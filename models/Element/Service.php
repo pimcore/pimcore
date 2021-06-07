@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -333,10 +333,12 @@ class Service extends Model\AbstractModel
                     case 'document':
                         $idColumn = 'id';
                         $publishedColumn = 'published';
+
                         break;
                     case 'object':
                         $idColumn = 'o_id';
                         $publishedColumn = 'o_published';
+
                         break;
                     default:
                         throw new \Exception('unknown type');
@@ -420,18 +422,30 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Returns a uniqe key for the element in the $target-Path (recursive)
-     *
-     * @internal
-     *
-     * @return string
+     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      *
      * @param string $type
      * @param string $sourceKey
      * @param ElementInterface $target
+     *
+     * @return string
      */
-    public static function getSafeCopyName($type, $sourceKey, $target)
+    public static function getSaveCopyName($type, $sourceKey, $target)
     {
+        return self::getSafeCopyName($sourceKey, $target);
+    }
+
+    /**
+     * Returns a uniqe key for the element in the $target-Path (recursive)
+     *
+     * @return string
+     *
+     * @param string $sourceKey
+     * @param ElementInterface $target
+     */
+    public static function getSafeCopyName(string $sourceKey, ElementInterface $target)
+    {
+        $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
@@ -450,7 +464,7 @@ class Service extends Model\AbstractModel
                 $sourceKey .= '_copy';
             }
 
-            return self::getSafeCopyName($type, $sourceKey, $target);
+            return self::getSafeCopyName($sourceKey, $target);
         }
 
         return $sourceKey;
@@ -648,6 +662,7 @@ class Service extends Model\AbstractModel
              */
             if ($child->getId() == $new->getId()) {
                 $found = true;
+
                 break;
             }
         }
@@ -753,14 +768,16 @@ class Service extends Model\AbstractModel
             }
 
             // if this is the initial element set the correct path and key
-            if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+            if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                 $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                 if ($originalElement) {
-                    if ($data instanceof Asset) {
-                        /** @var Asset $originalElement */
-                        $data->setFilename($originalElement->getFilename());
-                    } elseif ($data instanceof Document) {
+                    //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
+//                    if ($data instanceof Asset) {
+//                        /** @var Asset $originalElement */
+//                        $data->setFilename($originalElement->getFilename());
+//                    } else
+                    if ($data instanceof Document) {
                         /** @var Document $originalElement */
                         $data->setKey($originalElement->getKey());
                     } elseif ($data instanceof DataObject\AbstractObject) {
@@ -949,18 +966,22 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('form')[1];
+                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
                         $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
-                        $name = $joinConfig['name'];
+
+                        $joinAlias = array_keys($joinConfig['name']);
+                        $joinAlias = reset($joinAlias);
+                        $joinTable = $joinConfig['name'][$joinAlias];
+
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
                         $select->addSelect($columns);
-                        $select->$method($fromAlias, $name, $name, $condition);
+                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
 
@@ -1344,7 +1365,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
      *
      * @param string $type
      * @param int $elementId

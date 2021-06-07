@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -35,7 +35,7 @@ use Twig\Environment;
  *
  * @internal
  */
-final class PageController extends DocumentControllerBase
+class PageController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

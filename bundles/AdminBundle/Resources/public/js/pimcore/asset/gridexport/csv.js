@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.gridexport.csv");
@@ -26,7 +26,8 @@ pimcore.asset.gridexport.csv = Class.create(pimcore.element.gridexport.abstract,
                     name: 'delimiter',
                     maxLength: 1,
                     labelWidth: 200,
-                    value: ';'
+                    value: ';',
+                    allowBlank: false
                 })
             ]
         });

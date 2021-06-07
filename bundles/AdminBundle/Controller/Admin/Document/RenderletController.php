@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class RenderletController extends AdminController
+class RenderletController extends AdminController
 {
     /**
      * Handles editmode preview for renderlets
@@ -94,7 +94,7 @@ final class RenderletController extends AdminController
 
         // setting locale manually here before rendering the action to make sure editables use the right locale - if this
         // is needed in multiple places, move this to the tag handler instead (see #1834)
-        if ($attributes['_locale']) {
+        if (isset($attributes['_locale'])) {
             $localeService->setLocale($attributes['_locale']);
         }
 

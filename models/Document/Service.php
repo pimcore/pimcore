@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -41,6 +41,7 @@ class Service extends Model\Element\Service
      * @var Model\User|null
      */
     protected $_user;
+
     /**
      * @var array
      */
@@ -150,7 +151,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSafeCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -205,7 +206,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSafeCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -561,6 +562,7 @@ class Service extends Model\Element\Service
                 if ($document = Document::getByPath($p)) {
                     if (empty($types) || in_array($document->getType(), $types)) {
                         $document = $this->nearestPathCache[$cacheKey] = $document;
+
                         break;
                     }
                 } elseif (Model\Site::isSiteRequest()) {
@@ -574,6 +576,7 @@ class Service extends Model\Element\Service
                     if ($sitePrettyDocId) {
                         if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
                             $document = $this->nearestPathCache[$cacheKey] = $sitePrettyDoc;
+
                             break;
                         }
                     }

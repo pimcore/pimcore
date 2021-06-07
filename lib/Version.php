@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -23,6 +23,7 @@ use PackageVersions\Versions;
 final class Version
 {
     const PART_NUMBER = 0;
+
     const PART_HASH = 1;
 
     /**

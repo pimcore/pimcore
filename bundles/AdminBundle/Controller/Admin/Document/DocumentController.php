@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -46,7 +46,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
+class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
 
@@ -266,6 +266,10 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                     }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
+                } elseif ($request->get('type') == 'printpage') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_page');
+                } elseif ($request->get('type') == 'printcontainer') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_container');
                 }
 
                 if ($request->get('inheritanceSource')) {
@@ -279,32 +283,39 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                         $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
                         $success = true;
+
                         break;
                     case 'snippet':
                         $document = Document\Snippet::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'email': //ckogler
                         $document = Document\Email::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'link':
                         $document = Document\Link::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'hardlink':
                         $document = Document\Hardlink::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'folder':
                         $document = Document\Folder::create($request->get('parentId'), $createValues);
                         $document->setPublished(true);
+
                         try {
                             $document->save();
                             $success = true;
                         } catch (\Exception $e) {
                             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
+
                         break;
                     default:
                         $classname = '\\Pimcore\\Model\\Document\\' . ucfirst($request->get('type'));
@@ -320,16 +331,19 @@ final class DocumentController extends ElementControllerBase implements KernelCo
 
                         if (Tool::classExists($classname)) {
                             $document = $classname::create($request->get('parentId'), $createValues);
+
                             try {
                                 $document->save();
                                 $success = true;
                             } catch (\Exception $e) {
                                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                             }
+
                             break;
                         } else {
                             Logger::debug("Unknown document type, can't add [ " . $request->get('type') . ' ] ');
                         }
+
                         break;
                 }
             } else {
@@ -492,6 +506,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                 }
 
                 $document->setUserModification($this->getAdminUser()->getId());
+
                 try {
                     $document->save();
 
@@ -765,6 +780,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         $currentDocument = Document::getById($document->getId());
         if ($currentDocument->isAllowed('publish')) {
             $document->setPublished(true);
+
             try {
                 $document->setKey($currentDocument->getKey());
                 $document->setPath($currentDocument->getRealPath());
@@ -807,6 +823,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
+
         return $this->adminJson($site->getObjectVars());
     }
 
@@ -1041,6 +1058,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                 }
             } else {
                 Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
+
                 throw $this->createAccessDeniedHttpException();
             }
         }

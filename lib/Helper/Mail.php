@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
@@ -126,13 +126,15 @@ CSS;
     }
 
     /**
+     * @internal
+     *
      * Helper to format the receivers for the debug email and logging
      *
      * @param array $receivers
      *
      * @return string
      */
-    protected static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers)
     {
         $formatedReceiversArray = [];
 
@@ -166,7 +168,10 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        }
+
         $emailLog->setParams($mail->getParams());
         $emailLog->setSentDate(time());
 
@@ -429,7 +434,7 @@ CSS;
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);
-                $entryName = null;
+                $entryName = ''; // Symfony mailer want a string
                 $matches = [];
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
                     $entryAddress = trim($matches[2]);

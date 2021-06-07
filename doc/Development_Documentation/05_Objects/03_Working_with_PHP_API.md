@@ -440,14 +440,11 @@ on `\Doctrine\DBAL\Query\QueryBuilder`.
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
+// set  callback
 $list->onCreateQueryBuilder(
     function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
-        $queryBuilder->join(
-        ['rating' => 'plugin_rating_ratings'],
-        'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
-        ''
-    );
+        $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
+                    'orderItemObjects.o_id = orderItem.product__id');
     }
 );
 ```
@@ -466,7 +463,7 @@ $list = new Pimcore\Model\DataObject\News\Listing();
 // set onCreateQueryBuilder callback
 $list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
     // echo query
-    echo $queryBuilder;
+    echo $queryBuilder->getSQL();
 });
 ```
 

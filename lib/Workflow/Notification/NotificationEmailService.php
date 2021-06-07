@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\Notification;
@@ -178,7 +178,7 @@ class NotificationEmailService extends AbstractNotificationService
             $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
         );
 
-        $mail->setTextBody($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
+        $mail->text($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
 
         $mail->send();
     }

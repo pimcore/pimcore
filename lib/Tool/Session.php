@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -128,16 +128,11 @@ final class Session
     /**
      * @param string $namespace
      *
-     * @return AttributeBagInterface|null
+     * @return AttributeBagInterface
      */
-    public static function getReadOnly(string $namespace = 'pimcore_admin')
+    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
     {
-        $bag = static::getHandler()->getReadOnlyAttributeBag($namespace);
-        if ($bag instanceof AttributeBagInterface) {
-            return $bag;
-        }
-
-        return null;
+        return static::getHandler()->getReadOnlyAttributeBag($namespace);
     }
 
     /**

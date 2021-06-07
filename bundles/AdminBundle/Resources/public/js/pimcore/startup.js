@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 
@@ -62,7 +62,8 @@ Ext.require([
     'Ext.ux.grid.SubTable',
     'Ext.window.Toast',
     'Ext.slider.Single',
-    'Ext.form.field.Tag'
+    'Ext.form.field.Tag',
+    'Ext.ux.TabMiddleButtonClose'
 ]);
 
 Ext.ariaWarn = Ext.emptyFn;

@@ -15,7 +15,7 @@ base methods"). A child template can extend the base layout and override any of 
 Layout scripts are just normal view scripts and are located together with normal view scripts in: `/templates`
 
 For more details about template inheritance and layouts, please have a look at the 
-[Symfony documentation](http://symfony.com/doc/3.4/templating.html#template-inheritance-and-layouts). 
+[Symfony documentation](https://symfony.com/doc/5.2/templating.html#template-inheritance-and-layouts). 
 
 ## Usage of Layouts
 

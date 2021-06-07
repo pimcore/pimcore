@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class CustomReportController extends ReportsControllerBase
+class CustomReportController extends ReportsControllerBase
 {
     /**
      * @Route("/tree", name="pimcore_admin_reports_customreport_tree", methods={"GET", "POST"})
@@ -206,7 +206,6 @@ final class CustomReportController extends ReportsControllerBase
         $configuration = $configuration[0] ?? null;
 
         $success = false;
-        $columns = null;
         $errorMessage = null;
 
         $result = [];
@@ -459,6 +458,7 @@ final class CustomReportController extends ReportsControllerBase
 
             return $response;
         }
+
         throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 }

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -288,15 +288,15 @@ class Video extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if ($data['type']) {
+        if (isset($data['type'])) {
             $this->type = $data['type'];
         }
 
-        if ($data['title']) {
+        if (isset($data['title'])) {
             $this->title = $data['title'];
         }
 
-        if ($data['description']) {
+        if (isset($data['description'])) {
             $this->description = $data['description'];
         }
 
@@ -476,10 +476,12 @@ class Video extends Model\Document\Editable
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
-                    parse_str($parts['query'], $vars);
+                    if (array_key_exists('query', $parts)) {
+                        parse_str($parts['query'], $vars);
 
-                    if ($vars['v']) {
-                        $youtubeId = $vars['v'];
+                        if ($vars['v']) {
+                            $youtubeId = $vars['v'];
+                        }
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
@@ -778,11 +780,11 @@ class Video extends Model\Document\Editable
             $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [
-                '@context' => 'http://schema.org',
+                '@context' => 'https://schema.org',
                 '@type' => 'VideoObject',
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
-                'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
+                'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
                 'duration' => $durationString,
                 //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",

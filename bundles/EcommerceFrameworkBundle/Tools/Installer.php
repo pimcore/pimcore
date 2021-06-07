@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
@@ -68,7 +68,7 @@ class Installer extends AbstractInstaller
               `itemKey` varchar(100) COLLATE utf8_bin NOT NULL,
               `parentItemKey` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '0',
               `comment` LONGTEXT ASCII,
-              `addedDateTimestamp` int(10) NOT NULL,
+              `addedDateTimestamp` bigint NOT NULL,
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`),
               KEY `cartId_parentItemKey` (`cartId`,`parentItemKey`)
@@ -191,6 +191,7 @@ class Installer extends AbstractInstaller
     public function isInstalled()
     {
         $installed = false;
+
         try {
             // check if if first permission is installed
             $installed = $this->db->fetchOne('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', [

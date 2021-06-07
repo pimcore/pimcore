@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -129,6 +129,13 @@ class Definition extends Model\AbstractModel
                 $this->getParentClass()));
         }
 
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
         $this->generateClassFiles($saveDefinitionFile);
 
         // update classes
@@ -140,6 +147,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->createUpdateTable($class);
+
                             break;
                         }
                     }
@@ -244,6 +252,13 @@ class Definition extends Model\AbstractModel
         $cd .= "\n";
 
         File::put($this->getPhpClassFile(), $cd);
+
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
     }
 
     public function delete()
@@ -260,6 +275,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->delete($class);
+
                             break;
                         }
                     }

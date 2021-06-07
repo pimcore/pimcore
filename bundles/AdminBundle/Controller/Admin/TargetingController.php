@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -33,9 +33,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class TargetingController extends AdminController implements KernelControllerEventInterface
+class TargetingController extends AdminController implements KernelControllerEventInterface
 {
-    /* RULES */
+    // RULES
 
     /**
      * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
@@ -179,7 +179,7 @@ final class TargetingController extends AdminController implements KernelControl
         return $this->adminJson($return);
     }
 
-    /* TARGET GROUPS */
+    // TARGET GROUPS
 
     /**
      * @Route("/target-group/list", name="pimcore_admin_targeting_targetgrouplist", methods={"GET"})
@@ -278,6 +278,7 @@ final class TargetingController extends AdminController implements KernelControl
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = $targetGroup->getObjectVars();
 
         return $this->adminJson($targetGroup);
     }

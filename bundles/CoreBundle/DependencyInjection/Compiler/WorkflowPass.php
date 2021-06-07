@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -51,9 +51,8 @@ final class WorkflowPass implements CompilerPassInterface
             $loader->load('services_symfony_workflow.yml');
         }
 
-        $config = $container->getParameter('pimcore.workflow');
-
-        foreach ($config as $workflowName => $workflowConfig) {
+        $workflowsConfig = $container->getParameter('pimcore.workflow');
+        foreach ($workflowsConfig as $workflowName => $workflowConfig) {
             if (!$workflowConfig['enabled']) {
                 continue;
             }
@@ -146,7 +145,7 @@ final class WorkflowPass implements CompilerPassInterface
                 ]
             );
 
-            if (isset($workflowConfig['initial_markings']) && $workflowConfig['initial_markings'] !== []) {
+            if (!empty($workflowConfig['initial_markings'])) {
                 $definitionDefinition->addArgument($workflowConfig['initial_markings']);
             }
 

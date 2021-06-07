@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -46,7 +46,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var string
      */
     protected $itemKey;
+
     protected $count;
+
     protected $comment;
 
     /**
@@ -60,6 +62,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var CartInterface
      */
     protected $cart;
+
     protected $cartId;
 
     /**
@@ -305,7 +308,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     public function setAddedDate(\DateTime $date = null)
     {
         if ($date) {
-            $this->addedDateTimestamp = $date->getTimestamp();
+            $this->addedDateTimestamp = intval($date->format('Uu'));
         } else {
             $this->addedDateTimestamp = null;
         }
@@ -318,8 +321,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
-            $datetime = new \DateTime();
-            $datetime->setTimestamp($this->addedDateTimestamp);
+            $datetime = \DateTime::createFromFormat('U', intval($this->addedDateTimestamp / 1000000));
         }
 
         return $datetime;

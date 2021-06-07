@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\EventSubscriber;
@@ -32,9 +32,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotificationSubscriber implements EventSubscriberInterface
 {
     const MAIL_TYPE_TEMPLATE = 'template';
+
     const MAIL_TYPE_DOCUMENT = 'pimcore_document';
 
     const NOTIFICATION_CHANNEL_MAIL = 'mail';
+
     const NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION = 'pimcore_notification';
 
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';

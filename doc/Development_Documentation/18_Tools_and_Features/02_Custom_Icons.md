@@ -3,10 +3,6 @@
 Pimcore allows to dynamically define custom element icons & tooltips in the element tree. In addition, the icon of the editor tab can
 be changed.
 
-> Support for the event-based approach for Documents, Assets and Data Objects is available since release 6.4.1
-> If you you are looking for the (deprecated) pre 6.4.1 way (supporting Data Objects only) read these
-> [instructions](https://pimcore.com/docs/6.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
-
 #### Properties that can be changed
 * Element CSS class
 * Element icon
@@ -17,7 +13,7 @@ be changed.
  
 The basic idea is to provide one's own implementation of `Pimcore\Model\Element\AdminStyle`.
  
-This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L396-L407) event. 
+This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php#L396-L407) event. 
 
 Example:
 

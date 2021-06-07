@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -26,9 +26,9 @@ abstract class AbstractOperator implements OperatorInterface
     protected $label;
 
     /**
-     * @var mixed
+     * @var array
      */
-    protected $context;
+    protected array $context = [];
 
     /**
      * @var ConfigElementInterface[]
@@ -37,9 +37,9 @@ abstract class AbstractOperator implements OperatorInterface
 
     /**
      * @param \stdClass $config
-     * @param null $context
+     * @param array $context
      */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         $this->label = $config->label;
         $this->childs = $config->childs;

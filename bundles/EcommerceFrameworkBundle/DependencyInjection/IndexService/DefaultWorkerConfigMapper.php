@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService;
@@ -32,7 +32,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql;
  *
  * @internal
  */
-final class DefaultWorkerConfigMapper
+class DefaultWorkerConfigMapper
 {
     private $mapping = [
         OptimizedMysqlConfig::class => OptimizedMysql::class,

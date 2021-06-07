@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Unit\Cache;
@@ -137,7 +137,7 @@ class MailTest extends TestCase
     public function testTextBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
-        $mail->setTextBody('Hi, {{ firstname }} {{ lastname }}.');
+        $mail->text('Hi, {{ firstname }} {{ lastname }}.');
         $mail->setParams([
             'firstname' => 'John',
             'lastname' => 'Doe',
@@ -152,7 +152,7 @@ class MailTest extends TestCase
     public function testHtmlBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
-        $mail->setHtmlBody('Hi, {{ firstname }} {{ lastname }}.');
+        $mail->html('Hi, {{ firstname }} {{ lastname }}.');
         $mail->setParams([
             'firstname' => 'John',
             'lastname' => 'Doe',

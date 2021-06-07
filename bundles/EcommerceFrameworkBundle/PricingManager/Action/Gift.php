@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
@@ -24,23 +24,12 @@ class Gift implements GiftInterface
     /**
      * @var AbstractProduct|null
      */
-    protected $product;
+    protected ?AbstractProduct $product = null;
 
     /**
      * @var string
      */
-    protected $productPath;
-
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return GiftInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment)
-    {
-        // TODO: Implement executeOnProduct() method.
-        return $this;
-    }
+    protected string $productPath = '';
 
     /**
      * @param EnvironmentInterface $environment
@@ -128,10 +117,8 @@ class Gift implements GiftInterface
      */
     public function __wakeup()
     {
-        if ($this->productPath != '') {
+        if ($this->productPath !== '') {
             $this->product = AbstractProduct::getByPath($this->productPath);
-        } elseif (is_string($this->product)) {
-            $this->product = AbstractProduct::getByPath($this->product);
         }
     }
 }

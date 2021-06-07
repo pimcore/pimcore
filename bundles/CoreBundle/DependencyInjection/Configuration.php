@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -721,9 +721,15 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->scalarNode('pdf_creation_php_memory_limit')
-                            ->defaultValue('2048M')
+                                ->defaultValue('2048M')
+                            ->end()
+                            ->scalarNode('default_controller_print_page')
+                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
+                            ->end()
+                            ->scalarNode('default_controller_print_container')
+                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
+                            ->end()
                         ->end()
-                    ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)

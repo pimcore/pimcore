@@ -42,11 +42,7 @@ that then contain the actual print pages.
 
 Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
 Therefore, they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
-Pimcore ships with default implementations (Web2PrintController, container-Action) on new installations. 
-If you updated an existing Pimcore installation, please get the default implementations here: 
-
-* Controller: `website_example/controllers/Web2printController.php`
-* View: `website_example/views/scripts/web2print`
+Pimcore ships with default implementations (`Web2PrintController`, `containerAction`) in skeleton and demo installation package. 
 
 ## PDF Rendering
 
@@ -68,8 +64,8 @@ For details of settings please see section below or renderer documentation.
 They can be activated by the printermarks rendering setting. Technically they are implemented by an additional CSS-file which needs to be included.
 For Details, check links below:
 
-* [view-script](https://github.com/pimcore/demo/blob/master/templates/layouts/print_catalog.html.twig#L18-L20)
-* [css-file](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
+* [view-script](https://github.com/pimcore/demo/blob/10.x/templates/layouts/print_catalog.html.twig#L18-L20)
+* [css-file](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
 
 ## Settings
 In the web-to-print settings, the used PDF renderer is specified. Depending on the renderer, there are additional settings to be made. 

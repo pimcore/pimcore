@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\InstallBundle;
@@ -376,7 +376,14 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment();
-        $kernel = new \App\Kernel($environment, true);
+
+        $kernel = \App\Kernel::class;
+
+        if (isset($_ENV['PIMCORE_KERNEL_CLASS'])) {
+            $kernel = $_ENV['PIMCORE_KERNEL_CLASS'];
+        }
+
+        $kernel = new $kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -562,6 +569,7 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->mkdir($cacheDir);
+
         try {
             $filesystem->remove($oldCacheDir);
         } catch (IOException $e) {

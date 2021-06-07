@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -42,13 +42,13 @@ final class TranslateValue extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function __construct(Translator $translator, \stdClass $config, $context = null)
+    public function __construct(Translator $translator, \stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
         $this->translator = $translator;
         $this->prefix = $config->prefix ?? '';
-        if (null != $context && isset($context['language'])) {
+        if (isset($context['language'])) {
             $this->locale = $context['language'];
         }
     }

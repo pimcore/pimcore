@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
+
     /**
      * @var \Pimcore\Model\Dao\AbstractDao|null
      */
@@ -105,6 +106,7 @@ abstract class AbstractModel implements ModelInterface
 
         if (!$dao) {
             Logger::critical('No dao implementation found for: ' . $myClass);
+
             throw new \Exception('No dao implementation found for: ' . $myClass);
         }
 
@@ -153,6 +155,7 @@ abstract class AbstractModel implements ModelInterface
                 foreach ($classNames as $tmpClassName) {
                     if (class_exists($tmpClassName) && !in_array($tmpClassName, $forbiddenClassNames)) {
                         $daoClass = $tmpClassName;
+
                         break;
                     }
                 }
@@ -245,10 +248,12 @@ abstract class AbstractModel implements ModelInterface
                 return $r;
             } catch (\Exception $e) {
                 Logger::emergency($e);
+
                 throw $e;
             }
         } else {
             Logger::error('Class: ' . get_class($this) . ' => call to undefined method ' . $method);
+
             throw new \Exception('Call to undefined method ' . $method . ' in class ' . get_class($this));
         }
     }

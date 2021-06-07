@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
@@ -174,6 +174,23 @@ trait Dao
             if ($classDefinition->isEncryptedTable($table)) {
                 $this->db->query('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=NO;');
             }
+        }
+    }
+
+    /**
+     * @param string $table
+     * @param array $columnsToRemove
+     * @param array $protectedColumns
+     */
+    protected function removeIndices($table, $columnsToRemove, $protectedColumns)
+    {
+        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+            foreach ($columnsToRemove as $value) {
+                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                }
+            }
+            $this->resetValidTableColumnsCache($table);
         }
     }
 }

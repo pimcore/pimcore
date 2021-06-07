@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\WebDAV;
@@ -79,7 +79,7 @@ class Folder extends DAV\Collection
         $asset = null;
 
         if (is_string($name)) {
-            $name = Element\Service::getValidKey(substr($name, strrpos($name, '/') + 1), 'asset');
+            $name = Element\Service::getValidKey(basename($name), 'asset');
 
             $parentPath = $this->asset->getRealFullPath();
             if ($parentPath === '/') {
@@ -100,6 +100,7 @@ class Folder extends DAV\Collection
 
             return new Asset\WebDAV\File($asset);
         }
+
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Logger;
 use Pimcore\Mail;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class EmailController extends AdminController
+class EmailController extends AdminController
 {
     /**
      * @Route("/email-logs", name="pimcore_admin_email_emaillogs", methods={"GET", "POST"})
@@ -167,7 +168,7 @@ final class EmailController extends AdminController
     {
         if (!empty($data['objectClass'])) {
             $class = '\\' . ltrim($data['objectClass'], '\\');
-            if (!empty($data['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($data['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
@@ -213,15 +214,19 @@ final class EmailController extends AdminController
                     switch ($data['objectClassSubType']) {
                         case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
+
                             break;
                         case 'Video':
                             $fullEntry['iconCls'] = 'pimcore_icon_wmv';
+
                             break;
                         case 'Text':
                             $fullEntry['iconCls'] = 'pimcore_icon_txt';
+
                             break;
                         case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
+
                             break;
                         default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';
@@ -296,11 +301,11 @@ final class EmailController extends AdminController
             }
 
             if ($html = $emailLog->getHtmlLog()) {
-                $mail->setHtmlBody($html);
+                $mail->html($html);
             }
 
             if ($text = $emailLog->getTextLog()) {
-                $mail->setTextBody($text);
+                $mail->text($text);
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
@@ -396,9 +401,9 @@ final class EmailController extends AdminController
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {
-            $mail->setTextBody($request->get('content'));
+            $mail->text($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
-            $mail->setHtmlBody($request->get('content'));
+            $mail->html($request->get('content'));
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 
@@ -520,7 +525,7 @@ final class EmailController extends AdminController
         $data = null;
         if ($params['data']['type'] === 'object') {
             $class = '\\' . ltrim($params['data']['objectClass'], '\\');
-            if (!empty($params['data']['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($params['data']['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($params['data']['objectId']);
                 if (!is_null($obj)) {
                     $data = $obj;

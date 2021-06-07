@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Security\Encoder;
@@ -86,6 +86,7 @@ class EncoderFactory implements EncoderFactoryInterface
             foreach ($this->encoderFactories as $class => $factory) {
                 if ((is_object($user) && $user instanceof $class) || (!is_object($user) && (is_subclass_of($user, $class) || $user == $class))) {
                     $factoryKey = $class;
+
                     break;
                 }
             }
@@ -93,13 +94,8 @@ class EncoderFactory implements EncoderFactoryInterface
 
         if (null !== $factoryKey) {
             $factory = $this->encoderFactories[$factoryKey];
-            $encoder = $factory->getEncoder($user);
 
-            if (!$encoder) {
-                throw new \RuntimeException(sprintf('Failed to fetch encoder from factory "%s".', $factoryKey));
-            }
-
-            return $encoder;
+            return $factory->getEncoder($user);
         }
 
         return null;

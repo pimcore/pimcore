@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\DataProvider;
@@ -142,17 +142,11 @@ class GeoIp implements DataProviderInterface
 
     private function doResolveIp(string $ip)
     {
-        $city = null;
-
         try {
             $city = $this->geoIpProvider->city($ip);
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
-            return null;
-        }
-
-        if (!$city) {
             return null;
         }
 

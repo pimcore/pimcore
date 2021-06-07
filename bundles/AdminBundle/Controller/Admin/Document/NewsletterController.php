@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -38,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class NewsletterController extends DocumentControllerBase
+class NewsletterController extends DocumentControllerBase
 {
     use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 

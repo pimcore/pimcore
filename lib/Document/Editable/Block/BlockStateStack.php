@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Editable\Block;
@@ -20,9 +20,7 @@ namespace Pimcore\Document\Editable\Block;
 /**
  * @internal
  *
- * Handles block state (current block level, current block index). This is the
- * data which previously was handled in Registry pimcore_tag_block_current and
- * pimcore_tag_block_numeration.
+ * Handles block state (current block level, current block index)
  */
 final class BlockStateStack implements \Countable, \JsonSerializable
 {

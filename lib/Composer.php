@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -27,9 +27,9 @@ use Symfony\Component\Process\Process;
 class Composer
 {
     protected static $options = [
-        'symfony-app-dir' => 'app',
-        'symfony-web-dir' => 'public',
-        'symfony-assets-install' => 'hard',
+        'bin-dir' => 'bin',
+        'public-dir' => 'public',
+        'symfony-assets-install' => 'relative',
         'symfony-cache-warmup' => false,
     ];
 
@@ -86,6 +86,7 @@ class Composer
 
         // execute migrations
         $isInstalled = null;
+
         try {
             $process = static::executeCommand($event, $consoleDir,
                 ['internal:migration-helpers', '--is-installed'], 30, false);
@@ -242,20 +243,11 @@ class Composer
     protected static function getConsoleDir(Event $event, $actionName)
     {
         $options = static::getOptions($event);
-
-        if (static::useNewDirectoryStructure($options)) {
-            if (!static::hasDirectory($event, 'symfony-bin-dir', $options['symfony-bin-dir'], $actionName)) {
-                return;
-            }
-
-            return $options['symfony-bin-dir'];
-        }
-
-        if (!static::hasDirectory($event, 'symfony-app-dir', $options['symfony-app-dir'], 'execute command')) {
+        if (!static::hasDirectory($event, 'bin-dir', $options['bin-dir'], $actionName)) {
             return;
         }
 
-        return $options['symfony-app-dir'];
+        return $options['bin-dir'];
     }
 
     protected static function hasDirectory(Event $event, $configName, $path, $actionName)
@@ -267,11 +259,6 @@ class Composer
         }
 
         return true;
-    }
-
-    protected static function useNewDirectoryStructure(array $options)
-    {
-        return isset($options['symfony-var-dir']) && is_dir($options['symfony-var-dir']);
     }
 
     private static function removeDecoration($string)
@@ -304,7 +291,7 @@ class Composer
         }
 
         $command = ['assets:install'];
-        $webDir = $options['symfony-web-dir'];
+        $webDir = $options['public-dir'];
 
         if ('symlink' == $options['symfony-assets-install']) {
             $command[] = '--symlink';
@@ -312,7 +299,7 @@ class Composer
             array_push($command, '--symlink', '--relative');
         }
 
-        if (!static::hasDirectory($event, 'symfony-web-dir', $webDir, 'install assets')) {
+        if (!static::hasDirectory($event, 'public-dir', $webDir, 'install assets')) {
             return;
         }
 

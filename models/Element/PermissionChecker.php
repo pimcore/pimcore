@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -83,6 +83,7 @@ class PermissionChecker
 
                 if ($user->isAdmin()) {
                     $userPermission[$columnName] = true;
+
                     continue;
                 }
 
@@ -125,6 +126,7 @@ class PermissionChecker
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
                             $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+
                             continue;
                         }
                     }
@@ -201,6 +203,7 @@ class PermissionChecker
                     $role = User\Role::getById($roleId);
                     if ($role->getPermission($permissionKey)) {
                         $entry = self::createDetail($user, $permissionKey, true, $role->getType(), $role->getName());
+
                         break;
                     }
                 }

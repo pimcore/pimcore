@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.1.0
+- [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
+
 ## 10.0.0
 
 ### System Requirements
@@ -69,7 +72,8 @@
 - Removed `pimcore.routing.defaults`. Use `pimcore.documents.default_controller` instead.
 - Removed `\Pimcore\Tool::getRoutingDefaults()`, `PageSnippet::$module|$action|get/setAction()|get/setModule()`, `DocType::$module|$action|get/setAction()|get/setModule()`, `Staticroute::$module|$action|get/setAction()|get/setModule()`.
 - Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead. 
-- Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead. 
+- Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead.
+- Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead. 
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
@@ -121,7 +125,7 @@
 - [Ecommerce][FilterService] Added method `getFilterValues()` to `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType`
 - [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, _getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
 - [Translations] Remove `pimcore.translations.case_insensitive` support.
-- [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/current/setup/flex.html)
+- [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/5.2/setup/flex.html)
 - [Translations] `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been removed. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
 - Replaced `scheb/two-factor-bundle` with `scheb/2fa-bundle`, `scheb/2fa-google-authenticator` & `scheb/2fa-qr-code`.
 - Removed Laminas Packages.
@@ -257,7 +261,10 @@
   - Removed configuration node `worker_mode` in `index_service` configuration
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is
   implemented in `AbstractConfig` this should not have any consequences.
-- [Web2Print]
+- [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).  
+- [Ecommerce][PricingManager] Added two new interfaces `ProductActionInterface` and `CartActionInterface`. All actions
+  need to implement either of it - otherwise they will not be considered anymore in price calculation.
+- [Web2Print] 
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
      should be backwards compatible to older versions.
@@ -271,7 +278,7 @@
                 main: smtp://user:pass@smtp.example.com:port
                 pimcore_newsletter: smtp://user:pass@smtp.example.com:port
     ```
-    please see [Symfony Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for more information.
+    please see [Symfony Transport Setup](https://symfony.com/doc/5.2/mailer.html#transport-setup) for more information.
 
     API changes:
 
@@ -285,8 +292,8 @@
     After:
     ```php
         $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
-        $mail->setTextBody("This is just plain text");
-        $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
+        $mail->text("This is just plain text");
+        $mail->html("<b>some</b> rich text: {{ myParam }}");
         ...
     ```
 
@@ -318,3 +325,4 @@
   please update your system settings as per the requirements.
 - Removed deprecated `marshal()` and `unmarshal()` methods from object data-types.
 - `DynamicTextLabelInterface::renderLayoutText()` must handle nullable object param.
+- [AdminBundle] Marked classes and controllers as @internal/final - please see all changes here: https://github.com/pimcore/pimcore/pull/8453/files & https://github.com/pimcore/pimcore/pull/8988/files

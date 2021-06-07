@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "L'élément de peut être déplacé, car il est verrouillé",
     "element_cannot_be_moved": "L'élément ne peut être déplacé ici",
     "no_collections_allowed": "Pas de collections authorisés",
-    "this_is_a_newer_not_published_version": "Ceci est une version plus récente non publiée",
     "filter_condition": "Condition de filtre",
     "all_types": "Tous les types",
     "audio": "Audio",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "Les traductions ne sont pas configurées",
     "read_more_here": "En lire plus ici",
     "publish_version": "Publier la version",
-    "save_only_new_version": "Sauvegarder uniquement la nouvelle version",
     "start": "Démarrage",
     "su": "Dim.",
     "mo": "Lun.",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "Retirer de ceux sélectionnés par lot",
     "batch_remove_from": "Retirer les données de tous",
     "batch_remove_selected_from": "Retirer les données de ceux sélectionnés",
-    "force_picture_html_tag": "Forcer la balise HTML &lt;picture&gt;",
     "unit_tooltip": "Infobulle des unités alternatives",
     "toggle_image_features_visibility": "Basculer la visibilité de la fonctionnalité image",
     "detect_image_features": "Détecter les fonctionnalités de l'image",
@@ -937,5 +934,11 @@
     "version_currently_saved_in_database": "Actuellement enregistré dans la base de données (mais non publié)",
     "deprecated_feature": "<p style='color: orange;'>Fonctionnalité obsolète. Utilisez %s<br>à la place</p>",
     "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "No action available",
+    "bricks": "Bricks",
+    "draft": "Draft",
+    "auto_save": "Auto save",
+    "save_draft": "Save draft",
+    "selected_grid_columns": "Selected grid columns"
 }

@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
@@ -25,10 +25,15 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionEnvironment extends Environment implements EnvironmentInterface
 {
     const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
+
     const SESSION_KEY_USERID = 'userid';
+
     const SESSION_KEY_USE_GUEST_CART = 'useguestcart';
+
     const SESSION_KEY_ASSORTMENT_TENANT = 'currentassortmenttenant';
+
     const SESSION_KEY_ASSORTMENT_SUB_TENANT = 'currentassortmentsubtenant';
+
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
     /**

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -39,7 +39,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class ClassController extends AdminController implements KernelControllerEventInterface
+class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
@@ -612,6 +612,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$class instanceof DataObject\ClassDefinition) {
             $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -657,6 +658,7 @@ final class ClassController extends AdminController implements KernelControllerE
 
         $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
+
         throw $this->createNotFoundException($errorMessage);
     }
 
@@ -780,6 +782,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
             $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1029,6 +1032,7 @@ final class ClassController extends AdminController implements KernelControllerE
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
+
                         break;
                     }
                 }
@@ -1167,6 +1171,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
             $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1231,6 +1236,7 @@ final class ClassController extends AdminController implements KernelControllerE
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $keep = true;
+
                             continue;
                         }
                     }
@@ -1345,6 +1351,7 @@ final class ClassController extends AdminController implements KernelControllerE
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
+
                             continue;
                         }
                     }

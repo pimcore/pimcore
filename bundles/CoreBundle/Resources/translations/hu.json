@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "Az elem nem mozgatható, mivel zárolva van.",
     "element_cannot_be_moved": "Az elem ide nem mozgatható",
     "no_collections_allowed": "Kollekció nem megengedett",
-    "this_is_a_newer_not_published_version": "Ez egy újabb, nem publikált verzió",
     "filter_condition": "Szűrési feltétel",
     "all_types": "Minden típus",
     "audio": "Audio",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "A fordítások nincsenek beállítva",
     "read_more_here": "További információk itt",
     "publish_version": "Verzió publikálása",
-    "save_only_new_version": "Csak az új verzió mentése",
     "start": "Kezdés",
     "su": "Va",
     "mo": "Hé",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "Kötegelt eltávolítás a kiválasztottakból",
     "batch_remove_from": "Adat eltávolítása mindenhonnan",
     "batch_remove_selected_from": "Adat eltávolítása a kiválasztottakból",
-    "force_picture_html_tag": "&lt;picture&gt; HTML tag kényszerítése",
     "unit_tooltip": "Alternatív egységek tooltip",
     "toggle_image_features_visibility": "Kép jellemzők láthatóságának állítása",
     "detect_image_features": "Kép Jellemzők detektálása",
@@ -936,6 +933,12 @@
     "deprecated": "Elavult",
     "version_currently_saved_in_database": "Jelenleg adtbázisban mentett (de nem publikált)",
     "deprecated_feature": "<p style=\"color: orange;\">Elavult funkció. Használd ezt: %s<br>inkább</p>",
-    "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "edit_as_custom_text": "Szerkesztés egyedi szüvegként",
+    "symfony_translation_link": "Formátum:\nhttps://symfony.com/doc/current/translation/message_format.html\n",
+    "no_action_available": "Nincs művelet",
+    "bricks": "Építőelemek",
+    "draft": "Piszkozat",
+    "auto_save": "Automaikus mentés",
+    "save_draft": "Piszkozat mentése",
+    "selected_grid_columns": "Kiválaszott rács oszlopok"
 }

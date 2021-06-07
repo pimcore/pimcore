@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -34,15 +34,13 @@ final class LongRunningHelperPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->has(LongRunningHelper::class)) {
-            $helperDefinition = $container->getDefinition(LongRunningHelper::class);
-            foreach ($container->getDefinitions() as $serviceId => $definition) {
-                if (strpos($serviceId, 'monolog.handler.') === 0) {
-                    $class = $container->getParameterBag()->resolveValue($definition->getClass());
-                    if (is_a($class, 'Monolog\Handler\BufferHandler', true)
-                        || is_a($class, 'Monolog\Handler\FingersCrossedHandler', true)) {
-                        $helperDefinition->addMethodCall('addMonologHandler', [new Reference($serviceId)]);
-                    }
+        $helperDefinition = $container->getDefinition(LongRunningHelper::class);
+        foreach ($container->getDefinitions() as $serviceId => $definition) {
+            if (strpos($serviceId, 'monolog.handler.') === 0) {
+                $class = $container->getParameterBag()->resolveValue($definition->getClass());
+                if (is_a($class, 'Monolog\Handler\BufferHandler', true)
+                    || is_a($class, 'Monolog\Handler\FingersCrossedHandler', true)) {
+                    $helperDefinition->addMethodCall('addMonologHandler', [new Reference($serviceId)]);
                 }
             }
         }

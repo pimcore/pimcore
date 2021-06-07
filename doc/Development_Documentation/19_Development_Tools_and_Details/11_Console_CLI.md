@@ -8,10 +8,10 @@ entry point to console commands registered to the `Symfony\Console` application.
 
 
 ### Implementing own Commands
-Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/3.4/console.html) 
+Have a look at the `Symfony\Console` [documentation](https://symfony.com/doc/5.2/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
 `Pimcore\Console\AbstractCommand` to get some defaults like the `--ignore-maintenance-mode` option 
-and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/3.4/components/var_dumper/index.html) 
+and a helper for the [Symfony VarDumper Component](https://symfony.com/doc/5.2/components/var_dumper/index.html) 
 set up automatically (see below).
 
 ### Registering Commands
@@ -26,7 +26,7 @@ The console application implicitly adds the `--ignore-maintenance-mode` option f
 mode and the option is not set.
 
 ##### `dump()` and `dumpVerbose()`
-Better `var_dump` through [`VarDumper`](http://symfony.com/doc/3.4/components/var_dumper/introduction.html). 
+Better `var_dump` through [`VarDumper`](https://symfony.com/doc/5.2/components/var_dumper/introduction.html). 
 
 ## Example
 ```php

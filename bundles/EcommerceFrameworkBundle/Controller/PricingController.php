@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class PricingController extends AdminController implements KernelControllerEventInterface
+class PricingController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}
@@ -59,7 +59,7 @@ final class PricingController extends AdminController implements KernelControlle
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            /* @var  RuleInterface $rule */
+            // @var  RuleInterface $rule
 
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();

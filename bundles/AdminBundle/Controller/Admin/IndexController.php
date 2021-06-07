@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -45,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-final class IndexController extends AdminController implements KernelResponseEventInterface
+class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -128,36 +128,28 @@ final class IndexController extends AdminController implements KernelResponseEve
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
         // DB
-        $mysqlVersion = null;
         try {
-            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES
+            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
-
-            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
         } catch (\Exception $e) {
             $tables = [];
         }
 
-        // @TODO System
-        $system = [
-            'OS' => '',
-            'Distro' => '',
-            'RAMTotal' => '',
-            'CPUCount' => '',
-            'CPUModel' => '',
-            'CPUClock' => '',
-            'virtualization' => '',
-        ];
+        try {
+            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
+        } catch (\Exception $e) {
+            $mysqlVersion = null;
+        }
 
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
+                'pimcore_major_version' => 10,
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
                 'mysql_version' => $mysqlVersion,
                 'bundles' => array_keys($kernel->getBundles()),
-                'system' => $system,
                 'tables' => $tables,
             ];
         } catch (\Exception $e) {
@@ -281,6 +273,7 @@ final class IndexController extends AdminController implements KernelResponseEve
     private function getInstanceId()
     {
         $instanceId = 'not-set';
+
         try {
             $instanceId = $this->getParameter('secret');
             $instanceId = sha1(substr($instanceId, 3, -3));
@@ -353,9 +346,6 @@ final class IndexController extends AdminController implements KernelResponseEve
                 $mailIncomplete = true;
             }
             if (empty($config['email']['sender']['email'])) {
-                $mailIncomplete = true;
-            }
-            if (($config['email']['method'] ?? '') == 'smtp' && empty($config['email']['smtp']['host'])) {
                 $mailIncomplete = true;
             }
         }

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var PimcoreBundleManager

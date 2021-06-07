@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -325,10 +325,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $version = $list->current();
         }
 
-        /**
-         * @var Model\Version $version
-         */
         if (!$version) {
+            /** @var Model\Version $version */
             $version = self::getModelFactory()->build(Model\Version::class);
         }
 

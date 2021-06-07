@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation\Escaper;
@@ -121,8 +121,8 @@ class Xliff12Escaper
 
         $content = $node->asXML();
 
-        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>/i", '', $content);
-        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
+        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>\s?/i", '', $content);
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>\s?/i", '', $content);
         // we have to do this again but with html entities because of CDATA content
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 

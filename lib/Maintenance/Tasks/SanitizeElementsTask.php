@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -28,7 +28,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class SanitizeElementsTask implements TaskInterface
+class SanitizeElementsTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

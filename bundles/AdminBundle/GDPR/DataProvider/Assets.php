@@ -12,18 +12,20 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 class Assets extends Elements implements DataProviderInterface
 {
     /**
@@ -67,10 +69,7 @@ class Assets extends Elements implements DataProviderInterface
     public function doExportData(Asset $asset)
     {
         $this->exportIds = [];
-
-        $this->fillIds($asset);
-
-        $exportResult = [];
+        $this->exportIds[$asset->getId()] = true;
 
         // Prepare File
         $file = tempnam('/tmp', 'zip');
@@ -102,14 +101,6 @@ class Assets extends Elements implements DataProviderInterface
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $asset->getFilename() . '.zip"');
 
         return $response;
-    }
-
-    /**
-     * @param ElementInterface $element
-     */
-    protected function fillIds(ElementInterface $element)
-    {
-        $this->exportIds[$element->getId()] = true;
     }
 
     /**

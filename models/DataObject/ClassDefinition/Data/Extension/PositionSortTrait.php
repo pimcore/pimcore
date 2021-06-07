@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
@@ -21,8 +21,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait PositionSortTrait
 {
     /**
-     * @param array|null $a
-     * @param array|null $b
+     * @param array|string|null $a
+     * @param array|string|null $b
      *
      * @return int
      */
@@ -30,7 +30,8 @@ trait PositionSortTrait
     {
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position'];
-        } elseif (is_string($a) && is_string($b)) {
+        }
+        if (is_string($a) && is_string($b)) {
             return strcmp($a, $b);
         }
 

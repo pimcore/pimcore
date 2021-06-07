@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Mail\Plugins;
@@ -135,14 +135,14 @@ final class RedirectingPlugin
                 $html = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $html);
                 $html = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $html);
 
-                $message->setHtmlBody($html);
+                $message->html($html);
             } elseif (!empty($text)) {
                 $originalData['text'] = $text;
 
                 $rawText = $text;
                 $debugInformation = MailHelper::getDebugInformation('text', $message);
                 $rawText .= $debugInformation;
-                $message->setTextBody($rawText);
+                $message->text($rawText);
             }
 
             //setting debug subject
@@ -174,7 +174,7 @@ final class RedirectingPlugin
         $message->setParam('Debug-Redirected', 'true');
         foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $k) {
             // Add parameters to show this was redirected
-            $message->setParam('Debug-Original-' . $k, $originalData[$k]);
+            $message->setParam('Debug-Original-' . $k, MailHelper::formatDebugReceivers($originalData[$k]));
         }
     }
 
@@ -188,10 +188,10 @@ final class RedirectingPlugin
         $originalData = $message->getOriginalData();
 
         if (isset($originalData['html']) && $originalData['html']) {
-            $message->setHtmlBody($originalData['html']);
+            $message->html($originalData['html']);
         }
         if (isset($originalData['text']) && $originalData['text']) {
-            $message->setTextBody($originalData['text']);
+            $message->text($originalData['text']);
         }
         if (isset($originalData['subject']) && $originalData['subject']) {
             $message->setSubject($originalData['subject']);

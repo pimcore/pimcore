@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -43,7 +43,7 @@ use Symfony\Component\Workflow\Workflow;
  *
  * @internal
  */
-final class WorkflowController extends AdminController implements KernelControllerEventInterface
+class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var Document|Asset|ConcreteObject|null $element
@@ -226,6 +226,7 @@ final class WorkflowController extends AdminController implements KernelControll
 
             $svg = null;
             $msg = '';
+
             try {
                 $svg = $this->getWorkflowSvg($workflow);
             } catch (\InvalidArgumentException $e) {

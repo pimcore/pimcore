@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation;
@@ -348,6 +348,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @return string
      */
     public function getAdminPath()
@@ -357,6 +358,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @param string $adminPath
      */
     public function setAdminPath($adminPath)
@@ -366,6 +368,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getAdminTranslationMapping(): array
@@ -375,6 +378,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @param array $adminTranslationMapping
      */
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
@@ -384,6 +388,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @return Kernel
      */
     public function getKernel()
@@ -393,6 +398,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @internal
+     *
      * @param Kernel $kernel
      */
     public function setKernel($kernel)
@@ -412,6 +418,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param string $text
+     *
      * @return string
      */
     private function updateLinks(string $text): string

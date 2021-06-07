@@ -32,8 +32,8 @@ if($asset instanceof Asset\Video) {
       /*
          OUTPUTS:
          Array(
-             "mp4" => "/public/var/tmp/video.....mp4",
-             "webm" => "/public/var/tmp/video.....webm"
+             "mp4" => "/Sample%20Content/Videos/video-thumb__123__myVideoThumbnail...mp4",
+             "webm" => "/Sample%20Content/Videos/video-thumb__123__myVideoThumbnail...webm"
          )
       */
    } else if ($thumbnail["status"] == "inprogress")  {
@@ -51,11 +51,11 @@ As soon as you define transformations based on the bitrates in thumbnail config,
 The `.mpd` file will be referenced in  generated `<video>` Tag.
 
 However, you have to include a polyfill for all major browsers to support Adaptive  bitrate video-streaming: https://github.com/Dash-Industry-Forum/dash.js
-```php
+```twig
 {{ pimcore_video('campaignVideo', {
         width: auto,
         height: auto,
-        thumbnail: 'new',
+        thumbnail: 'new'
     }) }}
 ```
 generates frontend:

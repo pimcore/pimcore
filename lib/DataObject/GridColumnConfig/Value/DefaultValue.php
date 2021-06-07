@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
@@ -184,18 +183,18 @@ final class DefaultValue extends AbstractValue
      */
     public function getLabeledValue($element)
     {
-        /** @var Concrete $element */
         $attributeParts = explode('~', $this->attribute);
 
         $getter = 'get' . ucfirst($this->attribute);
         $brickType = null;
         $brickKey = null;
 
-        if (substr($this->attribute, 0, 1) == '~') {
+        if (str_starts_with($this->attribute, '~')) {
             // key value, ignore for now
 
             return $this->getClassificationStoreValueForObject($element, $this->attribute);
-        } elseif (count($attributeParts) > 1) {
+        }
+        if ($element instanceof Concrete && count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -26,7 +26,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class DumpExtension extends AbstractExtension
+class DumpExtension extends AbstractExtension
 {
     public function getFunctions()
     {

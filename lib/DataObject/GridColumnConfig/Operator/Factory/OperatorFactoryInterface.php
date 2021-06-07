@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
@@ -23,9 +23,9 @@ interface OperatorFactoryInterface
 {
     /**
      * @param \stdClass $configElement
-     * @param null $context
+     * @param array $context
      *
      * @return OperatorInterface|null
      */
-    public function build(\stdClass $configElement, $context = null);
+    public function build(\stdClass $configElement, array $context = []);
 }

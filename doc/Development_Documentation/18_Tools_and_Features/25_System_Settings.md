@@ -5,8 +5,8 @@ be made with care and only by developers.
 These settings are saved in `var/config/system.yml`. 
 
 
-## General 
-Contains general settings about timezone, view suffix, additional path variables, default langauge, user interface etc.
+## Appearance & Branding 
+Contains settings about changing appearance of Pimcore admin like login screen color, Admin interface color, background image & custom logo etc.
 
  
 ## Localization & Internationalization (i18n/l10n) 
@@ -16,17 +16,7 @@ Fallback languages are currently used in object's localized fields and shared tr
 
 ## Debug
 
-Several debugging settings for Pimcore, like the Application Logger settings.
-
-Please note that the core logger (log levels, files, ...) can now directly be configured via Symfony's Monolog configuration.
-For details see:
-
-* [Symfony Logging](https://symfony.com/doc/3.4/logging.html#handlers-writing-logs-to-different-locations)
-* [Logging](../19_Development_Tools_and_Details/07_Logging.md) 
-
-## E-Mail Settings
-Settings for default values of Mails sent via `Pimcore\Mail`. 
-
+Debugging settings for Pimcore, like Debug email addresses, Debug admin translations.
 
 ## Website
 System settings about the CMS part of Pimcore.
@@ -42,32 +32,9 @@ Version steps for objects.
 ## Assets 
 Settings for assets like version steps, default color profiles for thumbnail processing and display settings.
 
-
-## Google Credentials & API Keys
-Google API Credentials (Service Account Client ID for Analytics, ...) is required for the Google API integrations. 
-Only use a *Service Account* from the Google Cloud Console.
-
-Google API Key (Simple API Access for CSE, ...) is e.g. required for correct display of geo data types in Pimcore ojbects. 
- 
- 
-## Output-Cache
-Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache/README.md).
-
-
-## Outputfilters
-Settings for default output filters shipped with Pimcore. 
-
-
-## HTTP Connectivity (direct, proxy, ...)
-Settings for outbound HTTP connectivity of Pimcore - needed e.g. for Pimcore Updates or custom code using HTTP-Clients. 
- 
- 
-## Newsletter
-Possibility for configuring different newsletter delivery settings from the default e-mail settings.
- 
  
 ## Access system config in PHP Controller
-Using `\Pimcore\Config::getSystemConfig()` is deprecated. You can choose one of the following options to access the system configuration:
+ You can choose one of the following options to access the system configuration:
 
 ```php 
 <?php

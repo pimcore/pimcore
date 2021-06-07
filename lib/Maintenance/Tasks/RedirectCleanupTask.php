@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -21,7 +21,7 @@ use Pimcore\Model\Redirect;
 /**
  * @internal
  */
-final class RedirectCleanupTask implements TaskInterface
+class RedirectCleanupTask implements TaskInterface
 {
     /**
      * {@inheritdoc}

@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\HttpKernel\BundleCollection;
@@ -147,8 +147,6 @@ class BundleCollection
      */
     public function addBundle($bundle, int $priority = 0, array $environments = []): self
     {
-        $item = null;
-
         if ($bundle instanceof BundleInterface) {
             $item = new Item($bundle, $priority, $environments);
         } elseif (is_string($bundle) || !empty($bundle)) {

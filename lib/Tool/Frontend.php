@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -88,13 +88,9 @@ final class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $container = \Pimcore::getContainer();
-        if (!$container->has(FullPageCacheListener::class)) {
-            return false;
-        }
+        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
-        $cacheService = $container->get(FullPageCacheListener::class);
-        if ($cacheService && $cacheService->isEnabled()) {
+        if ($cacheService->isEnabled()) {
             return [
                 'enabled' => true,
                 'lifetime' => $cacheService->getLifetime(),

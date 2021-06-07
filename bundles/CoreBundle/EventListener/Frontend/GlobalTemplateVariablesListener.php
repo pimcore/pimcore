@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -30,7 +30,7 @@ use Twig\Environment;
 /**
  * @internal
  */
-final class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
+class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
@@ -84,13 +84,16 @@ final class GlobalTemplateVariablesListener implements EventSubscriberInterface,
         }
 
         $globals = $this->twig->getGlobals();
-        array_push($this->globalsStack, $globals);
 
-        $document = $this->documentResolver->getDocument($request);
-        $editmode = $this->editmodeResolver->isEditmode($request);
-
-        $this->twig->addGlobal('document', $document);
-        $this->twig->addGlobal('editmode', $editmode);
+        try {
+            // it could be the case that the Twig environment is already initialized at this point
+            // then it's not possible anymore to add globals
+            $this->twig->addGlobal('document', $this->documentResolver->getDocument($request));
+            $this->twig->addGlobal('editmode', $this->editmodeResolver->isEditmode($request));
+            array_push($this->globalsStack, $globals);
+        } catch (\Exception $e) {
+            array_push($this->globalsStack, false);
+        }
     }
 
     /**
@@ -100,8 +103,10 @@ final class GlobalTemplateVariablesListener implements EventSubscriberInterface,
     {
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
-            $this->twig->addGlobal('document', $globals['document'] ?? null);
-            $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
+            if ($globals !== false) {
+                $this->twig->addGlobal('document', $globals['document'] ?? null);
+                $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
+            }
         }
     }
 }

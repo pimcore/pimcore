@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class PrintcontainerController extends PrintpageControllerBase
+class PrintcontainerController extends PrintpageControllerBase
 {
     /**
      * @Route("/save-to-session", name="pimcore_admin_document_printcontainer_savetosession", methods={"POST"})

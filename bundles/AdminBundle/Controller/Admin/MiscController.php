@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -36,7 +36,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @internal
  */
-final class MiscController extends AdminController
+class MiscController extends AdminController
 {
     /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
@@ -237,7 +237,7 @@ final class MiscController extends AdminController
         ]);
     }
 
-    /* FILEEXPLORER */
+    // FILEEXPLORER
 
     /**
      * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})
@@ -527,8 +527,9 @@ final class MiscController extends AdminController
 
         $limit = (int)$request->get('limit');
         $offset = (int)$request->get('start');
-        $sort = $request->get('sort');
-        $dir = $request->get('dir');
+        $sortInfo = json_decode($request->get('sort'), true)[0];
+        $sort = $sortInfo['property'] ?? null;
+        $dir = $sortInfo['direction'] ?? null;
         $filter = $request->get('filter');
         if (!$limit) {
             $limit = 20;

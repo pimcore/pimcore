@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Test\DataType;
@@ -776,6 +776,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $invalidSlug = new UrlSlug('/xyz      /abc');
         $this->testObject->setUrlSlug([$invalidSlug]);
         $ex = null;
+
         try {
             $this->testObject->save();
         } catch (\Exception $e) {
@@ -798,6 +799,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $duplicateSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug2([$duplicateSlug]);
         $ex = null;
+
         try {
             $this->testObject->save();
         } catch (\Exception $e) {

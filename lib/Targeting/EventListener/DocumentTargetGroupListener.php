@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\EventListener;
@@ -80,7 +80,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
     {
-        if (!$document || !$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

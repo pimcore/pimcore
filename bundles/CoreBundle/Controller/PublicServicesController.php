@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
@@ -30,20 +30,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
-use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
 /**
  * @internal
  */
-final class PublicServicesController extends Controller
+class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
-     * @param SessionListener $sessionListener
      *
      * @return BinaryFileResponse|StreamedResponse
      */
-    public function thumbnailAction(Request $request, SessionListener $sessionListener)
+    public function thumbnailAction(Request $request)
     {
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
@@ -53,7 +51,7 @@ final class PublicServicesController extends Controller
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
 
-        if ($asset && $asset->getPath() == ('/' . $prefix)) {
+        if ($asset && $asset->getPath() === ('/' . $prefix)) {
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {
@@ -156,20 +154,18 @@ final class PublicServicesController extends Controller
                     return new StreamedResponse(function () use ($thumbnailStream) {
                         fpassthru($thumbnailStream);
                     }, 200, $headers);
-                } else {
-                    throw new \Exception('Unable to generate thumbnail, see logs for details.');
                 }
+
+                throw new \Exception('Unable to generate thumbnail, see logs for details.');
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
                 Logger::error($message);
 
                 return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
             }
-        } else {
-            throw $this->createNotFoundException('Asset not found');
         }
 
-        throw $this->createNotFoundException('Unable to create image thumbnail');
+        throw $this->createNotFoundException('Asset not found');
     }
 
     /**
@@ -237,7 +233,7 @@ final class PublicServicesController extends Controller
         $redirect = new RedirectResponse($url);
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
-        if (isset($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
+        if (!empty($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
             $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
         }
 

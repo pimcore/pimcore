@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -315,6 +315,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->exchangeArray([$data]);
                 }
+
                 break;
             case self::PREPEND:
                 if (null !== $key) {
@@ -325,6 +326,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->prepend($data);
                 }
+
                 break;
             case self::APPEND:
             default:
@@ -337,6 +339,7 @@ class Container extends \ArrayObject
                 } else {
                     $this[$this->nextIndex()] = $data;
                 }
+
                 break;
         }
     }

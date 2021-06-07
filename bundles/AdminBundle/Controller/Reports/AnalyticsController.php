@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
+class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
      * @var \Google_Service_Analytics

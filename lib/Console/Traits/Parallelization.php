@@ -10,22 +10,24 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
 
 trait Parallelization
 {
-    use LockableTrait;
+    /** @var LockInterface|null */
+    private $lock;
 
     use WebmozartParallelization
     {
@@ -56,8 +58,22 @@ trait Parallelization
                 null,
                 InputOption::VALUE_NONE,
                 'Set on child processes. For internal use only.'
+            )->addOption(
+                'batch-size',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Sets the number of items to process per child process or in a batch',
+                50
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSegmentSize(): int
+    {
+        return (int)$this->input->getOption('batch-size');
     }
 
     /**
@@ -106,5 +122,37 @@ trait Parallelization
     protected function getContainer()
     {
         return \Pimcore::getKernel()->getContainer();
+    }
+
+    /**
+     * Locks a command.
+     *
+     * @param string|null $name
+     * @param bool|null $blocking
+     *
+     * @return bool
+     */
+    private function lock($name = null, $blocking = false)
+    {
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName());
+
+        if (!$this->lock->acquire($blocking)) {
+            $this->lock = null;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Releases the command lock if there is one.
+     */
+    private function release()
+    {
+        if ($this->lock) {
+            $this->lock->release();
+            $this->lock = null;
+        }
     }
 }
