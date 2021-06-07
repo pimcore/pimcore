@@ -873,6 +873,14 @@ class Asset extends Element\AbstractElement
         $path = urlencode_ignore_slash($path);
 
         $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        if (!$prefix) {
+            $prefix = sprintf(
+                '%s://%s',
+                \Pimcore::getContainer()->getParameter('router.request_context.scheme'),
+                \Pimcore::getContainer()->getParameter('router.request_context.host')
+            );
+        }
+
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
