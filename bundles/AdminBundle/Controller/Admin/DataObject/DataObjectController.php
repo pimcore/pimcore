@@ -967,7 +967,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     return $this->json(['success' => false, 'message' => 'Changing the sort method is only allowed for admin users']);
                 }
 
-                if ($sortBy == "index") {
+                if ($sortBy == 'index') {
                     $this->reindexBasedOnSortOrder($object, $sortOrder);
                 }
             }
@@ -1091,7 +1091,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         return $this->adminJson(['success' => $success]);
     }
 
-    private function executeInsideTransaction(callable $fn) {
+    private function executeInsideTransaction(callable $fn)
+    {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
@@ -1122,13 +1123,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
     }
 
-
     /**
      * @param DataObject\AbstractObject $parentObject
      * @param string $currentSortOrder
      */
-    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder) {
-        $fn = function() use ($parentObject, $currentSortOrder) {
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    {
+        $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
 
             Db::get()->executeUpdate(
@@ -1144,14 +1145,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     SET o.o_index = order_table.newIndex
                     WHERE o.o_id=order_table.o_id',
                 [
-                    $parentObject->getId()
+                    $parentObject->getId(),
                 ]
             );
 
             $db = Db::get();
             $children = $db->fetchAll(
                 'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
-                ." WHERE o_parentId = ? ORDER BY o_index ASC",
+                .' WHERE o_parentId = ? ORDER BY o_index ASC',
                 [$parentObject->getId()]
             );
             $index = 0;
@@ -1167,7 +1168,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $this->executeInsideTransaction($fn);
     }
 
-    private function updateLatestVersionIndex($objectId, $modificationDate, $versionCount, $newIndex) {
+    private function updateLatestVersionIndex($objectId, $modificationDate, $versionCount, $newIndex)
+    {
         if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
             $objectId, $modificationDate, $versionCount
         )) {
@@ -1188,7 +1190,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
-        $fn = function() use ($updatedObject, $newIndex) {
+        $fn = function () use ($updatedObject, $newIndex) {
             $list = new DataObject\Listing();
             $updatedObject->saveIndex($newIndex);
 
@@ -1239,7 +1241,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         };
 
         $this->executeInsideTransaction($fn);
-
     }
 
     /**
