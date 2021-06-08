@@ -836,7 +836,6 @@ class AssetHelperController extends AdminController
         if (file_exists($csvFile)) {
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
-            $csvReader->setEnclosure('""');
             $csvReader->setSheetIndex(0);
 
             $spreadsheet = $csvReader->load($csvFile);
