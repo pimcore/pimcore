@@ -428,7 +428,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @param array|null $data*
+     * @param array|null $data
      *
      * @throws Element\ValidationException
      */
