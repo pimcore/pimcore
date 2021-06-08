@@ -461,7 +461,7 @@ abstract class AbstractRelations extends Data implements
                             $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
                         }
 
-                        throw new \Exception($message);
+                        throw new Element\ValidationException($message);
                     }
                 }
             }
