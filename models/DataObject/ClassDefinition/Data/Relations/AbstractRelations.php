@@ -430,7 +430,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @param array|null $data*
      *
-     * @throws \Exception
+     * @throws Element\ValidationException
      */
     public function performMultipleAssignmentCheck($data)
     {
