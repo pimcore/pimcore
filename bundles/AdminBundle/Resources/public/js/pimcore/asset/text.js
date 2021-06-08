@@ -97,6 +97,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
                     title: t("edit"),
                     iconCls: "pimcore_icon_edit",
                     bodyStyle: "padding: 10px;",
+                    layout: 'fit',
                     items: [{
                         xtype: 'component',
                         html: '<div id="' + editorId + '" style="height:100%;width:100%"></div>',
@@ -112,7 +113,10 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
                                 editor.getSession().setMode(mode);
 
                                 //set data
-                                editor.setValue(this.data.data);
+                                if (this.data.data) {
+                                    editor.setValue(this.data.data);
+                                    editor.clearSelection();
+                                }
 
                                 editor.setOptions({
                                     showLineNumbers: true,
@@ -131,9 +135,14 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
                 });
 
 
-
                 this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                     this.editor.resize();
+                }.bind(this));
+
+                this.editPanel.on("destroy", function (el) {
+                    if (this.editor) {
+                        this.editor.destroy();
+                    }
                 }.bind(this));
             } else {
                 this.editPanel = new Ext.Panel({
