@@ -242,7 +242,7 @@ class SettingsController extends AdminController
         foreach ($list as $item) {
             if ((string)$group === $item->getGroup()) {
                 $item->expand();
-                $result[] = $item;
+                $result[] = $item->getObjectVars();
             }
         }
 

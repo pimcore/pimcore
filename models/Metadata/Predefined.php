@@ -81,7 +81,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @var string
      */
-    public $group;
+    protected $group;
 
     /**
      * @var int
