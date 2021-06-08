@@ -192,7 +192,7 @@ class GoogleTagManager extends Tracker implements
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $call = [
-            'event' => 'checkout',
+            'event' => 'purchase',
             'ecommerce' => [
                 'currencyCode' => $order->getCurrency(),
                 'purchase' => [
