@@ -79,6 +79,11 @@ final class Predefined extends Model\AbstractModel
     protected $language;
 
     /**
+     * @var string
+     */
+    protected $group;
+
+    /**
      * @var int
      */
     protected $creationDate;
@@ -291,6 +296,22 @@ final class Predefined extends Model\AbstractModel
     public function getLanguage()
     {
         return $this->language;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**
