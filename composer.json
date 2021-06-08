@@ -119,7 +119,7 @@
     "symfony/rate-limiter": "^5.2.0",
     "symfony/routing": "^5.2.0",
     "symfony/security-bundle": "^5.2.0",
-    "symfony/security-core": "^5.2.0",
+    "symfony/security-core": "^5.2.8",
     "symfony/security-csrf": "^5.2.0",
     "symfony/security-guard": "^5.2.0",
     "symfony/security-http": "^5.2.0",
