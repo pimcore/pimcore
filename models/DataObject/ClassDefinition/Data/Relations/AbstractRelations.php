@@ -450,7 +450,7 @@ abstract class AbstractRelations extends Data implements
                     }
 
                     if ($elementHash === null) {
-                        throw new \Exception('Passing relations without ID or type not allowed anymore!');
+                        throw new Element\ValidationException('Passing relations without ID or type not allowed anymore!');
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
                     } else {
