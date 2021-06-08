@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.areablock");
@@ -760,7 +760,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         var nextKey = this.getNextKey();
         nextKey++;
 
-        if(this.config.types[brickIndex]['needsReload'] || forceReload === true) {
+        if(this.config.types[brickIndex]['needsReload'] || forceReload === true || this.config.reload === true) {
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
 
             this.elements.splice.apply(this.elements, [index, 0, {
@@ -819,6 +819,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         container.remove();
 
         this.refresh();
+
+        if(this.config.reload) {
+            this.reloadDocument();
+        }
     },
 
     moveBlockTo: function (block, toIndex) {

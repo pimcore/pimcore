@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "Елемент не може бути переміщеним, через те, що він заблокований.",
     "element_cannot_be_moved": "Елемент не може бути переміщений сюди",
     "no_collections_allowed": "Заборонені колекції",
-    "this_is_a_newer_not_published_version": "Це нова неопублікована версія",
     "filter_condition": "Умови фільтру",
     "all_types": "Всі типи",
     "audio": "Аудіо",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "Переклад не налаштований",
     "read_more_here": "Більше про це",
     "publish_version": "Опублікована версія",
-    "save_only_new_version": "Тильки зберігати нову версію",
     "start": "Початок",
     "su": "Неділя",
     "mo": "Понеділок",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "Пакетне видалення з вибраних",
     "batch_remove_from": "Видалити дані з усих",
     "batch_remove_selected_from": "Пакетне видалення з вибраних",
-    "force_picture_html_tag": "Примусово встановити &lt;picture&gt; HTML тег",
     "unit_tooltip": "Альтернативні підказки одиниць вимірювання",
     "toggle_image_features_visibility": "Переключити видимість властивостей зображення",
     "detect_image_features": "Визначити властивості зображення",
@@ -937,5 +934,11 @@
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
     "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
     "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "No action available",
+    "bricks": "Bricks",
+    "draft": "Draft",
+    "auto_save": "Auto save",
+    "save_draft": "Save draft",
+    "selected_grid_columns": "Selected grid columns"
 }

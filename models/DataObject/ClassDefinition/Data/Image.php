@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -384,9 +384,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function denormalize($value, $params = [])
     {
-        $id = $value['id'];
-        if (intval($id) > 0) {
-            return Asset\Image::getById($id);
+        if (isset($value['id'])) {
+            return Asset\Image::getById($value['id']);
         }
     }
 }

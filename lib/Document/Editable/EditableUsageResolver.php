@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Editable;
@@ -32,7 +32,9 @@ class EditableUsageResolver
      * @var UsageRecorderSubscriber|null
      */
     protected $subscriber;
+
     protected $dispatcher;
+
     protected $renderer;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)

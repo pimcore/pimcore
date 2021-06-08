@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Security\Encoder;
@@ -22,6 +22,7 @@ use Symfony\Component\Security\Core\Exception\RuntimeException;
 
 /**
  * @internal
+ *
  * @method Concrete getUser()
  */
 class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
@@ -91,7 +92,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
      */
     protected function getFieldDefinition()
     {
-        /* @var Password $passwordField */
+        // @var Password $passwordField
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
 
         if (!$field || !$field instanceof Password) {

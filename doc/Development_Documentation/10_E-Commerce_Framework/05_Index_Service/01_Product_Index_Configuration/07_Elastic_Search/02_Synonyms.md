@@ -1,6 +1,6 @@
 ## Synonyms 
 With elasticsearch so called synonym filters can be configured to further optimize search behavior. 
-For details see [Synonym Token Filter and following pages](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html)
+For details see [Synonym Token Filter and following pages](https://www.elastic.co/guide/en/elasticsearch/reference/7.12/analysis-synonym-tokenfilter.html)
 at elasticsearch documentation. 
 
 Pimcore provides an out-of-the box integration to provide synonyms for the synonym filters of elasticsearch. 
@@ -13,7 +13,7 @@ from a specific source and provide it for using them in elasticsearch synonym fi
 Sources can be simple files, Pimcore assets, Pimcore data objects, database tables or what ever source is
 needed. 
 Pimcore ships with a simple `FileSynonymProvider` that can be used right away. The synonym source is a file 
-(e.g. a Pimcore asset) that follows the [Solr file format](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html#_solr_synonyms).  
+(e.g. a Pimcore asset) that follows the [Solr file format](https://www.elastic.co/guide/en/elasticsearch/reference/7.12/analysis-synonym-tokenfilter.html#_solr_synonyms).  
 
 Besides the service configuration it self, the synonym providers need to be configured in index service 
 configuration as follows. 
@@ -24,7 +24,7 @@ pimcore_ecommerce_framework:
         tenants:
             <YOUR_ELASTIC_SEARCH_TENANT>:
                 enabled: true
-                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch6
+                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7
                 config_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 
                 config_options:
@@ -53,7 +53,7 @@ pimcore_ecommerce_framework:
         tenants:
             <YOUR_ELASTIC_SEARCH_TENANT>:
                 enabled: true
-                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch6
+                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7
                 config_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 
                 config_options:
@@ -74,7 +74,7 @@ pimcore_ecommerce_framework:
 
 ```
 
-> Don't forget to also add the synonyms filter to an analysers filter array where needed - as described in [elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html).
+> Don't forget to also add the synonyms filter to an analysers filter array where needed - as described in [elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.12/analysis-synonym-tokenfilter.html).
 
 
 #### Updating Synonyms 

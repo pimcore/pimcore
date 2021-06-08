@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Log\Handler;
@@ -21,6 +21,7 @@ use Pimcore\Db;
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
+
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**

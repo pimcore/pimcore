@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
@@ -382,6 +382,7 @@ class InheritanceHelper
                     if (!in_array($fieldname, $systemFields)) {
                         if (!is_null($value)) {
                             $toBeRemoved = false;
+
                             break;
                         }
                     }

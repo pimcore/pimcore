@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -33,7 +33,7 @@ final class Version20210324152822 extends AbstractMigration
     {
         $db = Db::get();
 
-        $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
+        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE Tables_in_{$db->getDatabase()} LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 
@@ -50,7 +50,7 @@ final class Version20210324152822 extends AbstractMigration
     {
         $db = Db::get();
 
-        $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
+        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE Tables_in_{$db->getDatabase()} LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element\Tag;
@@ -55,6 +55,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->beginTransaction();
+
         try {
             $dataAttributes = $this->model->getObjectVars();
 
@@ -87,6 +88,7 @@ class Dao extends Model\Dao\AbstractDao
             return true;
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }
@@ -99,6 +101,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->beginTransaction();
+
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
             $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
@@ -109,6 +112,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }
@@ -183,6 +187,7 @@ class Dao extends Model\Dao\AbstractDao
     public function setTagsForElement($cType, $cId, array $tags)
     {
         $this->db->beginTransaction();
+
         try {
             $this->db->delete('tags_assignment', ['ctype' => $cType, 'cid' => $cId]);
 
@@ -193,6 +198,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }
@@ -248,18 +254,18 @@ class Dao extends Model\Dao\AbstractDao
 
         $select = $this->db->createQueryBuilder()->select(['*'])
                            ->from('tags_assignment')
-                           ->where('tags_assignment.ctype = ?', $type);
+                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter(':ctype', $type);
 
         if (true === $considerChildTags) {
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
-            $select->where(
+            $select->andWhere(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
                 $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
                 . ')'
             );
         } else {
-            $select->where('tags_assignment.tagid = ?', $tag->getId());
+            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId', $tag->getId());
         }
 
         $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
@@ -268,20 +274,20 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->where($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query((string) $select);
+        $res = $this->db->query((string) $select, $select->getParameters());
 
         while ($row = $res->fetch()) {
-            $el = $map[$type][3]::getById($row['el_id']);
+            $el = $map[$type][3]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
             }

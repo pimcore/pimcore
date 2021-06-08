@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Mail\Plugins;
@@ -174,7 +174,7 @@ final class RedirectingPlugin
         $message->setParam('Debug-Redirected', 'true');
         foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $k) {
             // Add parameters to show this was redirected
-            $message->setParam('Debug-Original-' . $k, $originalData[$k]);
+            $message->setParam('Debug-Original-' . $k, MailHelper::formatDebugReceivers($originalData[$k]));
         }
     }
 

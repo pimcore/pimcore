@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -325,7 +325,7 @@ abstract class Kernel extends SymfonyKernel
         ], 60);
 
         // load development bundles only in matching environments
-        if ($this->isDebug() && in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
+        if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
                 new WebProfilerBundle(),

@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "ไม่สามารถย้ายองค์ประกอบได้เนื่องจากถูกล็อค",
     "element_cannot_be_moved": "ไม่สามารถย้ายองค์ประกอบได้ที่นี่",
     "no_collections_allowed": "ไม่อนุญาตให้ใช้คอลเล็กชัน",
-    "this_is_a_newer_not_published_version": "นี่เป็นรุ่นที่ใหม่กว่าที่ไม่ได้เผยแพร่",
     "filter_condition": "เงื่อนไขการกรอง",
     "all_types": "ทุกประเภท",
     "audio": "เสียง",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "การแปลไม่ได้รับการกำหนดค่า",
     "read_more_here": "อ่านเพิ่มเติมเกี่ยวกับที่นี่",
     "publish_version": "เผยแพร่เวอร์ชัน",
-    "save_only_new_version": "บันทึกเฉพาะเวอร์ชันใหม่เท่านั้น",
     "start": "เริ่มต้น",
     "su": "ซู",
     "mo": "Mo",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "ลบแบทช์ออกจากที่เลือก",
     "batch_remove_from": "ลบข้อมูลออกจากทั้งหมด",
     "batch_remove_selected_from": "ลบข้อมูลออกจากที่เลือก",
-    "force_picture_html_tag": "บังคับ & lt; รูปภาพ & gt; แท็ก HTML",
     "unit_tooltip": "คำแนะนำหน่วยทางเลือก",
     "toggle_image_features_visibility": "สลับการมองเห็นคุณสมบัติของภาพ",
     "detect_image_features": "ตรวจจับคุณสมบัติภาพ",
@@ -937,5 +934,11 @@
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
     "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
     "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "No action available",
+    "bricks": "Bricks",
+    "draft": "Draft",
+    "auto_save": "Auto save",
+    "save_draft": "Save draft",
+    "selected_grid_columns": "Selected grid columns"
 }

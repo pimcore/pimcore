@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -67,7 +67,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @internal
@@ -196,6 +196,16 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
+     *
+     * @param bool $mark
+     */
+    public function setLoadedAllLazyData($mark = true)
+    {
+        $this->_loadedAllLazyData = $mark;
+    }
+
+    /**
      * Note: this is for pimcore/pimcore use only.
      *
      * @internal
@@ -220,7 +230,7 @@ final class Localizedfield extends Model\AbstractModel implements
             }
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            $this->_loadedAllLazyData = true;
+            $this->setLoadedAllLazyData();
         }
 
         foreach ($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
@@ -235,15 +245,23 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|null $object
+     * @param Concrete|Model\Element\ElementDescriptor|null $object
      * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(?Concrete $object, bool $markAsDirty = true)
+    public function setObject($object, bool $markAsDirty = true)
     {
+        if ($object instanceof Model\Element\ElementDescriptor) {
+            $object = Service::getElementById($object->getType(), $object->getId());
+        }
+
+        if (!is_null($object) && !$object instanceof Concrete) {
+            throw new \Exception('must be instance of object concrete');
+        }
+
         if ($markAsDirty) {
             $this->markAllLanguagesAsDirty();
         }
@@ -310,6 +328,15 @@ final class Localizedfield extends Model\AbstractModel implements
             if (Tool::isValidLanguage($locale)) {
                 return $locale;
             }
+
+            if (\Pimcore::inAdmin()) {
+                foreach (Tool::getValidLanguages() as $validLocale) {
+                    if (str_starts_with($validLocale, $locale.'_')) {
+                        return $validLocale;
+                    }
+                }
+            }
+
             throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
@@ -451,7 +478,7 @@ final class Localizedfield extends Model\AbstractModel implements
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading() && !$this->_loadedAllLazyData) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 

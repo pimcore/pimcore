@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -85,6 +85,7 @@ final class PHPCode extends AbstractOperator
 
     /**
      * @return OperatorInterface
+     *
      * @throws \Exception
      */
     private function getInstance(): OperatorInterface
@@ -98,6 +99,7 @@ final class PHPCode extends AbstractOperator
 
     /**
      * @return OperatorInterface
+     *
      * @throws \Exception
      */
     private function buildInstance(): OperatorInterface
@@ -109,6 +111,7 @@ final class PHPCode extends AbstractOperator
 
             return $operatorInstance;
         }
+
         throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
     }
 }

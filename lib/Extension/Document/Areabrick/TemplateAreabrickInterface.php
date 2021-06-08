@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Extension\Document\Areabrick;
@@ -25,6 +25,7 @@ namespace Pimcore\Extension\Document\Areabrick;
 interface TemplateAreabrickInterface extends AreabrickInterface
 {
     const TEMPLATE_LOCATION_GLOBAL = 'global';
+
     const TEMPLATE_LOCATION_BUNDLE = 'bundle';
 
     const TEMPLATE_SUFFIX_TWIG = 'html.twig';

@@ -125,6 +125,6 @@ And the final view is like, below:
 
 Within the renderlet, you can access the editmode parameter as follows:
 
-```php
-$request->get("editmode");
+```twig
+{% if editmode %}
 ```

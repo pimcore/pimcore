@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -44,7 +44,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
 
@@ -127,7 +126,7 @@ class SettingsController extends AdminController
      */
     public function deleteCustomLogoAction(Request $request)
     {
-        if(Tool\Storage::get('admin')->fileExists(self::CUSTOM_LOGO_PATH)) {
+        if (Tool\Storage::get('admin')->fileExists(self::CUSTOM_LOGO_PATH)) {
             Tool\Storage::get('admin')->delete(self::CUSTOM_LOGO_PATH);
         }
 
@@ -404,6 +403,7 @@ class SettingsController extends AdminController
         $values = $this->decodeJson($request->get('data'));
 
         $existingValues = [];
+
         try {
             $file = Config::locateConfigFile('system.yml');
             $existingValues = Config::getConfigInstance($file, true);
@@ -473,7 +473,7 @@ class SettingsController extends AdminController
                     'login_screen_invert_colors' => $values['branding.login_screen_invert_colors'],
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
-                    'login_screen_custom_image' => $values['general.loginscreencustomimage'],
+                    'login_screen_custom_image' => $values['branding.login_screen_custom_image'],
                 ],
         ];
 
@@ -884,7 +884,7 @@ class SettingsController extends AdminController
                 // save glossary
                 $glossary = Glossary::getById($data['id']);
 
-                if ($data['link']) {
+                if (!empty($data['link'])) {
                     if ($doc = Document::getByPath($data['link'])) {
                         $data['link'] = $doc->getId();
                     }
@@ -928,7 +928,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary, 'success' => true]);
+                return $this->adminJson(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of glossaries
@@ -959,7 +959,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                $glossaries[] = $glossary;
+                $glossaries[] = $glossary->getObjectVars();
             }
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
@@ -1519,6 +1519,7 @@ class SettingsController extends AdminController
                                 $element = Element\Service::getElementByPath($setting->getType(), $data['data']);
                                 $data['data'] = $element;
                             }
+
                             break;
                     }
 
@@ -1600,9 +1601,11 @@ class SettingsController extends AdminController
                 if ($element) {
                     $resultItem['data'] = $element->getRealFullPath();
                 }
+
                 break;
             default:
                 $resultItem['data'] = $item->getData();
+
                 break;
         }
 

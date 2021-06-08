@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -240,6 +240,10 @@ class Asset extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Element\Service::correctPath($path);
 
         try {
@@ -295,6 +299,7 @@ class Asset extends Element\AbstractElement
 
         if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
             $asset = new Asset();
+
             try {
                 $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
@@ -363,9 +368,13 @@ class Asset extends Element\AbstractElement
                     }
                 }
             } else {
-                $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
-                if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                if (is_dir($data['sourcePath'])) {
+                    $mimeType = 'directory';
+                } else {
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
+                    if (is_file($data['sourcePath'])) {
+                        $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                    }
                 }
 
                 unset($data['sourcePath']);
@@ -457,6 +466,7 @@ class Asset extends Element\AbstractElement
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
+
                     break;
                 }
             }
@@ -583,19 +593,19 @@ class Asset extends Element\AbstractElement
             $this->clearDependentCache($additionalTags);
             $this->setDataChanged(false);
 
+            $postEvent = new AssetEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new AssetEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, AssetEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new AssetEvent($this);
+            $failureEvent = new AssetEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
@@ -608,9 +618,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @throws \Exception
      */
-    private function correctPath()
+    public function correctPath()
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -676,37 +688,19 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
-        // use current file name in order to prevent problems when filename has changed
-        // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $path = $this->getDao()->getCurrentFullPath();
-        if (!$path) {
-            // this is happen during a restore from the recycle bin
-            $path = $this->getRealFullPath();
-        }
-
+        $path = $this->getRealFullPath();
         $typeChanged = false;
 
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
-                $sourceUri = stream_get_meta_data($src)['uri'];
-                try {
-                    $targetUri = stream_get_meta_data($storage->readStream($path));
-                } catch (\Exception $e) {
-                    $targetUri = null;
+
+                $dbPath = $this->getDao()->getCurrentFullPath();
+                if ($dbPath !== $path && $storage->fileExists($dbPath)) {
+                    $storage->delete($dbPath);
                 }
 
-                if ($targetUri !== $sourceUri) {
-                    if ($storage->fileExists($path)) {
-                        // We don't open a stream on existing files, because they could be possibly used by versions
-                        // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                        // versioning information persists. Using the stream on the existing file would overwrite the
-                        // contents of the inode and therefore leads to wrong version data
-                        $storage->delete($path);
-                    }
-
-                    $storage->writeStream($path, $src);
-                }
+                $storage->writeStream($path, $src);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
@@ -1054,6 +1048,7 @@ class Asset extends Element\AbstractElement
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
+
             throw $e;
         }
 
@@ -1865,10 +1860,10 @@ class Asset extends Element\AbstractElement
     public function __wakeup()
     {
         if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
+            // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
             $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
-                $this->setFilename($originalElement->getFilename());
+                $this->setParentId($originalElement->getParentId());
                 $this->setPath($originalElement->getRealPath());
             }
         }

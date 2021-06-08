@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool\Glossary;
@@ -127,18 +127,18 @@ class Processor
             $tmpData['replace'][] = $entry['replace'];
         }
 
-        $result = '';
         $data = $tmpData;
         $data['count'] = array_fill(0, count($data['search']), 0);
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->text();
+            $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
                 strlen(trim($text))
             ) {
+                $originalText = $text;
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
@@ -151,12 +151,14 @@ class Processor
                     }
                 }
 
-                $domNode = $parentNode->getNode(0);
-                $fragment = $domNode->ownerDocument->createDocumentFragment();
-                $fragment->appendXML($text);
-                $clone = $domNode->cloneNode();
-                $clone->appendChild($fragment);
-                $domNode->parentNode->replaceChild($clone, $domNode);
+                if ($originalText !== $text) {
+                    $domNode = $parentNode->getNode(0);
+                    $fragment = $domNode->ownerDocument->createDocumentFragment();
+                    $fragment->appendXML($text);
+                    $clone = $domNode->cloneNode();
+                    $clone->appendChild($fragment);
+                    $domNode->parentNode->replaceChild($clone, $domNode);
+                }
             }
         });
 

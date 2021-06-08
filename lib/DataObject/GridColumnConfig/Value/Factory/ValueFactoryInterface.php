@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Value\Factory;
@@ -24,6 +24,7 @@ interface ValueFactoryInterface
     /**
      * @param \stdClass $configElement
      * @param null $context
+     *
      * @return ValueInterface
      */
     public function build(\stdClass $configElement, $context = null): ValueInterface;

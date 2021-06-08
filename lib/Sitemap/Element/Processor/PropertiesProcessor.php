@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Sitemap\Element\Processor;
@@ -29,6 +29,7 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 class PropertiesProcessor implements ProcessorInterface
 {
     const PROPERTY_CHANGE_FREQUENCY = 'sitemaps_changefreq';
+
     const PROPERTY_PRIORITY = 'sitemaps_priority';
 
     public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)

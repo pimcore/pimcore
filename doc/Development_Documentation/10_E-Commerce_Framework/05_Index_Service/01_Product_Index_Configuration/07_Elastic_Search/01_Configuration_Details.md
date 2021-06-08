@@ -17,8 +17,6 @@ also [elasticsearch Docs](https://www.elastic.co/guide/en/elasticsearch/client/p
 
 ##### `es_client_params`
 - `hosts`: Array of hosts of the elasticsearch cluster to use. 
-- `indexType`: Necessary for elasticsearch 5 - defines the type name of products in index.
-  For elasticsearch 6 it is optional, do not use it for elasticsearch 7.    
 - `timeoutMs`: optional parameter for setting the client timeout (frontend) in milliseconds.
 - `timeoutMsBackend`: optional parameter for setting the client timeout (CLI) in milliseconds. This value is typically higher than ``timeoutMs``.
 
@@ -40,7 +38,6 @@ pimcore_ecommerce_framework:
                     es_client_params:
                         hosts:
                             - '%elasticsearch.host%'
-                        indexType: '_doc' # optional for elasticsearch 6, not needed for elasticsearch 7
                         timeoutMs: 20000, # 20 seconds
                         timeoutMsBackend: 120000 # 2 minutes
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -85,6 +85,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
+        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);

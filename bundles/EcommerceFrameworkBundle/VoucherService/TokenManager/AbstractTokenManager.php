@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
@@ -25,12 +25,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
-    /* @var AbstractVoucherTokenType */
+    // @var AbstractVoucherTokenType
     public $configuration;
 
     public $seriesId;
 
-    /* @var AbstractVoucherSeries */
+    // @var AbstractVoucherSeries
     public $series;
 
     /**

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -532,7 +531,7 @@ class SearchController extends AdminController
         }
 
         if (mb_strlen($shortPath) > 50) {
-            $shortPath = mb_strstr($shortPath, 0, 49) . '…';
+            $shortPath = mb_substr($shortPath, 0, 49) . '…';
         }
 
         return $shortPath;

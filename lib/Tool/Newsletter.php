@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -33,6 +33,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Newsletter
 {
     public const SENDING_MODE_BATCH = 'batch';
+
     public const SENDING_MODE_SINGLE = 'single';
 
     /**
@@ -58,7 +59,7 @@ class Newsletter
         $mail->setIgnoreDebugMode(true);
         $config = Config::getSystemConfiguration('newsletter');
 
-        if ($config['use_specific']) {
+        if ($config['use_specific'] ?? false) {
             $mail->init('newsletter');
         }
 
@@ -148,7 +149,7 @@ class Newsletter
 
             $mailer = null;
             // check if newsletter specific mailer is needed
-            if ($config['use_specific']) {
+            if ($config['use_specific'] ?? false) {
                 $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 

@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 10.1.0
+- [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
+- [Core] composer.json: `symfony/symfony` package requirement has been replaced by `symfony/*` individual bundles. **Note for Bundles**: if you are using `symfony/symfony` dependency, it will now conflict with package `pimcore/pimcore`. Please move your bundle requirements to Symfony individual component packages.
+
 ## 10.0.0
 
 ### System Requirements
@@ -122,7 +126,7 @@
 - [Ecommerce][FilterService] Added method `getFilterValues()` to `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType`
 - [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, _getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
 - [Translations] Remove `pimcore.translations.case_insensitive` support.
-- [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/current/setup/flex.html)
+- [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/5.2/setup/flex.html)
 - [Translations] `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been removed. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
 - Replaced `scheb/two-factor-bundle` with `scheb/2fa-bundle`, `scheb/2fa-google-authenticator` & `scheb/2fa-qr-code`.
 - Removed Laminas Packages.
@@ -275,7 +279,7 @@
                 main: smtp://user:pass@smtp.example.com:port
                 pimcore_newsletter: smtp://user:pass@smtp.example.com:port
     ```
-    please see [Symfony Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for more information.
+    please see [Symfony Transport Setup](https://symfony.com/doc/5.2/mailer.html#transport-setup) for more information.
 
     API changes:
 

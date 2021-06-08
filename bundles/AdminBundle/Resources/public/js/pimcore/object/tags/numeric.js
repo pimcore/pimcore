@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.numeric");
@@ -83,7 +83,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type
+            componentCls: "object_field object_field_type_" + this.type,
+            mouseWheelEnabled: false
         };
 
         if (!isNaN(this.data)) {

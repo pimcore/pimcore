@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -24,10 +24,11 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element
@@ -208,10 +209,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        $dataItems = $data->getInternalData(true);
+        $loadLazy = !($params['objectFromVersion'] ?? false);
+        $dataItems = $data->getInternalData($loadLazy);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading() && $loadLazy) {
                     $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
@@ -567,7 +569,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
-            if (method_exists($fd, 'classSaved')) {
+            if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                 $fd->classSaved($class, $params);
             }
         }
@@ -983,6 +985,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                         throw $e;
                                     }
                                     $exceptionClass = get_class($e);
+
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
@@ -990,6 +993,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
+
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                             }
                         }
@@ -1004,6 +1008,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         if (count($validationExceptions) > 0) {
             $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
+
             throw $aggregatedExceptions;
         }
     }
@@ -1384,6 +1389,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         if (!$fd) {
                             // class definition seems to have changed
                             Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                             continue;
                         }
 
@@ -1421,6 +1427,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                         continue;
                     }
 

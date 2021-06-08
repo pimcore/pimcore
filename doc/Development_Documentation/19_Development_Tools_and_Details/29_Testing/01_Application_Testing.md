@@ -2,17 +2,17 @@
 
 Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
 
-1. [Symfony's default testing setup](https://symfony.com/doc/3.4/testing.html) with PHPUnit
+1. [Symfony's default testing setup](https://symfony.com/doc/5.2/testing.html) with PHPUnit
 2. [Codeception](https://codeception.com/) (which is based on PHPUnit) for more advanced features like Selenium testing by using Codeception's module system
 
 In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
 
-In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/master/tests).
+In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/10.x/tests).
 
 ## PHPUnit
 
 As Pimcore is a standard Symfony application, you can use Symfony's PHPUnit testing setup exactly as described in
-[Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). All you need to do is to create a custom
+[Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). All you need to do is to create a custom
 bootstrap file to ensure the Pimcore startup process has everything it needs. Start by adding Symfony's PHPUnit bridge
 to your project:
 
@@ -230,7 +230,7 @@ class ContentControllerTest extends WebTestCase
 
 If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/master/config/packages/test/config.yaml)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/10.x/config/packages/test/config.yaml)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
 recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely. What to use depends highly on your environment and your tests - if you have
@@ -249,7 +249,7 @@ Time: 2.69 seconds, Memory: 36.00MB
 OK (10 tests, 15 assertions)
 ```
 
-For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). Just keep
+For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). Just keep
 in mind to make sure Pimcore is properly bootstrapped before tests are run.
 
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 use Pimcore\Cache;
@@ -64,6 +64,7 @@ class Pimcore
 
     /**
      * switches pimcore into the admin mode - there you can access also unpublished elements, ....
+     *
      * @internal
      */
     public static function setAdminMode()
@@ -73,6 +74,7 @@ class Pimcore
 
     /**
      * switches back to the non admin mode, where unpublished elements are invisible
+     *
      * @internal
      */
     public static function unsetAdminMode()
@@ -82,6 +84,7 @@ class Pimcore
 
     /**
      * check if the process is currently in admin mode or not
+     *
      * @return bool
      */
     public static function inAdmin()
@@ -109,6 +112,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
@@ -118,6 +122,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return KernelInterface
      */
     public static function getKernel()
@@ -127,6 +132,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function hasKernel()
@@ -140,6 +146,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @param KernelInterface $kernel
      */
     public static function setKernel(KernelInterface $kernel)
@@ -216,6 +223,7 @@ class Pimcore
 
     /**
      * this method is called with register_shutdown_function() and writes all data queued into the cache
+     *
      * @internal
      */
     public static function shutdown()
@@ -251,6 +259,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function disableMinifyJs(): bool
@@ -269,6 +278,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @throws Exception
      */
     public static function initLogger()

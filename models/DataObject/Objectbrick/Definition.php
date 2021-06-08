@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick;
@@ -119,6 +119,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             if (!$class) {
                 Logger::error('class ' . $classname . " doesn't exist anymore");
+
                 continue;
             }
 
@@ -164,6 +165,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->checkTablenames();
         $this->checkContainerRestrictions();
 
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
 
@@ -185,6 +193,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->createContainerClasses();
         $this->updateDatabase();
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
     }
 
     private function enforceBlockRules($fds, $found = [])

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -39,6 +39,7 @@ class Authentication
         if (self::isValidUser($user)) {
             if (self::verifyPassword($user, $password)) {
                 $user->setLastLoginDate(); //set user current login date
+
                 return $user;
             }
         }
@@ -119,6 +120,7 @@ class Authentication
     {
         $username = null;
         $timestamp = null;
+
         try {
             $decrypted = self::tokenDecrypt($token);
             list($timestamp, $username) = $decrypted;
@@ -219,6 +221,7 @@ class Authentication
 
     /**
      * @internal
+     *
      * @param string $username
      *
      * @return string

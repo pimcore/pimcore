@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -266,7 +266,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
                 $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
 
-                /* relation needs to be an array with src_id, dest_id, type, fieldname*/
+                // relation needs to be an array with src_id, dest_id, type, fieldname
                 try {
                     $db->insert('object_url_slugs', $slug);
                 } catch (\Exception $e) {
@@ -292,6 +292,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                                 . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
                         }
                     }
+
                     throw $e;
                 }
             }

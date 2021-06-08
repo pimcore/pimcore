@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -158,7 +158,6 @@ class Area extends Model\Document\Editable
             $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
             $this->outputEditmode('<div class="pimcore_area_dialog" data-name="' . $attributes['data-name'] . '" data-real-name="' . $attributes['data-real-name'] . '" ' . $dialogAttributes . '></div>');
         }
-
 
         $params = [];
         if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {

@@ -164,13 +164,6 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: Merge }
 
-    pimcore.data_object.grid_column_config.operator.factory.object_brick_getter:
-        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
-        arguments:
-            $className: Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter
-        tags:
-            - { name: pimcore.data_object.grid_column_config.operator_factory, id: ObjectBrickGetter }
-
     pimcore.data_object.grid_column_config.operator.factory.object_field_getter:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:

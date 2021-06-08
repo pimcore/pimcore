@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
@@ -543,7 +543,7 @@ class OrderManager implements OrderManagerInterface
      */
     public function createOrderList()
     {
-        /* @var OrderListInterface $orderList */
+        // @var OrderListInterface $orderList
         $orderList = new $this->options['list_class'];
         $orderList->setItemClassName($this->options['list_item_class']);
 
@@ -823,7 +823,7 @@ class OrderManager implements OrderManagerInterface
         $orders->addConditionParam('customer__id = ?', $customerId);
         $orders->addConditionParam('orderState IS NOT NULL');
 
-        /* Check if provider is registered */
+        // Check if provider is registered
         $paymentProviderName = $paymentProvider->getName();
         Factory::getInstance()->getPaymentManager()->getProvider(strtolower($paymentProviderName));
 
@@ -831,7 +831,7 @@ class OrderManager implements OrderManagerInterface
             $orders->setCondition("oo_id = '{$orderId}'");
         }
 
-        /* Apply provider specific condition */
+        // Apply provider specific condition
         $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
 
         if (empty($orders->getOrderKey())) {

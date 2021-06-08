@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /*global localStorage */
@@ -2285,7 +2285,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.x/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';

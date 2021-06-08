@@ -1,7 +1,7 @@
 # Working with Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
-For details see [sessions docs](https://symfony.com/doc/3.4/components/http_foundation/sessions.html). 
+For details see [sessions docs](https://symfony.com/doc/5.2/components/http_foundation/sessions.html). 
 
 Pimcore adds the possibility to configure sessions before they are started through `SessionConfiguratorInterface` registered 
 as service with the `pimcore.session.configurator` tag. This is useful when you need a custom session bag for your bundle

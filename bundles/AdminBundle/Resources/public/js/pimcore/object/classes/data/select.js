@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.select");
@@ -49,13 +49,11 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
         this.specificPanel.add(specificItems);
-
 
         return this.layout;
     },
@@ -82,7 +80,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     {
                         ptype: 'gridviewdragdrop',
                         dragroup: 'objectclassselect'
-                    },
+                    }
                 ]
             },
             tbar: [{
@@ -133,7 +131,12 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     width: 200
                 },
                 {
-                    text: t("value"), sortable: true, dataIndex: 'value', editor: { xtype : 'textfield', allowBlank : false },
+                    text: t("value"),
+                    sortable: true,
+                    dataIndex: 'value',
+                    editor: new Ext.form.TextField({
+                        allowBlank: false
+                    }),
                     width: 200
                 },
                 {
@@ -220,9 +223,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                             return true;
                         }
                     }
-                })]
+                })
+            ]
         });
-
 
         this.selectionModel = valueGrid.getSelectionModel();
 

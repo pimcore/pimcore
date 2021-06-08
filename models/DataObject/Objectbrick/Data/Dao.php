@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
@@ -63,6 +63,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // remove all relations
         $db = Db::get();
+
         try {
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
@@ -227,6 +228,7 @@ class Dao extends Model\Dao\AbstractDao
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertDataValue) {
                                     $doInsert = true;
+
                                     break;
                                 }
                             }
@@ -328,6 +330,7 @@ class Dao extends Model\Dao\AbstractDao
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();
+
                     continue;
                 }
 

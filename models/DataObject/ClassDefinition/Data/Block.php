@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,10 +26,11 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element
@@ -153,6 +154,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -215,6 +217,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
@@ -301,6 +304,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -753,6 +757,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $elementData = $blockElement->getData();
@@ -783,6 +788,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $data = $blockElement->getData();
@@ -1106,6 +1112,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if ($validationExceptions) {
                     $aggregatedExceptions = new Model\Element\ValidationException();
                     $aggregatedExceptions->setSubItems($validationExceptions);
+
                     throw $aggregatedExceptions;
                 }
             }

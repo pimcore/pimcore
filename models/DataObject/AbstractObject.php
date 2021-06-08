@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -37,11 +37,15 @@ use Pimcore\Model\Element;
 abstract class AbstractObject extends Model\Element\AbstractElement
 {
     const OBJECT_TYPE_FOLDER = 'folder';
+
     const OBJECT_TYPE_OBJECT = 'object';
+
     const OBJECT_TYPE_VARIANT = 'variant';
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
+
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
@@ -323,6 +327,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         if ($force || !($object = Cache::load($cacheKey))) {
             $object = new Model\DataObject();
+
             try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
@@ -619,6 +624,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
             Logger::crit($e);
+
             throw $e;
         }
 
@@ -704,6 +710,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     self::setHideUnpublished($hideUnpublishedBackup);
 
                     $this->commit();
+
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
                     try {
@@ -731,6 +738,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         } else {
                             // if the transaction still fail after $maxRetries retries, we throw out the exception
                             Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+
                             throw $e;
                         }
                     } else {
@@ -751,20 +759,20 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            $postEvent = new DataObjectEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new DataObjectEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DataObjectEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_UPDATE);
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DataObjectEvent($this);
+            $failureEvent = new DataObjectEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);

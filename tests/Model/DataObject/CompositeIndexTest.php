@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\DataObject;
@@ -26,6 +26,7 @@ class CompositeIndexTest extends ModelTestCase
     {
         $classId = Unittest::classId();
         $db = Db::get();
+
         try {
             $db->query('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `mycomposite`');
             $this->fail('expected that the index does not exist yet');

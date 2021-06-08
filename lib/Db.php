@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -63,9 +63,6 @@ class Db
         return \Pimcore::getContainer()->get('monolog.logger.doctrine');
     }
 
-    /**
-     *
-     */
     public static function close()
     {
         $db = \Pimcore::getContainer()->get('database_connection');

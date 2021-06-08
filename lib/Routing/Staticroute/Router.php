@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Staticroute;
@@ -307,6 +307,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
             foreach ($this->localeParams as $localeParam) {
                 if (isset($routeParams[$localeParam])) {
                     $routeParams['_locale'] = $routeParams[$localeParam];
+
                     break;
                 }
             }
