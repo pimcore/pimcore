@@ -134,6 +134,9 @@ pimcore.settings.metadata.predefined = Class.create({
             {text: t("name"), width: 200, sortable: true, dataIndex: 'name',
                 getEditor: function() { return new Ext.form.TextField({}); }
             },
+            {text: t("group"), width: 200, sortable: true, dataIndex: 'group',
+                getEditor: function() { return new Ext.form.TextField({}); }
+            },
             {text: t("description"), sortable: true, dataIndex: 'description',
                 getEditor: function() { return new Ext.form.TextArea({}); },
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
