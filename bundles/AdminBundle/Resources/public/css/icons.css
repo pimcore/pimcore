@@ -638,6 +638,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_json {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/file-types.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video, .pimcore_icon_vob {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/video_file.svg) center center no-repeat !important;
 }
