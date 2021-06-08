@@ -281,6 +281,12 @@ pimcore.asset.metadata.grid = Class.create({
                 let predefinedMetadataGroups = Ext.Array.map (this.asset.data.predefinedMetaDataGroups, function(predefinedMetadataGroup){
                     return {text: t(predefinedMetadataGroup), handler: function(){ this.handleAddPredefinedDefinitions(predefinedMetadataGroup); }.bind(this)};
                 }.bind(this));
+
+                if(predefinedMetadataGroups.length > 0) {
+                    predefinedMetadataGroups.unshift('-');
+                    predefinedMetadataGroups.unshift({ text: t('ungrouped'), handler: function () { this.handleAddPredefinedDefinitions(''); }.bind(this) });
+                }
+
                 tbarItems.push(
                     new Ext.SplitButton({
                         text: t('add_predefined_metadata_definitions'),
@@ -515,7 +521,6 @@ pimcore.asset.metadata.grid = Class.create({
     },
 
     handleAddPredefinedDefinitions: function(group) {
-
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_getpredefinedmetadata'),
             params: {
