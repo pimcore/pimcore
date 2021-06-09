@@ -965,8 +965,26 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $object = DataObject::getById($request->get('id'));
         if ($object) {
-            $object->setChildrenSortBy($request->get('sortBy'));
-            $object->setChildrenSortOrder($request->get('childrenSortOrder'));
+            $sortBy = $request->get('sortBy');
+            $sortOrder = $request->get('childrenSortOrder');
+
+            $currentSortBy = $object->getChildrenSortBy();
+
+            $object->setChildrenSortBy($sortBy);
+            $object->setChildrenSortOrder($sortOrder);
+
+            if ($currentSortBy != $sortBy) {
+                $user = Tool\Admin::getCurrentUser();
+
+                if (!$user->isAdmin()) {
+                    return $this->json(['success' => false, 'message' => 'Changing the sort method is only allowed for admin users']);
+                }
+
+                if ($sortBy == 'index') {
+                    $this->reindexBasedOnSortOrder($object, $sortOrder);
+                }
+            }
+
             $object->save();
 
             return $this->json(['success' => true]);
@@ -1079,76 +1097,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $this->adminJson(['success' => $success]);
     }
 
-    /**
-     * @param DataObject\AbstractObject $updatedObject
-     * @param int $newIndex
-     */
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
+    private function executeInsideTransaction(callable $fn)
     {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $newIndex) {
-                    $object = DataObject\Concrete::getById($objectId);
-                    if ($object && $latestVersion = $object->getLatestVersion()) {
-                        // don't renew references (which means loading the target elements)
-                        // Not needed as we just save a new version with the updated index
-                        $object = $latestVersion->loadData(false);
-                        if ($newIndex !== $object->getIndex()) {
-                            $object->setIndex($newIndex);
-                        }
-                        $latestVersion->save();
-                    }
-                };
 
-                $list = new DataObject\Listing();
-                $updatedObject->saveIndex($newIndex);
-
-                Db::get()->executeUpdate(
-                    'UPDATE '.$list->getDao()->getTableName().' o,
-                    (
-                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
-                        FROM '.$list->getDao()->getTableName().',
-                        (SELECT @n := -1) variable
-                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
-                        "','", [
-                            DataObject::OBJECT_TYPE_OBJECT,
-                            DataObject::OBJECT_TYPE_VARIANT,
-                            DataObject::OBJECT_TYPE_FOLDER,
-                        ]
-                    ).'\')
-                            ORDER BY o_index, o_id=?
-                        ) tmp
-                    ) order_table
-                    SET o.o_index = order_table.newIndex
-                    WHERE o.o_id=order_table.o_id',
-                    [
-                        $newIndex,
-                        $updatedObject->getId(),
-                        $updatedObject->getParentId(),
-                        $updatedObject->getId(),
-                    ]
-                );
-
-                $db = Db::get();
-                $siblings = $db->fetchAll(
-                    'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
-                    ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
-                    [$updatedObject->getParentId(), $updatedObject->getId()]
-                );
-                $index = 0;
-
-                foreach ($siblings as $sibling) {
-                    if ($index == $newIndex) {
-                        $index++;
-                    }
-
-                    $updateLatestVersionIndex($sibling['o_id'], $index);
-                    $index++;
-
-                    DataObject::clearDependentCacheByObjectId($sibling['o_id']);
-                }
+                $fn();
 
                 Db::get()->commit();
 
@@ -1171,6 +1127,124 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
             }
         }
+    }
+
+    /**
+     * @param DataObject\AbstractObject $parentObject
+     * @param string $currentSortOrder
+     */
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    {
+        $fn = function () use ($parentObject, $currentSortOrder) {
+            $list = new DataObject\Listing();
+
+            Db::get()->executeUpdate(
+                'UPDATE '.$list->getDao()->getTableName().' o,
+                    (
+                    SELECT newIndex, o_id FROM (
+                        SELECT @n := @n +1 AS newIndex, o_id
+                        FROM '.$list->getDao()->getTableName().',
+                                (SELECT @n := -1) variable
+                                 WHERE o_parentId = ? ORDER BY o_key ' . $currentSortOrder
+                               .') tmp
+                    ) order_table
+                    SET o.o_index = order_table.newIndex
+                    WHERE o.o_id=order_table.o_id',
+                [
+                    $parentObject->getId(),
+                ]
+            );
+
+            $db = Db::get();
+            $children = $db->fetchAll(
+                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
+                .' WHERE o_parentId = ? ORDER BY o_index ASC',
+                [$parentObject->getId()]
+            );
+            $index = 0;
+
+            foreach ($children as $child) {
+                $this->updateLatestVersionIndex($child['o_id'], $child['o_modificationDate'], $child['o_versionCount'], $index);
+                $index++;
+
+                DataObject::clearDependentCacheByObjectId($child['o_id']);
+            }
+        };
+
+        $this->executeInsideTransaction($fn);
+    }
+
+    private function updateLatestVersionIndex($objectId, $newIndex)
+    {
+        $object = DataObject\Concrete::getById($objectId);
+        if ($object && $latestVersion = $object->getLatestVersion()) {
+                        // don't renew references (which means loading the target elements)
+                        // Not needed as we just save a new version with the updated index
+                        $object = $latestVersion->loadData(false);
+                        if ($newIndex !== $object->getIndex()) {
+                            $object->setIndex($newIndex);
+                        }
+                        $latestVersion->save();
+                    }
+                }
+
+    /**
+     * @param DataObject\AbstractObject $updatedObject
+     * @param int $newIndex
+     */
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
+    {
+        $fn = function () use ($updatedObject, $newIndex) {
+            $list = new DataObject\Listing();
+            $updatedObject->saveIndex($newIndex);
+
+            Db::get()->executeUpdate(
+                'UPDATE '.$list->getDao()->getTableName().' o,
+                    (
+                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                        FROM '.$list->getDao()->getTableName().',
+                        (SELECT @n := -1) variable
+                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
+                    "','", [
+                        DataObject::OBJECT_TYPE_OBJECT,
+                        DataObject::OBJECT_TYPE_VARIANT,
+                        DataObject::OBJECT_TYPE_FOLDER,
+                    ]
+                ).'\')
+                            ORDER BY o_index, o_id=?
+                        ) tmp
+                    ) order_table
+                    SET o.o_index = order_table.newIndex
+                    WHERE o.o_id=order_table.o_id',
+                [
+                    $newIndex,
+                    $updatedObject->getId(),
+                    $updatedObject->getParentId(),
+                    $updatedObject->getId(),
+                ]
+            );
+
+            $db = Db::get();
+            $siblings = $db->fetchAll(
+                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
+                ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                [$updatedObject->getParentId(), $updatedObject->getId()]
+            );
+            $index = 0;
+
+            foreach ($siblings as $sibling) {
+                if ($index == $newIndex) {
+                    $index++;
+                }
+
+                $this->updateLatestVersionIndex($sibling['o_id'], $index);
+                $index++;
+
+                DataObject::clearDependentCacheByObjectId($sibling['o_id']);
+            }
+        };
+
+        $this->executeInsideTransaction($fn);
     }
 
     /**
