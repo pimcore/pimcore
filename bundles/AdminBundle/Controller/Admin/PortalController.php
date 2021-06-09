@@ -20,8 +20,11 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Model\User;
+use Pimcore\Tool\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -260,6 +263,19 @@ class PortalController extends AdminController implements KernelControllerEventI
             'orderKey' => 'modificationDate',
         ]);
 
+        $user = Admin::getCurrentUser();
+        if ($user instanceof User && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+            $list->addConditionParam(
+                '(
+                    (SELECT `view` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,`key`),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                        OR
+                    (SELECT `view` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, `key`))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                )'
+            );
+        }
+
         $response = [];
         $response['documents'] = [];
 
@@ -292,6 +308,19 @@ class PortalController extends AdminController implements KernelControllerEventI
             'orderKey' => 'modificationDate',
         ]);
 
+        $user = Admin::getCurrentUser();
+        if ($user instanceof User && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+            $list->addConditionParam(
+                '(
+                    (SELECT `view` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                        OR
+                    (SELECT `view` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                )'
+            );
+        }
+
         $response = [];
         $response['assets'] = [];
 
@@ -299,14 +328,12 @@ class PortalController extends AdminController implements KernelControllerEventI
             /**
              * @var Asset $doc
              */
-            if ($doc->isAllowed('view')) {
-                $response['assets'][] = [
-                    'id' => $doc->getId(),
-                    'type' => $doc->getType(),
-                    'path' => $doc->getRealFullPath(),
-                    'date' => $doc->getModificationDate(),
-                ];
-            }
+            $response['assets'][] = [
+                'id' => $doc->getId(),
+                'type' => $doc->getType(),
+                'path' => $doc->getRealFullPath(),
+                'date' => $doc->getModificationDate(),
+            ];
         }
 
         return $this->adminJson($response);
@@ -327,18 +354,29 @@ class PortalController extends AdminController implements KernelControllerEventI
             'orderKey' => 'o_modificationDate',
         ]);
 
+        $user = Admin::getCurrentUser();
+        if ($user instanceof User && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+            $list->addConditionParam(
+                '(
+                    (SELECT `view` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(o_path,o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                        OR
+                    (SELECT `view` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(o_path,o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
+                )'
+            );
+        }
+
         $response = [];
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            if ($object->isAllowed('view')) {
-                $response['objects'][] = [
-                    'id' => $object->getId(),
-                    'type' => $object->getType(),
-                    'path' => $object->getRealFullPath(),
-                    'date' => $object->getModificationDate(),
-                ];
-            }
+            $response['objects'][] = [
+                'id' => $object->getId(),
+                'type' => $object->getType(),
+                'path' => $object->getRealFullPath(),
+                'date' => $object->getModificationDate(),
+            ];
         }
 
         return $this->adminJson($response);
