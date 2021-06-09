@@ -184,4 +184,29 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
         return $this->addConditionParam('`'.$field.'` '.$operator, $data);
     }
+
+    /**
+     * @param Model\User $user
+     * @param string $permission
+     *
+     * @return static
+     * @internal
+     */
+    public function filterAccessibleByUser(Model\User $user, $permission = 'list')
+    {
+        if (!$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $condition = '(
+                (SELECT `'.$permission.'` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(o_path,o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
+                    OR
+                (SELECT `'.$permission.'` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(o_path,o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
+            )';
+
+            $this->addConditionParam($condition);
+        }
+
+        return $this;
+    }
 }

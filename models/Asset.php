@@ -403,7 +403,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $config
      *
-     * @return mixed
+     * @return Listing
      *
      * @throws \Exception
      */

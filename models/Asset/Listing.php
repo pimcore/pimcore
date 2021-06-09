@@ -79,19 +79,20 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @internal
      *
      * @param Model\User $user
+     * @param string $permission
      *
      * @return static
      */
-    public function filterAccessibleByUser(Model\User $user)
+    public function filterAccessibleByUser(Model\User $user, $permission = 'list')
     {
         if (!$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
             $condition = '(
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+                (SELECT `'.$permission.'` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
                 or
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+                (SELECT `'.$permission.'` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
             )';
 
             $this->addConditionParam($condition);

@@ -264,17 +264,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         ]);
 
         $user = Admin::getCurrentUser();
-        if ($user instanceof User && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-            $list->addConditionParam(
-                '(
-                    (SELECT `view` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,`key`),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                        OR
-                    (SELECT `view` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, `key`))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                )'
-            );
-        }
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['documents'] = [];
@@ -309,17 +299,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         ]);
 
         $user = Admin::getCurrentUser();
-        if ($user instanceof User && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-            $list->addConditionParam(
-                '(
-                    (SELECT `view` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                        OR
-                    (SELECT `view` FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                )'
-            );
-        }
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['assets'] = [];
@@ -355,17 +335,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         ]);
 
         $user = Admin::getCurrentUser();
-        if ($user instanceof User && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-            $list->addConditionParam(
-                '(
-                    (SELECT `view` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(o_path,o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                        OR
-                    (SELECT `view` FROM users_workspaces_object WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(o_path,o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `view` DESC LIMIT 1)=1
-                )'
-            );
-        }
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['objects'] = [];
