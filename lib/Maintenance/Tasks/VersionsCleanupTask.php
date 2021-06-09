@@ -87,7 +87,7 @@ class VersionsCleanupTask implements TaskInterface
         foreach ($conf as $elementType => $tConf) {
             $versioningType = 'steps';
             //skip cleanup if element is null
-            if(is_null($tConf)){
+            if (is_null($tConf)) {
                 continue;
             }
             //skip cleanup if both, 'steps' & 'days', is null
