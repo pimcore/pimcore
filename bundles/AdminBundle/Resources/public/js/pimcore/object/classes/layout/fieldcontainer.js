@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.fieldcontainer");
@@ -79,10 +79,15 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
                     value: this.datax.fieldLabel
                 },
                 {
-                    xtype: "numberfield",
+                    xtype: "textfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "displayfield",
+                    hideLabel: true,
+                    value: t('width_explanation')
                 },
                 {
                     xtype: "combo",

@@ -79,7 +79,7 @@ pimcore.plugin.sample = Class.create(pimcore.plugin.admin, {
 Create a controller to find your DataObject
 
 ```php
-namespace AppBundle\Controller\Admin;
+namespace App\Controller\Admin;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -90,6 +90,8 @@ class BackendController
     /**
      * @param Request $request
      * @Route("/admin/find-by-external-id")
+     * 
+     * @return JsonResponse
      */
     public function findByWordpressId(Request $request) {
         if($id = (int)$request->get('external-id')) {

@@ -31,17 +31,22 @@
         <td>o_published</td>
         <td>{{ object.getPublished() ? 'true' : 'false' }}</td>
     </tr>
+    {% if versionNote %}
+        <tr class="system">
+            <td>Version Note</td>
+            <td>&nbsp;</td>
+            <td>{{ versionNote }}</td>
+        </tr>
+    {% endif %}
 
     <tr class="">
         <td colspan="3">&nbsp;</td>
     </tr>
-    {% set c = 0 %}
     {% for fieldName, definition in fields %}
         {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
             {% for language in validLanguages %}
                 {% for lfd in definition.getFieldDefinitions() %}
-                    {% set trClass = (c % 2) ? 'odd' : '' %}
-                    <tr class="{{ trClass }}">
+                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
                         <td>{{ lfd.getTitle()|trans([],'admin') }} ({{ language }})</td>
                         <td>{{ lfd.getName() }}</td>
                         <td>
@@ -50,7 +55,6 @@
                                 {% endif %}
                         </td>
                     </tr>
-                    {% set c = c + 1 %}
                 {% endfor %}
             {% endfor %}
         {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
@@ -70,8 +74,7 @@
                         {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
                             {% for language in validLanguages %}
                                 {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
-                                    {% set trClass = (c % 2) ? 'odd' : '' %}
-                                    <tr class="{{ trClass }}">
+                                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                         <td>{{ localizedFieldDefinition.getTitle()|trans([],'admin') }} ({{ language }})</td>
                                         <td>{{ localizedFieldDefinition.getName() }}</td>
                                         <td>
@@ -82,20 +85,17 @@
                                             {% endif %}
                                         </td>
                                     </tr>
-                                    {% set c = c + 1 %}
                                 {% endfor %}
                             {% endfor %}
                         {% else %}
                             {% if brickValue %}
                                 {% set value = lfd.getVersionPreview(brickValue.getValueForFieldName(lfd.getName())) %}
                             {% endif %}
-                            {% set trClass = (c % 2) ? 'odd' : '' %}
-                            <tr class="{{ trClass }}">
+                            <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                 <td>{{ asAllowedType|capitalize ~ " - " ~ lfd.getTitle()|trans([],'admin')  }}</td>
                                 <td>{{ lfd.getName() }}</td>
                                 <td>{{ value | raw }}</td>
                             </tr>
-                            {% set c = c + 1 %}
                         {% endif %}
                     {% endif %}
 
@@ -134,15 +134,13 @@
                                     {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
 
                                     {% set preview = keyDef.getVersionPreview(keyData) %}
-                                    {% set trClass2 = (c % 2) ? 'odd' : '' %}
-                                    <tr class=" {{ trClass2 }}">
+                                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                         <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                                         <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
                                         {% if isImportPreview or isNew %}
                                             {{ preview }}
                                         {% endif %}
                                     </tr>
-                                    {% set c = c + 1 %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
@@ -164,25 +162,21 @@
                     {% set fieldKeys = fieldDefinitions[fieldItem.getType()].getFieldDefinitions() %}
                     {% for fieldKey in fieldKeys %}
                         {% set value = fieldItem.get(fieldKey.getName()) %}
-                        {% set trClass = (c % 2) ? 'odd' : '' %}
-                        <tr class="{{ trClass }}">
+                        <tr {% if loop.index is odd %}class="odd"{% endif %}>
                             <td>{{ fieldItem.getType() ~ " - " ~ fieldKey.getTitle()|trans([],'admin') }}</td>
                             <td>{{ fieldKey.getName() }}</td>
                             <td>{{ fieldKey.getVersionPreview(value) | raw }}</td>
                         </tr>
-                        {% set c = c + 1 %}
                     {% endfor %}
                 {% endfor %}
             {% endif %}
         {% else %}
-            {% set trClass = (c % 2) ? 'odd' : '' %}
-            <tr class="{{ trClass }}">
+            <tr {% if loop.index is odd %}class="odd"{% endif %}>
                 <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                 <td>{{ definition.getName() }}</td>
                 <td>{{ definition.getVersionPreview(object.getValueForFieldName(fieldName)) | raw }}</td>
             </tr>
         {% endif %}
-        {% set c = c + 1 %}
     {% endfor %}
 </table>
 </body>

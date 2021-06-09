@@ -60,7 +60,7 @@ exports can be attached or external data sources can be included.
 To do so, following steps are necessary: 
 
 1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
+[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
 The following functions need to be implemented:
 
     * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.
@@ -83,14 +83,14 @@ The following functions need to be implemented:
             autoconfigure: true
             public: false
 
-        AppBundle\GDPR\DataProvider\MyCustomDataProvider: ~
+        App\GDPR\DataProvider\MyCustomDataProvider: ~
 
     # or specify the tag manually if not using autoconfiguration
     services:
         _defaults:
             public: false
 
-        AppBundle\GDPR\DataProvider\MyCustomDataProvider:
+        App\GDPR\DataProvider\MyCustomDataProvider:
             tags:
                 - { name: pimcore.gdpr.data-provider }
     ```

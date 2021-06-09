@@ -1,25 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Tool;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class CacheExtension extends AbstractExtension
 {
     /**
@@ -70,10 +73,6 @@ class CacheExtension extends AbstractExtension
     {
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $this->key .= 'webp';
-        }
 
         if (!$lifetime) {
             $lifetime = null;

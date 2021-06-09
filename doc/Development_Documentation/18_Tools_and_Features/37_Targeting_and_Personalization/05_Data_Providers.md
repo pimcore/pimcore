@@ -1,14 +1,14 @@
 # Data Providers
 
-A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/DataProviderInterface.php).
-Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProviderDependentInterface.php)
+A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/pimcore/blob/10.x/lib/Targeting/DataProvider/DataProviderInterface.php).
+Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/10.x/lib/Targeting/DataProviderDependentInterface.php)
 can define a set of data providers they depend on, triggering the data provider to load its data before the component
 is used.
 
 A data provider does not directly return its value, but is expected to set it on the `VisitorInfo` instance instead. As
 best practice, the core data providers expose their storage key as constant. This constant is used to store and retrieve
-the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/GeoIp.php)
-data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/GeoIp.php#L28)
+the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/pimcore/blob/10.x/lib/Targeting/DataProvider/GeoIp.php)
+data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/pimcore/blob/10.x/lib/Targeting/DataProvider/GeoIp.php#L28)
 constant which is used when storing and retrieving the data.
 
 ## Implementing a Data Provider
@@ -29,9 +29,9 @@ reusable `DateTime` data provider which stores the current `DateTime` on the `Vi
 ```php
 <?php
 
-// src/AppBundle/Targeting/DataProvider/DateTime.php
+// src/Targeting/DataProvider/DateTime.php
 
-namespace AppBundle\Targeting\DataProvider;
+namespace App\Targeting\DataProvider;
 
 use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -63,7 +63,7 @@ services:
         autoconfigure: true
         public: false
 
-    AppBundle\Targeting\DataProvider\DateTime: ~
+    App\Targeting\DataProvider\DateTime: ~
 ```
 
 And register the provider to the targeting engine with its provider key:
@@ -72,7 +72,7 @@ And register the provider to the targeting engine with its provider key:
 pimcore:
     targeting:
         data_providers:
-            datetime: AppBundle\Targeting\DataProvider\DateTime
+            datetime: App\Targeting\DataProvider\DateTime
 ```
 
 
@@ -85,11 +85,11 @@ provider:
 ```php
 <?php
 
-// src/AppBundle/Targeting/Condition/TimeOfTheDay.php
+// src/Targeting/Condition/TimeOfTheDay.php
 
-namespace AppBundle\Targeting\Condition;
+namespace App\Targeting\Condition;
 
-use AppBundle\Targeting\DataProvider\DateTime;
+use App\Targeting\DataProvider\DateTime;
 use Pimcore\Targeting\Condition\AbstractVariableCondition;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;

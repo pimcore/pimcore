@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Workflow\MarkingStore;
 
 use Pimcore\Model\DataObject\Concrete;
@@ -7,11 +20,12 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
-use Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
-class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
+class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 {
     private $property;
+
     private $propertyAccessor;
 
     /**
@@ -20,17 +34,16 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
      */
     public function __construct($property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
-        parent::__construct($property, $propertyAccessor);
         $this->property = $property;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws LogicException
      */
-    public function getMarking($subject)
+    public function getMarking($subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -45,12 +58,12 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws LogicException
      * @throws \Exception
      */
-    public function setMarking($subject, Marking $marking)
+    public function setMarking($subject, Marking $marking, array $context = [])
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -19,7 +20,10 @@ use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 
-class Requirements
+/**
+ * @internal
+ */
+final class Requirements
 {
     /**
      * @return Check[]
@@ -29,7 +33,7 @@ class Requirements
         $checks = [];
 
         // filesystem checks
-        foreach ([PIMCORE_PUBLIC_VAR, PIMCORE_PRIVATE_VAR] as $varDir) {
+        foreach ([PIMCORE_PRIVATE_VAR] as $varDir) {
             $varWritable = true;
 
             try {
@@ -113,6 +117,7 @@ class Requirements
 
         // create table
         $queryCheck = true;
+
         try {
             $db->query('CREATE TABLE __pimcore_req_check (
                   id int(11) NOT NULL AUTO_INCREMENT,
@@ -130,6 +135,7 @@ class Requirements
 
         // alter table
         $queryCheck = true;
+
         try {
             $db->query('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
         } catch (\Exception $e) {
@@ -143,21 +149,10 @@ class Requirements
 
         // Manage indexes
         $queryCheck = true;
-        try {
-            $db->query('ALTER TABLE __pimcore_req_check
-                  CHANGE COLUMN id id int(11) NOT NULL,
-                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
-                  ADD KEY field (field),
-                  DROP PRIMARY KEY ,
-                 DEFAULT CHARSET=utf8mb4');
 
-            $db->query('ALTER TABLE __pimcore_req_check
-                  CHANGE COLUMN id id int(11) NOT NULL AUTO_INCREMENT,
-                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
-                  ADD PRIMARY KEY (id) ,
-                 DEFAULT CHARSET=utf8mb4');
+        try {
+            $db->query('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
+            $db->query('DROP INDEX field_alter_field ON __pimcore_req_check;');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -169,6 +164,7 @@ class Requirements
 
         // Fulltext indexes
         $queryCheck = true;
+
         try {
             $db->query('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
         } catch (\Exception $e) {
@@ -182,6 +178,7 @@ class Requirements
 
         // insert data
         $queryCheck = true;
+
         try {
             $db->insert('__pimcore_req_check', [
                 'field' => uniqid(),
@@ -198,6 +195,7 @@ class Requirements
 
         // update
         $queryCheck = true;
+
         try {
             $db->updateWhere('__pimcore_req_check', [
                 'field' => uniqid(),
@@ -214,6 +212,7 @@ class Requirements
 
         // select
         $queryCheck = true;
+
         try {
             $db->fetchAll('SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
@@ -227,6 +226,7 @@ class Requirements
 
         // create view
         $queryCheck = true;
+
         try {
             $db->query('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
@@ -240,6 +240,7 @@ class Requirements
 
         // select from view
         $queryCheck = true;
+
         try {
             $db->fetchAll('SELECT * FROM __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -253,6 +254,7 @@ class Requirements
 
         // delete
         $queryCheck = true;
+
         try {
             $db->deleteWhere('__pimcore_req_check');
         } catch (\Exception $e) {
@@ -266,6 +268,7 @@ class Requirements
 
         // show create view
         $queryCheck = true;
+
         try {
             $db->query('SHOW CREATE VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -279,6 +282,7 @@ class Requirements
 
         // show create table
         $queryCheck = true;
+
         try {
             $db->query('SHOW CREATE TABLE __pimcore_req_check');
         } catch (\Exception $e) {
@@ -292,6 +296,7 @@ class Requirements
 
         // drop view
         $queryCheck = true;
+
         try {
             $db->query('DROP VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -305,6 +310,7 @@ class Requirements
 
         // drop table
         $queryCheck = true;
+
         try {
             $db->query('DROP TABLE __pimcore_req_check');
         } catch (\Exception $e) {
@@ -428,17 +434,6 @@ class Requirements
         $checks[] = new Check([
             'name' => 'pdftotext - (part of poppler-utils)',
             'state' => $pdftotextBin ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
-            $sqipAvailable = \Pimcore\Tool\Console::getExecutable('sqip');
-        } catch (\Exception $e) {
-            $sqipAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'SQIP - SVG Placeholder',
-            'state' => $sqipAvailable ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         try {
@@ -589,7 +584,7 @@ class Requirements
             $checks[] = new Check([
                 'name' => 'locales-all',
                 'link' => 'https://packages.debian.org/en/stable/locales-all',
-                'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
+                'state' => ($fmt->format(new \DateTime('next tuesday', new \DateTimeZone('Europe/Vienna'))) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
                 'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all).",
             ]);
         }
@@ -632,7 +627,12 @@ class Requirements
         ]);
 
         // WebP for active image adapter
-        $imageAdapter = Image::getInstance();
+        if (extension_loaded('imagick')) {
+            $imageAdapter = new Image\Adapter\Imagick();
+        } else {
+            $imageAdapter = new Image\Adapter\GD();
+        }
+
         $reflect = new \ReflectionClass($imageAdapter);
         $imageAdapterType = $reflect->getShortName();
         $checks[] = new Check([

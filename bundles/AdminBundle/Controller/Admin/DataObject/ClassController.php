@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -23,17 +24,20 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/class")
+ *
+ * @internal
  */
 class ClassController extends AdminController implements KernelControllerEventInterface
 {
@@ -125,9 +129,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
         // build groups
         $groups = [];
         foreach ($classes as $class) {
-            if (!$class) {
-                continue;
-            }
             $groupName = null;
 
             if ($class->getGroup()) {
@@ -145,7 +146,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 }
             }
 
-            $groupName = \Pimcore\Model\Translation\Admin::getByKeyLocalized($groupName, true, true);
+            $groupName = Translation::getByKeyLocalized($groupName, Translation::DOMAIN_ADMIN, true, true);
 
             if (!isset($groups[$groupName])) {
                 $groups[$groupName] = [
@@ -157,6 +158,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
 
         $treeNodes = [];
+        if (!empty($groups)) {
+            $types = array_column($groups, 'type');
+            array_multisort($types, SORT_ASC, array_keys($groups), SORT_ASC, $groups);
+        }
 
         if (!$request->get('grouped')) {
             // list output
@@ -210,6 +215,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions([]);
+        $isWriteable = $class->isWritable();
+        $class = $class->getObjectVars();
+        $class['isWriteable'] = $isWriteable;
 
         return $this->adminJson($class);
     }
@@ -224,6 +232,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
+        $isWriteable = $customLayout->isWritable();
+        $customLayout = $customLayout->getObjectVars();
+        $customLayout['isWriteable'] = $isWriteable;
 
         return $this->adminJson(['success' => true, 'data' => $customLayout]);
     }
@@ -352,7 +363,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setDefault($values['default']);
             $customLayout->save();
 
-            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
+            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
@@ -527,7 +538,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $list->setCondition('classId = ' . $list->quote($classId));
         $list = $list->load();
         $result = [];
-        /** @var DataObject\ClassDefinition\CustomLayout $item */
         foreach ($list as $item) {
             $result[] = [
                 'id' => $item->getId(),
@@ -602,6 +612,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if (!$class instanceof DataObject\ClassDefinition) {
             $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -629,16 +640,13 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                unset($customLayout->id);
-                unset($customLayout->classId);
-                unset($customLayout->name);
-                unset($customLayout->creationDate);
-                unset($customLayout->modificationDate);
-                unset($customLayout->userOwner);
-                unset($customLayout->userModification);
-                unset($customLayout->fieldDefinitions);
+                $customLayoutData = [
+                    'description' => $customLayout->getDescription(),
+                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
+                    'default' => $customLayout->getDefault() ?? 0,
+                ];
 
-                $json = json_encode($customLayout, JSON_PRETTY_PRINT);
+                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');
@@ -650,6 +658,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
+
         throw $this->createNotFoundException($errorMessage);
     }
 
@@ -667,6 +676,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function fieldcollectionGetAction(Request $request)
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
+
+        $isWriteable = $fc->isWritable();
+        $fc = $fc->getObjectVars();
+        $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
     }
@@ -769,6 +782,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
             $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -818,13 +832,12 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if ($request->query->has('allowedTypes')) {
             $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
-        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+        $object = DataObject::getById($request->get('object_id'));
 
         $currentLayoutId = $request->get('layoutId', null);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
 
         $groups = [];
-        /** @var DataObject\Fieldcollection\Definition $item */
         foreach ($list as $item) {
             if ($allowedTypes && !in_array($item->getKey(), $allowedTypes)) {
                 continue;
@@ -920,7 +933,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if ($request->query->has('allowedTypes')) {
             $filteredList = [];
             $allowedTypes = explode(',', $request->get('allowedTypes'));
-            /** @var DataObject\Fieldcollection\Definition $type */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
@@ -933,7 +945,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         'outerFieldname' => $request->get('field_name'),
                     ];
 
-                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
+                    $object = DataObject::getById($request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -984,7 +996,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $result['objectColumns']['nodeType'] = 'object';
 
         // array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
-        $systemColumnNames = DataObject\Concrete::$systemColumnNames;
+        $systemColumnNames = DataObject\Concrete::SYSTEM_COLUMN_NAMES;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
             $systemColumns[] = ['title' => $systemColumn, 'name' => $systemColumn, 'datatype' => 'data', 'fieldtype' => 'system'];
@@ -1020,6 +1032,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
+
                         break;
                     }
                 }
@@ -1043,6 +1056,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function objectbrickGetAction(Request $request)
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
+
+        $isWriteable = $fc->isWritable();
+        $fc = $fc->getObjectVars();
+        $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
     }
@@ -1154,6 +1171,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
             $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1201,7 +1219,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $fieldname = null;
         $className = null;
 
-        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+        $object = DataObject::getById($request->get('object_id'));
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1210,7 +1228,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $className = $classDefinition->getName();
         }
 
-        /** @var DataObject\Objectbrick\Definition $item */
         foreach ($list as $item) {
             if ($request->query->has('class_id') && $request->query->has('field_name')) {
                 $keep = false;
@@ -1219,6 +1236,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $keep = true;
+
                             continue;
                         }
                     }
@@ -1333,6 +1351,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
+
                             continue;
                         }
                     }
@@ -1354,7 +1373,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     'outerFieldname' => $request->get('field_name'),
                 ];
 
-                $object = DataObject\AbstractObject::getById($request->get('object_id'));
+                $object = DataObject::getById($request->get('object_id'));
 
                 DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);
@@ -1850,7 +1869,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $existingIds = [];
         $existingNames = [];
 
-        /** @var DataObject\ClassDefinition\CustomLayout $item */
         foreach ($list as $item) {
             $existingIds[] = $item->getId();
             if ($item->getClassId() == $classId) {

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -70,7 +71,7 @@ function gzcompressfile($source, $level = null, $target = null)
 }
 
 /**
- * @param string $string
+ * @param mixed $string
  *
  * @return bool
  */
@@ -80,9 +81,9 @@ function is_json($string)
         json_decode($string);
 
         return json_last_error() == JSON_ERROR_NONE;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
@@ -222,23 +223,23 @@ function array_toquerystring($args)
 }
 
 /**
- * @param array $array
+ * @param array $array with attribute names as keys, and values as values
  *
  * @return string
  */
 function array_to_html_attribute_string($array)
 {
-    $data = '';
+    $data = [];
+
     foreach ($array as $key => $value) {
         if (is_scalar($value)) {
-            if (!empty($data)) {
-                $data .= ' ';
-            }
-            $data .= $key . '="' . htmlspecialchars($value) . '"';
+            $data[] = $key . '="' . htmlspecialchars($value) . '"';
+        } elseif (is_string($key) && is_null($value)) {
+            $data[] = $key;
         }
     }
 
-    return $data;
+    return implode(' ', $data);
 }
 
 /**
@@ -315,12 +316,10 @@ function formatBytes($bytes, $precision = 2)
 /**
  * @param string $str
  *
- * @return float|int
+ * @return int
  */
 function filesize2bytes($str)
 {
-    $bytes = 0;
-
     $bytes_array = [
         'K' => 1024,
         'M' => 1024 * 1024,
@@ -537,6 +536,7 @@ function resolvePath($filename)
         }
         if ($part == '..') {
             array_pop($out);
+
             continue;
         }
         $out[] = $part;

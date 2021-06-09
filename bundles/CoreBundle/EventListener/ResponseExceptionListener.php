@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -22,7 +23,6 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,20 +31,18 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * @internal
+ */
 class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
     /**
-     * @var ActionRenderer
+     * @var DocumentRenderer
      */
     protected $documentRenderer;
-
-    /**
-     * @var bool
-     */
-    protected $renderErrorPage = true;
 
     /**
      * @var Config
@@ -59,18 +57,16 @@ class ResponseExceptionListener implements EventSubscriberInterface
     /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
-     * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config)
     {
         $this->documentRenderer = $documentRenderer;
-        $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
         $this->config = $config;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -94,9 +90,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         // further checks are only valid for default context
         $request = $event->getRequest();
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            if ($this->renderErrorPage) {
-                $this->handleErrorPage($event);
-            }
+            $this->handleErrorPage($event);
         }
     }
 
@@ -130,7 +124,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         // Error page rendering
         if (empty($errorPath)) {
-            $errorPath = '/';
+            // if not set, use Symfony error handling
+            return;
         }
 
         $document = Document::getByPath($errorPath);

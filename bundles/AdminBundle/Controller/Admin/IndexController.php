@@ -1,23 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
@@ -33,14 +34,17 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
@@ -63,7 +67,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param Config $config
      *
      * @return Response
@@ -75,7 +79,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
-        CsrfProtectionListener $csrfProtectionListener,
+        CsrfProtectionHandler $csrfProtection,
         Config $config
     ) {
         $user = $this->getAdminUser();
@@ -87,7 +91,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
-        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener, $siteConfigProvider);
+        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
             // only one login is allowed to setup 2FA by the user himself
@@ -124,36 +128,28 @@ class IndexController extends AdminController implements KernelResponseEventInte
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
         // DB
-        $mysqlVersion = null;
         try {
-            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES
+            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
-
-            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
         } catch (\Exception $e) {
             $tables = [];
         }
 
-        // @TODO System
-        $system = [
-            'OS' => '',
-            'Distro' => '',
-            'RAMTotal' => '',
-            'CPUCount' => '',
-            'CPUModel' => '',
-            'CPUClock' => '',
-            'virtualization' => '',
-        ];
+        try {
+            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
+        } catch (\Exception $e) {
+            $mysqlVersion = null;
+        }
 
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
+                'pimcore_major_version' => 10,
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
                 'mysql_version' => $mysqlVersion,
                 'bundles' => array_keys($kernel->getBundles()),
-                'system' => $system,
                 'tables' => $tables,
             ];
         } catch (\Exception $e) {
@@ -198,12 +194,12 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param SiteConfigProvider $siteConfigProvider
      *
      * @return $this
      */
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener, SiteConfigProvider $siteConfigProvider)
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider)
     {
         $config = $templateParams['config'];
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
@@ -246,6 +242,9 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
+            'document_auto_save_interval' => $config['documents']['auto_save_interval'],
+            'object_auto_save_interval' => $config['objects']['auto_save_interval'],
+
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
             'availablePerspectives' => Config::getAvailablePerspectives($user),
@@ -253,7 +252,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
         ];
 
         $this
@@ -262,7 +260,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
-        $settings['csrfToken'] = $csrfProtectionListener->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
 
         $templateParams['settings'] = $settings;
 
@@ -275,6 +273,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
     private function getInstanceId()
     {
         $instanceId = 'not-set';
+
         try {
             $instanceId = $this->getParameter('secret');
             $instanceId = sha1(substr($instanceId, 3, -3));
@@ -349,9 +348,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             if (empty($config['email']['sender']['email'])) {
                 $mailIncomplete = true;
             }
-            if (($config['email']['method'] ?? '') == 'smtp' && empty($config['email']['smtp']['host'])) {
-                $mailIncomplete = true;
-            }
         }
 
         $settings['mail'] = !$mailIncomplete;
@@ -381,7 +377,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
                 if ($rootNode) {
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
@@ -398,7 +394,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {

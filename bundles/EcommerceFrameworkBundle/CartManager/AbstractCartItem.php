@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -20,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements CartItemInterface
 {
@@ -32,7 +33,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $isLoading = false;
 
     /**
-     * @var CheckoutableInterface
+     * @var CheckoutableInterface|null
      */
     protected $product;
 
@@ -45,7 +46,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var string
      */
     protected $itemKey;
+
     protected $count;
+
     protected $comment;
 
     /**
@@ -59,10 +62,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var CartInterface
      */
     protected $cart;
+
     protected $cartId;
 
     /**
-     * @var int unix timestamp
+     * @var int|null unix timestamp
      */
     protected $addedDateTimestamp;
 
@@ -105,7 +109,12 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         if ($this->product) {
             return $this->product;
         }
-        $this->product = AbstractObject::getById($this->productId);
+
+        $product = DataObject::getById($this->productId);
+
+        if ($product instanceof CheckoutableInterface) {
+            $this->product = $product;
+        }
 
         return $this->product;
     }
@@ -208,7 +217,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         }
 
         foreach ($subItems as $item) {
-            $item->setParentItemKey($this->getItemKey());
+            if ($item instanceof AbstractCartItem) {
+                $item->setParentItemKey($this->getItemKey());
+            }
         }
         $this->subItems = $subItems;
     }
@@ -297,7 +308,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     public function setAddedDate(\DateTime $date = null)
     {
         if ($date) {
-            $this->addedDateTimestamp = $date->getTimestamp();
+            $this->addedDateTimestamp = intval($date->format('Uu'));
         } else {
             $this->addedDateTimestamp = null;
         }
@@ -310,8 +321,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
-            $datetime = new \DateTime();
-            $datetime->setTimestamp($this->addedDateTimestamp);
+            $datetime = \DateTime::createFromFormat('U', intval($this->addedDateTimestamp / 1000000));
         }
 
         return $datetime;

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.translation.website");
@@ -29,7 +29,7 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
 
     activate: function (filter) {
         if(filter){
-            this.store.getProxy().setExtraParam("filter", filter);
+            this.store.getProxy().setExtraParam("searchString", filter);
             this.store.load();
             this.filterField.setValue(filter);
         }

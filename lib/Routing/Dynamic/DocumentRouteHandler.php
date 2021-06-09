@@ -7,18 +7,17 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -26,7 +25,10 @@ use Pimcore\Routing\DocumentRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DocumentRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service
@@ -42,11 +44,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @var RequestHelper
      */
     private $requestHelper;
-
-    /**
-     * @var ConfigNormalizer
-     */
-    private $configNormalizer;
 
     /**
      * Determines if unpublished documents should be matched, even when not in admin mode. This
@@ -70,20 +67,17 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
-     * @param ConfigNormalizer $configNormalizer
      * @param Config $config
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        ConfigNormalizer $configNormalizer,
         Config $config
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
-        $this->configNormalizer = $configNormalizer;
         $this->config = $config;
     }
 
@@ -111,7 +105,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteByName(string $name)
     {
@@ -127,7 +121,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
@@ -333,17 +327,10 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
     {
-        $controller = $this->configNormalizer->formatControllerReference(
-            $document->getModule(),
-            $document->getController(),
-            $document->getAction()
-        );
-
-        $route->setDefault('_controller', $controller);
+        $route->setDefault('_controller', $document->getController());
 
         if ($document->getTemplate()) {
-            $template = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
-            $route->setDefault('_template', $template);
+            $route->setDefault('_template', $document->getTemplate());
         }
 
         return $route;

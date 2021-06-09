@@ -1,5 +1,5 @@
 # CKEDITOR (use builder: http://ckeditor.com/builder);
-current version: 4.15.0
+current version: 4.14.0
 upload build-config.js
 
 OR:
@@ -28,16 +28,105 @@ Remove plugins:
 Delete: samples/
 
 # EXT JS
-current version: 6.0.0.640
 
-needed components:
-\build\ext-all.js
-\build\ext-all-debug.js
-\build\classic\theme-triton
-\build\classic\locale
-\packages\ux\classic\src => ux
-\packages\build\charts\classic\ => packages\charts\classic (only JS)
-\packages\build\charts\classic\triton\ copy over ext\classic\theme-triton
+current version: 7.0.0
+
+First, register at Sencha.
+
+You need [NPM](https://github.com/npm/cli) for this.
+
+From your project root, call:
+```
+npm login --registry=https://sencha.myget.org/F/gpl/npm/ --scope=@sencha
+
+# you will be prompted for Sencha username and password.
+
+From the Pimcore project root execute the following commands
+
+# see https://docs.sencha.com/extjs/7.0.0/guides/using_systems/using_npm/extjs_packages.html
+npm install --prefix . -g @sencha/ext-gen
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-core
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-neptune
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-triton
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-ux
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-charts
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-locale
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-font-awesome
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-font-ext
+```
+
+From the generated `theme` directories (triton, ...) remove the inner node_modules directory. 
+
+Create a sample classic app with triton theme (some temporary folder)
+```
+bin/ext-gen app --template classicdesktop --classictheme theme-triton --name PimcoreApp
+```
+
+* Make sure that the charts are listed in package.json
+
+```
+"dependencies": {
+"@sencha/ext-classic": "~7.0.0",
+"@sencha/ext-classic-theme-triton": "~7.0.0",
+"@sencha/ext": "~7.0.0",
+"@sencha/ext-charts": "~7.0.0"
+},
+```
+
+* Modify app.json - add the charts dependency
+
+```
+  "dependencies": {
+  "requires": [
+    "font-awesome",
+    "charts"
+  },
+```
+
+* Start & Stop the application 
+
+```
+npm start
+```
+
+* Inside the `generatedFiles` folder a new `bootstrap.js` file can be found.
+Merge it with the existing `/bundles/AdminBundle/Resources/public/js/ext-js/bootstrap-ext-all.js` if needed.
+
+* Run the ExtJSCommand
+
+this will generate a combined ext-all file.
+
+* Remove all node_modules
+- except ext-ux
+
+* Replace the CSS
+
+CSS for the given theme will also be generated, e.g
+
+```
+pimcore-app/build/development/PimcoreApp/desktop/resources/PimcoreApp-all*.css
+```
+
+Replace the current ones in
+```
+bundles\AdminBundle\Resources\public\css\ext-js\PimcoreApp-*.css
+```
+medi
+and adapt the styles as needed (see color map below). Also the resource paths need to be updated.
+
+ # Manifest file
+ 
+ `ext-gen` will also generate a manifest file `generated/desktop.json` which is needed
+ for bootstrapping the application.
+ Remove everything that is sample-app-specific and merge it with the
+ existing `dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/ext-js/pimcore*.json` files.
+ Note that there is a special one for the the editmode.
+ Be careful with the indices, the have to be consecutively numbered.
+ Add everything that should synchronously loaded and not already in the list (have a look at your browser's console)
+ 
+
+# Additional notes
 
 + OpenSans Fonts from the installation package have been modified since they need the 'embed' flag for IE11
 

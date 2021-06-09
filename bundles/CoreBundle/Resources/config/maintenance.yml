@@ -66,12 +66,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: versioncleanup }
 
-    Pimcore\Maintenance\Tasks\VersionsCompressTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: versioncompress }
-
     Pimcore\Maintenance\Tasks\VersionsCleanupStackTraceDbTask:
         arguments:
             - '@logger'
@@ -90,12 +84,6 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: cleanupbrokenviews }
-
-    Pimcore\Maintenance\Tasks\CacheCleanupTask:
-        arguments:
-            - '@Pimcore\Cache\Core\CoreHandlerInterface'
-        tags:
-            - { name: pimcore.maintenance.task, type: cleanupcache }
 
     Pimcore\Maintenance\Tasks\TmpStoreCleanupTask:
         arguments:
@@ -128,9 +116,3 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
-
-    Pimcore\Maintenance\Tasks\CheckErrorLogsDbTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: checkerrorlogsdb }

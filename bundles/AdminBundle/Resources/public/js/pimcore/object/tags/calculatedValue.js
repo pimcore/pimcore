@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.calculatedValue");
@@ -52,7 +52,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            input.width += input.labelWidth;
+            input.width = this.sumWidths(input.width, input.labelWidth);
         }
 
         if (this.data) {
@@ -61,6 +61,8 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
 
         if(this.fieldConfig.elementType === 'textarea') {
             this.component = new Ext.form.field.TextArea(input);
+        } else if (this.fieldConfig.elementType === 'html') {
+            this.component = new Ext.form.field.Display(input);
         } else {
             this.component = new Ext.form.field.Text(input);
         }

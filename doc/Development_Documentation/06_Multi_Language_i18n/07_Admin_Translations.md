@@ -47,7 +47,7 @@ If you haven't configured anything different this is `%kernel.project_dir%/trans
 In some projects you want to use a different language as admin translations, e.g. English (en) instead of Croatian (hr) or Chinese (zh_Hans) instead of Chinese (zh).
 
 ```yaml
-# src/AppBundle/Resources/config/pimcore/config.yml
+# config/config.yaml
 pimcore:
     translations:
         admin_translation_mapping:

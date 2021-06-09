@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -17,15 +18,19 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Logger;
 use Pimcore\Mail;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/email")
+ *
+ * @internal
  */
 class EmailController extends AdminController
 {
@@ -163,7 +168,7 @@ class EmailController extends AdminController
     {
         if (!empty($data['objectClass'])) {
             $class = '\\' . ltrim($data['objectClass'], '\\');
-            if (!empty($data['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($data['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
@@ -192,7 +197,7 @@ class EmailController extends AdminController
                 $this->enhanceLoggingData($value, $data);
             }
         }
-        if ($data['children']) {
+        if ($data['children'] ?? false) {
             foreach ($data['children'] as $key => $entry) {
                 if (is_string($key)) { //key must be integers
                     unset($data['children'][$key]);
@@ -202,27 +207,31 @@ class EmailController extends AdminController
             $data['data'] = ['type' => 'simple', 'value' => 'Children (' . count($data['children']) . ')'];
         } else {
             //setting the icon class
-            if (!$data['iconCls']) {
-                if ($data['objectClassBase'] == 'DataObject') {
+            if (empty($data['iconCls'])) {
+                if (($data['objectClassBase'] ?? '') == 'DataObject') {
                     $fullEntry['iconCls'] = 'pimcore_icon_object';
-                } elseif ($data['objectClassBase'] == 'Asset') {
+                } elseif (($data['objectClassBase'] ?? '') == 'Asset') {
                     switch ($data['objectClassSubType']) {
                         case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
+
                             break;
                         case 'Video':
                             $fullEntry['iconCls'] = 'pimcore_icon_wmv';
+
                             break;
                         case 'Text':
                             $fullEntry['iconCls'] = 'pimcore_icon_txt';
+
                             break;
                         case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
+
                             break;
                         default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';
                     }
-                } elseif (strpos($data['objectClass'], 'Document') === 0) {
+                } elseif (strpos($data['objectClass'] ?? '', 'Document') === 0) {
                     $fullEntry['iconCls'] = 'pimcore_icon_' . strtolower($data['objectClassSubType']);
                 } else {
                     $data['iconCls'] = 'pimcore_icon_text';
@@ -292,11 +301,11 @@ class EmailController extends AdminController
             }
 
             if ($html = $emailLog->getHtmlLog()) {
-                $mail->setBodyHtml($html);
+                $mail->html($html);
             }
 
             if ($text = $emailLog->getTextLog()) {
-                $mail->setBodyText($text);
+                $mail->text($text);
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
@@ -310,8 +319,8 @@ class EmailController extends AdminController
                 if (!empty($values)) {
                     list($value) = $values;
                     if ($value) {
-                        $prefix = ($field === 'From') ? 'set' : 'add';
-                        $mail->{$prefix . $field}($value['email'], $value['name']);
+                        $prefix = 'add';
+                        $mail->{$prefix . $field}(new Address($value['email'], $value['name'] ?? ''));
                     }
                 }
             }
@@ -379,22 +388,22 @@ class EmailController extends AdminController
             if ($addressArray) {
                 //use the first address only
                 list($cleanedFromAddress) = $addressArray;
-                $mail->setFrom($cleanedFromAddress['email'], $cleanedFromAddress['name']);
+                $mail->from(new Address($cleanedFromAddress['email'], $cleanedFromAddress['name'] ?? ''));
             }
         }
 
         $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
         foreach ($toAddresses as $cleanedToAddress) {
-            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name']);
+            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
         }
 
         $mail->setSubject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {
-            $mail->setBodyText($request->get('content'));
+            $mail->text($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
-            $mail->setBodyHtml($request->get('content'));
+            $mail->html($request->get('content'));
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 
@@ -458,7 +467,7 @@ class EmailController extends AdminController
                 $address->setValues($data);
                 $address->save();
 
-                return $this->adminJson(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
@@ -466,7 +475,7 @@ class EmailController extends AdminController
                 $address->setValues($data);
                 $address->save();
 
-                return $this->adminJson(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of routes
@@ -489,10 +498,16 @@ class EmailController extends AdminController
             }
 
             $data = $list->load();
+            $jsonData = [];
+            if (is_array($data)) {
+                foreach ($data as $entry) {
+                    $jsonData[] = $entry->getObjectVars();
+                }
+            }
 
             return $this->adminJson([
                 'success' => true,
-                'data' => $data,
+                'data' => $jsonData,
                 'total' => $list->getTotalCount(),
             ]);
         }
@@ -510,7 +525,7 @@ class EmailController extends AdminController
         $data = null;
         if ($params['data']['type'] === 'object') {
             $class = '\\' . ltrim($params['data']['objectClass'], '\\');
-            if (!empty($params['data']['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($params['data']['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($params['data']['objectId']);
                 if (!is_null($obj)) {
                     $data = $obj;

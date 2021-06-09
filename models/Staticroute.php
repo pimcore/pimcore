@@ -1,23 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Staticroute
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -25,77 +24,67 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method void save()
  * @method void delete()
  */
-class Staticroute extends AbstractModel
+final class Staticroute extends AbstractModel
 {
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $pattern;
+    protected $pattern;
 
     /**
      * @var string
      */
-    public $reverse;
+    protected $reverse;
 
     /**
      * @var string
      */
-    public $module;
+    protected $controller;
 
     /**
      * @var string
      */
-    public $controller;
+    protected $variables;
 
     /**
      * @var string
      */
-    public $action;
-
-    /**
-     * @var string
-     */
-    public $variables;
-
-    /**
-     * @var string
-     */
-    public $defaults;
+    protected $defaults;
 
     /**
      * @var array
      */
-    public $siteId;
+    protected $siteId;
 
     /**
      * @var array
      */
-    public $methods;
+    protected $methods;
 
     /**
      * @var int
      */
-    public $priority = 1;
+    protected $priority = 1;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * Associative array filled on match() that holds matched path values
@@ -103,7 +92,7 @@ class Staticroute extends AbstractModel
      *
      * @var array
      */
-    public $_values = [];
+    protected $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
@@ -115,16 +104,16 @@ class Staticroute extends AbstractModel
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute
+     * @var Staticroute|null
      */
-    protected static $_currentRoute;
+    protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute $route
+     * @param Staticroute|null $route
      */
-    public static function setCurrentRoute($route)
+    public static function setCurrentRoute(?Staticroute $route)
     {
         self::$_currentRoute = $route;
     }
@@ -132,9 +121,9 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute
+     * @return Staticroute|null
      */
-    public static function getCurrentRoute()
+    public static function getCurrentRoute(): ?Staticroute
     {
         return self::$_currentRoute;
     }
@@ -172,6 +161,8 @@ class Staticroute extends AbstractModel
      * @param int|null $siteId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $siteId = null)
     {
@@ -187,7 +178,7 @@ class Staticroute extends AbstractModel
 
         try {
             $route->getDao()->getByName($name, $siteId);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
 
@@ -218,7 +209,7 @@ class Staticroute extends AbstractModel
      *
      * @return array
      */
-    public function getDefaultsArray()
+    private function getDefaultsArray()
     {
         $defaults = [];
 
@@ -252,25 +243,9 @@ class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
-     * @return string
-     */
     public function getController()
     {
         return $this->controller;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
     }
 
     /**
@@ -314,18 +289,6 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
      * @param string $controller
      *
      * @return $this
@@ -333,18 +296,6 @@ class Staticroute extends AbstractModel
     public function setController($controller)
     {
         $this->controller = $controller;
-
-        return $this;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
 
         return $this;
     }
@@ -478,55 +429,25 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $urlOptions
-     * @param bool $reset
      * @param bool $encode
      *
      * @return mixed|string
      */
-    public function assemble(array $urlOptions = [], $reset = false, $encode = true)
+    public function assemble(array $urlOptions = [], $encode = true)
     {
-        // get request parameters
-        $blockedRequestParams = ['controller', 'action', 'module', 'document'];
-
-        // allow blocked params if we use it as variables
-        $variables = explode(',', $this->getVariables());
-        foreach ($variables as $name) {
-            $pos = array_search($name, $blockedRequestParams);
-            if ($pos !== false) {
-                unset($blockedRequestParams[$pos]);
-            }
-        }
-
-        if ($reset) {
-            $requestParameters = [];
-        } else {
-            $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
-
-            // merge route params from static routes here
-            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $request && $request->attributes->get('_route_params')) {
-                $requestParameters = array_merge($requestParameters, $request->attributes->get('_route_params'));
-            }
-
-            // remove blocked parameters from request
-            foreach ($blockedRequestParams as $key) {
-                if (array_key_exists($key, $requestParameters)) {
-                    unset($requestParameters[$key]);
-                }
-            }
-        }
-
         $defaultValues = $this->getDefaultsArray();
 
-        // apply values (controller,action,module, ... ) from previous match if applicable (only when )
-        if ($reset) {
-            if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
-                $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
-            }
+        // apply values (controller, ... ) from previous match if applicable (only when )
+        if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
+            $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
         }
 
         // merge with defaults
+        // merge router.request_context params e.g. "_locale"
+        $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
         $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = [];
@@ -551,8 +472,7 @@ class Staticroute extends AbstractModel
                 $tmpReversePattern = str_replace('%' . $key, '---', $tmpReversePattern);
             } else {
                 // only append the get parameters if there are defined in $urlOptions
-                // or if they are defined in $_GET an $reset is false
-                if (array_key_exists($key, $urlOptions) || (!$reset && array_key_exists($key, $_GET))) {
+                if (array_key_exists($key, $urlOptions)) {
                     $parametersGet[$key] = $param;
                 }
             }
@@ -598,7 +518,6 @@ class Staticroute extends AbstractModel
         $event = new GenericEvent($this, [
             'frontendPath' => $url,
             'params' => $urlParams,
-            'reset' => $reset,
             'encode' => $encode,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
@@ -608,6 +527,8 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $path
      * @param array $params
      *
@@ -630,6 +551,7 @@ class Staticroute extends AbstractModel
                 foreach ($siteIds as $siteId) {
                     if ($siteId == Site::getCurrentSite()->getId()) {
                         $siteMatched = true;
+
                         break;
                     }
                 }
@@ -637,12 +559,6 @@ class Staticroute extends AbstractModel
                     return false;
                 }
             }
-
-            // we need to unset this 3 params here, because otherwise the defaults wouldn't have an effect if used
-            // in combination with dynamic action/controller/module configurations
-            unset($params['controller'], $params['action'], $params['module']);
-
-            $params = array_merge($this->getDefaultsArray(), $params);
 
             $variables = explode(',', $this->getVariables());
 
@@ -659,39 +575,8 @@ class Staticroute extends AbstractModel
                 }
             }
 
-            $controller = $this->getController();
-            $action = $this->getAction();
-            $module = trim($this->getModule());
+            $params['controller'] = $this->getController();
 
-            // check for dynamic controller / action / module
-            $dynamicRouteReplace = function ($item, $params) {
-                if (strpos($item, '%') !== false) {
-                    uksort($params, function ($a, $b) {
-                        // order by key length, longer key have priority
-                        // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
-                        return strlen($b) - strlen($a);
-                    });
-
-                    foreach ($params as $key => $value) {
-                        $dynKey = '%' . $key;
-                        if (strpos($item, $dynKey) !== false) {
-                            return str_replace($dynKey, $value, $item);
-                        }
-                    }
-                }
-
-                return $item;
-            };
-
-            $controller = $dynamicRouteReplace($controller, $params);
-            $action = $dynamicRouteReplace($action, $params);
-            $module = $dynamicRouteReplace($module, $params);
-
-            $params['controller'] = $controller;
-            $params['action'] = $action;
-            if (!empty($module)) {
-                $params['module'] = $module;
-            }
             // remember for reverse assemble
             $this->_values = $params;
 
@@ -706,7 +591,7 @@ class Staticroute extends AbstractModel
      */
     public function getMethods()
     {
-        if ($this->methods && !is_array($this->methods)) {
+        if ($this->methods && is_string($this->methods)) {
             $this->methods = explode(',', $this->methods);
         }
 
@@ -714,13 +599,13 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param array $methods
+     * @param array|string $methods
      *
      * @return $this
      */
     public function setMethods($methods)
     {
-        if (!is_array($methods)) {
+        if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             $methods = array_map('trim', $methods);
         }

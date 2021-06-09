@@ -10,8 +10,8 @@ Below is the configuration for a Nginx server (just the server part, the http et
 
 Assumptions - change them to match your environment/distro:
 
-- Pimcore was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
-- Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/logs`.
+- Pimcore was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/public`
+- Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/log`.
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
@@ -26,14 +26,14 @@ The following configuration is used with the assumption that it is for developme
 #   include       mime.types;
 # }
 
-upstream php-pimcore6 {
+upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
 }
 
 server {
     listen 80;
-    server_name pimcore.loc;
-    root /var/www/pimcore/web;
+    server_name YOUPROJECT.local;
+    root /var/www/pimcore/public;
     index index.php;
     
     # Filesize depending on your data
@@ -60,7 +60,7 @@ server {
     #
     ### 2. Option - Checking permissions before delivery
     #
-    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    # rewrite ^(/protected/.*) /index.php$is_args$args last;
     #
     # location ~ ^/var/.*/protected(.*) {
     #   return 403;
@@ -96,12 +96,12 @@ server {
     # Some Admin Modules need this:
     # Database Admin, Server Info
     location ~* ^/admin/(adminer|external) {
-        rewrite .* /app.php$is_args$args last;
+        rewrite .* /index.php$is_args$args last;
     }
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -109,7 +109,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -119,14 +119,14 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /app.php$is_args$args;
+        try_files $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
-    # location ~ /(app|install)\.php(/|$) {
+    # location ~ /(index|install)\.php(/|$) {
     #
     # Use this after initial install is done:
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
         # regex to split $uri to $fastcgi_script_name and $fastcgi_path
@@ -144,9 +144,9 @@ server {
         # fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         # fastcgi_param DOCUMENT_ROOT $realpath_root;
 
-        fastcgi_pass php-pimcore6;
+        fastcgi_pass php-pimcore10;
         # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
+        # http://domain.tld/index.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
@@ -159,10 +159,10 @@ server {
             allow 127.0.0.1;
             # add additional IP's or Ranges
             deny all;
-            fastcgi_pass php-pimcore6;
+            fastcgi_pass php-pimcore10;
         }
         location /fpm-ping {
-            fastcgi_pass php-pimcore6;
+            fastcgi_pass php-pimcore10;
         }
     }
     # nginx Status
@@ -186,7 +186,7 @@ The following configuration provides an approperiate base for a secure applicati
 #   include       mime.types;
 # }
 
-upstream php-pimcore6 {
+upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
 }
 
@@ -194,9 +194,9 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name pimcore.loc;
+    server_name YOUPROJECT.local;
 
-    root /var/www/pimcore/web;
+    root /var/www/pimcore/public;
 
     # We accept .well-known in case of acme challenge (e.g. letsencrypt)
     # Everything else, however, is return hostname with / location
@@ -222,17 +222,17 @@ server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
-    server_name pimcore.loc;
+    server_name YOUPROJECT.local;
 
-    root /var/www/pimcore/web;
+    root /var/www/pimcore/public;
     index index.php;
 
     # SSL Certificate and Key
     # To run letsencrypt you can use the following command:
-    # certbot certonly -n --expand --nginx -d pimcore.loc
+    # certbot certonly -n --expand --nginx -d YOUPROJECT.local
     # Depending on your OS you might need to install python-certbot-nginx
-    ssl_certificate   /etc/letsencrypt/live/pimcore.loc/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/pimcore.loc/privkey.pem;
+    ssl_certificate   /etc/letsencrypt/live/YOUPROJECT.local/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/YOUPROJECT.local/privkey.pem;
 
     # Verify security (if applicable) afterwards with https://ssllabs.com
     # It is recommended to cut out the following settings and include as file
@@ -335,7 +335,7 @@ server {
     # }
     #
     ### 2. Option - Checking permissions before delivery
-    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    # rewrite ^(/protected/.*) /index.php$is_args$args last;
     # 
     # location ~ ^/var/.*/protected(.*) {
     #  return 403;
@@ -371,12 +371,12 @@ server {
     # Some Admin Modules need this:
     # Database Admin, Server Info
     location ~* ^/admin/(adminer|external) {
-        rewrite .* /app.php$is_args$args last;
+        rewrite .* /index.php$is_args$args last;
     }
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -384,7 +384,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -394,14 +394,14 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /app.php$is_args$args;
+        try_files $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
-    # location ~ /(app|install)\.php(/|$) {
+    # location ~ /(index|install)\.php(/|$) {
     #
     # Use this after initial install is done:
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
         # regex to split $uri to $fastcgi_script_name and $fastcgi_path
@@ -419,9 +419,9 @@ server {
         # fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         # fastcgi_param DOCUMENT_ROOT $realpath_root;
 
-        fastcgi_pass php-pimcore6;
+        fastcgi_pass php-pimcore10;
         # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
+        # http://domain.tld/index.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
@@ -434,10 +434,10 @@ server {
             allow 127.0.0.1;
             # add additional IP's or Ranges
             deny all;
-            fastcgi_pass php-pimcore6;
+            fastcgi_pass php-pimcore10;
         }
         location /fpm-ping {
-            fastcgi_pass php-pimcore6;
+            fastcgi_pass php-pimcore10;
         }
     }
     # nginx Status
@@ -474,14 +474,14 @@ __Step 2: Replace the location that handles on-demand thumbnail generation__
     # Pimcore On-Demand Thumbnail generation
     # with Rate-Limit.
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri @imggen;
+        try_files /var/tmp/thumbnails$uri @imggen;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
     }
     location @imggen {
         limit_req zone=imggen burst=15;
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";

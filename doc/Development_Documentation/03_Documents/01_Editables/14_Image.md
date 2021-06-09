@@ -15,7 +15,7 @@ The biggest advantages of using that instead of (for example) the relation edita
 
 | Name                           | Type    | Description                                                                                                                                                                                                                              |
 |--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip.                                                                                                               |
+| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip. |
 | `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
 | `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
@@ -25,24 +25,16 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `minHeight`                    | integer | Min. height of the image (in pixel)                                                                                                                                                                                                      |
 | `ratioX`                       | integer | Set width in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioY.                                                                                                                         |
 | `ratioY`                       | integer | Set height in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioX.                                                                                                                        |
-| `attributes`                   | array   | Custom attributes for the `<img />` tag - this can be used to pass custom attributes (not w3c)                                                                                                                                             |
-| `removeAttributes`             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                                          |
 | `uploadPath`                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                                 |
 | `disableInlineUpload`          | boolean | Disable the inline upload. If set to true, the inline upload functionality will be disabled.                                                                                                                                             |
 | `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for *Retina* displays, print, ...)                                                                 |
-| `disableWidthHeightAttributes` | bool    | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                   |
-| `disableAutoTitle`             | bool    | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                               |
-| `disableAutoAlt`               | bool    | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                        |
-| `disableAutoCopyright`         | bool    | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
 | `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
 | `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
-| `lowQualityPlaceholder`        | bool    | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires [SQIP](https://github.com/technopagan/sqip) or [Imagick](http://php.net/imagick), details see [setup of additional tools](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)|
 | `predefinedDataTemplates`      | array   | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
 | `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
-| `pictureAttributes`            | array   | Custom attributes for the <picture> tag (if thumbnail definition has media queries defined)                                                                                                                                              |
 
-You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
+Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
 ## Methods
 
@@ -110,18 +102,6 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-### An Example Using Custom Attributes
-
-```twig
-{{ pimcore_image("myImage", {
-    "thumbnail": "content",
-    "attributes": {
-        "custom-attr": "value",
-        "data-role": "image"
-    }
-}) }}
-```
-
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
@@ -148,11 +128,6 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 {% endif %}
 
 
-{# Disable automatic width and height attributes #}
-{{ pimcore_image("myImage", {
-    "thumbnail": "exampleScaleWidth",
-    "disableWidthHeightAttributes": true
-}) }}
 
 
 {# Custom drop targets #}

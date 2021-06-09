@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.thumbnail.item");
@@ -141,11 +141,6 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("high_resolution_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
-                    }, {
-                        xtype: "checkbox",
-                        name: "forcePictureTag",
-                        boxLabel: t("force_picture_html_tag"),
-                        checked: this.data.forcePictureTag
                     }, {
                         xtype: "checkbox",
                         name: "preserveColor",

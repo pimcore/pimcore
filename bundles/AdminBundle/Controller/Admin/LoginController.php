@@ -1,23 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
@@ -39,7 +40,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
     /**
@@ -64,6 +69,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         foreach ($event->getRequest()->getLanguages() as $userLocale) {
             if (in_array($userLocale, $availableLocales)) {
                 $locale = $userLocale;
+
                 break;
             }
         }
@@ -72,7 +78,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {
@@ -85,13 +91,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
@@ -115,6 +121,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         $params['browserSupported'] = $this->detectBrowser();
+        $params['debug'] = \Pimcore::inDebugMode();
 
         return $this->render('@PimcoreAdmin/Admin/Login/login.html.twig', $params);
     }
@@ -122,12 +129,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/csrf-token", name="pimcore_admin_login_csrf_token")
      */
-    public function csrfTokenAction(Request $request, CsrfProtectionListener $csrfProtectionListener)
+    public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         return $this->json([
-           'csrfToken' => $csrfProtectionListener->getCsrfToken(),
+           'csrfToken' => $csrfProtection->getCsrfToken(),
         ]);
     }
 
@@ -155,7 +162,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -189,13 +196,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 try {
                     $event = new LostPasswordEvent($user, $loginUrl);
-                    $this->get('event_dispatcher')->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
+                    $eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
 
                     // only send mail if it wasn't prevented in event
                     if ($event->getSendMail()) {
                         $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
                         $mail->setIgnoreDebugMode(true);
-                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
+                        $mail->text("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
                         $mail->send();
                     }
 
@@ -214,7 +221,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
@@ -305,16 +312,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $browser = new \Browser();
         $browserVersion = (int)$browser->getVersion();
 
-        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 72) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 84) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 13.1) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 42) {
+        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 67) {
             $supported = true;
         }
 

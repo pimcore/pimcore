@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
@@ -32,7 +33,6 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,9 +40,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/asset-helper")
+ *
+ * @internal
  */
 class AssetHelperController extends AdminController
 {
@@ -121,6 +124,7 @@ class AssetHelperController extends AdminController
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
+
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -186,6 +190,7 @@ class AssetHelperController extends AdminController
         if (strlen($requestedGridConfigId) == 0) {
             // check if there is a favourite view
             $favourite = null;
+
             try {
                 try {
                     $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
@@ -211,6 +216,7 @@ class AssetHelperController extends AdminController
             }
 
             $savedGridConfig = null;
+
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
@@ -218,6 +224,7 @@ class AssetHelperController extends AdminController
 
             if ($savedGridConfig) {
                 $shared = null;
+
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -371,7 +378,7 @@ class AssetHelperController extends AdminController
         $availableFields = [];
 
         if (!$noSystemColumns) {
-            foreach (Asset\Service::$gridSystemColumns as $sc) {
+            foreach (Asset\Service::GRID_SYSTEM_COLUMNS as $sc) {
                 if (empty($types)) {
                     $availableFields[] = [
                         'key' => $sc . '~system',
@@ -568,14 +575,14 @@ class AssetHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
-                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId());
+                $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId();
 
-                return $this->adminJson(['success' => true,
-                        'settings' => $settings,
-                        'availableConfigs' => $availableConfigs,
-                        'sharedConfigs' => $sharedConfigs,
-                    ]
-                );
+                return $this->adminJson([
+                    'success' => true,
+                    'settings' => $settings,
+                    'availableConfigs' => $availableConfigs,
+                    'sharedConfigs' => $sharedConfigs,
+                ]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -585,7 +592,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param GridConfig $gridConfig
+     * @param GridConfig|null $gridConfig
      * @param array $metadata
      *
      * @throws \Exception
@@ -667,7 +674,6 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -753,7 +759,7 @@ class AssetHelperController extends AdminController
                     }
 
                     if ($data instanceof Element\ElementInterface) {
-                        $data = $data->getFullPath();
+                        $data = $data->getRealFullPath();
                     }
                     $dataRows[] = $data;
                 }
@@ -873,7 +879,6 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
-        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             //only allow unique metadata columns with subtypes
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
@@ -896,7 +901,7 @@ class AssetHelperController extends AdminController
         $result['metadataColumns']['nodeType'] = 'metadata';
 
         //system columns
-        $systemColumnNames = Asset\Service::$gridSystemColumns;
+        $systemColumnNames = Asset\Service::GRID_SYSTEM_COLUMNS;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
             $systemColumns[] = ['title' => $systemColumn, 'name' => $systemColumn, 'datatype' => 'data', 'fieldtype' => 'system'];
@@ -996,6 +1001,7 @@ class AssetHelperController extends AdminController
                             }
                             $em['data'] = $value;
                             $dirty = true;
+
                             break;
                         }
                     }

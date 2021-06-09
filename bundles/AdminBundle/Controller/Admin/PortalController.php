@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -29,6 +30,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
+ *
+ * @internal
  */
 class PortalController extends AdminController implements KernelControllerEventInterface
 {
@@ -232,6 +235,7 @@ class PortalController extends AdminController implements KernelControllerEventI
             foreach ($col as &$portlet) {
                 if ($portlet['id'] == $id) {
                     $portlet['config'] = $configuration;
+
                     break;
                 }
             }
@@ -260,9 +264,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response['documents'] = [];
 
         foreach ($list as $doc) {
-            /**
-             * @var Document $doc
-             */
             if ($doc->isAllowed('view')) {
                 $response['documents'][] = [
                     'id' => $doc->getId(),
@@ -330,9 +331,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            /**
-             * @var DataObject $object
-             */
             if ($object->isAllowed('view')) {
                 $response['objects'][] = [
                     'id' => $object->getId(),
@@ -408,7 +406,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             ],
         ];
 
-        /** @var Site $site */
         foreach ($sites->load() as $site) {
             if ($siteConfigProvider->isSiteReportingConfigured($site)) {
                 $data[] = [

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
@@ -55,17 +56,14 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         'preSelect' => 'text',
     ];
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
-
     public $width;
+
     public $considerTenants = false;
+
     public $multiPreSelect = false;
+
     public $filterGroups = '';
+
     public $predefinedPreSelectOptions = [];
 
     public function __construct()
@@ -245,14 +243,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === null || $data->getField() === null)) {
@@ -263,7 +256,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -284,28 +277,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return ObjectData\IndexFieldSelection|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('%%%%', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1] && $values[2]) {
-            $preSelect = explode('%%', $value[2]);
-            $value = new ObjectData\IndexFieldSelection($value[0], $values[1], $preSelect);
-        }
-
-        return $value;
     }
 
     /**
@@ -335,5 +306,25 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public function setWidth($width)
     {
         $this->width = (int)$width;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . ObjectData\IndexFieldSelection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . ObjectData\IndexFieldSelection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 }

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -27,9 +28,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
-    const CART_READ_ONLY_MODE_STRICT = 'strict';
-    const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
-
     /**
      * @var bool
      */
@@ -41,9 +39,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $userId;
 
     /**
-     * @var CartItemInterface[]
+     * @var CartItemInterface[]|null
      */
-    protected $items = null;
+    protected $items;
 
     /**
      * @var array
@@ -56,22 +54,22 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $name;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDateTimestamp;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $modificationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDateTimestamp;
 
@@ -91,53 +89,38 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $priceCalculator;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $itemAmount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $subItemAmount;
 
     /**
-     * @var int
+     * @var int|null
+     */
+    protected $mainAndSubItemAmount;
+
+    /**
+     * @var int|null
      */
     protected $itemCount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $subItemCount;
 
     /**
-     * @var string
+     * @var int|null
      */
-    protected $currentReadonlyMode = self::CART_READ_ONLY_MODE_STRICT;
+    protected $mainAndSubItemCount;
 
     public function __construct()
     {
-        $this->setIgnoreReadonly();
         $this->setCreationDate(new \DateTime());
-        $this->unsetIgnoreReadonly();
-    }
-
-    /**
-     * @param string $currentReadonlyMode
-     */
-    public function setCurrentReadonlyMode(string $currentReadonlyMode): void
-    {
-        $this->currentReadonlyMode = $currentReadonlyMode;
-    }
-
-    /**
-     * @deprecated use checkout implementation V7 instead
-     *
-     * @return bool
-     */
-    public function getIgnoreReadonly()
-    {
-        return $this->ignoreReadonly;
     }
 
     /**
@@ -149,67 +132,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @return string
      */
     abstract protected function getCartCheckoutDataClassName();
-
-    /**
-     * @deprecated use checkout implementation V7 instead
-     */
-    protected function setIgnoreReadonly()
-    {
-        $this->ignoreReadonly = true;
-    }
-
-    /**
-     * @deprecated use checkout implementation V7 instead
-     */
-    protected function unsetIgnoreReadonly()
-    {
-        $this->ignoreReadonly = false;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws InvalidConfigException
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
-     *
-     * @deprecated use checkout implementation V7 instead
-     */
-    public function isCartReadOnly()
-    {
-        switch ($this->currentReadonlyMode) {
-
-            case self::CART_READ_ONLY_MODE_STRICT:
-                $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
-
-                return !empty($order) && !empty($order->getOrderState());
-
-            case self::CART_READ_ONLY_MODE_DEACTIVATED:
-                //read only mode deactivated, always return false
-                return false;
-
-            default:
-                throw new InvalidConfigException("Unknown Readonly Mode '" . $this->currentReadonlyMode . "'");
-
-        }
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws \Exception
-     *
-     * @deprecated use checkout implementation V7 instead
-     */
-    protected function checkCartIsReadOnly()
-    {
-        if (!$this->getIgnoreReadonly()) {
-            if ($this->isCartReadOnly()) {
-                throw new \Exception('Cart ' . $this->getId() . ' is readonly.');
-            }
-        }
-
-        return false;
-    }
 
     /**
      * @param CheckoutableInterface&Concrete $product
@@ -224,8 +146,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
-        $this->checkCartIsReadOnly();
-
         if (empty($itemKey)) {
             $itemKey = $product->getId();
 
@@ -250,8 +170,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
-        $this->checkCartIsReadOnly();
-
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
 
@@ -277,7 +195,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         if (!empty($subProducts)) {
             $subItems = [];
             foreach ($subProducts as $subProduct) {
-                if ($subItems[$subProduct->getProduct()->getId()]) {
+                if (array_key_exists($subProduct->getProduct()->getId(), $subItems)) {
                     $subItem = $subItems[$subProduct->getProduct()->getId()];
                     $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
                 } else {
@@ -334,8 +252,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function addGiftItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
-        $this->checkCartIsReadOnly();
-
         if (empty($itemKey)) {
             $itemKey = $product->getId();
 
@@ -360,8 +276,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function updateGiftItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
-        $this->checkCartIsReadOnly();
-
         // item already exists?
         if (!array_key_exists($itemKey, $this->giftItems)) {
             $className = $this->getCartItemClassName();
@@ -408,8 +322,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     public function clear()
     {
-        $this->checkCartIsReadOnly();
-
         $this->items = [];
         $this->giftItems = [];
 
@@ -420,77 +332,133 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param bool $countSubItems
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemAmount($countSubItems = false)
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
     {
-        if ($countSubItems) {
-            if ($this->subItemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $subItems = $item->getSubItems();
-                        if ($subItems) {
-                            foreach ($subItems as $subItem) {
-                                $count += ($subItem->getCount() * $item->getCount());
+        switch ($countSubItems) {
+            case self::COUNT_MAIN_OR_SUB_ITEMS:
+
+                if ($this->subItemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if ($subItems) {
+                                foreach ($subItems as $subItem) {
+                                    $count += ($subItem->getCount() * $item->getCount());
+                                }
+                            } else {
+                                $count += $item->getCount();
                             }
-                        } else {
+                        }
+                    }
+                    $this->subItemAmount = $count;
+                }
+
+                return $this->subItemAmount;
+
+            case self::COUNT_MAIN_AND_SUB_ITEMS:
+
+                if ($this->mainAndSubItemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if ($subItems) {
+                                foreach ($subItems as $subItem) {
+                                    $count += ($subItem->getCount() * $item->getCount());
+                                }
+                            }
                             $count += $item->getCount();
                         }
                     }
+                    $this->mainAndSubItemAmount = $count;
                 }
-                $this->subItemAmount = $count;
-            }
 
-            return $this->subItemAmount;
-        } else {
-            if ($this->itemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $count += $item->getCount();
+                return $this->mainAndSubItemAmount;
+
+            case self::COUNT_MAIN_ITEMS_ONLY:
+
+                if ($this->itemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $count += $item->getCount();
+                        }
                     }
+                    $this->itemAmount = $count;
                 }
-                $this->itemAmount = $count;
-            }
 
-            return $this->itemAmount;
+                return $this->itemAmount;
+
+            default:
+                throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
     }
 
     /**
-     * @param bool|false $countSubItems
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false)
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
     {
-        if ($countSubItems) {
-            if ($this->subItemCount == null) {
-                $items = $this->getItems();
-                $count = count($items);
+        switch ($countSubItems) {
+            case self::COUNT_MAIN_OR_SUB_ITEMS:
 
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $subItems = $item->getSubItems();
-                        $count += count($subItems);
+                if ($this->subItemCount == null) {
+                    $items = $this->getItems();
+                    $count = 0;
+
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if (!empty($subItems)) {
+                                $count += count($subItems);
+                            } else {
+                                $count++;
+                            }
+                        }
                     }
+                    $this->subItemCount = $count;
                 }
-                $this->subItemCount = $count;
-            }
 
-            return $this->subItemCount;
-        } else {
-            if ($this->itemCount == null) {
-                $items = $this->getItems();
-                $this->itemCount = count($items);
-            }
+                return $this->subItemCount;
 
-            return $this->itemCount;
+            case self::COUNT_MAIN_AND_SUB_ITEMS:
+
+                if ($this->mainAndSubItemCount == null) {
+                    $items = $this->getItems();
+                    $count = count($items);
+
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            $count += count($subItems);
+                        }
+                    }
+                    $this->mainAndSubItemCount = $count;
+                }
+
+                return $this->mainAndSubItemCount;
+
+            case self::COUNT_MAIN_ITEMS_ONLY:
+
+                if ($this->itemCount == null) {
+                    $items = $this->getItems();
+                    $this->itemCount = count($items);
+                }
+
+                return $this->itemCount;
+
+            default:
+                throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
     }
 
@@ -554,12 +522,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CartItemInterface[] $items
+     * @param CartItemInterface[]|null $items
      */
     public function setItems($items)
     {
-        $this->checkCartIsReadOnly();
-
         $this->items = $items;
 
         // trigger cart has been modified
@@ -571,8 +537,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function removeItem($itemKey)
     {
-        $this->checkCartIsReadOnly();
-
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
 
@@ -646,8 +610,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function setCreationDate(\DateTime $creationDate = null)
     {
-        $this->checkCartIsReadOnly();
-
         $this->creationDate = $creationDate;
         if ($creationDate) {
             $this->creationDateTimestamp = $creationDate->getTimestamp();
@@ -661,8 +623,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function setCreationDateTimestamp($creationDateTimestamp)
     {
-        $this->checkCartIsReadOnly();
-
         $this->creationDateTimestamp = $creationDateTimestamp;
         $this->creationDate = null;
     }
@@ -693,8 +653,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function setModificationDate(\DateTime $modificationDate = null)
     {
-        $this->checkCartIsReadOnly();
-
         $this->modificationDate = $modificationDate;
         if ($modificationDate) {
             $this->modificationDateTimestamp = $modificationDate->getTimestamp();
@@ -708,8 +666,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function setModificationDateTimestamp($modificationDateTimestamp)
     {
-        $this->checkCartIsReadOnly();
-
         $this->modificationDateTimestamp = $modificationDateTimestamp;
         $this->modificationDate = null;
     }
@@ -751,16 +707,16 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutData($key)
     {
         $entry = $this->checkoutData[$key] ?? null;
         if ($entry) {
             return $this->checkoutData[$key]->getData();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -806,8 +762,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
         $this->itemAmount = null;
         $this->subItemAmount = null;
+        $this->mainAndSubItemAmount = null;
         $this->itemCount = null;
         $this->subItemCount = null;
+        $this->mainAndSubItemCount = null;
 
         //don't use getter here because reset is only necessary if price calculator is already there
         if ($this->priceCalculator) {
@@ -824,7 +782,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param int $count
      *
-     * @return CheckoutableInterface[]
+     * @return array<int, CartItemInterface>
      */
     public function getRecentlyAddedItems($count)
     {
@@ -857,13 +815,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @return bool
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      * @throws \Exception
      */
     public function addVoucherToken($code)
     {
-        $this->checkCartIsReadOnly();
-
         $service = Factory::getInstance()->getVoucherService();
         if ($service->checkToken($code, $this)) {
             if ($service->reserveToken($code, $this)) {
@@ -894,6 +849,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * Removes all tokens form cart and releases the token reservations.
+     *
+     * @throws InvalidConfigException
      */
     public function removeAllVoucherTokens()
     {
@@ -907,15 +864,12 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @param string $code
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      * @throws \Exception
      *
      * @return bool
      */
     public function removeVoucherToken($code)
     {
-        $this->checkCartIsReadOnly();
-
         $service = Factory::getInstance()->getVoucherService();
         $key = array_search($code, $this->getVoucherTokenCodes());
 
@@ -998,10 +952,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     {
         if ($item->getProduct() instanceof CheckoutableInterface) {
             return true;
-        } else {
-            Logger::warn('product ' . $item->getProductId() . ' not found');
-
-            return false;
         }
+
+        Logger::warn('product ' . $item->getProduct()->getId() . ' not found');
+
+        return false;
     }
 }

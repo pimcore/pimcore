@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Guard;
@@ -43,6 +44,9 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -108,7 +112,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(Request $request)
     {
@@ -117,7 +121,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -135,7 +139,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCredentials(Request $request)
     {
@@ -157,6 +161,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 ];
             } else {
                 $this->bruteforceProtectionHandler->checkProtection();
+
                 throw new AuthenticationException('Missing username or token');
             }
 
@@ -176,7 +181,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -256,7 +261,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -269,7 +274,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
@@ -283,7 +288,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
@@ -335,7 +340,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsRememberMe()
     {

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
@@ -17,21 +18,22 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/search")
+ *
+ * @internal
  */
 class SearchController extends AdminController
 {
@@ -473,8 +475,8 @@ class SearchController extends AdminController
                     'type' => $hit->getId()->getType(),
                     'subtype' => $element->getType(),
                     'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpath' => htmlspecialchars($element->getFullPath()),
-                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
+                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                     'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
@@ -525,11 +527,11 @@ class SearchController extends AdminController
             if (strlen($shortPath) <= 50 || $i === 0) {
                 break;
             }
-            array_splice($parts, $i - 1, 1, '...');
+            array_splice($parts, $i - 1, 1, '…');
         }
 
-        if (strlen($shortPath) > 50) {
-            $shortPath = substr($shortPath, 0, 47) . '...';
+        if (mb_strlen($shortPath) > 50) {
+            $shortPath = mb_substr($shortPath, 0, 49) . '…';
         }
 
         return $shortPath;

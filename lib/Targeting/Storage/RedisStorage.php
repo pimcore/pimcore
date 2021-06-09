@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Storage;
@@ -25,6 +25,7 @@ class RedisStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     /**
@@ -74,7 +75,7 @@ class RedisStorage implements TargetingStorageInterface
         $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hExists($key, $name);
 
-        return 1 === $result;
+        return (bool)$result;
     }
 
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)

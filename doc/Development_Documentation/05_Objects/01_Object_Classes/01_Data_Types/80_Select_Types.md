@@ -72,8 +72,17 @@ $valuesSingle = DataObject\Service::getOptionsForSelectField($o, "select");
 $selectedValueSingle = $valuesSingle[$o->getSelect()];
 
 // for a multiselect data field
-$valuesMulti = DataObject\Service::getOptionsForMultiSelectField($o, "multiselect");
-$selectedValueMulti = $valuesMulti[$o->getMultiselect()];
+$multiSelectFieldValues = DataObject\Service::getOptionsForMultiSelectField($o, "multiSelectField");
+$selectedValues = array_map(
+    static fn($value) => $multiSelectFieldValues[$value],
+    $o->getMultiSelectField()
+); // For PHP >= 7.4
+
+$selectedValues = array_map(
+    static function($value) use ($multiSelectFieldValues) {
+        return $multiSelectFieldValues[$value];
+    }, $o->getMultiSelectField()
+); // For PHP <= 7.3
 ```
 
 To show the selected option's display name in a Twig template, first put the option values as a view variable inside the controller action:

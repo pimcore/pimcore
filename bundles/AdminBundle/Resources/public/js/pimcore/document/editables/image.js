@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.image");
@@ -405,11 +405,6 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         var height = image.getHeight();
 
         if (width > 1 && height > 1) {
-
-            if(Ext.isIE && width==28 && height==30){
-                //IE missing image placeholder
-                return;
-            }
 
             var dimensionError = false;
             if(typeof this.config.minWidth != "undefined") {

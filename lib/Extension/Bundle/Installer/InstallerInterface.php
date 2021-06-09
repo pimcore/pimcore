@@ -1,21 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
-use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
+use Symfony\Component\Console\Output\OutputInterface;
 
 interface InstallerInterface
 {
@@ -61,31 +62,5 @@ interface InstallerInterface
      */
     public function needsReloadAfterInstall();
 
-    /**
-     * Determine if bundle can be updated
-     *
-     * @return bool
-     */
-    public function canBeUpdated();
-
-    /**
-     * Updates the bundle
-     *
-     * @throws UpdateException
-     */
-    public function update();
-
-    /**
-     * Returns the output writer
-     *
-     * @return OutputWriterInterface
-     */
-    public function getOutputWriter(): OutputWriterInterface;
-
-    /**
-     * Sets the output writer to use
-     *
-     * @param OutputWriterInterface $outputWriter
-     */
-    public function setOutputWriter(OutputWriterInterface $outputWriter);
+    public function getOutput(): OutputInterface;
 }

@@ -39,16 +39,3 @@ The search engine ID is used in your controller/action to configure the search s
 `\Pimcore\Google\Cse::search()`.
 
 The place of interest (parameter cx) is marked with a comment in the code example below.
- 
-
-### Code Example
-
-#### Controller Action
-See: https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Controller/AdvancedController.php#L85-L85
-
-#### View
-See: https://github.com/pimcore/demo-basic/tree/master/app/Resources/views/Advanced/search.html.php
-
-#### Partial View Script (includes/paging.php)
-See: https://github.com/pimcore/demo-basic/tree/master/app/Resources/views/Includes/paging.html.php
-

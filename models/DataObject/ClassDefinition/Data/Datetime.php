@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -20,17 +19,19 @@ use Carbon\Carbon;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
@@ -39,6 +40,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Type for the column to query
      *
+     * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'bigint(20)';
@@ -46,23 +49,22 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Type for the column
      *
+     * @internal
+     *
      * @var string
      */
     public $columnType = 'bigint(20)';
 
     /**
-     * Type for the generated phpdoc
+     * @internal
      *
-     * @var string
-     */
-    public $phpdocType = '\\Carbon\\Carbon';
-
-    /**
      * @var int|null
      */
     public $defaultValue;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $useCurrentDate;
@@ -136,7 +138,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -156,7 +158,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return \Carbon\Carbon
      */
-    protected function getDateFromTimestamp($timestamp)
+    private function getDateFromTimestamp($timestamp)
     {
         $date = new \Carbon\Carbon();
         $date->setTimestamp($timestamp);
@@ -167,7 +169,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -175,7 +177,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data) {
+        if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
         }
 
@@ -199,7 +201,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
@@ -217,7 +219,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getVersionPreview
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -233,14 +235,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -249,31 +244,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data->format('Y-m-d H:i');
         }
 
-        return null;
+        return '';
     }
 
     /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return \Carbon\Carbon|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $timestamp = strtotime($importValue);
-        if ($timestamp) {
-            return $this->getDateFromTimestamp($timestamp);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -326,11 +301,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->useCurrentDate;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -421,16 +393,16 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param \Pimcore\Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return Carbon|null
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -458,5 +430,75 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Carbon) {
+            return $value->getTimestamp();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if ($value !== null) {
+            return $this->getDateFromTimestamp($value);
+        }
+
+        return null;
+    }
+
+    /**
+     * overwrite default implementation to consider columnType & queryColumnType from class config
+     *
+     * @return array
+     */
+    public function resolveBlockedVars(): array
+    {
+        $defaultBlockedVars = [
+            'fieldDefinitionsCache',
+        ];
+
+        return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 }

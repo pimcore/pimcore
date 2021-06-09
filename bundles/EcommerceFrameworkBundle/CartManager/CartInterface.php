@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -23,6 +24,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenIn
  */
 interface CartInterface
 {
+    /**
+     * count main items only, don't consider sub items
+     */
+    const COUNT_MAIN_ITEMS_ONLY = 'main';
+
+    /**
+     * count sub items if available, otherwise main items
+     */
+    const COUNT_MAIN_OR_SUB_ITEMS = 'main_or_sub';
+
+    /**
+     * count main and sub items
+     */
+    const COUNT_MAIN_AND_SUB_ITEMS = 'main_and_sub';
+
     /**
      * @return int
      */
@@ -39,20 +55,14 @@ interface CartInterface
     public function getItems();
 
     /**
+     * @param CartItemInterface[]|null $items
+     */
+    public function setItems($items);
+
+    /**
      * @return bool
      */
     public function isEmpty();
-
-    /**
-     * returns if cart is read only
-     * default implementation checks if order object exists and if order state is PAYMENT_PENDING
-     *
-     * @return bool
-     *
-     * @deprecated use checkout implementation V7 instead
-     *
-     */
-    public function isCartReadOnly();
 
     /**
      * @param string $itemKey
@@ -152,20 +162,20 @@ interface CartInterface
     /**
      * calculates amount of items in cart
      *
-     * @param bool $countSubItems
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemAmount($countSubItems = false);
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
 
     /**
      * counts items in cart (does not consider item amount)
      *
-     * @param bool|false $countSubItems
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false);
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
 
     /**
      * @param int $count
@@ -204,7 +214,7 @@ interface CartInterface
      *
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutData($key);
 
@@ -332,5 +342,3 @@ interface CartInterface
      */
     public function isVoucherErrorCode($errorCode);
 }
-
-class_alias(CartInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart');

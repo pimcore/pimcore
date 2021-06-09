@@ -4,7 +4,7 @@ The Index Service (in combination with the Filter Service) provides functionalit
 searching products.
  
 In the heart of this component is the *Product Index* - an optimized storage of product data for all kinds of queries. Depending 
-on the implementation, the *Product Index* is stored in a special mysql table, in elastic search or any other search 
+on the implementation, the *Product Index* is stored in a special mysql table, in elasticsearch or any other search 
 provider (currently implemented are [fact finder](http://www.fact-finder.de/) and [findologic](https://www.findologic.com/)). 
 These implementations can be configured in [Assortment Tenants](./01_Product_Index_Configuration/03_Assortment_Tenant_Configuration.md). 
 The default tenant always uses `DefaultMysql` as implementation.  

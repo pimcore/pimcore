@@ -1,0 +1,34 @@
+parameters:
+    level: 4
+
+    paths:
+        - bundles
+        - lib
+        - models
+
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
+    symfony:
+        container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
+
+    excludes_analyse:
+        - '**/PreAuthenticatedAdminSessionFactory.php'
+        - '**/DependencyInjection/Configuration.php'
+        - '**/External/AdminerController.php'
+        - '**/Processor/PdfReactor.php'
+        - '**/simple_html_dom.php'
+        - '**/Fieldcollection/Data/Filter*'
+        - '**/PDFreactor.class.php'
+        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+
+    ignoreErrors:
+        - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
+        - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
+        - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
+        - '~^Unsafe usage of new static\(\)~'
+
+    # see https://phpstan.org/config-reference#universal-object-crates
+    universalObjectCratesClasses:
+        - Pimcore\Config\Config
+        - Pimcore\Templating\Model\ViewModel

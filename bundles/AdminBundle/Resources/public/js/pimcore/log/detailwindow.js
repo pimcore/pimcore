@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.log.detailwindow");
@@ -115,7 +115,7 @@ pimcore.log.detailwindow = Class.create({
             if (fileObjectText.length > 60) {
                 fileObjectText = fileObjectText.substr(0, 60) + "...";
             }
-            var url = Routing.generate('pimcore_admin_log_showfileobject', {filePath: record.data.fileobject});
+            var url = Routing.generate('pimcore_admin_log_showfileobject', {filePath: this.data.fileobject});
 
             var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url, fileObjectText);
             items.push({
