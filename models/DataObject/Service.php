@@ -856,7 +856,16 @@ class Service extends Model\Element\Service
             }
 
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {
-                $_options = $definition->getOptions();
+                $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+                    $definition->getOptionsProviderClass(),
+                    DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+                );
+
+                if ($optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
+                    $_options = $optionsProvider->getOptions(['fieldname' => $definition->getName()], $definition);
+                } else {
+                    $_options = $definition->getOptions();
+                }
 
                 foreach ($_options as $option) {
                     $options[$option['value']] = $option['key'];

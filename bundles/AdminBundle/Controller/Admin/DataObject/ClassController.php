@@ -295,8 +295,12 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $customLayout->setId($layoutId);
         $customLayout->save();
 
+        $isWriteable = $customLayout->isWritable();
+        $data = $customLayout->getObjectVars();
+        $data['isWriteable'] = $isWriteable;
+
         return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
-                                 'data' => $customLayout, ]);
+                                 'data' => $data, ]);
     }
 
     /**
