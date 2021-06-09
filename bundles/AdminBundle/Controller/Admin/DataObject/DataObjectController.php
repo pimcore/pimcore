@@ -1178,15 +1178,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $object = DataObject\Concrete::getById($objectId);
         if ($object && $latestVersion = $object->getLatestVersion()) {
-                        // don't renew references (which means loading the target elements)
-                        // Not needed as we just save a new version with the updated index
-                        $object = $latestVersion->loadData(false);
-                        if ($newIndex !== $object->getIndex()) {
-                            $object->setIndex($newIndex);
-                        }
-                        $latestVersion->save();
-                    }
-                }
+            // don't renew references (which means loading the target elements)
+            // Not needed as we just save a new version with the updated index
+            $object = $latestVersion->loadData(false);
+            if ($newIndex !== $object->getIndex()) {
+                $object->setIndex($newIndex);
+            }
+            $latestVersion->save();
+        }
+    }
 
     /**
      * @param DataObject\AbstractObject $updatedObject
