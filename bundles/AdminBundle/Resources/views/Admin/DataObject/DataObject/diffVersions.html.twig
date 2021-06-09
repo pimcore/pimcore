@@ -97,8 +97,8 @@
                 {% endfor %}
             {% endfor %}
         {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
-            {% set storedata1 = definition.getVersionPreview(object1.getValueForFieldName(fieldName)) %}
-            {% set storedata2 = definition.getVersionPreview(object2.getValueForFieldName(fieldName)) %}
+            {% set storedata1 = object1.getValueForFieldName(fieldName) %}
+            {% set storedata2 = object2.getValueForFieldName(fieldName) %}
 
             {% set existingGroups = [] %}
 
@@ -112,10 +112,10 @@
                 {% set activeGroups2 = storedata2.getActiveGroups() %}
             {% endif %}
 
-            {% set activeGroups = activeGroups1|merge(activeGroups2) %}
+            {% set activeGroups = activeGroups1 + activeGroups2 %}
 
             {% for activeGroupId, enabled in activeGroups %}
-                {% set existingGroups = existingGroups|merge({activeGroupId: enabled}) %}
+                {% set existingGroups = existingGroups + {(activeGroupId): enabled} %}
             {% endfor %}
 
             {% if existingGroups is not empty %}
@@ -135,9 +135,9 @@
 
                                 {% if keyDef is not empty %}
                                     {% for language in languages %}
-                                        {% set keyData1 = storeData1 ? storeData1.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                        {% set keyData1 = storedata1 ? storedata1.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
                                         {% set preview1 = keyDef.getVersionPreview(keyData1) %}
-                                        {% set keyData2 = storeData2 ? storeData2.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                        {% set keyData2 = storedata2 ? storedata2.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
                                         {% set preview2 = keyDef.getVersionPreview(keyData2) %}
 
                                         <tr {% if loop.index is odd %}class="odd"{% endif %}>
