@@ -1164,7 +1164,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $index = 0;
 
             foreach ($children as $child) {
-                $this->updateLatestVersionIndex($child['o_id'], $child['o_modificationDate'], $child['o_versionCount'], $index);
+                $this->updateLatestVersionIndex($child['o_id'], $child['o_modificationDate']);
                 $index++;
 
                 DataObject::clearDependentCacheByObjectId($child['o_id']);
