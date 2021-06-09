@@ -1274,11 +1274,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if (($request->get('task') == 'publish') || ($request->get('task') == 'unpublish')) {
-            if ($data) {
-                if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
-                    return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
-                }
-            }
+            // disabled for now: see different approach [Elements] Show users who are working on the same element #9381
+            // https://github.com/pimcore/pimcore/issues/9381
+            //            if ($data) {
+            //                if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
+            //                    return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
+            //                }
+            //            }
 
             $object->save();
             $treeData = $this->getTreeNodeConfig($object);
