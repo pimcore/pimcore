@@ -774,32 +774,36 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 // the successCallback function retrieves response data information
                                 successCallback(rdata);
                             }
-                            if (rdata && rdata.success) {
-                                // check for version notification
-                                if (this.draftVersionNotification) {
-                                    if (task == "publish" || task == "unpublish") {
-                                        this.draftVersionNotification.hide();
-                                    } else if (task === 'version' || task === 'autoSave') {
-                                        this.draftVersionNotification.show();
+                            if (rdata) {
+                                if (rdata.success) {
+                                    // check for version notification
+                                    if (this.draftVersionNotification) {
+                                        if (task == "publish" || task == "unpublish") {
+                                            this.draftVersionNotification.hide();
+                                        } else if (task === 'version' || task === 'autoSave') {
+                                            this.draftVersionNotification.show();
+                                        }
                                     }
+
+                                    if (task != "autoSave") {
+                                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+                                    }
+
+                                    this.resetChanges(task);
+                                    Ext.apply(this.data.general, rdata.general);
+
+                                    if (rdata['draft']) {
+                                        this.data['draft'] = rdata['draft'];
+                                    }
+
+                                    pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
+                                    pimcore.plugin.broker.fireEvent("postSaveObject", this);
+
+                                    // for internal use ID.
+                                    pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
+                                } else {
+                                    pimcore.helpers.showPrettyError("error", t("saving_failed"), rdata.message);
                                 }
-
-                                if(task != "autoSave") {
-                                    pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
-                                }
-
-                                this.resetChanges(task);
-                                Ext.apply(this.data.general, rdata.general);
-
-                                if(rdata['draft']) {
-                                    this.data['draft'] = rdata['draft'];
-                                }
-
-                                pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
-                                pimcore.plugin.broker.fireEvent("postSaveObject", this);
-
-                                // for internal use ID.
-                                pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
                         } catch (e) {
                             pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
