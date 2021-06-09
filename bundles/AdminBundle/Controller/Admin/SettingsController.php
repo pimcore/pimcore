@@ -235,11 +235,14 @@ class SettingsController extends AdminController
     {
         $type = $request->get('type');
         $subType = $request->get('subType');
+        $group = $request->get('group');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            $item->expand();
-            $result[] = $item->getObjectVars();
+            if ($group === null || $group === $item->getGroup()) {
+                $item->expand();
+                $result[] = $item->getObjectVars();
+            }
         }
 
         return $this->adminJson(['data' => $result, 'success' => true]);

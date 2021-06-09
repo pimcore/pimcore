@@ -38,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $redirects[] = Model\Redirect::getById($redirectData);
         }
 
-        $this->model->setRedirects($redirects);
+        $this->model->setRedirects(array_filter($redirects));
 
         return $redirects;
     }

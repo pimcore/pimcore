@@ -27,9 +27,6 @@ monolog:
             channels: ['!event', '!doctrine', '!console', '!cache']
 
 pimcore:
-    error_handling:
-        render_error_document: false
-
     web_profiler:
         toolbar:
             excluded_routes: ~

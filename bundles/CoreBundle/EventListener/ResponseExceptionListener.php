@@ -46,11 +46,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $documentRenderer;
 
     /**
-     * @var bool
-     */
-    protected $renderErrorPage = true;
-
-    /**
      * @var Config
      */
     protected $config;
@@ -73,18 +68,15 @@ class ResponseExceptionListener implements EventSubscriberInterface
     /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
-     * @param bool $renderErrorPage
      */
     public function __construct(
         DocumentRenderer $documentRenderer,
         ConnectionInterface $db,
         Config $config,
         Document\Service $documentService,
-        SiteResolver $siteResolver,
-        $renderErrorPage = true
+        SiteResolver $siteResolver
     ) {
         $this->documentRenderer = $documentRenderer;
-        $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
         $this->config = $config;
         $this->documentService = $documentService;
@@ -116,9 +108,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         // further checks are only valid for default context
         $request = $event->getRequest();
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            if ($this->renderErrorPage) {
-                $this->handleErrorPage($event);
-            }
+            $this->handleErrorPage($event);
         }
     }
 
@@ -145,6 +135,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $errorPath = $this->determineErrorPath($request);
 
         $this->logToHttpErrorLog($event->getRequest(), $statusCode);
+
+        // Error page rendering
+        if (empty($errorPath)) {
+            // if not set, use Symfony error handling
+            return;
+        }
 
         $document = Document::getByPath($errorPath);
 
@@ -197,6 +193,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
      */
     private function determineErrorPath(Request $request): string
     {
+        $errorPath = '';
+
         if ($this->siteResolver->isSiteRequest($request)) {
             $path = $this->siteResolver->getSitePath($request);
         } else {
@@ -246,10 +244,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
                     break;
                 }
             }
-        }
-
-        if (empty($errorPath)) {
-            $errorPath = '/';
         }
 
         return $errorPath;

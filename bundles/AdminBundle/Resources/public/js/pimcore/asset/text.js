@@ -102,6 +102,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
                     title: t("edit"),
                     iconCls: "pimcore_icon_edit",
                     bodyStyle: "padding: 10px;",
+                    layout: 'fit',
                     items: [this.editArea]
                 });
 
