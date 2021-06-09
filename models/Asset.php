@@ -455,7 +455,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
-            'text' => ['/text/', '/xml$/'],
+            'text' => ['/text/', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
