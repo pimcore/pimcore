@@ -219,7 +219,7 @@ class VariantsController extends AdminController
                 $objects = [];
                 foreach ($list->getObjects() as $object) {
                     if ($object->isAllowed('view')) {
-                        $o = DataObject\Service::gridObjectData($object, $request->get('fields'));
+                        $o = DataObject\Service::gridObjectData($object, $request->get('fields'), $requestedLanguage);
                         $objects[] = $o;
                     }
                 }
