@@ -38,6 +38,15 @@ services:
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
 
+    security.authentication.provider.dao:
+        class: Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider
+        arguments:
+            - !abstract User Provider
+            - !abstract User Checker
+            - !abstract  Provider-shared Key
+            - '@security.encoder_factory'
+            - '%security.authentication.hide_user_not_found%'
+        deprecated: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
     #
     # INFRASTRUCTURE
     #
