@@ -109,10 +109,10 @@ If you want to wrap buttons in a div or change the Position.
                     {% do block.blockEnd() %}
                 </td>
             {% do block.blockDestruct() %}
-        <?php } ?>
+        {% endfor %}
     </tr>
 </table>
-<?php $block->end(); ?>
+{% do block.end() %}
 ```
 
 ### Accessing Data Within a Block Element
