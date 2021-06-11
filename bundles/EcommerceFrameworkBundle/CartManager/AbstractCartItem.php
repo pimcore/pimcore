@@ -39,7 +39,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $product;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $productId;
 
@@ -60,7 +60,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var CartInterface
+     * @var CartInterface|null
      */
     protected $cart;
 
@@ -135,7 +135,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return CartInterface
+     * @return CartInterface|null
      */
     abstract public function getCart();
 
