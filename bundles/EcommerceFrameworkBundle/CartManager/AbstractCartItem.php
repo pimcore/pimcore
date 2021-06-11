@@ -118,6 +118,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         } else {
             // actual product is not available or not checkoutable (e.g. deleted in Admin)
             $product = new MockProduct();
+            $product->setId($this->productId);
             $this->product = $product;
         }
 

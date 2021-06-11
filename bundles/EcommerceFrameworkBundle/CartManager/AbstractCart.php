@@ -956,7 +956,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
             return true;
         }
 
-        Logger::warn('product ' . $item->getProduct()->getId() . ' not found');
+        Logger::warn('Product ' . $item->getProduct()->getId() . ' not found');
 
         return false;
     }
