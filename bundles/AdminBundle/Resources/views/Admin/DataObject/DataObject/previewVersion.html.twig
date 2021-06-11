@@ -102,23 +102,20 @@
                 {% endfor %}
             {% endfor %}
         {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
-            {% set storedata = definition.getVersionPreview(object.getValueForFieldName(fieldName)) %}
-
-            {% set existingGroups = [] %}
+            {% set storedata = object.getValueForFieldName(fieldName) %}
             {% set activeGroups = [] %}
 
             {% if storedata %}
                 {% set activeGroups = storedata.getActiveGroups() %}
             {% endif %}
-
-            {% if existingGroups is not empty %}
+            {% if activeGroups is not empty %}
                 {% set languages = ['default'] %}
                 {% if definition.isLocalized() %}
-                    {% set languages = validLanguages|merge(languages) %}
+                    {% set languages = validLanguages + languages %}
                 {% endif %}
 
-                {% for activeGroupId, enabled in existingGroups %}
-                    {% if activeGroups[activeGroupId] is not empty %}
+                {% for activeGroupId, enabled in activeGroups %}
+                    {% if activeGroups[activeGroupId] is empty %}
                         continue;
                     {% endif %}
 
@@ -131,14 +128,14 @@
 
                             {% if keyDef is not empty %}
                                 {% for language in languages %}
-                                    {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                    {% set keyData = storedata ? storedata.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
 
                                     {% set preview = keyDef.getVersionPreview(keyData) %}
                                     <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                         <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                                         <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
-                                        {% if isImportPreview or isNew %}
-                                            {{ preview }}
+                                        {% if isImportPreview is not defined or isNew is not defined %}
+                                            <td>{{ preview | raw }}</td>
                                         {% endif %}
                                     </tr>
                                 {% endfor %}
