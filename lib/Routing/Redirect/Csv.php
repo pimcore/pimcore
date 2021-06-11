@@ -23,6 +23,7 @@ use League\Csv\Statement;
 use League\Csv\Writer;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;
