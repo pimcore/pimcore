@@ -21,11 +21,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
 			message: "#^Call to function is_null\\(\\) with int will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
