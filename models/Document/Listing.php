@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Paginator\PaginateListingInterface;
@@ -147,9 +148,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
             $userIds[] = $user->getId();
 
             $condition = '(
-                (SELECT `'.$permission.'` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,`key`),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
+                (SELECT '.Db::get()->quoteIdentifier($permission).' FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,`key`),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, '.Db::get()->quoteIdentifier($permission).' DESC LIMIT 1)=1
                     OR
-                (SELECT `'.$permission.'` FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, `key`))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$permission.'` DESC LIMIT 1)=1
+                (SELECT '.Db::get()->quoteIdentifier($permission).' FROM users_workspaces_document WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path, `key`))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, '.Db::get()->quoteIdentifier($permission).' DESC LIMIT 1)=1
             )';
 
             $this->addConditionParam($condition);
