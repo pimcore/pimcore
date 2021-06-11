@@ -952,7 +952,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected static function isValidCartItem(CartItemInterface $item)
     {
         $product = $item->getProduct();
-        if (!$product instanceof MockProduct) {
+        if ($product instanceof CheckoutableInterface && !$product instanceof MockProduct) {
             return true;
         }
 
