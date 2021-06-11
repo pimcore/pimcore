@@ -259,7 +259,7 @@ final class Translation extends AbstractModel
      */
     public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
     {
-        $cacheKey = 'translation_' . $id;
+        $cacheKey = 'translation_' . $id . '_' . $domain;
         if (Runtime::isRegistered($cacheKey)) {
             return Runtime::get($cacheKey);
         }
