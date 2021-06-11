@@ -77,7 +77,12 @@ class Csv
                 $document = Document::getById((int)$redirect->getTarget());
 
                 if ($document) {
-                    $target = $document->getRealFullPath();
+                    $targetSiteId = $redirect->getTargetSite();
+                    $targetSite = Site::getById($targetSiteId);
+                    $rootDocument = $targetSite->getRootDocument();
+                    $rootDocumentPath = $rootDocument->getFullPath();
+                    $target = $document->getFullPath();
+                    $target = preg_replace('@^' . $rootDocumentPath . '/@', '/', $target);
                 }
             }
 
