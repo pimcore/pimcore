@@ -184,11 +184,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
                     }
 
-                    if (strlen($slug) < 2 || !str_starts_with($slug, '/')) {
+                    if (strlen($slug) < 2 || $slug[0] !== '/') {
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
 
-                    if (str_contains($slug, '//') || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
+                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
                         throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
                     }
                 }
