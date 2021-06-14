@@ -936,17 +936,19 @@ class Service extends Model\Element\Service
      *
      * @param AbstractObject $object
      * @param array $rewriteConfig
+     * @param array $params
      *
      * @return AbstractObject
      */
-    public static function rewriteIds($object, $rewriteConfig)
+    public static function rewriteIds($object, $rewriteConfig, $params = [])
     {
         // rewriting elements only for snippets and pages
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                if (method_exists($field, 'rewriteIds')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface || method_exists($field, 'rewriteIds')) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));

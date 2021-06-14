@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
@@ -569,6 +569,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
+            //TODO Pimcore 11 remove method_exists call
             if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                 $fd->classSaved($class, $params);
             }
@@ -1199,7 +1200,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if (method_exists($fd, 'rewriteIds')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }
