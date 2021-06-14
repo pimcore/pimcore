@@ -286,13 +286,13 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param Model\DataObject\Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(Model\DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset\Image) {

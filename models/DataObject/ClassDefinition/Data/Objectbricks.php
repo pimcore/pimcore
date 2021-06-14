@@ -834,13 +834,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param DataObject\Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return Model\Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
 

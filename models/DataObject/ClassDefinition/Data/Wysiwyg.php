@@ -354,13 +354,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param DataObject\Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return mixed
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $html = new DomCrawler($data);

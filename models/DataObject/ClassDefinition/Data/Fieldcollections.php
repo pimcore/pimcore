@@ -639,13 +639,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param DataObject\Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return Model\Element\ElementInterface
      */
-    public function rewriteIds(mixed $object, array $idMapping, array $params = []): mixed
+    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
 

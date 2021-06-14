@@ -22,10 +22,10 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 interface PreGetDataInterface
 {
     /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param mixed $object
      * @param array $params
      *
      * @return array
      */
-    public function preGetData(Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): array;
+    public function preGetData(mixed $object, array $params = []): array;
 }

@@ -373,13 +373,13 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param DataObject\Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link && $data->getLinktype() == 'internal') {

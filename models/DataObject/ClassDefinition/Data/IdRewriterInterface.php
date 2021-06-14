@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface IdRewriterInterface
 {
     /**
@@ -28,11 +30,11 @@ interface IdRewriterInterface
      *  "asset" => array(...)
      * )
      *
-     * @param mixed $object
+     * @param Concrete $object
      * @param array $idMapping
      * @param array $params
      *
      * @return mixed
      */
-    public function rewriteIds(mixed $object, array $idMapping, array $params = []): mixed;
+    public function rewriteIds(Concrete $object, array $idMapping, array $params = []): mixed;
 }
