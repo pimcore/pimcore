@@ -3,6 +3,7 @@
 ## 10.1.0
 - [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
 - [Core] composer.json: `symfony/symfony` package requirement has been replaced by `symfony/*` individual bundles. **Note for Bundles**: if you are using `symfony/symfony` dependency, it will now conflict with package `pimcore/pimcore`. Please move your bundle requirements to Symfony individual component packages.
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
 
 ## 10.0.0
 
