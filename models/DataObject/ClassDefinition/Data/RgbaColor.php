@@ -407,7 +407,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @return mixed
      */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    public function unmarshalAfterDecryption(mixed $value, mixed $object = null, $params = []): mixed
     {
         return Serialize::unserialize($value);
     }
