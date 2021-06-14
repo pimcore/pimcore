@@ -68,7 +68,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * Payment Provider
      *
-     * @var PaymentInterface
+     * @var PaymentInterface|null
      */
     protected $payment;
 

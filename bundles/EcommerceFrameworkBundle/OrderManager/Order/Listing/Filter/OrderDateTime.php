@@ -21,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 class OrderDateTime implements OrderListFilterInterface
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $from;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $till;
 
@@ -57,7 +57,7 @@ class OrderDateTime implements OrderListFilterInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getFrom()
     {
@@ -77,7 +77,7 @@ class OrderDateTime implements OrderListFilterInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getTill()
     {

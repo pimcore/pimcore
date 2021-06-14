@@ -159,7 +159,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         $subTotalNet = Decimal::zero();
         $subTotalGross = Decimal::zero();
 
-        /** @var Currency $currency */
+        /** @var Currency|null $currency */
         $currency = null;
 
         /** @var TaxEntry[] $subTotalTaxes */
