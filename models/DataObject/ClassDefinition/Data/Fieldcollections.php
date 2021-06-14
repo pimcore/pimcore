@@ -475,7 +475,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @throws \Exception
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(mixed $object, $params = []): mixed
     {
         if (!$object instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');

@@ -454,7 +454,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return null|Element\ElementInterface
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(mixed $object, $params = []): mixed
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {

@@ -25,7 +25,7 @@ interface PreGetDataInterface
      * @param mixed $object
      * @param array $params
      *
-     * @return array
+     * @return mixed
      */
-    public function preGetData(mixed $object, array $params = []): array;
+    public function preGetData(mixed $object, array $params = []): mixed;
 }

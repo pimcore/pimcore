@@ -618,7 +618,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @throws \Exception
      */
-    public function preGetData(Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): array
+    public function preGetData(mixed $object, $params = []): mixed
     {
         if (!$object instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');

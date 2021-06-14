@@ -585,7 +585,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @return array
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(mixed $object, $params = []): mixed
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {

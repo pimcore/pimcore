@@ -584,7 +584,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @throws \Exception
      */
-    public function preGetData($container, $params = [])
+    public function preGetData(mixed $object, $params = []): mixed
     {
         if (
             !$container instanceof DataObject\Concrete &&

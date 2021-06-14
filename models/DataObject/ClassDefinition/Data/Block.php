@@ -980,7 +980,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(mixed $object, $params = []): mixed
     {
         $data = null;
         $params['owner'] = $object;
