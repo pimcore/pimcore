@@ -18,7 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
-abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
+abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface,
+    Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface, Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface
 {
     /**
      * @internal
@@ -175,7 +176,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
      *
      * @return string
      */
-    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    public function marshalBeforeEncryption(mixed $value, mixed $object = null, $params = []) : mixed
     {
         return Serialize::serialize($value);
     }
@@ -187,7 +188,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
      *
      * @return mixed
      */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    public function unmarshalAfterDecryption(mixed $value, mixed $object = null, $params = []) : mixed
     {
         return Serialize::unserialize($value);
     }
