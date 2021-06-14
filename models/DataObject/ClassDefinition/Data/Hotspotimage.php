@@ -500,7 +500,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @throws \Exception
      */
-    public function rewriteIds(Concrete $object, array $idMapping, array $params = []): mixed
+    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $this->doRewriteIds($object, $idMapping, $params, $data);
