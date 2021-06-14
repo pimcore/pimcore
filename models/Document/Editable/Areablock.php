@@ -381,8 +381,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if (($this->config['manual'] ?? false) === true) {
             // in manual mode $this->render() is not called for the areablock, so we need to add
             // the editable to the collector manually here
-            $editableDefCollector = $this->getEditableDefinitionCollector();
-            $editableDefCollector->add($this);
+            if ($editableDefCollector = $this->getEditableDefinitionCollector()) {
+                $editableDefCollector->add($this);
+            }
         }
 
         reset($this->indices);
