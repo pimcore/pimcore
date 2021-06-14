@@ -66,19 +66,19 @@ pimcore.asset.metadata.grid = Class.create({
             if (this.dataProvider.getItemCount() < 1) {
                 // default fields
                 if (this.asset.data.type == "image") {
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "title",
                         type: "input",
                         language: "",
                         data: ""
                     });
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "alt",
                         type: "input",
                         language: "",
                         data: ""
                     });
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "copyright",
                         type: "input",
                         language: "",
