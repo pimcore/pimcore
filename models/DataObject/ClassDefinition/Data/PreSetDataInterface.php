@@ -26,5 +26,5 @@ interface PreSetDataInterface
      *
      * @return mixed
      */
-    public function preSetData($object, $data, $params = []);
+    public function preSetData(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, ?array $data, array $params = []): mixed;
 }
