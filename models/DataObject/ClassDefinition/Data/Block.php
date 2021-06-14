@@ -686,7 +686,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'block';
             $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
