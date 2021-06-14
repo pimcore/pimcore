@@ -27,5 +27,5 @@ interface PreGetDataInterface
      *
      * @return array
      */
-    public function preGetData($object, $params = []);
+    public function preGetData(Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): array;
 }
