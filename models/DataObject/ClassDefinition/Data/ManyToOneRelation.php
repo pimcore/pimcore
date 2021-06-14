@@ -492,7 +492,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return mixed
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($object);
 

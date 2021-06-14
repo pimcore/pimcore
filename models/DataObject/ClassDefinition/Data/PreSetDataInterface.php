@@ -21,10 +21,10 @@ interface PreSetDataInterface
 {
     /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array|null $data
+     * @param mixed $data
      * @param array $params
      *
      * @return mixed
      */
-    public function preSetData(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, ?array $data, array $params = []): mixed;
+    public function preSetData(mixed $object, mixed $data, array $params = []): mixed;
 }

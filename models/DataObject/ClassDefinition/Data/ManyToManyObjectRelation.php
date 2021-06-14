@@ -478,7 +478,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @return array|null
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
             $data = [];

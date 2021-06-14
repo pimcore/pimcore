@@ -505,7 +505,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @return DataObject\Fieldcollection|null
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($object);
 

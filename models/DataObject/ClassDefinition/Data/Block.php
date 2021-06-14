@@ -879,7 +879,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return mixed
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($object);
 
