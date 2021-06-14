@@ -545,12 +545,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        // TODO Pimcore 11: remove method_exists BC layer
+        // TODO this should be needed at all as preGetData is always there
+        // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
-        }
+//        } else {
+//            $code .= "\t" . '$data = $this->' . $key . ";\n";
+//        }
 
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";

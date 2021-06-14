@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 interface PreSetDataInterface
 {
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param mixed $object
      * @param mixed $data
      * @param array $params
      *
