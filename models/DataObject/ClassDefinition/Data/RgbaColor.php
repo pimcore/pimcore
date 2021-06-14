@@ -395,7 +395,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @return string
      */
-    public function marshalBeforeEncryption(mixed $value, mixed $object = null, $params = [])
+    public function marshalBeforeEncryption(mixed $value, mixed $object = null, $params = []) : mixed
     {
         return Serialize::serialize($value);
     }
