@@ -19,6 +19,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
@@ -615,7 +618,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @throws \Exception
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): array
     {
         if (!$object instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
