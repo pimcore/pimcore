@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
+
+use Pimcore\Model\DataObject\Concrete;
+
+interface PreSetDataInterface
+{
+    /**
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function preSetData($object, $data, $params = []);
+}

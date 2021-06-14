@@ -23,7 +23,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;

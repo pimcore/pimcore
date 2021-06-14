@@ -435,7 +435,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
 
-        if (method_exists($fieldDefinition, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,

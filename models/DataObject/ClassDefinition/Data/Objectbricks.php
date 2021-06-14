@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface
 {
     use DataObject\Traits\ClassSavedTrait;
 
@@ -572,7 +572,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 

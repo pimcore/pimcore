@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Extension\ColumnType;
 

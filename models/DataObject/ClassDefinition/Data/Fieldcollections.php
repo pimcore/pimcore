@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use DataObject\Traits\ClassSavedTrait;
 
@@ -545,7 +545,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";

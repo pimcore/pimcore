@@ -552,7 +552,8 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
             $data = $fieldDefinition->preGetData(
                 $this,
                 [
@@ -631,7 +632,8 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if (method_exists($fieldDefinition, 'preSetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\PreSetDataInterface || method_exists($fieldDefinition, 'preSetData')) {
             $value = $fieldDefinition->preSetData(
                 $this,
                 $value,

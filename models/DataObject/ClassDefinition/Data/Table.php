@@ -689,7 +689,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof  PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n\n";
@@ -736,7 +737,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -782,7 +784,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
             $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
             $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
