@@ -32,7 +32,7 @@ interface IdRewriterInterface
      * @param array $idMapping
      * @param array $params
      *
-     * @return array
+     * @return mixed
      */
     public function rewriteIds($object, $idMapping, $params = []);
 }
