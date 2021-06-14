@@ -302,16 +302,15 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response = [];
         $response['assets'] = [];
 
-        foreach ($list as $doc) {
-            /**
-             * @var Asset $doc
-             */
-            $response['assets'][] = [
-                'id' => $doc->getId(),
-                'type' => $doc->getType(),
-                'path' => $doc->getRealFullPath(),
-                'date' => $doc->getModificationDate(),
-            ];
+        foreach ($list as $asset) {
+            if ($asset->isAllowed('view')) {
+                $response['assets'][] = [
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'path' => $asset->getRealFullPath(),
+                    'date' => $asset->getModificationDate(),
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -339,12 +338,14 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            $response['objects'][] = [
-                'id' => $object->getId(),
-                'type' => $object->getType(),
-                'path' => $object->getRealFullPath(),
-                'date' => $object->getModificationDate(),
-            ];
+            if ($object->isAllowed('view')) {
+                $response['objects'][] = [
+                    'id' => $object->getId(),
+                    'type' => $object->getType(),
+                    'path' => $object->getRealFullPath(),
+                    'date' => $object->getModificationDate(),
+                ];
+            }
         }
 
         return $this->adminJson($response);
