@@ -1085,7 +1085,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
         if (!$activeGroupIds) {
-            return;
+            return self;
         }
 
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
@@ -1176,6 +1176,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $s1 <=> $s2;
             });
         }
+        return $this;
     }
 
     /**
