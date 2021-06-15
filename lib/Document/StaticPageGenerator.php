@@ -44,7 +44,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param Document\Page $document
+     * @param Document\PageSnippet $document
      *
      * @return string
      */
@@ -54,7 +54,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param Document\Page $document
+     * @param Document\PageSnippet $document
      *
      * @return bool
      */
@@ -86,7 +86,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param Document\Page $document
+     * @param Document\PageSnippet $document
      *
      * @throws \League\Flysystem\FilesystemException
      */
@@ -96,5 +96,18 @@ class StaticPageGenerator
         $storage = Storage::get('document_static');
 
         $storage->delete($storagePath);
+    }
+
+    /**
+     * @param Document\PageSnippet $document
+     *
+     * @return bool
+     */
+    public function pageExists($document)
+    {
+        $storagePath = $this->getStoragePath($document);
+        $storage = Storage::get('document_static');
+
+        return $storage->fileExists($storagePath);
     }
 }

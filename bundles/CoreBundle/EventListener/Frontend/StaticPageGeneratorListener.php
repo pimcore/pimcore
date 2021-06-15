@@ -55,9 +55,23 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     public function onPostAddUpdateDocument(DocumentEvent $e)
     {
         $document = $e->getDocument();
-        if ($document instanceof PageSnippet && $document->getStaticGeneratorEnabled()) {
+
+        if($e->hasArgument('saveVersionOnly') || $e->hasArgument('autoSave')) {
+            return;
+        }
+
+        if ($document instanceof PageSnippet) {
             try {
-                $this->staticPageGenerator->generate($document);
+                if ($document->getStaticGeneratorEnabled()) {
+                    if ($document->isPublished()) {
+                        $this->staticPageGenerator->generate($document);
+                    } else {
+                        $this->staticPageGenerator->remove($document);
+                    }
+                } elseif (!is_null($document->getStaticGeneratorEnabled())
+                    && $this->staticPageGenerator->pageExists($document)) {
+                    $this->staticPageGenerator->remove($document);
+                }
             } Catch(\Exception $e) {
                 Logger::error($e);
 
