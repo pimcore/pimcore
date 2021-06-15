@@ -20,9 +20,9 @@ namespace Pimcore\Document;
 
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 class StaticPageGenerator
 {
@@ -32,7 +32,7 @@ class StaticPageGenerator
     protected $documentRenderer;
 
     /**
-     * @var LockInterface
+     * @var LockFactory
      */
     private $lockFactory;
 
@@ -44,7 +44,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param $document
+     * @param Document\Page $document
      *
      * @return string
      */
@@ -54,7 +54,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param $document
+     * @param Document\Page $document
      *
      * @return bool
      */
@@ -86,7 +86,7 @@ class StaticPageGenerator
     }
 
     /**
-     * @param $document
+     * @param Document\Page $document
      *
      * @throws \League\Flysystem\FilesystemException
      */
