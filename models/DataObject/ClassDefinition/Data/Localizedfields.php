@@ -733,8 +733,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface::class));
             }
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -1208,8 +1208,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 //TODO Pimcore 11: remove method_exists BC layer
                 if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
                     if (!$fd instanceof IdRewriterInterface) {
-                        @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class), E_USER_DEPRECATED);
+                        trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class));
                     }
 
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);

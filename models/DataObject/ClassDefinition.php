@@ -974,8 +974,8 @@ final class ClassDefinition extends Model\AbstractModel
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             if (!$fieldDefinition instanceof DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface) {
-                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface::class));
             }
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);

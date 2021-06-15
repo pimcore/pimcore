@@ -555,8 +555,8 @@ final class Localizedfield extends Model\AbstractModel implements
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
             if (!$fieldDefinition instanceof DataObject\ClassDefinition\Data\PreGetDataInterface) {
-                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', Model\DataObject\ClassDefinition\Data\PreGetDataInterface::class), E_USER_DEPRECATED);
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', Model\DataObject\ClassDefinition\Data\PreGetDataInterface::class));
             }
 
             $data = $fieldDefinition->preGetData(
@@ -640,8 +640,8 @@ final class Localizedfield extends Model\AbstractModel implements
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\PreSetDataInterface || method_exists($fieldDefinition, 'preSetData')) {
             if (!$fieldDefinition instanceof DataObject\ClassDefinition\Data\PreSetDataInterface) {
-                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\PreSetDataInterface::class), E_USER_DEPRECATED);
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\PreSetDataInterface::class));
             }
 
             $value = $fieldDefinition->preSetData(

@@ -950,8 +950,8 @@ class Service extends Model\Element\Service
                 //TODO Pimcore 11: remove method_exists BC layer
                 if ($field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface || method_exists($field, 'rewriteIds')) {
                     if (!$field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface) {
-                        @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class), E_USER_DEPRECATED);
+                        trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class));
                     }
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
@@ -1443,8 +1443,8 @@ class Service extends Model\Element\Service
         //TODO Pimcore 11: remove method_exists BC layer
         if ($layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
             if (!$layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
-                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class));
             }
             $layout->enrichLayoutDefinition($object, $context);
         }
