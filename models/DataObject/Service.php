@@ -949,6 +949,10 @@ class Service extends Model\Element\Service
             foreach ($fields as $field) {
                 //TODO Pimcore 11: remove method_exists BC layer
                 if ($field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface || method_exists($field, 'rewriteIds')) {
+                    if (!$field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface) {
+                        @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class), E_USER_DEPRECATED);
+                    }
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));

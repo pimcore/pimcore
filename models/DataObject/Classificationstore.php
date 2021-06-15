@@ -437,6 +437,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
+            if (!$fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\PreGetDataInterface) {
+                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', Model\DataObject\ClassDefinition\Data\PreGetDataInterface::class), E_USER_DEPRECATED);
+            }
+
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,

@@ -688,6 +688,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         //TODO Pimcore 11: remove method_exists BC layer
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+            }
             $context['containerType'] = 'block';
             $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);

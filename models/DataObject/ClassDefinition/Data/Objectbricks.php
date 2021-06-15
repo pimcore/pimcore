@@ -858,6 +858,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     //TODO Pimcore 11: remove method_exists BC layer
                     if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if (!$fd instanceof IdRewriterInterface) {
+                            @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                                'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class), E_USER_DEPRECATED);
+                        }
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
