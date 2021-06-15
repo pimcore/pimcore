@@ -581,7 +581,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
     {
         if (!$this->visibleFields) {
-            return;
+            return $this;
         }
 
         $classIds = $this->getClasses();
@@ -648,6 +648,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 }
             }
         }
+        return $this;
     }
 
     /**
