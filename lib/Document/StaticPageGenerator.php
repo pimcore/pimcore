@@ -71,7 +71,7 @@ class StaticPageGenerator
         $lock->acquire(true);
 
         try {
-            $renderedDocumentData = $this->documentRenderer->render($document);
+            $renderedDocumentData = $this->documentRenderer->render($document, ['static_page_generator' => true]);
             $storage->write($storagePath, $renderedDocumentData);
         } catch (\Exception $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
