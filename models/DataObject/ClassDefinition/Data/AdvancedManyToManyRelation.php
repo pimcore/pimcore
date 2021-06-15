@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface
+class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -833,17 +833,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;
-    }
-
-    /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     */
-    public function enrichLayoutDefinition($object, $context = [])
-    {
-        // nothing to do
     }
 
     /**

@@ -19,9 +19,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface,
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface, LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
@@ -533,14 +534,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * Override point for enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete|null $object
-     * @param array $context additional contextual data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

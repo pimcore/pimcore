@@ -1440,7 +1440,12 @@ class Service extends Model\Element\Service
     {
         $context['object'] = $object;
 
-        if (method_exists($layout, 'enrichLayoutDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
+            if (!$layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
+                @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+            }
             $layout->enrichLayoutDefinition($object, $context);
         }
 

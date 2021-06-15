@@ -26,7 +26,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -1077,14 +1077,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
@@ -1129,7 +1124,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                if (method_exists($definition, 'enrichLayoutDefinition')) {
+
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                    if (!$definition instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
+                        @trigger_error(sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class), E_USER_DEPRECATED);
+                    }
                     $context['object'] = $object;
                     $context['class'] = $object->getClass();
                     $context['ownerType'] = 'classificationstore';

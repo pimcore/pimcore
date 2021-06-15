@@ -19,12 +19,13 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()
  */
-class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -805,7 +806,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
     {
         $classId = $this->allowedClassId;
 

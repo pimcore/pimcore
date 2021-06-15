@@ -18,10 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -575,12 +576,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
     {
         if (!$this->visibleFields) {
             return;
