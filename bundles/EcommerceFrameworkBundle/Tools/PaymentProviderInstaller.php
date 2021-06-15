@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Objectbrick;
