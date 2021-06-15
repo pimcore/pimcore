@@ -1085,7 +1085,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
         if (!$activeGroupIds) {
-            return self;
+            return $this;
         }
 
         $filteredGroupIds = array_keys($activeGroupIds, true, true);

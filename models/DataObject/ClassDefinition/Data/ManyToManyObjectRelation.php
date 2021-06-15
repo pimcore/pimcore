@@ -587,7 +587,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $classIds = $this->getClasses();
 
         if (empty($classIds[0]['classes'])) {
-            return;
+            return $this;
         }
 
         $classId = $classIds[0]['classes'];
@@ -599,7 +599,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if (!$class) {
-            return;
+            return $this;
         }
 
         $this->visibleFieldDefinitions = [];

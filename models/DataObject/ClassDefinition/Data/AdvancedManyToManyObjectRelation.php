@@ -811,7 +811,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $classId = $this->allowedClassId;
 
         if (!$classId) {
-            return;
+            return $this;
         }
 
         if (is_numeric($classId)) {
@@ -821,11 +821,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
 
         if (!$class) {
-            return;
+            return $this;
         }
 
         if (!$this->visibleFields) {
-            return;
+            return $this;
         }
 
         $this->visibleFieldDefinitions = [];
@@ -874,6 +874,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
             }
         }
+        return $this;
     }
 
     /**
