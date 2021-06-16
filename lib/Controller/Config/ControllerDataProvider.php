@@ -200,7 +200,7 @@ class ControllerDataProvider
             $finder->name($namePattern);
         }
 
-        if ($bundleName && 'Bundle' === substr($bundleName, -6)) {
+        if ($bundleName && str_ends_with($bundleName, 'Bundle')) {
             $bundleName = substr($bundleName, 0, -6);
         }
 
