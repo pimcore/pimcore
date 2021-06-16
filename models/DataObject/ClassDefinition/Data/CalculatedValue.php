@@ -242,13 +242,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getGetterCode($class)
     {
         $key = $this->getName();
-        $code = '';
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . "() {\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
@@ -260,7 +259,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         }
 
         $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
-        $code .= "\treturn " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -358,7 +357,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . "() {\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
 
@@ -368,7 +367,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null, null, null, $definition);' . "\n";
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -380,14 +379,13 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getSetterCode($class)
     {
         $key = $this->getName();
-        $code = '';
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ") {\n";
 
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
@@ -422,9 +420,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = '';
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";

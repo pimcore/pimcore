@@ -220,7 +220,7 @@ class WkHtmlToPdf extends Processor
         exec($cmd, $output, $retVal);
 
         if ($retVal != 0 && $retVal != 1) {
-            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . implode("\n", $output) . "\ncommand was: " . $cmd);
+            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "):\n" . implode("\n", $output) . "\ncommand was: " . $cmd);
         }
 
         return $dstFile;

@@ -580,12 +580,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     protected function getPreGetValueHookCode(string $key): string
     {
-        $code = "\t" . 'if($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . " \n";
-        $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t\t" . 'if($preValue !== null) { ' . "\n";
+        $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
+        $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
+        $code .= "\t\t" . 'if ($preValue !== null) { ' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
-        $code .= "\t" . '}' . " \n\n";
+        $code .= "\t" . '}' . "\n\n";
 
         return $code;
     }
@@ -607,25 +607,25 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $typeDeclaration = '';
         }
 
-        $code = '';
-
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($this);' . "\n\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n\n";
         }
 
         // insert this line if inheritance from parent objects is allowed
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
-            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
@@ -635,10 +635,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n\n";
 
-        $code .= "\treturn " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -669,13 +669,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $typeDeclaration = '';
         }
 
-        $code = '';
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ") {\n";
+        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -746,10 +746,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
@@ -766,9 +768,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain();' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n\n";
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -791,17 +793,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $typeDeclaration = '';
         }
 
-        $code = '';
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
+        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
+                $code .= "\t" . '/** @var \\' . static::class . ' $encryptedFd */' . "\n";
                 $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
                 $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
@@ -812,7 +815,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$class = $this->getObject() ? $this->getObject()->getClass() : null;' . "\n";
-            $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
+            $code .= "\t" . 'if ($class && $class->getAllowInherit()) {' . "\n";
             $code .= "\t\t" . '$inheritValues = $this->getObject()::getGetInheritedValues();'."\n";
             $code .= "\t\t" . '$this->getObject()::setGetInheritedValues(false);'."\n";
             $code .= "\t" . '}'."\n";
@@ -864,15 +867,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $typeDeclaration = '';
         }
 
-        $code = '';
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
             $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
             $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
         } else {
@@ -880,10 +883,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -906,17 +909,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $typeDeclaration = '';
         }
 
-        $code = '';
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ") {\n";
+        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
+                $code .= "\t" . '/** @var \\' . static::class . ' $encryptedFd */' . "\n";
                 $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
                 $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
@@ -974,7 +978,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '($language = null)' . $typeDeclaration . ' {' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
@@ -988,7 +992,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
-        $code .= "\treturn " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;

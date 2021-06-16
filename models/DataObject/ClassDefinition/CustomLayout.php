@@ -324,10 +324,7 @@ class CustomLayout extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
+        $cd = '/**' . "\n";
 
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
@@ -335,7 +332,7 @@ class CustomLayout extends Model\AbstractModel
 
             $cd .= '* '.$description."\n";
         }
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }
