@@ -136,12 +136,13 @@ class PageController extends DocumentControllerBase
      * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -201,13 +202,20 @@ class PageController extends DocumentControllerBase
 
             $this->handleTask($request->get('task'), $page);
 
+            $data = [
+                'versionDate' => $page->getModificationDate(),
+                'versionCount' => $page->getVersionCount(),
+            ];
+
+            if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
+                $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
+                $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+            }
+
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
-                'data' => [
-                    'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount(),
-                ],
+                'data' => $data,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
