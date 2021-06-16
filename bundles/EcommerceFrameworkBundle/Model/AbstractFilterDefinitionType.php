@@ -15,8 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-use Pimcore\Model\DataObject\Concrete;
-
 /**
  * Abstract base class for filter definition type field collections
  */

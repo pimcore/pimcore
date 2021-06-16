@@ -266,9 +266,6 @@
 - [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).
 - [Ecommerce][PricingManager] Added two new interfaces `ProductActionInterface` and `CartActionInterface`. All actions
   need to implement either of it - otherwise they will not be considered anymore in price calculation.
-- [Ecommerce] Add new method `getProductId` to the `CartItemInterface`
-- [Ecommerce] Add return type `?ConditionInterface` to the method `getCondition` of the `RuleInterface`
-- [Ecommerce] Add second argument `$seriesId` to the method `cleanUpReservations` of the `TokenManagerInterface`
 - [Web2Print]
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib

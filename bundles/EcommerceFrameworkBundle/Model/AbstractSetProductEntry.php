@@ -26,7 +26,7 @@ class AbstractSetProductEntry
     private $quantity;
 
     /**
-     * @var CheckoutableInterface|null
+     * @var CheckoutableInterface
      */
     private $product;
 
@@ -38,8 +38,6 @@ class AbstractSetProductEntry
 
     /**
      * @param CheckoutableInterface $product
-     *
-     * @return void
      */
     public function setProduct(CheckoutableInterface $product)
     {
@@ -47,7 +45,7 @@ class AbstractSetProductEntry
     }
 
     /**
-     * @return CheckoutableInterface|null
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {
@@ -79,10 +77,6 @@ class AbstractSetProductEntry
      */
     public function getId()
     {
-        if ($this->getProduct()) {
-            return $this->getProduct()->getId();
-        }
-
-        return null;
+        return $this->getProduct()->getId();
     }
 }

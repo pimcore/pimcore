@@ -103,7 +103,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return CheckoutableInterface|null
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {
@@ -156,11 +156,15 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getProductId()
     {
-        return $this->productId;
+        if (!is_null($this->productId)) {
+            return $this->productId;
+        }
+
+        return $this->getProduct()->getId();
     }
 
     /**

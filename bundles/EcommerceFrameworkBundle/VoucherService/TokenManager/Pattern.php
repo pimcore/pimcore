@@ -607,9 +607,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * {@inheritdoc}
      */
-    public function cleanUpReservations($duration = 0, $seriesId = null)
+    public function cleanUpReservations($duration = 0)
     {
-        // TODO: Also use the $seriesId param
         return Reservation::cleanUpReservations($duration, $this->seriesId);
     }
 

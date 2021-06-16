@@ -135,12 +135,13 @@ interface TokenManagerInterface
     public function getFinalTokenLength();
 
     /**
+     * Removes reservations
+     *
      * @param int $duration
-     * @param string|null $seriesId
      *
      * @return bool
      */
-    public function cleanUpReservations($duration = 0, $seriesId = null);
+    public function cleanUpReservations($duration = 0);
 
     /**
      * Prepares the view and returns the according template for rendering.

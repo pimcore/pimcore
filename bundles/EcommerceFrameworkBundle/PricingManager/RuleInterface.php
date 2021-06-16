@@ -81,7 +81,7 @@ interface RuleInterface
     /**
      * @return ConditionInterface|null
      */
-    public function getCondition(): ?ConditionInterface;
+    public function getCondition();
 
     /**
      * @param array $action
