@@ -102,7 +102,7 @@ class DocType extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var null|int
      */
     protected $staticGeneratorEnabled;
 
@@ -327,9 +327,9 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param int $staticGeneratorEnabled
+     * @param null|int $staticGeneratorEnabled
      */
-    public function setStaticGeneratorEnabled(int $staticGeneratorEnabled): void
+    public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
     }
