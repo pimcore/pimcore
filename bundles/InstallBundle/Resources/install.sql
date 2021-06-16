@@ -189,7 +189,6 @@ CREATE TABLE `documents_page` (
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorLifetime` int(11) DEFAULT NULL,
-  `staticLastGenerated` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
