@@ -390,7 +390,7 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('archive_treshold')
                             ->info('Archive threshold in days')
-                            ->defaultValue('')
+                            ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
                             ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
