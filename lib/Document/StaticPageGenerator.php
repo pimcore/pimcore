@@ -110,4 +110,21 @@ class StaticPageGenerator
 
         return $storage->fileExists($storagePath);
     }
+
+    /**
+     * @param Document\PageSnippet $document
+     *
+     * @return int|null
+     */
+    public function getLastModified($document)
+    {
+        $storagePath = $this->getStoragePath($document);
+        $storage = Storage::get('document_static');
+
+        if ($storage->fileExists($storagePath)) {
+            return $storage->lastModified($storagePath);
+        }
+
+        return null;
+    }
 }

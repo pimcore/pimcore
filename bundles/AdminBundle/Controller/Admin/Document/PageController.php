@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
+use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -73,10 +74,11 @@ class PageController extends DocumentControllerBase
      * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -113,6 +115,10 @@ class PageController extends DocumentControllerBase
 
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        }
+
+        if ($page->getStaticGeneratorEnabled()) {
+            $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
         }
 
         $data['url'] = $page->getUrl();

@@ -18,7 +18,6 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Document;
-use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -56,7 +55,6 @@ class StaticPagesGenerationTask implements TaskInterface
         $listing->setOrderKey('id');
         $listing->setOrder('DESC');
 
-        $storage = Storage::get('document_static');
         $total = $listing->getTotalCount();
         $perLoop = 10;
 
@@ -69,8 +67,7 @@ class StaticPagesGenerationTask implements TaskInterface
             foreach ($pages as $page) {
                 if ($page->getStaticGeneratorEnabled()) {
                     try {
-                        $storagePath = $this->generator->getStoragePath($page);
-                        $lastModified = $storage->lastModified($storagePath);
+                        $lastModified = $this->generator->getLastModified($page);
                         $generate = true;
                         if ($staticLifetime = $page->getStaticGeneratorLifetime()) {
                             $currentTime = \Carbon\Carbon::now();

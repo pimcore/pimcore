@@ -305,6 +305,18 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.draftVersionNotification.show();
             }
 
+            if (this.data.staticLastGenerated) {
+                var date = new Date(this.data.staticLastGenerated * 1000);
+                date = Ext.Date.format(date, "Y-m-d H:i");
+
+                buttons.push("-");
+                buttons.push({
+                    xtype: 'tbtext',
+                    text: t("static_last_generated") + ": " + date,
+                    scale: "medium"
+                });
+            }
+
             this.toolbar = new Ext.Toolbar({
                 id: "document_toolbar_" + this.id,
                 region: "north",

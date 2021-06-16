@@ -329,6 +329,7 @@
   "static_generator": "Static Page Generator",
   "static_generator_enable": "Enable Server side static rendering",
   "static_generator_lifetime": "Lifetime (in minutes) for static page (optional)",
+  "static_last_generated": "Static Last Generated",
   "key": "Key",
   "id": "ID",
   "name": "Name",
