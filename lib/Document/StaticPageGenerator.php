@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Document;
 
-
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Service;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -60,6 +60,7 @@ class StaticPageGenerator
      */
     public function generate($document)
     {
+        $document = Service::cloneMe($document);
         $storagePath = $this->getStoragePath($document);
 
         $storage = Storage::get('document_static');
@@ -71,7 +72,8 @@ class StaticPageGenerator
         $lock->acquire(true);
 
         try {
-            $renderedDocumentData = $this->documentRenderer->render($document, ['static_page_generator' => true]);
+            $renderedDocumentData = $this->documentRenderer->render($document, [
+                'static_page_generator' => true]);
             $storage->write($storagePath, $renderedDocumentData);
         } catch (\Exception $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
