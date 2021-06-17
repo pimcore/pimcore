@@ -539,7 +539,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . "() {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 

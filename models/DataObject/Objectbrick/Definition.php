@@ -311,7 +311,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= '* @param DataObject\Concrete $object' . "\n";
         $cd .= '*/' . "\n";
 
-        $cd .= 'public function __construct(DataObject\Concrete $object) {' . "\n";
+        $cd .= 'public function __construct(DataObject\Concrete $object)' . "\n";
+        $cd .= '{' . "\n";
         $cd .= "\t" . 'parent::__construct($object);' . "\n";
         $cd .= "\t" .'$this->markFieldDirty("_self");' . "\n";
         $cd .= '}' . "\n";
@@ -570,7 +571,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= '/**' . "\n";
                     $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "|null\n";
                     $cd .= '*/' . "\n";
-                    $cd .= 'public function get' . ucfirst($brickKey) . "() {\n";
+                    $cd .= 'public function get' . ucfirst($brickKey) . '()' . "\n";
+                    $cd .= '{' . "\n";
 
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject::doGetInheritedValues($this->getObject())) { ' . "\n";
@@ -600,7 +602,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
                     $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
                     $cd .= '*/' . "\n";
-                    $cd .= 'public function set' . ucfirst($brickKey) . ' (' . '$' . $brickKey . ") {\n";
+                    $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . ')' . "\n";
+                    $cd .= '{' . "\n";
                     $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
                     $cd .= "\t" . 'return $this' . ";\n";
                     $cd .= "}\n\n";

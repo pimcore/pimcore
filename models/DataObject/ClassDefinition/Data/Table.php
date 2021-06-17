@@ -683,7 +683,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -734,7 +735,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
@@ -782,7 +784,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -820,7 +823,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
