@@ -37,6 +37,7 @@ public function getLabel(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -46,9 +47,8 @@ public function getLabel(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
 */
 public function setLabel(?string $label) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
+
 	return $this;
 }
 
@@ -61,6 +61,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -70,9 +71,8 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
 */
 public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field) {
-	/** @var \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("field");
 	$this->field = $field;
+
 	return $this;
 }
 
@@ -85,6 +85,7 @@ public function getRangeFrom(): ?float {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -97,6 +98,7 @@ public function setRangeFrom(?float $rangeFrom) {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("rangeFrom");
 	$this->rangeFrom = $fd->preSetData($this, $rangeFrom);
+
 	return $this;
 }
 
@@ -109,6 +111,7 @@ public function getRangeTo(): ?float {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -121,6 +124,7 @@ public function setRangeTo(?float $rangeTo) {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("rangeTo");
 	$this->rangeTo = $fd->preSetData($this, $rangeTo);
+
 	return $this;
 }
 
@@ -133,6 +137,7 @@ public function getPreSelectFrom(): ?float {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -145,6 +150,7 @@ public function setPreSelectFrom(?float $preSelectFrom) {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectFrom");
 	$this->preSelectFrom = $fd->preSetData($this, $preSelectFrom);
+
 	return $this;
 }
 
@@ -157,6 +163,7 @@ public function getPreSelectTo(): ?float {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -169,6 +176,7 @@ public function setPreSelectTo(?float $preSelectTo) {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectTo");
 	$this->preSelectTo = $fd->preSetData($this, $preSelectTo);
+
 	return $this;
 }
 
@@ -181,6 +189,7 @@ public function getScriptPath(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -190,9 +199,8 @@ public function getScriptPath(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
 */
 public function setScriptPath(?string $scriptPath) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
+
 	return $this;
 }
 

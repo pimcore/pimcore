@@ -31,6 +31,7 @@ public function getLabel(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -40,9 +41,8 @@ public function getLabel(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
 public function setLabel(?string $label) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
+
 	return $this;
 }
 
@@ -55,6 +55,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -64,9 +65,8 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
 public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field) {
-	/** @var \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("field");
 	$this->field = $field;
+
 	return $this;
 }
 
@@ -79,6 +79,7 @@ public function getScriptPath(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -88,9 +89,8 @@ public function getScriptPath(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
 public function setScriptPath(?string $scriptPath) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
+
 	return $this;
 }
 
@@ -106,6 +106,7 @@ public function getAvailableRelations(): array {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -126,6 +127,7 @@ public function setAvailableRelations(?array $availableRelations) {
 		$this->markFieldDirty("availableRelations", true);
 	}
 	$this->availableRelations = $fd->preSetData($this, $availableRelations);
+
 	return $this;
 }
 

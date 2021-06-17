@@ -675,8 +675,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ") {\n";
-        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
-        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+
+        if (
+            (
+                $this->supportsDirtyDetection() &&
+                $this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface
+            ) || method_exists($this, 'preSetData')
+        ) {
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+        }
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -713,9 +721,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
         } else {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
 
         $code .= "\t" . 'return $this;' . "\n";
@@ -799,8 +807,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
-        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
-        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+
+        if (
+            (
+                $this->supportsDirtyDetection() &&
+                $this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface
+            ) || method_exists($this, 'preSetData')
+        ) {
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+        }
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -839,9 +855,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
         } else {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
 
         $code .= "\t" . 'return $this;' . "\n";
@@ -884,7 +900,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain();' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n\n";
 
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
@@ -915,8 +931,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ") {\n";
-        $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
-        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+        if (
+            (
+                $this->supportsDirtyDetection() &&
+                $this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface
+            ) || method_exists($this, 'preSetData')
+        ) {
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+        }
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -946,9 +969,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
         } else {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
 
         $code .= "\t" . 'return $this;' . "\n";
@@ -988,7 +1011,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain();' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n\n";
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
@@ -1072,7 +1095,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '$isEqual = false;' . "\n";
         }
 
-        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language, !$isEqual)' . ";\n";
+        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language, !$isEqual)' . ";\n\n";
 
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";

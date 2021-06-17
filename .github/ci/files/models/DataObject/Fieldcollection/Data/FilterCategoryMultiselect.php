@@ -35,6 +35,7 @@ public function getLabel(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -44,9 +45,8 @@ public function getLabel(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
 public function setLabel(?string $label) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
+
 	return $this;
 }
 
@@ -62,6 +62,7 @@ public function getPreSelect(): array {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -82,6 +83,7 @@ public function setPreSelect(?array $preSelect) {
 		$this->markFieldDirty("preSelect", true);
 	}
 	$this->preSelect = $fd->preSetData($this, $preSelect);
+
 	return $this;
 }
 
@@ -94,6 +96,7 @@ public function getUseAndCondition(): ?bool {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -103,9 +106,8 @@ public function getUseAndCondition(): ?bool {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
 public function setUseAndCondition(?bool $useAndCondition) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("useAndCondition");
 	$this->useAndCondition = $useAndCondition;
+
 	return $this;
 }
 
@@ -118,6 +120,7 @@ public function getIncludeParentCategories(): ?bool {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -127,9 +130,8 @@ public function getIncludeParentCategories(): ?bool {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
 public function setIncludeParentCategories(?bool $includeParentCategories) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("includeParentCategories");
 	$this->includeParentCategories = $includeParentCategories;
+
 	return $this;
 }
 
@@ -142,6 +144,7 @@ public function getScriptPath(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -151,9 +154,8 @@ public function getScriptPath(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
 public function setScriptPath(?string $scriptPath) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
+
 	return $this;
 }
 
@@ -169,6 +171,7 @@ public function getAvailableCategories(): array {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -189,6 +192,7 @@ public function setAvailableCategories(?array $availableCategories) {
 		$this->markFieldDirty("availableCategories", true);
 	}
 	$this->availableCategories = $fd->preSetData($this, $availableCategories);
+
 	return $this;
 }
 

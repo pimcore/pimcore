@@ -258,7 +258,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $code .= "\t" . '$object = $this;'  . "\n";
         }
 
-        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n\n";
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
@@ -366,7 +366,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
         $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null, null, null, $definition);' . "\n";
 
-        $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
+        $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n\n";
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 

@@ -35,6 +35,7 @@ public function getLabel(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -44,9 +45,8 @@ public function getLabel(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
 public function setLabel(?string $label) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
+
 	return $this;
 }
 
@@ -62,6 +62,7 @@ public function getPreSelect(): ?\Pimcore\Model\Element\AbstractElement {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -82,6 +83,7 @@ public function setPreSelect(?\Pimcore\Model\Element\AbstractElement $preSelect)
 		$this->markFieldDirty("preSelect", true);
 	}
 	$this->preSelect = $fd->preSetData($this, $preSelect);
+
 	return $this;
 }
 
@@ -97,6 +99,7 @@ public function getRootCategory(): ?\Pimcore\Model\Element\AbstractElement {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -117,6 +120,7 @@ public function setRootCategory(?\Pimcore\Model\Element\AbstractElement $rootCat
 		$this->markFieldDirty("rootCategory", true);
 	}
 	$this->rootCategory = $fd->preSetData($this, $rootCategory);
+
 	return $this;
 }
 
@@ -129,6 +133,7 @@ public function getIncludeParentCategories(): ?bool {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -138,9 +143,8 @@ public function getIncludeParentCategories(): ?bool {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
 public function setIncludeParentCategories(?bool $includeParentCategories) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("includeParentCategories");
 	$this->includeParentCategories = $includeParentCategories;
+
 	return $this;
 }
 
@@ -153,6 +157,7 @@ public function getScriptPath(): ?string {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -162,9 +167,8 @@ public function getScriptPath(): ?string {
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
 public function setScriptPath(?string $scriptPath) {
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Input $fd */
-	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
+
 	return $this;
 }
 
@@ -180,6 +184,7 @@ public function getAvailableCategories(): array {
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
 	}
+
 	return $data;
 }
 
@@ -200,6 +205,7 @@ public function setAvailableCategories(?array $availableCategories) {
 		$this->markFieldDirty("availableCategories", true);
 	}
 	$this->availableCategories = $fd->preSetData($this, $availableCategories);
+
 	return $this;
 }
 
