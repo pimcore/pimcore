@@ -482,6 +482,14 @@ final class SearchController extends AdminController
 
                 if ($element instanceof Asset) {
                     $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
+                 } elseif ($element instanceof DataObject\Concrete) {
+                    // Show custom on base class (not variants) if it exists
+                    if ($element->getType() === DataObject::OBJECT_TYPE_OBJECT && $element->getClass()->getIcon()) {
+                        $data['icon'] = $element->getClass()->getIcon();
+                        $data['iconCls'] = '';
+                    } else {
+                        $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
+                    }
                 } else {
                     $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
                 }
