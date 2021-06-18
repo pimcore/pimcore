@@ -875,6 +875,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
             $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+            DataObject\Service::enrichLayoutDefinition($definition);
 
             $item = [
                 'keyId' => $config->getKeyId(),
