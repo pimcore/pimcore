@@ -13,8 +13,8 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
-class FilterMultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType {
-
+class FilterMultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
+{
 protected $type = "FilterMultiSelectFromMultiSelect";
 protected $label;
 protected $field;

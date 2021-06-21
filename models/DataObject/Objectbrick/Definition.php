@@ -293,8 +293,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $implementsParts = [];
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
-        $cd .= "\n\n";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 

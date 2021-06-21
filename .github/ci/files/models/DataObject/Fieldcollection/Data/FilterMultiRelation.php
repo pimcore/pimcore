@@ -14,8 +14,8 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
-class FilterMultiRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType {
-
+class FilterMultiRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
+{
 protected $type = "FilterMultiRelation";
 protected $label;
 protected $field;

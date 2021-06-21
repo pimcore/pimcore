@@ -530,8 +530,8 @@ final class ClassDefinition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
-        $cd .= "\n\n";
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . "\n";
+        $cd .= '{' . "\n";
 
         $useParts = [];
 
@@ -609,8 +609,8 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
         $cd .= "\n\n";
-        $cd .= 'class Listing extends '.$extendListingClass.' {';
-        $cd .= "\n\n";
+        $cd .= 'class Listing extends '.$extendListingClass . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 

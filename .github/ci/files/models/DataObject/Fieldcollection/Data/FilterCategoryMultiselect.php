@@ -15,8 +15,8 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
-class FilterCategoryMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType {
-
+class FilterCategoryMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
+{
 protected $type = "FilterCategoryMultiselect";
 protected $label;
 protected $preSelect;
