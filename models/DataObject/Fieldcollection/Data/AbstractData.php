@@ -167,6 +167,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     protected function getLazyLoadedFieldNames(): array
     {
+        $fieldCollectionDefinition = $this->getObject()->getClass()->getFieldDefinition($this->getFieldname());
+        if($fieldCollectionDefinition instanceof LazyLoadingSupportInterface && !$fieldCollectionDefinition->getLazyLoading()) {
+            return [];
+        }
+
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {

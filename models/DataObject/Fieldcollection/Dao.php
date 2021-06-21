@@ -90,10 +90,8 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
-                        if ($fd instanceof LazyLoadingSupportInterface) {
-                            if ($fd->getLazyLoading()) {
-                                $doLoad = false;
-                            }
+                        if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading() && $fieldDef->getLazyLoading()) {
+                            $doLoad = false;
                         }
 
                         if ($doLoad) {
