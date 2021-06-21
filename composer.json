@@ -106,7 +106,8 @@
     "symfony/symfony": "3.4.43 || 4.4.11",
     "webmozarts/console-parallelization": "1.2.2",
     "symfony/monolog-bundle": "3.6.0",
-    "laminas/laminas-code": ">=4.4"
+    "laminas/laminas-code": ">=4.4",
+    "google/apiclient-services": ">=0.200.0"
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
