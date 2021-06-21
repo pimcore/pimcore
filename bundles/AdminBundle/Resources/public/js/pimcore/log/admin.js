@@ -236,7 +236,8 @@ pimcore.log.admin = Class.create({
                     // loadMask: false,
                     getRowClass: function(record) {
                         return 'log-type-' + record.get('priority');
-                    }
+                    },
+                    enableTextSelection: true
                 },
 
                 listeners: {
