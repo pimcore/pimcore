@@ -17,37 +17,12 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 3
+			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Call to function is_null\\(\\) with int will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 3
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\Currency will always evaluate to false\\.$#"
-			count: 2
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
 
 		-
@@ -61,44 +36,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php
 
 		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/CheckoutManagerFactory.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 3
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CommitOrderProcessor.php
-
-		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/PricingController.php
 
 		-
 			message: "#^Instanceof between Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ClassDefinition\\\\IndexFieldSelection\\|null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection will always evaluate to false\\.$#"
@@ -141,16 +81,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
@@ -159,21 +89,6 @@ parameters:
 			message: "#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#"
-			count: 4
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -206,11 +121,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
@@ -219,11 +129,6 @@ parameters:
 			message: "#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Filter/OrderDateTime.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -251,11 +156,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Tools/SessionConfigurator.php
@@ -274,16 +174,6 @@ parameters:
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 2
 			path: lib/Config/Config.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with Pimcore\\\\Model\\\\Element\\\\ElementInterface will always evaluate to false\\.$#"
-			count: 1
-			path: lib/DataObject/GridColumnConfig/Operator/Iterator.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: lib/DataObject/GridColumnConfig/Operator/Iterator.php
 
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
@@ -319,21 +209,6 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Navigation/Renderer/AbstractRenderer.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: lib/Security/Encoder/AbstractUserAwarePasswordEncoder.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: lib/Security/Encoder/AbstractUserAwarePasswordEncoder.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: lib/Security/Encoder/AbstractUserAwarePasswordEncoder.php
 
 		-
 			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"

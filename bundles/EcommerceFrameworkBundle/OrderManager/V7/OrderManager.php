@@ -290,7 +290,7 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param CartInterface $cart
      *
-     * @return null|AbstractOrder
+     * @return AbstractOrder|null
      *
      * @throws \Exception
      */
@@ -992,7 +992,7 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param StatusInterface $paymentStatus
      *
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrderByPaymentStatus(StatusInterface $paymentStatus)
     {

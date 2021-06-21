@@ -168,7 +168,10 @@ class Processor
             'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
+
+        Model\Version::disable();
         $asset->save();
+        Model\Version::enable();
 
         $instance->convert();
 
@@ -285,7 +288,10 @@ class Processor
                 'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
+
+            Model\Version::disable();
             $asset->save();
+            Model\Version::enable();
         }
 
         if ($instance->getDeleteSourceAfterFinished()) {
