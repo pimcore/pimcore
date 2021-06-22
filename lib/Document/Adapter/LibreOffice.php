@@ -129,9 +129,9 @@ class LibreOffice extends Ghostscript
 
         try {
             // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
-            $pdfPath = parent::getPdf($path);
-
-            return $pdfPath;
+            if (parent::isFileTypeSupported($path)) {
+                return parent::getPdf($path);
+            }
         } catch (\Exception $e) {
             // nothing to do, delegate to libreoffice
         }
@@ -200,10 +200,11 @@ class LibreOffice extends Ghostscript
     {
         $path = $path ? $this->preparePath($path) : $this->path;
 
-        if ($page || parent::isFileTypeSupported($path)) {
+        if ($page) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $this->getPdf($path));
-        } elseif (File::getFileExtension($path)) {
+        }
+        if (File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_TEMPORARY_DIRECTORY, $path];
             Console::addLowProcessPriority($cmd);
@@ -221,12 +222,12 @@ class LibreOffice extends Ghostscript
                 unlink($tmpName);
 
                 return $text;
-            } else {
-                $message = "Couldn't convert document to Text: " . $path . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
-                Logger::error($message);
-
-                return parent::getText(null, $this->getPdf($path));
             }
+
+            $message = "Couldn't convert document to Text: " . $path . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
+            Logger::notice($message);
+
+            return parent::getText(null, $this->getPdf($path));
         }
 
         return ''; // default empty string
