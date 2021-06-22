@@ -974,18 +974,22 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('form')[1];
+                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'];
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
                         $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
-                        $name = $joinConfig['name'];
+
+                        $joinAlias = array_keys($joinConfig['name']);
+                        $joinAlias = reset($joinAlias);
+                        $joinTable = $joinConfig['name'][$joinAlias];
+
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
                         $select->addSelect($columns);
-                        $select->$method($fromAlias, $name, $name, $condition);
+                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
 
