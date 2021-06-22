@@ -310,7 +310,7 @@ pimcore.settings.user.user.settings = Class.create({
             store: rolesStore,
             displayField: "name",
             valueField: "id",
-            value: this.currentUser.roles.join(","),
+            value: this.currentUser.roles,
             hidden: this.currentUser.admin
         });
 
