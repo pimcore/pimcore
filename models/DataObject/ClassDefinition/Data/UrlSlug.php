@@ -181,25 +181,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Found conflict with document path "' . $slug . '"');
+                        throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
-                        throw new Model\Element\ValidationException('slug must be at least 2 characters long and start with slash');
+                        throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
-                    $slug = substr($slug, 1);
-                    $slug = preg_replace('/\/$/', '', $slug);
 
-                    $parts = explode('/', $slug);
-                    for ($i = 0; $i < count($parts); $i++) {
-                        $part = $parts[$i];
-                        if (strlen($part) === 0) {
-                            throw new Model\Element\ValidationException('Slug ' . $slug .' not valid');
-                        }
-                        $sanitizedKey = Model\Element\Service::getValidKey($part, 'document');
-                        if ($sanitizedKey != $part) {
-                            throw new Model\Element\ValidationException('Slug part ' . $part .' not valid');
-                        }
+                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
+                        throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
                     }
                 }
             }
