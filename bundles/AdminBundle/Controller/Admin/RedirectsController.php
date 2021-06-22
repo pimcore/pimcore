@@ -157,7 +157,17 @@ class RedirectsController extends AdminController
                 if ($link = $redirect->getTarget()) {
                     if (is_numeric($link)) {
                         if ($doc = Document::getById(intval($link))) {
-                            $redirect->setTarget($doc->getRealFullPath());
+                            $target = $doc->getRealFullPath();
+                            $targetSiteId = $redirect->getTargetSite();
+                            if ($targetSite = Site::getById($targetSiteId)) {
+                                // if the target site is specified and and the target-path is starting at root (not absolute to site)
+                                // the root-path will be replaced
+                                $rootDocument = $targetSite->getRootDocument();
+                                $rootDocumentPath = $rootDocument->getFullPath();
+                                $target = $doc->getFullPath();
+                                $target = preg_replace('@^' . $rootDocumentPath . '/@', '/', $target);
+                            }
+                            $redirect->setTarget($target);
                         }
                     }
                 }
