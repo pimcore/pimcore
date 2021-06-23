@@ -216,8 +216,15 @@ pimcore.log.admin = Class.create({
                 },{
                     text: t("log_relatedobject"),
                     dataIndex: 'relatedobject',
-                    flex: 20,
-                    sortable: false
+                    flex: 35,
+                    sortable: false,
+                    renderer: function (value, p, record) {
+                        if (value) {
+                            return Ext.String.format('<a href="#" onclick="pimcore.helpers.openElement({0}, \'{1}\')">{2}</a>', value, record.get('relatedobjecttype'), record.get('relatedobjecttype')+' '+value);
+                        }
+
+                        return '';
+                    },
                 },{
                     text: t("log_component"),
                     dataIndex: 'component',
@@ -236,7 +243,8 @@ pimcore.log.admin = Class.create({
                     // loadMask: false,
                     getRowClass: function(record) {
                         return 'log-type-' + record.get('priority');
-                    }
+                    },
+                    enableTextSelection: true
                 },
 
                 listeners: {
