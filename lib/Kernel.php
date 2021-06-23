@@ -235,11 +235,11 @@ abstract class Kernel extends SymfonyKernel
         register_shutdown_function(function () {
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
-            if (null !== $container = $this->getContainer()) {
-                $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
+            try {
+                $this->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
+            } finally {
+                \Pimcore::shutdown();
             }
-
-            \Pimcore::shutdown();
         });
     }
 
