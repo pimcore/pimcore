@@ -252,7 +252,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
                     let editable = Ext.clone(editableDef);
                     editable['id'] = editable['id'].replace(new RegExp('pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_'), 'pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
                     editable['id'] = editable['id'].replaceAll('_1000000_', '_' + nextKey + '_');
-                    editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName()), this.getName());
+                    editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName() + ':'), this.getName() + ':');
                     editable['name'] = editable['name'].replaceAll(':1000000.', ':' + nextKey + '.');
                     editableManager.addByDefinition(editable);
                 });
