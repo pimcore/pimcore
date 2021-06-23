@@ -247,10 +247,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getClientConfig($property = null)
     {
-        return $property
-            ? $this->clientConfig[$property]
-            : $this->clientConfig
-            ;
+        if ($property) {
+            return $this->clientConfig[$property] ?? null;
+        }
+        return $this->clientConfig;
     }
 
     /**
