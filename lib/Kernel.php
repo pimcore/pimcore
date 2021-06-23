@@ -43,6 +43,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -236,10 +237,14 @@ abstract class Kernel extends SymfonyKernel
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
             try {
-                $this->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
-            } finally {
-                \Pimcore::shutdown();
+                $container = $this->getContainer();
+            } catch (\LogicException) {
+                // Container is cleared. Allow tests to finish.
             }
+            if (isset($container) && $container instanceof ContainerInterface) {
+                $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
+            }
+            \Pimcore::shutdown();
         });
     }
 
