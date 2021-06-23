@@ -426,7 +426,7 @@
   "default_unit": "Default Unit",
   "min_max_times": "Min \/ Max Times",
   "reset": "Reset",
-  "password_hint": "Password must contain at least 10 characters, one lowercase letter, one uppercase letter, one numeric digit, and one special character!",
+  "password_hint": "Password must contain at least 10 characters!",
   "editor_settings": "Editor Settings",
   "language_order": "Language Order",
   "preview_width": "Preview Width",
