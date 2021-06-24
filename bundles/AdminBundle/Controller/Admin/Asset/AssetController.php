@@ -32,6 +32,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Metadata;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -183,6 +184,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $data['imageInfo'] = $imageInfo;
         }
 
+        $predefinedMetaData = Metadata\Predefined\Listing::getByTargetType('asset', [$asset->getType()]);
+        $predefinedMetaDataGroups = [];
+        /** @var Metadata\Predefined $item */
+        foreach ($predefinedMetaData as $item) {
+            if ($item->getGroup()) {
+                $predefinedMetaDataGroups[$item->getGroup()] = true;
+            }
+        }
+        $data['predefinedMetaDataGroups'] = array_keys($predefinedMetaDataGroups);
         $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
         $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();

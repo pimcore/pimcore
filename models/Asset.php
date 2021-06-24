@@ -455,7 +455,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
-            'text' => ['/text/', '/xml$/'],
+            'text' => ['/text/', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
@@ -593,19 +593,19 @@ class Asset extends Element\AbstractElement
             $this->clearDependentCache($additionalTags);
             $this->setDataChanged(false);
 
+            $postEvent = new AssetEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new AssetEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, AssetEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new AssetEvent($this);
+            $failureEvent = new AssetEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_UPDATE_FAILURE);

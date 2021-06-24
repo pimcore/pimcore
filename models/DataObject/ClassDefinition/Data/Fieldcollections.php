@@ -21,8 +21,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
+    use DataObject\Traits\ClassSavedTrait;
+
     /**
      * Static type of this element
      *
@@ -692,11 +694,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if (method_exists($fd, 'classSaved')) {
-                            if (!$fd instanceof Localizedfields) {
-                                // defer creation
-                                $fd->classSaved($class);
-                            }
+                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+                            // defer creation
+                            $fd->classSaved($class);
                         }
                     }
 
