@@ -545,6 +545,18 @@ class Mail extends Email
 
         \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
+        if ($this->loggingIsEnabled()) {
+            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
+                $recipients = $this->getDebugMailRecipients($recipients);
+            }
+
+            try {
+                $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
+            } catch (\Exception $e) {
+                Logger::emerg("Couldn't log Email");
+            }
+        }
+
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
@@ -557,18 +569,6 @@ class Mail extends Email
                 } else {
                     throw new \Exception($e->getMessage());
                 }
-            }
-        }
-
-        if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
-                $recipients = $this->getDebugMailRecipients($recipients);
-            }
-
-            try {
-                $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
-            } catch (\Exception $e) {
-                Logger::emerg("Couldn't log Email");
             }
         }
 
