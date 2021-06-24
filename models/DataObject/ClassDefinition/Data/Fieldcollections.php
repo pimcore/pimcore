@@ -534,24 +534,25 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getGetterCode($class)
     {
         // getter, no inheritance here, that's the only difference
-
         $key = $this->getName();
-        $code = '';
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($this);' . "\n\n";
         } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
+            $code .= "\t" . '$data = $this->' . $key . ";\n\n";
         }
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
