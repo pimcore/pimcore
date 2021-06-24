@@ -55,13 +55,18 @@ class StaticPageGenerator
 
     /**
      * @param Document\PageSnippet $document
+     * @param array $params
      *
      * @return bool
      */
-    public function generate($document)
+    public function generate($document, $params = [])
     {
         $clonedDoc = Service::cloneMe($document);
-        $clonedDoc->setId($document->getId());
+        //we need ID to generate page URL in case of CLI
+        if ($params['is_cli']) {
+            $clonedDoc->setId($document->getId());
+        }
+
         $storagePath = $this->getStoragePath($clonedDoc);
 
         $storage = Storage::get('document_static');

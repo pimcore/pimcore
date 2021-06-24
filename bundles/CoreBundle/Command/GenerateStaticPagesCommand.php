@@ -100,7 +100,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
                     if ($page->getStaticGeneratorEnabled()) {
                         $progressBar->setMessage(sprintf('Generate for Document "%s"', $page->getFullPath()));
 
-                        $this->staticPageGenerator->generate($page);
+                        $this->staticPageGenerator->generate($page, ['is_cli' => true]);
                     }
                     else {
                         $progressBar->setMessage(sprintf('Skipping for Document "%s" cause Static Generation is disabled', $page->getFullPath()));
