@@ -60,19 +60,21 @@ class StaticPageGenerator
      */
     public function generate($document)
     {
-        $document = Service::cloneMe($document);
-        $storagePath = $this->getStoragePath($document);
+        $clonedDoc = Service::cloneMe($document);
+        $clonedDoc->setId($document->getId());
+        $storagePath = $this->getStoragePath($clonedDoc);
 
         $storage = Storage::get('document_static');
         $startTime = microtime(true);
 
-        $lockKey = 'document_static_' . $document->getId() . '_' . md5($storagePath);
+        $lockKey = 'document_static_' . $clonedDoc->getId() . '_' . md5($storagePath);
+
         $lock = $this->lockFactory->createLock($lockKey);
 
         $lock->acquire(true);
 
         try {
-            $renderedDocumentData = $this->documentRenderer->render($document, [
+            $renderedDocumentData = $this->documentRenderer->render($clonedDoc, [
                 'static_page_generator' => true]);
             $storage->write($storagePath, $renderedDocumentData);
         } catch (\Exception $e) {
