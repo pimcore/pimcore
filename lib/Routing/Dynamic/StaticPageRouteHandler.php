@@ -56,7 +56,7 @@ final class StaticPageRouteHandler implements DynamicRouteHandlerInterface
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($this->hasStaticPage($document)) {
+            if ($document && $this->hasStaticPage($document)) {
                 return $this->buildStaticPageRoute($document);
             }
         }
