@@ -36,6 +36,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
+
+		-
 			message: "#^Instanceof between Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ClassDefinition\\\\IndexFieldSelection\\|null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelection.php
@@ -164,11 +169,6 @@ parameters:
 			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
 			count: 2
 			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\OnlineShopVoucherSeries\\:\\:getOnlyTokenPerCart\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
 
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
