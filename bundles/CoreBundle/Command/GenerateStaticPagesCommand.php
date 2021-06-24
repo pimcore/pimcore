@@ -45,6 +45,12 @@ class GenerateStaticPagesCommand extends AbstractCommand
         $this
             ->setName('pimcore:generate-static-pages')
             ->setDescription('Regenerate static Pages')
+            ->addOption(
+                'document-path',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'Document Path to create the static sites from'
+            )
         ;
     }
 
@@ -53,10 +59,28 @@ class GenerateStaticPagesCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $path = $input->getOption('document-path');
+
         $listing = new Document\Listing();
         $listing->setCondition("type = 'page'");
         $listing->setOrderKey('id');
         $listing->setOrder('DESC');
+
+        if ($path) {
+            $parent = Document::getByPath($path);
+
+            if (!$parent) {
+                throw new \InvalidArgumentException(sprintf('Document with path %s not found', $path));
+            }
+
+            $listing->setCondition(
+                "type = 'page' AND (id = :id OR path LIKE :path)",
+                [
+                    'id' => $parent->getId(),
+                    'path' => $parent->getFullPath() . '/%',
+                ]
+            );
+        }
 
         if ($listing->getTotalCount() > 0) {
             $progressBar = new ProgressBar($output, $listing->getTotalCount());
