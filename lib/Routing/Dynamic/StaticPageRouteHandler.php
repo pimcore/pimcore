@@ -45,7 +45,7 @@ final class StaticPageRouteHandler implements DynamicRouteHandlerInterface
     public function __construct(StaticPageGenerator $staticPageGenerator, Config $config)
     {
         $this->staticPageGenerator = $staticPageGenerator;
-        $this->config = $config['documents'];
+        $this->config = $config;
     }
 
     /**
@@ -70,41 +70,42 @@ final class StaticPageRouteHandler implements DynamicRouteHandlerInterface
             return;
         }
 
-        if (!$this->config['static_page_router']['enabled']) {
+        $config = $this->config['documents'];
+
+        if (!$config['static_page_router']['enabled']) {
             return;
         }
 
-        $routePatterns = $this->config['static_page_router']['route_patterns'];
+        $routePatterns = $config['static_page_router']['route_patterns'];
         if (!empty($routePatterns) && !@preg_match($routePatterns, $context->getPath())) {
             return;
         }
 
         $document = Document::getByPath($context->getPath());
         if ($document && $document instanceof Document\Page && $this->hasStaticPage($document)) {
-            if ($route = $this->buildStaticPageRoute($document, $context)) {
-                $collection->add($route->getRouteKey(), $route);
-            }
+            $route = $this->buildStaticPageRoute($document, $context);
+            $collection->add($route->getRouteKey(), $route);
         }
     }
 
     /**
-     * @param $document
+     * @param Document $document
      *
      * @return bool
      */
-    private function hasStaticPage($document) {
+    private function hasStaticPage(Document $document) {
         return $this->staticPageGenerator->pageExists($document);
     }
 
     /**
      * Build a route for a document static page.
      *
-     * @param Document $document
+     * @param Document\Page $document
      * @param DynamicRequestContext|null $context
      *
-     * @return Route|null
+     * @return DocumentRoute
      */
-    private function buildStaticPageRoute(Document $document, DynamicRequestContext $context = null)
+    private function buildStaticPageRoute(Document\Page $document, DynamicRequestContext $context = null)
     {
         $route = new DocumentRoute($document->getFullPath());
         $route->setDocument($document);
