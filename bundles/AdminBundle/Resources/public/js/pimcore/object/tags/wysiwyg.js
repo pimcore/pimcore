@@ -194,6 +194,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig = mergeObject(eConfig, elementCustomConfig);
         }
 
+        if(!isNaN(this.fieldConfig.maxCharacters) && this.fieldConfig.maxCharacters > 0) {
+            var maxChars = this.fieldConfig.maxCharacters;
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: maxChars
+            }
+        } else {
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: -1
+            }
+        }
+
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
