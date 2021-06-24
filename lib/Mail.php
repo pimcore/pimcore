@@ -15,6 +15,7 @@
 
 namespace Pimcore;
 
+use Exception;
 use League\HTMLToMarkdown\HtmlConverter;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
@@ -545,18 +546,7 @@ class Mail extends Email
 
         \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
-        if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
-                $recipients = $this->getDebugMailRecipients($recipients);
-            }
-
-            try {
-                $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
-            } catch (\Exception $e) {
-                Logger::emerg("Couldn't log Email");
-            }
-        }
-
+        $sendingFailedException = null;
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
@@ -565,11 +555,27 @@ class Mail extends Email
                 $mailer->send($this);
             } catch (TransportExceptionInterface $e) {
                 if (isset($failedRecipients[0])) {
-                    throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
+                    $sendingFailedException = new \Exception($failedRecipients[0].' - '.$e->getMessage(), 0, $e);
                 } else {
-                    throw new \Exception($e->getMessage());
+                    $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
                 }
             }
+        }
+
+        if ($this->loggingIsEnabled()) {
+            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
+                $recipients = $this->getDebugMailRecipients($recipients);
+            }
+
+            try {
+                $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
+            } catch (\Exception $e) {
+                Logger::emerg("Couldn't log Email");
+            }
+        }
+
+        if($sendingFailedException instanceof \Exception) {
+            throw $sendingFailedException;
         }
 
         return $this;

@@ -139,6 +139,13 @@ class Log extends Model\AbstractModel
     protected $subject;
 
     /**
+     * Error which happened when mail got sent - empty if no error occured
+     *
+     * @var ?string
+     */
+    protected $error;
+
+    /**
      * @param int $id
      *
      * @return $this
@@ -572,5 +579,21 @@ class Log extends Model\AbstractModel
     public function getBodyText()
     {
         return $this->bodyText;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    /**
+     * @param string|null $error
+     */
+    public function setError(?string $error): void
+    {
+        $this->error = $error;
     }
 }
