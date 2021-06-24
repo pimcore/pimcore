@@ -80,12 +80,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @throws VoucherServiceException
-     *
-     * @return bool|int
+     * {@inheritdoc}
      */
     public function checkToken($code, CartInterface $cart)
     {

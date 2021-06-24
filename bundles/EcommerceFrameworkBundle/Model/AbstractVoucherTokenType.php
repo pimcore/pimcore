@@ -20,4 +20,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
+    /**
+     * @return bool
+     */
+    public function getOnlyTokenPerCart()
+    {
+        return false;
+    }
 }

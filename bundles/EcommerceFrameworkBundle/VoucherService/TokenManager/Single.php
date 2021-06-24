@@ -279,10 +279,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkToken($code, CartInterface $cart)
     {
