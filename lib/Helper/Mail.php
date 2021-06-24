@@ -156,7 +156,7 @@ CSS;
     /**
      * @param MailClient $mail
      * @param array $recipients
-     * @param ?string $errors
+     * @param ?string $error
      *
      * @return Model\Tool\Email\Log
      */
