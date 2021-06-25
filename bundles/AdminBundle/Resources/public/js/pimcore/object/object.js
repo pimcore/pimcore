@@ -573,7 +573,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             //workflow management
             pimcore.elementservice.integrateWorkflowManagement('object', this.id, this, buttons);
 
-            if(this.data.draft){
+            if(this.data.draft && this.isAllowed("save")){
                 this.draftVersionNotification.show();
             }
 
