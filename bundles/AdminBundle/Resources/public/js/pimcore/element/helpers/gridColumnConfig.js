@@ -263,6 +263,7 @@ pimcore.element.helpers.gridColumnConfig = {
         var menu = grid.headerCt.getMenu();
         menu.add(columnConfig);
         //
+
         var batchAllMenu = new Ext.menu.Item({
             text: t("batch_change"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
@@ -330,10 +331,27 @@ pimcore.element.helpers.gridColumnConfig = {
         });
         menu.add(batchRemoveSelectedMenu);
 
+        var filterByRelationMenu = new Ext.menu.Item({
+            text: t("Filter by relation"),
+            iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
+            handler: function (grid) {
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.filterPrepare(column);
+            }.bind(this, grid)
+        });
+        menu.add(filterByRelationMenu);
+
         //
         menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
             var menu = grid.headerCt.getMenu();
             var columnDataIndex = menu.activeHeader.dataIndex;
+
+            if (menu.activeHeader.config && typeof menu.activeHeader.config.getRelationFilter === "function") {
+                filterByRelationMenu.hide();
+            } else {
+                filterByRelationMenu.show();
+            }
 
             // no batch for system properties
             if (Ext.Array.contains(this.systemColumns, columnDataIndex) || Ext.Array.contains(this.noBatchColumns, columnDataIndex)) {
@@ -360,6 +378,95 @@ pimcore.element.helpers.gridColumnConfig = {
                 batchRemoveSelectedMenu.hide();
             }
         }.bind(this, batchAllMenu, batchSelectedMenu, grid));
+    },
+
+    filterPrepare: function (column) {
+        var dataIndexName = column.dataIndex
+        var gridColumns = this.grid.getColumns();
+        var columnIndex = -1;
+        for (let i = 0; i < gridColumns.length; i++) {
+            let dataIndex = gridColumns[i].dataIndex;
+            if (dataIndex == dataIndexName) {
+                columnIndex = i;
+                break;
+            }
+        }
+        if (columnIndex < 0) {
+            return;
+        }
+
+        if (this.systemColumns.indexOf(gridColumns[columnIndex].dataIndex) > -1) {
+            return;
+        }
+
+        var fieldInfo = this.grid.getColumns()[columnIndex].config;
+
+        if((this.objecttype === "object") || (this.objecttype === "variant")) {
+            if (!fieldInfo.layout || !fieldInfo.layout.layout) {
+                return;
+            }
+
+            if (fieldInfo.layout.layout.noteditable) {
+                Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
+                return;
+            }
+
+            var tagType = fieldInfo.layout.type;
+            var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
+            editor.setObject(this.object);
+        }
+
+        editor.updateContext({
+            containerType: "filterByRelationWindow"
+        });
+
+        var formPanel = Ext.create('Ext.form.Panel', {
+            xtype: "form",
+            border: false,
+            items: [editor.getLayoutEdit()],
+            bodyStyle: "padding: 10px;",
+            buttons: [
+                {
+                    text: t("Clear active relation filter"),
+                    iconCls: "pimcore_icon_filter_condition pimcore_icon_overlay_delete",
+                    handler: function () {
+                        this.filterByRelationWindow.close();
+                        this.grid.store.filters.removeByKey("x-gridfilter-"+fieldInfo.dataIndex);
+                    }.bind(this)
+                },
+                {
+                    text: t("Apply filter"),
+                    iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
+                    handler: function () {
+                        if (formPanel.isValid() && typeof fieldInfo.getRelationFilterCondition === "function") {
+                            this.grid.filters.getStore().addFilter(
+                                new Ext.util.Filter({
+                                    operator: "like",
+                                    type: "string",
+                                    id: "x-gridfilter-" + fieldInfo.dataIndex,
+                                    property: fieldInfo.dataIndex,
+                                    value: fieldInfo.getRelationFilterCondition(editor)
+                                })
+                            );
+                            this.filterByRelationWindow.close();
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
+
+        var title = "Filter by relation field " + fieldInfo.text;
+        this.filterByRelationWindow = new Ext.Window({
+            autoScroll: true,
+            modal: false,
+            title: title,
+            items: [formPanel],
+            bodyStyle: "background: #fff;",
+            width: 700,
+            maxHeight: 650
+        });
+        this.filterByRelationWindow.show();
+        this.filterByRelationWindow.updateLayout();
     },
 
     batchPrepare: function (column, onlySelected, append, remove) {

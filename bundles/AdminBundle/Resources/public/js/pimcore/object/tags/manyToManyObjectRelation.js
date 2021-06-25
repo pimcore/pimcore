@@ -88,8 +88,20 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                         return result.join("<br />");
                     }
                 }.bind(this, field.key),
+            getRelationFilterCondition: this.getRelationFilterCondition,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
+    },
+
+    getRelationFilterCondition: function (editor) {
+        var filterResult = [];
+            editor.store.getData().items.forEach(
+                function (item) {
+                     filterResult.push(item.data.id);
+                });
+            filterResult = filterResult.join(',');
+
+         return filterResult;
     },
 
     openParentSearchEditor: function () {
