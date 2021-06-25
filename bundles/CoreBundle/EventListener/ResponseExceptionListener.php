@@ -208,7 +208,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             ['page', 'snippet', 'hardlink', 'link', 'folder']
         );
 
-        if ($document) {
+        if ($document && $document->getFullPath() !== '/') {
             if ($document->getProperty('language')) {
                 $locale = $document->getProperty('language');
             }
@@ -216,9 +216,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-
-            $siteLocalizedErrorDocuments = $site->getLocalizedErrorDocuments();
-
             $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
             $defaultErrorDocumentPath = $site->getErrorDocument();
         } else {
@@ -226,24 +223,20 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
         }
 
-        if (!empty($locale)) {
-            if (array_key_exists($locale, $localizedErrorDocumentsPaths)) {
-                $errorPath = $localizedErrorDocumentsPaths[$locale];
-            } else {
-                $errorPath = $defaultErrorDocumentPath;
-            }
+        if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
+            $errorPath = $localizedErrorDocumentsPaths[$locale];
         } else {
             // If locale can't be determined check if error page is defined for any of user-agent preferences
             foreach ($request->getLanguages() as $requestLocale) {
-                if (
-                    array_key_exists($requestLocale, $localizedErrorDocumentsPaths) &&
-                    $localizedErrorDocumentsPaths[$requestLocale]
-                ) {
+                if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
                     $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
-
                     break;
                 }
             }
+        }
+
+        if(empty($errorPath)) {
+            $errorPath = $defaultErrorDocumentPath;
         }
 
         return $errorPath;
