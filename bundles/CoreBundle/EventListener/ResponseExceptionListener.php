@@ -230,12 +230,13 @@ class ResponseExceptionListener implements EventSubscriberInterface
             foreach ($request->getLanguages() as $requestLocale) {
                 if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
                     $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+
                     break;
                 }
             }
         }
 
-        if(empty($errorPath)) {
+        if (empty($errorPath)) {
             $errorPath = $defaultErrorDocumentPath;
         }
 
