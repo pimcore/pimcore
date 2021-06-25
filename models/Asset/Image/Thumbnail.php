@@ -398,7 +398,9 @@ final class Thumbnail
             $attributes['title'] = $titleText;
         }
 
-        $attributes['loading'] = 'lazy';
+        if(!isset($attributes['loading'])) {
+            $attributes['loading'] = 'lazy';
+        }
 
         foreach ($removeAttributes as $attribute) {
             unset($attributes[$attribute]);
