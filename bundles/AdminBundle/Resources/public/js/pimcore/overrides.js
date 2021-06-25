@@ -253,6 +253,7 @@ Ext.define('pimcore.tree.View', {
 
         itemupdate: function(record) {
             if (record.needsPaging && typeof record.ptb == "undefined") {
+                record.itemUpdated = true;
                 this.doUpdatePaging(record);
             }
         }
@@ -268,7 +269,8 @@ Ext.define('pimcore.tree.View', {
 
         me.superclass.renderRow.call(this, record, rowIdx, out);
 
-        if (record.needsPaging && typeof record.ptb == "undefined") {
+        // do not update paging again, if already done in "itemupdate" event
+        if (record.needsPaging && typeof record.ptb == "undefined" && typeof record.itemUpdated == "undefined") {
             this.doUpdatePaging(record);
         }
 
