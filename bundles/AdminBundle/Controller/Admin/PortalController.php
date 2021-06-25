@@ -255,13 +255,17 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedDocumentsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('documents')) {
+            return $this->adminJson([]);
+        }
+
         $list = Document::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
         ]);
 
-        $user = Admin::getCurrentUser();
         $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
@@ -290,13 +294,18 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedAssetsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('assets')) {
+            return $this->adminJson([]);
+        }
+
+        
         $list = Asset::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
         ]);
 
-        $user = Admin::getCurrentUser();
         $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
@@ -325,13 +334,17 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedObjectsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('objects')) {
+            return $this->adminJson([]);
+        }
+
         $list = DataObject::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
         ]);
 
-        $user = Admin::getCurrentUser();
         $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
