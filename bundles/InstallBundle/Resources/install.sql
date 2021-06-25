@@ -466,6 +466,7 @@ CREATE TABLE `sites` (
   `domains` text,
   `rootId` int(11) unsigned DEFAULT NULL,
   `errorDocument` varchar(255) DEFAULT NULL,
+  `localizedErrorDocuments` text,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
