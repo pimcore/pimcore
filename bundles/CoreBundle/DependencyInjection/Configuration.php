@@ -667,6 +667,17 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('default')
                             ->defaultNull()
                         ->end()
+                        ->arrayNode('localized')
+                            ->performNoDeepMerging()
+                            ->beforeNormalization()
+                                ->ifArray()
+                                    ->then(function ($v) {
+                                        return $v;
+                                    })
+                            ->end()
+                            ->prototype('scalar')
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->scalarNode('allow_trailing_slash')

@@ -185,7 +185,7 @@ class Definition extends Model\AbstractModel
 
             $exportedClass = var_export($clone, true);
 
-            $data = '<?php ';
+            $data = '<?php';
             $data .= "\n\n";
             $data .= $infoDocBlock;
             $data .= "\n\n";
@@ -202,7 +202,7 @@ class Definition extends Model\AbstractModel
         }
 
         // create class file
-        $cd = '<?php ';
+        $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
@@ -217,9 +217,8 @@ class Definition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
-
-        $cd .= "\n\n";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 
@@ -327,15 +326,12 @@ class Definition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
-        $cd .= "Fields Summary: \n";
+        $cd = '/**' . "\n";
+        $cd .= "Fields Summary:\n";
 
         $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
 
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }

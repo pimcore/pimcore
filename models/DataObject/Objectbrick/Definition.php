@@ -255,7 +255,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $exportedClass = var_export($clone, true);
 
-            $data = '<?php ';
+            $data = '<?php';
             $data .= "\n\n";
             $data .= $infoDocBlock;
             $data .= "\n\n";
@@ -273,7 +273,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         // create class
 
-        $cd = '<?php ';
+        $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
@@ -293,8 +293,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $implementsParts = [];
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
-        $cd .= "\n\n";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 
@@ -311,7 +311,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= '* @param DataObject\Concrete $object' . "\n";
         $cd .= '*/' . "\n";
 
-        $cd .= 'public function __construct(DataObject\Concrete $object) {' . "\n";
+        $cd .= 'public function __construct(DataObject\Concrete $object)' . "\n";
+        $cd .= '{' . "\n";
         $cd .= "\t" . 'parent::__construct($object);' . "\n";
         $cd .= "\t" .'$this->markFieldDirty("_self");' . "\n";
         $cd .= '}' . "\n";
@@ -551,7 +552,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
                 $namespace = $this->getContainerNamespace($class->getName(), $fieldname);
 
-                $cd = '<?php ';
+                $cd = '<?php';
 
                 $cd .= "\n\n";
                 $cd .= 'namespace ' . $namespace . ';';
@@ -570,7 +571,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= '/**' . "\n";
                     $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "|null\n";
                     $cd .= '*/' . "\n";
-                    $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
+                    $cd .= 'public function get' . ucfirst($brickKey) . '()' . "\n";
+                    $cd .= '{' . "\n";
 
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject::doGetInheritedValues($this->getObject())) { ' . "\n";
@@ -578,7 +580,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t\t" . '$brickContainer = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t\t" . 'if(!empty($brickContainer)) {' . "\n";
                         $cd .= "\t\t\t\t" . '//check if parent object has brick, and if so, create an empty brick to enable inheritance' . "\n";
-                        $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "();\n";
                         $cd .= "\t\t\t\t" . 'if (!empty($parentBrick)) {' . "\n";
                         $cd .= "\t\t\t\t\t" . '$brickType = "\\\Pimcore\\\Model\\\DataObject\\\Objectbrick\\\Data\\\" . ucfirst($parentBrick->getType());' . "\n";
                         $cd .= "\t\t\t\t\t" . '$brick = new $brickType($this->getObject());' . "\n";
@@ -592,7 +594,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";
                     }
-                    $cd .= '   return $this->' . $brickKey . "; \n";
+                    $cd .= "\t" . 'return $this->' . $brickKey . ";\n";
 
                     $cd .= "}\n\n";
 
@@ -600,7 +602,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
                     $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
                     $cd .= '*/' . "\n";
-                    $cd .= 'public function set' . ucfirst($brickKey) . ' (' . '$' . $brickKey . ") {\n";
+                    $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . ')' . "\n";
+                    $cd .= '{' . "\n";
                     $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
                     $cd .= "\t" . 'return $this' . ";\n";
                     $cd .= "}\n\n";

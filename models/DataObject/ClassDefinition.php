@@ -483,7 +483,7 @@ final class ClassDefinition extends Model\AbstractModel
             $extendClass = '\\'.ltrim($extendClass, '\\');
         }
 
-        $cd = '<?php ';
+        $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
@@ -504,7 +504,7 @@ final class ClassDefinition extends Model\AbstractModel
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
+                        ).'($field, $value, $locale = null, $limit = 0, $offset = 0)'."\n";
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -513,14 +513,14 @@ final class ClassDefinition extends Model\AbstractModel
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
+                            ).'($value, $locale = null, $limit = 0, $offset = 0)'."\n";
                     }
                 } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).'($value, $limit = 0, $offset = 0)'."\n";
                 }
             }
         }
@@ -530,8 +530,8 @@ final class ClassDefinition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
-        $cd .= "\n\n";
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . "\n";
+        $cd .= '{' . "\n";
 
         $useParts = [];
 
@@ -596,7 +596,7 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         // create list class
-        $cd = '<?php ';
+        $cd = '<?php';
 
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).';';
@@ -609,8 +609,8 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
         $cd .= "\n\n";
-        $cd .= 'class Listing extends '.$extendListingClass.' {';
-        $cd .= "\n\n";
+        $cd .= 'class Listing extends '.$extendListingClass . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
@@ -657,7 +657,7 @@ final class ClassDefinition extends Model\AbstractModel
 
             $exportedClass = var_export($clone, true);
 
-            $data = '<?php ';
+            $data = '<?php';
             $data .= "\n\n";
             $data .= $infoDocBlock;
             $data .= "\n\n";
@@ -675,10 +675,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
+        $cd = '/**' . "\n";
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
@@ -690,11 +687,11 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $cd .= "\n\n";
-        $cd .= "Fields Summary: \n";
+        $cd .= "Fields Summary:\n";
 
         $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
 
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }

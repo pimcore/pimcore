@@ -816,9 +816,22 @@ class DocumentController extends ElementControllerBase implements KernelControll
             ]);
         }
 
+        $localizedErrorDocuments = [];
+        $validLanguages = \Pimcore\Tool::getValidLanguages();
+
+        foreach ($validLanguages as $language) {
+            // localized error pages
+            $requestValue = $request->get('errorDocument_localized_' . $language);
+
+            if (isset($requestValue)) {
+                $localizedErrorDocuments[$language] = $requestValue;
+            }
+        }
+
         $site->setDomains($domains);
         $site->setMainDomain($request->get('mainDomain'));
         $site->setErrorDocument($request->get('errorDocument'));
+        $site->setLocalizedErrorDocuments($localizedErrorDocuments);
         $site->setRedirectToMainDomain(($request->get('redirectToMainDomain') == 'true') ? true : false);
         $site->save();
 

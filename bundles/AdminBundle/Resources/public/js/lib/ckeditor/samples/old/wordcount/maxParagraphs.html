@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>CKEditor</title>
+    <script src="../../../ckeditor.js"></script>
+	</head>
+	<body>
+		<textarea name="editor1"></textarea>
+		<script>
+      var config = {
+        extraPlugins: 'wordcount',
+        wordcount: {
+          maxParagraphs: 5,
+          showParagraphs: true,
+          showWordCount: false,
+          showRemaining: true
+        },
+        language: 'en'
+      }
+    </script>
+    <script>
+      CKEDITOR.replace( 'editor1' , config);
+    </script>
+	</body>
+</html>

@@ -630,7 +630,7 @@ function to_php_data_file_format($contents, $comments = null)
 {
     $contents = var_export_pretty($contents);
 
-    $export = '<?php ';
+    $export = '<?php';
 
     if (!empty($comments)) {
         $export .= "\n\n";
