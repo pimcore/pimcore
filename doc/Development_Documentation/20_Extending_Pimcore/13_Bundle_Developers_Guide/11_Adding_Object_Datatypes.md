@@ -5,13 +5,10 @@ Following steps are necessary to do so:
 1) Create a PHP class for server-side implementation:
  This class needs to extend `Pimcore\Model\DataObject\ClassDefinition\Data` and defines how your data type is stored into 
   database, how the getters and setters for Pimcore objects are generated and how data is sent to and read from 
-  Pimcore Admin Ui. 
+  Pimcore Admin UI. 
    
    For examples have a look at the Pimcore core datatypes at 
    [github](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/ClassDefinition/Data). 
-
-   In Pimcore 4 the PHP class had to be in namespace `Pimcore\Model\DataObject\ClassDefinition\Data` to be loaded. This is 
-   still possible, but not necessary any more (see below).
 
 2) Create JavaScript class for Class Definition editor (object data): 
 This JavaScript class defines the representation of the data type in the *Class Definition editor* and therefore where
