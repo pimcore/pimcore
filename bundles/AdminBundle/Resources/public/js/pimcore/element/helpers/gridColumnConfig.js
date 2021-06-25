@@ -332,7 +332,7 @@ pimcore.element.helpers.gridColumnConfig = {
         menu.add(batchRemoveSelectedMenu);
 
         var filterByRelationMenu = new Ext.menu.Item({
-            text: t("Filter by relation"),
+            text: t("filter_by_relation"),
             iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
             handler: function (grid) {
                 var menu = grid.headerCt.getMenu();
@@ -427,7 +427,7 @@ pimcore.element.helpers.gridColumnConfig = {
             bodyStyle: "padding: 10px;",
             buttons: [
                 {
-                    text: t("Clear active relation filter"),
+                    text: t("clear_relation_filter"),
                     iconCls: "pimcore_icon_filter_condition pimcore_icon_overlay_delete",
                     handler: function () {
                         this.filterByRelationWindow.close();
@@ -435,7 +435,7 @@ pimcore.element.helpers.gridColumnConfig = {
                     }.bind(this)
                 },
                 {
-                    text: t("Apply filter"),
+                    text: t("apply_filter"),
                     iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
                     handler: function () {
                         if (formPanel.isValid() && typeof fieldInfo.getRelationFilterCondition === "function") {
@@ -455,7 +455,7 @@ pimcore.element.helpers.gridColumnConfig = {
             ]
         });
 
-        var title = "Filter by relation field " + fieldInfo.text;
+        var title = t("filter_by_relation_field") + " " + fieldInfo.text;
         this.filterByRelationWindow = new Ext.Window({
             autoScroll: true,
             modal: false,
