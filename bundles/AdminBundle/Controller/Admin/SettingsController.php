@@ -20,7 +20,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;

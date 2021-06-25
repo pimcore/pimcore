@@ -398,7 +398,7 @@ final class Thumbnail
             $attributes['title'] = $titleText;
         }
 
-        if(!isset($attributes['loading'])) {
+        if (!isset($attributes['loading'])) {
             $attributes['loading'] = 'lazy';
         }
 
