@@ -273,7 +273,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $storeId = $request->get('storeId');
         $storeId = $storeId ? $storeId : $storeIdFromDefinition;
 
-        $conditionParts[] = ' (storeId = ' . $storeId . ')';
+        $conditionParts[] = ' (storeId = ' . $db->quote($storeId) . ')';
 
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
@@ -416,7 +416,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
 
         if ($request->get('storeId')) {
-            $conditionParts[] = '(storeId = ' . $request->get('storeId') . ')';
+            $conditionParts[] = '(storeId = ' . $db->quote($request->get('storeId')) . ')';
         }
 
         if ($request->get('filter')) {
