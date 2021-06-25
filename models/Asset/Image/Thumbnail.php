@@ -243,7 +243,7 @@ final class Thumbnail
 
         if (isset($options['previewDataUri'])) {
             $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-            $sourceTagAttributes['srcset'] = 'data:,1w';
+            unset($sourceTagAttributes['srcset']);
         }
 
         $sourceTagAttributes['type'] = $thumb->getMimeType();
