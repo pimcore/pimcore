@@ -592,7 +592,6 @@ class SettingsController extends AdminController
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
      * @param CoreCacheHandler $cache
-     * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
      *
@@ -603,7 +602,6 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CoreCacheHandler $cache,
-        ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {
@@ -619,8 +617,6 @@ class SettingsController extends AdminController
         if ($clearPimcoreCache) {
             // empty document cache
             $cache->clearAll();
-
-            $db->query('truncate table cache_items');
 
             if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
                 $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
