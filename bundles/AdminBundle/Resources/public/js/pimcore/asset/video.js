@@ -257,7 +257,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                                     image: data.id,
                                                     width: 265,
                                                     aspectratio: true,
-                                                    settime: true,
+                                                    setimage: true,
                                                     '_dc': date.getTime()
                                                 });
                                                 var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
