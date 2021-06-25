@@ -592,7 +592,6 @@ class SettingsController extends AdminController
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
      * @param CoreCacheHandler $cache
-     * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
      *
