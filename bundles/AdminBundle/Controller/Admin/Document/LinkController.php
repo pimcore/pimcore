@@ -158,6 +158,20 @@ class LinkController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
+        }  elseif ($link->isAllowed('save')) {
+            $this->setValuesToDocument($request, $link);
+
+            $version = $link->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+            $this->saveToSession($link);
+
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate(),
+            ];
+
+            $this->handleTask($request->get('task'), $link);
+
+            return $this->adminJson(['success' => true, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }
