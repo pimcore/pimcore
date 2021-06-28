@@ -28,7 +28,7 @@ trait RelationFilterConditionParser
             return '`' . $name . '` LIKE ' . $value . ' ';
         } elseif ($operator == 'LIKE') {
             $result = $name . " IS NULL";
-            $values = explode(',', $value ?? '');
+            $values = explode(',', (string)$value ?? '');
             if (is_array($values) && !empty($values)) {
                 $fieldConditions = [];
                 foreach ($values as $value) {
@@ -43,6 +43,5 @@ trait RelationFilterConditionParser
             }
             return $result;
         }
-        return "1=1";
     }
 }
