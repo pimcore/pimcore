@@ -50,12 +50,13 @@ class DataObjectParamConverter implements ParamConverterInterface
         }
 
         $class = $configuration->getClass();
+        $options = $configuration->getOptions() ?? [];
 
         /** @var Concrete|null $object */
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));
-        } elseif (!$object->isPublished() && !Tool::isElementRequestByAdmin($request, $object)) {
+        } elseif (!$object->isPublished() && !Tool::isElementRequestByAdmin($request, $object) && (!array_key_exists('unpublished', $options) || !$options['unpublished'])) {
             throw new NotFoundHttpException(sprintf('Data object for parameter "%s" is not published.', $param));
         }
 
