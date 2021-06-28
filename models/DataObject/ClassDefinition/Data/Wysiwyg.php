@@ -344,23 +344,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param DataObject\Concrete $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $html = new DomCrawler($data);

@@ -19,22 +19,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface IdRewriterInterface
 {
-    /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param Concrete $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function rewriteIds(Concrete $object, array $idMapping, array $params = []): mixed;
+    public function rewriteIds($object, $idMapping, $params = []);
 }

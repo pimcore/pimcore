@@ -443,13 +443,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function rewriteIds(DataObject\Concrete $object, array $idMapping, array $params = []): mixed
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
