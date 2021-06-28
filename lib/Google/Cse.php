@@ -20,6 +20,9 @@ use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
+use Google\Service\CustomSearchAPI;
+use Google\Service\CustomSearchAPI\Search;
+use Google\Service\CustomSearchAPI\Result;
 
 class Cse implements PaginateListingInterface
 {
@@ -56,7 +59,7 @@ class Cse implements PaginateListingInterface
         $query = $this->getQuery();
 
         if ($client) {
-            $search = new \Google_Service_Customsearch($client);
+            $search = new CustomSearchAPI($client);
 
             // determine language
             $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
@@ -159,9 +162,9 @@ class Cse implements PaginateListingInterface
     }
 
     /**
-     * @param \Google_Service_Customsearch_Search $googleResponse
+     * @param Search $googleResponse
      */
-    public function readGoogleResponse(\Google_Service_Customsearch_Search $googleResponse)
+    public function readGoogleResponse(Search $googleResponse)
     {
         $items = [];
 
@@ -174,7 +177,7 @@ class Cse implements PaginateListingInterface
         }
         $this->setTotal($total);
 
-        /** @var \Google_Service_Customsearch_Result[] $results */
+        /** @var Result[] $results */
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {
