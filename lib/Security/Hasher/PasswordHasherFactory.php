@@ -13,10 +13,12 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder;
+namespace Pimcore\Security\Hasher;
 
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Pimcore\Security\Encoder\EncoderFactoryAwareInterface;
+use Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -29,26 +31,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * If the given user is not configured to be handled by one of the encoder factories, the normal framework encoder
  * logic applies.
- *
- * @deprecated
  */
-class EncoderFactory implements EncoderFactoryInterface
+class PasswordHasherFactory implements PasswordHasherFactoryInterface
 {
     /**
-     * @var EncoderFactoryInterface
+     * @var PasswordHasherFactoryInterface
      */
     protected $frameworkFactory;
 
     /**
-     * @var EncoderFactoryInterface[]
+     * @var PasswordHasherFactoryInterface[]
      */
     protected $encoderFactories = [];
 
     /**
-     * @param EncoderFactoryInterface $frameworkFactory
+     * @param PasswordHasherFactoryInterface $frameworkFactory
      * @param array $encoderFactories
      */
-    public function __construct(EncoderFactoryInterface $frameworkFactory, array $encoderFactories = [])
+    public function __construct(PasswordHasherFactoryInterface $frameworkFactory, array $encoderFactories = [])
     {
         $this->frameworkFactory = $frameworkFactory;
         $this->encoderFactories = $encoderFactories;
@@ -57,28 +57,34 @@ class EncoderFactory implements EncoderFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getEncoder($user)
+    public function getPasswordHasher($user): PasswordHasherInterface
     {
-        if ($encoder = $this->getEncoderFromFactory($user)) {
-            return $encoder;
+        if ($hasher = $this->getPasswordHasherFromFactory($user)) {
+            return $hasher;
         }
 
         // fall back to default implementation
-        return $this->frameworkFactory->getEncoder($user);
+        return $this->frameworkFactory->getPasswordHasher($user);
     }
 
     /**
-     * Returns the password encoder factory to use for the given account.
+     * Returns the password hasher factory to use for the given account.
      *
      * @param UserInterface|string $user A UserInterface instance or a class name
      *
-     * @return PasswordEncoderInterface|null
+     * @return PasswordHasherInterface|null
      */
-    private function getEncoderFromFactory($user)
+    private function getPasswordHasherFromFactory($user)
     {
         $factoryKey = null;
 
         if ($user instanceof EncoderFactoryAwareInterface && (null !== $factoryName = $user->getEncoderFactoryName())) {
+            if (!array_key_exists($factoryName, $this->encoderFactories)) {
+                throw new \RuntimeException(sprintf('The encoder factory "%s" was not configured.', $factoryName));
+            }
+
+            $factoryKey = $factoryName;
+        }   if ($user instanceof PasswordHasherFactoryAwareInterface && (null !== $factoryName = $user->getHasherFactoryName())) {
             if (!array_key_exists($factoryName, $this->encoderFactories)) {
                 throw new \RuntimeException(sprintf('The encoder factory "%s" was not configured.', $factoryName));
             }
@@ -97,7 +103,9 @@ class EncoderFactory implements EncoderFactoryInterface
         if (null !== $factoryKey) {
             $factory = $this->encoderFactories[$factoryKey];
 
-            return $factory->getEncoder($user);
+            if($factory instanceof UserAwarePasswordHasherFactory) {
+                return $factory->getPasswordHasher($user);
+            }
         }
 
         return null;

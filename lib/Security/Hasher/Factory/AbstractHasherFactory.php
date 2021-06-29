@@ -13,27 +13,25 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder\Factory;
+namespace Pimcore\Security\Hasher\Factory;
 
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 /**
  * @internal
- *
- * @deprecated
  */
-abstract class AbstractEncoderFactory implements EncoderFactoryInterface
+abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
 {
     /**
-     * Encoder class name to build
+     * Hasher class name to build
      *
      * @var string
      */
     protected $className;
 
     /**
-     * Arguments passed to encoder constructor
+     * Arguments passed to hasher constructor
      *
      * @var array
      */
@@ -66,14 +64,14 @@ abstract class AbstractEncoderFactory implements EncoderFactoryInterface
     /**
      * @param \ReflectionClass $reflectionClass
      *
-     * @return PasswordEncoderInterface
+     * @return PasswordHasherInterface
      */
-    protected function buildEncoder(\ReflectionClass $reflectionClass)
+    protected function buildPasswordHasher(\ReflectionClass $reflectionClass)
     {
-        /** @var PasswordEncoderInterface $encoder */
-        $encoder = $reflectionClass->newInstanceArgs($this->arguments);
+        /** @var PasswordHasherInterface $hasher */
+        $hasher = $reflectionClass->newInstanceArgs($this->arguments);
 
-        return $encoder;
+        return $hasher;
     }
 
     /**
