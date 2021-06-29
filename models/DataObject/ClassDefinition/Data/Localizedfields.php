@@ -1111,15 +1111,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             $extData = $item['extData'];
             $fieldname = $extData['fieldname'];
             $language = $item['lang'];
-            $values = $mapping[$fieldname];
+            $values = $mapping[$fieldname] ?? [];
 
             $itemdata = $item['data'];
 
             if ($itemdata) {
-                if (!$values) {
-                    $values = [];
-                }
-
                 $values[] = $itemdata;
             }
 
