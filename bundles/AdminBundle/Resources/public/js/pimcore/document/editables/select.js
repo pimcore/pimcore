@@ -22,8 +22,21 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
         config.listeners = {};
 
+        // onchange event
+        if (config.onchange) {
+            config.listeners.select = eval(config.onchange);
+        }
+
+        if (config["required"]) {
+            config["reload"] = true;
+        }
+
         if (config["reload"]) {
             config.listeners.select = this.reloadDocument;
+        }
+
+        if(typeof config["defaultValue"] !== "undefined" && data === null) {
+            data = config["defaultValue"];
         }
 
         config.name = id + "_editable";
@@ -36,8 +49,38 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
     render: function() {
         this.setupWrapper();
+
+        if (this.config["required"]) {
+            this.required = this.config["required"];
+        }
+
         this.element = new Ext.form.ComboBox(this.config);
         this.element.render(this.id);
+
+        this.checkValue();
+    },
+
+    checkValue: function (mark) {
+        var value = this.getValue();
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
+        }
+
+        this.validateElement(value);
+    },
+
+    validateElement: function (value) {
+        if (!value && this.required) {
+            this.element.addCls('invalid-document-element');
+            this.element.setStyle('border', '1px solid #f40204');
+        } else {
+            this.element.removeCls('invalid-document-element');
+            this.element.removeCls('editable-error');
+            this.element.setStyle('border', '');
+        }
+
+        return this;
     },
 
     getValue: function () {
