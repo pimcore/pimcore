@@ -47,6 +47,15 @@ services:
             - '@security.encoder_factory'
             - '%security.authentication.hide_user_not_found%'
         deprecated: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
+
+    pimcore.security.validator.user_password:
+        class: Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator
+        arguments:
+            - '@security.token_storage'
+            - '@security.encoder_factory'
+        tags:
+            - { name: validator.constraint_validator, alias: security.validator.user_password }
+
     #
     # INFRASTRUCTURE
     #
