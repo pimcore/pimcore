@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Config\ReportConfigWriter;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +83,15 @@ class SettingsController extends ReportsControllerBase
             $values['piwik'] = $piwikConfig;
         }
 
-        $configWriter->write($values);
+        try {
+            $configWriter->write($values);
+        } catch (Exception $e) {
+            $result = [
+                'success' => false,
+                'errors' => [$e->getMessage()],
+            ];
+            return $this->adminJson($result);
+        }
 
         return $this->adminJson(['success' => true]);
     }
