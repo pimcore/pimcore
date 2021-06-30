@@ -175,21 +175,6 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
             this.validateRequiredValue(text, this.element, this, mark);
         }
-
-        this.validateElement(text);
-    },
-
-    validateElement: function (value) {
-        if (!value && this.required) {
-            this.element.addCls('invalid-document-element');
-            this.element.setStyle('border', '1px solid #f40204');
-        } else {
-            this.element.removeCls('invalid-document-element');
-            this.element.removeCls('editable-error');
-            this.element.setStyle('border', '');
-        }
-
-        return this;
     },
 
     getValue: function () {
