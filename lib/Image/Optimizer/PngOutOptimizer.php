@@ -15,21 +15,8 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Symfony\Component\Mime\MimeTypeGuesserInterface;
-use Symfony\Component\Mime\MimeTypes;
-
 final class PngOutOptimizer extends AbstractCommandOptimizer
 {
-    /**
-     * @var MimeTypeGuesserInterface
-     */
-    private $mimeTypeGuesser;
-
-    public function __construct()
-    {
-        $this->mimeTypeGuesser = MimeTypes::getDefault();
-    }
-
     /**
      * {@inheritdoc}
      */
