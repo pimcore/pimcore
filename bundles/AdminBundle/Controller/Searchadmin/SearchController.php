@@ -38,7 +38,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 final class SearchController extends AdminController
 {
-    use addAdminStyle;
+    use AdminStyleTrait;
 
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
