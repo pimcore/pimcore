@@ -57,31 +57,31 @@ class StaticPageGenerator
      * @param Document\PageSnippet $document
      * @param array $params
      *
-     * @return bool
+     * @return bool|string
      */
     public function generate($document, $params = [])
     {
-        $clonedDoc = Service::cloneMe($document);
-        //we need ID to generate page URL in case of CLI
-        if ($params['is_cli']) {
-            $clonedDoc->setId($document->getId());
-        }
-
-        $storagePath = $this->getStoragePath($clonedDoc);
+        $storagePath = $this->getStoragePath($document);
 
         $storage = Storage::get('document_static');
         $startTime = microtime(true);
 
-        $lockKey = 'document_static_' . $clonedDoc->getId() . '_' . md5($storagePath);
+        $lockKey = 'document_static_' . $document->getId() . '_' . md5($storagePath);
 
         $lock = $this->lockFactory->createLock($lockKey);
 
-        $lock->acquire(true);
+        if ($params['is_cli'] ?? false) {
+            $lock->acquire(true);
+        }
+
 
         try {
-            $renderedDocumentData = $this->documentRenderer->render($clonedDoc, [
-                'static_page_generator' => true]);
-            $storage->write($storagePath, $renderedDocumentData);
+            if (!$response = $params['response'] ?? false) {
+                $response = $this->documentRenderer->render($document, [
+                    'static_page_generator' => true]);
+            }
+
+            $storage->write($storagePath, $response);
         } catch (\Exception $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
             return false;
@@ -89,7 +89,9 @@ class StaticPageGenerator
 
         Logger::debug('Static Page ' . $storagePath . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
 
-        $lock->release();
+        if ($params['is_cli'] ?? false) {
+            $lock->release();
+        }
 
         return true;
     }

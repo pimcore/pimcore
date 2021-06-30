@@ -15,26 +15,52 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
+use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageResolverTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @internal
  */
 class StaticPageGeneratorListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+    use StaticPageContextAwareTrait;
+
     /**
      * @var StaticPageGenerator
      */
     protected $staticPageGenerator;
 
-    public function __construct(StaticPageGenerator $staticPageGenerator)
+    /**
+     * @var DocumentResolver
+     */
+    protected $documentResolver;
+
+
+    /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    public function __construct(StaticPageGenerator $staticPageGenerator, DocumentResolver $documentResolver, RequestHelper $requestHelper)
     {
         $this->staticPageGenerator = $staticPageGenerator;
+        $this->documentResolver = $documentResolver;
+        $this->requestHelper = $requestHelper;
     }
 
     /**
@@ -43,16 +69,71 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DocumentEvents::POST_ADD => 'onPostAddUpdateDocument',
-            DocumentEvents::POST_DELETE => 'onPostDeleteDocument',
-            DocumentEvents::POST_UPDATE => 'onPostAddUpdateDocument',
+            DocumentEvents::POST_ADD => 'onPostAddUpdateDeleteDocument',
+            DocumentEvents::POST_DELETE => 'onPostAddUpdateDeleteDocument',
+            DocumentEvents::POST_UPDATE => 'onPostAddUpdateDeleteDocument',
+            KernelEvents::REQUEST => ['onKernelRequest' , 10], //this must run before targeting listener
+            KernelEvents::RESPONSE => ['onKernelResponse', -120], //this must run after code injection listeners
         ];
+    }
+
+    /**
+     * @param RequestEvent $event
+     */
+    public function onKernelRequest(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if (\Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+            return;
+        }
+
+        $document = $this->documentResolver->getDocument();
+
+        if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
+            $this->staticPageResolver->setStaticPageContext($request);
+        }
+    }
+
+    /**
+     * @param ResponseEvent $event
+     */
+    public function onKernelResponse(ResponseEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if (\Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+            return;
+        }
+
+        //return if request is from StaticPageGenerator
+        if ($request->attributes->has('static_page_generator')) {
+            return;
+        }
+
+        // only inject analytics code on non-admin requests
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)
+            && !$this->matchesStaticPageContext($request)) {
+            return;
+        }
+
+        //return if request is from StaticPageGenerator
+        if ($request->attributes->has('static_page_generator')) {
+            return;
+        }
+
+        $document = $this->documentResolver->getDocument();
+
+        if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
+            $response = $event->getResponse()->getContent();
+            $this->staticPageGenerator->generate($document, ['response' => $response]);
+        }
     }
 
     /**
      * @param DocumentEvent $e
      */
-    public function onPostAddUpdateDocument(DocumentEvent $e)
+    public function onPostAddUpdateDeleteDocument(DocumentEvent $e)
     {
         $document = $e->getDocument();
 
@@ -62,36 +143,10 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
         if ($document instanceof PageSnippet) {
             try {
-                if ($document->getStaticGeneratorEnabled()) {
-                    if ($document->isPublished()) {
-                        $this->staticPageGenerator->generate($document);
-                    } else {
-                        $this->staticPageGenerator->remove($document);
-                    }
-                } elseif (!is_null($document->getStaticGeneratorEnabled())
-                    && $this->staticPageGenerator->pageExists($document)) {
+                if($document->getStaticGeneratorEnabled()
+                    || $this->staticPageGenerator->pageExists($document)) {
                     $this->staticPageGenerator->remove($document);
                 }
-            } Catch(\Exception $e) {
-                Logger::error($e);
-
-                return;
-            }
-
-        }
-    }
-
-    /**
-     * @param DocumentEvent $e
-     *
-     * @throws \League\Flysystem\FilesystemException
-     */
-    public function onPostDeleteDocument(DocumentEvent $e)
-    {
-        $document = $e->getDocument();
-        if ($document instanceof PageSnippet && $document->getStaticGeneratorEnabled()) {
-            try {
-                $this->staticPageGenerator->remove($document);
             } Catch(\Exception $e) {
                 Logger::error($e);
 

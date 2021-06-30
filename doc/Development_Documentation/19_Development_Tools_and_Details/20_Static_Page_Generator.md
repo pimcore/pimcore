@@ -21,7 +21,7 @@ RewriteRule ^(.*)$ /var/tmp/pages%{REQUEST_URI}.html [PT,L]
 
 ## Processing
 Once the static generator option is enabled, Pimcore generates static pages on following actions:
- - Document save & publish
+ - First request to the page, after updating and saving the document in admin.
  - Maintenance job
  - CLI command
  
