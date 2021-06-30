@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\Db;
@@ -37,6 +38,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 final class SearchController extends AdminController
 {
+    use addAdminStyle;
+
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
      *
@@ -478,6 +481,7 @@ final class SearchController extends AdminController
                     'fullpath' => htmlspecialchars($element->getRealFullPath()),
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                     'iconCls' => 'pimcore_icon_asset_default',
+                    'icon' => '',
                 ];
 
                 if ($element instanceof Asset) {
@@ -493,6 +497,8 @@ final class SearchController extends AdminController
                 } else {
                     $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
                 }
+
+                $this->addAdminStyle($element, null, $data);
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
