@@ -15,10 +15,10 @@
 
 namespace Pimcore\Google;
 
+use Google\Client;
 use Pimcore\Config;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Cache\CacheItemPoolInterface;
-use Google\Client;
 
 class Api
 {

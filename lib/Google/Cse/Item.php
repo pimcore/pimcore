@@ -15,10 +15,8 @@
 
 namespace Pimcore\Google\Cse;
 
-use Pimcore\Model;
-use Google\Service\CustomSearchAPI;
-use Google\Service\CustomSearchAPI\Search;
 use Google\Service\CustomSearchAPI\Result;
+use Pimcore\Model;
 
 class Item
 {
