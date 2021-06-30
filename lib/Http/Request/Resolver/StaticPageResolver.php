@@ -16,7 +16,6 @@
 namespace Pimcore\Http\Request\Resolver;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @internal
@@ -27,21 +26,9 @@ class StaticPageResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_STATIC_PAGE = '_pimcore_static_page';
 
     /**
-     * @var bool
-     */
-    protected $timestampWasQueried = false;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
-
-    /**
+     * @param Request $request
      *
-     * @return bool
+     * @return mixed
      */
     public function hasStaticPageContext($request)
     {
@@ -49,7 +36,7 @@ class StaticPageResolver extends AbstractRequestResolver
     }
 
     /**
-     * @param $request
+     * @param Request $request
      */
     public function setStaticPageContext($request)
     {
