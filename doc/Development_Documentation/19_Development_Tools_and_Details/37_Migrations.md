@@ -38,7 +38,7 @@ more comfortable.
 ```yml
 doctrine_migrations:
     migrations_paths:
-        'App\Migrations': '%kernel.project_dir%/src/App'
+        'App\Migrations': '%kernel.project_dir%/src/Migrations'
 ```
 
 # Run all available migrations after `composer update`
