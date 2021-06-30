@@ -15,14 +15,14 @@
 
 namespace Pimcore\Google;
 
+use Google\Service\CustomSearchAPI;
+use Google\Service\CustomSearchAPI\Result;
+use Google\Service\CustomSearchAPI\Search;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
-use Google\Service\CustomSearchAPI;
-use Google\Service\CustomSearchAPI\Search;
-use Google\Service\CustomSearchAPI\Result;
 
 class Cse implements PaginateListingInterface
 {
