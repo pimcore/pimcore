@@ -428,7 +428,7 @@ class GridHelperService
                     );
                 }
 
-                $havings = $featureAndSlugFilters['featureConditions'];
+                $havings = $featureAndSlugFilters['featureConditions'] ?? [];
                 if ($havings) {
                     $havings = implode(' AND ', $havings);
                     $select->having($havings);
@@ -632,7 +632,7 @@ class GridHelperService
         if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
             $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
             $list->setOrderKey($orderKey);
-            $list->setGroupBy('o_id');
+            $list->setGroupBy($orderKey . '.o_id', false);
 
             $parts = explode('_', $orderKey);
 
