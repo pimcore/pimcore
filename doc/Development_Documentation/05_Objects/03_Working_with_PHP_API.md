@@ -206,8 +206,17 @@ This is especially useful to get an object matching a foreign key, or get a list
 ```php
 $result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset]);
 
+// or object variants matching a value
+$result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT]]);
+
 // or for localized fields
 $result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset]);
+
+// or object variants matching a value in localized fields
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT]]);
+
+// or object variants and objects matching a value in localized fields
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]]);
 ```
 If you set no limit, a list object containing all matching objects are returned. If the limit is set to 1
 the first matching object is returned directly (without listing). Only published objects are return.
