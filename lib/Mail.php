@@ -530,9 +530,14 @@ class Mail extends Email
             $recipients[$key] = $addresses;
         }
 
-        if ($mailer == null) {
-            //if no mailer given, get default mailer from container
-            $mailer = \Pimcore::getContainer()->get(Mailer::class);
+        $sendingFailedException = null;
+        if ($mailer === null) {
+            try {
+                //if no mailer given, get default mailer from container
+                $mailer = \Pimcore::getContainer()->get(Mailer::class);
+            } catch (\Exception $e) {
+                $sendingFailedException = $e;
+            }
         }
 
         if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
@@ -546,7 +551,6 @@ class Mail extends Email
 
         \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
-        $sendingFailedException = null;
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
