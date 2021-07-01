@@ -1553,7 +1553,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return string
      */
-    public function getMimetype()
+    public function getMimeType()
     {
         return $this->mimetype;
     }

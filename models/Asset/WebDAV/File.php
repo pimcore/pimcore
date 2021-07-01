@@ -169,7 +169,7 @@ class File extends DAV\File
      */
     public function getContentType()
     {
-        return $this->asset->getMimetype();
+        return $this->asset->getMimeType();
     }
 
     /**

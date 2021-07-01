@@ -1,13 +1,13 @@
 # Pimcore Mail
 
-The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses) 
+The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses)
 Class and adds some features for the usage with Pimcore.
 
 If email settings are configured in your `config/config.yaml` then on initializing
 `Pimcore\Mail` object, these settings applied automatically. It is required to configure [email settings](./README.md#page_General-Information) prior to using Pimcore\Mail.
 
-The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, 
-normalizing URLs and Twig expressions ...). Note that all CSS files are embedded 
+The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS,
+normalizing URLs and Twig expressions ...). Note that all CSS files are embedded
 to the html with a `<style>` tag because the image paths are also normalised.
 
 ## Useful Methods
@@ -28,23 +28,23 @@ to the html with a `<style>` tag because the image paths are also normalised.
 
 ```php
 $params = ['firstName' => 'Pim', 'lastName' => 'Core', 'product' => 73613];
- 
+
 //sending an email document (pimcore document)
 $mail = new \Pimcore\Mail();
 $mail->to('example@pimcore.org');
 $mail->setDocument('/email/myemaildocument');
 $mail->setParams($params);
 $mail->send();
- 
- 
+
+
 // sending a text-mail
- 
+
 $mail = new \Pimcore\Mail();
 $mail->to('example@pimcore.org');
 $mail->text("This is just plain text");
 $mail->send();
- 
-// Sending a rich text (HTML) email with Twig expressions 
+
+// Sending a rich text (HTML) email with Twig expressions
 $mail = new \Pimcore\Mail();
 $mail->to('example@pimcore.org');
 $mail->bcc("bcc@pimcore.org");
@@ -53,19 +53,19 @@ $mail->setParams([
 ]);
 $mail->html("<b>some</b> rich text: {{ myParam }}");
 $mail->send();
- 
+
 //adding an asset as attachment
 if($asset instanceof Asset) {
-   $mail->createAttachment($asset->getData(), $asset->getMimetype(), $asset->getFilename());
+   $mail->createAttachment($asset->getData(), $asset->getMimeType(), $asset->getFilename());
 }
 
 //Embedding Images
 $mail = new \Pimcore\Mail();
 $mail->to('example@pimcore.org');
 
-$mail->embed($asset->getData(), 'logo', $asset->getMimetype());
+$mail->embed($asset->getData(), 'logo', $asset->getMimeType());
 //or
-$mail->embedFromPath($asset->getFileSystemPath(), 'logo', $asset->getMimetype());
+$mail->embedFromPath($asset->getFileSystemPath(), 'logo', $asset->getMimeType());
 
 $mail->html("Embedded Image: <img src='cid:logo'>"); //image name(passed second argument in embed) as ref
 $mail->send();
