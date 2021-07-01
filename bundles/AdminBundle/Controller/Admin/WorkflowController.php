@@ -132,14 +132,14 @@ class WorkflowController extends AdminController implements KernelControllerEven
                 $data = [
                     'success' => false,
                     'message' => $e->getMessage(),
-                    'reason' => $reason,
+                    'reasons' => [$reason],
 
                 ];
             } catch (\Exception $e) {
                 $data = [
                     'success' => false,
                     'message' => 'error performing action on this element',
-                    'reason' => $e->getMessage(),
+                    'reasons' => [$e->getMessage()],
                 ];
             }
         } else {
@@ -189,14 +189,14 @@ class WorkflowController extends AdminController implements KernelControllerEven
             $data = [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'reason' => $reason,
+                'reasons' => [$reason],
 
             ];
         } catch (\Exception $e) {
             $data = [
                 'success' => false,
                 'message' => 'error performing action on this element',
-                'reason' => $e->getMessage(),
+                'reasons' => [$e->getMessage()],
             ];
         }
 
