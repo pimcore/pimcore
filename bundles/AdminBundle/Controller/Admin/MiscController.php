@@ -527,7 +527,7 @@ class MiscController extends AdminController
 
         $limit = (int)$request->get('limit');
         $offset = (int)$request->get('start');
-        $sortInfo = json_decode($request->get('sort'), true)[0];
+        $sortInfo = ($request->get('sort') ? json_decode($request->get('sort'), true)[0] : []);
         $sort = $sortInfo['property'] ?? null;
         $dir = $sortInfo['direction'] ?? null;
         $filter = $request->get('filter');
