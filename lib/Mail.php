@@ -553,7 +553,7 @@ class Mail extends Email
 
             try {
                 $mailer->send($this);
-            } catch (TransportExceptionInterface $e) {
+            } catch (\Exception $e) {
                 if (isset($failedRecipients[0])) {
                     $sendingFailedException = new \Exception($failedRecipients[0].' - '.$e->getMessage(), 0, $e);
                 } else {
