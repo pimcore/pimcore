@@ -246,7 +246,7 @@ trait ImageThumbnailTrait
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            $pathReference = $this->getPathReference(true);
+            $pathReference = $this->getPathReference();
             if ($pathReference['type'] === 'data-uri') {
                 $this->mimetype = substr($pathReference['src'], 5, strpos($pathReference['src'], ';') - 5);
             } else {
