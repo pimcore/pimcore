@@ -87,7 +87,7 @@
     "symfony/config": "^5.2.0",
     "symfony/console": "^5.2.0",
     "symfony/css-selector": "^5.2.0",
-    "symfony/dependency-injection": "^5.2.0",
+    "symfony/dependency-injection": "^5.3.3",
     "symfony/debug-bundle": "^5.2.0",
     "symfony/doctrine-bridge": "^5.2.0",
     "symfony/dom-crawler": "^5.2.0",
