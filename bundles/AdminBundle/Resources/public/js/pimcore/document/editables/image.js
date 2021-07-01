@@ -332,6 +332,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.altBar.setStyle({
             display: "none"
         });
+        this.checkValue(true);
         this.reload();
     },
 
