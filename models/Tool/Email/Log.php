@@ -139,7 +139,7 @@ class Log extends Model\AbstractModel
     protected $subject;
 
     /**
-     * Error which happened when mail got sent - empty if no error occured
+     * Error log, when mail send resulted in failure - empty if successfully sent
      *
      * @var ?string
      */
