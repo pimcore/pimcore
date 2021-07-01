@@ -87,6 +87,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $excludeFromSearchIndex = false;
 
     /**
+     * @internal
+     *
+     * @var string|int
+     */
+    public $maxCharacters = 0;
+
+    /**
      * @return string|int
      */
     public function getWidth()
@@ -166,6 +173,22 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getMaxCharacters()
+    {
+        return $this->maxCharacters;
+    }
+
+    /**
+     * @param string|int $maxCharacters
+     */
+    public function setMaxCharacters($maxCharacters)
+    {
+        $this->maxCharacters = $maxCharacters;
     }
 
     /**
