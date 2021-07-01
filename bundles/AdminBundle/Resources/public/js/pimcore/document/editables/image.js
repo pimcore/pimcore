@@ -36,6 +36,12 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         this.element = Ext.get(this.id);
 
+        if(this.config["required"]) {
+            this.required = this.config["required"];
+        }
+
+        this.checkValue();
+
         if (this.config["width"]) {
             this.element.setStyle("width", this.config["width"] + "px");
         }
@@ -115,6 +121,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     this.datax.id = e['asset']['id'];
 
                     this.updateImage();
+                    this.checkValue();
                     this.reload();
 
                     return true;
@@ -130,6 +137,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         // insert image
         if (this.datax) {
             this.updateImage();
+            this.checkValue();
         }
     },
 
@@ -234,6 +242,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     this.datax.id = data["id"];
 
                     this.updateImage();
+                    this.checkValue(true);
                     this.reload();
                 }
             } catch (e) {
@@ -264,6 +273,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.id = data.id;
 
             this.updateImage();
+            this.checkValue(true);
             this.reload();
 
             return true;
@@ -300,6 +310,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.id = item.id;
 
             this.updateImage();
+            this.checkValue();
             this.reload();
 
             return true;
@@ -321,6 +332,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.altBar.setStyle({
             display: "none"
         });
+        this.checkValue(true);
         this.reload();
     },
 
@@ -473,6 +485,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.cropPercent = (undefined !== data.cropPercent) ? data.cropPercent : true;
 
             this.updateImage();
+            this.checkValue();
         }.bind(this), config);
         editor.open(true);
     },
@@ -498,6 +511,20 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         );
         editor.open(false);
+    },
+
+    checkValue: function (mark) {
+        var datax = this.datax;
+
+        if(typeof datax.id == 'undefined' || datax.id === null) {
+            value = null;
+        } else {
+            value = 'ok';
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
+        }
     },
 
     getValue: function () {

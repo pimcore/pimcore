@@ -43,6 +43,11 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
             emptyContainer = Ext.get(emptyContainer);
             emptyContainer.on("click", this.openEditor.bind(this));
         }
+
+        if(this.config["required"]) {
+            this.required = this.config["required"];
+        }
+        this.checkValue();
     },
 
     openEditor: function () {
@@ -78,6 +83,20 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
         window.dndManager.enable();
 
         this.window.hide();
+    },
+
+    checkValue: function (mark) {
+        var data = this.data;
+
+        if(typeof data.path == 'undefined' || data.path === null || data.path == '') {
+            value = null;
+        } else {
+            value = 'ok';
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.button, this, mark);
+        }
     },
 
     getValue: function () {
