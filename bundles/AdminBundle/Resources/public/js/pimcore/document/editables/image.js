@@ -242,7 +242,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     this.datax.id = data["id"];
 
                     this.updateImage();
-                    this.checkValue();
+                    this.checkValue(true);
                     this.reload();
                 }
             } catch (e) {
@@ -273,7 +273,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.id = data.id;
 
             this.updateImage();
-            this.checkValue();
+            this.checkValue(true);
             this.reload();
 
             return true;

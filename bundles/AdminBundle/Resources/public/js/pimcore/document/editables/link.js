@@ -117,7 +117,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
         var values = this.window.getComponent("form").getForm().getFieldValues();
         this.data = values;
-        this.checkValue();
+        this.checkValue(true);
 
         // close window
         this.window.close();
@@ -131,7 +131,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
     reload : function () {
         if (this.config.reload) {
             this.reloadDocument();
-            this.checkValue();
+            this.checkValue(true);
         }
     },
 
@@ -144,7 +144,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         this.window.close();
 
         this.data = this.defaultData;
-        this.checkValue();
+        this.checkValue(true);
 
         // set text
         Ext.get(this.id).query(".pimcore_editable_link_text")[0].innerHTML = this.getLinkContent();
