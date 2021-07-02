@@ -20,6 +20,7 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Tool\Glossary\Processor;
 use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * @internal
@@ -38,6 +39,31 @@ class GlossaryExtension extends AbstractExtension
     public function __construct(Processor $glossaryProcessor)
     {
         $this->glossaryProcessor = $glossaryProcessor;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('pimcore_glossary', [$this, 'applyGlossary'], ['is_safe' => ['html']]),
+        ];
+    }
+
+    /**
+     * @param string $string
+     * @param array $options
+     *
+     * @return string
+     */
+    public function applyGlossary(string $string, array $options = []): string
+    {
+        if (empty($string) || !is_string($string)) {
+            return $string;
+        } else {
+            return $this->glossaryProcessor->process($string, $options);
+        }
     }
 
     public function getTokenParsers(): array

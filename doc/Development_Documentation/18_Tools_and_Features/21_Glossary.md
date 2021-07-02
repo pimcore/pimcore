@@ -28,6 +28,15 @@ Then you have to define one or more regions in your views, telling the glossary 
 {% endpimcoreglossary %}
 ```
 
+or use glossary Twig filter:
+```twig
+{% apply pimcore_glossary %}
+<div>
+    {{ pimcore_wysiwyg('content', { height: 200 }) }}
+</div>
+{% endapply %}
+```
+
 Now the output of the WYSIWYG field will look like this.
 
 ![Glossary frontend](../img/glossary_frontend.png)
