@@ -15,7 +15,6 @@
 
 namespace Pimcore;
 
-use Exception;
 use League\HTMLToMarkdown\HtmlConverter;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
@@ -23,7 +22,6 @@ use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail\Mailer;
 use Pimcore\Tool\DomCrawler;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -578,7 +576,7 @@ class Mail extends Email
             }
         }
 
-        if($sendingFailedException instanceof \Exception) {
+        if ($sendingFailedException instanceof \Exception) {
             throw $sendingFailedException;
         }
 
