@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,8 +22,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -34,41 +34,56 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'quantityValue';
 
     /**
+     * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
+     *
      * @var string|int
      */
     public $unitWidth;
 
     /**
+     * @internal
+     *
      * @var float
      */
     public $defaultValue;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $defaultUnit;
 
     /**
+     * @internal
+     *
      * @var array
      */
     public $validUnits;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $decimalPrecision;
 
     /**
+     * @internal
      *
      * @var bool
      */
@@ -76,6 +91,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var array
      */
@@ -86,6 +103,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var array
      */
@@ -288,7 +307,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
+     * @param Model\DataObject\Data\AbstractQuantityValue|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -369,14 +388,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
             return;
@@ -396,14 +410,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -413,41 +420,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\QuantityValue|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        if (strpos($importValue, '_') !== false) {
-            [$number, $unitId] = explode('_', $importValue);
-            $number = (float) str_replace(',', '.', $number);
-
-            return new Model\DataObject\Data\QuantityValue($number, $unitId);
-        }
-
-        if (strpos($importValue, ' ') !== false) {
-            [$number, $abbreviation] = explode(' ', $importValue);
-            $number = (float)str_replace(',', '.', $number);
-            $unit = Model\DataObject\QuantityValue\Unit::getByAbbreviation($abbreviation);
-
-            return new Model\DataObject\Data\QuantityValue($number, $unit);
-        }
-
-        if ($importValue) {
-            $number = (float)str_replace(',', '.', $importValue);
-
-            return new Model\DataObject\Data\QuantityValue($number);
-        }
-
-        return null;
     }
 
     /**
@@ -479,72 +451,15 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * @internal
      */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\AbstractQuantityValue) {
-            return [
-                'value' => $value->getValue(),
-                'value2' => $value->getUnitId(),
-            ];
-        } elseif ($params['simple'] ?? false) {
-            if (is_array($value)) {
-                return [$value[$this->getName() . '__value'], $value[$this->getName() . '__unit']];
-            } else {
-                return null;
-            }
-        } else {
-            if (is_array($value)) {
-                return [
-                    'value' => $value[$this->getName() . '__value'],
-                    'value2' => $value[$this->getName() . '__unit'],
-                ];
-            } else {
-                return [
-                    'value' => null,
-                    'value2' => null,
-                ];
-            }
-        }
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (($params['blockmode'] ?? false) && is_array($value)) {
-            return new Model\DataObject\Data\QuantityValue($value['value'], $value['value2']);
-        } elseif ($params['simple'] ?? false) {
-            return $value;
-        } elseif (is_array($value)) {
-            return [
-                $this->getName() . '__value' => $value['value'],
-                $this->getName() . '__unit' => $value['value2'],
-
-            ];
-        } else {
-            return null;
-        }
-    }
-
     public function configureOptions()
     {
         if (!$this->validUnits) {
             $table = null;
-            try {
-                $table = null;
 
+            try {
                 if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
                     $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
                 }
@@ -559,10 +474,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 if (!is_array($table)) {
                     $table = [];
                     $list = new Model\DataObject\QuantityValue\Unit\Listing();
-                    $list->setOrderKey('abbreviation');
-                    $list->setOrder('asc');
-                    $list = $list->load();
-                    foreach ($list as $item) {
+                    $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+                    $list->setOrder(['ASC', 'ASC', 'ASC']);
+                    foreach ($list->getUnits() as $item) {
                         $table[$item->getId()] = $item;
                     }
 
@@ -584,10 +498,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return Model\DataObject\Data\QuantityValue|null
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -692,23 +603,60 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $unitId;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\QuantityValue) {
+            return [
+                'value' => $value->getValue(),
+                'unitId' => $value->getUnitId(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\QuantityValue($value['value'], $value['unitId']);
+        }
+
+        return null;
     }
 }

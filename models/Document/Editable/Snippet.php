@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -34,21 +32,23 @@ class Snippet extends Model\Document\Editable
     /**
      * Contains the ID of the linked snippet
      *
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Contains the object for the snippet
      *
-     * @var Document\Snippet
+     * @internal
+     *
+     * @var Document\Snippet|null
      */
-    protected $snippet;
+    protected $snippet = null;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -56,9 +56,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -99,9 +97,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -166,11 +162,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -183,11 +175,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -200,7 +188,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -214,7 +202,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -233,7 +221,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {

@@ -1,30 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\MetaData;
 
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
-    use TemporaryFileHelperTrait;
-
     /**
      * @param bool $force
      * @param bool $useExifTool
@@ -68,10 +63,8 @@ trait EmbeddedMetaDataTrait
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
 
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getTemporaryFile();
         }
-
-        $filePath = $this->getLocalFile($filePath);
 
         if ($exiftool && $useExifTool) {
             $process = new Process([$exiftool, '-j', $filePath]);
@@ -128,7 +121,7 @@ trait EmbeddedMetaDataTrait
     public function getEXIFData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -150,20 +143,13 @@ trait EmbeddedMetaDataTrait
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
 
         if (is_file($filePath)) {
             $chunkSize = 1024;
-            if (!is_int($chunkSize)) {
-                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-            }
-
-            if ($chunkSize < 12) {
-                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-            }
 
             if (($file_pointer = fopen($filePath, 'rb')) === false) {
                 throw new \RuntimeException('Could not open file for reading');
@@ -174,13 +160,17 @@ trait EmbeddedMetaDataTrait
             $buffer = false;
 
             // find open tag
+            $overlapString = '';
             while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
                 if (strlen($chunk) <= $tagLength) {
                     break;
                 }
+
+                $chunk = $overlapString . $chunk;
+
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                    $overlapString = substr($chunk, $tagLength * -1);
                 } else {
                     $buffer = substr($chunk, $position);
                 }
@@ -247,7 +237,7 @@ trait EmbeddedMetaDataTrait
     public function getIPTCData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Localizedfield;
@@ -139,6 +137,27 @@ class Dao extends Model\Dao\AbstractDao
          * which is a great performance gain if you have a lot of languages
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
+
+        $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
+        if (!$ignoreLocalizedQueryFallback) {
+            foreach ($validLanguages as $validLanguage) {
+                $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
+                foreach ($fallbackLanguages as $fallbackLanguage) {
+                    if ($this->model->isLanguageDirty($fallbackLanguage)) {
+                        $this->model->markLanguageAsDirty($validLanguage);
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        $flag = DataObject\Localizedfield::getGetFallbackValues();
+
+        if (!$ignoreLocalizedQueryFallback) {
+            DataObject\Localizedfield::setGetFallbackValues(true);
+        }
+
         foreach ($validLanguages as $language) {
             if (empty($params['newParent'])
                 && !empty($params['isUpdate'])
@@ -147,6 +166,7 @@ class Dao extends Model\Dao\AbstractDao
             ) {
                 continue;
             }
+
             $inheritedValues = DataObject::doGetInheritedValues();
             DataObject::setGetInheritedValues(false);
 
@@ -224,6 +244,7 @@ class Dao extends Model\Dao\AbstractDao
                     // throw exception which gets caught in AbstractObject::save() -> retry saving
                     throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
+
                 throw $e;
             }
 
@@ -244,6 +265,7 @@ class Dao extends Model\Dao\AbstractDao
                     )." AND language = '".$language."'";
 
                 $oldData = [];
+
                 try {
                     $oldData = $this->db->fetchRow($sql);
                 } catch (\Exception $e) {
@@ -293,7 +315,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!in_array($key, $untouchable)) {
-                            $localizedValue = $this->model->getLocalizedValue($key, $language);
+                            $localizedValue = $this->model->getLocalizedValue($key, $language, $ignoreLocalizedQueryFallback);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,
                                 $object,
@@ -335,6 +357,7 @@ class Dao extends Model\Dao\AbstractDao
                                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldDataValue != $insertDataValue) {
                                                 $doInsert = true;
+
                                                 break;
                                             }
                                         }
@@ -411,6 +434,10 @@ class Dao extends Model\Dao\AbstractDao
 
             DataObject::setGetInheritedValues($inheritedValues);
         } // foreach language
+
+        if (!$ignoreLocalizedQueryFallback) {
+            DataObject\Localizedfield::setGetFallbackValues($flag);
+        }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
@@ -613,37 +640,35 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($localizedfields->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
-                if ($fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        // datafield has it's own loader
-                        $params['language'] = $row['language'];
-                        $params['object'] = $object;
-                        if (!isset($params['context'])) {
-                            $params['context'] = [];
-                        }
-                        $params['context']['object'] = $object;
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    // datafield has it's own loader
+                    $params['language'] = $row['language'];
+                    $params['object'] = $object;
+                    if (!isset($params['context'])) {
+                        $params['context'] = [];
+                    }
+                    $params['context']['object'] = $object;
 
-                        if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
-                        } else {
-                            $value = $fd->load($this->model, $params);
-                            if ($value === 0 || !empty($value)) {
-                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                            }
+                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                        $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                    } else {
+                        $value = $fd->load($this->model, $params);
+                        if ($value === 0 || !empty($value)) {
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
-                            $multidata = [];
-                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
-                            }
-                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        } else {
-                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                }
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                    if (is_array($fd->getColumnType())) {
+                        $multidata = [];
+                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                            $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                         }
+                        $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                    } else {
+                        $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
                     }
                 }
             }
@@ -836,6 +861,7 @@ QUERY;
             }
         }
 
+        $this->removeIndices($table, $columnsToRemove, $protectedColumns);
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
         $validLanguages = Tool::getValidLanguages();

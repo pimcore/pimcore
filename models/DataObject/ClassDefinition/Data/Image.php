@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -20,8 +19,9 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use ImageTrait;
@@ -30,6 +30,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'image';
@@ -37,12 +39,16 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Type for the column to query
      *
+     * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'int(11)';
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var string
      */
@@ -87,7 +93,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param Asset $data
+     * @param Asset|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -181,14 +187,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -201,29 +200,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|Asset
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        if ($el = Asset::getByPath($importValue)) {
-            $value = $el;
-        } else {
-            $value = null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -231,17 +208,10 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof Asset\Image) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
                 $tags = $data->getCacheTags($tags);
@@ -270,11 +240,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -345,38 +312,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $masterDefinition->uploadPath;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * {@inheritdoc}
      */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof \Pimcore\Model\Asset\Image) {
-            return [
-                'type' => 'asset',
-                'id' => $value->getId(),
-            ];
-        }
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        $id = $value['id'];
-        if ((int)$id > 0) {
-            return Asset\Image::getById($id);
-        }
-    }
-
     public function isFilterable(): bool
     {
         return true;
@@ -396,23 +334,59 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof \Pimcore\Model\Asset\Image) {
+            return [
+                'type' => 'asset',
+                'id' => $value->getId(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        $id = $value['id'] ?? 0;
+        if (intval($id) > 0) {
+            return Asset\Image::getById($id);
+        }
     }
 }

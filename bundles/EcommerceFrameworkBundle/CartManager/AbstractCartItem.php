@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -18,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\MockProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject;
@@ -37,7 +39,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $product;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $productId;
 
@@ -45,7 +47,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var string
      */
     protected $itemKey;
+
     protected $count;
+
     protected $comment;
 
     /**
@@ -56,9 +60,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var CartInterface
+     * @var CartInterface|null
      */
     protected $cart;
+
     protected $cartId;
 
     /**
@@ -110,6 +115,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
         if ($product instanceof CheckoutableInterface) {
             $this->product = $product;
+        } else {
+            // actual product is not available or not checkoutable (e.g. deleted in Admin)
+            $product = new MockProduct();
+            $product->setId($this->productId);
+            $this->product = $product;
         }
 
         return $this->product;
@@ -125,7 +135,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return CartInterface
+     * @return CartInterface|null
      */
     abstract public function getCart();
 
@@ -304,7 +314,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     public function setAddedDate(\DateTime $date = null)
     {
         if ($date) {
-            $this->addedDateTimestamp = $date->getTimestamp();
+            $this->addedDateTimestamp = intval($date->format('Uu'));
         } else {
             $this->addedDateTimestamp = null;
         }
@@ -317,8 +327,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
-            $datetime = new \DateTime();
-            $datetime->setTimestamp($this->addedDateTimestamp);
+            $datetime = \DateTime::createFromFormat('U', intval($this->addedDateTimestamp / 1000000));
         }
 
         return $datetime;

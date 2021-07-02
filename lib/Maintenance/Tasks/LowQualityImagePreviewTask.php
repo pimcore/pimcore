@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -23,7 +24,7 @@ use Symfony\Component\Lock\LockInterface;
 /**
  * @internal
  */
-final class LowQualityImagePreviewTask implements TaskInterface
+class LowQualityImagePreviewTask implements TaskInterface
 {
     /**
      * @var LoggerInterface
@@ -68,7 +69,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
                 /** @var Asset\Image[] $images */
                 $images = $listing->load();
                 foreach ($images as $image) {
-                    if (!file_exists($image->getLowQualityPreviewFileSystemPath())) {
+                    if (!$image->getLowQualityPreviewDataUri()) {
                         try {
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();

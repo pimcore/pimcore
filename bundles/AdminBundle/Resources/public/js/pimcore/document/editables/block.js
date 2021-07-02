@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.block");
@@ -35,6 +35,8 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.createInitalControls();
         }
         else {
+            Ext.get(this.id).removeCls("pimcore_block_buttons");
+
             for (var i = 0; i < this.elements.length; i++) {
 
                 if(this.elements[i].key) {
@@ -230,12 +232,15 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.reloadDocument();
         } else {
             let template = this.config['template']['html'];
-
             for (let p = 0; p < amount; p++) {
                 nextKey++;
-                let blockHtml = template.replaceAll(':1000000.', ':' + nextKey + '.');
+                let blockHtml = template;
+                blockHtml = blockHtml.replaceAll(new RegExp('"([^"]+):1000000.' + this.getRealName() + '("|:)', 'g'), '"' + this.getName() + '$2');
+                blockHtml = blockHtml.replaceAll(new RegExp('"pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_', 'g'), '"pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                blockHtml = blockHtml.replaceAll(':1000000.', ':' + nextKey + '.');
                 blockHtml = blockHtml.replaceAll('_1000000_', '_' + nextKey + '_');
                 blockHtml = blockHtml.replaceAll('="1000000"', '="' + nextKey + '"');
+                blockHtml = blockHtml.replaceAll(', 1000000"', ', ' + nextKey + '"');
 
                 if(!this.elements.length) {
                     Ext.get(this.id).setHtml(blockHtml);
@@ -244,13 +249,13 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
                 }
 
                 this.config['template']['editables'].forEach(editableDef => {
-                    let editable = Object.assign({}, editableDef);
-                    editable['id'] = editable['id'].replace('_1000000_', '_' + nextKey + '_');
-                    editable['name'] = editable['name'].replace(':1000000.', ':' + nextKey + '.');
+                    let editable = Ext.clone(editableDef);
+                    editable['id'] = editable['id'].replace(new RegExp('pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_'), 'pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                    editable['id'] = editable['id'].replaceAll('_1000000_', '_' + nextKey + '_');
+                    editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName() + ':'), this.getName() + ':');
+                    editable['name'] = editable['name'].replaceAll(':1000000.', ':' + nextKey + '.');
                     editableManager.addByDefinition(editable);
                 });
-
-                this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
             }
 
             this.refresh();
@@ -263,11 +268,6 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
         this.elements.splice(index, 1);
         Ext.get(element).remove();
-
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
 
         if(this.config['reload'] === true) {
             this.reloadDocument();

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -35,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class ElementController extends AdminController
+class ElementController extends AdminController
 {
     /**
      * @Route("/element/lock-element", name="pimcore_admin_element_lockelement", methods={"PUT"})
@@ -480,18 +481,24 @@ final class ElementController extends AdminController
         $type = $request->get('type');
         $data = [];
 
-        if ($type == 'asset') {
+        if ($type === 'asset') {
             $element = Asset::getById($id);
-        } elseif ($type == 'document') {
+        } elseif ($type === 'document') {
             $element = Document::getById($id);
-            $data['index'] = $element->getIndex();
         } else {
             $element = DataObject::getById($id);
-            $data['index'] = $element->getIndex();
         }
+
+        if (!$element) {
+            $data['success'] = false;
+
+            return $this->adminJson($data);
+        }
+
         $typePath = Element\Service::getTypePath($element);
 
         $data['success'] = true;
+        $data['index'] = method_exists($element, 'getIndex') ? (int) $element->getIndex() : 0;
         $data['idPath'] = Element\Service::getIdPath($element);
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();
@@ -516,9 +523,12 @@ final class ElementController extends AdminController
         $data = $this->decodeJson($request->get('data'));
 
         $version = Version::getById($data['id']);
-        $version->setPublic($data['public']);
-        $version->setNote($data['note']);
-        $version->save();
+
+        if ($data['public'] != $version->getPublic() || $data['note'] != $version->getNote()) {
+            $version->setPublic($data['public']);
+            $version->setNote($data['note']);
+            $version->save();
+        }
 
         return $this->adminJson(['success' => true]);
     }
@@ -562,15 +572,17 @@ final class ElementController extends AdminController
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
                 $editModeData = $fd->getDataForEditmode($data, $source);
-                if (is_array($editModeData)) {
+                // Inherited values show as an empty array
+                if (is_array($editModeData) && !empty($editModeData)) {
                     foreach ($editModeData as $relationObjectAttribute) {
                         $relationObjectAttribute['$$nicepath'] =
                             isset($relationObjectAttribute[$idProperty]) && isset($result[$relationObjectAttribute[$idProperty]]) ? $result[$relationObjectAttribute[$idProperty]] : null;
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
                 } else {
-                    $editModeData['$$nicepath'] = $result[$editModeData[$idProperty]];
-                    $result[$editModeData[$idProperty]] = $editModeData;
+                    foreach ($result as $resultItemId => $resultItem) {
+                        $result[$resultItemId] = ['$$nicepath' => $resultItem];
+                    }
                 }
             } else {
                 Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
@@ -607,7 +619,19 @@ final class ElementController extends AdminController
                         }
                     }
 
-                    $versions = $element->getVersions();
+                    //only load auto-save versions from current user
+                    $list = new Version\Listing();
+                    $list->setLoadAutoSave(true);
+                    $list->setCondition('cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ', [
+                        $element->getId(),
+                        Element\Service::getType($element),
+                        $this->getUser()->getId(),
+                    ])
+                        ->setOrderKey('date')
+                        ->setOrder('ASC');
+
+                    $versions = $list->load();
+
                     $versions = Model\Element\Service::getSafeVersionInfo($versions);
                     $versions = array_reverse($versions); //reverse array to sort by ID DESC
                     foreach ($versions as &$version) {
@@ -627,6 +651,23 @@ final class ElementController extends AdminController
         }
 
         throw $this->createNotFoundException('Element type not found');
+    }
+
+    /**
+     * @Route("/element/delete-draft", name="pimcore_admin_element_deletedraft", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteDraftAction(Request $request)
+    {
+        $version = Version::getById($request->get('id'));
+        if ($version) {
+            $version->delete();
+        }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -761,7 +802,7 @@ final class ElementController extends AdminController
             $list->load();
 
             foreach ($list->getProperties() as $type) {
-                $properties[] = $type;
+                $properties[] = $type->getObjectVars();
             }
         }
 

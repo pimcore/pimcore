@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
@@ -34,7 +35,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
+    // @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code
 
     const MAX_PROBABILITY = 0.005;
 
@@ -114,10 +115,11 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         if ($token = Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
                 return true;
-            } else {
-                throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
             }
+
+            throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
         }
+
         throw new VoucherServiceException('No Token for this code exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
@@ -228,6 +230,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $codeSets = $this->generateCodes();
 
@@ -245,7 +248,6 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             return $codeSets;
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;
@@ -539,20 +541,16 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
-        if ($tokens) {
-            /** @var PaginatorInterface $paginator */
-            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-            $paginator = $paginator->paginate(
-                $tokens,
-                $params['page'] ?? 1,
-                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
-            );
+        /** @var PaginatorInterface $paginator */
+        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+        $paginator = $paginator->paginate(
+            $tokens,
+            $params['page'] ?? 1,
+            isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+        );
 
-            $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = count($tokens);
-        } else {
-            $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
-        }
+        $viewParamsBag['paginator'] = $paginator;
+        $viewParamsBag['count'] = count($tokens);
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? '';
         $viewParamsBag['msg']['success'] = $params['success'] ?? '';

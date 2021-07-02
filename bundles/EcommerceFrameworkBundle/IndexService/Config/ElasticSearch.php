@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -193,7 +194,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /** @inheritDoc */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-        if ($this->fieldMapping[$fieldName]) {
+        if (isset($this->fieldMapping[$fieldName])) {
             return $this->fieldMapping[$fieldName];
         }
 
@@ -201,7 +202,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         if ($considerSubFieldNames) {
             $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
             foreach ($fieldNameParts as $fieldNamePart) {
-                if ($this->fieldMapping[$fieldNamePart]) {
+                if (isset($this->fieldMapping[$fieldNamePart])) {
                     return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
                 }
             }
@@ -246,10 +247,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getClientConfig($property = null)
     {
-        return $property
-            ? $this->clientConfig[$property]
-            : $this->clientConfig
-            ;
+        if ($property) {
+            return $this->clientConfig[$property] ?? null;
+        }
+
+        return $this->clientConfig;
     }
 
     /**

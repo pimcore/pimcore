@@ -1,24 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Tool\Storage;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -26,21 +26,21 @@ use Pimcore\Model\Asset;
 class Folder extends Model\Asset
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'folder';
 
     /**
-     * Contains the child elements
+     * @internal
      *
      * @var Asset[]
      */
     protected $children;
 
     /**
-     * Indicator if there are children
+     * @internal
      *
-     * @var bool
+     * @var bool|null
      */
     protected $hasChildren;
 
@@ -86,11 +86,11 @@ class Folder extends Model\Asset
     public function hasChildren()
     {
         if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
+            if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {
                 return $this->getDao()->hasChildren();
-            } else {
-                return $this->hasChildren;
             }
+
+            return $this->hasChildren;
         }
 
         return $this->getDao()->hasChildren();
@@ -98,10 +98,23 @@ class Folder extends Model\Asset
 
     /**
      * @internal
+     *
+     * @param bool $hdpi
+     *
+     * @return resource|null
+     *
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \League\Flysystem\FilesystemException
      */
-    public function getPreviewImage(bool $hdpi = false): ?string
+    public function getPreviewImage(bool $hdpi = false)
     {
-        $filesystemPath = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails' . $this->getRealFullPath() . '/folder-preview' . ($hdpi ? '-hdpi' : '') . '.jpg';
+        $storage = Storage::get('thumbnail');
+        $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
+            rtrim($this->getRealFullPath(), '/'),
+            $this->getId(),
+            ($hdpi ? '-hdpi' : '')
+        );
+
         $tileThumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig($hdpi);
 
         $limit = 42;
@@ -111,10 +124,10 @@ class Folder extends Model\Asset
             'path' => $db->escapeLike($this->getRealFullPath()) . '/%',
         ];
 
-        if (file_exists($filesystemPath)) {
+        if ($storage->fileExists($cacheFilePath)) {
             $lastUpdate = $db->fetchOne('SELECT MAX(modificationDate) FROM assets WHERE ' . $condition . ' ORDER BY filename ASC LIMIT ' . $limit, $conditionParams);
-            if ($lastUpdate < filemtime($filesystemPath)) {
-                return $filesystemPath;
+            if ($lastUpdate < $storage->lastModified($cacheFilePath)) {
+                return $storage->readStream($cacheFilePath);
             }
         }
 
@@ -137,6 +150,10 @@ class Folder extends Model\Asset
             imagefill($collage, 0, 0, $background);
 
             foreach ($list as $asset) {
+                if ($asset instanceof Document && !$asset->getPageCount()) {
+                    continue;
+                }
+
                 $offsetLeft = ($squareDimension + $gutter) * ($count % $colums);
                 $tileThumb = null;
                 if ($asset instanceof Image) {
@@ -145,8 +162,8 @@ class Folder extends Model\Asset
                     $tileThumb = $asset->getImageThumbnail($tileThumbnailConfig);
                 }
 
-                if ($tileThumb && preg_match('/\.jpg$/', $tileThumb->getFileSystemPath())) {
-                    $tile = imagecreatefromjpeg($tileThumb->getFileSystemPath());
+                if ($tileThumb) {
+                    $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
                     $count++;
@@ -156,9 +173,14 @@ class Folder extends Model\Asset
                 }
             }
 
-            imagejpeg($collage, $filesystemPath, 60);
+            if ($count) {
+                $localFile = File::getLocalTempFilePath('jpg');
+                imagejpeg($collage, $localFile, 60);
+                $storage->write($cacheFilePath, file_get_contents($localFile));
+                unlink($localFile);
 
-            return $filesystemPath;
+                return $storage->readStream($cacheFilePath);
+            }
         }
 
         return null;

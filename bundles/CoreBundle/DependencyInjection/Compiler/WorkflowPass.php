@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -50,9 +51,8 @@ final class WorkflowPass implements CompilerPassInterface
             $loader->load('services_symfony_workflow.yml');
         }
 
-        $config = $container->getParameter('pimcore.workflow');
-
-        foreach ($config as $workflowName => $workflowConfig) {
+        $workflowsConfig = $container->getParameter('pimcore.workflow');
+        foreach ($workflowsConfig as $workflowName => $workflowConfig) {
             if (!$workflowConfig['enabled']) {
                 continue;
             }
@@ -145,7 +145,7 @@ final class WorkflowPass implements CompilerPassInterface
                 ]
             );
 
-            if (isset($workflowConfig['initial_markings']) && $workflowConfig['initial_markings'] !== []) {
+            if (!empty($workflowConfig['initial_markings'])) {
                 $definitionDefinition->addArgument($workflowConfig['initial_markings']);
             }
 
@@ -176,6 +176,7 @@ final class WorkflowPass implements CompilerPassInterface
                 $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             }
             $workflowDefinition->replaceArgument(3, $workflowName);
+            $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);
 
             // Store to container
             $container->setDefinition($workflowId, $workflowDefinition);

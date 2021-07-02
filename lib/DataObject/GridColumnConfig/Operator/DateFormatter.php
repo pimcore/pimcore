@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -29,6 +27,9 @@ final class DateFormatter extends AbstractOperator
      */
     private $format;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -36,6 +37,9 @@ final class DateFormatter extends AbstractOperator
         $this->format = ($config->format ? $config->format : null);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -88,6 +92,11 @@ final class DateFormatter extends AbstractOperator
         return $result;
     }
 
+    /**
+     * @param mixed $theValue
+     *
+     * @return string
+     */
     public function format($theValue)
     {
         $timestamp = null;

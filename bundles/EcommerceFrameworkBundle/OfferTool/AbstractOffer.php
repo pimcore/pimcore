@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
@@ -177,25 +177,17 @@ abstract class AbstractOffer extends Concrete
 
             $item->setAmount($amount);
             $item->setProduct($product);
-            if ($product) {
-                $item->setProductName($product->getOSName());
-                $item->setProductNumber($product->getOSProductNumber());
-            }
+            $item->setProductName($product->getOSName());
+            $item->setProductNumber($product->getOSProductNumber());
 
-            $price = Decimal::zero();
-            if ($product->getOSPriceInfo($amount)->getTotalPrice()) {
-                $price = $product->getOSPriceInfo($amount)->getTotalPrice()->getAmount();
-            }
+            $price = $product->getOSPriceInfo($amount)->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());
         } else {
             $item->setAmount($item->getAmount() + $amount);
 
-            $price = Decimal::zero();
-            if ($product->getOSPriceInfo($item->getAmount())->getTotalPrice()) {
-                $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
-            }
+            $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());

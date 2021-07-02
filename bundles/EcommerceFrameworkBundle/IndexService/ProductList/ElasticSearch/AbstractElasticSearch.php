@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
@@ -24,7 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
+
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+
     const ADVANCED_SORT = 'advanced_sort';
 
     /**
@@ -77,7 +80,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $order;
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $orderKey;
 
@@ -92,7 +95,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $offset = 0;
 
     /**
-     * @var AbstractCategory
+     * @var AbstractCategory|null
      */
     protected $category;
 
@@ -102,27 +105,27 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $inProductList;
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $filterConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $queryConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $relationConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -401,7 +404,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return string
+     * @return string|array
      */
     public function getOrderKey()
     {
@@ -472,7 +475,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public function getCategory()
     {
@@ -880,7 +883,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             //mapping of relations
             $relationFormatPimcore = [];
-            foreach ($sourceData['relations'] ?: [] as $name => $relation) {
+            foreach ($sourceData['relations'] ?? [] as $name => $relation) {
                 $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
             }
             $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);

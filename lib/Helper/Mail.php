@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
@@ -20,6 +21,9 @@ use Pimcore\Tool;
 use Symfony\Component\Mime\Address;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
+/**
+ * @internal
+ */
 class Mail
 {
     /**
@@ -122,13 +126,15 @@ CSS;
     }
 
     /**
+     * @internal
+     *
      * Helper to format the receivers for the debug email and logging
      *
-     * @param array|Address[] $receivers
+     * @param array $receivers
      *
      * @return string
      */
-    protected static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers)
     {
         $formatedReceiversArray = [];
 
@@ -162,7 +168,10 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        }
+
         $emailLog->setParams($mail->getParams());
         $emailLog->setSentDate(time());
 
@@ -425,7 +434,7 @@ CSS;
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);
-                $entryName = null;
+                $entryName = ''; // Symfony mailer want a string
                 $matches = [];
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
                     $entryAddress = trim($matches[2]);

@@ -26,13 +26,16 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Supported Versions
 
-| Version | Supported | LTS** | LTS Version |
-| ------- |    :---:  | :---: |    :---:    |
-| `<= 4.x`|    ❌     |  ❌    |             |
-| `5.x`   |    ❌     |  ✅    | `5.8`       |
-| `6.x`   |    ✅     |  ✅    |             |
+| Version  | Supported | LTS** | LTS Version** | CE End of life*** |
+| -------- |    :---:  | :---: |    :---:      |   :---:          |
+| `<= 4.x` |    ❌     |  ❌    |               | `2017-09-28`     |
+| `5.x`    |    ❌     |  ✅    | `5.8`         | `2019-12-09`     |
+| `6.x`    |    ❌     |  ✅    | `6.9`         | `2021-06-23`     |
+| `10.x`   |    ✅     |  ❌    |               |                  |
 
-** [LTS](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription). 
+** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
+*** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
+
 
 ## Overview
 ![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
@@ -71,7 +74,8 @@ Images, videos, PDF, Word/Excel documents and other files can be managed and org
 Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
 
 #### Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+_Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://x.pimcore.fun/admin/](https://x.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

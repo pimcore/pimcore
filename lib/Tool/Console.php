@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -19,17 +20,12 @@ use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class Console
+final class Console
 {
     /**
      * @var string system environment
      */
     private static $systemEnvironment;
-
-    /**
-     * @var null|bool
-     */
-    protected static $timeoutKillAfterSupport = null;
 
     /**
      * @var array
@@ -61,7 +57,7 @@ class Console
      * @param string $name
      * @param bool $throwException
      *
-     * @return bool|mixed|string
+     * @return bool|string
      *
      * @throws \Exception
      */
@@ -80,11 +76,18 @@ class Console
         // use DI to provide the ability to customize / overwrite paths
         if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
             $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
-            if (!$value && $throwException) {
-                throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+
+            if ($value === false) {
+                if ($throwException) {
+                    throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+                }
+
+                return false;
             }
 
-            return $value;
+            if ($value) {
+                return $value;
+            }
         }
 
         $systemConfig = Config::getSystemConfiguration('general');
@@ -129,65 +132,6 @@ class Console
 
         if ($throwException) {
             throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
-        }
-
-        return false;
-    }
-
-    protected static function setupComposer()
-    {
-        // composer needs either COMPOSER_HOME or HOME to be set
-        // we also populate the $_ENV variable, it is used by symfony/process component
-        if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {
-            $composerHome = PIMCORE_PRIVATE_VAR . '/composer';
-            if (!is_dir($composerHome)) {
-                mkdir($composerHome, 0777, true);
-            }
-            putenv('COMPOSER_HOME=' . $composerHome);
-            $_ENV['COMPOSER_HOME'] = $composerHome;
-        }
-
-        putenv('COMPOSER_DISABLE_XDEBUG_WARN=true');
-        $_ENV['COMPOSER_DISABLE_XDEBUG_WARN'] = 'true';
-    }
-
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkPngout($executablePath)
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkCjpeg($executablePath)
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
-                if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            // noting to do
         }
 
         return false;
@@ -243,11 +187,11 @@ class Console
 
     /**
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      *
      * @return array
      */
-    protected static function buildPhpScriptCmd($script, $arguments)
+    protected static function buildPhpScriptCmd(string $script, array $arguments = [])
     {
         $phpCli = self::getPhpCli();
 
@@ -258,10 +202,6 @@ class Console
         }
 
         if (!empty($arguments)) {
-            if (is_string($arguments)) {
-                @trigger_error(sprintf('Passing string arguments to %s is deprecated since v6.9 and will throw exception in Pimcore 10. Pass array arguments instead.', __METHOD__), E_USER_DEPRECATED);
-                $arguments = explode(' ', $arguments);
-            }
             $cmd = array_merge($cmd, $arguments);
         }
 
@@ -270,13 +210,13 @@ class Console
 
     /**
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
      *
      * @return string
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
+    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -303,12 +243,12 @@ class Console
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      *
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      * @param string|null $outputFile
      *
      * @return int
      */
-    public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
+    public static function runPhpScriptInBackground($script, $arguments = [], $outputFile = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
@@ -411,66 +351,6 @@ class Console
         Logger::debug('Process started - returning the PID is not supported on Windows Systems');
 
         return 0;
-    }
-
-    /**
-     * Returns a hash with all options passed to a cli script
-     *
-     * @param bool $onlyFullNotationArgs
-     *
-     * @return array
-     */
-    public static function getOptions($onlyFullNotationArgs = false)
-    {
-        global $argv;
-        $options = [];
-        $tmpOptions = $argv;
-        array_shift($tmpOptions);
-
-        foreach ($tmpOptions as $optionString) {
-            if ($onlyFullNotationArgs && substr($optionString, 0, 2) != '--') {
-                continue;
-            }
-            $exploded = explode('=', $optionString, 2);
-            $options[str_replace('-', '', $exploded[0])] = $exploded[1];
-        }
-
-        return $options;
-    }
-
-    /**
-     * @param array $options
-     * @param string $concatenator
-     * @param string $arrayConcatenator
-     *
-     * @return string
-     */
-    public static function getOptionString($options, $concatenator = '=', $arrayConcatenator = ',')
-    {
-        $string = '';
-
-        foreach ($options as $key => $value) {
-            $string .= '--' . $key;
-            if ($value) {
-                if (is_array($value)) {
-                    $value = implode($arrayConcatenator, $value);
-                }
-                $string .= $concatenator . "'" . $value . "'";
-            }
-            $string .= ' ';
-        }
-
-        return $string;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public static function checkCliExecution()
-    {
-        if (php_sapi_name() != 'cli') {
-            throw new \Exception('Script execution is restricted to CLI');
-        }
     }
 
     /**

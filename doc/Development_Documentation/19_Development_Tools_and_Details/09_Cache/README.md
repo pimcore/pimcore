@@ -21,7 +21,7 @@ Pimcore uses the `pimcore.cache.pool` Symfony cache pool, you can configure it a
 that the pool supports tags.
 
 ```yaml
-# app/config/cache.yml
+# config/cache.yaml
 framework:
     cache:
         pools:
@@ -37,7 +37,7 @@ framework:
 
 By default, the cache will reuse the Doctrine connection and write to your DB's `cache_items` tables. You can override
 the used connection by setting `connection` setting to a known Doctrine connection (see
-[DoctrineBundle Reference](http://symfony.com/doc/3.4/reference/configuration/doctrine.html#doctrine-dbal-configuration)
+[DoctrineBundle Reference](https://symfony.com/doc/5.2/reference/configuration/doctrine.html#doctrine-dbal-configuration)
 for further information).
  
 If you enable the `redis` cache configuration, the Redis cache will be used instead of the Doctrine one, even if Doctrine
@@ -73,7 +73,7 @@ You can use this functionality for your own application, and also to control the
 careful!).
 
 If you don't need the transactional tagging functionality as used in the core you're free to use a custom cache system as
-[provided by Symfony](http://symfony.com/blog/new-in-symfony-3-1-cache-component) but be aware that custom caches are not 
+[provided by Symfony](https://symfony.com/doc/5.2/components/cache.html) but be aware that custom caches are not 
 integrated with Pimcore's cache clearing functionality.
  
 #### Example of custom usage in an action

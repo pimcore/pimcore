@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -34,7 +35,7 @@ use Twig\Environment;
  *
  * @internal
  */
-final class PageController extends DocumentControllerBase
+class PageController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 
@@ -92,8 +93,8 @@ final class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $isLatestVersion = true;
-        $page = $this->getLatestVersion($page, $isLatestVersion);
+        $draftVersion = null;
+        $page = $this->getLatestVersion($page, $draftVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -115,9 +116,8 @@ final class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
-        $data['documentFromVersion'] = !$isLatestVersion;
 
-        $this->preSendDataActions($data, $page);
+        $this->preSendDataActions($data, $page, $draftVersion);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);
@@ -193,6 +193,8 @@ final class PageController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'), $page);
+
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
@@ -204,12 +206,18 @@ final class PageController extends DocumentControllerBase
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
 
-            $page->saveVersion();
+            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
             $this->saveToSession($page);
 
-            $treeData = $this->getTreeNodeConfig($page);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate(),
+            ];
 
-            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+            $treeData = $this->getTreeNodeConfig($page);
+            $this->handleTask($request->get('task'), $page);
+
+            return $this->adminJson(['success' => true, 'treeData' => $treeData, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }

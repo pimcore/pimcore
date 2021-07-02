@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -73,7 +74,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
-        $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
+        if (!$container->hasParameter('pimcore.encryption.secret')) {
+            $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
+        }
 
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
@@ -88,6 +91,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -126,6 +131,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
         $loader->load('cache.yml');
+        $loader->load('marshaller.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);

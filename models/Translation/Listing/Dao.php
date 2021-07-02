@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Translation
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Translation\Listing;
@@ -23,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Translation\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -43,7 +43,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->setMaxResults(null);
+        $queryBuilder->setFirstResult(0);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
@@ -85,6 +87,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                     $translations[$t['key']] = new Model\Translation();
                     $translations[$t['key']]->setDomain($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
+                    $translations[$t['key']]->setType($t['type']);
                 }
 
                 $translations[$t['key']]->addTranslation($t['language'], $t['text']);

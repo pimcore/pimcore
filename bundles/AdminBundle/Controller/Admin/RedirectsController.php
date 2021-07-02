@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -37,7 +37,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class RedirectsController extends AdminController
+class RedirectsController extends AdminController
 {
     /**
      * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
@@ -217,7 +217,7 @@ final class RedirectsController extends AdminController
     {
         $this->checkPermission('redirects');
 
-        /** @var UploadedFile $file */
+        /** @var UploadedFile|null $file */
         $file = $request->files->get('redirects');
 
         if (!$file) {

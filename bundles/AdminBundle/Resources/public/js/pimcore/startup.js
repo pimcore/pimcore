@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 
@@ -62,7 +62,8 @@ Ext.require([
     'Ext.ux.grid.SubTable',
     'Ext.window.Toast',
     'Ext.slider.Single',
-    'Ext.form.field.Tag'
+    'Ext.form.field.Tag',
+    'Ext.ux.TabMiddleButtonClose'
 ]);
 
 Ext.ariaWarn = Ext.emptyFn;
@@ -684,49 +685,6 @@ Ext.onReady(function () {
                     Ext.get("pimcore_avatar").on("click", function (ev) {
                         pimcore.helpers.openProfile();
                     });
-
-                    // check for latest news
-                    let request = new XMLHttpRequest();
-                    request.open('POST', "https://liveupdate.pimcore.org/news");
-                    request.onload = function() {
-                        if (this.status >= 200 && this.status < 400) {
-                            let data = Ext.decode(this.response);
-                            if(data && data['success'] === true) {
-                                let timestamp = Math.ceil(new Date().getTime()/1000);
-                                let localStorageMessageKey = "pimcore_news_" + data['messageId'];
-                                let messageTimestamp = localStorage.getItem(localStorageMessageKey);
-                                if(messageTimestamp === null || messageTimestamp < timestamp-data['messageInterval']) {
-                                    localStorage.setItem(localStorageMessageKey, timestamp);
-                                    if (data['frame']) {
-                                        pimcore.helpers.openGenericIframeWindow('news', data['frame']['url'], data['frame']['icon'], t(data['frame']['title']));
-                                    }
-
-                                    if (data['box']) {
-                                        Ext.applyIf(data['box'], {
-                                            width: 500,
-                                            height: 300,
-                                            bodyStyle: "padding: 10px;",
-                                            modal: false,
-                                        });
-
-                                        var win = new Ext.Window(data['box']);
-                                        win.show();
-                                    }
-                                }
-                            }
-                        }
-                    };
-
-                    let data = new FormData();
-                    data.append('id', pimcore.settings.instanceId);
-                    data.append('revision', pimcore.settings.build);
-                    data.append('version', pimcore.settings.version);
-                    data.append('debug', pimcore.settings.debug);
-                    data.append('devmode', pimcore.settings.devmode);
-                    data.append('environment', pimcore.settings.environment);
-                    data.append("language", pimcore.settings.language);
-                    data.append("isAdmin", pimcore.currentuser.admin);
-                    request.send(data);
                 }
             }
         });
@@ -950,7 +908,7 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    var record = quicksearchStore.getAt(node.dataset.recordIndex);
+                    var record = quicksearchStore.getAt(node.dataset.recordindex);
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';

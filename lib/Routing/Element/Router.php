@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Element;
@@ -43,6 +44,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $requestHelper;
 
+    /**
+     * @param RequestContext $context
+     * @param RequestHelper $requestHelper
+     */
     public function __construct(RequestContext $context, RequestHelper $requestHelper)
     {
         $this->context = $context;
@@ -170,6 +175,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $route;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function matchRequest(Request $request)
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));

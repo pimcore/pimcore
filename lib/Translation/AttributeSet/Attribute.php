@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation\AttributeSet;
@@ -17,13 +18,21 @@ namespace Pimcore\Translation\AttributeSet;
 class Attribute
 {
     const TYPE_PROPERTY = 'property';
+
     const TYPE_TAG = 'tag';
+
     const TYPE_SETTINGS = 'settings';
+
     const TYPE_LOCALIZED_FIELD = 'localizedfield';
+
     const TYPE_BRICK_LOCALIZED_FIELD = 'localizedbrick';
+
     const TYPE_BLOCK = 'block';
+
     const TYPE_BLOCK_IN_LOCALIZED_FIELD = 'blockinlocalizedfield';
+
     const TYPE_FIELD_COLLECTION_LOCALIZED_FIELD = 'localizedfieldcollection';
+
     const TYPE_ELEMENT_KEY = 'key';
 
     /**

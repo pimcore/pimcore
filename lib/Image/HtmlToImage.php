@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Image;
@@ -19,6 +20,9 @@ use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class HtmlToImage
 {
     /**
@@ -78,7 +82,7 @@ class HtmlToImage
             $command = [$xvfb, '--auto-servernum', '--server-args=-screen 0, 1280x1024x24',
                 self::getWkhtmltoimageBinary(), '--use-xserver', ];
         } else {
-            $command = self::getWkhtmltoimageBinary();
+            $command = [self::getWkhtmltoimageBinary()];
         }
         $command = array_merge($command, $options);
         Console::addLowProcessPriority($command);

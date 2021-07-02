@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.select");
@@ -49,13 +49,11 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
         this.specificPanel.add(specificItems);
-
 
         return this.layout;
     },
@@ -82,7 +80,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     {
                         ptype: 'gridviewdragdrop',
                         dragroup: 'objectclassselect'
-                    },
+                    }
                 ]
             },
             tbar: [{
@@ -97,9 +95,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                         value: ""
                     };
 
-                    var selectedRow = this.selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();
@@ -132,7 +131,12 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     width: 200
                 },
                 {
-                    text: t("value"), sortable: true, dataIndex: 'value', editor: { xtype : 'textfield', allowBlank : false },
+                    text: t("value"),
+                    sortable: true,
+                    dataIndex: 'value',
+                    editor: new Ext.form.TextField({
+                        allowBlank: false
+                    }),
                     width: 200
                 },
                 {
@@ -219,9 +223,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                             return true;
                         }
                     }
-                })]
+                })
+            ]
         });
-
 
         this.selectionModel = valueGrid.getSelectionModel();
 

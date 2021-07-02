@@ -1,30 +1,33 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
 
 trait Parallelization
 {
-    use LockableTrait;
+    /** @var LockInterface|null */
+    private $lock;
 
     use WebmozartParallelization
     {
@@ -33,6 +36,9 @@ trait Parallelization
 
     protected static function configureParallelization(Command $command): void
     {
+        // we need to override WebmozartParallelization::configureParallelization here
+        // because some existing commands are already using the `p` option, and would therefore
+        // causes collisions
         $command
             ->addArgument(
                 'item',
@@ -57,7 +63,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: only allow one command of a type at the same time.
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -68,10 +74,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: clean up garbage after each batch run, if there is only
-     * one master process in place.
-     *
-     * @param array $items
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -84,7 +87,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: release lock on termination.
+     * {@inheritdoc}
      */
     protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -108,10 +111,34 @@ trait Parallelization
     }
 
     /**
-     * {@inheritdoc}
+     * Locks a command.
+     *
+     * @param string|null $name
+     * @param bool|null $blocking
+     *
+     * @return bool
      */
-    public function getConsolePath(): string
+    private function lock($name = null, $blocking = false)
     {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName());
+
+        if (!$this->lock->acquire($blocking)) {
+            $this->lock = null;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Releases the command lock if there is one.
+     */
+    private function release()
+    {
+        if ($this->lock) {
+            $this->lock->release();
+            $this->lock = null;
+        }
     }
 }

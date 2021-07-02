@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -51,6 +49,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     protected $data;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $needsRenewReferences = false;
@@ -114,7 +114,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     public function getData()
     {
         if ($this->needsRenewReferences) {
-            $container = null;
             $this->needsRenewReferences = false;
             $this->renewReferences();
         }
@@ -186,6 +185,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     }
 
     /**
+     * @internal
+     *
      * @return bool
      */
     public function getNeedsRenewReferences(): bool
@@ -194,6 +195,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     }
 
     /**
+     * @internal
+     *
      * @param bool $needsRenewReferences
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences)

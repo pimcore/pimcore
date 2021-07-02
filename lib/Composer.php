@@ -5,12 +5,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -21,12 +21,15 @@ use Composer\Script\Event;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
+/**
+ * {@internal}
+ */
 class Composer
 {
     protected static $options = [
-        'symfony-app-dir' => 'app',
-        'symfony-web-dir' => 'public',
-        'symfony-assets-install' => 'hard',
+        'bin-dir' => 'bin',
+        'public-dir' => 'public',
+        'symfony-assets-install' => 'relative',
         'symfony-cache-warmup' => false,
     ];
 
@@ -83,6 +86,7 @@ class Composer
 
         // execute migrations
         $isInstalled = null;
+
         try {
             $process = static::executeCommand($event, $consoleDir,
                 ['internal:migration-helpers', '--is-installed'], 30, false);
@@ -131,7 +135,7 @@ class Composer
         if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
             $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
                 // generate a unique token for each occurrence
-                return base64_encode(random_bytes(24));
+                return base64_encode(random_bytes(32));
             }, $parameters);
             file_put_contents($parametersYml, $parameters);
         }
@@ -239,20 +243,11 @@ class Composer
     protected static function getConsoleDir(Event $event, $actionName)
     {
         $options = static::getOptions($event);
-
-        if (static::useNewDirectoryStructure($options)) {
-            if (!static::hasDirectory($event, 'symfony-bin-dir', $options['symfony-bin-dir'], $actionName)) {
-                return;
-            }
-
-            return $options['symfony-bin-dir'];
-        }
-
-        if (!static::hasDirectory($event, 'symfony-app-dir', $options['symfony-app-dir'], 'execute command')) {
+        if (!static::hasDirectory($event, 'bin-dir', $options['bin-dir'], $actionName)) {
             return;
         }
 
-        return $options['symfony-app-dir'];
+        return $options['bin-dir'];
     }
 
     protected static function hasDirectory(Event $event, $configName, $path, $actionName)
@@ -264,11 +259,6 @@ class Composer
         }
 
         return true;
-    }
-
-    protected static function useNewDirectoryStructure(array $options)
-    {
-        return isset($options['symfony-var-dir']) && is_dir($options['symfony-var-dir']);
     }
 
     private static function removeDecoration($string)
@@ -301,7 +291,7 @@ class Composer
         }
 
         $command = ['assets:install'];
-        $webDir = $options['symfony-web-dir'];
+        $webDir = $options['public-dir'];
 
         if ('symlink' == $options['symfony-assets-install']) {
             $command[] = '--symlink';
@@ -309,7 +299,7 @@ class Composer
             array_push($command, '--symlink', '--relative');
         }
 
-        if (!static::hasDirectory($event, 'symfony-web-dir', $webDir, 'install assets')) {
+        if (!static::hasDirectory($event, 'public-dir', $webDir, 'install assets')) {
             return;
         }
 

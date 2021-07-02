@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\User;
@@ -27,51 +25,72 @@ use Pimcore\Model\User\Workspace\Document;
 class UserRole extends AbstractUser
 {
     /**
+     * @internal
+     *
      * @var array
      */
     protected $permissions = [];
 
     /**
+     * @internal
+     *
      * @var Asset[]
      */
     protected $workspacesAsset = [];
 
     /**
+     * @internal
+     *
      * @var DataObject[]
      */
     protected $workspacesObject = [];
 
     /**
+     * @internal
+     *
      * @var Document[]
      */
     protected $workspacesDocument = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $classes = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $docTypes = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $perspectives = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $websiteTranslationLanguagesView = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $websiteTranslationLanguagesEdit = [];
 
-    public function update()
+    /**
+     * {@inheritdoc}
+     */
+    protected function update()
     {
         $this->getDao()->update();
 
@@ -92,6 +111,11 @@ class UserRole extends AbstractUser
         }
     }
 
+    /**
+     * @internal
+     *
+     * @return $this
+     */
     public function setAllAclToFalse()
     {
         $this->permissions = [];
@@ -141,6 +165,8 @@ class UserRole extends AbstractUser
 
     /**
      * Generates the permission list required for frontend display
+     *
+     * @internal
      *
      * @return array
      *
@@ -349,6 +375,8 @@ class UserRole extends AbstractUser
     /**
      * checks if given parameter is string and if so splits it creates array
      * returns empty array if empty parameter is given
+     *
+     * @internal
      *
      * @param array|string $array
      *

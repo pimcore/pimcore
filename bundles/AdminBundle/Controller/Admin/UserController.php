@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -35,7 +37,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @internal
  */
-final class UserController extends AdminController implements KernelControllerEventInterface
+class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
@@ -65,7 +67,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User $user
+     * @param User|User\Folder $user
      *
      * @return array
      */
@@ -304,6 +306,7 @@ final class UserController extends AdminController implements KernelControllerEv
                     if (method_exists($user, 'setAllAclToFalse')) {
                         $user->setAllAclToFalse();
                     }
+
                     break;
                 }
             }
@@ -406,13 +409,15 @@ final class UserController extends AdminController implements KernelControllerEv
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $user->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
 
         // object <=> user dependencies
@@ -457,6 +462,8 @@ final class UserController extends AdminController implements KernelControllerEv
 
         // unset confidential informations
         $userData = $user->getObjectVars();
+        $userData['roles'] =  array_map('intval', $user->getRoles());
+        $userData['docTypes'] =  array_map('intval', $user->getDocTypes());
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
@@ -646,7 +653,7 @@ final class UserController extends AdminController implements KernelControllerEv
         return $response;
     }
 
-    /* ROLES */
+    // ROLES
 
     /**
      * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})
@@ -672,7 +679,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User\Role $role
+     * @param User\Role|User\Role\Folder $role
      *
      * @return array
      */
@@ -724,24 +731,31 @@ final class UserController extends AdminController implements KernelControllerEv
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $role->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
+
+        $replaceFn = function ($value) {
+            return $value->getObjectVars();
+        };
 
         // get available permissions
         $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
+        $availableUserPermissions = array_map($replaceFn, $availableUserPermissions);
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         return $this->adminJson([
             'success' => true,
-            'role' => $role,
+            'role' => $role->getObjectVars(),
             'permissions' => $role->generatePermissionList(),
             'classes' => $role->getClasses(),
             'docTypes' => $role->getDocTypes(),
@@ -894,18 +908,19 @@ final class UserController extends AdminController implements KernelControllerEv
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getImageAction(Request $request)
     {
         /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
-        $thumb = $userObj->getImage();
+        $stream = $userObj->getImage();
 
-        $response = new BinaryFileResponse($thumb);
-        $response->headers->set('Content-Type', 'image/png');
-
-        return $response;
+        return new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => 'image/png',
+        ]);
     }
 
     /**
@@ -919,7 +934,6 @@ final class UserController extends AdminController implements KernelControllerEv
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        /** @var User $user */
         $user = User::getById($request->get('id'));
 
         if (!$user) {
@@ -1134,7 +1148,6 @@ final class UserController extends AdminController implements KernelControllerEv
         $message = '';
 
         if ($username = $request->get('username')) {
-            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {
@@ -1151,7 +1164,7 @@ final class UserController extends AdminController implements KernelControllerEv
             if (empty($message)) {
                 //generate random password if user has no password
                 if (!$user->getPassword()) {
-                    $user->setPassword(md5(uniqid()));
+                    $user->setPassword(bin2hex(random_bytes(16)));
                     $user->save();
                 }
 
@@ -1164,7 +1177,7 @@ final class UserController extends AdminController implements KernelControllerEv
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setTextBody("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $mail->text("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
                     $mail->send();
 
                     $success = true;

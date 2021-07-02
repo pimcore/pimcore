@@ -16,7 +16,7 @@ services:
 
     pimcore.cache.adapter.null_tag_aware:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
-        arguments: ['@pimcore.cache.adapter.null']
+        arguments: ['@pimcore.cache.adapter.null', null]
 
     pimcore.cache.adapter.pdo:
         class: Symfony\Component\Cache\Adapter\PdoAdapter
@@ -27,7 +27,7 @@ services:
 
     pimcore.cache.adapter.pdo_tag_aware:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
-        arguments: [ '@pimcore.cache.adapter.pdo' ]
+        arguments: [ '@pimcore.cache.adapter.pdo', null ]
 
     pimcore.cache.adapter.redis_tag_aware:
         class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter

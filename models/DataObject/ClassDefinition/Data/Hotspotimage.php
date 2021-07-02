@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -21,9 +20,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use ImageTrait;
@@ -33,12 +33,16 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'hotspotimage';
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var array
      */
@@ -47,21 +51,29 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Type for the column
      *
+     * @internal
+     *
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $ratioX;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $ratioY;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $predefinedDataTemplates;
@@ -171,10 +183,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $md = json_decode($metaData, true);
             if (!$md) {
                 $md = Serialize::unserialize($metaData);
-            } else {
-                if (is_array($md) && count($md)) {
-                    $md['hotspots'] = $md;
-                }
+            } elseif (is_array($md)) {
+                $md['hotspots'] = $md;
             }
 
             $hotspots = empty($md['hotspots']) ? null : $md['hotspots'];
@@ -234,7 +244,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param DataObject\Data\Hotspotimage|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -356,16 +366,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -378,28 +379,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|DataObject\ClassDefinition\Data
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            return $value;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -407,17 +387,10 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {
                 $tags = $data->getImage()->getCacheTags($tags);
@@ -535,6 +508,9 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function doRewriteIds($object, $idMapping, $params, $data)
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
@@ -605,62 +581,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $newDataArray;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            $result = [];
-            $result['hotspots'] = $value->getHotspots();
-            $result['marker'] = $value->getMarker();
-            $result['crop'] = $value->getCrop();
-
-            $image = $value->getImage();
-            if ($image) {
-                $type = Element\Service::getType($image);
-                $id = $image->getId();
-                $result['image'] = [
-                    'type' => $type,
-                    'id' => $id,
-                ];
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (is_array($value)) {
-            $image = new DataObject\Data\Hotspotimage();
-            $image->setHotspots($value['hotspots']);
-            $image->setMarker($value['marker']);
-            $image->setCrop($value['crop']);
-            if ($value['image']) {
-                $type = $value['image']['type'];
-                $id = $value['image']['id'];
-                $asset = Element\Service::getElementById($type, $id);
-                $image->setImage($asset);
-            }
-
-            return $image;
-        }
-    }
-
     /**
      * @param DataObject\Data\Hotspotimage|null $oldValue
      * @param DataObject\Data\Hotspotimage|null $newValue
@@ -702,23 +622,83 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Hotspotimage) {
+            $result = [];
+            $result['hotspots'] = $value->getHotspots();
+            $result['marker'] = $value->getMarker();
+            $result['crop'] = $value->getCrop();
+
+            $image = $value->getImage();
+            if ($image) {
+                $type = Element\Service::getType($image);
+                $id = $image->getId();
+                $result['image'] = [
+                    'type' => $type,
+                    'id' => $id,
+                ];
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $image = new DataObject\Data\Hotspotimage();
+            $image->setHotspots($value['hotspots']);
+            $image->setMarker($value['marker']);
+            $image->setCrop($value['crop']);
+            if ($value['image'] ?? false) {
+                $type = $value['image']['type'];
+                $id = $value['image']['id'];
+                $asset = Element\Service::getElementById($type, $id);
+                $image->setImage($asset);
+            }
+
+            return $image;
+        }
     }
 }

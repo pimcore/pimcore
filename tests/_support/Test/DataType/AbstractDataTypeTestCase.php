@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Cache;
@@ -760,19 +773,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testObject->setUrlSlug([$validSlug]);
         $this->testObject->save();
 
-        $invalidSlug = new UrlSlug('/xyz      /abc');
-        $this->testObject->setUrlSlug([$invalidSlug]);
-        $ex = null;
-        try {
-            $this->testObject->save();
-        } catch (\Exception $e) {
-            $ex = $e;
-        }
-        $this->assertNotNull($ex, 'invalid slug, expected an exception');
-
-        // make sure the invalid slug wasn't save and get a fresh copy
-        $this->testObject = Concrete::getById($this->testObject->getId(), true);
-
         // test lookup
         $slug = UrlSlug::resolveSlug('/xyz/abc');
         $this->assertTrue($slug instanceof UrlSlug, 'expected a slug');
@@ -785,6 +785,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $duplicateSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug2([$duplicateSlug]);
         $ex = null;
+
         try {
             $this->testObject->save();
         } catch (\Exception $e) {

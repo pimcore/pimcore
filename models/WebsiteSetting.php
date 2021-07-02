@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -22,7 +23,7 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
  */
-class WebsiteSetting extends AbstractModel
+final class WebsiteSetting extends AbstractModel
 {
     /**
      * @var int
@@ -321,6 +322,9 @@ class WebsiteSetting extends AbstractModel
         $this->language = $language;
     }
 
+    /**
+     * @internal
+     */
     public function clearDependentCache()
     {
         \Pimcore\Cache::clearTag('website_config');

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Listing\Dao;
@@ -18,6 +19,9 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 trait QueryBuilderHelperTrait
 {
     /**
@@ -127,6 +131,7 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(DoctrineQueryBuilder &$queryBuilder): void
     {
+        $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetQueryPart('orderBy');
         $queryBuilder->setMaxResults(null);
@@ -138,6 +143,7 @@ trait QueryBuilderHelperTrait
             }
 
             if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+                $queryBuilder->select($originalSelect);
                 $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
             } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';

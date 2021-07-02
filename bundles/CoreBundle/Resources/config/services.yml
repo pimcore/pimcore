@@ -7,6 +7,14 @@ services:
     # SESSION
     #
 
+    session:
+        public: true
+        class: Symfony\Component\HttpFoundation\Session\Session
+        arguments: [ '@session.storage', '@session.namespacedattributebag', '@session.flash_bag' ]
+
+    session.namespacedattributebag:
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+
     # Sessions need to be configured (e.g. adding custom attribute bags) before they are started. The configurator handles
     # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
     # DI tag. See the SessionConfiguratorPass for details.
@@ -29,6 +37,24 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
+
+    security.authentication.provider.dao:
+        class: Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider
+        arguments:
+            - !abstract User Provider
+            - !abstract User Checker
+            - !abstract  Provider-shared Key
+            - '@security.encoder_factory'
+            - '%security.authentication.hide_user_not_found%'
+        deprecated: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
+
+    pimcore.security.validator.user_password:
+        class: Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator
+        arguments:
+            - '@security.token_storage'
+            - '@security.encoder_factory'
+        tags:
+            - { name: validator.constraint_validator, alias: security.validator.user_password }
 
     #
     # INFRASTRUCTURE
@@ -176,6 +202,9 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
+    Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
+        public: true
+
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
     # Decorates Symfony Mailer
@@ -202,16 +231,11 @@ services:
         arguments:
             - '@database_connection'
 
-    Symfony\Component\Lock\Store\RetryTillSaveStore:
-        arguments:
-            - '@Symfony\Component\Lock\PersistingStoreInterface'
-            - 1000
-
     Symfony\Component\Lock\LockFactory:
         public: true
         class: Symfony\Component\Lock\LockFactory
         arguments:
-            - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
+            - '@Symfony\Component\Lock\PersistingStoreInterface'
 
 
     Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
@@ -220,4 +244,17 @@ services:
 
     Knp\Component\Pager\PaginatorInterface:
         class: Knp\Component\Pager\Paginator
+        public: true
+
+    Pimcore\Tool\Storage:
+        public: true
+        arguments:
+            $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Image\Adapter\Imagick:
+        shared: false
+        public: true
+
+    Pimcore\Image\Adapter\GD:
+        shared: false
         public: true

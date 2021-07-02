@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\WebDAV;
@@ -23,6 +21,9 @@ use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
 
+/**
+ * @internal
+ */
 class Folder extends DAV\Collection
 {
     /**
@@ -47,17 +48,19 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        if ($this->asset->hasChildren()) {
-            foreach ($this->asset->getChildren() as $child) {
-                if ($child->isAllowed('view')) {
-                    try {
-                        if ($child = $this->getChild($child)) {
-                            $children[] = $child;
-                        }
-                    } catch (\Exception $e) {
-                        Logger::warning($e);
-                    }
+        $childsList = new Asset\Listing();
+
+        $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $childsList->filterAccessibleByUser($user);
+
+        foreach ($childsList as $child) {
+            try {
+                if ($child = $this->getChild($child)) {
+                    $children[] = $child;
                 }
+            } catch (\Exception $e) {
+                Logger::warning($e);
             }
         }
 
@@ -65,7 +68,7 @@ class Folder extends DAV\Collection
     }
 
     /**
-     * @param string $name
+     * @param Asset|string $name
      *
      * @return DAV\INode|void
      *
@@ -73,13 +76,13 @@ class Folder extends DAV\Collection
      */
     public function getChild($name)
     {
-        $nameParts = explode('/', $name);
-        $name = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
         $asset = null;
 
         if (is_string($name)) {
+            $name = Element\Service::getValidKey(basename($name), 'asset');
+
             $parentPath = $this->asset->getRealFullPath();
-            if ($parentPath == '/') {
+            if ($parentPath === '/') {
                 $parentPath = '';
             }
 
@@ -91,12 +94,13 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
-            if ($asset->getType() == 'folder') {
+            if ($asset instanceof Asset\Folder) {
                 return new Asset\WebDAV\Folder($asset);
-            } else {
-                return new Asset\WebDAV\File($asset);
             }
+
+            return new Asset\WebDAV\File($asset);
         }
+
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 

@@ -1,20 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Dotenv\Dotenv;
@@ -145,7 +145,7 @@ class Bootstrap
         }
     }
 
-    protected static function prepareEnvVariables()
+    private static function prepareEnvVariables()
     {
         (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
     }
@@ -180,7 +180,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_PATH', realpath(__DIR__ . '/..'));
         $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/public');
         $resolveConstant('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-        $resolveConstant('PIMCORE_PUBLIC_VAR', PIMCORE_WEB_ROOT . '/var');
 
         // special directories for tests
         // test mode can bei either controlled by a constant or an env variable
@@ -188,7 +187,6 @@ class Bootstrap
         if ($testMode) {
             // override and initialize directories
             $resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PATH . '/tests/_output/var/classes');
-            $resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_WEB_ROOT . '/var/tests/assets');
 
             if (!defined('PIMCORE_TEST')) {
                 define('PIMCORE_TEST', true);
@@ -198,44 +196,27 @@ class Bootstrap
         // paths relying on basic paths above
         $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_PROJECT_ROOT . '/config/pimcore');
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
-        $resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_PUBLIC_VAR . '/assets');
-        $resolveConstant('PIMCORE_VERSION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/versions');
         $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_PRIVATE_VAR . '/application-logger');
-        $resolveConstant('PIMCORE_TEMPORARY_DIRECTORY', PIMCORE_PUBLIC_VAR . '/tmp');
         $resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
         $resolveConstant('PIMCORE_SYMFONY_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache');
         $resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PRIVATE_VAR . '/classes');
         $resolveConstant('PIMCORE_CUSTOMLAYOUT_DIRECTORY', PIMCORE_CLASS_DIRECTORY . '/customlayouts');
-        $resolveConstant('PIMCORE_RECYCLEBIN_DIRECTORY', PIMCORE_PRIVATE_VAR . '/recyclebin');
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
         $resolveConstant('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
-        $resolveConstant('PIMCORE_USERIMAGE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/user-image');
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 
-    public static function autoload()
+    private static function autoload()
     {
         $loader = \Pimcore::getAutoloader();
 
         // tell the autoloader where to find Pimcore's generated class stubs
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
         $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-
-        // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
-        $apiDocAnnotations = [
-            'api', 'apiDefine',
-            'apiDeprecated', 'apiDescription', 'apiError',  'apiErrorExample', 'apiExample', 'apiGroup', 'apiHeader',
-            'apiHeaderExample', 'apiIgnore', 'apiName', 'apiParam', 'apiParamExample', 'apiPermission', 'apiSampleRequest',
-            'apiSuccess', 'apiSuccessExample', 'apiUse', 'apiVersion',
-        ];
-
-        foreach ($apiDocAnnotations as $apiDocAnnotation) {
-            AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
-        }
 
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;

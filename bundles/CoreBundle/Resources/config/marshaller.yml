@@ -1,0 +1,98 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # block
+    Pimcore\DataObject\BlockDataMarshaller\Consent:
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent' }
+
+    Pimcore\DataObject\BlockDataMarshaller\Date:
+        class: Pimcore\DataObject\BlockDataMarshaller\Date
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, key: 'block_date' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, key: 'block_datetime' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\BlockDataMarshaller\EncryptedField:
+        class: Pimcore\DataObject\BlockDataMarshaller\EncryptedField
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_encryptedField, key: 'block_encryptedField' }
+
+    Pimcore\DataObject\BlockDataMarshaller\ExternalImage:
+        class: Pimcore\DataObject\BlockDataMarshaller\ExternalImage
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_externalImage,key: 'block_externalImage' }
+
+    Pimcore\DataObject\BlockDataMarshaller\Geopoint:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geopoint
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopoint, key: 'block_geopoint' }
+
+    Pimcore\DataObject\BlockDataMarshaller\Geobounds:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geobounds
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geobounds, key: 'block_geobounds' }
+
+    Pimcore\DataObject\BlockDataMarshaller\Geopolygon:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geopolygon
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolygon, key: 'block_geopolygon' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolyline, key: 'block_geopolyline' }
+
+    Pimcore\DataObject\BlockDataMarshaller\Localizedfields:
+        class: Pimcore\DataObject\BlockDataMarshaller\Localizedfields
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_localizedfields, key: 'block_localizedfields' }
+
+    Pimcore\DataObject\BlockDataMarshaller\RgbaColor:
+        class: Pimcore\DataObject\BlockDataMarshaller\RgbaColor
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_rgbaColor, key: 'block_rgbaColor' }
+
+    Pimcore\DataObject\BlockDataMarshaller\StructuredTable:
+        class: Pimcore\DataObject\BlockDataMarshaller\StructuredTable
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, key: 'block_structuredTable' }
+
+    # classification store
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\BooleanSelect:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\BooleanSelect
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_booleanSelect, key: 'classificationstore_booleanSelect' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\EncryptedField:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_encryptedField, key: 'classificationstore_encryptedField' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Multiselect:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_multiselect, key: 'classificationstore_multiselect' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_countrymultiselect, key: 'classificationstore_countrymultiselect' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_languagesmultiselect, key: 'classificationstore_languagemultiselect' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\RgbaColor:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\RgbaColor
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_rgbaColor, key: 'classificationstore_rgbaColor' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Table:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Table
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_table, key: 'classificationstore_table' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\QuantityValue:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\QuantityValue
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_quantityValue, key: 'classificationstore_quantityValue' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_inputQuantityValue, key: 'classificationstore_inputQuantityValue' }
+
+
+    # service
+    Pimcore\Element\MarshallerService:
+        arguments: ['@service_container', !tagged_locator { tag: 'pimcore.dataobject.fielddefinition.marshaller', index_by: 'key' }]

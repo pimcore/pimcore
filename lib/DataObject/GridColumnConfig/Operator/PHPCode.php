@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -37,6 +35,9 @@ final class PHPCode extends AbstractOperator
      */
     private $instance;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -45,22 +46,34 @@ final class PHPCode extends AbstractOperator
         $this->phpClass = $config->phpClass ?? '';
     }
 
+    /**
+     * @return string
+     */
     public function getPhpClass(): string
     {
         return $this->phpClass;
     }
 
+    /**
+     * @param string $phpClass
+     */
     public function setPhpClass(string $phpClass)
     {
         $this->phpClass = $phpClass;
         $this->instance = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabel()
     {
         return $this->getInstance()->getLabel();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         try {
@@ -70,6 +83,11 @@ final class PHPCode extends AbstractOperator
         }
     }
 
+    /**
+     * @return OperatorInterface
+     *
+     * @throws \Exception
+     */
     private function getInstance(): OperatorInterface
     {
         if (null === $this->instance) {
@@ -79,6 +97,11 @@ final class PHPCode extends AbstractOperator
         return $this->instance;
     }
 
+    /**
+     * @return OperatorInterface
+     *
+     * @throws \Exception
+     */
     private function buildInstance(): OperatorInterface
     {
         $phpClass = $this->getPhpClass();
@@ -88,6 +111,7 @@ final class PHPCode extends AbstractOperator
 
             return $operatorInstance;
         }
+
         throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
     }
 }

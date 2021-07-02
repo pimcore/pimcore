@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -39,11 +37,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
-     * @var array
+     * @internal
+     *
+     * @var array|null
      */
     protected $config;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $name;
@@ -51,6 +53,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Contains the real name of the editable without the prefixes and suffixes
      * which are generated automatically by blocks and areablocks
+     *
+     * @internal
      *
      * @var string
      */
@@ -66,12 +70,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Element belongs to the ID of the document
      *
+     * @internal
+     *
      * @var int
      */
     protected $documentId;
 
     /**
      * Element belongs to the document
+     *
+     * @internal
      *
      * @var Document\PageSnippet|null
      */
@@ -80,16 +88,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * In Editmode or not
      *
+     * @internal
+     *
      * @var bool
      */
     protected $editmode;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $inherited = false;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $inDialogBox = null;
@@ -133,7 +147,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return string
      */
-    protected function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
+    private function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
 
@@ -346,7 +360,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getConfig()
     {
@@ -354,9 +368,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param array $config
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setConfig($config)
     {
@@ -440,9 +452,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * direct output to the frontend
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     final public function render()
     {
@@ -527,7 +537,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return $tags;
     }
@@ -569,6 +579,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @internal
+     *
      * @return BlockState
      */
     protected function getBlockState(): BlockState
@@ -576,6 +588,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->getBlockStateStack()->getCurrentState();
     }
 
+    /**
+     * @internal
+     *
+     * @return BlockStateStack
+     */
     protected function getBlockStateStack(): BlockStateStack
     {
         return \Pimcore::getContainer()->get(BlockStateStack::class);
@@ -584,6 +601,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds an editable name for an editable, taking current
      * block state (block, index) and targeting into account.
+     *
+     * @internal
      *
      * @param string $type
      * @param string $name
@@ -639,6 +658,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $editableName;
     }
 
+    /**
+     * @param string $name
+     * @param string $type
+     * @param BlockState $blockState
+     * @param string|null $targetGroupElementName
+     *
+     * @return string
+     */
     private static function doBuildName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
     {
         if (!$blockState->hasBlocks()) {
@@ -669,9 +696,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             }
         }
 
-        $result = self::buildHierarchicalName($name, $blocks, $indexes);
-
-        return $result;
+        return self::buildHierarchicalName($name, $blocks, $indexes);
     }
 
     /**
@@ -704,6 +729,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param string $type
      * @param array $parentBlockNames
@@ -730,6 +757,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param Document $document
      *

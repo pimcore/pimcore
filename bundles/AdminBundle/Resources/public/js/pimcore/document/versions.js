@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.versions");
@@ -143,6 +143,13 @@ pimcore.document.versions = Class.create({
                         editable: false
                     },
                     {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode},
+                    {
+                        xtype: "checkcolumn",
+                        text: t("auto_save"),
+                        disabled : true,
+                        dataIndex: "autoSave",
+                        width: 50
+                    },
                     checkPublic,
                     {text: t("public_url"), width: 300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],
@@ -342,18 +349,19 @@ pimcore.document.versions = Class.create({
         });
     },
 
-    dataUpdate: function (store, record, operation) {
+    dataUpdate: function (store, record, operation, columns) {
 
         if (operation == "edit") {
-            Ext.Ajax.request({
-                method: "post",
-                url: Routing.generate('pimcore_admin_element_versionupdate'),
-                method: 'PUT',
-                params: {
-                    data: Ext.encode(record.data)
-                }
-            });
-
+            if (in_array("public", columns) || in_array("note", columns)) {
+                Ext.Ajax.request({
+                    method: "post",
+                    url: Routing.generate('pimcore_admin_element_versionupdate'),
+                    method: 'PUT',
+                    params: {
+                        data: Ext.encode(record.data)
+                    }
+                });
+            }
             this.checkForPreview(store);
         }
 

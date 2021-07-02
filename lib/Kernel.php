@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -17,6 +18,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\Runtime;
@@ -41,6 +43,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -96,6 +99,9 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -111,6 +117,9 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -204,7 +213,7 @@ abstract class Kernel extends SymfonyKernel
             $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
         }
 
-        return parent::shutdown();
+        parent::shutdown();
     }
 
     /**
@@ -227,10 +236,14 @@ abstract class Kernel extends SymfonyKernel
         register_shutdown_function(function () {
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
-            if (null !== $container = $this->getContainer()) {
+            try {
+                $container = $this->getContainer();
+            } catch (\LogicException) {
+                // Container is cleared. Allow tests to finish.
+            }
+            if (isset($container) && $container instanceof ContainerInterface) {
                 $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
-
             \Pimcore::shutdown();
         });
     }
@@ -307,6 +320,7 @@ abstract class Kernel extends SymfonyKernel
             new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
+            new FlysystemBundle(),
         ], 100);
 
         // pimcore bundles

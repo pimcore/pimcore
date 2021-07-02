@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DependencyInjection;
@@ -31,6 +31,9 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
      */
     private $ids;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($factories)
     {
         $this->ids = array_keys($factories);
@@ -45,6 +48,9 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
         }, $this->ids);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         foreach ($this->ids as $id) {

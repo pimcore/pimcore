@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -23,6 +24,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
@@ -39,7 +41,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
+class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
@@ -127,7 +129,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document);
+                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
                 $this->handleObjectParams($request);
             }
 
@@ -194,10 +196,11 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
     /**
      * @param Request $request
      * @param Document|null $document
+     * @param User $user
      *
      * @return Document|null
      */
-    protected function handleAdminUserDocumentParams(Request $request, ?Document $document)
+    private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user)
     {
         if (!$document) {
             return null;
@@ -205,7 +208,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document);
+            $document = $this->handleEditmode($document, $user);
         }
 
         // document preview
@@ -252,10 +255,11 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
     /**
      * @param Document $document
+     * @param User $user
      *
      * @return Document
      */
-    protected function handleEditmode(Document $document)
+    protected function handleEditmode(Document $document, User $user)
     {
         // check if there is the document in the session
         if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
@@ -271,7 +275,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
             // set the latest available version for editmode if there is no doc in the session
             if ($document instanceof Document\PageSnippet) {
-                $latestVersion = $document->getLatestVersion();
+                $latestVersion = $document->getLatestVersion($user->getId());
                 if ($latestVersion) {
                     $latestDoc = $latestVersion->loadData();
 

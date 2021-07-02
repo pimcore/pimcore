@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Translation
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Translation;
@@ -20,6 +18,8 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Translation $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -58,6 +58,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setKey($d['key']);
                 $this->model->setCreationDate($d['creationDate']);
                 $this->model->setModificationDate($d['modificationDate']);
+                $this->model->setType($d['type']);
             }
         } else {
             throw new \Exception("Translation-Key -->'" . $key . "'<-- not found");
@@ -73,15 +74,18 @@ class Dao extends Model\Dao\AbstractDao
         $this->createOrUpdateTable();
 
         if ($this->model->getKey() !== '') {
-            foreach ($this->model->getTranslations() as $language => $text) {
-                $data = [
-                    'key' => $this->model->getKey(),
-                    'language' => $language,
-                    'text' => $text,
-                    'modificationDate' => $this->model->getModificationDate(),
-                    'creationDate' => $this->model->getCreationDate(),
-                ];
-                $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+            if (is_array($this->model->getTranslations())) {
+                foreach ($this->model->getTranslations() as $language => $text) {
+                    $data = [
+                        'key' => $this->model->getKey(),
+                        'type' => $this->model->getType(),
+                        'language' => $language,
+                        'text' => $text,
+                        'modificationDate' => $this->model->getModificationDate(),
+                        'creationDate' => $this->model->getCreationDate(),
+                    ];
+                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                }
             }
         }
     }
@@ -135,6 +139,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+                          `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',
                           `text` text DEFAULT NULL,
                           `creationDate` int(11) unsigned DEFAULT NULL,

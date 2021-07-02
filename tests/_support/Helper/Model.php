@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Helper;
 
 use Pimcore\Model\DataObject;
@@ -1011,6 +1024,13 @@ class Model extends AbstractDefinitionHelper
         return $cm->setupObjectbrick($name, $filename);
     }
 
+    public function setupUnitDefinitions()
+    {
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'mm'])->save();
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'cm'])->save();
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'm'])->save();
+    }
+
     /**
      * Initialize widely used class definitions
      */
@@ -1020,6 +1040,7 @@ class Model extends AbstractDefinitionHelper
 
         $cm = $this->getClassManager();
 
+        $this->setupUnitDefinitions();
         $this->setupFieldcollection_Unittestfieldcollection();
 
         $this->setupPimcoreClass_Unittest();

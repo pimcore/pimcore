@@ -48,7 +48,7 @@ All Twig extension functions are described below in detail, the following tables
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
 {# using 'instaceof' checks if object is instanceof provided classname #}
-{% if (product is instanceof('AppBundle\\Model\\Product\\Car')) %}
+{% if (product is instanceof('App\\Model\\Product\\Car')) %}
     ...
 {% endif %}
 
@@ -91,7 +91,7 @@ The following table gives an overview of all available tests:
 | `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
+Here you can find an example how to [create](https://symfony.com/doc/5.2/templating/twig_extension.html)
 your own Twig Extension.
     
 ### `pimcore_cache`
@@ -122,21 +122,19 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 This extension makes it easy to implement "Adaptive Design" in Pimcore. 
 
-```twig
-{{ pimcore_device('a default value') }}
-```
-
+##### Arguments
 | Name         | Type         | Description  |
 |--------------|--------------|--------------|
-| `default`    | string       | Default if no device can be detected |
+| `default`    | string       | *optional* Default if no device can be detected |
 
 ##### Example
 ```twig
-{% if pimcore_device().isPhone() %}
+{% set device = pimcore_device('desktop') %}
+{% if device.isPhone() %}
     This is my phone content
-{% elseif pimcore_device().isTablet() %}
+{% elseif device.isTablet() %}
     This text is shown on a tablet
-{% elseif pimcore_device().isDesktop() %}
+{% elseif device.isDesktop() %}
     This is for default desktop Browser
 {% endif %}
 ```

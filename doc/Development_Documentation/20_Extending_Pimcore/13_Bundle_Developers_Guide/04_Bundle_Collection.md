@@ -1,7 +1,7 @@
 # Bundle Collection
 
 The `BundleCollection` is a container which is used to register every used bundle. As Pimcore gathers bundles from multiple 
-sources - registered via code in `AppKernel` and registered through the extension manager config, it makes sense to have 
+sources - registered via code in `App\Kernel` and registered through the extension manager config, it makes sense to have 
 a unified API how bundles can be registered. 
 
 While Symfony's standard edition uses a `registerBundles` method building an array of bundles to load, Pimcore expects you
@@ -15,12 +15,14 @@ Below are a couple of examples how the bundle collection can be used:
 ```php
 <?php
 
+namespace App;
+
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
-use Pimcore\Kernel;
+use Pimcore\Kernel as PimcoreKernel;
 
-class AppKernel extends Kernel
+class Kernel extends PimcoreKernel
 {
     public function registerBundlesToCollection(BundleCollection $collection)
     {
@@ -55,7 +57,7 @@ class AppKernel extends Kernel
 
 If a bundle depends on other bundles, e.g. because it uses features provided by a third-party bundle you need to
 make sure that third-party bundle is loaded together with your bundle. You can either instruct your users to manually
-load the bundles your bundle depends on in their `AppKernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/master/lib/HttpKernel/Bundle/DependentBundleInterface.php)
+load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/10.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
 and define a list of bundles which should be loaded together with your bundle:
 
 ```php
@@ -131,11 +133,12 @@ To override this, register `FooBundle` manually with your priority:
 
 ```php
 <?php
+namespace App;
 
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\Kernel;
+use Pimcore\Kernel as PimcoreKernel;
 
-class AppKernel extends Kernel
+class Kernel extends PimcoreKernel
 {
     public function registerBundlesToCollection(BundleCollection $collection)
     {

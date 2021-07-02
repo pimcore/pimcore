@@ -1,21 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Google;
 
 use Pimcore\Config;
 use Pimcore\Model\Tool\TmpStore;
+use Psr\Cache\CacheItemPoolInterface;
 
 class Api
 {
@@ -115,7 +117,8 @@ class Api
 
         $client = new \Google_Client();
 
-        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        /** @var CacheItemPoolInterface $cache */
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');
         $client->setCache($cache);
 
         $client->setApplicationName('pimcore CMF');
@@ -161,7 +164,8 @@ class Api
 
         $client = new \Google_Client();
 
-        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        /** @var CacheItemPoolInterface $cache */
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');
         $client->setCache($cache);
 
         $client->setApplicationName('pimcore CMF');

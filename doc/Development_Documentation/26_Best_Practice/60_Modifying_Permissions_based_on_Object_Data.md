@@ -1,6 +1,6 @@
 # Modifying Permissions based on Object Data
 
-The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L292-L304)
+The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php#L292-L304)
 can be used to manipulate the server response before object data is sent to Pimcore Backend UI when opening the detail
 view of an Pimcore object. 
 
@@ -28,22 +28,22 @@ To do so create a [Event Listener](../20_Extending_Pimcore/11_Event_API_and_Even
 with following content: 
 
 
-`app/config/services.yml`
+`config/services.yaml`
 ```yml
 services:
     app.event_listener.my_event_listner:
-        class: AppBundle\EventListener\MyEventListener
+        class: App\EventListener\MyEventListener
         arguments:
             - '@pimcore_admin.security.user_loader'
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.object.get.preSendData, method: checkPermissions }
 ```
 
-`src/AppBundle/EventListener/MyEventListener`
+`src/EventListener/MyEventListener`
 
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use ... 
 

@@ -183,7 +183,7 @@ CREATE TABLE `documents_page` (
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(383) DEFAULT NULL,
   `metaData` text,
-  `prettyUrl` varchar(190) DEFAULT NULL,
+  `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
@@ -328,11 +328,11 @@ CREATE TABLE `notes` (
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  KEY `id` (`id`)
+  PRIMARY KEY (`id`, `name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
@@ -559,6 +559,7 @@ CREATE TABLE `settings_store` (
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
@@ -570,6 +571,7 @@ CREATE TABLE `translations_admin` (
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
@@ -634,7 +636,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -653,7 +655,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -674,7 +676,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -718,11 +720,13 @@ CREATE TABLE `versions` (
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+  `autoSave` TINYINT(4) NOT NULL DEFAULT 0,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
-  KEY `binaryFileHash` (`binaryFileHash`)
+  KEY `binaryFileHash` (`binaryFileHash`),
+  KEY `autoSave` (`autoSave`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
@@ -959,3 +963,19 @@ CREATE TABLE `object_url_slugs` (
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+DROP TABLE IF EXISTS `webdav_locks`;
+CREATE TABLE IF NOT EXISTS webdav_locks
+(
+    id      INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    owner   VARCHAR(100),
+    timeout INTEGER UNSIGNED,
+    created INTEGER,
+    token   VARBINARY(100),
+    scope   TINYINT,
+    depth   TINYINT,
+    uri     VARBINARY(1000),
+    INDEX (token),
+    INDEX (uri(100))
+) ENGINE = InnoDB
+DEFAULT CHARSET = utf8mb4;

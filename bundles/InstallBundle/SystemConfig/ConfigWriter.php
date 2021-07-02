@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\InstallBundle\SystemConfig;
@@ -31,69 +31,7 @@ final class ConfigWriter
     private $defaultConfig = [
         'pimcore' => [
             'general' => [
-                'timezone' => 'Europe/Berlin',
                 'language' => 'en',
-                'valid_languages' => 'en',
-            ],
-            'documents' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-                'error_pages' => [
-                    'default' => '/',
-                ],
-                'allow_trailing_slash' => 'no',
-                'generate_preview' => false,
-            ],
-            'objects' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-            'assets' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-            'services' => [],
-            'full_page_cache' => [
-                'exclude_cookie' => '',
-            ],
-            'httpclient' => [
-                'adapter' => 'Socket',
-            ],
-            'email' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'debug' => [
-                    'email_addresses' => '',
-                ],
-            ],
-            'newsletter' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'use_specific' => false,
-            ],
-        ],
-        'pimcore_admin' => [
-            'branding' => [
-                'color_login_screen' => '',
-                'color_admin_interface' => '',
-                'login_screen_custom_image' => '',
             ],
         ],
     ];

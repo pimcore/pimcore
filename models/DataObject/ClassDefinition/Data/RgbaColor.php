@@ -1,26 +1,26 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -28,17 +28,23 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'rgbaColor';
 
     /**
+     * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var array
      */
@@ -49,6 +55,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var array
      */
@@ -82,7 +90,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -205,14 +213,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -224,7 +227,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         }
     }
 
-    public function checkColorComponent($color)
+    private function checkColorComponent($color)
     {
         if (!is_null($color)) {
             if (!($color >= 0 && $color <= 255)) {
@@ -285,48 +288,34 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return null;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * {@inheritdoc}
      */
-    public function marshal($value, $object = null, $params = [])
+    public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
-            $rgb = sprintf('%02x%02x%02x', $value->getR(), $value->getG(), $value->getB());
-            $a = sprintf('%02x', $value->getA());
-
             return [
-                'value' => $rgb,
-                'value2' => $a,
-            ];
-        } elseif (is_array($value)) {
-            return [
-                'value' => $value[$this->getName() . '__rgb'],
-                'value2' => $value[$this->getName() . '__a'],
+                'r' => $value->getR(),
+                'g' => $value->getG(),
+                'b' => $value->getB(),
+                'a' => $value->getA(),
             ];
         }
 
-        return $value;
+        return null;
     }
 
-    /** See marshal
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
+    /**
+     * {@inheritdoc}
      */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
-        if ($value) {
-            $rgb = $value['value'];
-            $a = $value['value2'];
-            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
-            $a = hexdec($a);
-            $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
+        if (is_array($value)) {
+            $color = new Model\DataObject\Data\RgbaColor();
+            $color->setR($value['r']);
+            $color->setG($value['g']);
+            $color->setB($value['b']);
+            $color->setA($value['a']);
 
             return $color;
         }
@@ -335,32 +324,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
         return $this->getDataForEditmode($data, $object, $params);
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return $this->getDataFromEditmode($importValue, $object, $params);
     }
 
     /**
@@ -387,7 +357,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -401,13 +371,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
             . $db->quoteIdentifier($name  . '__a') .')';
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);
@@ -455,21 +425,33 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';

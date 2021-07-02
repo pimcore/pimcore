@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Google;
@@ -173,6 +174,7 @@ class Cse implements PaginateListingInterface
         }
         $this->setTotal($total);
 
+        /** @var \Google_Service_Customsearch_Result[] $results */
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {
@@ -208,9 +210,7 @@ class Cse implements PaginateListingInterface
                                 }
                             }
 
-                            if (!array_key_exists('image', $item)) {
-                                $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
-                            }
+                            $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
                         }
                     }
                 }
@@ -423,16 +423,6 @@ class Cse implements PaginateListingInterface
         $items = $this->load();
 
         return $items;
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 10
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

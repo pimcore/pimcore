@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -32,7 +30,7 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $id;
 
@@ -99,7 +97,6 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                DataObject\Service::synchronizeCustomLayout($customLayout);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 return null;
@@ -189,13 +186,15 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @todo: $isUpdate is not needed
-     *
      * @param bool $saveDefinitionFile
      */
     public function save($saveDefinitionFile = true)
     {
         $isUpdate = $this->exists();
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+        }
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
@@ -252,20 +251,49 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @internal
+     *
+     * @return bool
      */
-    public function getDefinitionFile()
+    public function isWritable(): bool
     {
-        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->getId() .'.php';
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
 
-        return $file;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
-     * @param Data|Layout $data
+     * @internal
+     *
+     * @param string|null $id
+     *
+     * @return string
      */
-    public static function cleanupForExport(&$data)
+    public function getDefinitionFile($id = null)
     {
+        if (!$id) {
+            $id = $this->getId();
+        }
+
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $id .'.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            return PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
+        }
+    }
+
+    /**
+     * @param Data|Layout|null $data
+     */
+    private static function cleanupForExport(&$data)
+    {
+        if (is_null($data)) {
+            return;
+        }
+
         if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
             $blockedVars = $data->resolveBlockedVars();
             foreach ($blockedVars as $blockedVar) {
@@ -290,6 +318,8 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     protected function getInfoDocBlock()
@@ -311,6 +341,8 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return int|null
@@ -360,7 +392,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

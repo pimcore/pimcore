@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -32,12 +31,16 @@ class InputQuantityValue extends QuantityValue
     use Extension\QueryColumnType;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'inputQuantityValue';
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var array
      */
@@ -48,6 +51,8 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var array
      */
@@ -103,12 +108,9 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws Model\Element\ValidationException
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
             return;
@@ -121,77 +123,70 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null|InputQuantityValueDataObject
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('_', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1]) {
-            $number = (float) str_replace(',', '.', $values[0]);
-            $value = $this->getNewDataObject($number, $values[1]);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|mixed|null|InputQuantityValueDataObject
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (($params['blockmode'] ?? false) && is_array($value)) {
-            return $this->getNewDataObject($value['value'], $value['value2']);
-        } elseif ($params['simple'] ?? false) {
-            return $value;
-        } elseif (is_array($value)) {
-            return [
-                $this->getName() . '__value' => $value['value'],
-                $this->getName() . '__unit' => $value['value2'],
-
-            ];
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param string $value
      * @param int $unitId
      *
      * @return InputQuantityValueDataObject
      */
-    protected function getNewDataObject($value = null, $unitId = null)
+    private function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
+            return [
+                'value' => $value->getValue(),
+                'unitId' => $value->getUnitId(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);
+        }
+
+        return null;
     }
 }

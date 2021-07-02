@@ -7,17 +7,16 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Controller\Config;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -25,6 +24,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 /**
  * Provides bundle/controller/action/template selection options which can be
  * used to configure controller + template for documents or static routes.
+ *
+ * @internal
  */
 class ControllerDataProvider
 {
@@ -180,7 +181,7 @@ class ControllerDataProvider
     }
 
     /**
-     * Finds templates in a certain path. If bundleName is null, the global notation (app/Resources/views)
+     * Finds templates in a certain path. If bundleName is null, the global notation (templates/)
      * will be used.
      *
      * @param string $path
@@ -190,8 +191,6 @@ class ControllerDataProvider
      */
     private function findTemplates(string $path, string $bundleName = null): array
     {
-        $fs = new Filesystem();
-
         $finder = new Finder();
         $finder
             ->files()
@@ -201,29 +200,14 @@ class ControllerDataProvider
             $finder->name($namePattern);
         }
 
+        if ($bundleName && str_ends_with($bundleName, 'Bundle')) {
+            $bundleName = substr($bundleName, 0, -6);
+        }
+
         $templates = [];
         foreach ($finder as $file) {
-            $relativePath = $fs->makePathRelative($file->getRealPath(), $path);
-
-            $relativeDir = str_replace($file->getFilename(), '', $relativePath);
-            $relativeDir = trim($relativeDir, DIRECTORY_SEPARATOR);
-            $relativeDir = trim($relativeDir, '/');
-
-            $template = null;
-
-            if (null === $bundleName) {
-                if (empty($relativeDir)) {
-                    $template = $file->getFilename();
-                } else {
-                    $template = sprintf('%s/%s', $relativeDir, $file->getFilename());
-                }
-            } else {
-                $template = sprintf('%s:%s:%s', $bundleName, $relativeDir, $file->getFilename());
-            }
-
-            if (!empty($template)) {
-                $templates[] = $template;
-            }
+            $name = $file->getRelativePathname();
+            $templates[] = $bundleName ? sprintf('@%s/%s', $bundleName, $name) : $name;
         }
 
         return $templates;

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.extensionmanager.admin");
@@ -29,7 +29,7 @@ pimcore.extensionmanager.admin = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_extensionmanager_admin",
-                title: t("manage_extensions"),
+                title: t("bundles") + ' & ' + t('bricks'),
                 iconCls: "pimcore_icon_plugin",
                 border: false,
                 layout: "fit",

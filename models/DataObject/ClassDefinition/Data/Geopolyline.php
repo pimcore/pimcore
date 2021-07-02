@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -19,15 +18,23 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geopolyline extends AbstractGeo implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
@@ -36,12 +43,16 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * Type for the column to query
      *
+     * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var string
      */
@@ -90,14 +101,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
 
@@ -110,6 +116,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 foreach ($data as $point) {
                     if (!$point instanceof DataObject\Data\GeoCoordinates) {
                         $valid = false;
+
                         break;
                     }
                 }
@@ -130,7 +137,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -193,14 +200,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -221,42 +221,15 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $rows = explode('|', $importValue);
-        $points = [];
-        if (is_array($rows)) {
-            foreach ($rows as $row) {
-                $coords = explode(';', $row);
-                $points[] = new  DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
-            }
-        }
-
-        return $points;
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -283,58 +256,6 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         }
 
         return implode(' ', $line);
-    }
-
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value) {
-            $value = Serialize::unserialize($value);
-            $result = [];
-            if (is_array($value)) {
-                /** @var DataObject\Data\GeoCoordinates $point */
-                foreach ($value as $point) {
-                    $result[] = [
-                        $point->getLatitude(),
-                        $point->getLongitude(),
-                    ];
-                }
-            }
-
-            return [
-                'value' => json_encode($result),
-            ];
-        }
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (isset($value['value'])) {
-            $value = json_decode($value['value']);
-            $result = [];
-            if (is_array($value)) {
-                foreach ($value as $point) {
-                    $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
-                }
-            }
-
-            return $result;
-        }
-
-        return null;
     }
 
     /**
@@ -369,23 +290,70 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $points = [];
+            $fd = new Geopoint();
+            foreach ($value as $p) {
+                $points[] = $fd->normalize($p);
+            }
+
+            return $points;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $point) {
+                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 }

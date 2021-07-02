@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -39,14 +37,20 @@ use Pimcore\Model\Element;
 abstract class AbstractObject extends Model\Element\AbstractElement
 {
     const OBJECT_TYPE_FOLDER = 'folder';
+
     const OBJECT_TYPE_OBJECT = 'object';
+
     const OBJECT_TYPE_VARIANT = 'variant';
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
+
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public static $doNotRestoreKeyAndPath = false;
@@ -69,77 +73,107 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     private static $getInheritedValues = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected static $disableDirtyDetection = false;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_id = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_parentId;
 
     /**
+     * @internal
+     *
      * @var self|null
      */
     protected $o_parent;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_type = 'object';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_key;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_path;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_index;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_creationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_modificationDate;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    protected $o_userOwner;
+    protected ?int $o_userOwner = null;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    protected $o_userModification;
+    protected ?int $o_userModification = null;
 
     /**
-     * @var array
+     * @internal
+     *
+     * @var array|null
      */
-    protected $o_properties = null;
+    protected ?array $o_properties = null;
 
     /**
+     * @internal
+     *
      * @var bool[]
      */
     protected $o_hasChildren = [];
 
     /**
      * Contains a list of sibling documents
+     *
+     * @internal
      *
      * @var array
      */
@@ -148,36 +182,43 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Indicator if object has siblings or not
      *
+     * @internal
+     *
      * @var bool[]
      */
     protected $o_hasSiblings = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $o_children = [];
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_locked;
 
     /**
-     * @var Model\Element\AdminStyle
-     */
-    protected $o_elementAdminStyle;
-
-    /**
+     * @internal
+     *
      * @var string
      */
     protected $o_childrenSortBy;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_childrenSortOrder;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $o_versionCount = 0;
@@ -286,11 +327,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         if ($force || !($object = Cache::load($cacheKey))) {
             $object = new Model\DataObject();
+
             try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder')) {
-                    if ($typeInfo['o_type'] == 'folder') {
+                if (!empty($typeInfo['o_type']) && in_array($typeInfo['o_type'], DataObject::$types)) {
+                    if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
                         $className = Folder::class;
                     } else {
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
@@ -385,6 +427,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param array $config
      *
      * @return int total count
@@ -398,6 +442,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param AbstractObject $object
      *
      * @return bool
@@ -522,12 +568,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @throws \Exception
      */
     protected function doDelete()
     {
         // delete children
-        $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+        $children = $this->getChildren(self::$types, true);
         if (count($children) > 0) {
             foreach ($children as $child) {
                 $child->delete();
@@ -576,6 +624,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
             Logger::crit($e);
+
             throw $e;
         }
 
@@ -661,6 +710,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     self::setHideUnpublished($hideUnpublishedBackup);
 
                     $this->commit();
+
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
                     try {
@@ -688,6 +738,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         } else {
                             // if the transaction still fail after $maxRetries retries, we throw out the exception
                             Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+
                             throw $e;
                         }
                     } else {
@@ -733,7 +784,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
     }
 
-    public function correctPath()
+    /**
+     * @internal
+     *
+     * @throws \Exception
+     */
+    protected function correctPath()
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -766,7 +822,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->setParentId(0);
             $this->setPath('/');
             $this->setKey('');
-            $this->setType('folder');
+            $this->setType(DataObject::OBJECT_TYPE_FOLDER);
         }
 
         if (Service::pathExists($this->getRealFullPath())) {
@@ -780,6 +836,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param bool|null $isUpdate
      * @param array $params
      *
@@ -826,7 +884,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $additionalTags
+     * {@inheritdoc}
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -856,6 +914,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param int $index
      */
     public function saveIndex($index)
@@ -960,7 +1020,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1142,7 +1202,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return self
+     * @return self|null
      */
     public function getParent()
     {
@@ -1154,7 +1214,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param self $o_parent
+     * @param self|null $o_parent
      *
      * @return $this
      */
@@ -1192,7 +1252,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->o_properties = $properties;
 
@@ -1224,20 +1284,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_properties[$name] = $property;
 
         return $this;
-    }
-
-    /**
-     * @deprecated since 6.4.1, use AdminEvents.RESOLVE_ELEMENT_ADMIN_STYLE event instead
-     *
-     * @return Model\Element\AdminStyle
-     */
-    public function getElementAdminStyle()
-    {
-        if (empty($this->o_elementAdminStyle)) {
-            $this->o_elementAdminStyle = new Model\Element\AdminStyle($this);
-        }
-
-        return $this->o_elementAdminStyle;
     }
 
     /**
@@ -1282,36 +1328,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         $this->setInDumpState(false);
-    }
-
-    public function removeInheritedProperties()
-    {
-        $myProperties = $this->getProperties();
-
-        if ($myProperties) {
-            foreach ($this->getProperties() as $name => $property) {
-                if ($property->getInherited()) {
-                    unset($myProperties[$name]);
-                }
-            }
-        }
-
-        $this->setProperties($myProperties);
-    }
-
-    public function renewInheritedProperties()
-    {
-        $this->removeInheritedProperties();
-
-        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = self::getCacheKey($this->getId());
-        if (!Runtime::isRegistered($cacheKey)) {
-            Runtime::set($cacheKey, $this);
-        }
-
-        $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getDao()->getProperties(true);
-        $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
     /**
@@ -1390,6 +1406,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @return bool
      */
     public static function isDirtyDetectionDisabled()
@@ -1398,6 +1416,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param bool $disableDirtyDetection
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection)
@@ -1406,7 +1426,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Disables the dirty detection
+     * @internal
      */
     public static function disableDirtyDetection()
     {
@@ -1414,7 +1434,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Enables the dirty detection
+     * @internal
      */
     public static function enableDirtyDetection()
     {
@@ -1441,6 +1461,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
+    /**
+     * @internal
+     *
+     * @param array $args
+     *
+     * @return string
+     */
     protected function getListingCacheKey(array $args = [])
     {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];

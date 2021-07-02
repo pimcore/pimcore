@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
@@ -27,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class CustomReportController extends ReportsControllerBase
+class CustomReportController extends ReportsControllerBase
 {
     /**
      * @Route("/tree", name="pimcore_admin_reports_customreport_tree", methods={"GET", "POST"})
@@ -205,7 +206,6 @@ final class CustomReportController extends ReportsControllerBase
         $configuration = $configuration[0] ?? null;
 
         $success = false;
-        $columns = null;
         $errorMessage = null;
 
         $result = [];
@@ -400,10 +400,6 @@ final class CustomReportController extends ReportsControllerBase
         }
 
         $configuration = $config->getDataSourceConfig();
-        //if many rows returned as an array than use the first row. Fixes: #782
-        $configuration = is_array($configuration)
-            ? $configuration[0]
-            : $configuration;
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
@@ -416,6 +412,8 @@ final class CustomReportController extends ReportsControllerBase
         if (!($exportFile = $request->get('exportFile'))) {
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
+        } else {
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
         }
 
         $fp = fopen($exportFile, 'a');
@@ -460,6 +458,7 @@ final class CustomReportController extends ReportsControllerBase
 
             return $response;
         }
+
         throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 }
