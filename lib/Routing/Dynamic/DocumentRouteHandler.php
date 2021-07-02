@@ -265,9 +265,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // so then route should be built based on latest Document settings
         // https://github.com/pimcore/pimcore/issues/9644
         if ($isAdminRequest) {
-            $draftVersion = $document->getLatestVersion();
-            if ($draftVersion) {
-                $latestDoc = $draftVersion->loadData();
+            $latestVersion = $document->getLatestVersion();
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
                 if ($latestDoc instanceof Document\PageSnippet) {
                     $document = $latestDoc;
                 }
