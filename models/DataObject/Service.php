@@ -32,6 +32,8 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
@@ -1557,20 +1559,41 @@ class Service extends Model\Element\Service
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return null;
         }
-        $className = $fd->getCalculatorClass();
-        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-            Logger::error('Class does not exist or is not valid: ' . $className);
-
-            return null;
-        }
 
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
-        $result = $calculator->getCalculatedValueForEditMode($object, $data);
-        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
+        switch ($fd->getCalculatorType()) {
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                $className = $fd->getCalculatorClass();
+                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                    Logger::error('Class does not exist or is not valid: ' . $className);
 
+                    return null;
+                }
+
+                $result = $calculator->getCalculatedValueForEditMode($object, $data);
+                break;
+
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                $expressionLanguage = new ExpressionLanguage();
+                try {
+                    $result = $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
+                } catch (SyntaxError $exception) {
+                    return $exception->getMessage();
+                }
+
+                break;
+
+            default:
+                return null;
+
+        }
+
+        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
         return $result;
+
     }
 
     /**
