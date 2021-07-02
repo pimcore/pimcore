@@ -29,6 +29,6 @@ final class PrefixLoader extends BasePrefixLoader
      */
     protected function normalizeName(string $name): string
     {
-        return ucfirst(strtolower($name));
+        return mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1);
     }
 }
