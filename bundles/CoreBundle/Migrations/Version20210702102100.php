@@ -19,12 +19,15 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Tool\Console;
+use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 final class Version20210608094532 extends AbstractMigration
 {
+    /**
+     * {@inheritDoc}
+     */
     public function getDescription(): string
     {
         return 'Updates class definition files';
@@ -41,27 +44,14 @@ final class Version20210608094532 extends AbstractMigration
     }
 
     /**
-     * @throws \Exception|ProcessFailedException
+     * @throws \Exception
      */
     private function rebuildClassesCommand()
     {
-        $cmd = [
-            Console::getPhpCli(),
-            'bin/console',
-            'pimcore:deployment:classes-rebuild',
-            '--create-classes',
-        ];
-
-        $process = new Process($cmd);
-        $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-        $process->mustRun();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        if ($process->getOutput())  {
-            $this->write($process->getOutput());
+        $listing = new Listing();
+        foreach ($listing->getClasses() as $class) {
+            $this->write(sprintf('Saving php files for class: %s', $class->getName()));
+            $class->generateClassFiles(false);
         }
     }
 }
