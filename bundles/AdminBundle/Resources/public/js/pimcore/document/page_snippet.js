@@ -111,9 +111,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-
                 handler: this.save.bind(this),
-
                 menu: [
                     {
                         text: t('save_close'),
