@@ -458,8 +458,10 @@ final class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    private function generateClassFiles($generateDefinitionFile = true)
+    public function generateClassFiles($generateDefinitionFile = true)
     {
         $infoDocBlock = $this->getInfoDocBlock();
 
