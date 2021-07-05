@@ -404,6 +404,10 @@ final class ClassDefinition extends Model\AbstractModel
     {
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
                 $fd->preSave($this);
             }
