@@ -1,0 +1,19 @@
+name: Feature Request
+description: Request or propose a feature or improvement
+title: "[Feature]: "
+labels: ["New Feature"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Feature requests that do not meet the conditions listed below will be closed/deleted without comment.
+
+              - There's no existing ticket for the same topic
+              - This is already a specific ready-to-work-on feature request
+              - Discussions should take place [here](https://github.com/pimcore/pimcore/discussions).
+
+    - type: textarea
+      attributes:
+          label: Feature description
+      validations:
+          required: true
