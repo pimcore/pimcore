@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-final class Version20210608094532 extends AbstractMigration
+final class Version20210702102100 extends AbstractMigration
 {
     /**
      * {@inheritDoc}
