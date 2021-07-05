@@ -66,19 +66,28 @@ class GlossaryExtension extends AbstractExtension
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function getTokenParsers(): array
     {
+        trigger_deprecation('pimcore/pimcore', '10.1', 'Usage of pimcoreglossary tag is deprecated since version 10.1 and will be removed in Pimcore 11. Use pimcore_glossary Twig filter instead.');
+
         return [
             new GlossaryTokenParser(),
         ];
     }
 
+    /**
+     * @deprecated
+     */
     public function start()
     {
         ob_start();
     }
 
     /**
+     * @deprecated
      * @param array $options
      */
     public function stop(array $options = [])
