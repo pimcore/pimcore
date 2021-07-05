@@ -180,7 +180,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionData = [];
                 $collectionKey = $collectionRaw['type'];
 
-                $oIndex = $collectionRaw['oIndex'] ?? null;
+                $oIndex = null;
+                if (!isset($params['objectFromVersion'])) {
+                    $oIndex = $collectionRaw['oIndex'] ?? null;
+                }
 
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();

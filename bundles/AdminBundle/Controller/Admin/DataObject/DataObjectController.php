@@ -1306,7 +1306,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object, ['objectFromVersion' => $objectFromVersion]));
                     }
                 }
             }
