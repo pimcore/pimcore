@@ -131,6 +131,7 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(DoctrineQueryBuilder &$queryBuilder): void
     {
+        $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetQueryPart('orderBy');
         $queryBuilder->setMaxResults(null);
@@ -142,6 +143,7 @@ trait QueryBuilderHelperTrait
             }
 
             if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+                $queryBuilder->select($originalSelect);
                 $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
             } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';

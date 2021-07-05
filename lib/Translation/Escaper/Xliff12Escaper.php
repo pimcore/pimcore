@@ -52,7 +52,7 @@ class Xliff12Escaper
             $parts = explode('>', $match);
             $parts[0] .= '>';
             foreach ($parts as $part) {
-                if (!empty(trim($part))) {
+                if (!empty(trim($part)) || trim($part) === '0') {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);
                         if (in_array($tagName, self::SELFCLOSING_TAGS)) {

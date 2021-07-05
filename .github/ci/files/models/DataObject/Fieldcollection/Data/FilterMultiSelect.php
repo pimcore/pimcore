@@ -1,20 +1,20 @@
-<?php 
+<?php
 
-/** 
-Fields Summary: 
+/**
+Fields Summary:
 - label [input]
 - field [indexFieldSelection]
 - scriptPath [input]
 - UseAndCondition [checkbox]
-*/ 
+*/
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
-class FilterMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType {
-
+class FilterMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
+{
 protected $type = "FilterMultiSelect";
 protected $label;
 protected $field;
@@ -26,12 +26,14 @@ protected $UseAndCondition;
 * Get label - Label
 * @return string|null
 */
-public function getLabel (): ?string {
+public function getLabel(): ?string
+{
 	$data = $this->label;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		    return $data->getPlain();
+		return $data->getPlain();
 	}
-	 return $data;
+
+	return $data;
 }
 
 /**
@@ -39,9 +41,10 @@ public function getLabel (): ?string {
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
 */
-public function setLabel (?string $label) {
-	$fd = $this->getDefinition()->getFieldDefinition("label");
+public function setLabel(?string $label)
+{
 	$this->label = $label;
+
 	return $this;
 }
 
@@ -49,12 +52,14 @@ public function setLabel (?string $label) {
 * Get field - Field
 * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null
 */
-public function getField (): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection {
+public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection
+{
 	$data = $this->field;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		    return $data->getPlain();
+		return $data->getPlain();
 	}
-	 return $data;
+
+	return $data;
 }
 
 /**
@@ -62,9 +67,10 @@ public function getField (): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExten
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
 */
-public function setField (?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field) {
-	$fd = $this->getDefinition()->getFieldDefinition("field");
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+{
 	$this->field = $field;
+
 	return $this;
 }
 
@@ -72,12 +78,14 @@ public function setField (?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensio
 * Get scriptPath - Script Path
 * @return string|null
 */
-public function getScriptPath (): ?string {
+public function getScriptPath(): ?string
+{
 	$data = $this->scriptPath;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		    return $data->getPlain();
+		return $data->getPlain();
 	}
-	 return $data;
+
+	return $data;
 }
 
 /**
@@ -85,9 +93,10 @@ public function getScriptPath (): ?string {
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
 */
-public function setScriptPath (?string $scriptPath) {
-	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
+public function setScriptPath(?string $scriptPath)
+{
 	$this->scriptPath = $scriptPath;
+
 	return $this;
 }
 
@@ -95,12 +104,14 @@ public function setScriptPath (?string $scriptPath) {
 * Get UseAndCondition - Use And Condition
 * @return bool|null
 */
-public function getUseAndCondition (): ?bool {
+public function getUseAndCondition(): ?bool
+{
 	$data = $this->UseAndCondition;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		    return $data->getPlain();
+		return $data->getPlain();
 	}
-	 return $data;
+
+	return $data;
 }
 
 /**
@@ -108,9 +119,10 @@ public function getUseAndCondition (): ?bool {
 * @param bool|null $UseAndCondition
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
 */
-public function setUseAndCondition (?bool $UseAndCondition) {
-	$fd = $this->getDefinition()->getFieldDefinition("UseAndCondition");
+public function setUseAndCondition(?bool $UseAndCondition)
+{
 	$this->UseAndCondition = $UseAndCondition;
+
 	return $this;
 }
 

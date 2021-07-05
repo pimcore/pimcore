@@ -63,7 +63,7 @@ interface CartItemInterface
     public function setCart(CartInterface $cart);
 
     /**
-     * @return CartInterface
+     * @return CartInterface|null
      */
     public function getCart();
 

@@ -679,13 +679,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $typeDeclaration = '';
         }
 
-        $code = '';
-
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -708,10 +707,10 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
         $code .= "\t" . '}' . "\n\n";
 
-        $code .= "\treturn " . '$data ?? []' . ";\n";
+        $code .= "\t" . 'return $data ?? [];' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -735,7 +734,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         //TODO Pimcore 11: remove method_exists BC layer
         if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
@@ -745,7 +745,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         if ($this->supportsInheritance()) {
-            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
@@ -756,9 +756,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n\n";
 
-        $code .= "\t return " . '$data??[]' . ";\n";
+        $code .= "\t" . 'return $data ?? [];' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -782,11 +782,13 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         //TODO Pimcore 11: remove method_exists BC layer
         if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
             $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
             $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
         } else {
@@ -794,10 +796,10 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $code .= "\t return " . '$data ?? []' . ";\n";
+        $code .= "\t" . 'return $data ?? [];' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -820,7 +822,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 

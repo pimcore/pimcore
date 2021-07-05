@@ -63,7 +63,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
     protected $checkoutManagers = [];
 
     /**
-     * @var ServiceLocator
+     * @var ServiceLocator|null
      */
     protected $handlePendingPaymentStrategyLocator = null;
 

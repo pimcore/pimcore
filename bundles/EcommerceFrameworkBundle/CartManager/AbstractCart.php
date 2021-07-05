@@ -85,7 +85,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $giftItems = [];
 
     /**
-     * @var CartPriceCalculatorInterface
+     * @var CartPriceCalculatorInterface|null
      */
     protected $priceCalculator;
 
@@ -510,7 +510,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $itemKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public function getGiftItem($itemKey)
     {

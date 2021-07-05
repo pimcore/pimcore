@@ -67,7 +67,7 @@ interface CartInterface
     /**
      * @param string $itemKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public function getItem($itemKey);
 
@@ -79,7 +79,7 @@ interface CartInterface
     /**
      * @param string $itemKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public function getGiftItem($itemKey);
 

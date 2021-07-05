@@ -290,7 +290,7 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param CartInterface $cart
      *
-     * @return null|AbstractOrder
+     * @return AbstractOrder|null
      *
      * @throws \Exception
      */
@@ -496,7 +496,7 @@ class OrderManager implements OrderManagerInterface
                         $priceRule->setRuleId($rule->getId());
 
                         foreach (Tool::getValidLanguages() as $language) {
-                            $priceRule->setName($rule->getLabel(), $language);
+                            $priceRule->setName($rule->getLabel($language), $language);
                         }
 
                         $priceRules->add($priceRule);
@@ -992,7 +992,7 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param StatusInterface $paymentStatus
      *
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrderByPaymentStatus(StatusInterface $paymentStatus)
     {

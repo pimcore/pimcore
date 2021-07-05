@@ -243,7 +243,7 @@ final class Thumbnail
 
         if (isset($options['previewDataUri'])) {
             $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-            $sourceTagAttributes['srcset'] = 'data:,1w';
+            unset($sourceTagAttributes['srcset']);
         }
 
         $sourceTagAttributes['type'] = $thumb->getMimeType();
@@ -398,7 +398,9 @@ final class Thumbnail
             $attributes['title'] = $titleText;
         }
 
-        $attributes['loading'] = 'lazy';
+        if (!isset($attributes['loading'])) {
+            $attributes['loading'] = 'lazy';
+        }
 
         foreach ($removeAttributes as $attribute) {
             unset($attributes[$attribute]);

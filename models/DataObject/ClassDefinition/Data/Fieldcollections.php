@@ -534,14 +534,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getGetterCode($class)
     {
         // getter, no inheritance here, that's the only difference
-
         $key = $this->getName();
-        $code = '';
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -553,7 +552,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
 //        }
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;

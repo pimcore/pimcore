@@ -25,7 +25,7 @@ interface ConfigElementInterface
     public function getLabel();
 
     /**
-     * @param ElementInterface $element
+     * @param ElementInterface|ElementInterface[] $element
      *
      * @return \stdClass|ResultContainer|null
      */

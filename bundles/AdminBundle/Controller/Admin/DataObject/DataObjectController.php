@@ -1374,7 +1374,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'treeData' => $treeData,
             ]);
         } elseif ($request->get('task') == 'session') {
-            DataObject\Service::saveElementToSession($object);
+            //TODO https://github.com/pimcore/pimcore/issues/9536
+            DataObject\Service::saveElementToSession($object, '', false);
 
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {

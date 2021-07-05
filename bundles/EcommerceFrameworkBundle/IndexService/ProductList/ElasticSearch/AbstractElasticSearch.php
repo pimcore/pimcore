@@ -80,7 +80,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $order;
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $orderKey;
 
@@ -95,7 +95,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $offset = 0;
 
     /**
-     * @var AbstractCategory
+     * @var AbstractCategory|null
      */
     protected $category;
 
@@ -105,27 +105,27 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $inProductList;
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $filterConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $queryConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $relationConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -404,7 +404,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return string
+     * @return string|array
      */
     public function getOrderKey()
     {
@@ -475,7 +475,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public function getCategory()
     {

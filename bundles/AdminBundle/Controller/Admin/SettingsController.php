@@ -20,7 +20,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -411,14 +410,23 @@ class SettingsController extends AdminController
             // nothing to do
         }
 
+        // localized error pages
+        $localizedErrorPages = [];
+
         // fallback languages
         $fallbackLanguages = [];
         $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
+
         foreach ($languages as $language) {
             if (isset($values['general.fallbackLanguages.' . $language])) {
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
+            }
+
+            // localized error pages
+            if (isset($values['documents.error_pages.localized.' . $language])) {
+                $localizedErrorPages[$language] = $values['documents.error_pages.localized.' . $language];
             }
 
             if ($localeService->isLocale($language)) {
@@ -448,6 +456,7 @@ class SettingsController extends AdminController
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default'],
+                    'localized' => $localizedErrorPages,
                 ],
             ],
             'objects' => [
@@ -595,7 +604,6 @@ class SettingsController extends AdminController
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
      * @param CoreCacheHandler $cache
-     * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
      *
@@ -606,7 +614,6 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CoreCacheHandler $cache,
-        ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {
@@ -622,8 +629,6 @@ class SettingsController extends AdminController
         if ($clearPimcoreCache) {
             // empty document cache
             $cache->clearAll();
-
-            $db->query('truncate table cache_items');
 
             if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
                 $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
@@ -1091,7 +1096,7 @@ class SettingsController extends AdminController
                         'iconCls' => 'pimcore_icon_folder',
                         'group' => $item->getGroup(),
                         'children' => [],
-                        ];
+                    ];
                 }
                 $groups[$item->getGroup()]['children'][] =
                     [

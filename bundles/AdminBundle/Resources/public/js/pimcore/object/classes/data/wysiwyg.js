@@ -100,6 +100,12 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("exclude_from_search_index"),
                 name: "excludeFromSearchIndex",
                 checked: datax.excludeFromSearchIndex
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("max_characters"),
+                name: "maxCharacters",
+                value: datax.maxCharacters
             }
 
         ];
@@ -115,7 +121,8 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                     width: source.datax.width,
                     height: source.datax.height,
                     toolbarConfig: source.datax.toolbarConfig,
-                    excludeFromSearchIndex : source.datax.excludeFromSearchIndex
+                    excludeFromSearchIndex : source.datax.excludeFromSearchIndex,
+                    maxCharacters : source.datax.maxCharacters
                 });
         }
     }
