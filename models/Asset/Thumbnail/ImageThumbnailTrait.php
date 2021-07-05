@@ -104,6 +104,10 @@ trait ImageThumbnailTrait
 
     public function getPathReference(bool $deferredAllowed = false): array
     {
+        if(!$deferredAllowed && (($this->pathReference['type'] ?? '') === 'deferred')) {
+            $this->pathReference = [];
+        }
+
         if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
@@ -246,7 +250,7 @@ trait ImageThumbnailTrait
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            $pathReference = $this->getPathReference();
+            $pathReference = $this->getPathReference(true);
             if ($pathReference['type'] === 'data-uri') {
                 $this->mimetype = substr($pathReference['src'], 5, strpos($pathReference['src'], ';') - 5);
             } else {
