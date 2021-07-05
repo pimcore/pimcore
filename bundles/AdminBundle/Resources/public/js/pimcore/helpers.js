@@ -571,7 +571,7 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
             maxWidth: 350,
             closeable: true,
             align: "br",
-            anchor: Ext.get(tabContainer),
+            anchor: Ext.get(tabsBody),
             paddingX: 5,
             paddingY: paddingY
         });
