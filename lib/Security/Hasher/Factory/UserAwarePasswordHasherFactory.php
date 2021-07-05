@@ -13,41 +13,39 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder\Factory;
+namespace Pimcore\Security\Hasher\Factory;
 
-use Pimcore\Security\Encoder\UserAwarePasswordEncoderInterface;
 use Pimcore\Security\Exception\ConfigurationException;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Pimcore\Security\Hasher\UserAwarePasswordHasherInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @internal
  *
- * Encoder factory keeping a dedicated encoder instance per user object. This is needed as Pimcore Users and user
- * objects containing Password field definitions handle their encoding logic by themself. The user aware encoder
+ * Password Hasher factory keeping a dedicated hasher instance per user object. This is needed as Pimcore Users and user
+ * objects containing Password field definitions handle their encoding logic by themself. The user aware hasher
  * delegates encoding and verification to the user object.
  *
- * Example DI configuration for a factory building PasswordFieldEncoder instances which get 'password' as argument:
+ * Example DI configuration for a factory building PasswordFieldHasher instances which get 'password' as argument:
  *
- *      website_demo.security.password_encoder_factory:
- *          class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+ *      website_demo.security.password_hasher_factory:
+ *          class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
  *          arguments:
- *              - Pimcore\Security\Encoder\PasswordFieldEncoder
+ *              - Pimcore\Security\Hasher\PasswordFieldHasher
  *              - ['password']
- *
- * @deprecated
  */
-class UserAwareEncoderFactory extends AbstractEncoderFactory
+class UserAwarePasswordHasherFactory extends AbstractHasherFactory
 {
     /**
-     * @var PasswordEncoderInterface[]
+     * @var PasswordHasherInterface[]
      */
-    private $encoders = [];
+    private $hashers = [];
 
     /**
      * {@inheritdoc}
      */
-    public function getEncoder($user)
+    public function getPasswordHasher($user): PasswordHasherInterface
     {
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException(sprintf(
@@ -65,22 +63,22 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             throw new \RuntimeException('User class must implement either getUserIdentifier() or getUsername()');
         }
 
-        if (isset($this->encoders[$username])) {
-            return $this->encoders[$username];
+        if (isset($this->hashers[$username])) {
+            return $this->hashers[$username];
         }
 
         $reflector = $this->getReflector();
-        if (!$reflector->implementsInterface(UserAwarePasswordEncoderInterface::class)) {
-            throw new ConfigurationException('An encoder built by the UserAwareEncoderFactory must implement UserAwareEncoderInterface');
+        if (!$reflector->implementsInterface(UserAwarePasswordHasherInterface::class)) {
+            throw new ConfigurationException('An encoder built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
         }
 
-        $encoder = $this->buildEncoder($reflector);
+        $encoder = $this->buildPasswordHasher($reflector);
 
-        if ($encoder instanceof UserAwarePasswordEncoderInterface) {
+        if ($encoder instanceof UserAwarePasswordHasherInterface) {
             $encoder->setUser($user);
         }
 
-        $this->encoders[$username] = $encoder;
+        $this->hashers[$username] = $encoder;
 
         return $encoder;
     }

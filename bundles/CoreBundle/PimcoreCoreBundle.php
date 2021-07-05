@@ -22,6 +22,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PasswordFactoryDecoratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
@@ -82,5 +83,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new RoutingLoaderPass());
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new CacheFallbackPass());
+        $container->addCompilerPass(new PasswordFactoryDecoratorPass());
     }
 }

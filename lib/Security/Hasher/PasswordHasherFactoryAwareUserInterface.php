@@ -13,22 +13,20 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder;
+namespace Pimcore\Security\Hasher;
 
 /**
  * @internal
- *
- * @deprecated
  */
-interface EncoderFactoryAwareUserInterface
+interface PasswordHasherFactoryAwareUserInterface
 {
     /**
-     * Gets the name of the encoder factory used to encode the password.
+     * Gets the name of the encoder factory used to hash the password.
      *
-     * If the method returns null, the standard way to retrieve the encoder
+     * If the method returns null, the standard way to retrieve the hasher
      * will be used instead.
      *
      * @return string
      */
-    public function getEncoderFactoryName();
+    public function getHasherFactoryName();
 }

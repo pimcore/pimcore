@@ -17,6 +17,8 @@ namespace Pimcore\Security\Encoder;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 interface EncoderFactoryAwareInterface
 {

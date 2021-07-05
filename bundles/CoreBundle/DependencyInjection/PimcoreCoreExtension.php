@@ -140,6 +140,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
+        $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
@@ -337,6 +338,24 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $factoryMapping = [];
         foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
+            $factoryMapping[$className] = new Reference($factoryConfig['id']);
+        }
+
+        $definition->replaceArgument(1, $factoryMapping);
+    }
+
+    /**
+     * Handle pimcore.security.password_hasher_factories mapping
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    private function configurePasswordHashers(ContainerBuilder $container, array $config)
+    {
+        $definition = $container->findDefinition('pimcore.security.password_hasher_factory');
+
+        $factoryMapping = [];
+        foreach ($config['security']['password_hasher_factories'] as $className => $factoryConfig) {
             $factoryMapping[$className] = new Reference($factoryConfig['id']);
         }
 

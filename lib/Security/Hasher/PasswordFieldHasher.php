@@ -13,22 +13,24 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder;
+namespace Pimcore\Security\Hasher;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\PasswordHasher\Exception\InvalidPasswordException;
+use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 
 /**
  * @internal
  *
- * @deprecated
- *
  * @method Concrete getUser()
  */
-class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
+class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 {
+    use CheckPasswordLengthTrait;
+
     /**
      * @var string
      */
@@ -68,7 +70,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function encodePassword($raw, $salt)
+    public function hashPassword($raw, $salt): string
     {
         if ($this->isPasswordTooLong($raw)) {
             throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
@@ -80,7 +82,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function isPasswordValid($encoded, $raw, $salt)
+    public function isPasswordValid($encoded, $raw): bool
     {
         if ($this->isPasswordTooLong($raw)) {
             return false;
@@ -108,5 +110,10 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
         }
 
         return $field;
+    }
+
+    public function verify(string $hashedPassword, string $plainPassword, ?string $salt = null): bool
+    {
+        return $this->getFieldDefinition()->verifyPassword($plainPassword, $this->getUser(), $this->updateHash);
     }
 }
