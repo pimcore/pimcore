@@ -410,6 +410,7 @@ class Model extends AbstractDefinitionHelper
 
             $calculatedValueExpression = $this->createDataChild('calculatedValue', 'calculatedValueExpression');
             $calculatedValueExpression->setCalculatorExpression("object.getFirstname() ~ ' some calc'");
+            $calculatedValueExpression->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
             $panel->addChild($calculatedValueExpression);
 
 
