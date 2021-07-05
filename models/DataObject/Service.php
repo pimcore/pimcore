@@ -1580,9 +1580,9 @@ class Service extends Model\Element\Service
                 $expressionLanguage = new ExpressionLanguage();
                 //overwrite constant function to aviod exposing internal information
                 $expressionLanguage->register('constant', function ($str) {
-                    return throw new SyntaxError('`constant` function not available');
+                    throw new SyntaxError('`constant` function not available');
                 }, function ($arguments, $str) {
-                    return throw new SyntaxError('`constant` function not available');
+                    throw new SyntaxError('`constant` function not available');
                 });
 
                 try {
