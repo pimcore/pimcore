@@ -58,6 +58,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentStackListener: ~
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 
     #
     # CONTROLLER HANDLING

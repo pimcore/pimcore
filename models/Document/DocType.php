@@ -100,6 +100,13 @@ class DocType extends Model\AbstractModel
     protected $modificationDate;
 
     /**
+     * @internal
+     *
+     * @var null|int
+     */
+    protected $staticGeneratorEnabled;
+
+    /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
      * @param int $id
@@ -309,5 +316,21 @@ class DocType extends Model\AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getStaticGeneratorEnabled(): ?int
+    {
+        return $this->staticGeneratorEnabled;
+    }
+
+    /**
+     * @param null|int $staticGeneratorEnabled
+     */
+    public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
+    {
+        $this->staticGeneratorEnabled = $staticGeneratorEnabled;
     }
 }

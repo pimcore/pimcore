@@ -258,6 +258,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
+                    $createValues['staticGeneratorEnabled'] = $docType->getStaticGeneratorEnabled();
                 } elseif ($request->get('translationsBaseDocument')) {
                     $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
                     if ($translationsBaseDocument instanceof Document\PageSnippet) {
