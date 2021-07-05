@@ -36,6 +36,8 @@ class Image extends Model\Asset
      */
     protected $type = 'image';
 
+    private bool $clearThumbnailsOnSave = false;
+
     /**
      * {@inheritdoc}
      */
@@ -70,7 +72,8 @@ class Image extends Model\Asset
             $this->handleEmbeddedMetaData(true, $tmpFile);
         }
 
-        $this->clearThumbnails();
+        $this->clearThumbnails($this->clearThumbnailsOnSave);
+        $this->clearThumbnailsOnSave = false; // reset to default
 
         parent::update($params);
 
@@ -457,7 +460,7 @@ EOT;
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
             // if the focal point changes we need to clean all thumbnails on save
             if ($this->getCustomSetting($key) != $value) {
-                $this->setDataChanged();
+                $this->clearThumbnailsOnSave = true;
             }
         }
 
