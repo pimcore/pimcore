@@ -223,7 +223,7 @@ reasons, but a couple of methods could be useful when implementing your own bric
 
 | Method                  | Description                                      |
 |-------------------------|--------------------------------------------------|
-| `$info->getTag()`       | Returns the tag rendering the brick              |
+| `$info->getEditable()`       | Returns the editable rendering the brick              |
 | `$info->getDocument()`  | Retrieve the document   |
 | `$info->getDocumentElement($name)` | Retrieve the editable tag from document   |
 | `$info->getRequest()`   | Returns the current request                      |
