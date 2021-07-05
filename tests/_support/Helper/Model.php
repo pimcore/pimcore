@@ -413,6 +413,10 @@ class Model extends AbstractDefinitionHelper
             $calculatedValueExpression->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
             $panel->addChild($calculatedValueExpression);
 
+            $calculatedValueExpressionConstant = $this->createDataChild('calculatedValue', 'calculatedValueExpressionConstant');
+            $calculatedValueExpressionConstant->setCalculatorExpression("constant('PIMCORE_PROJECT_ROOT')");
+            $calculatedValueExpressionConstant->setCalculatorType(ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION);
+            $panel->addChild($calculatedValueExpressionConstant);
 
             $panel->addChild($this->createDataChild('consent'));
 

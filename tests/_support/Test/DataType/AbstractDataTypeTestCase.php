@@ -218,6 +218,21 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertEquals('Jane some calc', $row['calculatedValueExpression'], 'value should have been written to query table');
     }
 
+    public function testCalculatedValueExpressionConstant()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillCalculatedValue',
+                'field' => 'calculatedValueExpressionConstant',
+            ],
+        ]);
+
+        $value = $this->testObject->getCalculatedValueExpressionConstant();
+        $this->assertNotEquals(PIMCORE_PROJECT_ROOT, $value, 'calculated returns constant value');
+
+    }
+
+
     public function testCheckbox()
     {
         $this->createTestObject('checkbox');
