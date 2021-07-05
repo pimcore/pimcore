@@ -9,7 +9,38 @@ For this you have several components:
 
 Pimcore provides a `Pimcore\Mail` Class which extends the `\Symfony\Component\Mime\Email` Class. 
 If email settings are configured in your `config/config.yaml` then on initializing 
-`Pimcore\Mail` object, these settings applied automatically 
+`Pimcore\Mail` object, these settings applied automatically
+
+It is recommended to configure email settings in `config/config.yaml` file:
+```yaml
+pimcore:
+    email:
+        sender:
+            name: 'Pimcore Demo'
+            email: demo@pimcore.com
+        return:
+            name: ''
+            email: ''
+```
+and debug email addresses should be configured in Admin *Settings* > *System* > *Debug* > *Debug Email Addresses*.
+
+If the Debug Mode is enabled, all emails will be sent to the
+Debug Email recipients defined in *Settings* > *System* > *Debug* > *Debug Email Addresses*.
+Additionally the debug information (to whom the email would have been sent) is appended to the email
+and the Subject contains the prefix "Debug email:".
+
+This is done by extending Symfony Mailer, with injected service `RedirectingPlugin`, which calls beforeSendPerformed before mail is sent and sendPerformed immediately after email is sent.
+
+Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yml e.g.,
+```yaml
+framework:
+    mailer:
+        transports:
+            main: smtp://user:pass@smtp.example.com:port
+            pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+```
+Please refer to the [Transport Setup](https://symfony.com/doc/5.2/mailer.html#transport-setup) for further details on how this can be set up.
+
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 
 [here](../../03_Documents/README.md)) and Twig variables. 
