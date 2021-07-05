@@ -12,9 +12,9 @@ The only data stored is the one in the object's query tables for being able to q
 > table might not be up-to-date depending on the caluclation parameters.  
 
 As display type in object editor three types are available: 
-- Input
-- TextArea
-- HTML
+- Input: Single line, displayed as read-only input field.
+- TextArea: Multi line, displayed as read-only text area.
+- HTML: Multi line HTML content, displayed as display field.
 
 
 ## Calculation
