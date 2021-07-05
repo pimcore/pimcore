@@ -1578,6 +1578,13 @@ class Service extends Model\Element\Service
             case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                 $expressionLanguage = new ExpressionLanguage();
+                //overwrite constant function to aviod exposing internal information
+                $expressionLanguage->register('constant', function ($str) {
+                    return throw new SyntaxError('`constant` function not available');
+                }, function ($arguments, $str) {
+                    return throw new SyntaxError('`constant` function not available');
+                });
+
                 try {
                     $result = $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
                 } catch (SyntaxError $exception) {
