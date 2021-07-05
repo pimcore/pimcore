@@ -6,7 +6,7 @@ body:
     - type: markdown
       attributes:
           value: |
-              **IMPORTANT:**
+              ## Important notice
               As an open source project we love to work together with our community to improve and develop our products.
               It's also important for us to make clear that **we're not working for you or your company**,
               but we enjoy to work together to solve issues or improve the product.
