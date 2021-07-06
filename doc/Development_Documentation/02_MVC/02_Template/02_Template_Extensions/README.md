@@ -29,7 +29,7 @@ All Twig extension functions are described below in detail, the following tables
 | `pimcore_cache()`         | Simple in-template caching functionality                                         |
 | `pimcore_device()`        | Helps implementing adaptive designs                                              |
 | `pimcoreglossary()`       | Deprecated: Extension to control the glossary engine                             |
-| `pimcore_glossary`        | Twig Fitler: Apply filter on content to pass it to Glossary engine               |
+| `pimcore_glossary`        | Twig Filter: Apply filter on content to pass it to Glossary engine               |
 | `pimcore_placeholder()`   | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
 | `pimcore_head_link()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
 | `pimcore_head_meta()`     | Managing your \<meta\> elements in your HTML document                            |
