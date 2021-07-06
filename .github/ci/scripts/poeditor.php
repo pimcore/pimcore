@@ -33,7 +33,7 @@ echo "Allowed languages: \n\n";
 var_dump($allowedLanguages);
 echo "\n\n";
 
-foreach($projects as $projectId => $languages) {
+foreach($projects as $projectId) {
 
     $responseJson = $getPostValues('https://api.poeditor.com/v2/languages/list', [
         'api_token' => $token,
