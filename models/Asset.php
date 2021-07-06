@@ -536,15 +536,16 @@ class Asset extends Element\AbstractElement
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
-                            $differentOldPath = $oldPath;
-                            $this->getDao()->updateWorkspaces();
-                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         } catch (UnableToMoveFile $e) {
                             //nothing to do
                         }
 
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->updateChildPaths($oldPath);
                         $this->relocateThumbnails($oldPath);
                     }
 
@@ -1960,6 +1961,32 @@ class Asset extends Element\AbstractElement
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param string $oldPath
+     *
+     * @return array
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    private function updateChildPaths(string $oldPath)
+    {
+        $storage = Storage::get('asset');
+        try {
+            $children = $storage->listContents($oldPath, true);
+            foreach ($children as $child) {
+                if ($child['type'] === 'file') {
+                    $src  = $child['path'];
+                    $dest = str_replace($oldPath, $this->getRealFullPath(), "/" . $src);
+                    $storage->move($src, $dest);
+                }
+            }
+
+            $storage->deleteDirectory($oldPath);
+        } catch (UnableToMoveFile $e) {
+            // noting to do
         }
     }
 
