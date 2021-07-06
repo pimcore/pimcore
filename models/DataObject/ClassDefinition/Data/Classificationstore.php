@@ -537,6 +537,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setReferencedFields($referencedFields)
     {
         $this->referencedFields = $referencedFields;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -553,6 +554,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
