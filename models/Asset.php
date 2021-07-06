@@ -1988,6 +1988,8 @@ class Asset extends Element\AbstractElement
         } catch (UnableToMoveFile $e) {
             // noting to do
         }
+
+        return $this->getDao()->updateChildPaths($oldPath);
     }
 
     /**
