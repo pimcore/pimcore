@@ -644,9 +644,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $data = $params['data'];
         } elseif ($container instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             if ($this->getLazyLoading() && $container->getObject()) {
-                $container = $container->getObject()->getObjectVar($container->getFieldname());
-                if ($container instanceof Model\DataObject\Fieldcollection) {
-                    $container->loadLazyField($container->getObject(), $container->getType(), $container->getFieldname(), $container->getIndex(), $this->getName());
+                $subContainer = $container->getObject()->getObjectVar($container->getFieldname());
+                if ($subContainer instanceof Model\DataObject\Fieldcollection) {
+                    $subContainer->loadLazyField($container->getObject(), $container->getType(), $container->getFieldname(), $container->getIndex(), $this->getName());
                 } else {
                     // if container is not available we assume that it is a newly set item
                     $container->markLazyKeyAsLoaded($this->getName());
@@ -657,9 +657,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         } elseif ($container instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
             if ($this->getLazyLoading() && $container->getObject()) {
                 $brickGetter = 'get' . ucfirst($container->getFieldname());
-                $container = $container->getObject()->$brickGetter();
-                if ($container instanceof Model\DataObject\Objectbrick) {
-                    $container->loadLazyField($container->getType(), $container->getFieldname(), $this->getName());
+                $subContainer = $container->getObject()->$brickGetter();
+                if ($subContainer instanceof Model\DataObject\Objectbrick) {
+                    $subContainer->loadLazyField($container->getType(), $container->getFieldname(), $this->getName());
                 } else {
                     $container->markLazyKeyAsLoaded($this->getName());
                 }
