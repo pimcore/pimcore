@@ -371,7 +371,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         $html = new DomCrawler($data);
         $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 

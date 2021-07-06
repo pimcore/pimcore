@@ -828,7 +828,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data instanceof DataObject\Objectbrick) {
             $items = $data->getItems();

@@ -771,7 +771,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if (is_array($data)) {
             foreach ($data as &$metaObject) {

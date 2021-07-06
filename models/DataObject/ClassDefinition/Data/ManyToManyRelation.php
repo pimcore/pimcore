@@ -718,7 +718,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
 
         return $data;

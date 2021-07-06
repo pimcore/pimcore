@@ -447,7 +447,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data && $data->getData() instanceof Asset) {
             if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {

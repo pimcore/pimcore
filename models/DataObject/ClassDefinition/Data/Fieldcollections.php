@@ -633,7 +633,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {

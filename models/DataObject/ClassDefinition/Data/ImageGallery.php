@@ -476,11 +476,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
             foreach ($data as $item) {
-                $fd->doRewriteIds($object, $idMapping, $params, $item);
+                $fd->doRewriteIds($container, $idMapping, $params, $item);
             }
         }
 
