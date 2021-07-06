@@ -469,13 +469,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param Objectbrick|null $value
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function preSetData(mixed $object, mixed $value, array $params = []): mixed
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
     {
         if ($value instanceof DataObject\Objectbrick) {
             $value->setFieldname($this->getName());
