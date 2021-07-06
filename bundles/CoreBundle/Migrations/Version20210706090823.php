@@ -28,7 +28,7 @@ final class Version20210706090823 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Rebuild class definitions to fix Objectbricks with multiple Localized fields';
     }
 
     public function up(Schema $schema): void
