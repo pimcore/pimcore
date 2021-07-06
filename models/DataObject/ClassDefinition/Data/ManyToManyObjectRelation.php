@@ -481,7 +481,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = [];
         }
 
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         return $data;
     }
