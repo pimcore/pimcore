@@ -25,8 +25,9 @@ interface LayoutDefinitionEnrichmentInterface
      *
      * @param Concrete|null $object
      * @param array $context additional contextual data
+     * @return $this
      *
      * @throws \Exception
      */
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self;
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */;
 }

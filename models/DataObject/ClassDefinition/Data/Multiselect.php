@@ -536,7 +536,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
