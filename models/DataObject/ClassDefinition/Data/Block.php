@@ -878,15 +878,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array|null $data
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
     {
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         $lf = $this->getFieldDefinition('localizedfields');
         if ($lf && is_array($data)) {
@@ -896,7 +892,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         if ($itemElement->getType() === 'localizedfields') {
                             /** @var DataObject\Localizedfield $itemElementData */
                             $itemElementData = $itemElement->getData();
-                            $itemElementData->setObject($object);
+                            $itemElementData->setObject($container);
 
                             // the localized field needs at least the containerType as this is important
                             // for lazy loading

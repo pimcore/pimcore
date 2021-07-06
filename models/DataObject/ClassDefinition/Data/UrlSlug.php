@@ -672,19 +672,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param Model\DataObject\Data\UrlSlug[]|null $data
-     * @param array $params
-     *
-     * @return array|null
+     * { @inheritdoc }
      */
-    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
     {
         if ($data === null) {
             $data = [];
         }
 
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         return $data;
     }

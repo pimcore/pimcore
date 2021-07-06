@@ -495,15 +495,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param DataObject\Fieldcollection|null $data
-     * @param array $params
-     *
-     * @return DataObject\Fieldcollection|null
+     * { @inheritdoc }
      */
-    public function preSetData(mixed $object, mixed $data, array $params = []): mixed
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
     {
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         if ($data instanceof DataObject\Fieldcollection) {
             $data->setFieldname($this->getName());
