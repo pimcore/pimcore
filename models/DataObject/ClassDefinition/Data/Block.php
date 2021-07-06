@@ -985,28 +985,28 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData(mixed $object, $params = []): mixed
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
         $data = null;
-        $params['owner'] = $object;
+        $params['owner'] = $container;
         $params['fieldname'] = $this->getName();
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, $params);
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                    $this->markLazyloadedFieldAsLoaded($object);
+                if (method_exists($container, $setter)) {
+                    $container->$setter($data);
+                    $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
-        } elseif ($object instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
         }
 
         return is_array($data) ? $data : [];

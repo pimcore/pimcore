@@ -22,10 +22,10 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 interface PreGetDataInterface
 {
     /**
-     * @param mixed $object
+     * @param mixed $container any container type, e.g. Concrete, Localizedfield, AbstractData, etc ...
      * @param array $params
      *
      * @return mixed
      */
-    public function preGetData(mixed $object, array $params = []): mixed;
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */;
 }

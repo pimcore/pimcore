@@ -467,31 +467,27 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
+
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null|DataObject\Fieldcollection
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData(mixed $object, $params = []): mixed
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
-        if (!$object instanceof DataObject\Concrete) {
+        if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');
         }
 
-        $data = $object->getObjectVar($this->getName());
-        if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-            $data = $this->load($object);
+        $data = $container->getObjectVar($this->getName());
+        if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+            $data = $this->load($container);
             if ($data instanceof Model\Element\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 
             $setter = 'set' . ucfirst($this->getName());
-            if (method_exists($object, $setter)) {
-                $object->$setter($data);
-                $this->markLazyloadedFieldAsLoaded($object);
+            if (method_exists($container, $setter)) {
+                $container->$setter($data);
+                $this->markLazyloadedFieldAsLoaded($container);
             }
         }
 

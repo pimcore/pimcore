@@ -610,29 +610,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore->createUpdateTable();
     }
 
+
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData(mixed $object, $params = []): mixed
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
-        if (!$object instanceof DataObject\Concrete) {
+        if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
         }
 
-        if (!$object->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
+        if (!$container->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
             $store = new DataObject\Classificationstore();
-            $store->setObject($object);
+            $store->setObject($container);
             $store->setFieldname($this->getName());
 
-            $object->{'set' . $this->getName()}($store);
+            $container->{'set' . $this->getName()}($store);
         }
 
-        return $object->getObjectVar($this->getName());
+        return $container->getObjectVar($this->getName());
     }
 
     /**
