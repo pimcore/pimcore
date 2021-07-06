@@ -67,7 +67,7 @@ foreach($projects as $projectId) {
             continue;
         }
 
-        $file = $getFile($projectId, $language['code']);
+        $file = $getFile($projectId, $language);
         echo $file . "\n-------------------------------------\n";
 
         $responseJson = $getPostValues('https://api.poeditor.com/v2/projects/export', [
