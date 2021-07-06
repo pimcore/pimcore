@@ -55,6 +55,9 @@ foreach($projects as $projectId => $languages) {
                 }
             }
         }
+    } else {
+        echo sprintf("Retrieving languages for project %s failed\n", $projectId);
+        var_dump($responseJson);
     }
 
     foreach($languages as $language) {
