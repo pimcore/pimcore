@@ -1,6 +1,7 @@
 <?php
 
 $token = getenv('POEDITOR_TOKEN');
+$languagesString = getenv('POEDITOR_LANGUAGES');
 
 $projects = [
     38068 => [
@@ -37,8 +38,23 @@ $projects = [
     ]
 ];
 
+$allowedLanguages = [];
+if(!empty($languagesString)) {
+    $allowedLanguages = array_map('trim', explode(',', $languagesString));
+}
+
+echo "Allowed languages: \n\n";
+var_dump($allowedLanguages);
+echo "\n\n";
+
 foreach($projects as $projectId => $languages) {
     foreach($languages as $language) {
+
+        if(!empty($allowedLanguages) && !in_array($language, $allowedLanguages)) {
+            echo sprintf('Skipped language %s', $language) . "\n";
+            continue;
+        }
+
         $file = sprintf('bundles/CoreBundle/Resources/translations/%s.%sjson',
             $language,
             ($projectId === 197253) ? 'extended.' : ''
@@ -60,8 +76,8 @@ foreach($projects as $projectId => $languages) {
         $responseJson = @json_decode($response, true);
         if($responseJson && isset($responseJson['result']) && isset($responseJson['result']['url'])) {
             $contents = file_get_contents($responseJson['result']['url']);
-            echo $contents;
-            echo "\n-----------------------------------------------------------\n\n\n";
+            //echo $contents;
+            //echo "\n-----------------------------------------------------------\n\n\n";
             //file_put_contents($file, $contents);
         } else {
             var_dump($response);

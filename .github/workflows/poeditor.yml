@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
         inputs:
             languages:
-                description: 'Languages (csv)'
+                description: 'Language-Codes (csv, eg. zh-CN)'
                 required: false
                 default: ''
 
