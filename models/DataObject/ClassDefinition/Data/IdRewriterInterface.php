@@ -23,7 +23,7 @@ interface IdRewriterInterface
      * @param mixed $container any container type like Concrete, Localizedfields, Fieldcollection, etc...
      * @param array $idMapping
      * @param array $params
-     * @return void
+     * @return mixed rewritten data based on data type
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */;
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */;
 }

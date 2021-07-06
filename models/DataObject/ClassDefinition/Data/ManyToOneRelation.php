@@ -530,7 +530,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data) {
