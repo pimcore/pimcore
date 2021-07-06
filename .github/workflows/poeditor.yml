@@ -24,7 +24,6 @@ jobs:
             - name: POEditor
               env:
                   POEDITOR_TOKEN: ${{ secrets.POEDITOR_TOKEN }}
-                  FOOBAR: "tavi-ori"
               run: |
                   php .github/ci/scripts/poeditor.php
 

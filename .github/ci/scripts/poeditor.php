@@ -64,6 +64,8 @@ foreach($projects as $projectId => $languages) {
             echo "\n-----------------------------------------------------------\n\n\n";
             //file_put_contents($file, $contents);
         } else {
+            var_dump($response);
+            var_dump($responseJson);
             exit(1);
         }
 
