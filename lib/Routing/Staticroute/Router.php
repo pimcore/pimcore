@@ -135,7 +135,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
         // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
         // but just the query string generation using the given parameters
