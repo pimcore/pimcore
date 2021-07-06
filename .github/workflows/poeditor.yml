@@ -1,3 +1,6 @@
+
+name: "POEditor translations export"
+
 on:
     workflow_dispatch:
         inputs:
