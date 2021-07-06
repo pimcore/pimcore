@@ -806,7 +806,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []) : self
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
     {
         $classId = $this->allowedClassId;
 
