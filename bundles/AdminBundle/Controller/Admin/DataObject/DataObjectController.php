@@ -689,6 +689,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 // see https://github.com/pimcore/pimcore/issues/9329
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Classificationstore && $level == 0) {
                     $this->objectData[$key]['metaData'] = $value['metaData'] ?? [];
+                    $this->objectData[$key]['inherited'] = true;
                 }
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
