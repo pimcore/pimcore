@@ -81,7 +81,7 @@ foreach($projects as $projectId) {
             $contents = file_get_contents($responseJson['result']['url']);
             //echo $contents;
             //echo "\n-----------------------------------------------------------\n\n\n";
-            //file_put_contents($file, $contents);
+            file_put_contents($file, $contents);
         } else {
             var_dump($responseJson);
             exit(1);
