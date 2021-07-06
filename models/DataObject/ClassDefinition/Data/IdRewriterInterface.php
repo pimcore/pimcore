@@ -19,5 +19,11 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface IdRewriterInterface
 {
-    public function rewriteIds($object, $idMapping, $params = []);
+    /**
+     * @param mixed $container any container type like Concrete, Localizedfields, Fieldcollection, etc...
+     * @param array $idMapping
+     * @param array $params
+     * @return void
+     */
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */;
 }

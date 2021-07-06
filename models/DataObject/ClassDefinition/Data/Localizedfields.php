@@ -1179,7 +1179,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
         $data = $this->getDataFromObjectParam($object, $params);
 

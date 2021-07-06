@@ -278,7 +278,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :void */
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset\Image) {
