@@ -23,5 +23,5 @@ interface FieldDefinitionEnrichmentInterface
      * @param array $context
      * @return Data
      */
-    public function enrichFieldDefinition(array $context = []) : Data;
+    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */;
 }
