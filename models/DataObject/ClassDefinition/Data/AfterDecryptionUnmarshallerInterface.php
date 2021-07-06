@@ -15,14 +15,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface AfterDecryptionUnmarshallerInterface
 {
     /**
      * @param mixed $value
-     * @param mixed $object
+     * @param Concrete|null $object
      * @param array $params
-     *
      * @return mixed
      */
-    public function unmarshalAfterDecryption(mixed $value, mixed $object = null, array $params = []) : mixed;
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;
 }

@@ -169,26 +169,14 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
         return $this;
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function marshalBeforeEncryption(mixed $value, mixed $object = null, $params = []) : mixed
+    /** { @inheritdoc } */
+    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
-    /**
-     * @param string $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption(mixed $value, mixed $object = null, $params = []) : mixed
+    /** { @inheritdoc } */
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }
