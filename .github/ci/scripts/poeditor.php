@@ -4,7 +4,7 @@ $token = getenv('POEDITOR_TOKEN');
 
 $projects = [
     38068 => [
-        'zh_Hans',
+        'zh-CN',
         'cs',
         'nl',
         'fr',
@@ -14,12 +14,12 @@ $projects = [
         'ja',
         'fa',
         'pl',
-        'pt_BR',
+        'pt-br',
         'ru',
         'sk',
         'es',
         'sv',
-        'sv_FI',
+        'sv-fi',
         'th',
         'tr',
         'uk',
