@@ -1971,8 +1971,6 @@ class Asset extends Element\AbstractElement
      * @param FilesystemOperator $storage
      * @param string $oldPath
      *
-     * @return array
-     *
      * @throws \League\Flysystem\FilesystemException
      */
     private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
@@ -2005,14 +2003,14 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
-            //remove source parent folder preview
+            //remove source parent folder thumbnails
             $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
                 $storage->delete($item['path']);
             }
 
-            //remove destination parent folder preview
+            //remove destination parent folder thumbnails
             $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
