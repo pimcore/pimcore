@@ -16,6 +16,7 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
@@ -545,7 +546,8 @@ class Asset extends Element\AbstractElement
                         }
 
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->updateChildPaths($oldPath);
+                        $this->updateChildPaths($storage, $oldPath);
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         $this->relocateThumbnails($oldPath);
                     }
 
@@ -1965,15 +1967,15 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param FilesystemOperator $storage
      * @param string $oldPath
      *
      * @return array
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    private function updateChildPaths(string $oldPath)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
     {
-        $storage = Storage::get('asset');
         try {
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
@@ -1988,8 +1990,6 @@ class Asset extends Element\AbstractElement
         } catch (UnableToMoveFile $e) {
             // noting to do
         }
-
-        return $this->getDao()->updateChildPaths($oldPath);
     }
 
     /**
@@ -2016,7 +2016,12 @@ class Asset extends Element\AbstractElement
             }
 
             //required in case if there is only renaming on parent
-            $storage->move($oldPath, $this->getRealFullPath());
+            try {
+                $storage->move($oldPath, $this->getRealFullPath());
+            } catch (\Exception $e) {
+                $this->updateChildPaths($storage, $oldPath);
+            }
+
         } catch (UnableToMoveFile $e) {
             // noting to do
         }
