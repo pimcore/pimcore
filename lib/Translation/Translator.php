@@ -220,7 +220,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                             //wrap non-translated keys with "+", if debug admin translations is enabled
                             if  ($debugAdminTranslations) {
-                                $translationKey = '+' . $translationKey . '+';
+                                $translationTerm = '+' . $translationTerm. '+';
                             }
                         }
 
