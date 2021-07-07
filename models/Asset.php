@@ -2005,6 +2005,20 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
+            //remove source parent folder preview
+            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                $storage->delete($item['path']);
+            }
+
+            //remove destination parent folder preview
+            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                $storage->delete($item['path']);
+            }
+
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
