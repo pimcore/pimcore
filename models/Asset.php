@@ -542,11 +542,12 @@ class Asset extends Element\AbstractElement
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
                         } catch (UnableToMoveFile $e) {
-                            //nothing to do
+                            //update children, if unable to move parent
+                            $this->updateChildPaths($storage, $oldPath);
                         }
 
                         $this->getDao()->updateWorkspaces();
-                        $this->updateChildPaths($storage, $oldPath);
+
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         $this->relocateThumbnails($oldPath);
                     }
@@ -2015,10 +2016,11 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            //required in case if there is only renaming on parent
+            //required in case if renaming or moving parent folder
             try {
                 $storage->move($oldPath, $this->getRealFullPath());
-            } catch (\Exception $e) {
+            } catch (UnableToMoveFile $e) {
+                //update children, if unable to move parent
                 $this->updateChildPaths($storage, $oldPath);
             }
 
