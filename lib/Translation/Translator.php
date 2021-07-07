@@ -219,7 +219,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             $translationTerm = $translationKey;
 
                             //wrap non-translated keys with "+", if debug admin translations is enabled
-                            if  ($debugAdminTranslations) {
+                            if ($debugAdminTranslations) {
                                 $translationTerm = '+' . $translationTerm. '+';
                             }
                         }
