@@ -1980,7 +1980,7 @@ class Asset extends Element\AbstractElement
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $this->getRealFullPath(), "/" . $src);
+                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
                     $storage->move($src, $dest);
                 }
             }
@@ -2004,14 +2004,14 @@ class Asset extends Element\AbstractElement
 
         try {
             //remove source parent folder thumbnails
-            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
+            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
                 $storage->delete($item['path']);
             }
 
             //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'],'image-thumb_')));
+            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
                 $storage->delete($item['path']);
@@ -2035,7 +2035,6 @@ class Asset extends Element\AbstractElement
                 //update children, if unable to move parent
                 $this->updateChildPaths($storage, $oldPath);
             }
-
         } catch (UnableToMoveFile $e) {
             // noting to do
         }
