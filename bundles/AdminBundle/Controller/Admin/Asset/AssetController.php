@@ -1176,6 +1176,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $thumbnailConfig->setQuality($config['quality']);
             $thumbnailConfig->setFormat($config['format']);
+            $thumbnailConfig->setRasterizeSVG(true);
 
             if ($thumbnailConfig->getFormat() == 'JPEG') {
                 $thumbnailConfig->setPreserveMetaData(true);
