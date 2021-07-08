@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,6 +29,21 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateStorageCommand extends AbstractCommand
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $locator;
+
+    /**
+     * @param ContainerInterface $locator
+     */
+    public function __construct(ContainerInterface $locator)
+    {
+        parent::__construct();
+
+        $this->locator = $locator;
+    }
+
     protected function configure()
     {
         $this
@@ -48,20 +63,21 @@ class MigrateStorageCommand extends AbstractCommand
     {
         $storages = $input->getArgument('storage');
 
-        foreach ($storages as $storage) {
-            $storageSourceName = $storage . '_source';
-            $storageDestinationName = $storage . '_destination';
+        foreach ($storages as $storageName) {
+            $storageSourceName = $this->getStorageName($storageName, 'source');
+            $storageDestinationName = $this->getStorageName($storageName, 'destination');
 
             try {
-                $sourceStorage = Storage::get($storageSourceName);
-                $destinationStorage = Storage::get($storageDestinationName);
+                $sourceStorage = $this->locator->get($storageSourceName);
+                $destinationStorage = $this->locator->get($storageDestinationName);
             } catch (\Exception $e) {
-                $this->io->warning(sprintf('Skipped migrating storage "%s", please make sure source and destination configuration exists for migration.', $storage));
+                p_r($e); die;
+                $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageDestinationName));
                 continue;
             }
 
             $this->io->newLine();
-            $this->io->info(sprintf('Migrating storage "%s"', $storage));
+            $this->io->info(sprintf('Migrating storage "%s"', $storageName));
 
             $progressBar = new ProgressBar($output);
             $progressBar->setFormat('%current% [%bar%] %message%');
@@ -78,12 +94,12 @@ class MigrateStorageCommand extends AbstractCommand
                         if (!$destinationStorage->fileExists($path)) {
                             $destinationStorage->writeStream($item->path(), $stream);
 
-                            $progressBar->setMessage(sprintf('Migrating %s: %s', $storage , $item->path()));
+                            $progressBar->setMessage(sprintf('Migrating %s: %s', $storageName , $item->path()));
                         } else {
-                            $progressBar->setMessage(sprintf('Skipping %s: %s', $storage, $item->path()));
+                            $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                         }
                     } catch (\Exception $e) {
-                        $progressBar->setMessage(sprintf('Skipping %s: %s', $storage, $item->path()));
+                        $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                     }
                     $progressBar->advance();
                 }
@@ -95,6 +111,17 @@ class MigrateStorageCommand extends AbstractCommand
         $this->io->success('Finished Migrating Storage!');
 
         return 0;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getStorageName(string $name, string $type): string
+    {
+        return sprintf('pimcore.%s.storage.%s', $name, $type);
     }
 
 }

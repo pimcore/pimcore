@@ -166,26 +166,26 @@ flysystem:
 If you are switching to different a storage type, it is often required to migrate contents from old storage to the newly configured one. Pimcore provides a command to solve the purpose of migrating contents from between storages, which in turn uses the flysystem `listcontents` API to read contents recursively from old (source) storage and copy contents to the new (destination) storage. 
 
 Follow these steps to migrate the content:
-1. Create a Flysystem configuration for source & destination storages. It is important to follow the naming structure, as follows: source config node: `pimcore.{storagetype}_source` & destination config node: `pimcore.{storagetype}_destination`
+1. Create a Flysystem configuration for source & destination storages. It is important to follow the naming structure, as follows: source config node: `pimcore.{storagetype}.storage.source` & destination config node: `pimcore.{storagetype}.storage.destination`
 
 Few examples,
 
    | Migration Task | source node                        | destination node                      |
    |----------------|------------------------------------|---------------------------------------|
-   | `asset`        | pimcore.asset_source.storage       | pimcore.asset_destination.storage     |
-   | `thumbnail`    | pimcore.thumbnail_source.storage   | pimcore.thumbnail_destination.storage |
-   | `version`      | pimcore.version_source.storage     | pimcore.version_source.storage        |
+   | `asset`        | pimcore.asset.storage.source       | pimcore.asset.storage.destination     |
+   | `thumbnail`    | pimcore.thumbnail.storage.source   | pimcore.thumbnail.storage.destination |
+   | `version`      | pimcore.version.storage.source     | pimcore.version.storage.destination   |
    
 ```yaml
 flysystem:
     storages:
-        pimcore.asset_source.storage:
+        pimcore.asset.storage.source:
             adapter: 'local'
             visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/assets'
 
-        pimcore.asset_destination.storage:
+        pimcore.asset.storage.destination:
             adapter: 'aws'
             visibility: public
             options:
@@ -193,7 +193,7 @@ flysystem:
                 bucket: 'bucket-name'
                 prefix: asset
 
-        pimcore.thumbnail_source.storage:
+        pimcore.thumbnail.storage.source:
             adapter: 'local'
             visibility: public
             options:
@@ -204,7 +204,7 @@ flysystem:
                     dir:
                         private: 0755
 
-        pimcore.thumbnail_destination.storage:
+        pimcore.thumbnail.storage.destination:
             adapter: 'aws'
             visibility: public
             options:
