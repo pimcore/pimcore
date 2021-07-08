@@ -88,6 +88,7 @@ class GlossaryExtension extends AbstractExtension
 
     /**
      * @deprecated
+     *
      * @param array $options
      */
     public function stop(array $options = [])
