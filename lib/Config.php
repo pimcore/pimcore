@@ -371,7 +371,7 @@ final class Config implements \ArrayAccess
         } else {
             try {
                 $configJson = SettingsStore::get(
-                    ReportConfigWriter::REPORT_CONFIG_ID, ReportConfigWriter::REPORT_CONFIG_SCOPE
+                    ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
                 );
                 $configArray = json_decode($configJson->getData(), true);
                 $config = new PimcoreConfig($configArray);

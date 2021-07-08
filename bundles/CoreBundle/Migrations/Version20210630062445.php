@@ -28,18 +28,18 @@ final class Version20210630062445 extends AbstractMigration
         $config = $config->toArray();
 
         SettingsStore::set(
-            ReportConfigWriter::REPORT_CONFIG_ID,
+            ReportConfigWriter::REPORT_SETTING_ID,
             json_encode($config),
             'string',
-            ReportConfigWriter::REPORT_CONFIG_SCOPE
+            ReportConfigWriter::REPORT_SETTING_SCOPE
         );
     }
 
     public function down(Schema $schema): void
     {
         $reportSettings = SettingsStore::get(
-            ReportConfigWriter::REPORT_CONFIG_ID, ReportConfigWriter::REPORT_CONFIG_SCOPE
+            ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
         );
-        SettingsStore::delete($reportSettings->getId(), ReportConfigWriter::REPORT_CONFIG_SCOPE);
+        SettingsStore::delete($reportSettings->getId(), ReportConfigWriter::REPORT_SETTING_SCOPE);
     }
 }

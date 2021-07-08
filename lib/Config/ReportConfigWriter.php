@@ -31,8 +31,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class ReportConfigWriter
 {
 
-    const REPORT_CONFIG_ID = 'reports.php';
-    const REPORT_CONFIG_SCOPE = 'pimcore';
+    const REPORT_SETTING_ID = 'reports';
+    const REPORT_SETTING_SCOPE = 'pimcore';
 
     /**
      * @var EventDispatcherInterface
@@ -58,10 +58,10 @@ final class ReportConfigWriter
         $settings = $settingsEvent->getSettings();
 
         SettingsStore::set(
-            self::REPORT_CONFIG_ID,
+            self::REPORT_SETTING_ID,
             json_encode($settings),
             'string',
-            self::REPORT_CONFIG_SCOPE
+            self::REPORT_SETTING_SCOPE
         );
     }
 
