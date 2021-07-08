@@ -23,6 +23,7 @@ use Twig\TokenParser\AbstractTokenParser;
 
 /**
  * @internal
+ * @deprecated
  */
 class GlossaryTokenParser extends AbstractTokenParser
 {
