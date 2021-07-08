@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface, DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -675,5 +675,46 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';
+    }
+
+    /**
+     * Perform sanity checks, see #5010.
+     *
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function preSave($containerDefinition, $params = [])
+    {
+        /** @var ?DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
+        if ($optionsProvider) {
+            $context = [];
+            $context['fieldname'] = $this->getName();
+
+            $options = $optionsProvider->getOptions($context, $this);
+        } else {
+            $options = $this->getOptions();
+        }
+        if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
+                return $containsComma || str_contains($option['value'], ',');
+            }, false)) {
+            throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
+        }
+    }
+
+    /**
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function postSave($containerDefinition, $params = [])
+    {
+        // nothing to do
     }
 }
