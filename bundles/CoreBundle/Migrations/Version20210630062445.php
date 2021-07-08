@@ -11,9 +11,6 @@ use Pimcore\Config;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Config\ReportConfigWriter;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20210630062445 extends AbstractMigration
 {
     public function getDescription(): string
