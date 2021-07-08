@@ -158,3 +158,6 @@ bar):
 ## Opt-out from targeting
 You can give the user the possibility to opt-out from targeting at any time, by setting the following cookie: `pimcore_targeting_disabled=1`. 
 
+> **I use the targeting engine on my website. Should my users be aware of these cookies?** Since privacy laws vary from country to country, 
+> we recommend that you consult with your legal team or company to determine which cookies need to be listed on your site and whether or
+> not a cookie manager should be utilized.
