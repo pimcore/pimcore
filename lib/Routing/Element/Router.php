@@ -73,7 +73,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function supports(string $name)
+    public function supports($name)
     {
         return $name === 'pimcore_element';
     }
