@@ -163,18 +163,18 @@ flysystem:
 ```
 
 ### Storage Migration
-If you are switching to different a storage type, it is often required to migrate contents from old storage to the newly configured one. Pimcore provides a command to solve the purpose of migrating contents from between storages, which in turn uses the flysystem `listcontents` API to read contents recursively from old (source) storage and copy contents to the new (destination) storage. 
+If you are switching to different a storage type, it is often required to migrate contents from old storage to the newly configured one. Pimcore provides a command to solve the purpose of migrating contents from between storages, which in turn uses the flysystem `listcontents` API to read contents recursively from old (source) storage and copy contents to the new (target) storage. 
 
 Follow these steps to migrate the content:
-1. Create a Flysystem configuration for source & destination storages. It is important to follow the naming structure, as follows: source config node: `pimcore.{storagetype}.storage.source` & destination config node: `pimcore.{storagetype}.storage.destination`
+1. Create a Flysystem configuration for source & target storages. It is important to follow the naming structure, as follows: source config node: `pimcore.{storagetype}.storage.source` & target config node: `pimcore.{storagetype}.storage.target`
 
 Few examples,
 
-   | Migration Task | source node                        | destination node                      |
+   | Migration Task | source node                        | target node                      |
    |----------------|------------------------------------|---------------------------------------|
-   | `asset`        | pimcore.asset.storage.source       | pimcore.asset.storage.destination     |
-   | `thumbnail`    | pimcore.thumbnail.storage.source   | pimcore.thumbnail.storage.destination |
-   | `version`      | pimcore.version.storage.source     | pimcore.version.storage.destination   |
+   | `asset`        | pimcore.asset.storage.source       | pimcore.asset.storage.target     |
+   | `thumbnail`    | pimcore.thumbnail.storage.source   | pimcore.thumbnail.storage.target |
+   | `version`      | pimcore.version.storage.source     | pimcore.version.storage.target   |
    
 ```yaml
 flysystem:
@@ -185,7 +185,7 @@ flysystem:
             options:
                 directory: '%kernel.project_dir%/public/var/assets'
 
-        pimcore.asset.storage.destination:
+        pimcore.asset.storage.target:
             adapter: 'aws'
             visibility: public
             options:
@@ -204,7 +204,7 @@ flysystem:
                     dir:
                         private: 0755
 
-        pimcore.thumbnail.storage.destination:
+        pimcore.thumbnail.storage.target:
             adapter: 'aws'
             visibility: public
             options:

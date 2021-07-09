@@ -65,13 +65,13 @@ class MigrateStorageCommand extends AbstractCommand
 
         foreach ($storages as $storageName) {
             $storageSourceName = $this->getStorageName($storageName, 'source');
-            $storageDestinationName = $this->getStorageName($storageName, 'destination');
+            $storageTargetName = $this->getStorageName($storageName, 'target');
 
             try {
                 $sourceStorage = $this->locator->get($storageSourceName);
-                $destinationStorage = $this->locator->get($storageDestinationName);
+                $targetStorage = $this->locator->get($storageTargetName);
             } catch (\Exception $e) {
-                $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageDestinationName));
+                $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageTargetName));
                 continue;
             }
 
@@ -90,8 +90,8 @@ class MigrateStorageCommand extends AbstractCommand
                     try {
                         $stream = $sourceStorage->readStream($path);
 
-                        if (!$destinationStorage->fileExists($path)) {
-                            $destinationStorage->writeStream($item->path(), $stream);
+                        if (!$targetStorage->fileExists($path)) {
+                            $targetStorage->writeStream($item->path(), $stream);
 
                             $progressBar->setMessage(sprintf('Migrating %s: %s', $storageName , $item->path()));
                         } else {
@@ -122,5 +122,4 @@ class MigrateStorageCommand extends AbstractCommand
     {
         return sprintf('pimcore.%s.storage.%s', $name, $type);
     }
-
 }
