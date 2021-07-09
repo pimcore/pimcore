@@ -23,7 +23,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * @internal
  */
@@ -72,6 +71,7 @@ class MigrateStorageCommand extends AbstractCommand
                 $targetStorage = $this->locator->get($storageTargetName);
             } catch (\Exception $e) {
                 $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageTargetName));
+
                 continue;
             }
 
@@ -93,7 +93,7 @@ class MigrateStorageCommand extends AbstractCommand
                         if (!$targetStorage->fileExists($path)) {
                             $targetStorage->writeStream($item->path(), $stream);
 
-                            $progressBar->setMessage(sprintf('Migrating %s: %s', $storageName , $item->path()));
+                            $progressBar->setMessage(sprintf('Migrating %s: %s', $storageName, $item->path()));
                         } else {
                             $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                         }
