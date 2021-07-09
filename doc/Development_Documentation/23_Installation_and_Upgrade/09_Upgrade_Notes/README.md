@@ -103,6 +103,7 @@
     $existingObject->save(); //validation error
     ```
 - [Data Objects] ManyToMany Relation Types: throws exception if multiple assignments passed without enabling Multiple assignments on class definition.
+- [Data Objects] ReverseManyToManyObjectRelation - now supports reverse relations from ManyToOneRelation field and has been renamed to ReverseObjectRelation with BC layer.
 - [Data Object] Table Data-Type always return an array.
 - [Data Object] `Model::getById()` & `Model::getByPath()` do not catch exceptions anymore.
 - Added methods `getArgument($key)`, `setArgument($key, $value)`, `getArguments()`, `setArguments(array $args = [])`, `hasArgument($key)` to `Pimcore\Model\Element\ElementInterface\ElementEventInterface`.
