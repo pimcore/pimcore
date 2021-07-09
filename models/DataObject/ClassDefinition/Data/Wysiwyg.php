@@ -320,7 +320,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Classificationstore|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Classificationstore|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
      * @return string

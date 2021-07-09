@@ -19,7 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1025,11 +1025,13 @@ class ClassificationstoreController extends AdminController implements KernelCon
                     $context['keyId'] = $keyData->getKeyId();
                     $context['groupId'] = $groupId;
                     $context['keyDefinition'] = $definition;
+
                     //TODO Pimcore 11: remove method_exists BC layer
-                    if ($definition instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
-                        if (!$definition instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.1', 'Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class);
+                    if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                        if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                            trigger_deprecation('pimcore/pimcore', '10.1',
+                                'Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                                'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class);
                         }
                         $definition = $definition->enrichLayoutDefinition($object, $context);
                     }
@@ -1110,11 +1112,13 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $context['keyId'] = $keyData->getKeyId();
             $context['groupId'] = $groupId;
             $context['keyDefinition'] = $definition;
+
             //TODO Pimcore 11: remove method_exists BC layer
-            if ($definition instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
-                if (!$definition instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
-                    trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                        'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class));
+            if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                    trigger_deprecation('pimcore/pimcore', '10.1',
+                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
                 }
                 $definition = $definition->enrichLayoutDefinition($object, $context);
             }

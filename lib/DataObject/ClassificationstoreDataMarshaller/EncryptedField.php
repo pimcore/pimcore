@@ -141,9 +141,10 @@ class EncryptedField implements MarshallerInterface
             $delegateFd = $fd->getDelegate();
 
             //TODO Pimcore 11: remove method_exists BC layer
-            if ($delegateFd instanceof BeforeEncryptionMarshallerInterface ||method_exists($delegateFd, 'marshalBeforeEncryption')) {
+            if ($delegateFd instanceof BeforeEncryptionMarshallerInterface || method_exists($delegateFd, 'marshalBeforeEncryption')) {
                 if (!$delegateFd instanceof BeforeEncryptionMarshallerInterface) {
-                    trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    trigger_deprecation('pimcore/pimcore', '10.1',
+                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
                         'Implement the %s interface instead.', BeforeEncryptionMarshallerInterface::class));
                 }
                 $data = $delegateFd->marshalBeforeEncryption($data, $object, $params);
@@ -186,7 +187,8 @@ class EncryptedField implements MarshallerInterface
                 //TODO Pimcore 11: remove method_exists BC layer
                 if ($delegateFd instanceof AfterDecryptionUnmarshallerInterface || method_exists($delegateFd, 'unmarshalAfterDecryption')) {
                     if (!$delegateFd instanceof AfterDecryptionUnmarshallerInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
                             'Implement the %s interface instead.', AfterDecryptionUnmarshallerInterface::class));
                     }
                     $data = $delegateFd->unmarshalAfterDecryption($data, $object, $params);

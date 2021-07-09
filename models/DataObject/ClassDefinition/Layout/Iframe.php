@@ -17,8 +17,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 
-class Iframe extends Model\DataObject\ClassDefinition\Layout implements Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface
+class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDefinitionEnrichmentInterface
 {
     /**
      * Static type of this element

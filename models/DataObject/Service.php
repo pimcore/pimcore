@@ -28,6 +28,8 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool\Admin as AdminTool;
@@ -948,10 +950,11 @@ class Service extends Model\Element\Service
 
             foreach ($fields as $field) {
                 //TODO Pimcore 11: remove method_exists BC layer
-                if ($field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface || method_exists($field, 'rewriteIds')) {
-                    if (!$field instanceof DataObject\ClassDefinition\Data\IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', DataObject\ClassDefinition\Data\IdRewriterInterface::class));
+                if ($field instanceof IdRewriterInterface || method_exists($field, 'rewriteIds')) {
+                    if (!$field instanceof IdRewriterInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', IdRewriterInterface::class));
                     }
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
@@ -1441,10 +1444,11 @@ class Service extends Model\Element\Service
         $context['object'] = $object;
 
         //TODO Pimcore 11: remove method_exists BC layer
-        if ($layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
-            if (!$layout instanceof DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface::class));
+        if ($layout instanceof LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
+            if (!$layout instanceof LayoutDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
             }
             $layout->enrichLayoutDefinition($object, $context);
         }
