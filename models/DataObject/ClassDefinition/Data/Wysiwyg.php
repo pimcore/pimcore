@@ -325,21 +325,21 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string
      */
-    public function preGetData(mixed $object, $params = []): mixed
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
         $data = '';
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Classificationstore) {
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
         }
 
         return Text::wysiwygText($data, [
-                'object' => $object,
+                'object' => $container,
                 'context' => $this,
             ]);
     }
