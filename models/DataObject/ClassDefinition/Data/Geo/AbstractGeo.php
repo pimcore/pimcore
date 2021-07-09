@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
