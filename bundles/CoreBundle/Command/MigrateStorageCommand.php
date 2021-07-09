@@ -71,7 +71,6 @@ class MigrateStorageCommand extends AbstractCommand
                 $sourceStorage = $this->locator->get($storageSourceName);
                 $destinationStorage = $this->locator->get($storageDestinationName);
             } catch (\Exception $e) {
-                p_r($e); die;
                 $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageDestinationName));
                 continue;
             }
