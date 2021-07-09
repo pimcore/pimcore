@@ -58,7 +58,7 @@
     "doctrine/inflector": "^1.4.0 || ^2.0.0",
     "symfony/doctrine-messenger": "^5.2.0",
     "egulias/email-validator": "^3.0.0",
-    "endroid/qr-code": "^3.4.4",
+    "endroid/qr-code": "^4",
     "friendsofsymfony/jsrouting-bundle": "^2.6",
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.10",
