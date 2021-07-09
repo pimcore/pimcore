@@ -360,7 +360,9 @@ final class Config implements \ArrayAccess
 
     /**
      * @return PimcoreConfig
+     *
      * @throws \Exception
+     *
      * @internal
      * @static
      */

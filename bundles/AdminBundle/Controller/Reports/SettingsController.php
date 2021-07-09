@@ -90,6 +90,7 @@ class SettingsController extends ReportsControllerBase
                 'success' => false,
                 'errors' => [$e->getMessage()],
             ];
+
             return $this->adminJson($result);
         }
 
