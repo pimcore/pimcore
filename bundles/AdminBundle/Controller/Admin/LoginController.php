@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
+use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -229,7 +230,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      */
-    public function deeplinkAction(Request $request)
+    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
@@ -239,18 +240,29 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $perspective = strip_tags($request->get('perspective'));
 
             if (strpos($queryString, 'token')) {
-                $url = $this->generateUrl('pimcore_admin_login', [
+
+                $event = new LoginRedirectEvent('pimcore_admin_login', [
                     'deeplink' => $deeplink,
                     'perspective' => $perspective,
                 ]);
+                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
+                $url = $this->generateUrl($event->getRouteName(), $event->getRouteParams());
                 $url .= '&' . $queryString;
 
                 return $this->redirect($url);
             } elseif ($queryString) {
+
+                $event = new LoginRedirectEvent('pimcore_admin_login', [
+                    'deeplink' => true,
+                    'perspective' => $perspective,
+                ]);
+                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
+
+
                 return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,
-                    'perspective' => $perspective,
+                    'redirect' => $this->generateUrl($event->getRouteName(), $event->getRouteParams()),
                 ]);
             }
         }
