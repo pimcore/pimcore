@@ -23,7 +23,7 @@ final class AdminEvents
      *
      * This event allows you to influence path of the login page, e.g. for SSO integrations.
      *
-     * @Event("Pimcore\Event\Admin\Login\LoginCredentialsEvent")
+     * @Event("Pimcore\Event\Admin\Login\LoginRedirectEvent")
      *
      * @var string
      */

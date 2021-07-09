@@ -9,7 +9,7 @@ class LoginRedirectEvent extends Event
 {
 
     /**
-     * @var
+     * @var string
      */
     protected $routeName;
 
@@ -19,28 +19,27 @@ class LoginRedirectEvent extends Event
     protected $routeParams;
 
     /**
-     * LoginRedirectEvent constructor.
-     * @param $routeName
+     * @param string $routeName
      * @param array $routeParams
      */
-    public function __construct($routeName, array $routeParams)
+    public function __construct(string $routeName, array $routeParams)
     {
         $this->routeName = $routeName;
         $this->routeParams = $routeParams;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getRouteName()
+    public function getRouteName(): string
     {
         return $this->routeName;
     }
 
     /**
-     * @param mixed $routeName
+     * @param string $routeName
      */
-    public function setRouteName($routeName): void
+    public function setRouteName(string $routeName): void
     {
         $this->routeName = $routeName;
     }
