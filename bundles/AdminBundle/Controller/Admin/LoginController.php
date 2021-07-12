@@ -240,7 +240,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $perspective = strip_tags($request->get('perspective'));
 
             if (strpos($queryString, 'token')) {
-
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
                     'deeplink' => $deeplink,
                     'perspective' => $perspective,
@@ -252,13 +251,11 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 return $this->redirect($url);
             } elseif ($queryString) {
-
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
                     'deeplink' => true,
                     'perspective' => $perspective,
                 ]);
                 $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
-
 
                 return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,

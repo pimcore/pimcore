@@ -17,7 +17,6 @@ namespace Pimcore\Event;
 
 final class AdminEvents
 {
-
     /**
      * The LOGIN_REDIRECT event is triggered before user is redirected to login page.
      *
