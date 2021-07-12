@@ -33,6 +33,11 @@ final class Version20210630062445 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $file = Config::locateConfigFile('reports.php');
+
+        if (!file_exists($file)) {
+            return;
+        }
+        
         $config = Config::getConfigInstance($file);
         $config = $config->toArray();
 
