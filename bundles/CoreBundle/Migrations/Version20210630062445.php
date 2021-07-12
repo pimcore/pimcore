@@ -37,7 +37,7 @@ final class Version20210630062445 extends AbstractMigration
         if (!file_exists($file)) {
             return;
         }
-        
+
         $config = Config::getConfigInstance($file);
         $config = $config->toArray();
 
