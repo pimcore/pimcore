@@ -368,6 +368,7 @@ final class Config implements \ArrayAccess
      */
     public static function getReportConfig(): PimcoreConfig
     {
+        $config = null;
         if (Runtime::isRegistered('pimcore_config_report')) {
             $config = Runtime::get('pimcore_config_report');
         } else {
@@ -375,14 +376,21 @@ final class Config implements \ArrayAccess
                 $configJson = SettingsStore::get(
                     ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
                 );
-                $configArray = json_decode($configJson->getData(), true);
-                $config = new PimcoreConfig($configArray);
-            } catch (\Exception $e) {
-                $config = new PimcoreConfig([]);
-            }
 
-            self::setReportConfig($config);
+                if($configJson) {
+                    $configArray = json_decode($configJson->getData(), true);
+                    $config = new PimcoreConfig($configArray);
+                }
+            } catch (\Exception $e) {
+                // nothing to do
+            }
         }
+
+        if(!$config) {
+            $config = new PimcoreConfig([]);
+        }
+
+        self::setReportConfig($config);
 
         return $config;
     }
