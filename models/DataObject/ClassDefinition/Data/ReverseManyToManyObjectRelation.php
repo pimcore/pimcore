@@ -21,9 +21,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
     E_USER_DEPRECATED
 );
 
-class_exists(ReverseObjectRelation::class);
-
-if (false) {
+if (!class_exists(ReverseObjectRelation::class)) {
     /**
      * @deprecated use \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation instead
      */
