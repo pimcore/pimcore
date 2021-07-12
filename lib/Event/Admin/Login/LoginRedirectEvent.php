@@ -22,7 +22,7 @@ class LoginRedirectEvent extends Event
      * @param string $routeName
      * @param array $routeParams
      */
-    public function __construct(string $routeName, array $routeParams)
+    public function __construct(string $routeName, array $routeParams = [])
     {
         $this->routeName = $routeName;
         $this->routeParams = $routeParams;
