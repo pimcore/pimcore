@@ -377,7 +377,7 @@ final class Config implements \ArrayAccess
                     ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
                 );
 
-                if($configJson) {
+                if ($configJson) {
                     $configArray = json_decode($configJson->getData(), true);
                     $config = new PimcoreConfig($configArray);
                 }
@@ -386,7 +386,7 @@ final class Config implements \ArrayAccess
             }
         }
 
-        if(!$config) {
+        if (!$config) {
             $config = new PimcoreConfig([]);
         }
 
