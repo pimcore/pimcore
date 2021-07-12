@@ -142,7 +142,7 @@ class NotesSubscriber implements EventSubscriberInterface
             $data = $this->getAdditionalDataForField($additionalFieldConfig);
 
             //check required
-            if ($additionalFieldConfig['required'] && (empty($data) || !$data)) {
+            if ($additionalFieldConfig['required'] && empty($data)) {
                 $label = isset($additionalFieldConfig['title']) && strlen($additionalFieldConfig['title']) > 0
                     ? $additionalFieldConfig['title']
                     : $additionalFieldConfig['name'];
