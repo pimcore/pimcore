@@ -172,7 +172,7 @@ class Composer
 
         //$event->getIO()->write('Run command: ' . implode(' ', $command), false);
 
-        $process = new Process($command, null, null, null, $timeout);
+        $process = new Process(implode(' ', $command), null, null, null, $timeout);
         $process->run(function ($type, $buffer) use ($event, $writeBuffer) {
             if ($writeBuffer) {
                 $event->getIO()->write($buffer, false);
