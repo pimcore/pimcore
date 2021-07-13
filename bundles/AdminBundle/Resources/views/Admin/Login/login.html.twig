@@ -63,6 +63,7 @@
         window.localStorage.setItem(symfonyToolbarKey, 'none');
     }
 </script>
-{% endblock %}
 
-{% do pimcore_breach_attack_random_content() %}
+{{ pimcore_breach_attack_random_content() }}
+
+{% endblock %}
