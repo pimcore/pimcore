@@ -769,9 +769,6 @@ class OrderManager implements OrderManagerInterface
     {
         // sets customer to order - if available
         if (@Tool::classExists('\\Pimcore\\Model\\DataObject\\Customer')) {
-            /**
-             * @var $customer \Pimcore\Model\DataObject\Customer
-             */
             $customer = \Pimcore\Model\DataObject\Customer::getById($this->environment->getCurrentUserId());
             $order->setCustomer($customer);
         }
