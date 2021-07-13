@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
@@ -552,7 +554,13 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
+            if (!$fieldDefinition instanceof PreGetDataInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', PreGetDataInterface::class));
+            }
+
             $data = $fieldDefinition->preGetData(
                 $this,
                 [
@@ -631,7 +639,14 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if (method_exists($fieldDefinition, 'preSetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof PreSetDataInterface || method_exists($fieldDefinition, 'preSetData')) {
+            if (!$fieldDefinition instanceof PreSetDataInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', PreSetDataInterface::class));
+            }
+
             $value = $fieldDefinition->preSetData(
                 $this,
                 $value,

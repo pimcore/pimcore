@@ -20,7 +20,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface,
+    BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -387,26 +388,15 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function marshalBeforeEncryption($value, $object = null, $params = [])
+
+    /** { @inheritdoc } */
+    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

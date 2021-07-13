@@ -129,7 +129,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
                 throw new \Exception('could not load key');
             }
             // store it in raw binary mode to preserve space
-            if (method_exists($this->delegate, 'marshalBeforeEncryption')) {
+            if ($this->delegate instanceof BeforeEncryptionMarshallerInterface || method_exists($this->delegate, 'marshalBeforeEncryption')) {
                 $data = $this->delegate->marshalBeforeEncryption($data, $object, $params);
             }
 
@@ -174,7 +174,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
                     $data = Crypto::decrypt($data, $key, $rawBinary);
                 }
 
-                if (method_exists($this->delegate, 'unmarshalAfterDecryption')) {
+                if ($this->delegate instanceof AfterDecryptionUnmarshallerInterface || method_exists($this->delegate, 'unmarshalAfterDecryption')) {
                     $data = $this->delegate->unmarshalAfterDecryption($data, $object, $params);
                 }
 
@@ -473,12 +473,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return self
+     * @inheritdoc
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
     {
         $delegate = $this->getDelegate();
 

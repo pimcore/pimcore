@@ -17,8 +17,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
 
-abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
+abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {
     /**
      * @internal
@@ -168,26 +172,14 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
         return $this;
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
-    /**
-     * @param string $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

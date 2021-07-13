@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
@@ -571,6 +571,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
+            //TODO Pimcore 11 remove method_exists call
             if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                 $fd->classSaved($class, $params);
             }
@@ -578,14 +579,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param mixed $container
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData($container, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
         if (
             !$container instanceof DataObject\Concrete &&
@@ -731,7 +727,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     private function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1173,31 +1175,24 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Model\Element\ElementInterface
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         $validLanguages = Tool::getValidLanguages();
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if (method_exists($fd, 'rewriteIds')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                    if (!$fd instanceof IdRewriterInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', IdRewriterInterface::class));
+                    }
+
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }

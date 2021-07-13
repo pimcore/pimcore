@@ -19,11 +19,14 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -609,29 +612,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore->createUpdateTable();
     }
 
+
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
     {
-        if (!$object instanceof DataObject\Concrete) {
+        if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
         }
 
-        if (!$object->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
+        if (!$container->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
             $store = new DataObject\Classificationstore();
-            $store->setObject($object);
+            $store->setObject($container);
             $store->setFieldname($this->getName());
 
-            $object->{'set' . $this->getName()}($store);
+            $container->{'set' . $this->getName()}($store);
         }
 
-        return $object->getObjectVar($this->getName());
+        return $container->getObjectVar($this->getName());
     }
 
     /**
@@ -1076,20 +1075,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
         if (!$activeGroupIds) {
-            return;
+            return $this;
         }
 
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
@@ -1128,7 +1122,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                if (method_exists($definition, 'enrichLayoutDefinition')) {
+
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                    if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
+                    }
                     $context['object'] = $object;
                     $context['class'] = $object->getClass();
                     $context['ownerType'] = 'classificationstore';
@@ -1174,6 +1175,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $s1 <=> $s2;
             });
         }
+        return $this;
     }
 
     /**

@@ -16,8 +16,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Concrete;
 
-class Text extends Model\DataObject\ClassDefinition\Layout
+class Text extends Model\DataObject\ClassDefinition\Layout implements Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface
 {
     /**
      * Static type of this element
@@ -115,14 +116,9 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $context additional contextual data
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
     {
         $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
             $this->getRenderingClass()
