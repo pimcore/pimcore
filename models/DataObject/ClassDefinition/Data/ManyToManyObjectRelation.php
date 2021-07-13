@@ -437,7 +437,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @return array
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -475,7 +475,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
         if ($data === null) {
             $data = [];
@@ -560,7 +560,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         if (!$this->visibleFields) {
             return $this;
@@ -630,6 +630,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 }
             }
         }
+
         return $this;
     }
 

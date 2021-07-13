@@ -22,7 +22,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface, LayoutDefinitionEnrichmentInterface,
+class Select extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    \JsonSerializable,
+    NormalizerInterface,
+    LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
@@ -448,7 +456,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

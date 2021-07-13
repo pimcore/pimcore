@@ -475,7 +475,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @inheritdoc
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $delegate = $this->getDelegate();
 

@@ -325,7 +325,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = '';
         if ($container instanceof DataObject\Concrete) {

@@ -20,8 +20,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface,
-    BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
+class RgbaColor extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface,
+    BeforeEncryptionMarshallerInterface,
+    AfterDecryptionUnmarshallerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -387,7 +394,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
-
 
     /** { @inheritdoc } */
     public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */

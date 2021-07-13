@@ -16,8 +16,8 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDefinitionEnrichmentInterface
 {
@@ -69,7 +69,7 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $this->width = $this->getWidth() ? $this->getWidth() : 500;
         $this->height = $this->getHeight() ? $this->getHeight() : 500;

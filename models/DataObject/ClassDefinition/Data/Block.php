@@ -883,7 +883,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -984,7 +984,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
         $params['owner'] = $container;

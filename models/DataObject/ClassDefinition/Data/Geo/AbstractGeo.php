@@ -15,12 +15,11 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 
-use Pimcore\Model;
-use Pimcore\Tool\Serialize;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
-use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
+use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {

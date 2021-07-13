@@ -470,11 +470,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');
@@ -500,7 +499,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -542,7 +541,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // TODO Pimcore 11: remove method_exists BC layer
         // TODO else part should not be needed at all as preGetData is always there
         // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
 //        } else {
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
 //        }

@@ -23,6 +23,7 @@ interface AfterDecryptionUnmarshallerInterface
      * @param mixed $value
      * @param Concrete|null $object
      * @param array $params
+     *
      * @return mixed
      */
     public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;

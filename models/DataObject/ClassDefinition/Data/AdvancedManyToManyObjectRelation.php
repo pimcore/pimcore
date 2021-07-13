@@ -575,7 +575,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -806,7 +806,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $classId = $this->allowedClassId;
 
@@ -874,6 +874,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
             }
         }
+
         return $this;
     }
 

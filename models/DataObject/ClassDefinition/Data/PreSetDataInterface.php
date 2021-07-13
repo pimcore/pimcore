@@ -19,11 +19,11 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface PreSetDataInterface
 {
-
     /**
      * @param mixed $container any container type, e.g. Concrete, Localizedfield, AbstractData, etc ...
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) /*: mixed*/;

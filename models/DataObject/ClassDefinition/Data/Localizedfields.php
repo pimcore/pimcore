@@ -581,7 +581,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         if (
             !$container instanceof DataObject\Concrete &&

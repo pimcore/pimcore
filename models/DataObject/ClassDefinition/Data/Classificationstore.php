@@ -20,8 +20,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
@@ -612,11 +610,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore->createUpdateTable();
     }
 
-
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
@@ -1077,7 +1074,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object , /**  array */ $context = []) /* : self */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
@@ -1175,6 +1172,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $s1 <=> $s2;
             });
         }
+
         return $this;
     }
 

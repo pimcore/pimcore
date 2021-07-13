@@ -645,11 +645,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         parent::save($object, $params);
     }
 
-
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -784,7 +783,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         $temp->getDao()->createOrUpdateTable($class);
     }
-
 
     /**
      * { @inheritdoc }

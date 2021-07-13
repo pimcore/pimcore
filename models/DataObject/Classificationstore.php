@@ -16,8 +16,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**

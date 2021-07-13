@@ -19,11 +19,11 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface BeforeEncryptionMarshallerInterface
 {
-
     /**
      * @param mixed $value
      * @param Concrete|null $object
      * @param array $params
+     *
      * @return mixed
      */
     public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;
