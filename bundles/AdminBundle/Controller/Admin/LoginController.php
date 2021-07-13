@@ -131,7 +131,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
-        $csrfProtection->regenerateCsrfToken();
+        if(!$this->getAdminUser()) {
+            $csrfProtection->regenerateCsrfToken();
+        }
 
         return $this->json([
            'csrfToken' => $csrfProtection->getCsrfToken(),
