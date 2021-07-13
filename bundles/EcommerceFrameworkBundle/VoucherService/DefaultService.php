@@ -321,7 +321,7 @@ class DefaultService implements VoucherServiceInterface
     /**
      * @param string $code
      *
-     * @return bool|TokenManager\TokenManagerInterface
+     * @return TokenManager\TokenManagerInterface|null
      */
     public function getTokenManager($code)
     {
@@ -331,6 +331,6 @@ class DefaultService implements VoucherServiceInterface
             }
         }
 
-        return false;
+        return null;
     }
 }
