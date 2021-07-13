@@ -22,6 +22,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Tool\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -254,12 +255,18 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedDocumentsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('documents')) {
+            return $this->adminJson([]);
+        }
+
         $list = Document::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
+
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['documents'] = [];
@@ -287,26 +294,30 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedAssetsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('assets')) {
+            return $this->adminJson([]);
+        }
+
+        
         $list = Asset::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
+
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['assets'] = [];
 
-        foreach ($list as $doc) {
-            /**
-             * @var Asset $doc
-             */
-            if ($doc->isAllowed('view')) {
+        foreach ($list as $asset) {
+            if ($asset->isAllowed('view')) {
                 $response['assets'][] = [
-                    'id' => $doc->getId(),
-                    'type' => $doc->getType(),
-                    'path' => $doc->getRealFullPath(),
-                    'date' => $doc->getModificationDate(),
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'path' => $asset->getRealFullPath(),
+                    'date' => $asset->getModificationDate(),
                 ];
             }
         }
@@ -323,12 +334,18 @@ class PortalController extends AdminController implements KernelControllerEventI
      */
     public function portletModifiedObjectsAction(Request $request)
     {
+        $user = $this->getAdminUser();
+        if(!$user->isAllowed('objects')) {
+            return $this->adminJson([]);
+        }
+
         $list = DataObject::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'",
         ]);
+
+        $list->filterAccessibleByUser($user, 'view');
 
         $response = [];
         $response['objects'] = [];
