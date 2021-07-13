@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
@@ -392,19 +394,19 @@ class PageController extends DocumentControllerBase
 
         $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
 
-        $code = new \Endroid\QrCode\QrCode;
-        $code->setWriterByName('png');
-        $code->setText($url);
-        $code->setSize(500);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size($request->query->get('download') ? 4000 : 500)
+            ->build();
 
         $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->writeFile($tmpFile);
+        $result->saveToFile($tmpFile);
 
         $response = new BinaryFileResponse($tmpFile);
         $response->headers->set('Content-Type', 'image/png');
 
         if ($request->query->get('download')) {
-            $code->setSize(4000);
             $response->setContentDisposition('attachment', 'qrcode-preview.png');
         }
 

@@ -879,7 +879,7 @@ class ElementController extends AdminController
         } elseif ($ownerType == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
-            if ($context['subContainerType'] == 'localizedfield') {
+            if (($context['subContainerType'] ?? null) === 'localizedfield') {
                 /** @var DataObject\ClassDefinition\Data\Localizedfields $fdLocalizedFields */
                 $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
                 $fd = $fdLocalizedFields->getFieldDefinition($fieldname);

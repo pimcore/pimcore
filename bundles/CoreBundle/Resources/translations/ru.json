@@ -940,5 +940,7 @@
     "draft": "Черновик",
     "auto_save": "Автосохранение",
     "save_draft": "Сохранить черновик",
-    "selected_grid_columns": "Выбранные столбцы сетки"
+    "selected_grid_columns": "Выбранные столбцы сетки",
+    "ungrouped": "ungrouped",
+    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?"
 }

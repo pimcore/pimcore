@@ -19,7 +19,7 @@ body:
                 You can use our public demo as well to verify bugs: https://demo.pimcore.fun/admin/ (`admin` / `demo`)
               - This is not a security issue -> use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/) instead.
               - You are not able to provide a pull request that fixes the issue.
-              - There's no existing ticket for the same issue
+              - There's no existing ticket for the same issue.
 
     - type: textarea
       attributes:

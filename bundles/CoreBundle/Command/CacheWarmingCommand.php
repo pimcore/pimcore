@@ -127,6 +127,7 @@ class CacheWarmingCommand extends AbstractCommand
             $documentTypes = $this->getArrayOption('documentTypes', 'validDocumentTypes', 'document type');
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type');
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
+            $objectClasses = $this->input->getOption('classes');
         } catch (\InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
@@ -144,8 +145,9 @@ class CacheWarmingCommand extends AbstractCommand
         }
 
         if (in_array('object', $types)) {
-            $this->writeWarmingMessage('object', $objectTypes);
-            Warming::objects($objectTypes);
+            $extraInfo = count($objectClasses) ? ' from class: ' . implode(',', $objectClasses) : '';
+            $this->writeWarmingMessage('object', $objectTypes, $extraInfo);
+            Warming::objects($objectTypes, $objectClasses);
         }
 
         return 0;
@@ -155,13 +157,17 @@ class CacheWarmingCommand extends AbstractCommand
      * @param string $type
      * @param array $types
      */
-    protected function writeWarmingMessage($type, $types)
+    protected function writeWarmingMessage($type, $types, $extra = '')
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
         if (null !== $types && count($types) > 0) {
             $output .= sprintf(' for types %s', $this->humanList($types, 'and', '<info>%s</info>'));
         } else {
             $output .= sprintf(' for <info>all</info> types');
+        }
+
+        if (!empty($extra)) {
+            $output .= $extra;
         }
 
         $output .= '...';

@@ -474,7 +474,7 @@
     "conversionFactor": "Umwandlungsfaktor",
     "conversionOffset": "Umwandlungsversatz",
     "reset": "Zurücksetzen",
-    "password_hint": "Passwort muss mindestens 10 Zeichen umfassen, davon ein Klein- und ein Grossbuchstabe, eine numerische Zahl und ein Sonderzeichen!",
+    "password_hint": "Passwort muss mindestens 10 Zeichen umfassen!",
     "log_pid": "PID",
     "search_console_settings_description": "Bitte konfigurieren Sie das Google API Service Konto in den Systemeinstellungen, um die Google Search Console Integration zu verwenden",
     "fieldcontainer": "Feldcontainer",
@@ -655,5 +655,6 @@
     "web2print_headlesschrome_documentation_additions_text": "Es gibt zwei zusätzliche Optionen: \"Kopfzeile\" und \"Fußzeile\". Diese Optionen benötigen eine URL, die die Kopf- oder Fußzeilenvorlage zurückgibt.",
     "json_converter": "Die Optionen formatieren",
     "json_converter_link": "JSON Formatierer",
-    "preview_generator_reference": "Vorschau Generator Klasse oder Dienstname"
+    "preview_generator_reference": "Vorschau Generator Klasse oder Dienstname",
+    "max_characters": "Maximum Characters"
 }

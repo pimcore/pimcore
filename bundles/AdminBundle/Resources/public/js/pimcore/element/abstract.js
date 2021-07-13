@@ -218,6 +218,12 @@ pimcore.element.abstract = Class.create({
             return;
         }
 
+        //do not run auto-save for types not supporting versions
+        let nonVersionTypes = ['link', 'hardlink', 'folder'];
+        if (this.data.type && in_array(this.data.type, nonVersionTypes)) {
+            return;
+        }
+
         var doSave = false;
         var liveData = this.getSaveData();
         Object.keys(liveData).forEach(key => {

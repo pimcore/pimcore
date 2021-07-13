@@ -90,6 +90,20 @@ This is especially useful if using an object storage that is publicly accessible
 like CloudFront for your resources. 
 
 ### Example: AWS S3 Adapter for Assets
+First, install AWS S3 Adapter with command:
+```
+composer require league/flysystem-aws-s3-v3:^2.0
+````
+
+Next step is to configure AWS S3 client service for class `Aws\S3\S3Client` with following required arguments:
+
+| Name          | Description                                                 |
+|---------------|-------------------------------------------------------------|
+| `endpoint`    | AWS S3 endpoint url                                         |
+| `region`      | AWS Region to access the bucket                             |
+| `version`     | latest or specific                                          |
+| `credentials` | IAM Access keys: Access key ID & Secret access key          |
+
 ```yaml
 # config/packages/prod/flysystem.yaml
 services:
@@ -102,7 +116,41 @@ services:
                credentials:
                    key: '%env(S3_STORAGE_KEY)%'
                    secret: '%env(S3_STORAGE_SECRET)%'
+```
 
+Note: The required IAM permissions are:
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1420044805001",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:ReplicateObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::your-bucket-name",
+                "arn:aws:s3:::your-bucket-name/*"
+            ]
+        }
+    ]
+}
+```
+
+And then override core flysystem configuration to use remote storage instead of local. For that, change the adapter from 'local' to 'aws'.
+Also update following options:
+ - `client`: newly created service 'assets_s3'
+ - `bucket`: create a new bucket on S3 Management console and use the bucket name.
+ - `prefix`: prefix serves as the root folder for a storage type e.g. assets, versions, thumbnails etc. All storage contents will be generated inside this folder.
+```yaml
+# config/packages/prod/flysystem.yaml
 flysystem:
     storages:
         pimcore.asset.storage:
@@ -111,4 +159,63 @@ flysystem:
             options:
                 client: 'assets_s3'
                 bucket: 'bucket-name'
+                prefix: assets
 ```
+
+### Storage Migration
+If you are switching to different a storage type, it is often required to migrate contents from old storage to the newly configured one. Pimcore provides a command to solve the purpose of migrating contents from between storages, which in turn uses the flysystem `listcontents` API to read contents recursively from old (source) storage and copy contents to the new (target) storage. 
+
+Follow these steps to migrate the content:
+1. Create a Flysystem configuration for source & target storages. It is important to follow the naming structure, as follows: source config node: `pimcore.{storagetype}.storage.source` & target config node: `pimcore.{storagetype}.storage.target`
+
+Few examples,
+
+   | Migration Task | source node                        | target node                      |
+   |----------------|------------------------------------|---------------------------------------|
+   | `asset`        | pimcore.asset.storage.source       | pimcore.asset.storage.target     |
+   | `thumbnail`    | pimcore.thumbnail.storage.source   | pimcore.thumbnail.storage.target |
+   | `version`      | pimcore.version.storage.source     | pimcore.version.storage.target   |
+   
+```yaml
+flysystem:
+    storages:
+        pimcore.asset.storage.source:
+            adapter: 'local'
+            visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/assets'
+
+        pimcore.asset.storage.target:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'assets_s3'
+                bucket: 'bucket-name'
+                prefix: asset
+
+        pimcore.thumbnail.storage.source:
+            adapter: 'local'
+            visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
+                permissions:
+                    file:
+                        private: 0644
+                    dir:
+                        private: 0755
+
+        pimcore.thumbnail.storage.target:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'assets_s3'
+                bucket: 'bucket-name'
+                prefix: asset
+```
+
+2. Run command `pimcore:migrate:storage` with storage type argument: 
+   `bin/console pimcore:migrate:storage asset`
+   It is also possible to pass multiple arguments to migrate different storages in one go.
+
+Output:
+![Storage Migration](../../img/migratingstorage.png)

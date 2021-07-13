@@ -104,6 +104,10 @@ trait ImageThumbnailTrait
 
     public function getPathReference(bool $deferredAllowed = false): array
     {
+        if (!$deferredAllowed && (($this->pathReference['type'] ?? '') === 'deferred')) {
+            $this->pathReference = [];
+        }
+
         if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
