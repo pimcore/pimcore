@@ -268,6 +268,7 @@ pimcore.element.properties = Class.create({
                             });
                         },
                         sortable: true,
+                        renderer: Ext.util.Format.htmlEncode,
                         width: 230
                     },
                     {
@@ -275,17 +276,16 @@ pimcore.element.properties = Class.create({
                         dataIndex: 'description',
                         editable: false,
                         sortable: true,
+                        renderer: Ext.util.Format.htmlEncode,
                         width: 230
                     },
                     {
-                        //id: "property_value_col",
                         text: t("value"),
                         dataIndex: 'data',
                         flex: 1,
                         getEditor: this.getCellEditor.bind(this),
                         editable: true,
-                        renderer: this.getCellRenderer.bind(this)
-                        ,
+                        renderer: this.getCellRenderer.bind(this),
                         listeners: {
                             "mousedown": this.cellMousedown.bind(this)
                         }
@@ -430,6 +430,8 @@ pimcore.element.properties = Class.create({
             } else {
                 return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
+        } else if (type == 'text') {
+            return Ext.util.Format.htmlEncode(value);
         }
 
         return value;
