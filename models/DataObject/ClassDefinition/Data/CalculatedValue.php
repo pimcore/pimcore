@@ -279,7 +279,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= 'public function get' . ucfirst($key) . ' ($language = null) {' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
-        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();'  . "\n";
+        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("pimcore.locale")->getLocale();'  . "\n";
         $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage($locale)) {'  . "\n";
         $code .= "\t\t\t\t" . '$language = (string) $locale;'  . "\n";
         $code .= "\t\t\t" . '} else {'  . "\n";
