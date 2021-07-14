@@ -2,7 +2,7 @@
 
 {% block content %}
 <div id="loginform">
-    <form method="post" action="{{ path('pimcore_admin_login_check', {'perspective' : app.request.get('perspective')|striptags}) }}">
+    <form id="form-element" method="post" action="{{ path('pimcore_admin_login_check', {'perspective' : app.request.get('perspective')|striptags}) }}">
 
         {% if error is defined %}
         <div class="text error">
@@ -12,7 +12,7 @@
 
         <input type="text" name="username" autocomplete="username" placeholder="{{ 'username'|trans([], 'admin') }}" required autofocus>
         <input type="password" name="password" autocomplete="current-password" placeholder="{{ 'password'|trans([], 'admin') }}" required>
-        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <input type="hidden" name="csrfToken" id="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
 
         <button type="submit">{{ 'login'|trans([], 'admin') }}</button>
     </form>
@@ -62,6 +62,38 @@
     if(!window.localStorage.getItem(symfonyToolbarKey)) {
         window.localStorage.setItem(symfonyToolbarKey, 'none');
     }
+
+
+    // CSRF token refresh
+    var formElement = document.getElementById('form-element');
+    var csrfRefreshInProgress = false;
+    function refreshCsrfToken() {
+        csrfRefreshInProgress = true;
+        formElement.style.opacity = '0.3';
+        var request = new XMLHttpRequest();
+        request.open('GET', '{{ path("pimcore_admin_login_csrf_token") }}');
+        request.onload = function () {
+            if (this.status >= 200 && this.status < 400) {
+                var res = JSON.parse(this.response);
+                document.getElementById('csrfToken').setAttribute('value', res['csrfToken']);
+                formElement.style.opacity = '1';
+                csrfRefreshInProgress = false;
+            }
+        };
+        request.send();
+    }
+    document.addEventListener('visibilitychange', function(ev) {
+        if(document.visibilityState === 'visible') {
+            refreshCsrfToken();
+        }
+    });
+    window.setInterval(refreshCsrfToken, {{ csrfTokenRefreshInterval }});
+    formElement.addEventListener("submit", function(evt) {
+        if(csrfRefreshInProgress) {
+            evt.preventDefault();
+        }
+    }, true);
+
 </script>
 
 {{ pimcore_breach_attack_random_content() }}
