@@ -848,7 +848,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $code->setText($url);
         $code->setSize(200);
 
-        $qrCodeFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
         $code->writeFile($qrCodeFile);
 
         $response = new BinaryFileResponse($qrCodeFile);
