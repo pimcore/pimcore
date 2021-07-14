@@ -163,7 +163,7 @@ class Video extends Model\Asset
     {
         $fullPath = rtrim($this->getRealPath(), '/') . $path;
 
-        if(Tool::isFrontend()) {
+        if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
             $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
