@@ -19,6 +19,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -243,10 +244,13 @@ EOT;
     public function getLowQualityPreviewPath()
     {
         $storagePath = $this->getLowQualityPreviewStoragePath();
-        $path = urlencode_ignore_slash($storagePath);
+        $path = $storagePath;
 
-        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
-        $path = $prefix . $path;
+        if(Tool::isFrontend()) {
+            $path = urlencode_ignore_slash($storagePath);
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+            $path = $prefix . $path;
+        }
 
         $event = new GenericEvent($this, [
             'storagePath' => $storagePath,

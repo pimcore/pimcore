@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Thumbnail;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
 
@@ -287,18 +288,20 @@ trait ImageThumbnailTrait
     protected function convertToWebPath(array $pathReference): string
     {
         $type = $pathReference['type'] ?? null;
-        $src = $pathReference['src'] ?? null;
+        $path = $pathReference['src'] ?? null;
 
-        if ($type === 'data-uri') {
-            return $src;
-        } elseif ($type === 'deferred') {
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
-            $path = $prefix . urlencode_ignore_slash($src);
-        } elseif ($type === 'thumbnail') {
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
-            $path = $prefix . urlencode_ignore_slash($src);
-        } else {
-            $path = urlencode_ignore_slash($src);
+        if(Tool::isFrontend()) {
+            if ($type === 'data-uri') {
+                return $path;
+            } elseif ($type === 'deferred') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+                $path = $prefix . urlencode_ignore_slash($path);
+            } elseif ($type === 'thumbnail') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                $path = $prefix . urlencode_ignore_slash($path);
+            } else {
+                $path = urlencode_ignore_slash($path);
+            }
         }
 
         return $path;
