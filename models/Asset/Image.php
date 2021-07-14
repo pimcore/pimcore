@@ -246,7 +246,7 @@ EOT;
         $storagePath = $this->getLowQualityPreviewStoragePath();
         $path = $storagePath;
 
-        if(Tool::isFrontend()) {
+        if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
             $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
             $path = $prefix . $path;

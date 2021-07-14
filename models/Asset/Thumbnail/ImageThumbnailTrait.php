@@ -290,7 +290,7 @@ trait ImageThumbnailTrait
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
 
-        if(Tool::isFrontend()) {
+        if (Tool::isFrontend()) {
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
