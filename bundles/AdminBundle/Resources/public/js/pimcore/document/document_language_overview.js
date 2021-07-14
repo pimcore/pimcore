@@ -242,15 +242,16 @@ pimcore.document.document_language_overview = Class.create({
                         },
                         items: [{
                             xtype: "textfield",
+                            itemId: "title",
+                            fieldLabel: t('title'),
+                            name: 'title',
                             width: "100%",
-                            fieldLabel: t('key'),
-                            itemId: "key",
-                            name: 'key',
                             enableKeyEvents: true,
                             listeners: {
                                 keyup: function (el) {
                                     pageForm.getComponent("name").setValue(el.getValue());
-                                }
+                                    pageForm.getComponent("key").setValue(el.getValue());
+                                }.bind(this)
                             }
                         },{
                             xtype: "textfield",
@@ -260,10 +261,10 @@ pimcore.document.document_language_overview = Class.create({
                             width: "100%"
                         },{
                             xtype: "textfield",
-                            itemId: "title",
-                            fieldLabel: t('title'),
-                            name: 'title',
-                            width: "100%"
+                            width: "100%",
+                            fieldLabel: t('key'),
+                            itemId: "key",
+                            name: 'key',
                         }]
                     });
 
