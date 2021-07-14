@@ -397,7 +397,7 @@ class PageController extends DocumentControllerBase
         $code->setText($url);
         $code->setSize(500);
 
-        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
         $code->writeFile($tmpFile);
 
         $response = new BinaryFileResponse($tmpFile);
