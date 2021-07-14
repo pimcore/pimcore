@@ -57,7 +57,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     public $defaultValue;
 
@@ -154,23 +154,17 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @return float|null
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?float
     {
-        if ($this->defaultValue !== null) {
-            return (float) $this->defaultValue;
-        }
-
-        return null;
+        return $this->defaultValue;
     }
 
     /**
-     * @param int $defaultValue
+     * @param float|null $defaultValue
      */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(?float $defaultValue): void
     {
-        if (strlen((string)$defaultValue) > 0) {
-            $this->defaultValue = $defaultValue;
-        }
+        $this->defaultValue = $defaultValue;
     }
 
     /**
