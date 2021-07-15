@@ -1179,9 +1179,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
                 }
             }
 
-            if ($keyCriteria) {
-                $conditionParts[] = $keyCriteria;
-            }
+            $conditionParts[] = $keyCriteria;
         }
 
         $start = 0;

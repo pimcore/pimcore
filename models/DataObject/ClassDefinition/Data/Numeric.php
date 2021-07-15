@@ -94,14 +94,14 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     public $minValue;
 
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     public $maxValue;
 
@@ -215,7 +215,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param float $maxValue
+     * @param float|null $maxValue
      */
     public function setMaxValue($maxValue)
     {
@@ -223,7 +223,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getMaxValue()
     {
@@ -231,7 +231,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param float $minValue
+     * @param float|null $minValue
      */
     public function setMinValue($minValue)
     {
@@ -239,7 +239,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getMinValue()
     {
@@ -521,11 +521,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
             }
 
-            if (strlen($this->getMinValue()) && $this->getMinValue() > $data) {
+            if ($this->getMinValue() !== null && $this->getMinValue() > $data) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
-            if (strlen($this->getMaxValue()) && $data > $this->getMaxValue()) {
+            if ($this->getMaxValue() !== null && $data > $this->getMaxValue()) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue());
             }
 
