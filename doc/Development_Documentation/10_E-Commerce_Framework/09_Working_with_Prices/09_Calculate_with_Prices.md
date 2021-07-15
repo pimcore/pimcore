@@ -68,7 +68,7 @@ float calculations and rounding to generate the integer representation:
 * `Decimal::create('123.1234567')` with a string value will fall back to float calculations as the amount of digits after
   the comma exceed the scale of `4`. The value is first multiplied with `10^4`, resulting in PHP casting the string to float.
   The float `1231234.567` is then passed to PHP's `round()` function with a `precision` parameter of `0` and a default rounding
-  mode of `PHP_ROUND_HALF_EVEN`, resulting in an integer representation of `1231235` (note the rounding on the last digit).
+  mode of `PHP_ROUND_HALF_UP`, resulting in an integer representation of `1231235` (note the rounding on the last digit).
 * `Decimal::create(123.1234567)` with a float value will have the same behaviour as above (skipping the string conversion). 
 
 You can influence how rounding is applied by specifying the `$roundingMode` parameter on the `create()` method:

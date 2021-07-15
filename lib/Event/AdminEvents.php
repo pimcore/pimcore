@@ -18,6 +18,17 @@ namespace Pimcore\Event;
 final class AdminEvents
 {
     /**
+     * The LOGIN_REDIRECT event is triggered before user is redirected to login page.
+     *
+     * This event allows you to influence path of the login page, e.g. for SSO integrations.
+     *
+     * @Event("Pimcore\Event\Admin\Login\LoginRedirectEvent")
+     *
+     * @var string
+     */
+    const LOGIN_REDIRECT = 'pimcore.admin.login.redirect';
+
+    /**
      * The LOGIN_CREDENTIALS event is triggered after login credentials were resolved from request.
      *
      * This event allows you to influence the credentials resolved in the authenticator before

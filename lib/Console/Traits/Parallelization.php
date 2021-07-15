@@ -63,7 +63,7 @@ trait Parallelization
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Sets the number of items to process per child process or in a batch',
-                50
+                '50'
             )
         ;
     }

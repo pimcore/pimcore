@@ -496,7 +496,7 @@ class OrderManager implements OrderManagerInterface
                         $priceRule->setRuleId($rule->getId());
 
                         foreach (Tool::getValidLanguages() as $language) {
-                            $priceRule->setName($rule->getLabel(), $language);
+                            $priceRule->setName($rule->getLabel($language), $language);
                         }
 
                         $priceRules->add($priceRule);

@@ -139,9 +139,14 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
                 function ($currentValue) {
                     if ($currentValue instanceof ElementDescriptor) {
                         $cacheKey = $currentValue->getCacheKey();
-                        if (Runtime::isRegistered($cacheKey)) {
-                            // we don't want the copy from the runtime but cache is fine
-                            Runtime::getInstance()->offsetUnset($cacheKey);
+                        $cacheKeyRenewed = $cacheKey . '_blockElementRenewed';
+
+                        if (!Runtime::isRegistered($cacheKeyRenewed)) {
+                            if (Runtime::isRegistered($cacheKey)) {
+                                // we don't want the copy from the runtime but cache is fine
+                                Runtime::getInstance()->offsetUnset($cacheKey);
+                            }
+                            Runtime::save(true, $cacheKeyRenewed);
                         }
 
                         $renewedElement = Service::getElementById($currentValue->getType(), $currentValue->getId());

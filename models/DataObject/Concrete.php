@@ -683,9 +683,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                $arguments = array_pad($arguments, 5, 0);
+                $arguments = array_pad($arguments, 6, 0);
 
-                [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
+                [$localizedPropertyName, $value, $locale, $limit, $offset, $objectTypes] = $arguments;
 
                 $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
@@ -708,8 +708,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $listConfig['locale'] = $locale;
                 }
             } else {
-                $arguments = array_pad($arguments, 3, 0);
-                [$value, $limit, $offset] = $arguments;
+                $arguments = array_pad($arguments, 4, 0);
+                [$value, $limit, $offset, $objectTypes] = $arguments;
 
                 if (!$field instanceof AbstractRelations) {
                     $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
@@ -733,6 +733,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             $list = static::getList($listConfig);
+
+            // Check if variants, in addition to objects, to be fetched
+            if (!empty($objectTypes)) {
+                if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+                    Logger::error('Class: DataObject\\Concrete => Unsupported object type in array ' . implode(',', $objectTypes));
+
+                    throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\Concrete');
+                }
+
+                $list->setObjectTypes($objectTypes);
+            }
 
             if ($field instanceof AbstractRelations && $field->isFilterable()) {
                 $list = $field->addListingFilter($list, $value);
