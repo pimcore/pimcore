@@ -9,6 +9,26 @@
 - [Glossary] `pimcoreglossary()` tag has been deprecated in favor of `pimcore_glossary` Twig filter and will be removed in Pimcore 11.
 - Bumped `google/apiclient` to 2.10 version - Use proper namespaces for API references.
 - Bumped `endroid/qr-code` to version 4.
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
+- [Password encoding] Pimcore Password Encoder factory has been deprecated in favor of new Password Hasher factory, to align with Symfony authentication system. The default factory is used as default and to switch to new Password hasher factory, please enable through config `factory_type` as follows:
+```yaml
+pimcore:
+    security:
+        factory_type: password_hasher
+
+        # the password hasher factory as defined in services.yml
+        password_hasher_factories:
+            App\Model\DataObject\User: website_demo.security.password_hasher_factory
+```
+and use new service handler:
+```yaml
+services:
+    website_demo.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+        arguments:
+            - Pimcore\Security\Encoder\PasswordFieldEncoder
+            - ['password']
+```
 
 ## 10.0.0
 

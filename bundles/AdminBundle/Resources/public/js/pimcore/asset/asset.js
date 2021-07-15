@@ -32,15 +32,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         try {
             this.data = Ext.decode(response.responseText);
 
+            if (typeof this.data.editlock == "object") {
+                pimcore.helpers.lockManager(this.id, "asset", this.type, this.data);
+                throw "asset is locked";
+            }
+
             if(this.type !== this.data.type) {
                 pimcore.helpers.closeAsset(this.id);
                 pimcore.helpers.openAsset(this.id, this.data.type);
                 return;
-            }
-
-            if (typeof this.data.editlock == "object") {
-                pimcore.helpers.lockManager(this.id, "asset", this.type, this.data);
-                throw "asset is locked";
             }
 
             this.addTab();

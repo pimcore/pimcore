@@ -168,7 +168,9 @@ class EmailController extends AdminController
     {
         if (!empty($data['objectClass'])) {
             $class = '\\' . ltrim($data['objectClass'], '\\');
-            if (!empty($data['objectId']) && is_subclass_of($class, ElementInterface::class)) {
+            $reflection = new \ReflectionClass($class);
+
+            if (!empty($data['objectId']) && $reflection->implementsInterface(ElementInterface::class)) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
@@ -177,7 +179,7 @@ class EmailController extends AdminController
                 }
                 //check for classmapping
                 if (stristr($class, '\\Pimcore\\Model') === false) {
-                    $niceClassName = '\\' . ltrim(get_parent_class($class), '\\');
+                    $niceClassName = '\\' . ltrim($reflection->getParentClass()->getName(), '\\');
                 } else {
                     $niceClassName = $class;
                 }
@@ -525,7 +527,9 @@ class EmailController extends AdminController
         $data = null;
         if ($params['data']['type'] === 'object') {
             $class = '\\' . ltrim($params['data']['objectClass'], '\\');
-            if (!empty($params['data']['objectId']) && is_subclass_of($class, ElementInterface::class)) {
+            $reflection = new \ReflectionClass($class);
+
+            if (!empty($params['data']['objectId']) && $reflection->implementsInterface(ElementInterface::class)) {
                 $obj = $class::getById($params['data']['objectId']);
                 if (!is_null($obj)) {
                     $data = $obj;

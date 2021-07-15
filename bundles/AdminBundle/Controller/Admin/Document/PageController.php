@@ -400,7 +400,7 @@ class PageController extends DocumentControllerBase
             ->size($request->query->get('download') ? 4000 : 500)
             ->build();
 
-        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
         $result->saveToFile($tmpFile);
 
         $response = new BinaryFileResponse($tmpFile);
