@@ -16,7 +16,6 @@
 namespace Pimcore\Security\Hasher;
 
 use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 use Symfony\Component\Security\Core\User\UserInterface;
 

@@ -17,7 +17,6 @@ namespace Pimcore\Security\Hasher;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
 use Pimcore\Model\DataObject\Concrete;
-use Symfony\Component\PasswordHasher\Exception\InvalidPasswordException;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
