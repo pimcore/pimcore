@@ -37,24 +37,21 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
+        deprecated: 'The "%service_id%" service is deprecated, use "pimcore.security.user_password_hasher" instead.'
 
-    security.authentication.provider.dao:
-        class: Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider
-        arguments:
-            - !abstract User Provider
-            - !abstract User Checker
-            - !abstract  Provider-shared Key
-            - '@security.encoder_factory'
-            - '%security.authentication.hide_user_not_found%'
-        deprecated: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
-
-    pimcore.security.validator.user_password:
-        class: Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator
-        arguments:
-            - '@security.token_storage'
-            - '@security.encoder_factory'
-        tags:
-            - { name: validator.constraint_validator, alias: security.validator.user_password }
+    # Only use with Symfony ver 5.3 or higher
+    # Decorate the symfony encoder factory with our own. Encoders operating on pimcore admin users and pimcore objects using
+    # the password field definition need access to the user instance while encoding the password. Our factory allows delegating
+    # encoder building to sub-factories which are able to build and cache an encoder per user object.
+    #
+    # See UserAwareEncoderFactory which is used from the admin bundle and from CMS demo profile.
+    #
+    # The second argument (factory mapping) is read from config (pimcore.security.encoder_factories) and set by the extension.
+    pimcore.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\PasswordHasherFactory
+        decorates: security.password_hasher_factory
+        arguments: ['@.inner', '@?']
+        public: false
 
     #
     # INFRASTRUCTURE

@@ -13,18 +13,16 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Security\Encoder;
+namespace Pimcore\Security\Hasher;
 
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @internal
- *
- * @deprecated
  */
-interface UserAwarePasswordEncoderInterface extends PasswordEncoderInterface
+interface UserAwarePasswordHasherInterface extends PasswordHasherInterface
 {
     /**
      * Set the user
