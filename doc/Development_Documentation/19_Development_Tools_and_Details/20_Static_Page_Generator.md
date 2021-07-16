@@ -7,8 +7,11 @@ To enable automatic static page generation on document save or by CLI command, g
 
 Mark enable checkbox and define optional lifetime for static pages (which regenerates static page after lifetime) and save document.
 
-Once, the static page generator is enabled, the document icon changes to grey icon(as below) and last generated information is displayed on document detail view.
+Once, the static page generator is enabled, the document icon changes to grey icon:
 ![Static Page Detail](../img/static_page2.png)
+
+and last generated information is displayed in document settings, when the generation is requested from frontend or cli command.
+![Static Page Detail](../img/static_page3.png)
 
 In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section (after the `# Thumbnails` section), which is responsible for looking up static page before passing to templating engine. 
 ```
