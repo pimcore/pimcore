@@ -17,9 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\StaticPageGenerator;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -61,7 +58,6 @@ class GenerateStaticPagesCommand extends AbstractCommand
     {
         $path = $input->getOption('path');
 
-
         $db = \Pimcore\Db::get();
 
         if ($path) {
@@ -71,7 +67,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
                 throw new \InvalidArgumentException(sprintf('Document with path %s not found', $path));
             }
 
-            $ids = $db->fetchCol("SELECT documents.id FROM `documents_page` LEFT JOIN documents ON documents_page.id = documents.id WHERE `staticGeneratorEnabled` = 1  AND (documents.id = :id OR path LIKE :path)", [
+            $ids = $db->fetchCol('SELECT documents.id FROM `documents_page` LEFT JOIN documents ON documents_page.id = documents.id WHERE `staticGeneratorEnabled` = 1  AND (documents.id = :id OR path LIKE :path)', [
                 'id' => $parent->getId(),
                 'path' => $parent->getFullPath() . '/%',
             ]);
@@ -91,8 +87,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
                     $progressBar->setMessage(sprintf('Generate for document "%s"', $page->getFullPath()));
 
                     $this->staticPageGenerator->generate($page, ['is_cli' => true]);
-                }
-                else {
+                } else {
                     $progressBar->setMessage(sprintf('Skipping for document "%s" cause static generation is disabled', $page->getFullPath()));
 
                     $this->staticPageGenerator->remove($page);
@@ -100,7 +95,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
 
                 $progressBar->advance();
 
-                if($progressBar->getProgress() % 10 === 0) {
+                if ($progressBar->getProgress() % 10 === 0) {
                     \Pimcore::collectGarbage();
                 }
             }
@@ -109,8 +104,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
 
             $output->writeln('');
             $output->writeln('<info>Finished generating static pages</info>');
-        }
-        else {
+        } else {
             $output->writeln('No static generation pages found');
         }
 

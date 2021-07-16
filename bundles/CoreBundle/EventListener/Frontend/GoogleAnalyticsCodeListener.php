@@ -54,7 +54,6 @@ class GoogleAnalyticsCodeListener
             return;
         }
 
-
         $request = $event->getRequest();
         if (!$event->isMasterRequest() && !$this->matchesStaticPageContext($request)) {
             return;

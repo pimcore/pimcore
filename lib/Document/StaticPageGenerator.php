@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Service;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -36,7 +35,6 @@ class StaticPageGenerator
      * @var LockFactory
      */
     private $lockFactory;
-
 
     public function __construct(DocumentRenderer $documentRenderer, LockFactory $lockFactory)
     {
@@ -75,7 +73,6 @@ class StaticPageGenerator
             $lock->acquire(true);
         }
 
-
         try {
             if (!$response = $params['response'] ?? false) {
                 $response = $this->documentRenderer->render($document, [
@@ -87,6 +84,7 @@ class StaticPageGenerator
             $storage->write($storagePath, $response);
         } catch (\Exception $e) {
             Logger::debug('Error generating static Page ' . $storagePath .': ' . $e->getMessage());
+
             return false;
         }
 

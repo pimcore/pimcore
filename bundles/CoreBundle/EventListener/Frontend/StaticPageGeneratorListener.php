@@ -25,11 +25,8 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
-use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageResolverTrait;
-use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,7 +79,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             DocumentEvents::POST_ADD => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_DELETE => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_UPDATE => 'onPostAddUpdateDeleteDocument',
-            KernelEvents::REQUEST => ['onKernelRequest' , 580], //this must run before targeting listener
+            KernelEvents::REQUEST => ['onKernelRequest', 580], //this must run before targeting listener
             KernelEvents::RESPONSE => ['onKernelResponse', -120], //this must run after code injection listeners
         ];
     }
@@ -94,7 +91,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if(!$event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -140,7 +137,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if(!$event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -174,17 +171,17 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     {
         $document = $e->getDocument();
 
-        if($e->hasArgument('saveVersionOnly') || $e->hasArgument('autoSave')) {
+        if ($e->hasArgument('saveVersionOnly') || $e->hasArgument('autoSave')) {
             return;
         }
 
         if ($document instanceof PageSnippet) {
             try {
-                if($document->getStaticGeneratorEnabled()
+                if ($document->getStaticGeneratorEnabled()
                     || $this->staticPageGenerator->pageExists($document)) {
                     $this->staticPageGenerator->remove($document);
                 }
-            } Catch(\Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error($e);
 
                 return;
