@@ -172,7 +172,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             bodyStyle: "padding: 10px;",
             items: [
                 {
-                    xtype: "textfield",
+                    xtype: "numberfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
