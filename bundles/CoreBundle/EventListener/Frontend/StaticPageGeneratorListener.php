@@ -119,9 +119,11 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             $filename = urldecode($request->getPathInfo()) . '.html';
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
+                $date = date(\DateTime::ISO8601, $storage->lastModified($filename));
 
                 $reponse = new Response($content, Response::HTTP_OK, [
                     'Content-Type' => 'text/html',
+                    'X-Pimcore-Static-Page-Last-Modified' => $date,
                 ]);
 
                 $event->setResponse($reponse);
