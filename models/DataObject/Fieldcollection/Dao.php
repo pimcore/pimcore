@@ -248,11 +248,13 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . ' OR ' . $whereLocalizedFields;
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')';
 
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+
+        // better to split into 2 queries then use OR condition (on big tables has to go through all rows so its killing index)
+        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }
