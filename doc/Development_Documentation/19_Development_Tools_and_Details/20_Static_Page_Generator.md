@@ -10,7 +10,7 @@ Mark enable checkbox and define optional lifetime for static pages (which regene
 Once, the static page generator is enabled, the document icon changes to grey icon(as below) and last generated information is displayed on document detail view.
 ![Static Page Detail](../img/static_page2.png)
 
-In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section, which is responsible for looking up static page before passing to templating engine. 
+In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section (after the `# Thumbnails` section), which is responsible for looking up static page before passing to templating engine. 
 ```
 # static pages
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
