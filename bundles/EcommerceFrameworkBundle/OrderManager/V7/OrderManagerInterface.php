@@ -78,7 +78,7 @@ interface OrderManagerInterface
      *
      * @param CartInterface $cart
      *
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrderFromCart(CartInterface $cart);
 
@@ -87,7 +87,7 @@ interface OrderManagerInterface
      *
      * @param StatusInterface $paymentStatus
      *
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrderByPaymentStatus(StatusInterface $paymentStatus);
 

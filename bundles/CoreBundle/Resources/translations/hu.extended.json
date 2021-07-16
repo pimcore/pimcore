@@ -22,7 +22,7 @@
     "best": "Legjobb",
     "average": "Átlagos",
     "example": "Példa",
-    "add_media_query": "Média fájl hozzáadása",
+    "add_media_query": "Média query hozzáadása",
     "send_as_html_mime": "Küldés HTML/Mime-ként",
     "send_as_plain_text": "Küldés sima szövegként",
     "send_test_email": "Teszt e-mail küldése",
@@ -655,5 +655,6 @@
     "web2print_headlesschrome_documentation_additions_text": "Két további beállítás: \"fejléc\" és \"lábléc\". URL-t kell megadni, amelyik visszaadják a fejléc vagy lábléc sablonját.",
     "json_converter": "Beállítások formázása",
     "json_converter_link": "JSON formázó",
-    "preview_generator_reference": "Előnézet generáló osztály vagy szolgáltatás"
+    "preview_generator_reference": "Előnézet generáló osztály vagy szolgáltatás",
+    "max_characters": "Maximum Characters"
 }

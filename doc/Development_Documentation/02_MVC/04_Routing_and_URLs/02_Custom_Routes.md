@@ -82,9 +82,17 @@ To use the param converter, simply type hint the argument (Symfony routing examp
 ```
 
 Param converters work with Pimcore Custom Routes as well as with Symfony Routes. 
-Of course you can also configure the param converter using the `@ParamConverter`, for details please have a look at
+Of course, you can also configure the param converter using the `@ParamConverter`, for details please have a look at
 the official documentation for [param converters](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
 
+By taking advantage of the options that we can pass further on to the object, we can also work with unpublished objects.
+````php
+/**
+
+@route("/blog/{post}")
+@ParamConverter( "post", options={ "unpublished" = true } )
+*/
+````
 
 ## Building URLs based on Custom Routes
 

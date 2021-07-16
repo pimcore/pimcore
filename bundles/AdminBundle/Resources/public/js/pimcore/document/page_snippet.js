@@ -301,7 +301,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.draftVersionNotification);
 
-            if (this.data.draft){
+            if (this.data.draft && this.isAllowed("save")) {
                 this.draftVersionNotification.show();
             }
 

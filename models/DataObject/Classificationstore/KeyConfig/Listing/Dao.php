@@ -81,10 +81,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $condition = $condition . ' AND (' . $cond . ')';
         }
 
-        if ($condition) {
-            return ' WHERE ' . $condition . ' ';
-        }
-
-        return '';
+        return ' WHERE ' . $condition . ' ';
     }
 }

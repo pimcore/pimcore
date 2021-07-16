@@ -79,7 +79,7 @@ interface RuleInterface
     public function setCondition(ConditionInterface $condition);
 
     /**
-     * @return ConditionInterface
+     * @return ConditionInterface|null
      */
     public function getCondition();
 

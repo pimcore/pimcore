@@ -15,12 +15,13 @@
 
 namespace Pimcore\Google\Cse;
 
+use Google\Service\CustomSearchAPI\Result;
 use Pimcore\Model;
 
 class Item
 {
     /**
-     * @var \Google_Service_Customsearch_Result
+     * @var Result
      */
     public $raw;
 
@@ -80,20 +81,20 @@ class Item
     public $type;
 
     /**
-     * @param \Google_Service_Customsearch_Result $data
+     * @param Result $data
      */
-    public function __construct(\Google_Service_Customsearch_Result $data)
+    public function __construct(Result $data)
     {
         $this->setRaw($data);
         $this->setValues($data);
     }
 
     /**
-     * @param \Google_Service_Customsearch_Result $data
+     * @param Result $data
      *
      * @return $this
      */
-    public function setValues(\Google_Service_Customsearch_Result $data)
+    public function setValues(Result $data)
     {
         $properties = get_object_vars($data);
         foreach ($properties as $key => $value) {
@@ -280,10 +281,10 @@ class Item
     }
 
     /**+
-     * @param \Google_Service_Customsearch_Result $raw
+     * @param Result $raw
      * @return $this
      */
-    public function setRaw(\Google_Service_Customsearch_Result $raw)
+    public function setRaw(Result $raw)
     {
         $this->raw = $raw;
 
@@ -291,7 +292,7 @@ class Item
     }
 
     /**
-     * @return \Google_Service_Customsearch_Result
+     * @return Result
      */
     public function getRaw()
     {

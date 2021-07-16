@@ -27,6 +27,9 @@ To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbna
 an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example: 
 `/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
+**Important**: The function `getThumbnail()` does not generate the Thumbnail itself. It just returns the path were the thumbnail file will be stored.
+If you want to generate the Thumbnail directly have a look at [Deferred Rendering of Thumbnails](#deferred-rendering-of-thumbnails)
+
 This path can then be directly used to display the image in a `<img />` or `<picture`> tag. For example:
 ```php
 $image = Asset::getById(1234);
