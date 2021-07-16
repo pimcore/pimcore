@@ -95,15 +95,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 saveData.missingRequiredEditable = this.data.missingRequiredEditable;
             }
 
-            if (this.staticText) {
-                if (this.data.staticGeneratorEnabled) {
-                    this.staticText.show();
-                } else {
-                    this.staticText.hide();
-                }
-            }
-
-
             try {
                 pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
             } catch (e) {
@@ -139,16 +130,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                 } else if (task === 'version' || task === 'autoSave') {
                                     this.draftVersionNotification.show();
                                 }
-                            }
-
-                            if (rdata.data.staticGeneratorEnabled && rdata.data.staticLastGenerated) {
-                                var date = new Date(rdata.data.staticLastGenerated * 1000);
-                                date = Ext.Date.format(date, "Y-m-d H:i");
-
-                                this.staticGenerateInfo.setText(t("static_last_generated") + ": " + date);
-                                this.staticGenerateInfo.show();
-                            } else if (this.staticGenerateInfo) {
-                                this.staticGenerateInfo.hide();
                             }
 
                             if(task !== "autoSave") {
