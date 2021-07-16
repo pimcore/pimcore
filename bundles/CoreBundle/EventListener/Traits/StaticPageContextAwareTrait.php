@@ -24,16 +24,16 @@ use Symfony\Component\HttpFoundation\Request;
 trait StaticPageContextAwareTrait
 {
     /**
-     * @var StaticPageResolver
+     * @var StaticPageResolver|null
      */
-    private $staticPageResolver;
+    private ?StaticPageResolver $staticPageResolver;
 
     /**
      * @required
      *
      * @param StaticPageResolver $staticPageResolver
      */
-    public function setStaticPageContext(StaticPageResolver $staticPageResolver)
+    public function setStaticPageResolver(StaticPageResolver $staticPageResolver)
     {
         $this->staticPageResolver = $staticPageResolver;
     }
@@ -45,7 +45,7 @@ trait StaticPageContextAwareTrait
      *
      * @return bool
      */
-    protected function matchesStaticPageContext(Request $request)
+    protected function matchesStaticPageContext(Request $request): bool
     {
         return $this->staticPageResolver->hasStaticPageContext($request);
     }
