@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
+use Pimcore\Config;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -24,10 +25,14 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageResolverTrait;
+use Pimcore\Tool;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -50,17 +55,22 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
      */
     protected $documentResolver;
 
-
     /**
      * @var RequestHelper
      */
     protected $requestHelper;
 
-    public function __construct(StaticPageGenerator $staticPageGenerator, DocumentResolver $documentResolver, RequestHelper $requestHelper)
+    /**
+     * @var Config
+     */
+    private $config;
+
+    public function __construct(StaticPageGenerator $staticPageGenerator, DocumentResolver $documentResolver, RequestHelper $requestHelper, Config $config)
     {
         $this->staticPageGenerator = $staticPageGenerator;
         $this->documentResolver = $documentResolver;
         $this->requestHelper = $requestHelper;
+        $this->config = $config;
     }
 
     /**
@@ -72,7 +82,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             DocumentEvents::POST_ADD => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_DELETE => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_UPDATE => 'onPostAddUpdateDeleteDocument',
-            KernelEvents::REQUEST => ['onKernelRequest' , 10], //this must run before targeting listener
+            KernelEvents::REQUEST => ['onKernelRequest' , 580], //this must run before targeting listener
             KernelEvents::RESPONSE => ['onKernelResponse', -120], //this must run after code injection listeners
         ];
     }
@@ -84,14 +94,40 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (\Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+        if(!$event->isMainRequest()) {
             return;
         }
 
-        $document = $this->documentResolver->getDocument();
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+            return;
+        }
 
-        if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
-            $this->staticPageResolver->setStaticPageContext($request);
+        $config = $this->config['documents'];
+
+        if (!$config['static_page_router']['enabled']) {
+            return;
+        }
+
+        $routePattern = $config['static_page_router']['route_pattern'];
+        if (!empty($routePattern) && !@preg_match($routePattern, $request->getPathInfo())) {
+            return;
+        }
+
+        $storage = Storage::get('document_static');
+
+        try {
+            $filename = urldecode($request->getPathInfo()) . '.html';
+            if ($storage->fileExists($filename)) {
+                $content = $storage->read($filename);
+
+                $reponse = new Response($content, Response::HTTP_OK, [
+                    'Content-Type' => 'text/html',
+                ]);
+
+                $event->setResponse($reponse);
+            }
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
         }
     }
 
@@ -101,6 +137,10 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
+
+        if(!$event->isMainRequest()) {
+            return;
+        }
 
         if (\Pimcore\Tool::isFrontendRequestByAdmin($request)) {
             return;

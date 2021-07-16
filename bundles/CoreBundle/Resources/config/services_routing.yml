@@ -12,14 +12,10 @@ services:
     Pimcore\Routing\DynamicRouteProvider:
         calls:
             - [addHandler, ['@Pimcore\Routing\Dynamic\DocumentRouteHandler']]
-            - [addHandler, ['@Pimcore\Routing\Dynamic\StaticPageRouteHandler']]
             - [addHandler, ['@Pimcore\Routing\Dynamic\DataObjectRouteHandler']]
 
     # specific document related dynamic routing handling
     Pimcore\Routing\Dynamic\DocumentRouteHandler: ~
-
-    # specific document static page related dynamic routing handling
-    Pimcore\Routing\Dynamic\StaticPageRouteHandler: ~
 
     # specific data object url slug related dynamic routing handling
     Pimcore\Routing\Dynamic\DataObjectRouteHandler: ~

@@ -240,31 +240,4 @@ class PublicServicesController extends Controller
 
         return $redirect;
     }
-
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     *
-     * @throws ResourceNotFoundException
-     */
-    public function staticPageAction(Request $request)
-    {
-        $requestUri = $request->getRequestUri();
-        $storage = Storage::get('document_static');
-
-        try {
-            if ($storage->fileExists($requestUri . '.html')) {
-                $content = $storage->read($requestUri . '.html');
-
-                return new Response($content, Response::HTTP_OK, [
-                    'Content-Type' => 'text/html',
-                ]);
-            }
-        } catch (\Exception $e) {
-            Logger::error($e->getMessage());
-        }
-
-        throw new ResourceNotFoundException(sprintf('Static Page Page Not Found for "%s".', $requestUri));
-    }
 }
