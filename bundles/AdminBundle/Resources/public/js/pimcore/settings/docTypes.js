@@ -156,6 +156,27 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
+                xtype: 'checkcolumn',
+                text: t("static"),
+                dataIndex: 'staticGeneratorEnabled',
+                width: 40,
+                renderer: function (value, metaData, record) {
+                    return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
+                },
+                listeners: {
+                    beforecheckchange: function (el, rowIndex, checked, eOpts) {
+                        if (this.store.getAt(rowIndex).get("type") !== "page") {
+                            record.set('staticGeneratorEnabled', false);
+                            return false;
+                        }
+                    }.bind(this),
+                    checkChange: function (column, rowIndex, checked, eOpts) {
+                        var record = this.store.getAt(rowIndex);
+                        record.set('staticGeneratorEnabled', checked);
+                    }.bind(this)
+                }
+            },
+            {
                 text: t("creationDate"),
                 sortable: true,
                 dataIndex: 'creationDate',

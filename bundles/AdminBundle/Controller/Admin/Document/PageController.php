@@ -20,6 +20,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
+use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -75,10 +76,11 @@ class PageController extends DocumentControllerBase
      * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -117,6 +119,10 @@ class PageController extends DocumentControllerBase
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
 
+        if ($page->getStaticGeneratorEnabled()) {
+            $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+        }
+
         $data['url'] = $page->getUrl();
 
         $this->preSendDataActions($data, $page, $draftVersion);
@@ -132,12 +138,13 @@ class PageController extends DocumentControllerBase
      * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -197,13 +204,20 @@ class PageController extends DocumentControllerBase
 
             $this->handleTask($request->get('task'), $page);
 
+            $data = [
+                'versionDate' => $page->getModificationDate(),
+                'versionCount' => $page->getVersionCount(),
+            ];
+
+            if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
+                $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
+                $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+            }
+
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
-                'data' => [
-                    'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount(),
-                ],
+                'data' => $data,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);

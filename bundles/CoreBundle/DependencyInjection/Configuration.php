@@ -746,6 +746,18 @@ final class Configuration implements ConfigurationInterface
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
+                ->arrayNode('static_page_router')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                            ->info('Enable Static Page router for document when using remote storage for generated pages')
+                        ->end()
+                        ->scalarNode('route_pattern')
+                            ->defaultNull()
+                            ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
+                        ->end()
+                ->end()
             ->end();
     }
 

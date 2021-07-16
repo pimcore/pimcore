@@ -116,3 +116,10 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
+
+    Pimcore\Maintenance\Tasks\StaticPagesGenerationTask:
+        arguments:
+            - '@Pimcore\Document\StaticPageGenerator'
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: documents_static_page_generate }
