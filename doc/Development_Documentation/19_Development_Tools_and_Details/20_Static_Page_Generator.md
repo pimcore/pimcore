@@ -26,10 +26,10 @@ Once the static generator option is enabled, Pimcore generates static pages on f
  - CLI command
  
 In background, maintenance job takes care of generating static pages for documents on regular intervals. However, you can also use CLI command to generate static pages on demand:
-  `php bin/console pimcore:generate-static-pages`
+  `php bin/console pimcore:documents:generate-static-pages`
  
  also, you can filter the documents by parent path, which should processed for static generation:
- `php bin/console pimcore:generate-static-pages -d /en/Magazine`
+ `php bin/console pimcore:documents:generate-static-pages -p /en/Magazine`
  
 ## Storage
 By default, Pimcore stores the generated HTML pages on local path: `'document_root/public/var/tmp/pages'`.
