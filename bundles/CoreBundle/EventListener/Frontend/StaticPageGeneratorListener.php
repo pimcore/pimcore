@@ -159,11 +159,6 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return;
         }
 
-        //return if request is from StaticPageGenerator
-        if ($request->attributes->has('static_page_generator')) {
-            return;
-        }
-
         $document = $this->documentResolver->getDocument();
 
         if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
