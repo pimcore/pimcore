@@ -252,8 +252,6 @@ class Dao extends Model\Dao\AbstractDao
 
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
-
-        // better to split into 2 queries then use OR condition (on big tables has to go through all rows so its killing index)
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
