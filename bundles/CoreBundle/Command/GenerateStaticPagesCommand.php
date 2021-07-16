@@ -43,13 +43,13 @@ class GenerateStaticPagesCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('pimcore:generate-static-pages')
-            ->setDescription('Regenerate static Pages')
+            ->setName('pimcore:documents:generate-static-pages')
+            ->setDescription('Regenerate static pages')
             ->addOption(
-                'document-path',
-                'd',
+                'path',
+                'p',
                 InputOption::VALUE_REQUIRED,
-                'Document Path to create the static sites from'
+                'Document path prefix to create the static pages from'
             )
         ;
     }
@@ -59,56 +59,49 @@ class GenerateStaticPagesCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $path = $input->getOption('document-path');
+        $path = $input->getOption('path');
 
-        $listing = new Document\Listing();
-        $listing->setCondition("type = 'page'");
-        $listing->setOrderKey('id');
-        $listing->setOrder('DESC');
+
+        $db = \Pimcore\Db::get();
 
         if ($path) {
-            $parent = Document::getByPath($path);
+            $parent = Document::getByPath(rtrim($path, '/'));
 
             if (!$parent) {
                 throw new \InvalidArgumentException(sprintf('Document with path %s not found', $path));
             }
 
-            $listing->setCondition(
-                "type = 'page' AND (id = :id OR path LIKE :path)",
-                [
-                    'id' => $parent->getId(),
-                    'path' => $parent->getFullPath() . '/%',
-                ]
-            );
+            $ids = $db->fetchCol("SELECT documents.id FROM `documents_page` LEFT JOIN documents ON documents_page.id = documents.id WHERE `staticGeneratorEnabled` = 1  AND (documents.id = :id OR path LIKE :path)", [
+                'id' => $parent->getId(),
+                'path' => $parent->getFullPath() . '/%',
+            ]);
+        } else {
+            $ids = $db->fetchCol('SELECT id FROM `documents_page` WHERE `staticGeneratorEnabled` = 1');
         }
 
-        if ($listing->getTotalCount() > 0) {
-            $progressBar = new ProgressBar($output, $listing->getTotalCount());
+        $total = count($ids);
+
+        if ($total) {
+            $progressBar = new ProgressBar($output, $total);
             $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
 
-            $total = $listing->getTotalCount();
-            $perLoop = 10;
+            foreach ($ids as $id) {
+                $page = Document\Page::getById($id);
+                if ($page->getStaticGeneratorEnabled()) {
+                    $progressBar->setMessage(sprintf('Generate for document "%s"', $page->getFullPath()));
 
-            for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
-                $listing->setLimit($perLoop);
-                $listing->setOffset($i * $perLoop);
+                    $this->staticPageGenerator->generate($page, ['is_cli' => true]);
+                }
+                else {
+                    $progressBar->setMessage(sprintf('Skipping for document "%s" cause static generation is disabled', $page->getFullPath()));
 
-                /** @var Document\Page[] $pages */
-                $pages = $listing->load();
+                    $this->staticPageGenerator->remove($page);
+                }
 
-                foreach ($pages as $page) {
-                    if ($page->getStaticGeneratorEnabled()) {
-                        $progressBar->setMessage(sprintf('Generate for Document "%s"', $page->getFullPath()));
+                $progressBar->advance();
 
-                        $this->staticPageGenerator->generate($page, ['is_cli' => true]);
-                    }
-                    else {
-                        $progressBar->setMessage(sprintf('Skipping for Document "%s" cause Static Generation is disabled', $page->getFullPath()));
-
-                        $this->staticPageGenerator->remove($page);
-                    }
-
-                    $progressBar->advance();
+                if($progressBar->getProgress() % 10 === 0) {
+                    \Pimcore::collectGarbage();
                 }
             }
 
@@ -118,7 +111,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
             $output->writeln('<info>Finished generating static pages</info>');
         }
         else {
-            $output->writeln('No Static Generation Pages found');
+            $output->writeln('No static generation pages found');
         }
 
         return 0;
