@@ -56,10 +56,10 @@ pimcore:
     documents:
         static_page_router:
             enabled: true
-            route_patterns: '@^/(en/Magazine|de/Magazin)@'
+            route_pattern: '@^/(en/Magazine|de/Magazin)@'
 ```
 
 | config         | Description                                                   |
 |----------------|---------------------------------------------------------------|
 | enabled        | Set it true to enable Static Page Router                      |
-| route_patterns | Regular expression to match routes for static page rendering  |
+| route_pattern | Regular expression to match routes for static page rendering  |

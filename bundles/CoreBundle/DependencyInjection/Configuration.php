@@ -742,7 +742,7 @@ final class Configuration implements ConfigurationInterface
                             ->defaultFalse()
                             ->info('Enable Static Page router for document when using remote storage for generated pages')
                         ->end()
-                        ->scalarNode('route_patterns')
+                        ->scalarNode('route_pattern')
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()

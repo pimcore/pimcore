@@ -76,7 +76,7 @@ final class StaticPageRouteHandler implements DynamicRouteHandlerInterface
             return;
         }
 
-        $routePatterns = $config['static_page_router']['route_patterns'];
+        $routePatterns = $config['static_page_router']['route_pattern'];
         if (!empty($routePatterns) && !@preg_match($routePatterns, $context->getPath())) {
             return;
         }
