@@ -149,7 +149,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
 
         //return if request is from StaticPageGenerator
-        if ($request->attributes->has('static_page_generator')) {
+        if ($request->attributes->has('pimcore_static_page_generator')) {
             return;
         }
 

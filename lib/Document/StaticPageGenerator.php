@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document;
 
 use Pimcore\Document\Renderer\DocumentRenderer;
+use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Service;
@@ -78,7 +79,9 @@ class StaticPageGenerator
         try {
             if (!$response = $params['response'] ?? false) {
                 $response = $this->documentRenderer->render($document, [
-                    'static_page_generator' => true]);
+                    'pimcore_static_page_generator' => true,
+                    StaticPageResolver::ATTRIBUTE_PIMCORE_STATIC_PAGE => true,
+                ]);
             }
 
             $storage->write($storagePath, $response);
