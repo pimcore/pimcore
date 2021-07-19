@@ -64,7 +64,7 @@ foreach($projects as $projectId => $sourceUrl) {
                 "data" => $dataString
             ]);
 
-            echo $response;
+            print_r($response);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -80,7 +80,7 @@ foreach($projects as $projectId => $sourceUrl) {
                 "data" => $dataEnString
             ]);
 
-            echo $response;
+            print_r($response);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }

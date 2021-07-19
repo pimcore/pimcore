@@ -3,6 +3,11 @@ name: "POEditor Translations Export"
 
 on:
     workflow_dispatch:
+    push:
+        branches:
+            - "[0-9]+.x"
+        paths:
+            - 'bundles/CoreBundle/Resources/translations/en.*json'
 
 jobs:
     poeditor:
