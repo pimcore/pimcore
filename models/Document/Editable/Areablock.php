@@ -527,7 +527,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         // we need to set this here otherwise custom areaDir's won't work
         $this->config = $config;
 
-        $translator = \Pimcore::getContainer()->get('translator');
         if (!isset($config['allowed']) || !is_array($config['allowed'])) {
             $config['allowed'] = [];
         }
@@ -546,9 +545,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             $groups = [];
             foreach ($config['group'] as $name => $areas) {
                 $n = $name;
-                if ($this->editmode) {
-                    $n = $translator->trans($name, [], 'admin');
-                }
                 $groups[$n] = $areas;
 
                 foreach ($areas as $area) {
@@ -562,9 +558,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                     $uncatAreas[] = $area;
                 }
                 $n = 'Uncategorized';
-                if ($this->editmode) {
-                    $n = $translator->trans($n, [], 'admin');
-                }
                 $groups[$n] = $uncatAreas;
             }
 
