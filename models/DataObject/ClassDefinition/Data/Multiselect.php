@@ -710,8 +710,8 @@ class Multiselect extends Data implements
             $options = $this->getOptions();
         }
         if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
-                return $containsComma || str_contains($option['value'], ',');
-            }, false)) {
+            return $containsComma || str_contains($option['value'], ',');
+        }, false)) {
             throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
         }
     }
