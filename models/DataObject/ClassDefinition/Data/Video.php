@@ -418,7 +418,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param DataObject\Data\Video|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string

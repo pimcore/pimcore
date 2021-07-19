@@ -52,7 +52,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param string $fieldname
      * @param array $columns
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      */
     public function __construct($fieldname, $columns = [], $object = null)
     {

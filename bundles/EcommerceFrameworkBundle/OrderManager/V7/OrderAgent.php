@@ -482,7 +482,7 @@ class OrderAgent implements OrderAgentInterface
     /**
      * generates internal payment id for current order
      *
-     * @param null $paymentInfoCount
+     * @param int|null $paymentInfoCount
      *
      * @return string
      */

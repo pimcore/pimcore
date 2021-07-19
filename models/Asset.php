@@ -1831,7 +1831,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Asset $parent
+     * @param Asset|null $parent
      *
      * @return $this
      */

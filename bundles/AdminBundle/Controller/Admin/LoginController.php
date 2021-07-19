@@ -175,18 +175,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
             if ($user instanceof User) {
                 if (!$user->isActive()) {
-                    $error = 'user inactive';
+                    $error = 'user_inactive';
                 }
 
                 if (!$user->getEmail()) {
-                    $error = 'user has no email address';
+                    $error = 'user_no_email_address';
                 }
 
                 if (!$user->getPassword()) {
-                    $error = 'user has no password';
+                    $error = 'user_no_password';
                 }
             } else {
-                $error = 'user unknown';
+                $error = 'user_unknown';
             }
 
             if (!$error && $user instanceof User) {
@@ -214,13 +214,15 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                         return $event->getResponse();
                     }
                 } catch (\Exception $e) {
-                    $error = 'could not send email';
+                    Logger::error('Error sending password recovery email: ' . $e->getMessage());
+                    $error = 'lost_password_email_error';
                 }
             }
 
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
+                $params['error'] = $error;
             }
         }
 

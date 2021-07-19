@@ -173,6 +173,12 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return array_keys($vars);
     }
 
+    public function __wakeup()
+    {
+        //loads select list options
+        $this->init();
+    }
+
     /**
      * @return $this
      */

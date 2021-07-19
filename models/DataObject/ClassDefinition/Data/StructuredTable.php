@@ -51,7 +51,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @internal
      *
-     * @var string|int
+     * @var int
      */
     public $labelWidth = 0;
 
@@ -123,7 +123,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return string|int
+     * @return int
      */
     public function getLabelWidth()
     {
@@ -131,16 +131,13 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param string|int $labelWidth
+     * @param int $labelWidth
      *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
-        if (is_numeric($labelWidth)) {
-            $labelWidth = (int)$labelWidth;
-        }
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
 
         return $this;
     }

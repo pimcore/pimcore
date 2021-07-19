@@ -96,7 +96,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string|int
+     * @var int
      */
     public $labelWidth = 0;
 
@@ -913,18 +913,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param string|int $labelWidth
+     * @param int $labelWidth
      */
     public function setLabelWidth($labelWidth)
     {
-        if (is_numeric($labelWidth)) {
-            $labelWidth = (int)$labelWidth;
-        }
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
     }
 
     /**
-     * @return string|int
+     * @return int
      */
     public function getLabelWidth()
     {

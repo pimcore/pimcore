@@ -1425,7 +1425,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById((int)$request->get('image'));
+            $image = Asset\Image::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
