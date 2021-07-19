@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This script imports all translations from all languages from POEditor which have a
+ * percentage over 70%
+ */
+
 $token = getenv('POEDITOR_TOKEN');
 $languagesString = getenv('POEDITOR_LANGUAGES');
 $projects = [38068, 197253];
@@ -61,6 +66,10 @@ foreach($projects as $projectId) {
     }
 
     foreach($languages as $language) {
+
+        if($language === 'en') {
+            continue;
+        }
 
         if(!empty($allowedLanguages) && !in_array($language, $allowedLanguages)) {
             echo sprintf('Skipped language %s', $language) . "\n";

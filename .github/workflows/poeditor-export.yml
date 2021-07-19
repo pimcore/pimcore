@@ -1,0 +1,22 @@
+
+name: "POEditor Translations Export"
+
+on:
+    workflow_dispatch:
+
+jobs:
+    poeditor:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+
+            - name: POEditor
+              env:
+                  POEDITOR_TOKEN: ${{ secrets.POEDITOR_TOKEN }}
+              run: |
+                  php .github/ci/scripts/poeditor-export.php
