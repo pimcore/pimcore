@@ -651,7 +651,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             for (var g=0; g<groups.length; g++) {
                 if(groups[g].length > 0) {
                     groupMenu = {
-                        text: groups[g],
+                        text: t(groups[g]),
                         hideOnClick: false,
                         menu: []
                     };
@@ -914,7 +914,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                     if(!groupMenu) {
                         groupMenu = new Ext.Button({
                             xtype: "button",
-                            text: groups[g],
+                            text: t(groups[g]),
                             textAlign: "left",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
