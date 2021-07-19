@@ -86,7 +86,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param string $thumbnailName
+     * @param string|array|Image\Thumbnail\Config $thumbnailName
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *

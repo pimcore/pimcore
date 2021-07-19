@@ -107,7 +107,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -116,7 +116,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -128,7 +128,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
