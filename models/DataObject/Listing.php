@@ -124,7 +124,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @param string $condition
-     * @param array|null $conditionVariables
+     * @param array|scalar $conditionVariables
      *
      * @return $this
      */
