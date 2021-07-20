@@ -46,7 +46,10 @@ services:
             - !abstract  Provider-shared Key
             - '@security.encoder_factory'
             - '%security.authentication.hide_user_not_found%'
-        deprecated: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
+        deprecated:
+            message: 'The "%service_id%" service is deprecated, use the new authenticator system instead.'
+            package: pimcore/pimcore
+            version: 10.0.4
 
     pimcore.security.validator.user_password:
         class: Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator
