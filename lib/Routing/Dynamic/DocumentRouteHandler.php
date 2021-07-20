@@ -58,7 +58,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * @var array
      */
-    private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer'];
+    private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer', 'headlesspage'];
 
     /**
      * @var Config

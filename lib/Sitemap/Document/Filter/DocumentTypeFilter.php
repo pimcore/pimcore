@@ -31,6 +31,7 @@ class DocumentTypeFilter implements FilterInterface
         'page',
         'link',
         'hardlink',
+        'headlesspage'
     ];
 
     /**
@@ -41,6 +42,7 @@ class DocumentTypeFilter implements FilterInterface
         'folder',
         'link',
         'hardlink',
+        'headlesspage'
     ];
 
     public function __construct(array $documentTypes = null, array $containerTypes = null)
