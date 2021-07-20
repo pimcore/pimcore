@@ -71,21 +71,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/AbstractWorker.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
@@ -96,33 +81,8 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PriceSystem/CachingPriceSystem.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Tools/SessionConfigurator.php
-
-		-
 			message: "#^Call to function is_scalar\\(\\) with Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal will always evaluate to false\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 2
 			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
 
 		-

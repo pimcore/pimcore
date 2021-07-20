@@ -177,11 +177,7 @@ class DefaultService implements ServiceInterface
 
         $offerItem->setComment($item->getComment());
 
-        $price = Decimal::zero();
-        if ($item->getTotalPrice()) {
-            $price = $item->getTotalPrice()->getAmount();
-        }
-
+        $price = $item->getTotalPrice()->getAmount();
         $price = $this->priceTransformationHook($price);
 
         $offerItem->setOriginalTotalPrice($price->asString());
@@ -217,11 +213,7 @@ class DefaultService implements ServiceInterface
 
         $offerItem->setComment($cartItem->getComment());
 
-        $price = Decimal::zero();
-        if ($cartItem->getTotalPrice()) {
-            $price = $cartItem->getTotalPrice()->getAmount();
-        }
-
+        $price = $cartItem->getTotalPrice()->getAmount();
         $price = $this->priceTransformationHook($price);
 
         $originalTotalPrice = Decimal::create($offerItem->getOriginalTotalPrice());

@@ -80,7 +80,7 @@ abstract class AbstractWorker implements WorkerInterface
             ];
 
             foreach ($this->tenantConfig->getAttributes() as $attribute) {
-                if (!$considerHideInFieldList || ($considerHideInFieldList && !$attribute->getHideInFieldlistDatatype())) {
+                if (!$considerHideInFieldList || !$attribute->getHideInFieldlistDatatype()) {
                     $indexColumns[$attribute->getName()] = $attribute->getName();
                 }
             }
