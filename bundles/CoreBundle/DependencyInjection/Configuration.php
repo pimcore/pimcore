@@ -73,7 +73,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                    ->setDeprecated('The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.')
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.1',
+                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                    )
                 ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
