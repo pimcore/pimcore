@@ -120,6 +120,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if ($request->get('session_expired')) {
             $params['error'] = 'error_session_expired';
         }
+        if ($request->get('deeplink')) {
+            $params['deeplink'] = true;
+        }
 
         $params['browserSupported'] = $this->detectBrowser();
         $params['debug'] = \Pimcore::inDebugMode();
