@@ -487,6 +487,10 @@ class Mail extends Email
         }
 
         $this->subject($this->getSubjectRendered());
+        
+        // Remove the document property because it is no longer needed and makes it difficult
+        // to serialize the Mail object when using the Symfony Messenger component
+        $this->setDocument(null);
 
         return $this->sendWithoutRendering($mailer);
     }
