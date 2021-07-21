@@ -240,7 +240,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first row of the SQL result.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -258,7 +258,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first column of all SQL result rows as an array.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -287,7 +287,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first column of the first row of the SQL result.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed

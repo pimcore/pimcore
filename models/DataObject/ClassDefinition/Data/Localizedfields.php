@@ -1247,7 +1247,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
     }
 
     /**

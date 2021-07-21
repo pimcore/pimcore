@@ -590,7 +590,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param DataObject\Fieldcollection|null $data
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string

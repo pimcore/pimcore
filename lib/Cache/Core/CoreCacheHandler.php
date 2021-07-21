@@ -539,7 +539,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $key
      * @param mixed $data
      * @param array $tags
-     * @param null $lifetime
+     * @param int|\DateInterval|null $lifetime
      * @param bool $force
      *
      * @return bool
