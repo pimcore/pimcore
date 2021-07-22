@@ -1329,18 +1329,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
-     * @param string $type
-     */
-    public static function addDocumentType($type)
-    {
-        if (!in_array($type, self::$types)) {
-            self::$types[] = $type;
-        }
-    }
-
-    /**
      * Set true if want to hide documents.
      *
      * @param bool $hideUnpublished
