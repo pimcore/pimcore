@@ -746,7 +746,7 @@ class Mail extends Email
     }
 
     /**
-     * @param Model\Document|int|string $document
+     * @param Model\Document|int|string|null $document
      *
      * @return $this
      *
@@ -762,7 +762,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
             $this->document = $document;
             $this->setDocumentSettings();
         } else {
