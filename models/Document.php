@@ -43,9 +43,11 @@ class Document extends Element\AbstractElement
      *
      * @internal
      *
+     * @deprecated will be removed in Pimcore 11. Use getTypes() method.
+     *
      * @var array
      */
-    public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer', 'headlesspage'];
+    public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
 
     /**
      * @var bool
@@ -201,7 +203,9 @@ class Document extends Element\AbstractElement
      */
     public static function getTypes()
     {
-        return self::$types;
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+
+        return $documentsConfig['types'];
     }
 
     /**
