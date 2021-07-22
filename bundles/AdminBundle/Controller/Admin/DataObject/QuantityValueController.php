@@ -134,6 +134,10 @@ class QuantityValueController extends AdminController
                     throw new \Exception('unit with ID [' . $id . '] already exists');
                 }
 
+                if (mb_strlen($id) > 50) {
+                    throw new \Exception('The maximal character length for the unit ID is 50 characters, the provided ID has ' . mb_strlen($id) . ' characters.');
+                }
+
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();

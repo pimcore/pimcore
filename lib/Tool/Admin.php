@@ -98,14 +98,13 @@ class Admin
      */
     public static function getMinimizedScriptPath($scriptContent)
     {
-        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
+        $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';
 
-        if (!is_file($scriptPath)) {
-            File::put($scriptPath, $scriptContent);
-        }
+        $storage = Storage::get('admin');
+        $storage->write($scriptPath, $scriptContent);
 
         $params = [
-            'scripts' => basename($scriptPath),
+            'storageFile' => basename($scriptPath),
             '_dc' => \Pimcore\Version::getRevision(),
         ];
 

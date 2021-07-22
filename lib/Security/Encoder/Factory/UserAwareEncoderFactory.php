@@ -34,6 +34,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *          arguments:
  *              - Pimcore\Security\Encoder\PasswordFieldEncoder
  *              - ['password']
+ *
+ * @deprecated
  */
 class UserAwareEncoderFactory extends AbstractEncoderFactory
 {

@@ -173,3 +173,10 @@ Build instructions:
     </ul>
 </li>
 
+# Ace editor
+current version: 1.4.12
+
+Build instructions:
+ - Download latest build from https://github.com/ajaxorg/ace-builds and extract /src-min-noconflict
+ - Cleanup all theme-*.js files except "theme-chrome.js" & "theme-twilight.js"
+ - Replace the current folder with extracted one here `/bundles/AdminBundle/Resources/public/js/lib/ace/src-min-noconflict`

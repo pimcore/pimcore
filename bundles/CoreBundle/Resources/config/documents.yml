@@ -66,3 +66,10 @@ services:
 
     Pimcore\Document\DocumentStack:
         public: true
+
+    Pimcore\Document\StaticPageGenerator:
+        public: true
+        arguments:
+            - '@Pimcore\Document\Renderer\DocumentRenderer'
+            - '@Symfony\Component\Lock\LockFactory'
+

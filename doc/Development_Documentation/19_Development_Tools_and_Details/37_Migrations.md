@@ -10,7 +10,7 @@ To create your project or bundle specific migrations you can just follow the off
 However, Pimcore adds one small yet helpful feature to the provided commands by the Doctrine Migrations Bundle. 
 Normally Doctrine Migrations just runs/lists all available migrations, defined in the config.
 Since it could be useful to filter migrations for a certain path (core, bundle or project), Pimcore adds the `--prefix` option to all 
-Doctrine commands, which let's you filter migrations by the given namespace. 
+Doctrine commands, which let's you filter migrations by the given namespace.
 
 If you'd like to create migrations for your bundle, please have a look at our
 [bundles documentation](../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md). 
@@ -21,10 +21,13 @@ more comfortable.
 ### Example Commands
 ```bash
 # just run migrations of the Pimcore core
-bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
+./bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
 
 # run migrations of a certain bundle
 ./bin/console doctrine:migrations:migrate --prefix=Vendor\\PimcoreExampleBundle
+
+# generate a project specific migration
+./bin/console doctrine:migrations:generate --namespace=App\\Migrations
 
 # run project specific migrations
 ./bin/console doctrine:migrations:migrate --prefix=App\\Migrations
@@ -35,7 +38,7 @@ bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
 ```yml
 doctrine_migrations:
     migrations_paths:
-        'App\Migrations': '%kernel.project_dir%/src/App'
+        'App\Migrations': '%kernel.project_dir%/src/Migrations'
 ```
 
 # Run all available migrations after `composer update`

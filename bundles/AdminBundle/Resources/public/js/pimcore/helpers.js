@@ -550,6 +550,18 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
         });
         errWin.show();
     } else {
+        // Avoid overlapping any footer toolbar buttons
+        // Find current active tab to find its footer if there is one
+        let paddingY = 10;
+        let tabsBody = document.getElementById('pimcore_panel_tabs-body');
+        let activeTab = tabsBody.querySelector(':scope > [aria-expanded="true"]');
+        if (activeTab) {
+            let footerToolbar = activeTab.querySelector(':scope .x-toolbar-footer');
+            if (footerToolbar) {
+                paddingY += footerToolbar.scrollHeight;
+            }
+        }
+
         var notification = Ext.create('Ext.window.Toast', {
             iconCls: 'pimcore_icon_' + type,
             title: title,
@@ -558,7 +570,10 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
             width: 'auto',
             maxWidth: 350,
             closeable: true,
-            align: "br"
+            align: "br",
+            anchor: Ext.get(tabsBody),
+            paddingX: 5,
+            paddingY: paddingY
         });
         notification.show(document);
     }

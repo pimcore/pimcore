@@ -933,12 +933,14 @@
     "deprecated": "Obsolète",
     "version_currently_saved_in_database": "Actuellement enregistré dans la base de données (mais non publié)",
     "deprecated_feature": "<p style='color: orange;'>Fonctionnalité obsolète. Utilisez %s<br>à la place</p>",
-    "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
-    "no_action_available": "No action available",
-    "bricks": "Bricks",
-    "draft": "Draft",
-    "auto_save": "Auto save",
-    "save_draft": "Save draft",
-    "selected_grid_columns": "Selected grid columns"
+    "edit_as_custom_text": "Modifier en tant que texte personnalisé",
+    "symfony_translation_link": "Format de traduction : https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "Aucune action disponible",
+    "bricks": "Briques",
+    "draft": "Brouillon",
+    "auto_save": "Sauvegarde automatique",
+    "save_draft": "Enregistrer le brouillon",
+    "selected_grid_columns": "Colonnes de grille sélectionnées",
+    "ungrouped": "dégroupé",
+    "reindex_warning": "Le changement de l'ordre de tri de alphabétique à indexé réindexera tous les éléments. Voulez-vous continuer ?"
 }

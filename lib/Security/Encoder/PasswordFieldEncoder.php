@@ -23,6 +23,8 @@ use Symfony\Component\Security\Core\Exception\RuntimeException;
 /**
  * @internal
  *
+ * @deprecated
+ *
  * @method Concrete getUser()
  */
 class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder

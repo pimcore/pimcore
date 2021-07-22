@@ -23,6 +23,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -402,6 +403,17 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
         if (!$this->getId()) {
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
@@ -447,6 +459,12 @@ final class ClassDefinition extends Model\AbstractModel
         } catch (\Exception $e) {
         }
 
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
+
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
         } else {
@@ -472,7 +490,7 @@ final class ClassDefinition extends Model\AbstractModel
             $extendClass = '\\'.ltrim($extendClass, '\\');
         }
 
-        $cd = '<?php ';
+        $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
@@ -493,7 +511,7 @@ final class ClassDefinition extends Model\AbstractModel
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
+                        ).'($field, $value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -502,14 +520,14 @@ final class ClassDefinition extends Model\AbstractModel
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
+                            ).'($value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
                     }
                 } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).'($value, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
                 }
             }
         }
@@ -519,8 +537,8 @@ final class ClassDefinition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
-        $cd .= "\n\n";
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . "\n";
+        $cd .= '{' . "\n";
 
         $useParts = [];
 
@@ -564,7 +582,8 @@ final class ClassDefinition extends Model\AbstractModel
                 $cd .= $def->getSetterCode($this);
 
                 // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-                if (method_exists($def, 'classSaved')) {
+                //TODO Pimcore 11 remove method_exists call
+                if (!$def instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface && method_exists($def, 'classSaved')) {
                     $def->classSaved($this);
                 }
             }
@@ -585,7 +604,7 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         // create list class
-        $cd = '<?php ';
+        $cd = '<?php';
 
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).';';
@@ -598,8 +617,8 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
         $cd .= "\n\n";
-        $cd .= 'class Listing extends '.$extendListingClass.' {';
-        $cd .= "\n\n";
+        $cd .= 'class Listing extends '.$extendListingClass . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
@@ -646,7 +665,7 @@ final class ClassDefinition extends Model\AbstractModel
 
             $exportedClass = var_export($clone, true);
 
-            $data = '<?php ';
+            $data = '<?php';
             $data .= "\n\n";
             $data .= $infoDocBlock;
             $data .= "\n\n";
@@ -664,10 +683,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
+        $cd = '/**' . "\n";
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
@@ -679,11 +695,11 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $cd .= "\n\n";
-        $cd .= "Fields Summary: \n";
+        $cd .= "Fields Summary:\n";
 
         $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
 
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }
@@ -959,7 +975,13 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }

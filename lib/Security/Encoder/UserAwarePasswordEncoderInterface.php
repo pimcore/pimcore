@@ -21,6 +21,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 interface UserAwarePasswordEncoderInterface extends PasswordEncoderInterface
 {

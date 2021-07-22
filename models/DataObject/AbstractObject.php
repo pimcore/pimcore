@@ -759,20 +759,20 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            $postEvent = new DataObjectEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new DataObjectEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DataObjectEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_UPDATE);
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DataObjectEvent($this);
+            $failureEvent = new DataObjectEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);

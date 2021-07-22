@@ -76,14 +76,35 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
 
         $list->setCondition(implode(' AND ', $conditions));
+        $assetIdsList = $list->loadIdList();
 
-        return $list->loadIdList();
+        // get all thumbnails
+        $videoThumbnailList = new Asset\Video\Thumbnail\Config\Listing();
+
+        $allowedThumbs = [];
+        if ($input->getOption('thumbnails')) {
+            $allowedThumbs = explode(',', $input->getOption('thumbnails'));
+        }
+
+        $items = [];
+        foreach ($assetIdsList as $assetId) {
+            foreach ($videoThumbnailList->getThumbnails() as $thumbnailConfig) {
+                $thumbName = $thumbnailConfig->getName();
+                if (empty($allowedThumbs) || in_array($thumbName, $allowedThumbs)) {
+                    $items[] = $assetId . '~~~' . $thumbName;
+                }
+            }
+        }
+
+        return $items;
     }
 
-    protected function runSingleCommand(string $assetId, InputInterface $input, OutputInterface $output): void
+    protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output): void
     {
         // disable versioning
         Version::disable();
+
+        list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
 
         $video = Asset\Video::getById($assetId);
         if (!$video) {
@@ -92,34 +113,17 @@ class ThumbnailsVideoCommand extends AbstractCommand
             return;
         }
 
-        // get all thumbnails
-        $thumbnails = [];
+        $thumbnail = Asset\Video\Thumbnail\Config::getByName($thumbnailConfigName);
 
-        $list = new Asset\Video\Thumbnail\Config\Listing();
-        $items = $list->getThumbnails();
-
-        foreach ($items as $item) {
-            $thumbnails[] = $item->getName();
+        if ($output->isVerbose()) {
+            $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnailConfigName . ' : ' . formatBytes(memory_get_usage()));
         }
-
-        $allowedThumbs = [];
-        if ($input->getOption('thumbnails')) {
-            $allowedThumbs = explode(',', $input->getOption('thumbnails'));
-        }
-
-        foreach ($thumbnails as $thumbnail) {
-            if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
-                if ($output->isVerbose()) {
-                    $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));
-                }
-                $video->getThumbnail($thumbnail);
-                $this->waitTillFinished($video->getId(), $thumbnail);
-            }
-        }
+        $video->getThumbnail($thumbnail);
+        $this->waitTillFinished($video->getId(), $thumbnail);
 
         if ($input->getOption('system')) {
             if ($output->isVerbose()) {
-                $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . formatBytes(memory_get_usage()));
+                $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . formatBytes(memory_get_usage()));
             }
             $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
             $video->getThumbnail($thumbnail);
@@ -164,6 +168,6 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
     protected function getItemName(int $count): string
     {
-        return $count == 1 ? 'video' : 'videos';
+        return $count == 1 ? 'thumbnail' : 'thumbnails';
     }
 }

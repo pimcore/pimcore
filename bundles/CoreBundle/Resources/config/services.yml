@@ -37,6 +37,7 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
+        deprecated: 'The "%service_id%" service is deprecated, use "pimcore.security.user_password_hasher" instead.'
 
     security.authentication.provider.dao:
         class: Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider
