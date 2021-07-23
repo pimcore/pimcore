@@ -194,7 +194,7 @@ final class PimcoreConfigStorage
         if ($env) {
             $writeLocation = $env;
         } else {
-            $writeLocation = "settingsstore";
+            $writeLocation = "yaml";
         }
         if (!in_array($writeLocation, ["settingsstore", "yaml"])) {
             throw new \Exception("invalid write location");
