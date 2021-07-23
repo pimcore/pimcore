@@ -15,20 +15,23 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
+use Pimcore\Db\PimcoreConfigStorage;
 use Pimcore\Model;
 use Pimcore\Tool\Console;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
+ * @property PimcoreConfigStorage $db
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreConfigBag
 {
     public function configure()
     {
         parent::configure();
-        $this->setFile('image-thumbnails');
+        $this->setContext('image-thumbnails');
     }
 
     /**
@@ -44,9 +47,14 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getName());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
+
         } else {
             throw new Model\Exception\NotFoundException(sprintf(
                 'Thumbnail with ID "%s" does not exist.',

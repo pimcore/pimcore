@@ -177,7 +177,8 @@ pimcore.settings.thumbnail.panel = Class.create({
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
-            handler: this.deleteField.bind(this, tree, record)
+            handler: this.deleteField.bind(this, tree, record),
+            disabled: !record.data.writeable
         }));
 
 

@@ -20,8 +20,6 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
- * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
- * @method void save(bool $forceClearTempFiles = false)
  * @method void delete(bool $forceClearTempFiles = false)
  */
 final class Config extends Model\AbstractModel
@@ -160,6 +158,13 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
+     * @var bool
+     */
+    protected $writeable = false;
+
+    /**
+     * @internal
+     *
      * @param string|array|self $config
      *
      * @return self|null
@@ -258,7 +263,19 @@ final class Config extends Model\AbstractModel
 
         $thumbnail = new self();
 
-        return $thumbnail->getDao()->exists($name);
+        return $thumbnail->getLegacyDao()->exists($name);
+    }
+
+    /**
+     * @return \Pimcore\Model\Dao\AbstractDao
+     */
+    public function getLegacyDao()
+    {
+        if (!$this->dao) {
+            $this->initDao();
+        }
+
+        return $this->dao;
     }
 
     /**
@@ -906,10 +923,36 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isWriteable(): bool
+    {
+        return $this->writeable;
+    }
+
+    /**
+     * @param bool $writeable
+     */
+    public function setWriteable(bool $writeable): void
+    {
+        $this->writeable = $writeable;
+    }
+
+
+
+    /**
      * @param bool $downloadable
      */
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;
     }
+
+
+    public function save(bool $forceClearTempFiles = false) {
+        $dao = $this->getDao();
+        $dao->save($forceClearTempFiles);
+    }
+
+
 }

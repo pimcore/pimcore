@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config\Listing;
 
+use Pimcore\Db\PimcoreConfigStorage;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 
@@ -22,32 +23,33 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
  * @internal
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing $model
+ * @property PimcoreConfigStorage $db
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreConfigBag
 {
     public function configure()
     {
         parent::configure();
-        $this->setFile('image-thumbnails');
+        $this->setContext('image-thumbnails');
     }
 
     /**
-     * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
-     *
      * @return array
      */
     public function load()
     {
-        $properties = [];
-        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $configs = [];
+        $configData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData['id']);
+        foreach ($configData as $key => $propertyData) {
+            $config = Config::getByName($key);
+            $config->setWriteable($propertyData['writeable'] ?? false);
+            $configs[] = $config;
         }
 
-        $this->model->setThumbnails($properties);
+        $this->model->setThumbnails($configs);
 
-        return $properties;
+        return $configs;
     }
 
     /**

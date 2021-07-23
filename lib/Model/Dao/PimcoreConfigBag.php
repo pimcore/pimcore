@@ -15,20 +15,17 @@
 
 namespace Pimcore\Model\Dao;
 
-use Pimcore\Config;
-use Pimcore\Db\PhpArrayFileTable;
+use Pimcore\Db\PimcoreConfigStorage;
 
 /**
  * @internal
- *
- * @deprecated Will be removed in Pimcore 11
  */
-abstract class PhpArrayTable implements DaoInterface
+abstract class PimcoreConfigBag implements DaoInterface
 {
     use DaoTrait;
 
     /**
-     * @var PhpArrayFileTable
+     * @var array
      */
     protected $db;
 
@@ -37,14 +34,19 @@ abstract class PhpArrayTable implements DaoInterface
      */
     public function configure()
     {
+        // nothing to do
     }
 
     /**
-     * @param string $name
+     * @param string $legacyKey
      */
-    protected function setFile($name)
+    protected function setContext($legacyKey)
     {
-        $file = Config::locateConfigFile($name . '.php');
-        $this->db = PhpArrayFileTable::get($file);
+        $key = str_replace("-", "", $legacyKey);
+        $container = \Pimcore::getContainer();
+        $config = $container->getParameter("pimcore.config");
+        $theConfig = $config[$key];
+
+        $this->db = PimcoreConfigStorage::get($key, $legacyKey);
     }
 }

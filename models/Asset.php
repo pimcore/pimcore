@@ -16,7 +16,6 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
-use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
@@ -537,18 +536,15 @@ class Asset extends Element\AbstractElement
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
-
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
+                            $differentOldPath = $oldPath;
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         } catch (UnableToMoveFile $e) {
-                            //update children, if unable to move parent
-                            $this->updateChildPaths($storage, $oldPath);
+                            //nothing to do
                         }
 
-                        $this->getDao()->updateWorkspaces();
-
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         $this->relocateThumbnails($oldPath);
                     }
 
@@ -855,13 +851,17 @@ class Asset extends Element\AbstractElement
      */
     public function getFullPath()
     {
-        $path = $this->getPath() . $this->getFilename();
+        try {
+            $path = $this->getPath() . $this->getFilename();
 
-        if (Tool::isFrontend()) {
-            return $this->getFrontendFullPath();
+            if (Tool::isFrontend()) {
+                return $this->getFrontendFullPath();
+            }
+
+            return $path;
+        } catch (\Throwable $e) {
+            throw $e;
         }
-
-        return $path;
     }
 
     /**
@@ -1968,30 +1968,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param FilesystemOperator $storage
-     * @param string $oldPath
-     *
-     * @throws \League\Flysystem\FilesystemException
-     */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
-    {
-        try {
-            $children = $storage->listContents($oldPath, true);
-            foreach ($children as $child) {
-                if ($child['type'] === 'file') {
-                    $src  = $child['path'];
-                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
-                    $storage->move($src, $dest);
-                }
-            }
-
-            $storage->deleteDirectory($oldPath);
-        } catch (UnableToMoveFile $e) {
-            // noting to do
-        }
-    }
-
-    /**
      * @param string $oldPath
      *
      * @throws \League\Flysystem\FilesystemException
@@ -2003,20 +1979,6 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
-            //remove source parent folder thumbnails
-            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
-            }
-
-            //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
-            }
-
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
@@ -2028,13 +1990,8 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            //required in case if renaming or moving parent folder
-            try {
-                $storage->move($oldPath, $this->getRealFullPath());
-            } catch (UnableToMoveFile $e) {
-                //update children, if unable to move parent
-                $this->updateChildPaths($storage, $oldPath);
-            }
+            //required in case if there is only renaming on parent
+            $storage->move($oldPath, $this->getRealFullPath());
         } catch (UnableToMoveFile $e) {
             // noting to do
         }
