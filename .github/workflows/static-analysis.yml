@@ -28,6 +28,7 @@ jobs:
                 include:
                     - { php-version: "8.0", dependencies: "lowest", experimental: false, symfony: "" }
                     - { php-version: "8.0", dependencies: "highest", experimental: false, symfony: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "" }
                     - { php-version: "8.0", dependencies: "highest", experimental: true, symfony: "5.4.x-dev" }
 
         steps:
