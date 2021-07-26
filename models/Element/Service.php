@@ -1205,38 +1205,6 @@ class Service extends Model\AbstractModel
     public static function cloneMe(ElementInterface $element)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
-            /**
-             * The element to be cloned
-             *
-             * @var  ElementInterface
-             */
-            private $element;
-
-            /**
-             * @param ElementInterface $element
-             */
-            public function __construct($element)
-            {
-                $this->element = $element;
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function matches($object, $property)
-            {
-                try {
-                    $reflectionProperty = new \ReflectionProperty($object, $property);
-                } catch (\Exception $e) {
-                    return false;
-                }
-                $reflectionProperty->setAccessible(true);
-                $myValue = $reflectionProperty->getValue($object);
-
-                return $myValue instanceof ElementInterface;
-            }
-        });
 
         if ($element instanceof Concrete) {
             $deepCopy->addFilter(
