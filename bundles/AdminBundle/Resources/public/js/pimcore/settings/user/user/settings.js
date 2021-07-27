@@ -296,7 +296,10 @@ pimcore.settings.user.user.settings = Class.create({
         });
 
         var rolesStore = Ext.create('Ext.data.ArrayStore', {
-            fields: ["id", "name"],
+            fields: [
+                { type: "string", name: "id" },
+                "name"
+            ],
             data: this.data.roles
         });
 
