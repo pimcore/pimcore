@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -23,7 +24,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class CleanupBrickTablesTask implements TaskInterface
+class CleanupBrickTablesTask implements TaskInterface
 {
     /**
      * @var LoggerInterface
@@ -63,6 +64,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $brickDef = Definition::getByKey($brickType);
                 if (!$brickDef) {
                     $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 
@@ -71,6 +73,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $classDefinition = ClassDefinition::getById($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 

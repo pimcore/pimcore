@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle;
@@ -21,6 +22,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PasswordFactoryDecoratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
@@ -36,7 +38,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @internal
  */
-final class PimcoreCoreBundle extends Bundle
+class PimcoreCoreBundle extends Bundle
 {
     public function getContainerExtension()
     {
@@ -81,5 +83,6 @@ final class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new RoutingLoaderPass());
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new CacheFallbackPass());
+        $container->addCompilerPass(new PasswordFactoryDecoratorPass());
     }
 }

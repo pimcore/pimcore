@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Google;
 
+use Google\Client;
 use Pimcore\Config;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Cache\CacheItemPoolInterface;
@@ -85,7 +87,7 @@ class Api
     /**
      * @param string $type
      *
-     * @return \Google_Client
+     * @return Client
      */
     public static function getClient($type = 'service')
     {
@@ -99,7 +101,7 @@ class Api
     /**
      * @param array|null $scope
      *
-     * @return bool|\Google_Client
+     * @return bool|Client
      */
     public static function getServiceClient($scope = null)
     {
@@ -114,7 +116,7 @@ class Api
             $scope = ['https://www.googleapis.com/auth/analytics.readonly'];
         }
 
-        $client = new \Google_Client();
+        $client = new Client();
 
         /** @var CacheItemPoolInterface $cache */
         $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');
@@ -153,7 +155,7 @@ class Api
     }
 
     /**
-     * @return \Google_Client|false
+     * @return Client|false
      */
     public static function getSimpleClient()
     {
@@ -161,7 +163,7 @@ class Api
             return false;
         }
 
-        $client = new \Google_Client();
+        $client = new Client();
 
         /** @var CacheItemPoolInterface $cache */
         $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');

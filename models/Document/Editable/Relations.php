@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -29,19 +27,21 @@ use Pimcore\Model\Element;
 class Relations extends Model\Document\Editable implements \Iterator
 {
     /**
+     * @internal
+     *
      * @var array
      */
     protected $elements = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $elementIds = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -75,9 +75,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -87,7 +85,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -122,9 +120,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -141,11 +137,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -157,11 +149,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -196,7 +184,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -206,7 +194,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -261,7 +249,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {
@@ -285,6 +273,10 @@ class Relations extends Model\Document\Editable implements \Iterator
     /**
      * Methods for Iterator
      */
+
+    /**
+     * {@inheritdoc}
+     */
     public function rewind()
     {
         $this->setElements();
@@ -292,7 +284,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -303,7 +295,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -314,18 +306,16 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function next()
     {
         $this->setElements();
-        $var = next($this->elements);
-
-        return $var;
+        next($this->elements);
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {

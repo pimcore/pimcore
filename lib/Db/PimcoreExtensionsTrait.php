@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Db;
@@ -239,7 +240,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first row of the SQL result.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -257,7 +258,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first column of all SQL result rows as an array.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -286,7 +287,7 @@ trait PimcoreExtensionsTrait
      * Fetches the first column of the first row of the SQL result.
      *
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -535,7 +536,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param array $params
+     * @param array|scalar $params
      *
      * @return array
      */

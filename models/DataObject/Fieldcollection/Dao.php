@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Fieldcollection
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -227,6 +225,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($items as $item) {
                     if ($item->hasDirtyFields()) {
                         $this->model->markFieldDirty('_self');
+
                         break;
                     }
                 }
@@ -251,11 +250,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . ' OR ' . $whereLocalizedFields;
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')';
 
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

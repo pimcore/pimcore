@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -38,7 +39,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class ClassController extends AdminController implements KernelControllerEventInterface
+class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
@@ -128,9 +129,6 @@ final class ClassController extends AdminController implements KernelControllerE
         // build groups
         $groups = [];
         foreach ($classes as $class) {
-            if (!$class) {
-                continue;
-            }
             $groupName = null;
 
             if ($class->getGroup()) {
@@ -217,6 +215,9 @@ final class ClassController extends AdminController implements KernelControllerE
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions([]);
+        $isWriteable = $class->isWritable();
+        $class = $class->getObjectVars();
+        $class['isWriteable'] = $isWriteable;
 
         return $this->adminJson($class);
     }
@@ -231,8 +232,11 @@ final class ClassController extends AdminController implements KernelControllerE
     public function getCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
+        $isWriteable = $customLayout->isWritable();
+        $customLayout = $customLayout->getObjectVars();
+        $customLayout['isWriteable'] = $isWriteable;
 
-        return $this->adminJson(['success' => true, 'data' => $customLayout->getObjectVars()]);
+        return $this->adminJson(['success' => true, 'data' => $customLayout]);
     }
 
     /**
@@ -291,8 +295,12 @@ final class ClassController extends AdminController implements KernelControllerE
         $customLayout->setId($layoutId);
         $customLayout->save();
 
+        $isWriteable = $customLayout->isWritable();
+        $data = $customLayout->getObjectVars();
+        $data['isWriteable'] = $isWriteable;
+
         return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
-                                 'data' => $customLayout, ]);
+                                 'data' => $data, ]);
     }
 
     /**
@@ -608,6 +616,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$class instanceof DataObject\ClassDefinition) {
             $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -653,6 +662,7 @@ final class ClassController extends AdminController implements KernelControllerE
 
         $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
+
         throw $this->createNotFoundException($errorMessage);
     }
 
@@ -670,6 +680,10 @@ final class ClassController extends AdminController implements KernelControllerE
     public function fieldcollectionGetAction(Request $request)
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
+
+        $isWriteable = $fc->isWritable();
+        $fc = $fc->getObjectVars();
+        $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
     }
@@ -772,6 +786,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
             $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -985,7 +1000,7 @@ final class ClassController extends AdminController implements KernelControllerE
         $result['objectColumns']['nodeType'] = 'object';
 
         // array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
-        $systemColumnNames = DataObject\Concrete::$systemColumnNames;
+        $systemColumnNames = DataObject\Concrete::SYSTEM_COLUMN_NAMES;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
             $systemColumns[] = ['title' => $systemColumn, 'name' => $systemColumn, 'datatype' => 'data', 'fieldtype' => 'system'];
@@ -1021,6 +1036,7 @@ final class ClassController extends AdminController implements KernelControllerE
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
+
                         break;
                     }
                 }
@@ -1044,6 +1060,10 @@ final class ClassController extends AdminController implements KernelControllerE
     public function objectbrickGetAction(Request $request)
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
+
+        $isWriteable = $fc->isWritable();
+        $fc = $fc->getObjectVars();
+        $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
     }
@@ -1155,6 +1175,7 @@ final class ClassController extends AdminController implements KernelControllerE
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
             $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1219,6 +1240,7 @@ final class ClassController extends AdminController implements KernelControllerE
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $keep = true;
+
                             continue;
                         }
                     }
@@ -1333,6 +1355,7 @@ final class ClassController extends AdminController implements KernelControllerE
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
+
                             continue;
                         }
                     }

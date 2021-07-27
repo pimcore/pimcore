@@ -109,29 +109,24 @@ If you want to wrap buttons in a div or change the Position.
                     {% do block.blockEnd() %}
                 </td>
             {% do block.blockDestruct() %}
-        <?php } ?>
+        {% endfor %}
     </tr>
 </table>
-<?php $block->end(); ?>
+{% do block.end() %}
 ```
 
 ### Accessing Data Within a Block Element
 
 Bricks and structure refer to the CMS demo (content/default template).
 
-```php
-<?php
-// load document
-$document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
- 
-// Bsp #1 | get the first picture from the first "gallery-single-images" brick
-$image = $document
-    ->getElement('content')                             // view.html.php > $this->areablock('content')
-        ->getElement('gallery-single-images')[0]        // get the first entry for this brick
-            ->getBlock('gallery')->getElements()[0]     // view.html.php > $this->block("gallery")->loop()
-                ->getImage('image')                     // view.html.php > $this->image("image")
-;
- 
- 
-var_dump("Bsp #1: " . $image->getSrc());
+```twig
+
+{# load document #}
+{% set document = pimcore_document_by_path('/en/More-Stuff/Developers-Corner/Galleries') %}
+
+{# get the first picture from the first "gallery-carousel" brick #}
+{% set image = document.getEditable('content').getElement('gallery-single-images')[5].getBlock('gallery').getElements()[0].getImage('image') %}
+
+{{ dump(document.getEditable('content').getElement('gallery-single-images')) }}
+{{ dump(image.getSrc()) }}
 ```

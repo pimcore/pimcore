@@ -1,30 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -45,7 +43,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * Type for the column
@@ -54,7 +52,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $columnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal
@@ -205,7 +203,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\ImageGallery $data
+     * @param DataObject\Data\ImageGallery|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -352,7 +350,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\ImageGallery $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -370,9 +368,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             }
         }
 
-        $result = new DataObject\Data\ImageGallery($resultItems);
-
-        return $result;
+        return new DataObject\Data\ImageGallery($resultItems);
     }
 
     /**
@@ -429,10 +425,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
             foreach ($data as $item) {
@@ -477,29 +471,15 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Element\ElementInterface
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
             foreach ($data as $item) {
-                $fd->doRewriteIds($object, $idMapping, $params, $item);
+                $fd->doRewriteIds($container, $idMapping, $params, $item);
             }
         }
 

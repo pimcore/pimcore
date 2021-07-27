@@ -1,26 +1,30 @@
 # Contributing to Pimcore
+As an open source project we love to work together with our community to improve and develop our products. 
+It's also important for us to make clear that **we're not working for you or your company**, 
+but we enjoy to work together to solve issues or improve the product. 
 
-## Bug Reports & Feature Requests
-The pimcore team heavily uses (and loves!) GitHub for all of our software management. 
-We use GitHub issues exclusively to track all bugs and features.
+## Contributing Pull Requests
+We gladly accept community pull requests. This is the preferred way to contribute to Pimcore. 
+There are a few necessary steps before we can accept a pull request:
 
-* [Open an issue](https://github.com/pimcore/pimcore/issues) here on GitHub. 
-If you can, **please provide a fix and create a pull request (PR) instead**; this will automatically create an issue for you.
+* [Fork us!](https://help.github.com/articles/fork-a-repo/)
+* Select the right branch. `main`(e.g. `10.x`) for features and improvements or latest maintenance branch for bug fixes (e.g. `10.1`)
+* Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/10.x/.php-cs-fixer.dist.php) and [here](https://github.com/pimcore/pimcore/blob/10.x/doc/Development_Documentation/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
+* [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our repo branch.
+* [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
+
+
+## Bug Reports
+**Please provide a fix for the bug as a pull request (PR) whenever possible!**  
+If you've created a pull request, it's not necessary anymore to create an issue for the bug. 
+
+* Only file an issue if you're not able to fix the bug and provide the patch as a pull request.
+* Please keep in mind that the Pimcore team will only work on system critical and security bugs. 
+* [Open an issue](https://github.com/pimcore/pimcore/issues) here on GitHub.
 * Report security issues only by using [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/). 
 * Please be patient as not all items will be tested immediately - remember, pimcore is open source and free of charge. 
 * Occasionally we'll close issues if they appear stale or are too vague - please don't take this personally! 
 Please feel free to re-open issues we've closed if there's something we've missed and they still need to be addressed.
-
-## Contributing Pull Requests
-PR's are even better than issues. 
-We gladly accept community pull requests. 
-There are a few necessary steps before we can accept a pull request:
-
-* [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. `master` for features and improvements, latest maintenance branch for bug fixes (e.g. `6.6`) 
-* Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/master/.php_cs.dist) and [here](https://github.com/pimcore/pimcore/blob/master/doc/Development_Documentation/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
-* [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our `master` branch.
-* [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
 
 ### Contributor License Agreement
 The following terms are used throughout this agreement:

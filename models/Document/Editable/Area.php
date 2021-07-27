@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -51,38 +49,12 @@ class Area extends Model\Document\Editable
      */
     public function admin()
     {
-        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
-
-        $dialogConfig = null;
-        $brick = $areabrickManager->getBrick($this->config['type']);
-        $info = $this->buildInfoObject();
-        if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
-            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
-            $dialogConfig->setId('dialogBox-' . $this->getName());
-        }
-
         $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
         $this->outputEditmode('<div ' . $attributeString . '>');
-
-        if ($dialogConfig) {
-            $dialogAttributes = [
-                'data-dialog-id' => $dialogConfig->getId(),
-            ];
-
-            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
-            $this->outputEditmode('<div class="pimcore_area_dialog" data-name="' . $attributes['data-name'] . '" data-real-name="' . $attributes['data-real-name'] . '" ' . $dialogAttributes . '></div>');
-        }
-
         $this->frontend();
 
         $this->outputEditmode('</div>');
-
-        if ($dialogConfig) {
-            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
-        }
     }
 
     /**
@@ -113,7 +85,7 @@ class Area extends Model\Document\Editable
         }
     }
 
-    protected function buildInfoObject(): Area\Info
+    private function buildInfoObject(): Area\Info
     {
         $config = $this->getConfig();
         // create info object and assign it to the view
@@ -167,6 +139,26 @@ class Area extends Model\Document\Editable
         // start at first index
         $blockState->pushIndex(1);
 
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+
+        $dialogConfig = null;
+        $brick = $areabrickManager->getBrick($this->config['type']);
+        $info = $this->buildInfoObject();
+        if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
+            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
+            $dialogConfig->setId('dialogBox-' . $this->getName());
+        }
+
+        if ($dialogConfig) {
+            $attributes = $this->getEditmodeElementAttributes();
+            $dialogAttributes = [
+                'data-dialog-id' => $dialogConfig->getId(),
+            ];
+
+            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
+            $this->outputEditmode('<div class="pimcore_area_dialog" data-name="' . $attributes['data-name'] . '" data-real-name="' . $attributes['data-real-name'] . '" ' . $dialogAttributes . '></div>');
+        }
+
         $params = [];
         if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
             if (is_array($config['params'][$config['type']])) {
@@ -175,6 +167,12 @@ class Area extends Model\Document\Editable
         }
 
         $info->setParams($params);
+
+        if ($dialogConfig) {
+            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+        }
 
         echo $editableHandler->renderAreaFrontend($info);
 

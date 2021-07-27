@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Staticroute;
@@ -30,9 +31,11 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
+ * @internal
+ *
  * A custom router implementation handling pimcore static routes.
  */
-class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
+final class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -63,6 +66,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $config;
 
+    /**
+     * @param RequestContext $context
+     * @param Config $config
+     */
     public function __construct(RequestContext $context, Config $config)
     {
         $this->context = $context;
@@ -85,11 +92,17 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $this->context;
     }
 
+    /**
+     * @return array
+     */
     public function getLocaleParams(): array
     {
         return $this->localeParams;
     }
 
+    /**
+     * @param array $localeParams
+     */
     public function setLocaleParams(array $localeParams)
     {
         $this->localeParams = $localeParams;
@@ -122,17 +135,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
-        // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
-        // but just the query string generation using the given parameters
-        // eg. $this->url(["foo" => "bar"], false) => /?foo=bar
-        if ($name === null) {
-            if (Staticroute::getCurrentRoute() instanceof Staticroute) {
-                $name = Staticroute::getCurrentRoute()->getName();
-            }
-        }
-
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
         $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
@@ -203,8 +207,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             return $url;
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found',
-            $name));
+        throw new RouteNotFoundException(sprintf(
+            'Could not generate URL for route %s as the static route wasn\'t found',
+            $name
+        ));
     }
 
     /**
@@ -294,6 +300,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             foreach ($this->localeParams as $localeParam) {
                 if (isset($routeParams[$localeParam])) {
                     $routeParams['_locale'] = $routeParams[$localeParam];
+
                     break;
                 }
             }

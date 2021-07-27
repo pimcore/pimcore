@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -45,7 +46,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class DataObjectHelperController extends AdminController
+class DataObjectHelperController extends AdminController
 {
     const SYSTEM_COLUMNS = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
@@ -195,6 +196,7 @@ final class DataObjectHelperController extends AdminController
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
+
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -290,6 +292,7 @@ final class DataObjectHelperController extends AdminController
         if (strlen($requestedGridConfigId) == 0 && $class) {
             // check if there is a favourite view
             $favourite = null;
+
             try {
                 try {
                     $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
@@ -317,6 +320,7 @@ final class DataObjectHelperController extends AdminController
             }
 
             $savedGridConfig = null;
+
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
@@ -562,7 +566,7 @@ final class DataObjectHelperController extends AdminController
 
     /**
      * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition $class
+     * @param DataObject\ClassDefinition|null $class
      * @param string $gridType
      * @param bool $noBrickColumns
      * @param DataObject\ClassDefinition\Data[] $fields
@@ -965,14 +969,14 @@ final class DataObjectHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
-                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin());
+                $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin();
 
-                return $this->adminJson(['success' => true,
-                        'settings' => $settings,
-                        'availableConfigs' => $availableConfigs,
-                        'sharedConfigs' => $sharedConfigs,
-                    ]
-                );
+                return $this->adminJson([
+                    'success' => true,
+                    'settings' => $settings,
+                    'availableConfigs' => $availableConfigs,
+                    'sharedConfigs' => $sharedConfigs,
+                ]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -982,7 +986,7 @@ final class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param GridConfig $gridConfig
+     * @param GridConfig|null $gridConfig
      * @param array $metadata
      *
      * @throws \Exception
@@ -1371,7 +1375,6 @@ final class DataObjectHelperController extends AdminController
         if (file_exists($csvFile)) {
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
-            $csvReader->setEnclosure('""');
             $csvReader->setSheetIndex(0);
 
             $spreadsheet = $csvReader->load($csvFile);

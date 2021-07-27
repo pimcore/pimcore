@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
@@ -22,13 +20,17 @@ use Defuse\Crypto\Key;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Marshaller\MarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 
 /**
  * @internal
  */
 class EncryptedField implements MarshallerInterface
 {
-    /** @var MarshallerService */
+    /**
+     * @var MarshallerService
+     */
     protected $marshallerService;
 
     /**
@@ -138,7 +140,13 @@ class EncryptedField implements MarshallerInterface
             $fd = $params['fieldDefinition'];
             $delegateFd = $fd->getDelegate();
 
-            if (method_exists($delegateFd, 'marshalBeforeEncryption')) {
+            //TODO Pimcore 11: remove method_exists BC layer
+            if ($delegateFd instanceof BeforeEncryptionMarshallerInterface || method_exists($delegateFd, 'marshalBeforeEncryption')) {
+                if (!$delegateFd instanceof BeforeEncryptionMarshallerInterface) {
+                    trigger_deprecation('pimcore/pimcore', '10.1',
+                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        'Implement the %s interface instead.', BeforeEncryptionMarshallerInterface::class));
+                }
                 $data = $delegateFd->marshalBeforeEncryption($data, $object, $params);
             }
 
@@ -165,6 +173,7 @@ class EncryptedField implements MarshallerInterface
 
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
                 } catch (\Exception $e) {
@@ -175,13 +184,20 @@ class EncryptedField implements MarshallerInterface
                     $data = Crypto::decrypt($data, $key);
                 }
 
-                if (method_exists($delegateFd, 'unmarshalAfterDecryption')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($delegateFd instanceof AfterDecryptionUnmarshallerInterface || method_exists($delegateFd, 'unmarshalAfterDecryption')) {
+                    if (!$delegateFd instanceof AfterDecryptionUnmarshallerInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', AfterDecryptionUnmarshallerInterface::class));
+                    }
                     $data = $delegateFd->unmarshalAfterDecryption($data, $object, $params);
                 }
 
                 return $data;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 throw new \Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');
             }
         }

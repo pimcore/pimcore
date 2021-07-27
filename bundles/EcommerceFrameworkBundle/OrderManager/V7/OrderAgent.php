@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
@@ -44,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent implements OrderAgentInterface
 {
-    const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
+    public const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
     /**
      * @var AbstractOrder
@@ -62,7 +63,7 @@ class OrderAgent implements OrderAgentInterface
     protected $paymentManager;
 
     /**
-     * @var PaymentInterface
+     * @var PaymentInterface|null
      */
     protected $paymentProvider;
 
@@ -72,7 +73,7 @@ class OrderAgent implements OrderAgentInterface
     protected $eventDispatcher;
 
     /**
-     * @var Note[]
+     * @var Note[]|null
      */
     protected $fullChangeLog;
 
@@ -274,7 +275,7 @@ class OrderAgent implements OrderAgentInterface
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    /* @var AbstractData $providerData */
+                    // @var AbstractData $providerData
 
                     // get provider data
                     if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
@@ -320,7 +321,7 @@ class OrderAgent implements OrderAgentInterface
         $order = $this->getOrder();
 
         $provider = $order->getPaymentProvider();
-        /* @var PaymentProvider $provider */
+        // @var PaymentProvider $provider
 
         // load existing
         $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
@@ -350,7 +351,7 @@ class OrderAgent implements OrderAgentInterface
             $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
         }
 
-        /* recurring payment data */
+        // recurring payment data
         if ($sourceOrder && $paymentProvider instanceof RecurringPaymentInterface) {
             $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
@@ -481,7 +482,7 @@ class OrderAgent implements OrderAgentInterface
     /**
      * generates internal payment id for current order
      *
-     * @param null $paymentInfoCount
+     * @param int|null $paymentInfoCount
      *
      * @return string
      */
@@ -587,6 +588,7 @@ class OrderAgent implements OrderAgentInterface
                 $currentPaymentInformation = $paymentInfo;
 
                 $currentOrderFingerPrint = $this->generateInternalPaymentId($paymentInfoIndex + 1);
+
                 break;
             }
         }
@@ -639,6 +641,7 @@ class OrderAgent implements OrderAgentInterface
                 $paymentStateBackup . '". throwing exception!'
             );
             $order->save(['versionNote' => 'OrderAgent::updatePayment - aborted response received.']);
+
             throw new UnsupportedException('Got response although payment state was already aborted, new payment state was ' . $paymentStateBackup);
         } elseif ($currentOrderFingerPrint != $status->getInternalPaymentId()) {
             // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
@@ -647,6 +650,7 @@ class OrderAgent implements OrderAgentInterface
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' -> order fingerprint changed since start payment. throwing exception!');
             $order->setOrderState(null);
             $order->save(['versionNote' => 'OrderAgent::updatePayment - finger print of order changed.']);
+
             throw new UnsupportedException('order fingerprint changed since start payment. Old internal status = ' . $status->getInternalPaymentId() . ' -> current internal status id = ' . $currentOrderFingerPrint);
         } else {
             $order->save(['versionNote' => 'OrderAgent::updatePayment.']);
@@ -676,7 +680,7 @@ class OrderAgent implements OrderAgentInterface
 
             // load order events
             $noteList = new NoteListing();
-            /* @var NoteListing $noteList */
+            // @var NoteListing $noteList
 
             $cid = [ $order->getId() ];
             foreach ($order->getItems() as $item) {

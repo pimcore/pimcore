@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Storage;
@@ -27,6 +27,7 @@ class SessionStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     public function all(VisitorInfo $visitorInfo, string $scope): array
@@ -149,6 +150,8 @@ class SessionStorage implements TargetingStorageInterface
      * @param string $scope
      * @param bool $checkPreviousSession
      *
+     * @throws \Exception
+     *
      * @return null|NamespacedAttributeBag
      */
     private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
@@ -165,16 +168,15 @@ class SessionStorage implements TargetingStorageInterface
 
         $session = $request->getSession();
 
-        /** @var NamespacedAttributeBag $bag */
-        $bag = null;
-
         switch ($scope) {
             case self::SCOPE_SESSION:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+
                 break;
 
             case self::SCOPE_VISITOR:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+
                 break;
 
             default:
@@ -184,15 +186,11 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        if ($bag) {
-            if ($bag instanceof NamespacedAttributeBag) {
-                return $bag;
-            } else {
-                throw new \Exception('wrong type');
-            }
+        if ($bag instanceof NamespacedAttributeBag) {
+            return $bag;
         }
 
-        return null;
+        throw new \Exception('wrong type');
     }
 
     private function updateTimestamps(

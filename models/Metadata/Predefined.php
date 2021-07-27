@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Metadata
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Metadata;
@@ -22,11 +20,13 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
  * @method void save()
  * @method void delete()
  */
-class Predefined extends Model\AbstractModel
+final class Predefined extends Model\AbstractModel
 {
     /**
      * @var int
@@ -77,6 +77,11 @@ class Predefined extends Model\AbstractModel
      * @var string
      */
     protected $language;
+
+    /**
+     * @var string
+     */
+    protected $group;
 
     /**
      * @var int
@@ -291,6 +296,22 @@ class Predefined extends Model\AbstractModel
     public function getLanguage()
     {
         return $this->language;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**

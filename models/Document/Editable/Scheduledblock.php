@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -28,14 +26,14 @@ use Pimcore\Tool\HtmlUtils;
 class Scheduledblock extends Block implements BlockInterface
 {
     /**
+     * @internal
+     *
      * @var array|null
      */
     protected $cachedCurrentElement = null;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -43,11 +41,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -65,9 +59,9 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setDefault()
+    protected function setDefault()
     {
         if (empty($this->indices)) {
             $this->indices[] = [
@@ -79,7 +73,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $this;
     }
 
-    protected function filterElements()
+    private function filterElements()
     {
         if ($this->getEditmode()) {
             return $this->indices;
@@ -122,7 +116,7 @@ class Scheduledblock extends Block implements BlockInterface
      * @param int $outputTimestamp
      * @param array $nextElement
      */
-    protected function updateOutputCacheLifetime($outputTimestamp, $nextElement)
+    private function updateOutputCacheLifetime($outputTimestamp, $nextElement)
     {
         $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
@@ -137,9 +131,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * Loops through the block
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function loop()
     {
@@ -170,9 +162,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * Is executed at the beginning of the loop and setup some general settings
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function start()
     {
@@ -196,7 +186,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * Called before the block is rendered
+     * {@inheritdoc}
      */
     public function blockConstruct()
     {
@@ -232,9 +222,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * Return current index
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCurrentIndex()
     {
@@ -242,7 +230,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * @return \Generator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -252,7 +240,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * @return Block\Item[]
+     * {@inheritdoc}
      */
     public function getElements()
     {

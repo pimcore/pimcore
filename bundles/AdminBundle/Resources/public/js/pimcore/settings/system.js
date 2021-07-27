@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.system");
@@ -59,7 +59,7 @@ pimcore.settings.system = Class.create({
         var current = this.data.values;
 
         for (var i = 0; i < nk.length; i++) {
-            if (current[nk[i]]) {
+            if (typeof current[nk[i]] != "undefined") {
                 current = current[nk[i]];
             } else {
                 current = null;
@@ -200,8 +200,8 @@ pimcore.settings.system = Class.create({
                             items: [{
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
-                                name: "general.loginscreencustomimage",
-                                value: this.getValue("general.loginscreencustomimage")
+                                name: "branding.login_screen_custom_image",
+                                value: this.getValue("branding.login_screen_custom_image")
                             }]
                         }]
                     }
@@ -271,12 +271,12 @@ pimcore.settings.system = Class.create({
                                 xtype: "hidden",
                                 id: "system_settings_general_validLanguages",
                                 name: 'general.validLanguages',
-                                value: this.getValue("general.validLanguages")
+                                value: this.getValue("general.valid_languages")
                             }, {
                                 xtype: "hidden",
                                 id: "system_settings_general_defaultLanguage",
                                 name: "general.defaultLanguage",
-                                value: this.getValue("general.defaultLanguage")
+                                value: this.getValue("general.default_language")
                             }, {
                                 xtype: "container",
                                 width: 450,
@@ -286,7 +286,7 @@ pimcore.settings.system = Class.create({
                                 listeners: {
                                     beforerender: function () {
                                         // add existing language entries
-                                        var locales = this.getValue("general.validLanguages").split(",");
+                                        var locales = this.getValue("general.valid_languages").split(",");
                                         if (locales && locales.length > 0) {
                                             Ext.each(locales, this.addLanguage.bind(this));
                                         }
@@ -313,7 +313,7 @@ pimcore.settings.system = Class.create({
                             width: 650,
                             fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
                             name: 'email.debug.emailAddresses',
-                            value: this.getValue("email.debug.emailaddresses"),
+                            value: this.getValue("email.debug.email_addresses"),
                             emptyText: "john@doe.com,jane@doe.com"
                         }]
                     },
@@ -374,6 +374,22 @@ pimcore.settings.system = Class.create({
                                             }.bind(el)
                                         });
                                     }
+                                }
+                            },
+                            {
+                                xtype: "container",
+                                width: 450,
+                                style: "margin-top: 20px;",
+                                id: "system_settings_errorPage_languageContainer",
+                                items: [],
+                                listeners: {
+                                    beforerender: function () {
+                                        // add existing language entries
+                                        var locales = this.getValue("general.valid_languages").split(",");
+                                        if (locales && locales.length > 0) {
+                                            Ext.each(locales, this.addErrorPage.bind(this));
+                                        }
+                                    }.bind(this)
                                 }
                             }
                         ]
@@ -665,12 +681,12 @@ pimcore.settings.system = Class.create({
                     width: 450,
                     fieldLabel: t("fallback_languages"),
                     name: "general.fallbackLanguages." + language,
-                    value: this.getValue("general.fallbackLanguages." + language)
+                    value: this.getValue("general.fallback_languages." + language)
                 }, {
                     xtype: "radio",
                     name: "general.defaultLanguageRadio",
                     boxLabel: t("default_language"),
-                    checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
+                    checked: this.getValue("general.default_language") == language || (!this.getValue("general.default_language") && container.items.length == 0 ),
                     listeners: {
                         change: function (el, checked) {
                             if (checked) {
@@ -714,6 +730,78 @@ pimcore.settings.system = Class.create({
             container.remove(lang);
         }
         container.updateLayout();
-    }
+    },
 
+    addErrorPage: function (language) {
+
+        if (empty(language)) {
+            return;
+        }
+
+        // find the language entry in the store, because "language" can be the display value too
+        var index = this.languagesStore.findExact("language", language);
+        if (index < 0) {
+            index = this.languagesStore.findExact("display", language)
+        }
+
+        if (index >= 0) {
+
+            var rec = this.languagesStore.getAt(index);
+            language = rec.get("language");
+
+            var container = Ext.getCmp("system_settings_errorPage_languageContainer");
+            var lang = container.getComponent(language);
+            if (lang) {
+                return;
+            }
+
+            container.add({
+                xtype: "fieldset",
+                itemId: language,
+                title: rec.get("display"),
+                labelWidth: 250,
+                width: 600,
+                style: "position: relative;",
+                items: [{
+                    fieldLabel: t("error_page"),
+                    name: "documents.error_pages.localized." + language,
+                    fieldCls: "input_drop_target",
+                    value: this.getValue("documents.error_pages.localized." + language),
+                    width: 550,
+                    xtype: "textfield",
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function (e) {
+                                    return this.getEl();
+                                }.bind(el),
+
+                                onNodeOver: function (target, dd, e, data) {
+                                    if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
+                                },
+
+                                onNodeDrop: function (target, dd, e, data) {
+                                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        var record = data.records[0];
+                                        var data = record.data;
+
+                                        if (data.elementType == "document") {
+                                            this.setValue(data.path);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+                }]
+            });
+            container.updateLayout();
+        }
+    }
 });

@@ -12,7 +12,7 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 
 ## Option 1: Use Doctrine ORM
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities. 
-Please check <http://symfony.com/doc/3.4/doctrine.html> for more details.  
+Please check <https://symfony.com/doc/5.2/doctrine.html> for more details.  
 
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
@@ -23,7 +23,7 @@ As a first step, create the database structure for the model, for this example I
 has an id, a username (just a string) and a score. If you want to write a model for a bundle you have to create the 
 table(s) during the installation.
 
-```php
+```sql
 CREATE TABLE `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) DEFAULT NULL,
@@ -39,10 +39,10 @@ The next step is to implement the model. To make it easy the model is stored int
 it into a bundle library.
 
 ```php
-# src/AppBundle/Model/Vote.php
+# src/Model/Vote.php
 <?php
  
-namespace AppBundle\Model;
+namespace App\Model;
  
 use Pimcore\Model\AbstractModel;
  
@@ -134,16 +134,16 @@ The `save` and `getById` methods just call the corresponding DAO methods.
 The `getDao` method looks for the nearest DAO. It just appends Dao to the class name, if the class exists you are ready 
 to use the DAO. If the class doesn't exist, it just continue searching using the next namespace.
 
-Small example: `AppBundle\Model\Vote` looks for `AppBundle\Model\Vote\Dao`, `AppBundle\Model\Dao`, `AppBundle\Dao`.
+Small example: `App\Model\Vote` looks for `App\Model\Vote\Dao`, `App\Model\Dao`, `App\Dao`.
  
 
 ## DAO
 Now we are ready to implement the Dao:
 
 ```php
-#src/AppBundle/Model/Vote/Dao.php
+#src/Model/Vote/Dao.php
 <?php
-namespace AppBundle\Model\Vote;
+namespace App\Model\Vote;
  
 use Pimcore\Model\Dao\AbstractDao;
  
@@ -227,7 +227,7 @@ save dependencies or whatever you want.
 Now you can use your Model in your service-layer.
 
 ```php
-$vote = new \AppBundle\Model\Vote();
+$vote = new \App\Model\Vote();
 $vote->setScore(3);
 $vote->setUsername('foobar!'.mt_rand(1, 999));
 $vote->save();
@@ -238,11 +238,11 @@ $vote->save();
 If you need to query the data using a Pimcore entity list, you also need to implement a `Listing` and `Listing\Dao` class:
 
 ```php
-#src/AppBundle/Model/Vote/Listing.php
+#src/Model/Vote/Listing.php
   
 <?php
  
-namespace AppBundle\Model\Vote;
+namespace App\Model\Vote;
  
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
@@ -388,21 +388,21 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 ## Listing\Dao
 
 ```php
-#src/AppBundle/Model/Vote/Listing/Dao.php
+#src/Model/Vote/Listing/Dao.php
   
 <?php
  
-namespace AppBundle\Model\Vote\Listing;
+namespace App\Model\Vote\Listing;
  
 use Pimcore\Model\Listing;
-use AppBundle\Model;
-use Pimcore\Tool;
+use App\Model;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
-
+    
     /**
      * @var string
      */
@@ -421,8 +421,9 @@ class Dao extends Listing\Dao\AbstractDao
     }
  
     /**
-     * get select query.
-     * @throws \Exception
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder()
     {
@@ -519,7 +520,7 @@ class Dao extends Listing\Dao\AbstractDao
 Now you can use your Listing in your service-layer.
 
 ```php
-$list = \AppBundle\Model\Vote::getList();
+$list = \App\Model\Vote::getList();
 $list->setCondition("score > ?", array(1));
 $votes = $list->load();
 ```

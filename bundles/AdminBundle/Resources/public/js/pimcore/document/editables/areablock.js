@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.areablock");
@@ -651,7 +651,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             for (var g=0; g<groups.length; g++) {
                 if(groups[g].length > 0) {
                     groupMenu = {
-                        text: groups[g],
+                        text: t(groups[g]),
                         hideOnClick: false,
                         menu: []
                     };
@@ -760,7 +760,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         var nextKey = this.getNextKey();
         nextKey++;
 
-        if(this.config.types[brickIndex]['needsReload'] || forceReload === true) {
+        if(this.config.types[brickIndex]['needsReload'] || forceReload === true || this.config.reload === true) {
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
 
             this.elements.splice.apply(this.elements, [index, 0, {
@@ -819,17 +819,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         container.remove();
 
         this.refresh();
+
+        if(this.config.reload) {
+            this.reloadDocument();
+        }
     },
 
     moveBlockTo: function (block, toIndex) {
-
         toIndex = intval(toIndex);
-
-        var currentIndex = this.getElementIndex(block);
-        if(currentIndex < toIndex) {
-            toIndex--;
-        }
-
         if(this.elements[toIndex]) {
             Ext.get(block).insertBefore(this.elements[toIndex]);
         } else {
@@ -917,7 +914,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                     if(!groupMenu) {
                         groupMenu = new Ext.Button({
                             xtype: "button",
-                            text: groups[g],
+                            text: t(groups[g]),
                             textAlign: "left",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,

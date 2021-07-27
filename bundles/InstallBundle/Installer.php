@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\InstallBundle;
@@ -66,9 +66,9 @@ class Installer
     private $dbCredentials;
 
     /**
-     * @var PimcoreStyle
+     * @var PimcoreStyle|null
      */
-    private $commandLineOutput;
+    private ?PimcoreStyle $commandLineOutput = null;
 
     /**
      * When false, skips creating database structure during install
@@ -376,7 +376,14 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment();
-        $kernel = new \App\Kernel($environment, true);
+
+        $kernel = \App\Kernel::class;
+
+        if (isset($_ENV['PIMCORE_KERNEL_CLASS'])) {
+            $kernel = $_ENV['PIMCORE_KERNEL_CLASS'];
+        }
+
+        $kernel = new $kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -473,7 +480,7 @@ class Installer
 
         $this->runCommand([
             'doctrine:migrations:version',
-            '--all', '--add', '-n', '-q',
+            '--all', '--add', '--prefix=Pimcore\\Bundle\\CoreBundle', '-n', '-q',
         ], 'Marking all migrations as done');
     }
 
@@ -562,6 +569,7 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->mkdir($cacheDir);
+
         try {
             $filesystem->remove($oldCacheDir);
         } catch (IOException $e) {
@@ -633,7 +641,7 @@ class Installer
     {
         $defaultConfig = [
             'username' => 'admin',
-            'password' => md5(microtime()),
+            'password' => bin2hex(random_bytes(16)),
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);

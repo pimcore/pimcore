@@ -34,12 +34,21 @@ services:
             - '@Pimcore\Workflow\ExpressionService'
         abstract: true
 
+    workflow.support_strategy.authorization_checker:
+        class: Symfony\Component\Security\Core\Authorization\AuthorizationChecker
+        arguments:
+            - '@security.token_storage'
+            - '@security.authentication.manager'
+            - '@security.access.decision_manager'
+            - '%security.access.always_authenticate_before_granting%'
+            - false
+
     Pimcore\Workflow\ExpressionService:
         class: Pimcore\Workflow\ExpressionService
         arguments:
             - '@workflow.security.expression_language'
             - '@security.token_storage'
-            - '@security.authorization_checker'
+            - '@workflow.support_strategy.authorization_checker'
             - '@security.authentication.trust_resolver'
             - '@security.role_hierarchy'
             - '@validator'

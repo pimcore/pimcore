@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 Ext.setVersion("ext", "7.0.0.159");
@@ -253,6 +253,7 @@ Ext.define('pimcore.tree.View', {
 
         itemupdate: function(record) {
             if (record.needsPaging && typeof record.ptb == "undefined") {
+                record.itemUpdated = true;
                 this.doUpdatePaging(record);
             }
         }
@@ -268,7 +269,8 @@ Ext.define('pimcore.tree.View', {
 
         me.superclass.renderRow.call(this, record, rowIdx, out);
 
-        if (record.needsPaging && typeof record.ptb == "undefined") {
+        // do not update paging again, if already done in "itemupdate" event
+        if (record.needsPaging && typeof record.ptb == "undefined" && typeof record.itemUpdated == "undefined") {
             this.doUpdatePaging(record);
         }
 
@@ -1051,6 +1053,29 @@ Ext.override(Ext.picker.Date, {
     }
 });
 
+
+/** workaround for [DataObject] Advanced Image Dropzone only works once #9115
+ * Issue: on node drop the component gets destroyed. On mouse up it then tries to focus an already destroyed element.
+ */
+Ext.override(Ext.dom.Element, {
+    focus: function (defer, dom) {
+
+        var me = this;
+
+        dom = dom || me.dom;
+
+        if (Number(defer)) {
+            Ext.defer(me.focus, defer, me, [null, dom]);
+        } else {
+            Ext.fireEvent('beforefocus', dom);
+            if (dom) {
+                dom.focus();
+            }
+        }
+
+        return me;
+    }
+});
 
 /**
  * A specialized {@link Ext.view.BoundListKeyNav} implementation for navigating in the quicksearch.

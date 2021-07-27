@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Helper\DataType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
@@ -21,7 +34,9 @@ use Pimcore\Tool\Authentication;
 class TestDataHelper extends AbstractTestDataHelper
 {
     const IMAGE = 'sampleimage.jpg';
+
     const DOCUMENT = 'sampledocument.txt';
+
     const HOTSPOT_IMAGE = 'hotspot.jpg';
 
     /**
@@ -619,7 +634,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertNotNull($link);
         $this->assertInstanceOf(DataObject\Data\Link::class, $link);
 
-        $document = Document::getByPath($link->getObject());
+        $document = Document::getByPath($link->getElement());
         $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
 
         foreach (['expected' => $expected, 'value' => $document] as $desc => $item) {
@@ -1562,6 +1577,7 @@ class TestDataHelper extends AbstractTestDataHelper
             if (is_null($filename)) {
                 $hotspotImages[] = null;
                 $idx++;
+
                 continue;
             }
             $asset = Asset::getByPath('/' . $filename);

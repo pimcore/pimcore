@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -24,49 +22,67 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
  */
-class Note extends Model\AbstractModel
+final class Note extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $cid;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $ctype;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $date;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $user;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $title;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $description;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $data = [];
@@ -120,6 +136,9 @@ class Note extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
 

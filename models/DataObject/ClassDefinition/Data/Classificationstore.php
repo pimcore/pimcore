@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -20,11 +19,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -96,7 +96,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string|int
+     * @var int
      */
     public $labelWidth = 0;
 
@@ -166,9 +166,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxItems;
 
     /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionView;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionEdit;
+
+    /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Classificationstore|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -436,6 +450,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
         $activeGroups = $classificationStore->getActiveGroups();
+        $params['owner'] = $classificationStore;
+
         if ($items) {
             foreach ($items as $groupId => $keys) {
                 if (!isset($activeGroups[$groupId])) {
@@ -522,6 +538,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setReferencedFields($referencedFields)
     {
         $this->referencedFields = $referencedFields;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -538,6 +555,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -587,34 +605,29 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function classSaved($class, $params = [])
     {
-        $clasificationStore = new DataObject\Classificationstore();
-        $clasificationStore->setClass($class);
-        $clasificationStore->createUpdateTable();
+        $classificationStore = new DataObject\Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->createUpdateTable();
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
-        if (!$object instanceof DataObject\Concrete) {
+        if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
         }
 
-        if (!$object->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
+        if (!$container->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
             $store = new DataObject\Classificationstore();
-            $store->setObject($object);
+            $store->setObject($container);
             $store->setFieldname($this->getName());
 
-            $object->{'set' . $this->getName()}($store);
+            $container->{'set' . $this->getName()}($store);
         }
 
-        return $object->getObjectVar($this->getName());
+        return $container->getObjectVar($this->getName());
     }
 
     /**
@@ -804,6 +817,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             if ($keyGroupRelation->isMandatory()) {
                                 $keyDef->setMandatory(1);
                             }
+
                             try {
                                 $keyDef->checkValidity($value, false, $params);
                             } catch (\Exception $exception) {
@@ -826,6 +840,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+
             throw $validationException;
         }
     }
@@ -898,18 +913,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param string|int $labelWidth
+     * @param int $labelWidth
      */
     public function setLabelWidth($labelWidth)
     {
-        if (is_numeric($labelWidth)) {
-            $labelWidth = (int)$labelWidth;
-        }
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
     }
 
     /**
-     * @return string|int
+     * @return int
      */
     public function getLabelWidth()
     {
@@ -946,6 +958,38 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setLocalized($localized)
     {
         $this->localized = $localized;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): ?array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array|null $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): ?array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array|null $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
     }
 
     /**
@@ -991,12 +1035,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $activeGroups
      *
      * @return array|null
-     *
-     * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
@@ -1019,7 +1061,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         if ($inheritanceAllowed) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
-                $activeGroups = $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
+                $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
         }
 
@@ -1027,26 +1069,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
         if (!$activeGroupIds) {
-            return;
+            return $this;
         }
 
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
+        $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
+
         $groupList->setOrderKey(['id']);
         $groupList->setOrder(['ASC']);
 
@@ -1077,18 +1115,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $definition->__wakeup();
                 }
 
-                if ($definition) {
-                    $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                    if (method_exists($definition, 'enrichLayoutDefinition')) {
-                        $context['object'] = $object;
-                        $context['class'] = $object->getClass();
-                        $context['ownerType'] = 'classificationstore';
-                        $context['ownerName'] = $this->getName();
-                        $context['keyId'] = $keyGroupRelation->getKeyId();
-                        $context['groupId'] = $keyGroupRelation->getGroupId();
-                        $context['keyDefinition'] = $definition;
-                        $definition = $definition->enrichLayoutDefinition($object, $context);
+                $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
+
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                    if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
                     }
+                    $context['object'] = $object;
+                    $context['class'] = $object->getClass();
+                    $context['ownerType'] = 'classificationstore';
+                    $context['ownerName'] = $this->getName();
+                    $context['keyId'] = $keyGroupRelation->getKeyId();
+                    $context['groupId'] = $keyGroupRelation->getGroupId();
+                    $context['keyDefinition'] = $definition;
+                    $definition = $definition->enrichLayoutDefinition($object, $context);
                 }
 
                 $keyList[] = [
@@ -1112,7 +1155,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
+            $relation->setCondition('`colId` in (' . implode(',', array_fill(0, count($collectionIds), '?')) . ')', $collectionIds);
 
             $sorting = [];
             foreach ($relation->load() as $item) {
@@ -1126,6 +1169,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 return $s1 <=> $s2;
             });
         }
+
+        return $this;
     }
 
     /**
@@ -1137,9 +1182,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $allowedGroupIds
-     *
-     * @todo: $parts is not definied here, should it be definied as empty array or null
+     * @param array|string $allowedGroupIds
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {

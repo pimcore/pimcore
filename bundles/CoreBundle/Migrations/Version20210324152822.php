@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -18,19 +31,15 @@ final class Version20210324152822 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        try {
-            $db = Db::get();
+        $db = Db::get();
 
-            $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
-            foreach ($translationsTables as $table) {
-                $translationsTable = current($table);
+        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
+        foreach ($translationsTables as $table) {
+            $translationsTable = current($table);
 
-                if (!$schema->getTable($translationsTable)->hasColumn('type')) {
-                    $this->addSql('ALTER TABLE `'.$translationsTable.'` ADD COLUMN `type` varchar(10) DEFAULT NULL AFTER `key`');
-                }
+            if (!$schema->getTable($translationsTable)->hasColumn('type')) {
+                $this->addSql('ALTER TABLE `'.$translationsTable.'` ADD COLUMN `type` varchar(10) DEFAULT NULL AFTER `key`');
             }
-        } catch (\Exception $e) {
-            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 
@@ -39,19 +48,15 @@ final class Version20210324152822 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        try {
-            $db = Db::get();
+        $db = Db::get();
 
-            $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
-            foreach ($translationsTables as $table) {
-                $translationsTable = current($table);
+        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
+        foreach ($translationsTables as $table) {
+            $translationsTable = current($table);
 
-                if ($schema->getTable($translationsTable)->hasColumn('type')) {
-                    $this->addSql('ALTER TABLE `'.$translationsTable.'` DROP COLUMN `type`');
-                }
+            if ($schema->getTable($translationsTable)->hasColumn('type')) {
+                $this->addSql('ALTER TABLE `'.$translationsTable.'` DROP COLUMN `type`');
             }
-        } catch (\Exception $e) {
-            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 }

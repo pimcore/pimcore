@@ -1,19 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
@@ -36,7 +39,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @internal
  */
-final class UserController extends AdminController implements KernelControllerEventInterface
+class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
@@ -66,7 +69,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User $user
+     * @param User|User\Folder $user
      *
      * @return array
      */
@@ -305,6 +308,7 @@ final class UserController extends AdminController implements KernelControllerEv
                     if (method_exists($user, 'setAllAclToFalse')) {
                         $user->setAllAclToFalse();
                     }
+
                     break;
                 }
             }
@@ -460,6 +464,8 @@ final class UserController extends AdminController implements KernelControllerEv
 
         // unset confidential informations
         $userData = $user->getObjectVars();
+        $userData['roles'] =  array_map('intval', $user->getRoles());
+        $userData['docTypes'] =  array_map('intval', $user->getDocTypes());
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
@@ -649,7 +655,7 @@ final class UserController extends AdminController implements KernelControllerEv
         return $response;
     }
 
-    /* ROLES */
+    // ROLES
 
     /**
      * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})
@@ -675,7 +681,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User\Role $role
+     * @param User\Role|User\Role\Folder $role
      *
      * @return array
      */
@@ -727,13 +733,15 @@ final class UserController extends AdminController implements KernelControllerEv
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $role->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
 
         $replaceFn = function ($value) {
@@ -837,17 +845,16 @@ final class UserController extends AdminController implements KernelControllerEv
 
         $url = $twoFactor->getQRContent($proxyUser);
 
-        $code = new \Endroid\QrCode\QrCode;
-        $code->setWriterByName('png');
-        $code->setText($url);
-        $code->setSize(200);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size(200)
+            ->build();
 
-        $qrCodeFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->writeFile($qrCodeFile);
+        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
+        $result->saveToFile($qrCodeFile);
 
-        $response = new BinaryFileResponse($qrCodeFile);
-
-        return $response;
+        return new BinaryFileResponse($qrCodeFile);
     }
 
     /**
@@ -928,7 +935,6 @@ final class UserController extends AdminController implements KernelControllerEv
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        /** @var User $user */
         $user = User::getById($request->get('id'));
 
         if (!$user) {
@@ -1143,7 +1149,6 @@ final class UserController extends AdminController implements KernelControllerEv
         $message = '';
 
         if ($username = $request->get('username')) {
-            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {
@@ -1160,7 +1165,7 @@ final class UserController extends AdminController implements KernelControllerEv
             if (empty($message)) {
                 //generate random password if user has no password
                 if (!$user->getPassword()) {
-                    $user->setPassword(md5(uniqid()));
+                    $user->setPassword(bin2hex(random_bytes(16)));
                     $user->save();
                 }
 
@@ -1173,7 +1178,7 @@ final class UserController extends AdminController implements KernelControllerEv
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setTextBody("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $mail->text("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
                     $mail->send();
 
                     $success = true;

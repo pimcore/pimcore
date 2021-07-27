@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Translation
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -28,9 +26,10 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
-class Translation extends AbstractModel
+final class Translation extends AbstractModel
 {
     const DOMAIN_DEFAULT = 'messages';
+
     const DOMAIN_ADMIN = 'admin';
 
     /**
@@ -196,6 +195,8 @@ class Translation extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $domain
      *
      * @return array
@@ -238,6 +239,9 @@ class Translation extends AbstractModel
         return isset($this->translations[$language]);
     }
 
+    /**
+     * @internal
+     */
     public static function clearDependentCache()
     {
         Cache::clearTags(['translator', 'translate']);
@@ -255,7 +259,7 @@ class Translation extends AbstractModel
      */
     public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
     {
-        $cacheKey = 'translation_' . $id;
+        $cacheKey = 'translation_' . $id . '_' . $domain;
         if (Runtime::isRegistered($cacheKey)) {
             return Runtime::get($cacheKey);
         }
@@ -396,7 +400,7 @@ class Translation extends AbstractModel
      * Imports translations from a csv file
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
-     * @static
+     * @internal
      *
      * @param string $file - path to the csv file
      * @param string $domain

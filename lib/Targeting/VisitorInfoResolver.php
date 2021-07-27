@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting;
@@ -38,7 +38,9 @@ class VisitorInfoResolver
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     const STORAGE_KEY_RULE_CONDITION_VARIABLES = 'vi:var';
+
     const STORAGE_KEY_MATCHED_SESSION_RULES = 'vi:sru'; // visitorInfo:sessionRules
+
     const STORAGE_KEY_MATCHED_VISITOR_RULES = 'vi:vru'; // visitorInfo:visitorRules
 
     /**

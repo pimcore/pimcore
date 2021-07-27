@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
@@ -31,6 +32,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Metadata;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -51,7 +53,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class AssetController extends ElementControllerBase implements KernelControllerEventInterface
+class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -182,6 +184,15 @@ final class AssetController extends ElementControllerBase implements KernelContr
             $data['imageInfo'] = $imageInfo;
         }
 
+        $predefinedMetaData = Metadata\Predefined\Listing::getByTargetType('asset', [$asset->getType()]);
+        $predefinedMetaDataGroups = [];
+        /** @var Metadata\Predefined $item */
+        foreach ($predefinedMetaData as $item) {
+            if ($item->getGroup()) {
+                $predefinedMetaDataGroups[$item->getGroup()] = true;
+            }
+        }
+        $data['predefinedMetaDataGroups'] = array_keys($predefinedMetaDataGroups);
         $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
         $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
@@ -190,7 +201,10 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
+        $frontendPath = $asset->getFrontendFullPath();
+        $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
+            $frontendPath :
+            $request->getSchemeAndHttpHost() . $frontendPath;
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -416,6 +430,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
+
                     break;
                 } catch (\Exception $e) {
                     if ($retries < ($maxRetries - 1)) {
@@ -549,7 +564,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
             $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
-            $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
+            $newFilename = Element\Service::getSafeCopyName($newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
 
@@ -876,12 +891,11 @@ final class AssetController extends ElementControllerBase implements KernelContr
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
+            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO(\Pimcore\Db::get()->getWrappedConnection());
+            $lockBackend->tableName = 'webdav_locks';
+
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
-
-            // sync plugin
-            $server->addPlugin(new \Sabre\DAV\Sync\Plugin());
 
             // browser plugin
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
@@ -1087,9 +1101,9 @@ final class AssetController extends ElementControllerBase implements KernelContr
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $asset->getMimetype(),
+            'Content-Type' => $asset->getMimeType(),
             'Content-Disposition' => sprintf('attachment; filename="%s"', $asset->getFilename()),
-            'Content-Length' => fstat($stream)['size'],
+            'Content-Length' => $asset->getFileSize(),
         ]);
     }
 
@@ -1172,6 +1186,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
 
             $thumbnailConfig->setQuality($config['quality']);
             $thumbnailConfig->setFormat($config['format']);
+            $thumbnailConfig->setRasterizeSVG(true);
 
             if ($thumbnailConfig->getFormat() == 'JPEG') {
                 $thumbnailConfig->setPreserveMetaData(true);
@@ -1238,7 +1253,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $image->getMimetype(),
+            'Content-Type' => $image->getMimeType(),
             'Access-Control-Allow-Origin' => '*',
         ]);
         $this->addThumbnailCacheHeaders($response);
@@ -1410,7 +1425,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById((int)$request->get('image'));
+            $image = Asset\Image::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1541,7 +1556,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
     {
         $stream = null;
 
-        if ($asset->getMimetype() == 'application/pdf') {
+        if ($asset->getMimeType() == 'application/pdf') {
             $stream = $asset->getStream();
         }
 
@@ -1929,6 +1944,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             }
         } else {
             Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
+
             throw $this->createAccessDeniedHttpException();
         }
 
@@ -2510,6 +2526,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
 
                                 $em['data'] = $value;
                                 $dirty = true;
+
                                 break;
                             }
                         }

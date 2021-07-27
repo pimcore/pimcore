@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.document.doctypes");
@@ -154,6 +154,27 @@ pimcore.settings.document.doctypes = Class.create({
                     editable: false,
                     triggerAction: "all"
                 })
+            },
+            {
+                xtype: 'checkcolumn',
+                text: t("static"),
+                dataIndex: 'staticGeneratorEnabled',
+                width: 40,
+                renderer: function (value, metaData, record) {
+                    return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
+                },
+                listeners: {
+                    beforecheckchange: function (el, rowIndex, checked, eOpts) {
+                        if (this.store.getAt(rowIndex).get("type") !== "page") {
+                            record.set('staticGeneratorEnabled', false);
+                            return false;
+                        }
+                    }.bind(this),
+                    checkChange: function (column, rowIndex, checked, eOpts) {
+                        var record = this.store.getAt(rowIndex);
+                        record.set('staticGeneratorEnabled', checked);
+                    }.bind(this)
+                }
             },
             {
                 text: t("creationDate"),

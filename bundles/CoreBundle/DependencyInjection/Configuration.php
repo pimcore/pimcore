@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -72,6 +73,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.1',
+                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                    )
                 ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
@@ -388,7 +394,7 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('archive_treshold')
                             ->info('Archive threshold in days')
-                            ->defaultValue('')
+                            ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
                             ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
@@ -567,6 +573,15 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('ignore_localized_query_fallback')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                                ->end()
+                            ->defaultFalse()
+                        ->end()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
                         ->end()
@@ -656,6 +671,17 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('default')
                             ->defaultNull()
                         ->end()
+                        ->arrayNode('localized')
+                            ->performNoDeepMerging()
+                            ->beforeNormalization()
+                                ->ifArray()
+                                    ->then(function ($v) {
+                                        return $v;
+                                    })
+                            ->end()
+                            ->prototype('scalar')
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->scalarNode('allow_trailing_slash')
@@ -711,12 +737,30 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->scalarNode('pdf_creation_php_memory_limit')
-                            ->defaultValue('2048M')
+                                ->defaultValue('2048M')
+                            ->end()
+                            ->scalarNode('default_controller_print_page')
+                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
+                            ->end()
+                            ->scalarNode('default_controller_print_container')
+                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
+                            ->end()
                         ->end()
-                    ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
+                ->end()
+                ->arrayNode('static_page_router')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                            ->info('Enable Static Page router for document when using remote storage for generated pages')
+                        ->end()
+                        ->scalarNode('route_pattern')
+                            ->defaultNull()
+                            ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
+                        ->end()
                 ->end()
             ->end();
     }
@@ -775,7 +819,8 @@ final class Configuration implements ConfigurationInterface
     private function addContextNode(ArrayNodeDefinition $rootNode)
     {
         $contextNode = $rootNode->children()
-            ->arrayNode('context');
+            ->arrayNode('context')
+            ->useAttributeAsKey('name');
 
         /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
@@ -919,6 +964,10 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->enumNode('factory_type')
+                            ->values(['encoder', 'password_hasher'])
+                            ->defaultValue('encoder')
+                        ->end()
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
@@ -935,11 +984,28 @@ final class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('id')->end()
                             ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('password_hasher_factories')
+                            ->info('Password hasher factories to use as className => factory service ID mapping')
+                            ->example([
+                                'App\Model\DataObject\User1' => [
+                                    'id' => 'website_demo.security.encoder_factory2',
+                                ],
+                                'App\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
+                            ])
+                            ->useAttributeAsKey('class')
+                            ->prototype('array')
+                            ->beforeNormalization()->ifString()->then(function ($v) {
+                                return ['id' => $v];
+                            })->end()
+                            ->children()
+                            ->scalarNode('id')->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
     }
 
     /**

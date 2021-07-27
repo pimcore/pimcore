@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -67,7 +66,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -131,7 +130,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -152,7 +151,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -191,7 +190,7 @@ class Geopoint extends AbstractGeo implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\GeoCoordinates) {
-            return $data->getLongitude() . ',' . $data->getLatitude();
+            return $data->getLatitude().','.$data->getLongitude();
         }
 
         return '';

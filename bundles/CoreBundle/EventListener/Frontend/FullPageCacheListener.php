@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
@@ -33,9 +35,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class FullPageCacheListener
+class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
+    use StaticPageContextAwareTrait;
 
     /**
      * @var VisitorInfoStorageInterface
@@ -357,10 +360,11 @@ final class FullPageCacheListener
             return;
         }
 
-        $response = $event->getResponse();
-        if (!$response) {
-            return;
+        if ($this->matchesStaticPageContext($request)) {
+            $this->disable('Response can\'t be cached for static pages');
         }
+
+        $response = $event->getResponse();
 
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');

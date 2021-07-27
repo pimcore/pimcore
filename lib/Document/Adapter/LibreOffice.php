@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Adapter;
@@ -38,7 +39,7 @@ class LibreOffice extends Ghostscript
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::notice($e->getMessage());
         }
 
         return false;
@@ -49,7 +50,6 @@ class LibreOffice extends Ghostscript
      */
     public function isFileTypeSupported($fileType)
     {
-
         // it's also possible to pass a path or filename
         if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/i", $fileType)) {
             return true;
@@ -59,13 +59,13 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
     public static function getLibreOfficeCli()
     {
-        return \Pimcore\Tool\Console::getExecutable('soffice', true);
+        return Console::getExecutable('soffice', true);
     }
 
     /**
@@ -82,6 +82,7 @@ class LibreOffice extends Ghostscript
         if (!$this->isFileTypeSupported($asset->getFilename())) {
             $message = "Couldn't load document " . $asset->getRealFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -109,9 +110,9 @@ class LibreOffice extends Ghostscript
 
         try {
             // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
-            $stream = parent::getPdf($asset);
-
-            return $stream;
+            if (parent::isFileTypeSupported($asset->getFilename())) {
+                return parent::getPdf($asset);
+            }
         } catch (\Exception $e) {
             // nothing to do, delegate to libreoffice
         }
@@ -160,6 +161,7 @@ class LibreOffice extends Ghostscript
             } else {
                 $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
+
                 throw new \Exception($message);
             }
         }
@@ -176,10 +178,11 @@ class LibreOffice extends Ghostscript
             $asset = $this->asset;
         }
 
-        if ($page || parent::isFileTypeSupported($asset->getFilename())) {
+        if ($page) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $asset);
-        } elseif (self::isFileTypeSupported($asset->getFilename())) {
+        }
+        if (self::isFileTypeSupported($asset->getFilename())) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_SYSTEM_TEMP_DIRECTORY, $asset->getLocalFile()];
             Console::addLowProcessPriority($cmd);
@@ -197,12 +200,12 @@ class LibreOffice extends Ghostscript
                 unlink($tmpName);
 
                 return $text;
-            } else {
-                $message = "Couldn't convert document to Text: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
-                Logger::error($message);
-
-                return parent::getText(null, $asset);
             }
+
+            $message = "Couldn't convert document to Text: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
+            Logger::notice($message);
+
+            return parent::getText(null, $asset);
         }
 
         return ''; // default empty string

@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -20,9 +19,20 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface
+class Multiselect extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    \JsonSerializable,
+    NormalizerInterface,
+    LayoutDefinitionEnrichmentInterface,
+    FieldDefinitionEnrichmentInterface,
+    DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -228,7 +238,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -282,7 +292,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -412,11 +422,18 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator == '=') {
+        if ($operator === '=') {
             $name = $params['name'] ? $params['name'] : $this->name;
+
+            $db = \Pimcore\Db::get();
+            $key = $db->quoteIdentifier($name);
+            if (!empty($params['brickPrefix'])) {
+                $key = $params['brickPrefix'].$key;
+            }
+
             $value = "'%,".$value.",%'";
 
-            return '`'.$name.'` LIKE '.$value.' ';
+            return $key.' LIKE '.$value.' ';
         }
 
         return null;
@@ -509,7 +526,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    public function enrichFieldDefinition($context = [])
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -526,14 +546,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * Override point for enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -628,6 +643,20 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * {@inheritdoc}
      */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+
+        if ($this->getOptionsProviderClass()) {
+            $blockedVars[] = 'options';
+        }
+
+        return $blockedVars;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
@@ -655,5 +684,46 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';
+    }
+
+    /**
+     * Perform sanity checks, see #5010.
+     *
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function preSave($containerDefinition, $params = [])
+    {
+        /** @var ?DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
+        if ($optionsProvider) {
+            $context = [];
+            $context['fieldname'] = $this->getName();
+
+            $options = $optionsProvider->getOptions($context, $this);
+        } else {
+            $options = $this->getOptions();
+        }
+        if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
+            return $containsComma || str_contains($option['value'], ',');
+        }, false)) {
+            throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
+        }
+    }
+
+    /**
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function postSave($containerDefinition, $params = [])
+    {
+        // nothing to do
     }
 }

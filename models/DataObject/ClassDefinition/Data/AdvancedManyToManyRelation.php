@@ -1,21 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends ManyToManyRelation
+class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -116,14 +116,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         $list = [
             'dirty' => false,
             'data' => [],
         ];
 
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             $targets = [];
             $existingTargets = [];
 
@@ -135,7 +135,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             $db = Db::get();
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == 'object' ? 'o_id' : 'id';
+                $identifier = $targetType === 'object' ? 'o_id' : 'id';
 
                 $result = $db->fetchCol(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
@@ -154,6 +154,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     if (!in_array($destinationId, $existingTargets[$destinationType])) {
                         // destination object does not exist anymore
                         $list['dirty'] = true;
+
                         continue;
                     }
 
@@ -202,7 +203,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Data\ElementMetadata[]|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -219,7 +220,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
         $d = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
@@ -229,11 +230,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return ',' . implode(',', $d) . ',';
-        } elseif (is_array($d) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -307,6 +306,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
                     Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
+
                     continue;
                 }
 
@@ -341,7 +341,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                 foreach ($this->getColumns() as $c) {
                     $getter = 'get' . ucfirst($c['key']);
-                    $itemData[$c['key']] = $metaObject->$getter();
+
+                    try {
+                        $itemData[$c['key']] = $metaObject->$getter();
+                    } catch (Exception $e) {
+                        Logger::debug('Meta column '.$c['key'].' does not exist');
+                    }
                 }
 
                 $itemData['rowId'] = $itemData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $itemData['type'];
@@ -361,7 +366,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -370,7 +375,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 
@@ -378,11 +383,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 $e = null;
-                if ($element['type'] == 'object') {
+                if ($element['type'] === 'object') {
                     $e = DataObject::getById($element['id']);
-                } elseif ($element['type'] == 'asset') {
+                } elseif ($element['type'] === 'asset') {
                     $e = Asset::getById($element['id']);
-                } elseif ($element['type'] == 'document') {
+                } elseif ($element['type'] === 'document') {
                     $e = Document::getById($element['id']);
                 }
 
@@ -406,7 +411,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         $setter = 'set' . ucfirst($key);
                         $value = $element[$key] ?? null;
 
-                        if ($columnConfig['type'] == 'multiselect') {
+                        if ($columnConfig['type'] === 'multiselect') {
                             if (is_array($value) && count($value)) {
                                 $value = implode(',', $value);
                             }
@@ -641,30 +646,27 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array
+     * { @inheritdoc }
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if (!$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if (!$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container);
 
-                $object->setObjectVar($this->getName(), $data);
-                $this->markLazyloadedFieldAsLoaded($object);
+                $container->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($object instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            parent::loadLazyFieldcollectionField($object);
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            parent::loadLazyBrickField($object);
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($container);
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($container);
+            $data = $container->getObjectVar($this->getName());
         }
 
         // note, in case of advanced many to many relations we don't want to force the loading of the element
@@ -783,25 +785,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return DataObject\Data\ElementMetadata[]
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if (is_array($data)) {
             foreach ($data as &$metaObject) {
@@ -828,17 +816,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;
-    }
-
-    /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     */
-    public function enrichLayoutDefinition($object, $context = [])
-    {
-        // nothing to do
     }
 
     /**

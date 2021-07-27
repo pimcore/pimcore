@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.wysiwyg");
@@ -85,7 +85,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             iconCls = "pimcore_icon_droptarget";
         }
 
-        var html = '<div class="pimcore_tag_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
+        var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
         var pConf = {
             iconCls: iconCls,
             title: this.fieldConfig.title,
@@ -194,6 +194,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig = mergeObject(eConfig, elementCustomConfig);
         }
 
+        if(!isNaN(this.fieldConfig.maxCharacters) && this.fieldConfig.maxCharacters > 0) {
+            var maxChars = this.fieldConfig.maxCharacters;
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: maxChars
+            }
+        } else {
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: -1
+            }
+        }
+
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
@@ -290,7 +307,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectration: true});
+                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectratio: true});
 
                 if(typeof node.data.imageWidth != "undefined") {
                     if(node.data.imageWidth < defaultWidth

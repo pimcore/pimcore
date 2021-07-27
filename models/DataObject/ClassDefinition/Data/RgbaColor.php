@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -21,7 +20,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class RgbaColor extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface,
+    BeforeEncryptionMarshallerInterface,
+    AfterDecryptionUnmarshallerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -91,7 +98,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -358,7 +365,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -372,13 +379,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
             . $db->quoteIdentifier($name  . '__a') .')';
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);
@@ -388,26 +395,14 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

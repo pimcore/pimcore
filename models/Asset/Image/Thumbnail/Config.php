@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
@@ -30,6 +28,9 @@ final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
+    /**
+     * @internal
+     */
     protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
 
     /**
@@ -45,81 +46,113 @@ final class Config extends Model\AbstractModel
      )
      * )
      *
+     * @internal
+     *
      * @var array
      */
     protected $items = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $medias = [];
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $name = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $description = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $group = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $format = 'SOURCE';
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $quality = 85;
 
     /**
+     * @internal
+     *
      * @var float
      */
     protected $highResolution;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $preserveColor = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $preserveMetaData = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $rasterizeSVG = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $downloadable = false;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $modificationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $filenameSuffix;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $preserveAnimation = false;

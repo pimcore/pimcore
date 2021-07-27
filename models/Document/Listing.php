@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -37,11 +35,15 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
      *
+     * @internal
+     *
      * @var bool
      */
     protected $objectTypeDocument = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $unpublished = false;
@@ -89,9 +91,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     * Returns the SQL condition value.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getCondition()
     {
@@ -114,9 +114,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      */
 
     /**
-     * Returns the total items count.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -124,12 +122,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     * Returns the listing based on defined offset and limit as parameters.
-     *
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return Document[]
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {

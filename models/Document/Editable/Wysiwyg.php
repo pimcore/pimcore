@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -29,14 +27,14 @@ class Wysiwyg extends Model\Document\Editable
     /**
      * Contains the text
      *
+     * @internal
+     *
      * @var string
      */
     protected $text;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -44,9 +42,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -77,9 +73,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -92,11 +86,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param string $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -106,11 +96,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param string $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -120,7 +106,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -128,7 +114,7 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -136,14 +122,11 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $blockedTags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($ownerDocument, $blockedTags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
+        return Text::getCacheTagsOfWysiwygText($this->text, $tags);
     }
 
     /**

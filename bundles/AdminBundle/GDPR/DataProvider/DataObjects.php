@@ -1,17 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
@@ -24,6 +26,9 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 
+/**
+ * @internal
+ */
 class DataObjects extends Elements implements DataProviderInterface
 {
     /**
@@ -127,7 +132,7 @@ class DataObjects extends Elements implements DataProviderInterface
      * @param string $email
      * @param int $start
      * @param int $limit
-     * @param string $sort
+     * @param string|null $sort
      *
      * @return array
      */
@@ -138,8 +143,8 @@ class DataObjects extends Elements implements DataProviderInterface
         }
 
         $offset = $start;
-        $offset = $offset ? $offset : 0;
-        $limit = $limit ? $limit : 50;
+        $offset = $offset ?: 0;
+        $limit = $limit ?: 50;
 
         $searcherList = new Data\Listing();
         $conditionParts = [];
@@ -179,10 +184,8 @@ class DataObjects extends Elements implements DataProviderInterface
             $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
         }
 
-        if (count($conditionParts) > 0) {
-            $condition = implode(' AND ', $conditionParts);
-            $searcherList->setCondition($condition);
-        }
+        $condition = implode(' AND ', $conditionParts);
+        $searcherList->setCondition($condition);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
@@ -216,12 +219,7 @@ class DataObjects extends Elements implements DataProviderInterface
             }
         }
 
-        // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($limit) {
-            $totalMatches = $searcherList->getTotalCount();
-        } else {
-            $totalMatches = count($elements);
-        }
+        $totalMatches = $searcherList->getTotalCount();
 
         return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
     }

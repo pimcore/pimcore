@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -52,7 +51,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @internal
      *
-     * @var string|int
+     * @var int
      */
     public $labelWidth = 0;
 
@@ -124,7 +123,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return string|int
+     * @return int
      */
     public function getLabelWidth()
     {
@@ -132,16 +131,13 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param string|int $labelWidth
+     * @param int $labelWidth
      *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
-        if (is_numeric($labelWidth)) {
-            $labelWidth = (int)$labelWidth;
-        }
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
 
         return $this;
     }
@@ -300,7 +296,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -373,7 +369,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\StructuredTable $data
+     * @param DataObject\Data\StructuredTable|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

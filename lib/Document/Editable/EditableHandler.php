@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Editable;
@@ -31,8 +32,10 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -93,6 +96,16 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected $httpKernelRuntime;
 
+    /**
+     * @var FragmentRendererInterface
+     */
+    protected $fragmentRenderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     private EditmodeEditableDefinitionCollector $definitionCollector;
@@ -119,7 +132,9 @@ class EditableHandler implements LoggerAwareInterface
         ResponseStack $responseStack,
         EditmodeResolver $editmodeResolver,
         HttpKernelRuntime $httpKernelRuntime,
-        EditmodeEditableDefinitionCollector $definitionCollector
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        FragmentRendererInterface $fragmentRenderer,
+        RequestStack $requestStack
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -131,6 +146,8 @@ class EditableHandler implements LoggerAwareInterface
         $this->editmodeResolver = $editmodeResolver;
         $this->httpKernelRuntime = $httpKernelRuntime;
         $this->definitionCollector = $definitionCollector;
+        $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -173,6 +190,7 @@ class EditableHandler implements LoggerAwareInterface
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
+
                 try {
                     $bundle = $this->bundleLocator->getBundle($brick);
 
@@ -389,7 +407,17 @@ class EditableHandler implements LoggerAwareInterface
 
         $uri = new ControllerReference($controller, $attributes, $query);
 
-        return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        if ($this->requestHelper->hasCurrentRequest()) {
+            return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        } else {
+            // this case could happen when rendering on CLI, e.g. search-reindex ...
+            $request = $this->requestHelper->createRequestWithContext();
+            $this->requestStack->push($request);
+            $response = $this->fragmentRenderer->render($uri, $request, $attributes);
+            $this->requestStack->pop();
+
+            return $response;
+        }
     }
 
     /**

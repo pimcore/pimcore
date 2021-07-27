@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -37,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class NewsletterController extends DocumentControllerBase
+class NewsletterController extends DocumentControllerBase
 {
     use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 
@@ -175,7 +176,7 @@ final class NewsletterController extends DocumentControllerBase
 
             $draftData = [
                 'id' => $version->getId(),
-                'modificationDate' => $version->getDate()
+                'modificationDate' => $version->getDate(),
             ];
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
@@ -371,7 +372,7 @@ final class NewsletterController extends DocumentControllerBase
 
         Console::runPhpScriptInBackground(
             realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'),
-            'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()),
+            ['internal:newsletter-document-send', $document->getTmpStoreId(), \Pimcore\Tool::getHostUrl()],
             PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log'
         );
 

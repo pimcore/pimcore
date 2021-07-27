@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
@@ -41,51 +39,71 @@ final class Config extends Model\AbstractModel
      )
      * )
      *
+     * @internal
+     *
      * @var array
      */
     protected $items = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     public $medias = [];
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $name = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $description = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $group = '';
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $videoBitrate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $audioBitrate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $modificationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $filenameSuffix;
@@ -147,7 +165,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param string $name
      */
-    protected function createMediaIfNotExists($name)
+    private function createMediaIfNotExists($name)
     {
         if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];

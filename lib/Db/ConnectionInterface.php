@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Db;
@@ -106,7 +107,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -115,7 +116,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -127,7 +128,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array|scalar $params
      * @param array $types
      *
      * @return mixed
@@ -291,4 +292,9 @@ interface ConnectionInterface extends Connection
      * @return string
      */
     public function escapeLike(string $like): string;
+
+    /**
+     * @return \PDO
+     */
+    public function getWrappedConnection();
 }

@@ -135,8 +135,8 @@ languages. Please see the article about Translations to find out how to add obje
 * `visible in search result`: Determines if the field's data column is shown in the search results grid, or hidden 
   (meaning it has to be activated manually)
 * `indexed`: puts an index on this column in the database
-Moreover, each data field can have a `tooltip`, which is shown when the mouse hovers over the input field.
-* `unique`: currently the `input`, `numeric` and `user` data types allow to add a unique constraint. If checked, the values will also be indexed. Note that only works on top level attributes and not on nested stuff inside localized fields etc.
+* `unique`: If checked, the value has to be unique across all objects of this class. Note that only works on top level attributes and not on nested stuff inside localized fields etc. Beware that this does not add a database index to the query table which `Listing` classes use.
+* Moreover, each data field can have a `tooltip`, which is shown when the mouse hovers over the input field.
 
 ![Data Field Settings](../../../img/classes-datatypes1.jpg)
 ![Data Field Settings](../../../img/classes-datatypes2.jpg)

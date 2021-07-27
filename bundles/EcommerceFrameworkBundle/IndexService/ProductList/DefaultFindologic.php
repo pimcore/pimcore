@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
@@ -374,11 +375,13 @@ class DefaultFindologic implements ProductListInterface
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
                     $id = $item['id'];
+
                     break;
 
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
+
                     break;
             }
 
@@ -640,6 +643,7 @@ class DefaultFindologic implements ProductListInterface
                         foreach ($field->items->item as $entry) {
                             if ($entry->name == $cat) {
                                 $field = $entry;
+
                                 break;
                             }
                         }

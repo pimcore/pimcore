@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -19,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\MockProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
@@ -83,7 +85,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $giftItems = [];
 
     /**
-     * @var CartPriceCalculatorInterface
+     * @var CartPriceCalculatorInterface|null
      */
     protected $priceCalculator;
 
@@ -508,7 +510,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $itemKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public function getGiftItem($itemKey)
     {
@@ -949,11 +951,12 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     protected static function isValidCartItem(CartItemInterface $item)
     {
-        if ($item->getProduct() instanceof CheckoutableInterface) {
+        $product = $item->getProduct();
+        if ($product instanceof CheckoutableInterface && !$product instanceof MockProduct) {
             return true;
         }
 
-        Logger::warn('product ' . $item->getProduct()->getId() . ' not found');
+        Logger::warn('Product ' . $item->getProduct()->getId() . ' not found');
 
         return false;
     }

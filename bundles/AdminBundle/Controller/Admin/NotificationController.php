@@ -1,18 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
@@ -32,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class NotificationController extends AdminController
+class NotificationController extends AdminController
 {
     /**
      * @Route("/recipients", name="pimcore_admin_notification_recipients", methods={"GET"})
@@ -104,6 +105,7 @@ final class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $id = (int) $request->get('id', 0);
+
         try {
             $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
         } catch (\UnexpectedValueException $e) {

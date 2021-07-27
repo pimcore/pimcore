@@ -7,25 +7,30 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DocumentRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service
@@ -61,6 +66,11 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private $config;
 
     /**
+     * @var StaticPageResolver
+     */
+    private StaticPageResolver $staticPageResolver;
+
+    /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
@@ -70,12 +80,14 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        Config $config
+        Config $config,
+        StaticPageResolver $staticPageResolver
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
         $this->config = $config;
+        $this->staticPageResolver = $staticPageResolver;
     }
 
     public function setForceHandleUnpublishedDocuments(bool $handle)
@@ -255,6 +267,24 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             // check for redirects (pretty URL, SEO) when not in admin mode and while matching (not generating route)
             if ($redirectRoute = $this->handleDirectRouteRedirect($document, $route, $context)) {
                 return $redirectRoute;
+            }
+
+            // set static page context
+            if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
+                $this->staticPageResolver->setStaticPageContext($context->getRequest());
+            }
+        }
+
+        // Use latest version, if available, when the request is admin request
+        // so then route should be built based on latest Document settings
+        // https://github.com/pimcore/pimcore/issues/9644
+        if ($isAdminRequest) {
+            $latestVersion = $document->getLatestVersion();
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
+                if ($latestDoc instanceof Document\PageSnippet) {
+                    $document = $latestDoc;
+                }
             }
         }
 

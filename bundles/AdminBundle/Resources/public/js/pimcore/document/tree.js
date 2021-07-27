@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 Ext.define('documentreemodel', {
@@ -1221,6 +1221,7 @@ pimcore.document.tree = Class.create({
             "domains": [],
             "mainDomain": "",
             "errorDocument": "",
+            "localizedErrorDocuments": [],
             "redirectToMainDomain": false
         };
 
@@ -1233,9 +1234,11 @@ pimcore.document.tree = Class.create({
 
         var windowCfg = {
             width: 600,
+            height: 600,
             layout: "fit",
             closeAction: "close",
             items: [{
+                autoScroll: true,
                 xtype: "form",
                 bodyStyle: "padding: 10px;",
                 defaults: {
@@ -1259,7 +1262,7 @@ pimcore.document.tree = Class.create({
                     xtype: "textfield",
                     name: "errorDocument",
                     fieldCls: "input_drop_target",
-                    fieldLabel: t("error_page"),
+                    fieldLabel: t("error_page") + " (" + t("default") + ")",
                     value: data["errorDocument"],
                     listeners: {
                         "render": function (el) {
@@ -1293,6 +1296,10 @@ pimcore.document.tree = Class.create({
                         }
                     }
                 }, {
+                    xtype: "fieldset",
+                    style: "margin-top: 20px;",
+                    items: this.renderErrorDocuments(data["localizedErrorDocuments"]),
+                },{
                     xtype: "checkbox",
                     name: "redirectToMainDomain",
                     fieldLabel: t("redirect_to_main_domain"),
@@ -1470,7 +1477,7 @@ pimcore.document.tree = Class.create({
                     if (rdata && rdata.success) {
                         var options = {
                             elementType: "document",
-                                id: record.data.id,
+                            id: record.data.id,
                             published: task != "unpublish"
                         };
                         pimcore.elementservice.setElementPublishedState(options);
@@ -1594,5 +1601,61 @@ pimcore.document.tree = Class.create({
         } catch (e) {
             console.log(e);
         }
+    },
+
+    renderErrorDocuments: function(localizedErrorDocumentsData) {
+        var localizedErrorDocumentFields = []
+        var availableLanguages = pimcore.available_languages
+
+        var websiteLanguages = pimcore.settings.websiteLanguages;
+        if (websiteLanguages && websiteLanguages.length > 0) {
+            Ext.each(websiteLanguages, function (language) {
+                if (empty(language)) {
+                    return;
+                }
+
+                localizedErrorDocumentFields.push({
+                    fieldLabel: t("error_page") + " (" + availableLanguages[language] + ")",
+                    name: "errorDocument.localized." + language,
+                    fieldCls: "input_drop_target",
+                    value: localizedErrorDocumentsData[language] ? localizedErrorDocumentsData[language] : '',
+                    labelWidth: 200,
+                    width: 500,
+                    xtype: "textfield",
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function (e) {
+                                    return this.getEl();
+                                }.bind(el),
+
+                                onNodeOver: function (target, dd, e, data) {
+                                    if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
+                                },
+
+                                onNodeDrop: function (target, dd, e, data) {
+                                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        var record = data.records[0];
+                                        var data = record.data;
+
+                                        if (data.elementType == "document") {
+                                            this.setValue(data.path);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        return localizedErrorDocumentFields;
     }
 });

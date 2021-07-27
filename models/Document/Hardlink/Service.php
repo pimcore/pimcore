@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Hardlink;
@@ -55,6 +53,8 @@ class Service
     }
 
     /**
+     * @internal
+     *
      * @static
      *
      * @param Document $doc
@@ -81,6 +81,8 @@ class Service
     }
 
     /**
+     * @internal
+     *
      * this is used to get children below a hardlink by a path
      * for example: the requested path is /de/service/contact but /de/service is a hardlink to /en/service
      * then $hardlink would be /en/service and $path /de/service/contact and this function returns then /en/service/contact
@@ -113,6 +115,8 @@ class Service
     }
 
     /**
+     * @internal
+     *
      * @param Document\Hardlink $hardlink
      * @param string $path
      *

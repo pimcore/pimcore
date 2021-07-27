@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Image;
@@ -32,6 +30,8 @@ final class Thumbnail
     use ImageThumbnailTrait;
 
     /**
+     * @internal
+     *
      * @var bool[]
      */
     protected static $hasListenersCache = [];
@@ -206,7 +206,7 @@ final class Thumbnail
      *
      * @return string
      */
-    protected function addCacheBuster(string $path, array $options, Asset $asset): string
+    private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
             $path = '/cache-buster-' . $asset->getVersionCount() . $path;
@@ -235,29 +235,25 @@ final class Thumbnail
             }
         }
 
-        if ($thumb) {
-            $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-            if ($mediaQuery) {
-                $sourceTagAttributes['media'] = $mediaQuery;
-                $thumb->reset();
-            }
-
-            if (isset($options['previewDataUri'])) {
-                $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                $sourceTagAttributes['srcset'] = 'data:,1w';
-            }
-
-            $sourceTagAttributes['type'] = $thumb->getMimeType();
-
-            $sourceCallback = $options['sourceCallback'] ?? null;
-            if ($sourceCallback) {
-                $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
-            }
-
-            return '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+        $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+        if ($mediaQuery) {
+            $sourceTagAttributes['media'] = $mediaQuery;
+            $thumb->reset();
         }
 
-        return '';
+        if (isset($options['previewDataUri'])) {
+            $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+            unset($sourceTagAttributes['srcset']);
+        }
+
+        $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+        $sourceCallback = $options['sourceCallback'] ?? null;
+        if ($sourceCallback) {
+            $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
+        }
+
+        return '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
     }
 
     /**
@@ -402,7 +398,9 @@ final class Thumbnail
             $attributes['title'] = $titleText;
         }
 
-        $attributes['loading'] = 'lazy';
+        if (!isset($attributes['loading'])) {
+            $attributes['loading'] = 'lazy';
+        }
 
         foreach ($removeAttributes as $attribute) {
             unset($attributes[$attribute]);
@@ -457,7 +455,7 @@ final class Thumbnail
      *
      * @throws NotFoundException
      */
-    protected function createConfig($selector)
+    private function createConfig($selector)
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
@@ -38,6 +39,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     const RELATION_FIELD = 'parentchildrelation';
 
     const REINDEXING_LOCK_KEY = 'elasticsearch_reindexing_lock';
+
+    const DEFAULT_TIMEOUT_MS_FRONTEND = 20000; // 20 seconds
+
+    const DEFAULT_TIMEOUT_MS_BACKEND =  120000; // 2 minutes
 
     /**
      * Default value for the mapping of custom attributes
@@ -189,7 +194,26 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_es');
                 $builder->setLogger($logger);
             }
-            $builder->setHosts($this->tenantConfig->getElasticSearchClientParams()['hosts']);
+
+            $esSearchParams = $this->tenantConfig->getElasticSearchClientParams();
+            $builder->setHosts($esSearchParams['hosts']);
+
+            // timeout for search queries is important, because long queries can block PHP FPM
+            // distinguish CLI, because reindexing scripts tend to run longer than frontend search queries
+            $timeoutMsParamName = php_sapi_name() == PHP_SAPI ? 'timeoutMsBackend' : 'timeoutMs';
+            if (isset($esSearchParams[$timeoutMsParamName])) {
+                $timeoutMs = $esSearchParams[$timeoutMsParamName];
+            } else {
+                $timeoutMs = php_sapi_name() == PHP_SAPI ? self::DEFAULT_TIMEOUT_MS_BACKEND : self::DEFAULT_TIMEOUT_MS_FRONTEND;
+            }
+            $builder->setConnectionParams([
+                'client' => [
+                    'curl' => [
+                        CURLOPT_TIMEOUT_MS => $timeoutMs,
+                    ],
+                ],
+            ]);
+
             $this->elasticSearchClient = $builder->build();
         }
 
@@ -704,6 +728,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     public function fetchEsActiveIndex(): ?string
     {
         $esClient = $this->getElasticSearchClient();
+
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -175,13 +176,11 @@ class Text
     }
 
     /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsTagsInWysiwyg($text)
+    private static function getElementsTagsInWysiwyg($text)
     {
         if (!is_string($text) || strlen($text) < 1) {
             return [];
@@ -201,13 +200,11 @@ class Text
     }
 
     /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsInWysiwyg($text)
+    private static function getElementsInWysiwyg($text)
     {
         $hash = 'elements_wysiwyg_text_' . md5($text);
         if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
@@ -245,8 +242,6 @@ class Text
     /**
      * extracts all dependencies to other elements from wysiwyg text
      *
-     * @static
-     *
      * @param  string $text
      *
      * @return array
@@ -275,10 +270,8 @@ class Text
      *
      * @return array
      */
-    public static function getCacheTagsOfWysiwygText($text, $tags = [])
+    public static function getCacheTagsOfWysiwygText($text, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
@@ -376,7 +369,7 @@ class Text
             if (false !== ($length = strrpos($text, ' '))) {
                 $text = substr($text, 0, $length);
             }
-            $string = $text.'...';
+            $string = $text . '…';
         }
 
         return $string;

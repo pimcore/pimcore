@@ -1,20 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Dotenv\Dotenv;
@@ -84,7 +84,7 @@ class Bootstrap
         if (!$pimcoreConsole) {
             // skip if maintenance mode is on and the flag is not set
             if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
-                die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
+                die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution\n");
             }
         }
 
@@ -145,7 +145,7 @@ class Bootstrap
         }
     }
 
-    protected static function prepareEnvVariables()
+    private static function prepareEnvVariables()
     {
         (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
     }
@@ -210,25 +210,13 @@ class Bootstrap
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 
-    public static function autoload()
+    private static function autoload()
     {
         $loader = \Pimcore::getAutoloader();
 
         // tell the autoloader where to find Pimcore's generated class stubs
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
         $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-
-        // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
-        $apiDocAnnotations = [
-            'api', 'apiDefine',
-            'apiDeprecated', 'apiDescription', 'apiError',  'apiErrorExample', 'apiExample', 'apiGroup', 'apiHeader',
-            'apiHeaderExample', 'apiIgnore', 'apiName', 'apiParam', 'apiParamExample', 'apiPermission', 'apiSampleRequest',
-            'apiSuccess', 'apiSuccessExample', 'apiUse', 'apiVersion',
-        ];
-
-        foreach ($apiDocAnnotations as $apiDocAnnotation) {
-            AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
-        }
 
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;

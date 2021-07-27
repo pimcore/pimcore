@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
@@ -51,7 +52,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AdminOrderController extends AdminController implements KernelControllerEventInterface
+class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface
@@ -121,6 +122,7 @@ final class AdminOrderController extends AdminController implements KernelContro
                     $filterProductType = new ProductType();
                     $filterProductType->setTypes([$q]);
                     $list->addFilter($filterProductType);
+
                     break;
 
                 case 'order':
@@ -128,6 +130,7 @@ final class AdminOrderController extends AdminController implements KernelContro
                     $filterOrder = new OrderSearch();
                     $filterOrder->setKeyword($q);
                     $list->addFilter($filterOrder);
+
                     break;
             }
         }
@@ -206,7 +209,7 @@ final class AdminOrderController extends AdminController implements KernelContro
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
-        /* @var AbstractOrder $order */
+        // @var AbstractOrder $order
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -228,6 +231,7 @@ final class AdminOrderController extends AdminController implements KernelContro
             );
 
             $json = null;
+
             try {
                 $response = $client->request('GET', $url);
                 if ($response->getStatusCode() < 300) {
@@ -290,7 +294,7 @@ final class AdminOrderController extends AdminController implements KernelContro
                     $classes = $field->getClasses();
                     if (count($classes) === 1) {
                         $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
-                        /* @var \Pimcore\Model\DataObject\Concrete $class */
+                        // @var \Pimcore\Model\DataObject\Concrete $class
 
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
@@ -316,13 +320,13 @@ final class AdminOrderController extends AdminController implements KernelContro
         $arrTimeline = [];
         $date = new \DateTime();
         foreach ($orderAgent->getFullChangeLog() as $note) {
-            /* @var \Pimcore\Model\Element\Note $note */
+            // @var \Pimcore\Model\Element\Note $note
 
             $quantity = null;
 
             // get avatar
             $user = User::getById($note->getUser());
-            /* @var \Pimcore\Model\User $user */
+            // @var \Pimcore\Model\User $user
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
             // group events
@@ -344,13 +348,13 @@ final class AdminOrderController extends AdminController implements KernelContro
 
             // add
             $arrTimeline[$group][] = [
-                'icon' => $arrIcons[$note->getTitle()],
-                'context' => $arrContext[$note->getTitle()] ?: 'default',
+                'icon' => $arrIcons[$note->getTitle()] ?? '',
+                'context' => $arrContext[$note->getTitle()] ?? 'default',
                 'type' => $note->getTitle(),
                 'date' => $formatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
                 'avatar' => $avatar,
                 'user' => $user ? $user->getName() : null,
-                'message' => $note->getData()['message']['data'],
+                'message' => $note->getData()['message']['data'] ?? '',
                 'title' => $title ?: $note->getTitle(),
                 'quantity' => $quantity,
             ];
@@ -384,7 +388,7 @@ final class AdminOrderController extends AdminController implements KernelContro
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -419,7 +423,7 @@ final class AdminOrderController extends AdminController implements KernelContro
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -453,7 +457,7 @@ final class AdminOrderController extends AdminController implements KernelContro
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

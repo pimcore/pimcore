@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Thumbnail;
@@ -20,6 +18,7 @@ namespace Pimcore\Model\Asset\Thumbnail;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
 
@@ -28,46 +27,64 @@ trait ImageThumbnailTrait
     use TemporaryFileHelperTrait;
 
     /**
-     * @var Asset
+     * @internal
+     *
+     * @var Asset|null
      */
     protected $asset;
 
     /**
+     * @internal
+     *
      * @var Image\Thumbnail\Config|null
      */
     protected $config;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    protected $pathReference = [];
+    protected array $pathReference = [];
 
     /**
+     * @internal
+     *
      * @var int|null
      */
     protected $width;
 
     /**
+     * @internal
+     *
      * @var int|null
      */
     protected $height;
 
     /**
+     * @internal
+     *
      * @var int|null
      */
     protected $realWidth;
 
     /**
+     * @internal
+     *
      * @var int|null
      */
     protected $realHeight;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $mimetype;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $deferred = true;
@@ -78,6 +95,7 @@ trait ImageThumbnailTrait
     public function getStream()
     {
         $pathReference = $this->getPathReference();
+
         try {
             return Storage::get($pathReference['type'])->readStream($pathReference['src']);
         } catch (\Exception $e) {
@@ -87,6 +105,10 @@ trait ImageThumbnailTrait
 
     public function getPathReference(bool $deferredAllowed = false): array
     {
+        if (!$deferredAllowed && (($this->pathReference['type'] ?? '') === 'deferred')) {
+            $this->pathReference = [];
+        }
+
         if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
@@ -265,19 +287,21 @@ trait ImageThumbnailTrait
      */
     protected function convertToWebPath(array $pathReference): string
     {
-        $type = $pathReference['type'];
-        $src = $pathReference['src'];
+        $type = $pathReference['type'] ?? null;
+        $path = $pathReference['src'] ?? null;
 
-        if ($type === 'data-uri') {
-            return $src;
-        } elseif ($type === 'deferred') {
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
-            $path = $prefix . urlencode_ignore_slash($src);
-        } elseif ($type === 'thumbnail') {
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
-            $path = $prefix . urlencode_ignore_slash($src);
-        } else {
-            $path = urlencode_ignore_slash($src);
+        if (Tool::isFrontend()) {
+            if ($type === 'data-uri') {
+                return $path;
+            } elseif ($type === 'deferred') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+                $path = $prefix . urlencode_ignore_slash($path);
+            } elseif ($type === 'thumbnail') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                $path = $prefix . urlencode_ignore_slash($path);
+            } else {
+                $path = urlencode_ignore_slash($path);
+            }
         }
 
         return $path;

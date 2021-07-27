@@ -64,12 +64,12 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test
 
 #### Important Environment Variables
 
-| Env Variable                              | Example          | Comment                                                                                                                        |
-|-------------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| PIMCORE_ENVIRONMENT                       | test             | Test environment                                                                                                               |
-| PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
-| PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_REDIS_DSN                    | redis://localhost| **required for REDIS tests**                                                                                                   |
+| Env Variable           | Example          | Comment                                                     |
+|------------------------|------------------|-------------------------------------------------------------|
+| APP_ENV                | test             | Test environment                         |
+| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes) |
+| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
+| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**   |
 
 #### Suites
 
@@ -122,7 +122,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 In general, contributions in form extending and improving tests is highly appreciated.
 Please follow the structure and principles described above.
 
-If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/master/tests/_support/Helper/Model.php).
+If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/10.x/tests/_support/Helper/Model.php).
 There you will find all class definitions used for testing.
 
 ### Perform PHPStan Analysis

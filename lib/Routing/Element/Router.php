@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Element;
@@ -43,6 +44,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $requestHelper;
 
+    /**
+     * @param RequestContext $context
+     * @param RequestHelper $requestHelper
+     */
     public function __construct(RequestContext $context, RequestHelper $requestHelper)
     {
         $this->context = $context;
@@ -70,7 +75,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function supports($name)
     {
-        return $name instanceof ElementInterface;
+        return $name === 'pimcore_element';
     }
 
     /**
@@ -78,8 +83,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
-        if ($name instanceof ElementInterface) {
-            return sprintf('Element (Type: %s, ID: %d)', $name->getType(), $name->getId());
+        $element = $parameters['element'] ?? null;
+        if ($element instanceof ElementInterface) {
+            return sprintf('Element (Type: %s, ID: %d)', $parameters['element']->getType(), $parameters['element']->getId());
         }
 
         return 'No element';
@@ -88,13 +94,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
-        if ($name instanceof Document || $name instanceof Asset) {
+        $element = $parameters['element'] ?? null;
+        if ($element instanceof Document || $element instanceof Asset) {
             $schemeAuthority = '';
             $host = $this->context->getHost();
             $scheme = $this->context->getScheme();
-            $path = $name->getFullPath();
+            $path = $element->getFullPath();
             $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
 
             if (strpos($path, '://') !== false) {
@@ -125,10 +132,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
             return $schemeAuthority . $this->context->getBaseUrl() . $path . $qs;
         }
-        if ($name instanceof Concrete) {
-            $linkGenerator = $name->getClass()->getLinkGenerator();
+        if ($element instanceof Concrete) {
+            $linkGenerator = $element->getClass()->getLinkGenerator();
             if ($linkGenerator) {
-                return $linkGenerator->generate($name, [
+                return $linkGenerator->generate($element, [
                     'route' => $this->getCurrentRoute(),
                     'parameters' => $parameters,
                     'context' => $this,
@@ -137,12 +144,12 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             }
         }
 
-        if ($name instanceof ElementInterface) {
+        if ($element instanceof ElementInterface) {
             throw new RouteNotFoundException(
                 sprintf(
                     'Could not generate URL for element (Type: %s, ID: %d)',
-                    $name->getType(),
-                    $name->getId()
+                    $element->getType(),
+                    $element->getId()
                 )
             );
         }
@@ -170,6 +177,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $route;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function matchRequest(Request $request)
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));

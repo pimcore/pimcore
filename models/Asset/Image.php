@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset;
@@ -21,6 +19,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -34,14 +33,14 @@ class Image extends Model\Asset
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'image';
 
+    private bool $clearThumbnailsOnSave = false;
+
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -74,7 +73,8 @@ class Image extends Model\Asset
             $this->handleEmbeddedMetaData(true, $tmpFile);
         }
 
-        $this->clearThumbnails();
+        $this->clearThumbnails($this->clearThumbnailsOnSave);
+        $this->clearThumbnailsOnSave = false; // reset to default
 
         parent::update($params);
 
@@ -90,6 +90,9 @@ class Image extends Model\Asset
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function postPersistData()
     {
         if ($this->getDataChanged()) {
@@ -241,10 +244,13 @@ EOT;
     public function getLowQualityPreviewPath()
     {
         $storagePath = $this->getLowQualityPreviewStoragePath();
-        $path = urlencode_ignore_slash($storagePath);
+        $path = $storagePath;
 
-        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
-        $path = $prefix . $path;
+        if (Tool::isFrontend()) {
+            $path = urlencode_ignore_slash($storagePath);
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+            $path = $prefix . $path;
+        }
 
         $event = new GenericEvent($this, [
             'storagePath' => $storagePath,
@@ -288,7 +294,7 @@ EOT;
      *
      * @param string|array|Image\Thumbnail\Config $config
      *
-     * @return Image\Thumbnail\Config
+     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig($config)
     {
@@ -451,17 +457,14 @@ EOT;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return Model\Asset
+     * {@inheritdoc}
      */
     public function setCustomSetting($key, $value)
     {
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
             // if the focal point changes we need to clean all thumbnails on save
             if ($this->getCustomSetting($key) != $value) {
-                $this->setDataChanged();
+                $this->clearThumbnailsOnSave = true;
             }
         }
 
@@ -490,12 +493,14 @@ EOT;
     {
         $isAnimated = false;
 
-        switch ($this->getMimetype()) {
+        switch ($this->getMimeType()) {
             case 'image/gif':
                 $isAnimated = $this->isAnimatedGif();
+
                 break;
             case 'image/png':
                 $isAnimated = $this->isAnimatedPng();
+
                 break;
             default:
                 break;
@@ -513,7 +518,7 @@ EOT;
     {
         $isAnimated = false;
 
-        if ($this->getMimetype() == 'image/gif') {
+        if ($this->getMimeType() == 'image/gif') {
             $fileContent = $this->getData();
 
             /**
@@ -541,7 +546,7 @@ EOT;
     {
         $isAnimated = false;
 
-        if ($this->getMimetype() == 'image/png') {
+        if ($this->getMimeType() == 'image/png') {
             $fileContent = $this->getData();
 
             /**

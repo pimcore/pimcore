@@ -39,7 +39,7 @@ to let elasticsearch know about the sub-documents:
     options:
         mapping:
             type: 'nested'
-    interpreter_id: AppBundle\Ecommerce\IndexService\Interpreter\MyAttributes
+    interpreter_id: App\Ecommerce\IndexService\Interpreter\MyAttributes
     interpreter_options:
         locale: '%%locale%%'
 ```

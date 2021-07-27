@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -22,9 +20,14 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class IsEqual extends AbstractOperator
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $skipNull;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -32,6 +35,9 @@ final class IsEqual extends AbstractOperator
         $this->skipNull = $config->skipNull ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -70,6 +76,7 @@ final class IsEqual extends AbstractOperator
             foreach ($valueArray as $val) {
                 if ($firstValue !== $val) {
                     $isEqual = false;
+
                     break;
                 }
             }

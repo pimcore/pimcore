@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.document_language_overview");
@@ -242,15 +242,16 @@ pimcore.document.document_language_overview = Class.create({
                         },
                         items: [{
                             xtype: "textfield",
+                            itemId: "title",
+                            fieldLabel: t('title'),
+                            name: 'title',
                             width: "100%",
-                            fieldLabel: t('key'),
-                            itemId: "key",
-                            name: 'key',
                             enableKeyEvents: true,
                             listeners: {
                                 keyup: function (el) {
                                     pageForm.getComponent("name").setValue(el.getValue());
-                                }
+                                    pageForm.getComponent("key").setValue(el.getValue());
+                                }.bind(this)
                             }
                         },{
                             xtype: "textfield",
@@ -260,10 +261,10 @@ pimcore.document.document_language_overview = Class.create({
                             width: "100%"
                         },{
                             xtype: "textfield",
-                            itemId: "title",
-                            fieldLabel: t('title'),
-                            name: 'title',
-                            width: "100%"
+                            width: "100%",
+                            fieldLabel: t('key'),
+                            itemId: "key",
+                            name: 'key',
                         }]
                     });
 

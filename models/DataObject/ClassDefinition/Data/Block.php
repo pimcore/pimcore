@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -27,10 +26,11 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element
@@ -154,6 +154,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -216,6 +217,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
@@ -244,7 +246,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
 
                     if ($blockElementRaw['type'] == 'localizedfields') {
-                        /** @var DataObject\Localizedfield $data */
+                        /** @var DataObject\Localizedfield|null $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
@@ -279,7 +281,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -302,6 +304,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -438,7 +441,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
@@ -587,7 +590,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array
@@ -683,7 +686,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['containerType'] = 'block';
             $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -698,6 +707,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setReferencedFields($referencedFields)
     {
         $this->referencedFields = $referencedFields;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -714,6 +724,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -754,6 +765,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $elementData = $blockElement->getData();
@@ -768,10 +780,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($this->getLazyLoading()) {
             return $tags;
         }
@@ -786,6 +796,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $data = $blockElement->getData();
@@ -870,26 +881,21 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param null|DataObject\Data\BlockElement[] $data
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         $lf = $this->getFieldDefinition('localizedfields');
         if ($lf && is_array($data)) {
-            /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {
                 if (is_array($item)) {
                     foreach ($item as $itemElement) {
-                        if ($itemElement->getType() == 'localizedfields') {
+                        if ($itemElement->getType() === 'localizedfields') {
                             /** @var DataObject\Localizedfield $itemElementData */
                             $itemElementData = $itemElement->getData();
-                            $itemElementData->setObject($object);
+                            $itemElementData->setObject($container);
 
                             // the localized field needs at least the containerType as this is important
                             // for lazy loading
@@ -978,28 +984,28 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
-        $params['owner'] = $object;
+        $params['owner'] = $container;
         $params['fieldname'] = $this->getName();
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, $params);
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                    $this->markLazyloadedFieldAsLoaded($object);
+                if (method_exists($container, $setter)) {
+                    $container->$setter($data);
+                    $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
-        } elseif ($object instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
         }
 
         return is_array($data) ? $data : [];
@@ -1110,6 +1116,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if ($validationExceptions) {
                     $aggregatedExceptions = new Model\Element\ValidationException();
                     $aggregatedExceptions->setSubItems($validationExceptions);
+
                     throw $aggregatedExceptions;
                 }
             }

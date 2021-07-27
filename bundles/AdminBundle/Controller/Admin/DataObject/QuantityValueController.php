@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -28,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  *  @internal
  */
-final class QuantityValueController extends AdminController
+class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})
@@ -135,6 +134,10 @@ final class QuantityValueController extends AdminController
                     throw new \Exception('unit with ID [' . $id . '] already exists');
                 }
 
+                if (mb_strlen($id) > 50) {
+                    throw new \Exception('The maximal character length for the unit ID is 50 characters, the provided ID has ' . mb_strlen($id) . ' characters.');
+                }
+
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
@@ -185,8 +188,9 @@ final class QuantityValueController extends AdminController
             $list->setCondition('id IN (' . $string . ')');
         }
 
+        $result = [];
         $units = $list->getUnits();
-        foreach ($units as $unit) {
+        foreach ($units as &$unit) {
             try {
                 if ($unit->getAbbreviation()) {
                     $unit->setAbbreviation(\Pimcore\Model\Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
@@ -196,22 +200,24 @@ final class QuantityValueController extends AdminController
                     $unit->setLongname(\Pimcore\Model\Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_ADMIN, true,
                         true));
                 }
+                $result[] = $unit->getObjectVars();
             } catch (\Exception $e) {
                 // nothing to do ...
             }
         }
 
-        return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
+        return $this->adminJson(['data' => $result, 'success' => true, 'total' => $list->getTotalCount()]);
     }
 
     /**
      * @Route("/quantity-value/convert", name="pimcore_admin_dataobject_quantityvalue_convert", methods={"GET"})
      *
      * @param Request $request
+     * @param UnitConversionService $conversionService
      *
      * @return JsonResponse
      */
-    public function convertAction(Request $request)
+    public function convertAction(Request $request, UnitConversionService $conversionService)
     {
         $fromUnitId = $request->get('fromUnit');
         $toUnitId = $request->get('toUnit');
@@ -222,10 +228,8 @@ final class QuantityValueController extends AdminController
             return $this->adminJson(['success' => false]);
         }
 
-        /** @var UnitConversionService $converter */
-        $converter = $this->container->get(UnitConversionService::class);
         try {
-            $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
+            $convertedValue = $conversionService->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false]);
         }
@@ -237,10 +241,11 @@ final class QuantityValueController extends AdminController
      * @Route("/quantity-value/convert-all", name="pimcore_admin_dataobject_quantityvalue_convertall", methods={"GET"})
      *
      * @param Request $request
+     * @param UnitConversionService $conversionService
      *
      * @return JsonResponse
      */
-    public function convertAllAction(Request $request)
+    public function convertAllAction(Request $request, UnitConversionService $conversionService)
     {
         $unitId = $request->get('unit');
 
@@ -255,11 +260,9 @@ final class QuantityValueController extends AdminController
         $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
 
         $convertedValues = [];
-        /** @var UnitConversionService $converter */
-        $converter = $this->container->get(UnitConversionService::class);
         foreach ($units->getUnits() as $targetUnit) {
             try {
-                $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
+                $convertedValue = $conversionService->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
 
                 $convertedValues[] = ['unit' => $targetUnit->getAbbreviation(), 'unitName' => $targetUnit->getLongname(), 'value' => round($convertedValue->getValue(), 4)];
             } catch (\Exception $e) {

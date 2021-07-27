@@ -1,24 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -46,29 +44,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      * @var string|null
      */
     public $restrictTo = null;
-
-    public function __construct()
-    {
-        $this->buildOptions();
-    }
-
-    private function buildOptions()
-    {
-        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
-        asort($countries);
-        $options = [];
-
-        foreach ($countries as $short => $translation) {
-            if (strlen($short) == 2) {
-                $options[] = [
-                    'key' => $translation,
-                    'value' => $short,
-                ];
-            }
-        }
-
-        $this->setOptions($options);
-    }
 
     /**
      * {@inheritdoc}
@@ -133,14 +108,10 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @return $this
+     * @return string
      */
-    public function jsonSerialize()
+    public function getOptionsProviderClass()
     {
-        if (Service::doRemoveDynamicOptions()) {
-            $this->options = null;
-        }
-
-        return $this;
+        return '@' . CountryOptionsProvider::class;
     }
 }

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -84,12 +85,15 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
+        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -136,6 +140,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
+        $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
@@ -333,6 +338,24 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $factoryMapping = [];
         foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
+            $factoryMapping[$className] = new Reference($factoryConfig['id']);
+        }
+
+        $definition->replaceArgument(1, $factoryMapping);
+    }
+
+    /**
+     * Handle pimcore.security.password_hasher_factories mapping
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    private function configurePasswordHashers(ContainerBuilder $container, array $config)
+    {
+        $definition = $container->findDefinition('pimcore.security.password_hasher_factory');
+
+        $factoryMapping = [];
+        foreach ($config['security']['password_hasher_factories'] as $className => $factoryConfig) {
             $factoryMapping[$className] = new Reference($factoryConfig['id']);
         }
 

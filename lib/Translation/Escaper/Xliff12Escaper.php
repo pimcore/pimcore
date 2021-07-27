@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation\Escaper;
@@ -51,7 +52,7 @@ class Xliff12Escaper
             $parts = explode('>', $match);
             $parts[0] .= '>';
             foreach ($parts as $part) {
-                if (!empty(trim($part))) {
+                if (!empty(trim($part)) || trim($part) === '0') {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);
                         if (in_array($tagName, self::SELFCLOSING_TAGS)) {
@@ -120,8 +121,8 @@ class Xliff12Escaper
 
         $content = $node->asXML();
 
-        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>/i", '', $content);
-        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
+        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>\s?/i", '', $content);
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>\s?/i", '', $content);
         // we have to do this again but with html entities because of CDATA content
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 

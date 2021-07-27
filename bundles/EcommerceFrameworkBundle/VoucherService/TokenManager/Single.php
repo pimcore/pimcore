@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
@@ -80,7 +81,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             $paginator = $paginator->paginate(
                 (array)$codes,
                 $params['page'] ?? 1,
-                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+                isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
             );
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($codes);
@@ -138,6 +139,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $query =
                 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES (?,?,?)
@@ -147,7 +149,6 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
             return trim($this->configuration->getToken());
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;

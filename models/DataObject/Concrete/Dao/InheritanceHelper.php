@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
@@ -20,6 +18,9 @@ namespace Pimcore\Model\DataObject\Concrete\Dao;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 class InheritanceHelper
 {
     const STORE_TABLE = 'object_store_';
@@ -381,6 +382,7 @@ class InheritanceHelper
                     if (!in_array($fieldname, $systemFields)) {
                         if (!is_null($value)) {
                             $toBeRemoved = false;
+
                             break;
                         }
                     }
@@ -435,7 +437,6 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-
                 $language = $params['language'];
 
                 $query = "
@@ -454,11 +455,9 @@ class InheritanceHelper
                          $fields
                     FROM cte x
                     LEFT JOIN $storeTable l ON x.id = l.$idfield
-                   WHERE COALESCE(`language`, " . $this->db->quote($language) . ") = " . $this->db->quote($language) .
-                   " ORDER BY x.o_path ASC";
-
+                   WHERE COALESCE(`language`, " . $this->db->quote($language) . ') = ' . $this->db->quote($language) .
+                   ' ORDER BY x.o_path ASC';
             } else {
-
                 $query = "
                     WITH RECURSIVE cte(id, classId, parentId, o_path) as (
                         SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path

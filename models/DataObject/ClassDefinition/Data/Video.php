@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,7 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -120,7 +119,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -212,7 +211,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -288,7 +287,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -364,10 +363,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data && $data->getData() instanceof Asset) {
             if (!array_key_exists($data->getData()->getCacheTag(), $tags)) {
                 $tags = $data->getData()->getCacheTags($tags);
@@ -421,7 +418,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param DataObject\Data\Video|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -446,15 +443,11 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data && $data->getData() instanceof Asset) {
             if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
@@ -568,14 +561,14 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (is_array($value)) {
             $video = new DataObject\Data\Video();
             $video->setType($value['type']);
-            $video->setTitle($value['title']);
-            $video->setDescription($value['description']);
+            $video->setTitle($value['title'] ?? null);
+            $video->setDescription($value['description'] ?? null);
 
-            if ($value['poster']) {
+            if ($value['poster'] ?? null) {
                 $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
             }
 
-            if ($value['data']) {
+            if ($value['data'] ?? null) {
                 if (is_array($value['data'])) {
                     $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
                 } else {

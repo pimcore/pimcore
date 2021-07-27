@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -32,6 +33,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Newsletter
 {
     public const SENDING_MODE_BATCH = 'batch';
+
     public const SENDING_MODE_SINGLE = 'single';
 
     /**
@@ -57,7 +59,7 @@ class Newsletter
         $mail->setIgnoreDebugMode(true);
         $config = Config::getSystemConfiguration('newsletter');
 
-        if ($config['use_specific']) {
+        if ($config['use_specific'] ?? false) {
             $mail->init('newsletter');
         }
 
@@ -72,7 +74,7 @@ class Newsletter
         }
 
         if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
-            $mail->setTextBody(trim($newsletterDocument->getPlaintext()));
+            $mail->text(trim($newsletterDocument->getPlaintext()));
         }
 
         $contentHTML = $mail->getBodyHtmlRendered();
@@ -115,12 +117,12 @@ class Newsletter
             $html->clear();
             unset($html);
 
-            $mail->setHtmlBody($contentHTML);
+            $mail->html($contentHTML);
         }
 
-        $mail->setHtmlBody($contentHTML);
+        $mail->html($contentHTML);
         // Adds the plain text part to the message, that it becomes a multipart email
-        $mail->setTextBody($contentText);
+        $mail->text($contentText);
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;
@@ -147,7 +149,7 @@ class Newsletter
 
             $mailer = null;
             // check if newsletter specific mailer is needed
-            if ($config['use_specific']) {
+            if ($config['use_specific'] ?? false) {
                 $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 
@@ -455,18 +457,14 @@ class Newsletter
      */
     public function unsubscribe(DataObject\Concrete $object): bool
     {
-        if ($object) {
-            if (method_exists($object, 'setNewsletterActive')) {
-                $object->setNewsletterActive(false);
-            }
-            $object->save();
-
-            $this->addNoteOnObject($object, 'unsubscribe');
-
-            return true;
+        if (method_exists($object, 'setNewsletterActive')) {
+            $object->setNewsletterActive(false);
         }
+        $object->save();
 
-        return false;
+        $this->addNoteOnObject($object, 'unsubscribe');
+
+        return true;
     }
 
     /**

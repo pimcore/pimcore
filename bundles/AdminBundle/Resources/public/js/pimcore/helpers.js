@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /*global localStorage */
@@ -195,12 +195,12 @@ pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
         if (pimcore.globalmanager.exists(key)) {
             var editMask = pimcore.globalmanager.get(key);
             if (editMask.tab) {
-                if (typeof treeData.icon !== "undefined") {
-                    editMask.tab.setIcon(treeData.icon);
-                }
-
                 if (typeof treeData.iconCls !== "undefined") {
                     editMask.tab.setIconCls(treeData.iconCls);
+                }
+
+                if (typeof treeData.icon !== "undefined") {
+                    editMask.tab.setIcon(treeData.icon);
                 }
             }
         }
@@ -550,6 +550,18 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
         });
         errWin.show();
     } else {
+        // Avoid overlapping any footer toolbar buttons
+        // Find current active tab to find its footer if there is one
+        let paddingY = 10;
+        let tabsBody = document.getElementById('pimcore_panel_tabs-body');
+        let activeTab = tabsBody.querySelector(':scope > [aria-expanded="true"]');
+        if (activeTab) {
+            let footerToolbar = activeTab.querySelector(':scope .x-toolbar-footer');
+            if (footerToolbar) {
+                paddingY += footerToolbar.scrollHeight;
+            }
+        }
+
         var notification = Ext.create('Ext.window.Toast', {
             iconCls: 'pimcore_icon_' + type,
             title: title,
@@ -558,7 +570,10 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
             width: 'auto',
             maxWidth: 350,
             closeable: true,
-            align: "br"
+            align: "br",
+            anchor: Ext.get(tabsBody),
+            paddingX: 5,
+            paddingY: paddingY
         });
         notification.show(document);
     }
@@ -2285,7 +2300,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.x/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
@@ -2685,8 +2700,10 @@ pimcore.helpers.exportWarning = function (type, callback) {
         buttons: [{
             text: t("OK"),
             handler: function () {
-                callback(formPanel.getValues());
-                window.close();
+                if (formPanel.isValid()) {
+                    callback(formPanel.getValues());
+                    window.close();
+                }
             }.bind(this)
         },
             {

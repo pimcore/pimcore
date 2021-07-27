@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\User\Workspace;
@@ -20,67 +18,93 @@ namespace Pimcore\Model\User\Workspace;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
  * @method void save()
  */
-class AbstractWorkspace extends Model\AbstractModel
+abstract class AbstractWorkspace extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
     protected $userId;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $cid;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $cpath;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $list = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $view = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $publish = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $delete = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $rename = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $create = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $settings = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $versions = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $properties = false;

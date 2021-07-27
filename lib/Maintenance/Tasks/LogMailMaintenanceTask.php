@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -22,7 +23,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
-final class LogMailMaintenanceTask implements TaskInterface
+class LogMailMaintenanceTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface
@@ -84,7 +85,7 @@ final class LogMailMaintenanceTask implements TaskInterface
                     $html = "<pre>$html</pre>";
                     $mail = new \Pimcore\Mail();
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setHtmlBody($html);
+                    $mail->html($html);
                     $mail->addTo($receivers);
                     $mail->setSubject('Error Log '.\Pimcore\Tool::getHostUrl());
                     $mail->send();

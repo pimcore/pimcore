@@ -32,7 +32,7 @@ pimcore_ecommerce_config:
                         
                     # example step from the Ecommerce demo, which extends AbstractStep
                     confirm:
-                        class: \AppBundle\Ecommerce\Checkout\Confirm
+                        class: \App\Ecommerce\Checkout\Confirm
 
             default:
                 # define payment provider which should be used for payment.

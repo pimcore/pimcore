@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "元素无法移动，已被锁定。",
     "element_cannot_be_moved": "元件不能移到到这里",
     "no_collections_allowed": "没有许可的collections",
-    "this_is_a_newer_not_published_version": "这是一个新的未发布版本",
     "filter_condition": "过滤条件",
     "all_types": "所有类型",
     "audio": "声音",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "翻译还没有配置",
     "read_more_here": "了解更多",
     "publish_version": "发布版本",
-    "save_only_new_version": "仅保存新版本",
     "start": "开始",
     "su": "周日",
     "mo": "周一",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "Batch remove from selected",
     "batch_remove_from": "Remove data from all",
     "batch_remove_selected_from": "Remove data from selected",
-    "force_picture_html_tag": "Force &lt;picture&gt; HTML tag",
     "unit_tooltip": "Alternative units tooltip",
     "toggle_image_features_visibility": "Toggle Image Feature Visibility",
     "detect_image_features": "Detect Image Features",
@@ -937,5 +934,11 @@
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
     "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
     "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "No action available",
+    "bricks": "Bricks",
+    "draft": "Draft",
+    "auto_save": "Auto save",
+    "save_draft": "Save draft",
+    "selected_grid_columns": "Selected grid columns"
 }

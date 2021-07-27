@@ -16,7 +16,6 @@ The biggest advantages of using that instead of (for example) the relation edita
 | Name                           | Type    | Description                                                                                                                                                                                                                              |
 |--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip. |
-
 | `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
 | `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
@@ -34,6 +33,7 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
 | `predefinedDataTemplates`      | array   | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
 | `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
+| `required`                     | bool    | (default: false) set to true to make field value required for publish                                                                                                                                                                    |
 
 Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 

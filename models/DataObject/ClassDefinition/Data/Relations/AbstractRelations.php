@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
@@ -27,7 +26,8 @@ abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
     Data\LazyLoadingSupportInterface,
-    Data\EqualComparisonInterface
+    Data\EqualComparisonInterface,
+    Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 
@@ -116,7 +116,7 @@ abstract class AbstractRelations extends Data implements
             foreach ($relations as $relation) {
                 $this->enrichDataRow($object, $params, $classId, $relation);
 
-                /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                // relation needs to be an array with src_id, dest_id, type, fieldname
                 try {
                     $db->insert('object_relations_' . $classId, $relation);
                 } catch (\Exception $e) {
@@ -190,7 +190,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      */
-    abstract protected function loadData($data, $object = null, $params = []);
+    abstract protected function loadData(array $data, $object = null, $params = []);
 
     /**
      * @internal
@@ -393,7 +393,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Fieldcollection $container */
+            /** @var DataObject\Fieldcollection|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -414,7 +414,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick $container */
+            /** @var DataObject\Objectbrick|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
@@ -429,9 +429,9 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @param array|null $data*
+     * @param array|null $data
      *
-     * @throws \Exception
+     * @throws Element\ValidationException
      */
     public function performMultipleAssignmentCheck($data)
     {
@@ -451,7 +451,7 @@ abstract class AbstractRelations extends Data implements
                     }
 
                     if ($elementHash === null) {
-                        throw new \Exception('Passing relations without ID or type not allowed anymore!');
+                        throw new Element\ValidationException('Passing relations without ID or type not allowed anymore!');
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
                     } else {
@@ -462,7 +462,7 @@ abstract class AbstractRelations extends Data implements
                             $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
                         }
 
-                        throw new \Exception($message);
+                        throw new Element\ValidationException($message);
                     }
                 }
             }
@@ -502,8 +502,8 @@ abstract class AbstractRelations extends Data implements
      */
     public function getPhpdocReturnType(): ?string
     {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
+        if ($phpdocType = $this->getPhpdocType()) {
+            return $phpdocType;
         }
 
         return null;

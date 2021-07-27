@@ -1,11 +1,26 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
 
 namespace Pimcore\Model\Element\Traits;
 
-use Pimcore\Model\Version;
 use Pimcore\Model\Element;
+use Pimcore\Model\Version;
 
+/**
+ * @internal
+ */
 trait VersionDaoTrait
 {
     /**
@@ -17,7 +32,7 @@ trait VersionDaoTrait
      */
     public function getLatestVersion($userId = null)
     {
-        $versionId = $this->db->fetchOne("SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1", [
+        $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getType($this->model),
             'userId' => $userId,
@@ -40,7 +55,7 @@ trait VersionDaoTrait
     public function getVersions()
     {
         $list = new Version\Listing();
-        $list->setCondition("cid = :cid AND ctype = :ctype",[
+        $list->setCondition('cid = :cid AND ctype = :ctype', [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getType($this->model),
         ])->setOrderKey('id')->setOrder('ASC');

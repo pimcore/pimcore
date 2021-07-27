@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Doctrine\Migrations\DependencyFactory;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,11 +29,14 @@ class InternalMigrationHelpersCommand extends AbstractCommand
 {
     private FilteredTableMetadataStorage $metadataStorage;
 
-    public function __construct(FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
+    private DependencyFactory $dependencyFactory;
+
+    public function __construct(DependencyFactory $dependencyFactory, FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
     {
         parent::__construct($name);
 
         $this->metadataStorage = $metadataStorage;
+        $this->dependencyFactory = $dependencyFactory;
     }
 
     protected function configure()
@@ -56,6 +61,7 @@ class InternalMigrationHelpersCommand extends AbstractCommand
         if ($input->getOption('is-installed')) {
             try {
                 if (\Pimcore::isInstalled()) {
+                    $this->metadataStorage->__invoke($this->dependencyFactory);
                     $this->metadataStorage->ensureInitialized();
                     $output->write(1);
                 }

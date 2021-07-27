@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -58,7 +57,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     public $defaultValue;
 
@@ -99,7 +98,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -111,7 +110,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -165,12 +164,14 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $defaultValue
+     * @param float|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen((string)$defaultValue) > 0) {
-            $this->defaultValue = $defaultValue;
+        if ($defaultValue !== null) {
+            $this->defaultValue = (float) $defaultValue;
+        } else {
+            $this->defaultValue = null;
         }
     }
 
@@ -308,7 +309,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
+     * @param Model\DataObject\Data\AbstractQuantityValue|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -459,6 +460,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         if (!$this->validUnits) {
             $table = null;
+
             try {
                 if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
                     $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);

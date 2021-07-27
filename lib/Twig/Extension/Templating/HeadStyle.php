@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -127,13 +128,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             switch (strtoupper($placement)) {
                 case 'SET':
                     $action = 'setStyle';
+
                     break;
                 case 'PREPEND':
                     $action = 'prependStyle';
+
                     break;
                 case 'APPEND':
                 default:
                     $action = 'appendStyle';
+
                     break;
             }
             $this->$action($content, $attributes);
@@ -314,13 +318,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
         switch ($this->_captureType) {
             case Container::SET:
                 $this->setStyle($content, $attrs);
+
                 break;
             case Container::PREPEND:
                 $this->prependStyle($content, $attrs);
+
                 break;
             case Container::APPEND:
             default:
                 $this->appendStyle($content, $attrs);
+
                 break;
         }
     }

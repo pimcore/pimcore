@@ -73,12 +73,12 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 
 **Apache**
 
-In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
+In the `.htaccess` of the project, requests to assets of this folder need to be routed to `index.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
 ```apache
 ...
-RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
+RewriteRule ^protected/(.*) %{ENV:BASE}/index.php [L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
 RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
@@ -91,7 +91,7 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 Add the following parts to your Nginx configuration directly after the index directive. 
 
 ```nginx
-rewrite ^(/protected/.*) /app.php$is_args$args last;
+rewrite ^(/protected/.*) /index.php$is_args$args last;
 
 location ~ ^/var/.*/protected(.*) {
   return 403;
@@ -105,10 +105,10 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
-In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# app/config/routing.yml
+# config/routing.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
@@ -121,7 +121,7 @@ asset_protect:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;

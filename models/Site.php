@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Site
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -25,12 +23,12 @@ use Pimcore\Logger;
  * @method void delete()
  * @method void save()
  */
-class Site extends AbstractModel
+final class Site extends AbstractModel
 {
     /**
-     * @var Site
+     * @var Site|null
      */
-    protected static $currentSite;
+    protected static ?Site $currentSite = null;
 
     /**
      * @var int
@@ -50,9 +48,9 @@ class Site extends AbstractModel
     protected $rootId;
 
     /**
-     * @var Document\Page
+     * @var Document\Page|null
      */
-    protected $rootDocument;
+    protected ?Document\Page $rootDocument = null;
 
     /**
      * @var string
@@ -68,6 +66,11 @@ class Site extends AbstractModel
      * @var string
      */
     protected $errorDocument = '';
+
+    /**
+     * @var array
+     */
+    protected $localizedErrorDocuments;
 
     /**
      * @var bool
@@ -201,8 +204,6 @@ class Site extends AbstractModel
     /**
      * returns true if the current process/request is inside a site
      *
-     * @static
-     *
      * @return bool
      */
     public static function isSiteRequest()
@@ -223,9 +224,9 @@ class Site extends AbstractModel
     {
         if (null !== self::$currentSite) {
             return self::$currentSite;
-        } else {
-            throw new \Exception('This request/process is not inside a subsite');
         }
+
+        throw new \Exception('This request/process is not inside a subsite');
     }
 
     /**
@@ -233,7 +234,7 @@ class Site extends AbstractModel
      *
      * @param Site $site
      */
-    public static function setCurrentSite(Site $site)
+    public static function setCurrentSite(Site $site): void
     {
         self::$currentSite = $site;
     }
@@ -263,9 +264,9 @@ class Site extends AbstractModel
     }
 
     /**
-     * @return Document\Page
+     * @return Document\Page|null
      */
-    public function getRootDocument()
+    public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;
     }
@@ -306,14 +307,14 @@ class Site extends AbstractModel
     {
         $this->rootId = (int) $rootId;
 
-        $rd = Document::getById($this->rootId);
+        $rd = Document\Page::getById($this->rootId);
         $this->setRootDocument($rd);
 
         return $this;
     }
 
     /**
-     * @param Document\Page $rootDocument
+     * @param Document\Page|null $rootDocument
      *
      * @return $this
      */
@@ -365,6 +366,29 @@ class Site extends AbstractModel
     }
 
     /**
+     * @param mixed $localizedErrorDocuments
+     *
+     * @return $this
+     */
+    public function setLocalizedErrorDocuments($localizedErrorDocuments)
+    {
+        if (is_string($localizedErrorDocuments)) {
+            $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
+        }
+        $this->localizedErrorDocuments = $localizedErrorDocuments;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLocalizedErrorDocuments()
+    {
+        return $this->localizedErrorDocuments;
+    }
+
+    /**
      * @param string $mainDomain
      */
     public function setMainDomain($mainDomain)
@@ -396,6 +420,9 @@ class Site extends AbstractModel
         return $this->redirectToMainDomain;
     }
 
+    /**
+     * @internal
+     */
     public function clearDependentCache()
     {
 

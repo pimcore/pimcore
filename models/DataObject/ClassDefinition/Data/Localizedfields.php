@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -25,10 +24,11 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element
@@ -144,14 +144,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var array
      */
-    public $permissionView = [];
+    public $permissionView;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $permissionEdit = [];
+    public $permissionEdit;
 
     /**
      * @see Data::getDataForEditmode
@@ -209,10 +209,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        $dataItems = $data->getInternalData(true);
+        $loadLazy = !($params['objectFromVersion'] ?? false);
+        $dataItems = $data->getInternalData($loadLazy);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading() && $loadLazy) {
                     $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
@@ -475,6 +476,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setReferencedFields($referencedFields)
     {
         $this->referencedFields = $referencedFields;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -491,6 +493,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -546,7 +549,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if ($localizedFields instanceof DataObject\Localizedfield) {
             $localizedFields->setObject($object);
-            $context = isset($params['context']) ? $params['context'] : null;
+            $context = $params['context'] ?? [];
             $localizedFields->setContext($context);
             $localizedFields->delete(true, false);
         }
@@ -563,29 +566,28 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         // create a dummy instance just for updating the tables
         $localizedFields = new DataObject\Localizedfield();
         $localizedFields->setClass($class);
-        $context = isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? [];
         $localizedFields->setContext($context);
         $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
-            if (method_exists($fd, 'classSaved')) {
+            //TODO Pimcore 11 remove method_exists call
+            if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                 $fd->classSaved($class, $params);
             }
         }
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function preGetData($container, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
-        if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
-            && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+        if (
+            !$container instanceof DataObject\Concrete &&
+            !$container instanceof DataObject\Fieldcollection\Data\AbstractData &&
+            !$container instanceof DataObject\Objectbrick\Data\AbstractData
+        ) {
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
@@ -630,7 +632,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getGetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= parent::getGetterCode($class);
         }
 
@@ -652,7 +654,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getSetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= parent::getSetterCode($class);
         }
 
@@ -725,7 +727,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     private function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -734,7 +742,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array
@@ -769,10 +777,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if (!$data instanceof DataObject\Localizedfield) {
             return $tags;
         }
@@ -983,6 +989,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                         throw $e;
                                     }
                                     $exceptionClass = get_class($e);
+
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
@@ -990,6 +997,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
+
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                             }
                         }
@@ -1004,6 +1012,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         if (count($validationExceptions) > 0) {
             $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
+
             throw $aggregatedExceptions;
         }
     }
@@ -1106,15 +1115,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             $extData = $item['extData'];
             $fieldname = $extData['fieldname'];
             $language = $item['lang'];
-            $values = $mapping[$fieldname];
+            $values = $mapping[$fieldname] ?? [];
 
             $itemdata = $item['data'];
 
             if ($itemdata) {
-                if (!$values) {
-                    $values = [];
-                }
-
                 $values[] = $itemdata;
             }
 
@@ -1170,31 +1175,24 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Model\Element\ElementInterface
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         $validLanguages = Tool::getValidLanguages();
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if (method_exists($fd, 'rewriteIds')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                    if (!$fd instanceof IdRewriterInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', IdRewriterInterface::class));
+                    }
+
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }
@@ -1238,6 +1236,54 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getMaxTabs()
     {
         return $this->maxTabs;
+    }
+
+    /**
+     * @param int $labelWidth
+     */
+    public function setLabelWidth($labelWidth)
+    {
+        $this->labelWidth = (int)$labelWidth;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLabelWidth()
+    {
+        return $this->labelWidth;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): ?array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array|null $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): ?array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array|null $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
     }
 
     /**
@@ -1321,38 +1367,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @return array
-     */
-    public function getPermissionView(): array
-    {
-        return $this->permissionView;
-    }
-
-    /**
-     * @param array $permissionView
-     */
-    public function setPermissionView($permissionView): void
-    {
-        $this->permissionView = $permissionView;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPermissionEdit(): array
-    {
-        return $this->permissionEdit;
-    }
-
-    /**
-     * @param array $permissionEdit
-     */
-    public function setPermissionEdit($permissionEdit): void
-    {
-        $this->permissionEdit = $permissionEdit;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function normalize($value, $params = [])
@@ -1368,6 +1382,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         if (!$fd) {
                             // class definition seems to have changed
                             Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                             continue;
                         }
 
@@ -1405,6 +1420,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                         continue;
                     }
 
