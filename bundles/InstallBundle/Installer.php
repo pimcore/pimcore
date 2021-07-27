@@ -480,7 +480,7 @@ class Installer
 
         $this->runCommand([
             'doctrine:migrations:version',
-            '--all', '--add', '-n', '-q',
+            '--all', '--add', '--prefix=Pimcore\\Bundle\\CoreBundle', '-n', '-q',
         ], 'Marking all migrations as done');
     }
 

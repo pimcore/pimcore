@@ -21,6 +21,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder implements UserAwarePasswordEncoderInterface
 {

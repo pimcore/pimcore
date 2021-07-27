@@ -1,12 +1,34 @@
 # Upgrade Notes
 
 ## 10.1.0
-- [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
+- [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
+  be removed in Pimcore 11.
+- [InstallBundle] Installer preconfiguration path changed from `app/config/installer.yml` to `config/installer.yaml`.
 - [Core] composer.json: `symfony/symfony` package requirement has been replaced by `symfony/*` individual bundles. **Note for Bundles**: if you are using `symfony/symfony` dependency, it will now conflict with package `pimcore/pimcore`. Please move your bundle requirements to Symfony individual component packages.
-- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files).
 - [Glossary] `pimcoreglossary()` tag has been deprecated in favor of `pimcore_glossary` Twig filter and will be removed in Pimcore 11.
-- Bumped `google/apiclient` to 2.10 version - Use proper namespaces for API references
-- Bumped `endroid/qr-code` to 4 version
+- Bumped `google/apiclient` to 2.10 version - Use proper namespaces for API references.
+- Bumped `endroid/qr-code` to version 4.
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
+- [Password encoding] Pimcore Password Encoder factory has been deprecated in favor of new Password Hasher factory, to align with Symfony authentication system. The default factory is used as default and to switch to new Password hasher factory, please enable through config `factory_type` as follows:
+```yaml
+pimcore:
+    security:
+        factory_type: password_hasher
+
+        # the password hasher factory as defined in services.yml
+        password_hasher_factories:
+            App\Model\DataObject\User: website_demo.security.password_hasher_factory
+```
+and use new service handler:
+```yaml
+services:
+    website_demo.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+        arguments:
+            - Pimcore\Security\Encoder\PasswordFieldEncoder
+            - ['password']
+```
 
 ## 10.0.0
 
@@ -111,6 +133,7 @@
     $existingObject->save(); //validation error
     ```
 - [Data Objects] ManyToMany Relation Types: throws exception if multiple assignments passed without enabling Multiple assignments on class definition.
+- [Data Objects] ReverseManyToManyObjectRelation - now supports reverse relations from ManyToOneRelation field and has been renamed to ReverseObjectRelation with BC layer.
 - [Data Object] Table Data-Type always return an array.
 - [Data Object] `Model::getById()` & `Model::getByPath()` do not catch exceptions anymore.
 - Added methods `getArgument($key)`, `setArgument($key, $value)`, `getArguments()`, `setArguments(array $args = [])`, `hasArgument($key)` to `Pimcore\Model\Element\ElementInterface\ElementEventInterface`.

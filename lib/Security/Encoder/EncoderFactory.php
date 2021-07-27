@@ -29,6 +29,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * If the given user is not configured to be handled by one of the encoder factories, the normal framework encoder
  * logic applies.
+ *
+ * @deprecated
  */
 class EncoderFactory implements EncoderFactoryInterface
 {

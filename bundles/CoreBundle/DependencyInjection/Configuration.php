@@ -73,7 +73,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                    ->setDeprecated('The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.')
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.1',
+                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                    )
                 ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
@@ -748,6 +752,18 @@ final class Configuration implements ConfigurationInterface
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
+                ->arrayNode('static_page_router')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                            ->info('Enable Static Page router for document when using remote storage for generated pages')
+                        ->end()
+                        ->scalarNode('route_pattern')
+                            ->defaultNull()
+                            ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
+                        ->end()
+                ->end()
             ->end();
     }
 
@@ -950,6 +966,10 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->enumNode('factory_type')
+                            ->values(['encoder', 'password_hasher'])
+                            ->defaultValue('encoder')
+                        ->end()
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
@@ -966,11 +986,28 @@ final class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('id')->end()
                             ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('password_hasher_factories')
+                            ->info('Password hasher factories to use as className => factory service ID mapping')
+                            ->example([
+                                'App\Model\DataObject\User1' => [
+                                    'id' => 'website_demo.security.encoder_factory2',
+                                ],
+                                'App\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
+                            ])
+                            ->useAttributeAsKey('class')
+                            ->prototype('array')
+                            ->beforeNormalization()->ifString()->then(function ($v) {
+                                return ['id' => $v];
+                            })->end()
+                            ->children()
+                            ->scalarNode('id')->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
     }
 
     /**

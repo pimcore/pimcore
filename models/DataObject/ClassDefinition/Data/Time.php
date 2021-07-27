@@ -163,7 +163,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      * Returns a timestamp representation of a given time
      *
      * @param string $string
-     * @param null $baseTimestamp
+     * @param int|null $baseTimestamp
      *
      * @return int
      */

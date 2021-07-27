@@ -28,6 +28,8 @@ services:
 
     Pimcore\Http\Request\Resolver\PimcoreContextResolver: ~
 
+    Pimcore\Http\Request\Resolver\StaticPageResolver: ~
+
     Pimcore\Http\Request\Resolver\OutputTimestampResolver: ~
 
     Pimcore\Http\Request\Resolver\SiteResolver: ~

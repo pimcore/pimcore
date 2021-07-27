@@ -705,7 +705,7 @@ class Asset extends Element\AbstractElement
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
                 $mimeType = $storage->mimeType($path);
-                $this->setMimetype($mimeType);
+                $this->setMimeType($mimeType);
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());
@@ -1302,7 +1302,7 @@ class Asset extends Element\AbstractElement
 
             if (!$isRewindable) {
                 $tempFile = $this->getTemporaryFile();
-                $dest = fopen($tempFile, 'w+', false, File::getContext());
+                $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
         } elseif (is_null($stream)) {
@@ -1553,7 +1553,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return string
      */
-    public function getMimetype()
+    public function getMimeType()
     {
         return $this->mimetype;
     }
@@ -1563,7 +1563,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setMimetype($mimetype)
+    public function setMimeType($mimetype)
     {
         $this->mimetype = $mimetype;
 
@@ -1831,7 +1831,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Asset $parent
+     * @param Asset|null $parent
      *
      * @return $this
      */

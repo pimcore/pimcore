@@ -26,7 +26,8 @@ abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
     Data\LazyLoadingSupportInterface,
-    Data\EqualComparisonInterface
+    Data\EqualComparisonInterface,
+    Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 

@@ -628,10 +628,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
-            $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
-            $code .= "\t" . '$data = $fd->preGetData($this);' . "\n\n";
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreGetDataInterface ||method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n\n";
         }
@@ -734,8 +733,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreSetDataInterface || method_exists($this, 'preSetData')) {
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
@@ -771,10 +771,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
-            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
-            $code .= "\t" . '$data = $fd->preGetData($this);' . "\n";
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreGetDataInterface ||method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
@@ -870,8 +869,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreSetDataInterface || method_exists($this, 'preSetData')) {
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
@@ -906,7 +906,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
             $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
             $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
@@ -987,8 +988,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n\n";
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof DataObject\ClassDefinition\Data\PreSetDataInterface || method_exists($this, 'preSetData')) {
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }

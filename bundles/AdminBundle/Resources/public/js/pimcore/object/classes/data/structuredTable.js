@@ -81,7 +81,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 value: t('height_explanation')
             },
             {
-                xtype: "textfield",
+                xtype: "numberfield",
                 fieldLabel: t("label_width"),
                 name: "labelWidth",
                 value: this.datax.labelWidth

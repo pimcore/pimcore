@@ -1101,7 +1101,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $asset->getMimetype(),
+            'Content-Type' => $asset->getMimeType(),
             'Content-Disposition' => sprintf('attachment; filename="%s"', $asset->getFilename()),
             'Content-Length' => $asset->getFileSize(),
         ]);
@@ -1253,7 +1253,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $image->getMimetype(),
+            'Content-Type' => $image->getMimeType(),
             'Access-Control-Allow-Origin' => '*',
         ]);
         $this->addThumbnailCacheHeaders($response);
@@ -1425,7 +1425,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById((int)$request->get('image'));
+            $image = Asset\Image::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1556,7 +1556,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $stream = null;
 
-        if ($asset->getMimetype() == 'application/pdf') {
+        if ($asset->getMimeType() == 'application/pdf') {
             $stream = $asset->getStream();
         }
 

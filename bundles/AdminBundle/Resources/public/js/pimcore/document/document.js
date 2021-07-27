@@ -479,14 +479,15 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }
             }, {
                 xtype: "textfield",
+                itemId: "title",
+                fieldLabel: t('title'),
+                name: 'title',
                 width: "100%",
-                fieldLabel: t('key'),
-                itemId: "key",
-                name: 'key',
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function (el) {
                         pageForm.getComponent("name").setValue(el.getValue());
+                        pageForm.getComponent("key").setValue(el.getValue());
                     }
                 }
             }, {
@@ -497,10 +498,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 width: "100%"
             }, {
                 xtype: "textfield",
-                itemId: "title",
-                fieldLabel: t('title'),
-                name: 'title',
-                width: "100%"
+                width: "100%",
+                fieldLabel: t('key'),
+                itemId: "key",
+                name: 'key'
             }]
         });
 

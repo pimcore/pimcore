@@ -36,6 +36,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
+
+		-
 			message: "#^Instanceof between Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ClassDefinition\\\\IndexFieldSelection\\|null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelection.php

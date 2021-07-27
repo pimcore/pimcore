@@ -103,6 +103,10 @@ class AdminStyle
 
                 $this->elementIconClass = 'pimcore_icon_page';
 
+                if ($element instanceof Document\Page && $element->getStaticGeneratorEnabled()) {
+                    $this->elementIconClass = 'pimcore_icon_page_static';
+                }
+
                 // test for a site
                 if ($site = Site::getByRootId($element->getId())) {
                     $this->elementIconClass = 'pimcore_icon_site';

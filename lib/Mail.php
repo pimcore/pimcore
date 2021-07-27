@@ -487,6 +487,10 @@ class Mail extends Email
 
         $this->subject($this->getSubjectRendered());
 
+        // Remove the document property because it is no longer needed and makes it difficult
+        // to serialize the Mail object when using the Symfony Messenger component
+        $this->setDocument(null);
+
         return $this->sendWithoutRendering($mailer);
     }
 
@@ -557,7 +561,7 @@ class Mail extends Email
                 $mailer->send($this);
             } catch (\Exception $e) {
                 if (isset($failedRecipients[0])) {
-                    $sendingFailedException = new \Exception($failedRecipients[0].' - '.$e->getMessage(), 0, $e);
+                    $sendingFailedException = new \Exception($failedRecipients[0] . ' - ' . $e->getMessage(), 0, $e);
                 } else {
                     $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
                 }
@@ -750,7 +754,7 @@ class Mail extends Email
     }
 
     /**
-     * @param Model\Document|int|string $document
+     * @param Model\Document|int|string|null $document
      *
      * @return $this
      *
@@ -766,7 +770,7 @@ class Mail extends Email
             }
         }
 
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
             $this->document = $document;
             $this->setDocumentSettings();
         } else {
@@ -939,7 +943,7 @@ class Mail extends Email
     {
         //old param style with string name as second param
         if (isset($addresses[1]) && is_string($addresses[1])) {
-            return [ new Address($addresses[0], $addresses[1]) ];
+            return [new Address($addresses[0], $addresses[1])];
         }
 
         return $addresses;

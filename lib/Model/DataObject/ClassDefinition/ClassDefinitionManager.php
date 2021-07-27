@@ -41,10 +41,11 @@ class ClassDefinitionManager
 
             $cls = new ClassDefinition();
             $cls->setId($id);
-            $definitionFile = $cls->getDefinitionFile($name);
+            $cls->setName($name);
+            $definitionFile = $cls->getDefinitionFile();
 
             if (!file_exists($definitionFile)) {
-                $deleted[] = [$name, $id];
+                $deleted[] = [$name, $id, self::DELETED];
 
                 //ClassDefinition doesn't exist anymore, therefore we delete it
                 $cls->delete();

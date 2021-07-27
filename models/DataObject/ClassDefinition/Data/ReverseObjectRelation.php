@@ -209,3 +209,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 }
+
+//TODO remove in Pimcore 11
+class_alias(ReverseObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation');

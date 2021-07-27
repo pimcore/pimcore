@@ -1205,6 +1205,7 @@ span.warning {
 }
 
 .pimcore_droptarget_display div {
+    width: 100%;
     min-height: 30px;
     padding: 5px 10px 4px;
     margin-top: 0;
