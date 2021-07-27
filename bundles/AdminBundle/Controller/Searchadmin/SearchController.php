@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -481,24 +482,9 @@ final class SearchController extends AdminController
                     'fullpath' => htmlspecialchars($element->getRealFullPath()),
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                     'iconCls' => 'pimcore_icon_asset_default',
-                    'icon' => '',
                 ];
 
-                if ($element instanceof Asset) {
-                    $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
-                 } elseif ($element instanceof DataObject\Concrete) {
-                    // Show custom on base class (not variants) if it exists
-                    if ($element->getType() === DataObject::OBJECT_TYPE_OBJECT && $element->getClass()->getIcon()) {
-                        $data['icon'] = $element->getClass()->getIcon();
-                        $data['iconCls'] = '';
-                    } else {
-                        $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
-                    }
-                } else {
-                    $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
-                }
-
-                $this->addAdminStyle($element, null, $data);
+                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 

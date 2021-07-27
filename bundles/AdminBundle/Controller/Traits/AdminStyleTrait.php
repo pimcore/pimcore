@@ -35,8 +35,12 @@ trait AdminStyleTrait
     protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
     {
         $adminStyle = Service::getElementAdminStyle($element, $context);
-        $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
+        if (!$data['iconCls']) {
+            $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        } else {
+            $data['icon'] = null;
+        }
         if ($adminStyle->getElementCssClass() !== false) {
             if (!isset($data['cls'])) {
                 $data['cls'] = '';
