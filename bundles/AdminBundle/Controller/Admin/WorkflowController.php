@@ -147,7 +147,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
 
             $reasons = array_map(function ($blockTransitionItem) {
                 return $blockTransitionItem->getMessage();
-            }, $blockTransitionList->getIterator()->getArrayCopy());
+            }, iterator_to_array($blockTransitionList->getIterator()));
 
             $data = [
                 'success' => false,
