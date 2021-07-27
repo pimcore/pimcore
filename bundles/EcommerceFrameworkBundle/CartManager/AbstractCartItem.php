@@ -78,6 +78,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setCount($count, bool $fireModified = true)
     {
+        if($count < 0) {
+            $count = 0;
+        }
+
         if ($this->count != $count && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
