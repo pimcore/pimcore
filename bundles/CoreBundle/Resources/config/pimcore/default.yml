@@ -19,6 +19,7 @@ framework:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         # use the native PHP session mechanism
         handler_id:  null
+        cookie_samesite: 'strict'
     php_errors:
         log: true
     assets: ~
