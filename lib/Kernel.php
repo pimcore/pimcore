@@ -43,6 +43,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -155,34 +156,10 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        $loader->load(function (ContainerBuilder $container) use ($loader) {
-            //TODO instead of making this configurable ...
-            $pimcoreConfiguration = $container->getExtensionConfig("pimcore");
-
-            foreach ($pimcoreConfiguration as $extensionConfigBlock) {
-                    foreach ($extensionConfigBlock as $extensionConfigName => $data) {
-                        if ($extensionConfigName == "configuration_sections") {
-                            foreach ($data as $item) {
-                                /* Example:
-                                pimcore:
-                                    configuration_sections:
-                                        -
-                                            name: imagethumbnails
-                                            path: var/config/imagethumbnails/
-                                        -
-                                            name: datahub_thumbnails
-                                            path: dev/pimcore/data-hub/datahub_imagethumbnails
-                                */
-                                $name = $item["name"];
-                                $path = $item["path"];
-                                $filepath = PIMCORE_PROJECT_ROOT . "/" . $path;
-                                $loader->import($filepath);
-                            }
-                        }
-                    }
-
-                }
-            });
+        if (is_dir(PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails/')) {
+            /* @phpstan-ignore-next-line */
+            $loader->import(PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails/');
+        }
     }
 
     private function registerExtensionConfigFileResources(ContainerBuilder $container)

@@ -93,7 +93,8 @@ pimcore.settings.thumbnail.panel = Class.create({
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addField.bind(this)
+                            handler: this.addField.bind(this),
+                            disabled: !pimcore.settings['image-thumbnails-writeable']
                         }
                     ]
                 }

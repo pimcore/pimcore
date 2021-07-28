@@ -20,7 +20,10 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete(bool $forceClearTempFiles = false)
+ * @method void save(bool $forceClearTempFiles = false)
  */
 final class Config extends Model\AbstractModel
 {
@@ -158,13 +161,6 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var bool
-     */
-    protected $writeable = false;
-
-    /**
-     * @internal
-     *
      * @param string|array|self $config
      *
      * @return self|null
@@ -219,7 +215,9 @@ final class Config extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->getDao()->getByName($name);
+                /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */
+                $dao = $thumbnail->getDao();
+                $dao->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -261,21 +259,7 @@ final class Config extends Model\AbstractModel
             return true;
         }
 
-        $thumbnail = new self();
-
-        return $thumbnail->getLegacyDao()->exists($name);
-    }
-
-    /**
-     * @return \Pimcore\Model\Dao\AbstractDao
-     */
-    public function getLegacyDao()
-    {
-        if (!$this->dao) {
-            $this->initDao();
-        }
-
-        return $this->dao;
+        return (bool) self::getByName($name);
     }
 
     /**
@@ -923,24 +907,6 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return bool
-     */
-    public function isWriteable(): bool
-    {
-        return $this->writeable;
-    }
-
-    /**
-     * @param bool $writeable
-     */
-    public function setWriteable(bool $writeable): void
-    {
-        $this->writeable = $writeable;
-    }
-
-
-
-    /**
      * @param bool $downloadable
      */
     public function setDownloadable(bool $downloadable): void
@@ -948,11 +914,9 @@ final class Config extends Model\AbstractModel
         $this->downloadable = $downloadable;
     }
 
-
-    public function save(bool $forceClearTempFiles = false) {
-        $dao = $this->getDao();
-        $dao->save($forceClearTempFiles);
+    public function __clone()
+    {
+        $this->dao = clone $this->dao;
+        $this->dao->setModel($this);
     }
-
-
 }

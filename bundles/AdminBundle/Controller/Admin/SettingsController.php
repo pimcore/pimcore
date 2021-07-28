@@ -1209,8 +1209,10 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+        $data = $pipe->getObjectVars();
+        $data['writeable'] = $pipe->isWriteable();
 
-        return $this->adminJson($pipe->getObjectVars());
+        return $this->adminJson($data);
     }
 
     /**

@@ -15,36 +15,26 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config\Listing;
 
-use Pimcore\Db\PimcoreConfigStorage;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing $model
- * @property PimcoreConfigStorage $db
  */
-class Dao extends Model\Dao\PimcoreConfigBag
+class Dao extends Config\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setContext('image-thumbnails');
-    }
-
     /**
      * @return array
      */
-    public function load()
+    public function loadList()
     {
         $configs = [];
-        $configData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        foreach ($configData as $key => $propertyData) {
-            $config = Config::getByName($key);
-            $config->setWriteable($propertyData['writeable'] ?? false);
-            $configs[] = $config;
+        foreach($this->loadIdList() as $name) {
+            $configs[] = Config::getByName($name);
         }
 
         $this->model->setThumbnails($configs);
@@ -57,9 +47,6 @@ class Dao extends Model\Dao\PimcoreConfigBag
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return count($this->loadIdList());
     }
 }

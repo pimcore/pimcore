@@ -167,8 +167,6 @@ final class Configuration implements ConfigurationInterface
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
-        $this->addConfigurationSectionsNode($rootNode);
-        $this->addImageThumbnailsNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
@@ -459,6 +457,48 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('thumbnails')
                                 ->addDefaultsIfNotSet()
                                 ->children()
+                                    ->arrayNode('definitions')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('id')->end()
+                                                ->scalarNode('name')->end()
+                                                ->scalarNode('description')->end()
+                                                ->scalarNode('group')->end()
+                                                ->scalarNode('format')->end()
+                                                ->scalarNode('quality')->end()
+                                                ->scalarNode('highResolution')->end()
+                                                ->booleanNode('preserveColor')->end()
+                                                ->booleanNode('preserveMetaData')->end()
+                                                ->booleanNode('rasterizeSVG')->end()
+                                                ->booleanNode('downloadable')->end()
+                                                ->integerNode('modificationDate')->end()
+                                                ->integerNode('creationDate')->end()
+                                                ->booleanNode('preserveAnimation')->end()
+                                                ->arrayNode('items')
+                                                    ->prototype('array')
+                                                        ->children()
+                                                            ->scalarNode("method")->end()
+                                                            ->arrayNode("arguments")
+                                                                ->prototype('variable')->end()
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+                                                ->end()
+                                                ->arrayNode('medias')
+                                                    ->prototype('array')
+                                                        ->arrayProtoType()
+                                                            ->children()
+                                                                ->scalarNode("method")->end()
+                                                                ->arrayNode("arguments")
+                                                                    ->prototype('variable')->end()
+                                                                ->end()
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
                                     ->booleanNode('clip_auto_support')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -1250,70 +1290,6 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
     }
-
-    private function addConfigurationSectionsNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('configuration_sections')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('name')->end()
-                            ->scalarNode('path') ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addImageThumbnailsNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('imagethumbnails')
-                ->prototype('array')
-                ->children()
-                    ->scalarNode('id')->end()
-                    ->scalarNode('name')->end()
-                    ->scalarNode('description') ->end()
-                    ->scalarNode('group') ->end()
-                    ->scalarNode('format') ->end()
-                    ->scalarNode('quality') ->end()
-                    ->scalarNode('highResolution') ->end()
-                    ->booleanNode('preserveColor') ->end()
-                    ->booleanNode('preserveMetaData') ->end()
-                    ->scalarNode('rasterizeSVG') ->end()
-                    ->scalarNode('downloadable')->end()
-                    ->integerNode('modificationDate') ->end()
-                    ->integerNode('creationDate') ->end()
-                    ->booleanNode('preserveAnimation') ->end()
-                    ->arrayNode('items')
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode("method")->end()
-                                ->arrayNode("arguments")
-                                    ->prototype('variable')->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                    ->arrayNode('medias')
-                        ->prototype('array')
-                            ->arrayProtoType()
-                                ->children()
-                                        ->scalarNode("method")->end()
-                                        ->arrayNode("arguments")
-                                            ->prototype('variable')->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
 
     private function addSitemapsNode(ArrayNodeDefinition $rootNode)
     {
