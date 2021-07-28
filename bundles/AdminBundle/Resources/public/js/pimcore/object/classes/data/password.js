@@ -174,6 +174,12 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
                 hideLabel: true,
                 value: t('width_explanation')
             },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("min_length"),
+                name: "minimumLength",
+                value: this.datax.minimumLength
+            },
             algorithmsCombo,
             salt,
             saltCombo
@@ -193,6 +199,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
+                    minimumLength: source.datax.minimumLength,
                     algorithm: source.datax.algorithm,
                     salt: source.datax.salt,
                     saltlocation: source.datax.saltlocation
