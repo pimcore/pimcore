@@ -504,7 +504,7 @@ class Select extends Data implements
         );
 
         if ($optionsProvider) {
-            $context = $params['context'] ? $params['context'] : [];
+            $context = $params['context'] ?? [];
             $context['object'] = $object;
             if ($object) {
                 $context['class'] = $object->getClass();
@@ -514,7 +514,7 @@ class Select extends Data implements
             $options = $optionsProvider->{'getOptions'}($context, $this);
             $this->setOptions($options);
 
-            if ($params['purpose'] == 'editmode') {
+            if (isset($params['purpose']) && $params['purpose'] == 'editmode') {
                 $result = $data;
             } else {
                 $result = ['value' => $data ?? null, 'options' => $this->getOptions()];

@@ -1184,7 +1184,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     private function updateLatestVersionIndex($objectId, $newIndex)
     {
         $object = DataObject\Concrete::getById($objectId);
-        if ($object && $latestVersion = $object->getLatestVersion()) {
+
+        if (
+            $object &&
+            $object->getType() != DataObject::OBJECT_TYPE_FOLDER &&
+            $latestVersion = $object->getLatestVersion()
+        ) {
             // don't renew references (which means loading the target elements)
             // Not needed as we just save a new version with the updated index
             $object = $latestVersion->loadData(false);
