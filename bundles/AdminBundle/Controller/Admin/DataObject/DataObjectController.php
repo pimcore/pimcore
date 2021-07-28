@@ -1187,7 +1187,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if (
             $object &&
-            $object->getType() != 'folder' &&
+            $object->getType() != DataObject::OBJECT_TYPE_FOLDER &&
             $latestVersion = $object->getLatestVersion()
         ) {
             // don't renew references (which means loading the target elements)
