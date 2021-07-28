@@ -171,6 +171,11 @@ pimcore:
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
+        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
+        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
+
+    routing:
+        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
 
     newsletter:
         source_adapters:

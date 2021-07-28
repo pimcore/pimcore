@@ -43,7 +43,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         }
 
         if (this.isAllowed("properties")) {
-            this.properties = new pimcore.document.properties(this, "document");
+            this.properties = new pimcore.document.properties(this, "document", true);
         }
         if (this.isAllowed("versions")) {
             this.versions = new pimcore.document.versions(this);
