@@ -178,6 +178,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
                 xtype: "numberfield",
                 fieldLabel: t("min_length"),
                 name: "minimumLength",
+                minValue: 0,
                 value: this.datax.minimumLength
             },
             algorithmsCombo,
