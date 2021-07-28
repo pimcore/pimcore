@@ -338,7 +338,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Object|null $o
      *
      * @return Document\Editable\Renderlet
      */

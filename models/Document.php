@@ -1197,7 +1197,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param int $published
+     * @param bool $published
      *
      * @return Document
      */
