@@ -82,7 +82,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
                 xtype: 'multiselect',
                 queryDelay: 0,
                 triggerAction: 'all',
-                resizable: true,
+                resizable: false,
                 width: 600,
                 fieldLabel: t("valid_quantityValue_units"),
                 typeAhead: true,
