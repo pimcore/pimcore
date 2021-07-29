@@ -1997,6 +1997,10 @@ span.warning {
     float: left;
     margin-right: 5px;
 }
+.pimcore_quicksearch_picker .list-icon .class-icon {
+    width: 20px;
+    height: 20px;
+}
 
 .pimcore_quicksearch_picker .list-path {
     line-height: 20px;
