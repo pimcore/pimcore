@@ -21,6 +21,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
+use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Admin;
@@ -133,7 +134,10 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $url = $this->router->generate('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective'))]);
+        $event = new LoginRedirectEvent('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective'))]);
+        $this->dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
+
+        $url = $this->router->generate($event->getRouteName(), $event->getRouteParams());
 
         return new RedirectResponse($url);
     }

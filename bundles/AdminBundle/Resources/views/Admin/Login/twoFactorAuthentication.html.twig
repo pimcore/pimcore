@@ -20,7 +20,7 @@
 
     <a href="{{ path('pimcore_admin_logout') }}">{{ 'Back to Login'|trans([],'admin') }}</a>
 
-    {% do pimcore_breach_attack_random_content() %}
+    {{ pimcore_breach_attack_random_content() }}
 {% endblock %}
 
 

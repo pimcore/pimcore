@@ -19,8 +19,10 @@ namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -56,12 +58,17 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * @var array
      */
-    private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer'];
+    private $directRouteDocumentTypes = [];
 
     /**
      * @var Config
      */
     private $config;
+
+    /**
+     * @var StaticPageResolver
+     */
+    private StaticPageResolver $staticPageResolver;
 
     /**
      * @param Document\Service $documentService
@@ -73,12 +80,14 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        Config $config
+        Config $config,
+        StaticPageResolver $staticPageResolver
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
         $this->config = $config;
+        $this->staticPageResolver = $staticPageResolver;
     }
 
     public function setForceHandleUnpublishedDocuments(bool $handle)
@@ -91,15 +100,22 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     public function getDirectRouteDocumentTypes()
     {
+        if (empty($this->directRouteDocumentTypes)) {
+            $routingConfig = \Pimcore\Config::getSystemConfiguration('routing');
+            $this->directRouteDocumentTypes = $routingConfig['direct_route_document_types'];
+        }
+
         return $this->directRouteDocumentTypes;
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param string $type
      */
     public function addDirectRouteDocumentType($type)
     {
-        if (!in_array($type, $this->directRouteDocumentTypes)) {
+        if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
             $this->directRouteDocumentTypes[] = $type;
         }
     }
@@ -258,6 +274,24 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
             // check for redirects (pretty URL, SEO) when not in admin mode and while matching (not generating route)
             if ($redirectRoute = $this->handleDirectRouteRedirect($document, $route, $context)) {
                 return $redirectRoute;
+            }
+
+            // set static page context
+            if ($document instanceof Page && $document->getStaticGeneratorEnabled()) {
+                $this->staticPageResolver->setStaticPageContext($context->getRequest());
+            }
+        }
+
+        // Use latest version, if available, when the request is admin request
+        // so then route should be built based on latest Document settings
+        // https://github.com/pimcore/pimcore/issues/9644
+        if ($isAdminRequest) {
+            $latestVersion = $document->getLatestVersion();
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
+                if ($latestDoc instanceof Document\PageSnippet) {
+                    $document = $latestDoc;
+                }
             }
         }
 

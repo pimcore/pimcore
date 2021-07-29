@@ -200,6 +200,17 @@ namespace {
                 new \AdminerDumpAlter,
             ];
 
+            // support for SSL (at least for PDO)
+            $driverOptions = \Pimcore\Db::get()->getParams()['driverOptions'] ?? [];
+            $ssl = [
+                'key' => $driverOptions[\PDO::MYSQL_ATTR_SSL_KEY] ?? null,
+                'cert' => $driverOptions[\PDO::MYSQL_ATTR_SSL_CERT] ?? null,
+                'ca' => $driverOptions[\PDO::MYSQL_ATTR_SSL_CA] ?? null,
+            ];
+            if ($ssl['key'] !== null || $ssl['cert'] !== null || $ssl['ca'] !== null) {
+                $plugins[] = new \AdminerLoginSsl($ssl);
+            }
+
             class AdminerPimcore extends \AdminerPlugin
             {
                 /**

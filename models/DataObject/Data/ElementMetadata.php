@@ -54,7 +54,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @param string $fieldname
      * @param array $columns
-     * @param null $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @throws \Exception
      */

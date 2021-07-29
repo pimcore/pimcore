@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
@@ -37,6 +38,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
+    use StaticPageContextAwareTrait;
 
     /**
      * @var VisitorInfoStorageInterface
@@ -356,6 +358,10 @@ class FullPageCacheListener
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
+        }
+
+        if ($this->matchesStaticPageContext($request)) {
+            $this->disable('Response can\'t be cached for static pages');
         }
 
         $response = $event->getResponse();

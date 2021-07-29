@@ -135,17 +135,8 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
-        // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
-        // but just the query string generation using the given parameters
-        // eg. $this->url(["foo" => "bar"], false) => /?foo=bar
-        if ($name === null) {
-            if (Staticroute::getCurrentRoute() instanceof Staticroute) {
-                $name = Staticroute::getCurrentRoute()->getName();
-            }
-        }
-
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
         $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
@@ -216,8 +207,10 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
             return $url;
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found',
-            $name));
+        throw new RouteNotFoundException(sprintf(
+            'Could not generate URL for route %s as the static route wasn\'t found',
+            $name
+        ));
     }
 
     /**

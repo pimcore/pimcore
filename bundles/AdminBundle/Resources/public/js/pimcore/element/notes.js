@@ -110,7 +110,7 @@ pimcore.element.notes = Class.create({
 
             var columns = [
                 {text: "ID", sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
-                {text: t("type"), sortable: true, dataIndex: 'type', filter: 'string', flex: 60},
+                {text: t("type"), sortable: true, dataIndex: 'type', filter: 'string', flex: 60, renderer: Ext.util.Format.htmlEncode},
                 {text: t("element"), sortable: false, dataIndex: 'cpath', flex: 200,
                     hidden: this.inElementContext,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {

@@ -101,7 +101,7 @@ class CacheQueueItem
     }
 
     /**
-     * @return mixed
+     * @return int|\DateInterval|null
      */
     public function getLifetime()
     {

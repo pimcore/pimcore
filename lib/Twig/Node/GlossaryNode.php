@@ -22,6 +22,8 @@ use Twig\Node\Node;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 class GlossaryNode extends Node
 {

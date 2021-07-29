@@ -684,6 +684,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
+                // exception for classification store. if there are no items then it is empty by definition.
+                // consequence is that we have to preserve the metadata information
+                // see https://github.com/pimcore/pimcore/issues/9329
+                if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Classificationstore && $level == 0) {
+                    $this->objectData[$key]['metaData'] = $value['metaData'] ?? [];
+                    $this->objectData[$key]['inherited'] = true;
+                }
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
                 $this->metaData[$key]['objectid'] = $object->getId();
@@ -1177,7 +1184,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     private function updateLatestVersionIndex($objectId, $newIndex)
     {
         $object = DataObject\Concrete::getById($objectId);
-        if ($object && $latestVersion = $object->getLatestVersion()) {
+
+        if (
+            $object &&
+            $object->getType() != DataObject::OBJECT_TYPE_FOLDER &&
+            $latestVersion = $object->getLatestVersion()
+        ) {
             // don't renew references (which means loading the target elements)
             // Not needed as we just save a new version with the updated index
             $object = $latestVersion->loadData(false);
@@ -1306,7 +1318,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object, ['objectFromVersion' => $objectFromVersion]));
                     }
                 }
             }

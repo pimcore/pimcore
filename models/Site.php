@@ -307,14 +307,14 @@ final class Site extends AbstractModel
     {
         $this->rootId = (int) $rootId;
 
-        $rd = Document::getById($this->rootId);
+        $rd = Document\Page::getById($this->rootId);
         $this->setRootDocument($rd);
 
         return $this;
     }
 
     /**
-     * @param Document\Page $rootDocument
+     * @param Document\Page|null $rootDocument
      *
      * @return $this
      */
