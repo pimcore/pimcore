@@ -503,6 +503,11 @@ input.cke_dialog_ui_input_tel {
 .pimcore_areablock_toolbar .x-btn-wrap-default-small.x-btn-arrow-right:after {
     content: '\f0da';
 }
+.pimcore_areablock_menu_limit {
+    color: #28a050;
+    font-style: normal;
+    font-weight: normal;
+}
 
 .pimcore_editable_video {
     position: relative;

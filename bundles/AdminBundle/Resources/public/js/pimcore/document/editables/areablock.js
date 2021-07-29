@@ -688,6 +688,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             menuText += " | " + brick.description;
         }
 
+        if (brick.limit) {
+            menuText += ' <span class="pimcore_areablock_menu_limit">('+ brick.limit +')</span>';
+        }
+
         if(!insertPosition) {
             insertPosition = 'after';
         }
@@ -1032,8 +1036,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             textAlign: "left",
             icon: brick.icon,
             cls: 'pimcore_cursor_move',
-            text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
-                : brick.name,
+            text: (brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
+                : brick.name) + (brick.limit ? ' <span class="pimcore_areablock_menu_limit">('+ brick.limit +')</span>' : ''),
             width: areaBlockToolbarSettings.buttonWidth,
             handler: function () {
                 Ext.MessageBox.alert(t("info"), t("area_brick_assign_info_message"));
