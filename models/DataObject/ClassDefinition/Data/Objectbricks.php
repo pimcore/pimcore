@@ -247,7 +247,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
             $data = [];
 
-            if ($fielddefinition instanceof ManyToOneRelation && count($relations) > 0) {
+            if ($fielddefinition instanceof ManyToOneRelation && isset($relations[0])) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
