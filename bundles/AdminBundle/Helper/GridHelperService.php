@@ -297,7 +297,10 @@ class GridHelperService
                                 ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                             $fieldConditions[] = $brickCondition;
                         }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+
+                        if (!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+                        }
                     } else {
                         $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
                                 ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';

@@ -299,7 +299,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param int $published
+     * @param bool $published
      *
      * @return $this
      */
