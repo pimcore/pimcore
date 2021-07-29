@@ -1542,7 +1542,8 @@ class Service extends Model\Element\Service
         }
     }
 
-    private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data) {
+    private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data)
+    {
         $expressionLanguage = new ExpressionLanguage();
         //overwrite constant function to aviod exposing internal information
         $expressionLanguage->register('constant', function ($str) {
@@ -1600,6 +1601,7 @@ class Service extends Model\Element\Service
                 }
 
                 $result = $calculator->getCalculatedValueForEditMode($object, $data);
+
                 break;
 
             case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
@@ -1618,8 +1620,8 @@ class Service extends Model\Element\Service
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-        return $result;
 
+        return $result;
     }
 
     /**

@@ -28,12 +28,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @interal
      */
-    CONST CALCULATOR_TYPE_EXPRESSION = 'expression';
+    const CALCULATOR_TYPE_EXPRESSION = 'expression';
 
     /**
      * @interal
      */
-    CONST CALCULATOR_TYPE_CLASS = 'class';
+    const CALCULATOR_TYPE_CLASS = 'class';
 
     /**
      * Static type of this element

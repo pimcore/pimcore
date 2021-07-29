@@ -195,7 +195,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->testObject->setFirstname('Jane');
 
-
         $value = $this->testObject->getCalculatedValueExpression();
         $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
 
@@ -229,9 +228,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $value = $this->testObject->getCalculatedValueExpressionConstant();
         $this->assertNotEquals(PIMCORE_PROJECT_ROOT, $value, 'calculated returns constant value');
-
     }
-
 
     public function testCheckbox()
     {
