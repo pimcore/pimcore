@@ -26,6 +26,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
+     * @interal
+     */
+    CONST CALCULATOR_TYPE_EXPRESSION = 'expression';
+
+    /**
+     * @interal
+     */
+    CONST CALCULATOR_TYPE_CLASS = 'class';
+
+    /**
      * Static type of this element
      *
      * @internal
@@ -47,6 +57,20 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string|int
      */
     public $width = 0;
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
+    public string $calculatorType = self::CALCULATOR_TYPE_CLASS;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    public ?string $calculatorExpression = null;
 
     /**
      * @internal
@@ -150,6 +174,38 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function setCalculatorClass($calculatorClass)
     {
         $this->calculatorClass = $calculatorClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCalculatorType(): string
+    {
+        return $this->calculatorType;
+    }
+
+    /**
+     * @param string $calculatorType
+     */
+    public function setCalculatorType(string $calculatorType): void
+    {
+        $this->calculatorType = $calculatorType;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCalculatorExpression(): ?string
+    {
+        return $this->calculatorExpression;
+    }
+
+    /**
+     * @param string|null $calculatorExpression
+     */
+    public function setCalculatorExpression(?string $calculatorExpression): void
+    {
+        $this->calculatorExpression = $calculatorExpression;
     }
 
     /**
