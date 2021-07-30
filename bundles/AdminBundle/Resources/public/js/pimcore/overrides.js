@@ -252,7 +252,7 @@ Ext.define('pimcore.tree.View', {
         },
 
         itemupdate: function(record) {
-            if (record.needsPaging && typeof record.ptb == "undefined") {
+            if (record.needsPaging && typeof record.ptb == "undefined" && typeof record.itemUpdated == "undefined") {
                 record.itemUpdated = true;
                 this.doUpdatePaging(record);
             }
