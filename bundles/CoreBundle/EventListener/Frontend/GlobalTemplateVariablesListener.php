@@ -36,34 +36,15 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     use PimcoreContextAwareTrait;
 
     /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @var Environment
-     */
-    protected $twig;
-
-    /**
      * @var array
      */
     protected $globalsStack = [];
 
     public function __construct(
-        DocumentResolver $documentResolver,
-        EditmodeResolver $editmodeResolver,
-        Environment $twig
-    ) {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->twig = $twig;
-    }
+        protected DocumentResolver $documentResolver,
+        protected EditmodeResolver $editmodeResolver,
+        protected Environment $twig
+    ) { }
 
     /**
      * {@inheritdoc}

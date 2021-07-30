@@ -46,46 +46,15 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var UserLoader
-     */
-    protected $userLoader;
-
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    public const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
 
     public function __construct(
-        DocumentResolver $documentResolver,
-        EditmodeResolver $editmodeResolver,
-        RequestHelper $requestHelper,
-        UserLoader $userLoader,
-        DocumentTargetingConfigurator $targetingConfigurator
-    ) {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->requestHelper = $requestHelper;
-        $this->userLoader = $userLoader;
-        $this->targetingConfigurator = $targetingConfigurator;
-    }
+        protected DocumentResolver $documentResolver,
+        protected EditmodeResolver $editmodeResolver,
+        protected RequestHelper $requestHelper,
+        protected UserLoader $userLoader,
+        private DocumentTargetingConfigurator $targetingConfigurator
+    ) { }
 
     /**
      * {@inheritdoc}

@@ -43,38 +43,11 @@ class EditmodeListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var UserLoader
-     */
-    protected $userLoader;
-
-    /**
-     * @var PimcoreBundleManager
-     */
-    protected $bundleManager;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
      * @var array
      */
     protected $contentTypes = [
         'text/html',
     ];
-
-    private EditmodeEditableDefinitionCollector $editableConfigCollector;
 
     /**
      * @param EditmodeResolver $editmodeResolver
@@ -85,20 +58,13 @@ class EditmodeListener implements EventSubscriberInterface
      * @param EditmodeEditableDefinitionCollector $editableConfigCollector
      */
     public function __construct(
-        EditmodeResolver $editmodeResolver,
-        DocumentResolver $documentResolver,
-        UserLoader $userLoader,
-        PimcoreBundleManager $bundleManager,
-        RouterInterface $router,
-        EditmodeEditableDefinitionCollector $editableConfigCollector
-    ) {
-        $this->editmodeResolver = $editmodeResolver;
-        $this->documentResolver = $documentResolver;
-        $this->userLoader = $userLoader;
-        $this->bundleManager = $bundleManager;
-        $this->router = $router;
-        $this->editableConfigCollector = $editableConfigCollector;
-    }
+        protected EditmodeResolver $editmodeResolver,
+        protected DocumentResolver $documentResolver,
+        protected UserLoader $userLoader,
+        protected PimcoreBundleManager $bundleManager,
+        protected RouterInterface $router,
+        private EditmodeEditableDefinitionCollector $editableConfigCollector
+    ) { }
 
     /**
      * {@inheritdoc}
