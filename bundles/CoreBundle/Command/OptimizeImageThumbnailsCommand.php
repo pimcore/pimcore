@@ -27,19 +27,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class OptimizeImageThumbnailsCommand extends AbstractCommand
 {
-    /**
-     * @var ImageOptimizerInterface
-     */
-    private $optimizer;
 
     /**
      * @param ImageOptimizerInterface $optimizer
      */
-    public function __construct(ImageOptimizerInterface $optimizer)
+    public function __construct(private ImageOptimizerInterface $optimizer)
     {
         parent::__construct();
-
-        $this->optimizer = $optimizer;
     }
 
     protected function configure()
