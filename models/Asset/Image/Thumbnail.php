@@ -353,13 +353,15 @@ final class Thumbnail
             $path = $this->getPath(true);
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
+        
+        if (!isset($options['disableWidthHeightAttributes'])) {
+            if ($this->getWidth()) {
+                $attributes['width'] = $this->getWidth();
+            }
 
-        if ($this->getWidth()) {
-            $attributes['width'] = $this->getWidth();
-        }
-
-        if ($this->getHeight()) {
-            $attributes['height'] = $this->getHeight();
+            if ($this->getHeight()) {
+                $attributes['height'] = $this->getHeight();
+            }
         }
 
         $altText = $attributes['alt'] ?? '';
