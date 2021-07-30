@@ -95,7 +95,7 @@ abstract class AbstractWorker implements WorkerInterface
     {
         $this->getAllFilterGroups();
 
-        return $this->filterGroups[$filterGroup] ? $this->filterGroups[$filterGroup] : [];
+        return $this->filterGroups[$filterGroup] ?? [];
     }
 
     public function getAllFilterGroups()

@@ -214,7 +214,7 @@ final class WorkflowPass implements CompilerPassInterface
             // Enable the AuditTrail
             if ($workflowConfig['audit_trail']['enabled']) {
                 $listener = new Definition(Workflow\EventListener\AuditTrailListener::class);
-                $listener->setPrivate(true);
+                $listener->setPublic(false);
                 $listener->addTag('monolog.logger', ['channel' => 'workflow']);
                 $listener->addTag(
                     'kernel.event_listener',
@@ -234,7 +234,7 @@ final class WorkflowPass implements CompilerPassInterface
 
             // Add Guard Listener
             $guard = new Definition(Workflow\EventListener\GuardListener::class);
-            $guard->setPrivate(true);
+            $guard->setPublic(false);
             $configuration = [];
             foreach ($workflowConfig['transitions'] as $transitionName => $config) {
                 if (!isset($config['guard'])) {

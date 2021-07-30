@@ -58,7 +58,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * @var array
      */
-    private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer'];
+    private $directRouteDocumentTypes = [];
 
     /**
      * @var Config
@@ -100,15 +100,22 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     public function getDirectRouteDocumentTypes()
     {
+        if (empty($this->directRouteDocumentTypes)) {
+            $routingConfig = \Pimcore\Config::getSystemConfiguration('routing');
+            $this->directRouteDocumentTypes = $routingConfig['direct_route_document_types'];
+        }
+
         return $this->directRouteDocumentTypes;
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param string $type
      */
     public function addDirectRouteDocumentType($type)
     {
-        if (!in_array($type, $this->directRouteDocumentTypes)) {
+        if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
             $this->directRouteDocumentTypes[] = $type;
         }
     }

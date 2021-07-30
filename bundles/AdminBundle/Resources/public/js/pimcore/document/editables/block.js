@@ -50,12 +50,12 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
 
         // re-initialize amount boxes on every refresh
-        amountBox = Ext.get(element).query('.pimcore_block_amount_select', false)[0];
+        amountBox = Ext.get(element).query('.pimcore_block_amount[data-name="' + this.name + '"] .pimcore_block_amount_select', false)[0];
         if (typeof amountBox !== 'undefined') {
             amountBox.remove();
         }
 
-        plusButton = Ext.get(element).query('.pimcore_block_button_plus', false)[0];
+        plusButton = Ext.get(element).query('.pimcore_block_plus[data-name="' + this.name + '"] .pimcore_block_button_plus', false)[0];
         if (typeof plusButton !== 'undefined') {
             plusButton.remove();
         }
@@ -86,7 +86,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         }
 
         // minus button
-        minusButton = Ext.get(element).query('.pimcore_block_button_minus')[0];
+        minusButton = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"] .pimcore_block_button_minus')[0];
         if (typeof minusButton === 'undefined') {
             minusDiv = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"]')[0];
             minusButton = new Ext.Button({
@@ -100,7 +100,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         }
 
         // up button
-        upButton = Ext.get(element).query('.pimcore_block_button_up')[0];
+        upButton = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"] .pimcore_block_button_up')[0];
         if (typeof upButton === 'undefined') {
             upDiv = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"]')[0];
             upButton = new Ext.Button({
@@ -114,7 +114,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         }
 
         // down button
-        downButton = Ext.get(element).query('.pimcore_block_button_down')[0];
+        downButton = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"] .pimcore_block_button_down')[0];
         if (typeof downButton === 'undefined') {
             downDiv = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"]')[0];
             downButton = new Ext.Button({

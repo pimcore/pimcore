@@ -29,6 +29,14 @@ services:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']
 ```
+- [Session] Default setting for `framework.session.cookie_samesite` changed to `strict`. 
+  For more information about the possible impact on your project, please have a look at the [docs of set-cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite). 
+  If you prefer to stay on the old session cookie behavior, please add the following to your project configuration: 
+```yaml
+framework:
+    session:
+        cookie_samesite: 'lax'
+```  
 
 ## 10.0.0
 

@@ -73,7 +73,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                    ->setDeprecated('The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.')
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.1',
+                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                    )
                 ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
@@ -707,6 +711,14 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('types')
+                    ->info('list of supported document types')
+                    ->scalarPrototype()->end()
+                ->end()
+                ->arrayNode('valid_tables')
+                    ->info('list of supported documents_* tables')
+                    ->scalarPrototype()->end()
+                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -793,6 +805,9 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('direct_route_document_types')
+                            ->scalarPrototype()->end()
+                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
