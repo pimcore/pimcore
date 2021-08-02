@@ -199,7 +199,7 @@ class Processor
         if (is_resource($fileSystemPath)) {
             $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
         }
-        
+
         if (!file_exists($fileSystemPath)) {
             throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
         }
