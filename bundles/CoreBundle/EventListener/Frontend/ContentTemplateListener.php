@@ -34,17 +34,10 @@ class ContentTemplateListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var TemplateResolver
-     */
-    protected $templateResolver;
-
-    /**
      * @param TemplateResolver $templateResolver
      */
-    public function __construct(TemplateResolver $templateResolver)
-    {
-        $this->templateResolver = $templateResolver;
-    }
+    public function __construct(protected TemplateResolver $templateResolver)
+    { }
 
     /**
      * {@inheritdoc}

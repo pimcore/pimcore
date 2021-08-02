@@ -27,18 +27,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ResponseStackListener implements EventSubscriberInterface
 {
-    /**
-     * @var ResponseStack
-     */
-    private $responseStack;
 
     /**
      * @param ResponseStack $responseStack
      */
-    public function __construct(ResponseStack $responseStack)
-    {
-        $this->responseStack = $responseStack;
-    }
+    public function __construct(private ResponseStack $responseStack)
+    { }
 
     /**
      * {@inheritdoc}

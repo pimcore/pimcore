@@ -28,19 +28,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateStorageCommand extends AbstractCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $locator;
 
     /**
      * @param ContainerInterface $locator
      */
-    public function __construct(ContainerInterface $locator)
+    public function __construct(private ContainerInterface $locator)
     {
         parent::__construct();
-
-        $this->locator = $locator;
     }
 
     protected function configure()

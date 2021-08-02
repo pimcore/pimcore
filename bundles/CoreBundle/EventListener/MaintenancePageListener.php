@@ -29,11 +29,6 @@ class MaintenancePageListener
     use ResponseInjectionTrait;
 
     /**
-     * @var KernelInterface
-     */
-    protected $kernel;
-
-    /**
      * @var string
      */
     protected $templateCode = null;
@@ -41,10 +36,7 @@ class MaintenancePageListener
     /**
      * @param KernelInterface $kernel
      */
-    public function __construct(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
-    }
+    public function __construct(protected KernelInterface $kernel) {  }
 
     /**
      * @param string $code

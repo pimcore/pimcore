@@ -34,18 +34,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class InternalNewsletterDocumentSendCommand extends AbstractCommand
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
         parent::__construct();
-
-        $this->container = $container;
     }
 
     protected function configure(): void

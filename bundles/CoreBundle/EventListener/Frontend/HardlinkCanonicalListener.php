@@ -39,17 +39,9 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
      * @param DocumentResolver $documentResolver
      */
-    public function __construct(DocumentResolver $documentResolver)
-    {
-        $this->documentResolver = $documentResolver;
-    }
+    public function __construct(protected DocumentResolver $documentResolver) { }
 
     /**
      * {@inheritdoc}

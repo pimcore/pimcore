@@ -41,21 +41,6 @@ class FullPageCacheListener
     use StaticPageContextAwareTrait;
 
     /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
-
-    /**
-     * @var SessionStatus
-     */
-    private $sessionStatus;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
      * @var bool
      */
     protected $enabled = true;
@@ -85,22 +70,12 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
     public function __construct(
-        VisitorInfoStorageInterface $visitorInfoStorage,
-        SessionStatus $sessionStatus,
-        EventDispatcherInterface $eventDispatcher,
-        Config $config
-    ) {
-        $this->visitorInfoStorage = $visitorInfoStorage;
-        $this->sessionStatus = $sessionStatus;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->config = $config;
-    }
+        private VisitorInfoStorageInterface $visitorInfoStorage,
+        private SessionStatus $sessionStatus,
+        private EventDispatcherInterface $eventDispatcher,
+        protected Config $config
+    ) { }
 
     /**
      * @param string|null $reason
