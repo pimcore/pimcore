@@ -144,7 +144,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            // ensure editable are loaded
             $document->getEditables();
+        } else {
+            // ensure no editables (e.g. from session, version, ...) are still referenced
+            $document->setEditables([]);
         }
 
         if ($request->get('data')) {
