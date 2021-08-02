@@ -34,7 +34,6 @@ use Pimcore\Workflow\Place;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Workflow\Registry;
 
 /**
  * @internal
@@ -44,7 +43,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      * @var bool
      */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     public function __construct(
         private Manager $workflowManager,
