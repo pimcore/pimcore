@@ -109,15 +109,7 @@ class Processor
             ];
         }
 
-        if (!$fileSystemPath && $asset instanceof Asset) {
-            $fileSystemPath = $asset->getLocalFile();
-        }
-
-        if (is_resource($fileSystemPath)) {
-            $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
-        }
-
-        $fileExt = File::getFileExtension(basename($fileSystemPath));
+        $fileExt = File::getFileExtension($asset->getFilename());
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
@@ -171,7 +163,7 @@ class Processor
 
         $fileExtension = $format;
         if ($format == 'original') {
-            $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+            $fileExtension = $fileExt;
         } elseif ($format === 'pjpeg' || $format === 'jpeg') {
             $fileExtension = 'jpg';
         }
@@ -200,6 +192,14 @@ class Processor
         }
 
         // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
+        if (!$fileSystemPath && $asset instanceof Asset) {
+            $fileSystemPath = $asset->getLocalFile();
+        }
+
+        if (is_resource($fileSystemPath)) {
+            $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
+        }
+        
         if (!file_exists($fileSystemPath)) {
             throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
         }
