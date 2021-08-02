@@ -105,7 +105,7 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
             combineErrors: false,
             width: width,
             items: [this.checkBox, this.textLabel],
-            componentCls: "object_field object_field_type_" + this.type + " object_field_name_" + this.name,
+            componentCls: this.getWrapperClassNames(),
             isDirty: function() {
                 return this.checkBox.isDirty()
             }.bind(this)

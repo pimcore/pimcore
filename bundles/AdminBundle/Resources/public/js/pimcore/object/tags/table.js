@@ -106,7 +106,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         options.layout = "fit";
         options.style = "margin-bottom: 10px";
         options.title = this.fieldConfig.title;
-        options.componentCls = "object_field object_field_type_" + this.type;
+        options.componentCls = this.getWrapperClassNames();
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
         }
