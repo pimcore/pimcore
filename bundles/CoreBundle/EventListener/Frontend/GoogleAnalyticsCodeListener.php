@@ -38,7 +38,9 @@ class GoogleAnalyticsCodeListener
     use PreviewRequestTrait;
     use StaticPageContextAwareTrait;
 
-    public function __construct(private Tracker $tracker) { }
+    public function __construct(private Tracker $tracker)
+    {
+    }
 
     public function onKernelResponse(ResponseEvent $event)
     {

@@ -27,7 +27,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class OptimizeImageThumbnailsCommand extends AbstractCommand
 {
-
     /**
      * @param ImageOptimizerInterface $optimizer
      */

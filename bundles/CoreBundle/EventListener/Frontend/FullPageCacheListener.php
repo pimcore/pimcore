@@ -75,7 +75,8 @@ class FullPageCacheListener
         private SessionStatus $sessionStatus,
         private EventDispatcherInterface $eventDispatcher,
         protected Config $config
-    ) { }
+    ) {
+    }
 
     /**
      * @param string|null $reason

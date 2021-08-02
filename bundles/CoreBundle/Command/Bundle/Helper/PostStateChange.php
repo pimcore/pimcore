@@ -31,12 +31,12 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  */
 class PostStateChange
 {
-
     public function __construct(
         private CacheClearer $cacheClearer,
         private AssetsInstaller $assetsInstaller,
         private EventDispatcherInterface $eventDispatcher
-    ) { }
+    ) {
+    }
 
     public static function configureStateChangeCommandOptions(Command $command)
     {

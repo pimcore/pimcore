@@ -53,7 +53,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
         protected Config $config,
         protected Document\Service $documentService,
         protected SiteResolver $siteResolver
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

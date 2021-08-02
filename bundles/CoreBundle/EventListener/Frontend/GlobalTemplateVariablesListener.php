@@ -44,7 +44,8 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         protected DocumentResolver $documentResolver,
         protected EditmodeResolver $editmodeResolver,
         protected Environment $twig
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

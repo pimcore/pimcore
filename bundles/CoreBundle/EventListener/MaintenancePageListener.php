@@ -36,7 +36,9 @@ class MaintenancePageListener
     /**
      * @param KernelInterface $kernel
      */
-    public function __construct(protected KernelInterface $kernel) {  }
+    public function __construct(protected KernelInterface $kernel)
+    {
+    }
 
     /**
      * @param string $code

@@ -52,7 +52,8 @@ class RoutingListener implements EventSubscriberInterface
         protected RedirectHandler $redirectHandler,
         protected SiteResolver $siteResolver,
         protected Config $config
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

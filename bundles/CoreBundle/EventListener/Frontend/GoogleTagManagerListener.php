@@ -70,7 +70,8 @@ class GoogleTagManagerListener
         private SiteIdProvider $siteIdProvider,
         private EventDispatcherInterface $eventDispatcher,
         private EngineInterface $templatingEngine
-    ) { }
+    ) {
+    }
 
     public function onKernelResponse(ResponseEvent $event)
     {

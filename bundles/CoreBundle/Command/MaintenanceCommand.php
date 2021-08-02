@@ -27,7 +27,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MaintenanceCommand extends AbstractCommand
 {
-
     /**
      * @param ExecutorInterface $maintenanceExecutor
      * @param LoggerInterface $logger

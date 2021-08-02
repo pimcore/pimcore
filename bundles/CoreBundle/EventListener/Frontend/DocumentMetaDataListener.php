@@ -40,7 +40,8 @@ class DocumentMetaDataListener implements EventSubscriberInterface
      * @param HeadMeta $headMeta
      */
     public function __construct(protected DocumentResolverService $documentResolverService, protected HeadMeta $headMeta)
-    { }
+    {
+    }
 
     /**
      * {@inheritdoc}

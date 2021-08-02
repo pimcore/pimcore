@@ -64,7 +64,8 @@ class EditmodeListener implements EventSubscriberInterface
         protected PimcoreBundleManager $bundleManager,
         protected RouterInterface $router,
         private EditmodeEditableDefinitionCollector $editableConfigCollector
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

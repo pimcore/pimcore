@@ -28,7 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateStorageCommand extends AbstractCommand
 {
-
     /**
      * @param ContainerInterface $locator
      */

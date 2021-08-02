@@ -28,7 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class UninstallCommand extends AbstractBundleCommand
 {
-
     public function __construct(PimcoreBundleManager $bundleManager, private PostStateChange $postStateChangeHelper)
     {
         parent::__construct($bundleManager);

@@ -30,7 +30,9 @@ class OutputTimestampListener implements EventSubscriberInterface
 {
     const TIMESTAMP_OVERRIDE_PARAM_NAME = 'pimcore_override_output_timestamp';
 
-    public function __construct(protected OutputTimestampResolver $outputTimestampResolver) { }
+    public function __construct(protected OutputTimestampResolver $outputTimestampResolver)
+    {
+    }
 
     /**
      * {@inheritdoc}

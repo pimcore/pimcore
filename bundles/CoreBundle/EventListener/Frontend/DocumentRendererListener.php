@@ -26,8 +26,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class DocumentRendererListener implements EventSubscriberInterface
 {
-
-    public function __construct(protected ContainerService $containerService) { }
+    public function __construct(protected ContainerService $containerService)
+    {
+    }
 
     /**
      * {@inheritdoc}

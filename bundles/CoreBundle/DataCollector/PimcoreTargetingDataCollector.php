@@ -30,12 +30,12 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class PimcoreTargetingDataCollector extends DataCollector implements ResetInterface
 {
-
     public function __construct(
         private VisitorInfoStorageInterface $visitorInfoStorage,
         private DocumentResolver $documentResolver,
         private TargetingDataCollector $targetingDataCollector
-    ) { }
+    ) {
+    }
 
     public function getName()
     {

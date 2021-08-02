@@ -27,10 +27,10 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
-
     public function __construct(
         protected PimcoreContextResolver $contextResolver
-    ) { }
+    ) {
+    }
 
     public function collect(Request $request, Response $response, ?\Throwable $exception = null)
     {

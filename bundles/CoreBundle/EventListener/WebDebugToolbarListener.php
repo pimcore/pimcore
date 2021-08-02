@@ -31,7 +31,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
-
     /**
      * @var RequestMatcherInterface[]
      */
@@ -43,7 +42,8 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         protected ?SymfonyWebDebugToolbarListener $debugToolbarListener,
         protected EventDispatcherInterface $eventDispatcher,
         protected array $excludeRoutes
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

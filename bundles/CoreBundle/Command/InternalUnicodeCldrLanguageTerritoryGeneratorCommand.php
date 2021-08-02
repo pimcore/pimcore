@@ -26,7 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractCommand
 {
-
     public function __construct(private LocaleServiceInterface $localeService)
     {
         parent::__construct();

@@ -39,7 +39,8 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
      * @param BlockStateStack $blockStateStack
      */
     public function __construct(protected BlockStateStack $blockStateStack)
-    { }
+    {
+    }
 
     /**
      * {@inheritdoc}

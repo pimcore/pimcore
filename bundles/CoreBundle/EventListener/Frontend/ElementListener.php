@@ -54,7 +54,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         protected RequestHelper $requestHelper,
         protected UserLoader $userLoader,
         private DocumentTargetingConfigurator $targetingConfigurator
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

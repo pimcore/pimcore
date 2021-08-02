@@ -28,7 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GenerateStaticPagesCommand extends AbstractCommand
 {
-
     public function __construct(protected StaticPageGenerator $staticPageGenerator)
     {
         parent::__construct();

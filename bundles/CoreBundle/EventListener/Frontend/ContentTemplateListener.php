@@ -37,7 +37,8 @@ class ContentTemplateListener implements EventSubscriberInterface
      * @param TemplateResolver $templateResolver
      */
     public function __construct(protected TemplateResolver $templateResolver)
-    { }
+    {
+    }
 
     /**
      * {@inheritdoc}

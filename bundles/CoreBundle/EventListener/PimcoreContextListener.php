@@ -42,7 +42,8 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     public function __construct(
         protected PimcoreContextResolver $resolver,
         protected RequestStack $requestStack
-    ) { }
+    ) {
+    }
 
     /**
      * {@inheritdoc}

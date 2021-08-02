@@ -41,7 +41,9 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
     /**
      * @param DocumentResolver $documentResolver
      */
-    public function __construct(protected DocumentResolver $documentResolver) { }
+    public function __construct(protected DocumentResolver $documentResolver)
+    {
+    }
 
     /**
      * {@inheritdoc}
