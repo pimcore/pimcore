@@ -117,7 +117,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
             },
             layout: 'hbox',
             width: width,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: "object_field object_field_type_" + this.type + " object_field_name_" + this.name,
             items: [this.colorField, this.selector,
                 {
                 xtype: "button",

@@ -203,7 +203,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             labelWidth: labelWidth,
             combineErrors: false,
             items: [this.inputField, this.unitField, compatibleUnitsButton],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: "object_field object_field_type_" + this.type + " object_field_name_" + this.name,
             isDirty: function() {
                 return this.defaultValue || this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)

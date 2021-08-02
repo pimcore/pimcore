@@ -87,7 +87,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             fieldLabel:this.fieldConfig.title,
             combineErrors:false,
             items:[this.datefield, this.timefield],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: "object_field object_field_type_" + this.type + " object_field_name_" + this.name,
             isDirty: function() {
                 return this.datefield.isDirty() || this.timefield.isDirty()
             }.bind(this)
