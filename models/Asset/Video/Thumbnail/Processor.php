@@ -83,14 +83,12 @@ class Processor
         }
 
         $storage = Storage::get('thumbnail');
-        $sourceFile = $asset->getTemporaryFile(true);
 
         $instance = new self();
         $formats = empty($onlyFormats) ? ['mp4'] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
-        $instance->setDeleteSourceAfterFinished($sourceFile);
 
         //create dash file(.mpd), if medias exists
         $medias = $config->getMedias();
@@ -127,6 +125,10 @@ class Processor
                 throw new \Exception('Unable to convert video, see logs for details.');
             }
         }
+
+        //generate tmp file only for new jobs
+        $sourceFile = $asset->getTemporaryFile(true);
+        $instance->setDeleteSourceAfterFinished($sourceFile);
 
         foreach ($formats as $format) {
             $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
@@ -168,7 +170,10 @@ class Processor
             'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
+
+        Model\Version::disable();
         $asset->save();
+        Model\Version::enable();
 
         $instance->convert();
 
@@ -285,7 +290,10 @@ class Processor
                 'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
+
+            Model\Version::disable();
             $asset->save();
+            Model\Version::enable();
         }
 
         if ($instance->getDeleteSourceAfterFinished()) {

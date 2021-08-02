@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\MockProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject;
@@ -38,7 +39,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $product;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $productId;
 
@@ -59,7 +60,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var CartInterface
+     * @var CartInterface|null
      */
     protected $cart;
 
@@ -77,6 +78,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setCount($count, bool $fireModified = true)
     {
+        if ($count < 0) {
+            $count = 0;
+        }
+
         if ($this->count != $count && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
@@ -114,6 +119,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
         if ($product instanceof CheckoutableInterface) {
             $this->product = $product;
+        } else {
+            // actual product is not available or not checkoutable (e.g. deleted in Admin)
+            $product = new MockProduct();
+            $product->setId($this->productId);
+            $this->product = $product;
         }
 
         return $this->product;
@@ -129,7 +139,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return CartInterface
+     * @return CartInterface|null
      */
     abstract public function getCart();
 

@@ -36,6 +36,6 @@ class AssetCompressNode extends Node
             ->addDebugInfo($this)
             ->write("ob_start();\n")
             ->subcompile($this->getNode('body'))
-            ->write("\n; echo trim(str_replace(\"\n\", '', ob_get_clean())); \n");
+            ->write("\n; echo trim(str_replace(\"\n\", '', ob_get_clean()));\n");
     }
 }

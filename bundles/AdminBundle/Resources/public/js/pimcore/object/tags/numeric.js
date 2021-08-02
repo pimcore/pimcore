@@ -84,6 +84,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
             componentCls: this.getWrapperClassNames(),
+            mouseWheelEnabled: false
         };
 
         if (!isNaN(this.data)) {

@@ -126,13 +126,15 @@ CSS;
     }
 
     /**
+     * @internal
+     *
      * Helper to format the receivers for the debug email and logging
      *
      * @param array $receivers
      *
      * @return string
      */
-    protected static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers)
     {
         $formatedReceiversArray = [];
 
@@ -154,10 +156,11 @@ CSS;
     /**
      * @param MailClient $mail
      * @param array $recipients
+     * @param ?string $error
      *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail, $recipients)
+    public static function logEmail(MailClient $mail, $recipients, $error = null)
     {
         $emailLog = new Model\Tool\Email\Log();
         $document = $mail->getDocument();
@@ -206,6 +209,8 @@ CSS;
                 }
             }
         }
+
+        $emailLog->setError($error);
 
         $emailLog->save();
 

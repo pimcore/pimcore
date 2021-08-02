@@ -94,7 +94,7 @@ class PdfReactor extends Processor
     {
         $pdfreactor = $this->getClient();
 
-        $customConfig = (array)$params['adapterConfig'];
+        $customConfig = (array)($params['adapterConfig'] ?? []);
         $reactorConfig = $this->getConfig((object)$customConfig);
 
         if (!array_keys($customConfig, 'addLinks')) {

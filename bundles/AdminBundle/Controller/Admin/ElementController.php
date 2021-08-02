@@ -572,15 +572,17 @@ class ElementController extends AdminController
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
                 $editModeData = $fd->getDataForEditmode($data, $source);
-                if (is_array($editModeData)) {
+                // Inherited values show as an empty array
+                if (is_array($editModeData) && !empty($editModeData)) {
                     foreach ($editModeData as $relationObjectAttribute) {
                         $relationObjectAttribute['$$nicepath'] =
                             isset($relationObjectAttribute[$idProperty]) && isset($result[$relationObjectAttribute[$idProperty]]) ? $result[$relationObjectAttribute[$idProperty]] : null;
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
                 } else {
-                    $editModeData['$$nicepath'] = $result[$editModeData[$idProperty]];
-                    $result[$editModeData[$idProperty]] = $editModeData;
+                    foreach ($result as $resultItemId => $resultItem) {
+                        $result[$resultItemId] = ['$$nicepath' => $resultItem];
+                    }
                 }
             } else {
                 Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
@@ -877,7 +879,7 @@ class ElementController extends AdminController
         } elseif ($ownerType == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
-            if ($context['subContainerType'] == 'localizedfield') {
+            if (($context['subContainerType'] ?? null) === 'localizedfield') {
                 /** @var DataObject\ClassDefinition\Data\Localizedfields $fdLocalizedFields */
                 $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
                 $fd = $fdLocalizedFields->getFieldDefinition($fieldname);

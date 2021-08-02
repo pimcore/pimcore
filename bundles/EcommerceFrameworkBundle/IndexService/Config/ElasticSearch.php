@@ -194,7 +194,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /** @inheritDoc */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-        if ($this->fieldMapping[$fieldName]) {
+        if (isset($this->fieldMapping[$fieldName])) {
             return $this->fieldMapping[$fieldName];
         }
 
@@ -202,7 +202,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         if ($considerSubFieldNames) {
             $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
             foreach ($fieldNameParts as $fieldNamePart) {
-                if ($this->fieldMapping[$fieldNamePart]) {
+                if (isset($this->fieldMapping[$fieldNamePart])) {
                     return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
                 }
             }
@@ -247,10 +247,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getClientConfig($property = null)
     {
-        return $property
-            ? $this->clientConfig[$property]
-            : $this->clientConfig
-            ;
+        if ($property) {
+            return $this->clientConfig[$property] ?? null;
+        }
+
+        return $this->clientConfig;
     }
 
     /**

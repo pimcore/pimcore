@@ -940,5 +940,7 @@
     "draft": "Entwurf",
     "auto_save": "Automatisch speichern",
     "save_draft": "Entwurf speichern",
-    "selected_grid_columns": "Ausgewählte Grid-Spalten"
+    "selected_grid_columns": "Ausgewählte Grid-Spalten",
+    "ungrouped": "ungrouped",
+    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?"
 }

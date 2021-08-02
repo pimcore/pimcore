@@ -77,26 +77,21 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         if (!$this->csrfToken) {
             $this->csrfToken = Session::getReadOnly()->get('csrfToken');
             if (!$this->csrfToken) {
-                $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-                    if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
-                        $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
-                    }
-
-                    return $adminSession->get('csrfToken');
-                });
+                $this->regenerateCsrfToken(false);
             }
         }
 
         return $this->csrfToken;
     }
 
-    public function regenerateCsrfToken()
+    public function regenerateCsrfToken(bool $force = true)
     {
-        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-            $token = sha1(generateRandomSymfonySecret());
-            $adminSession->set('csrfToken', $token);
+        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($force) {
+            if ($force || !$adminSession->get('csrfToken')) {
+                $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
+            }
 
-            return $token;
+            return $adminSession->get('csrfToken');
         });
 
         $this->twig->addGlobal('csrfToken', $this->csrfToken);

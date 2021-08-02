@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Objectbrick;
@@ -100,13 +99,9 @@ class PaymentProviderInstaller extends AbstractInstaller
     protected function unInstallBricks()
     {
         foreach ($this->bricksToInstall as $brickKey => $brickFile) {
-            try {
-                $brick = Objectbrick\Definition::getByKey($brickKey);
-                if ($brick instanceof Objectbrick\Definition) {
-                    $brick->delete();
-                }
-            } catch (\Exception $e) {
-                Logger::err("Could not delete $brickKey brick. Error:" . $e->getMessage());
+            $brick = Objectbrick\Definition::getByKey($brickKey);
+            if ($brick instanceof Objectbrick\Definition) {
+                $brick->delete();
             }
         }
     }
@@ -120,23 +115,19 @@ class PaymentProviderInstaller extends AbstractInstaller
         }
 
         if (!$brick) {
-            try {
-                $brick = new Objectbrick\Definition;
-                $brick->setKey($brickKey);
+            $brick = new Objectbrick\Definition;
+            $brick->setKey($brickKey);
 
-                $json = file_get_contents($filepath);
+            $json = file_get_contents($filepath);
 
-                $success = Service::importObjectBrickFromJson($brick, $json);
+            $success = Service::importObjectBrickFromJson($brick, $json);
 
-                if ($success) {
-                    $onlineOrderClass = ClassDefinition::getByName('OnlineShopOrder');
-                    /** @var ClassDefinition\Data\Objectbricks $paymentProviderBrickField */
-                    $paymentProviderBrickField = $onlineOrderClass->getFieldDefinition('paymentProvider');
-                    $allowedTypes = $paymentProviderBrickField->getAllowedTypes();
-                    $paymentProviderBrickField->setAllowedTypes([$brickKey, ...$allowedTypes]);
-                }
-            } catch (\Exception $e) {
-                Logger::err("Could not import $brickKey brick. Error:" . $e->getMessage());
+            if ($success) {
+                $onlineOrderClass = ClassDefinition::getByName('OnlineShopOrder');
+                /** @var ClassDefinition\Data\Objectbricks $paymentProviderBrickField */
+                $paymentProviderBrickField = $onlineOrderClass->getFieldDefinition('paymentProvider');
+                $allowedTypes = $paymentProviderBrickField->getAllowedTypes();
+                $paymentProviderBrickField->setAllowedTypes([$brickKey, ...$allowedTypes]);
             }
         }
     }

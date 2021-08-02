@@ -188,6 +188,11 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         }
 
         tbar.push({
+            iconCls: 'pimcore_icon_copy',
+            handler: this.copyFromTable.bind(this)
+        });
+
+        tbar.push({
             iconCls: "pimcore_icon_paste",
             handler: this.pasteFromClipboard.bind(this)
         });
@@ -333,6 +338,72 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     getCellEditValue: function () {
         return this.getValue();
+    },
+
+    getCopyData: function() {
+        var data = this.getValue();
+        var copyData;
+        if (data.length > 0) {
+            try {
+                var temp = [];
+                for (var i = 0; i < data.length; i++) {
+                    temp.push(data[i].join("\t"))
+                }
+                copyData = temp.join('\n');
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        return copyData;
+    },
+
+    copyFromTable: function() {
+        this.copyField = new Ext.form.TextArea({
+            width: "100%",
+            validateOnChange: false,
+            value: this.getCopyData()
+        });
+
+        this.copyWindow = new Ext.Window({
+            width: 500,
+            modal: true,
+            title: t("copy"),
+            layout: "fit"
+        });
+
+        var panel = new Ext.Panel({
+            bodyStyle: "padding: 10px;",
+            items: [
+                this.copyField,
+            ],
+            buttons: [
+                {
+                    text: t("copy"),
+                    iconCls: "pimcore_icon_white_copy",
+                    handler: function () {
+                        this.copyField.focus();
+                        this.copyField.selectText();
+                        try {
+                            document.execCommand("copy");
+                        } catch (e) {
+                            console.log(e);
+                        };
+                        this.copyWindow.close();
+                    }.bind(this)
+                }, {
+                    text: t("cancel"),
+                    iconCls: "pimcore_icon_cancel",
+                    handler: function () {
+                        this.copyWindow.close();
+                    }.bind(this)
+                }
+            ]
+        });
+
+        this.copyWindow.add(panel);
+        this.copyWindow.show();
+        this.copyField.focus();
     },
 
     pasteFromClipboard: function() {

@@ -584,7 +584,7 @@ final class Requirements
             $checks[] = new Check([
                 'name' => 'locales-all',
                 'link' => 'https://packages.debian.org/en/stable/locales-all',
-                'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
+                'state' => ($fmt->format(new \DateTime('next tuesday', new \DateTimeZone('Europe/Vienna'))) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
                 'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all).",
             ]);
         }

@@ -204,6 +204,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 $list = new Translation\Listing();
                 $list->setDomain($domain);
 
+                $debugAdminTranslations = \Pimcore\Config::getSystemConfiguration('general')['debug_admin_translations'] ?? false;
                 $list->setCondition('language = ?', [$locale]);
                 $translations = $list->loadRaw();
 
@@ -216,6 +217,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                         if (empty($translationTerm)) {
                             $translationTerm = $translationKey;
+
+                            //wrap non-translated keys with "+", if debug admin translations is enabled
+                            if ($debugAdminTranslations) {
+                                $translationTerm = '+' . $translationTerm. '+';
+                            }
                         }
 
                         if (empty($translation['type']) || $translation['type'] === 'simple') {

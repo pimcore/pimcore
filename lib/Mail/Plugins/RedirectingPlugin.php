@@ -174,7 +174,7 @@ final class RedirectingPlugin
         $message->setParam('Debug-Redirected', 'true');
         foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $k) {
             // Add parameters to show this was redirected
-            $message->setParam('Debug-Original-' . $k, $originalData[$k]);
+            $message->setParam('Debug-Original-' . $k, MailHelper::formatDebugReceivers($originalData[$k]));
         }
     }
 

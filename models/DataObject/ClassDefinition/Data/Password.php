@@ -85,6 +85,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $saltlocation = '';
 
     /**
+     * @var int|null
+     */
+    public $minimumLength;
+
+    /**
      * @return string|int
      */
     public function getWidth()
@@ -105,6 +110,22 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->width = $width;
 
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMinimumLength(): ?int
+    {
+        return $this->minimumLength;
+    }
+
+    /**
+     * @param int|null $minimumLength
+     */
+    public function setMinimumLength(?int $minimumLength): void
+    {
+        $this->minimumLength = $minimumLength;
     }
 
     /**
@@ -205,7 +226,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             ? $params['owner']
             : ($object ?: null);
 
-        if (null !== $passwordModel) {
+        if (null !== $passwordModel && !$passwordModel instanceof DataObject\Classificationstore && !$passwordModel instanceof DataObject\Localizedfield) {
             $setter = 'set' . ucfirst($this->getName());
             $passwordModel->$setter($hashed);
         }
@@ -466,5 +487,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength()) {
+            throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck, $params);
     }
 }

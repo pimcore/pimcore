@@ -20,7 +20,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
 - `upload_max_filesize` and `post_max_size` >= 100M (depending on your data) 
-- [pdo_mysql](http://php.net/pdo-mysql) or [mysqli](http://php.net/mysqli)
+- [pdo_mysql](http://php.net/pdo-mysql)
 - [iconv](http://php.net/iconv)
 - [dom](http://php.net/dom)
 - [simplexml](http://php.net/simplexml)
@@ -36,11 +36,12 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - CLI SAPI (for Cron Jobs)
 - [Composer 2](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
-#### Recommended Modules & Extensions 
+#### Recommended or Optional Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
-
+- [mysqli](http://php.net/mysqli) (PDO although is still required for parameter mappings)
+  
 ### Database Server
 - MariaDB >= 10.3
 - MySQL >= 8.0

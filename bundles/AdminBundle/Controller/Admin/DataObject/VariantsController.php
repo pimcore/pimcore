@@ -70,8 +70,13 @@ class VariantsController extends AdminController
     {
         // get list of variants
 
-        if ($request->get('language')) {
-            $request->setLocale($request->get('language'));
+        $requestedLanguage = $request->get('language');
+        if ($requestedLanguage) {
+            if ($requestedLanguage != 'default') {
+                $request->setLocale($requestedLanguage);
+            }
+        } else {
+            $requestedLanguage = $request->getLocale();
         }
 
         if ($request->get('xaction') == 'update') {
@@ -80,15 +85,6 @@ class VariantsController extends AdminController
             // save
             $object = DataObject\Concrete::getById($data['id']);
             $class = $object->getClass();
-
-            $requestedLanguage = $allParams['language'] ?? null;
-            if ($requestedLanguage) {
-                if ($requestedLanguage != 'default') {
-                    $request->setLocale($requestedLanguage);
-                }
-            } else {
-                $requestedLanguage = $request->getLocale();
-            }
 
             if ($object->isAllowed('publish')) {
                 $objectData = [];
@@ -223,7 +219,7 @@ class VariantsController extends AdminController
                 $objects = [];
                 foreach ($list->getObjects() as $object) {
                     if ($object->isAllowed('view')) {
-                        $o = DataObject\Service::gridObjectData($object, $request->get('fields'));
+                        $o = DataObject\Service::gridObjectData($object, $request->get('fields'), $requestedLanguage);
                         $objects[] = $o;
                     }
                 }

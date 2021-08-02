@@ -294,7 +294,7 @@ class Ffmpeg extends Adapter
     public function destroy()
     {
         if (file_exists($this->getConversionLogFile())) {
-            Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+            Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
         }
 

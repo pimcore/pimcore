@@ -132,12 +132,13 @@ class Processor
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->text();
+            $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
                 strlen(trim($text))
             ) {
+                $originalText = $text;
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
@@ -150,12 +151,14 @@ class Processor
                     }
                 }
 
-                $domNode = $parentNode->getNode(0);
-                $fragment = $domNode->ownerDocument->createDocumentFragment();
-                $fragment->appendXML(sprintf('<![CDATA[%s]]>', $text));
-                $clone = $domNode->cloneNode();
-                $clone->appendChild($fragment);
-                $domNode->parentNode->replaceChild($clone, $domNode);
+                if ($originalText !== $text) {
+                    $domNode = $parentNode->getNode(0);
+                    $fragment = $domNode->ownerDocument->createDocumentFragment();
+                    $fragment->appendXML($text);
+                    $clone = $domNode->cloneNode();
+                    $clone->appendChild($fragment);
+                    $domNode->parentNode->replaceChild($clone, $domNode);
+                }
             }
         });
 

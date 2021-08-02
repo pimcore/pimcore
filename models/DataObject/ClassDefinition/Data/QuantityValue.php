@@ -57,7 +57,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     public $defaultValue;
 
@@ -98,7 +98,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -110,7 +110,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -164,12 +164,14 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $defaultValue
+     * @param float|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen((string)$defaultValue) > 0) {
-            $this->defaultValue = $defaultValue;
+        if ($defaultValue !== null) {
+            $this->defaultValue = (float) $defaultValue;
+        } else {
+            $this->defaultValue = null;
         }
     }
 

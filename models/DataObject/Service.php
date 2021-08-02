@@ -28,10 +28,14 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
@@ -856,7 +860,16 @@ class Service extends Model\Element\Service
             }
 
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {
-                $_options = $definition->getOptions();
+                $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+                    $definition->getOptionsProviderClass(),
+                    DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+                );
+
+                if ($optionsProvider instanceof DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface) {
+                    $_options = $optionsProvider->getOptions(['fieldname' => $definition->getName()], $definition);
+                } else {
+                    $_options = $definition->getOptions();
+                }
 
                 foreach ($_options as $option) {
                     $options[$option['value']] = $option['key'];
@@ -927,17 +940,24 @@ class Service extends Model\Element\Service
      *
      * @param AbstractObject $object
      * @param array $rewriteConfig
+     * @param array $params
      *
      * @return AbstractObject
      */
-    public static function rewriteIds($object, $rewriteConfig)
+    public static function rewriteIds($object, $rewriteConfig, $params = [])
     {
         // rewriting elements only for snippets and pages
         if ($object instanceof Concrete) {
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                if (method_exists($field, 'rewriteIds')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($field instanceof IdRewriterInterface || method_exists($field, 'rewriteIds')) {
+                    if (!$field instanceof IdRewriterInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', IdRewriterInterface::class));
+                    }
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -1425,7 +1445,13 @@ class Service extends Model\Element\Service
     {
         $context['object'] = $object;
 
-        if (method_exists($layout, 'enrichLayoutDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($layout instanceof LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
+            if (!$layout instanceof LayoutDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
+            }
             $layout->enrichLayoutDefinition($object, $context);
         }
 
@@ -1516,6 +1542,19 @@ class Service extends Model\Element\Service
         }
     }
 
+    private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data)
+    {
+        $expressionLanguage = new ExpressionLanguage();
+        //overwrite constant function to aviod exposing internal information
+        $expressionLanguage->register('constant', function ($str) {
+            throw new SyntaxError('`constant` function not available');
+        }, function ($arguments, $str) {
+            throw new SyntaxError('`constant` function not available');
+        });
+
+        return $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
+    }
+
     /**
      * @param Concrete $object
      * @param array $params
@@ -1548,17 +1587,38 @@ class Service extends Model\Element\Service
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return null;
         }
-        $className = $fd->getCalculatorClass();
-        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-            Logger::error('Class does not exist or is not valid: ' . $className);
-
-            return null;
-        }
 
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
-        $result = $calculator->getCalculatedValueForEditMode($object, $data);
+        switch ($fd->getCalculatorType()) {
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                $className = $fd->getCalculatorClass();
+                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                    Logger::error('Class does not exist or is not valid: ' . $className);
+
+                    return null;
+                }
+
+                $result = $calculator->getCalculatedValueForEditMode($object, $data);
+
+                break;
+
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                try {
+                    $result = self::evaluateExpression($fd, $object, $data);
+                } catch (SyntaxError $exception) {
+                    return $exception->getMessage();
+                }
+
+                break;
+
+            default:
+                return null;
+
+        }
+
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
         return $result;
@@ -1592,23 +1652,45 @@ class Service extends Model\Element\Service
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return null;
         }
-        $className = $fd->getCalculatorClass();
-        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-            Logger::error('Class does not exist or is not valid: ' . $className);
-
-            return null;
-        }
 
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
+
         if (
             $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
             $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
         ) {
             $object = $object->getObject();
         }
-        $result = $calculator->compute($object, $data);
+
+        switch ($fd->getCalculatorType()) {
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                $className = $fd->getCalculatorClass();
+                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                    Logger::error('Class does not exist or is not valid: ' . $className);
+
+                    return null;
+                }
+                $result = $calculator->compute($object, $data);
+
+                break;
+
+            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                try {
+                    $result = self::evaluateExpression($fd, $object, $data);
+                } catch (SyntaxError $exception) {
+                    return $exception->getMessage();
+                }
+
+                break;
+
+            default:
+                return null;
+
+        }
+
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
         return $result;

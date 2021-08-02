@@ -184,6 +184,52 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertEquals($value, $row['calculatedValue'], 'value should have been written to query table');
     }
 
+    public function testCalculatedValueExpression()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillCalculatedValue',
+                'field' => 'calculatedValueExpression',
+            ],
+        ]);
+
+        $this->testObject->setFirstname('Jane');
+
+        $value = $this->testObject->getCalculatedValueExpression();
+        $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
+
+        // now call the setter and retry, shouldn't have any effect
+        $newValue = uniqid();
+        $this->testObject->setCalculatedValueExpression($newValue);
+
+        $value = $this->testObject->getCalculatedValueExpression();
+        $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
+
+        //check if it got written to the query table
+
+        $this->testObject->save();
+
+        $db = Db::get();
+        $select = 'SELECT calculatedValueExpression from object_query_' . $this->testObject->getClassId()
+            . ' WHERE oo_id = ' . $this->testObject->getId();
+        $row = $db->fetchRow($select);
+
+        $this->assertEquals('Jane some calc', $row['calculatedValueExpression'], 'value should have been written to query table');
+    }
+
+    public function testCalculatedValueExpressionConstant()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillCalculatedValue',
+                'field' => 'calculatedValueExpressionConstant',
+            ],
+        ]);
+
+        $value = $this->testObject->getCalculatedValueExpressionConstant();
+        $this->assertNotEquals(PIMCORE_PROJECT_ROOT, $value, 'calculated returns constant value');
+    }
+
     public function testCheckbox()
     {
         $this->createTestObject('checkbox');
@@ -772,20 +818,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $validSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug([$validSlug]);
         $this->testObject->save();
-
-        $invalidSlug = new UrlSlug('/xyz      /abc');
-        $this->testObject->setUrlSlug([$invalidSlug]);
-        $ex = null;
-
-        try {
-            $this->testObject->save();
-        } catch (\Exception $e) {
-            $ex = $e;
-        }
-        $this->assertNotNull($ex, 'invalid slug, expected an exception');
-
-        // make sure the invalid slug wasn't save and get a fresh copy
-        $this->testObject = Concrete::getById($this->testObject->getId(), true);
 
         // test lookup
         $slug = UrlSlug::resolveSlug('/xyz/abc');

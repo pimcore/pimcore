@@ -32,6 +32,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Metadata;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -183,6 +184,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $data['imageInfo'] = $imageInfo;
         }
 
+        $predefinedMetaData = Metadata\Predefined\Listing::getByTargetType('asset', [$asset->getType()]);
+        $predefinedMetaDataGroups = [];
+        /** @var Metadata\Predefined $item */
+        foreach ($predefinedMetaData as $item) {
+            if ($item->getGroup()) {
+                $predefinedMetaDataGroups[$item->getGroup()] = true;
+            }
+        }
+        $data['predefinedMetaDataGroups'] = array_keys($predefinedMetaDataGroups);
         $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
         $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
@@ -191,7 +201,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
+        $frontendPath = $asset->getFrontendFullPath();
+        $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
+            $frontendPath :
+            $request->getSchemeAndHttpHost() . $frontendPath;
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -1088,9 +1101,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $asset->getMimetype(),
+            'Content-Type' => $asset->getMimeType(),
             'Content-Disposition' => sprintf('attachment; filename="%s"', $asset->getFilename()),
-            'Content-Length' => fstat($stream)['size'],
+            'Content-Length' => $asset->getFileSize(),
         ]);
     }
 
@@ -1173,6 +1186,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $thumbnailConfig->setQuality($config['quality']);
             $thumbnailConfig->setFormat($config['format']);
+            $thumbnailConfig->setRasterizeSVG(true);
 
             if ($thumbnailConfig->getFormat() == 'JPEG') {
                 $thumbnailConfig->setPreserveMetaData(true);
@@ -1239,7 +1253,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
-            'Content-Type' => $image->getMimetype(),
+            'Content-Type' => $image->getMimeType(),
             'Access-Control-Allow-Origin' => '*',
         ]);
         $this->addThumbnailCacheHeaders($response);
@@ -1411,7 +1425,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById((int)$request->get('image'));
+            $image = Asset\Image::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1542,7 +1556,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $stream = null;
 
-        if ($asset->getMimetype() == 'application/pdf') {
+        if ($asset->getMimeType() == 'application/pdf') {
             $stream = $asset->getStream();
         }
 

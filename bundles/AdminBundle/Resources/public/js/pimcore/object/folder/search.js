@@ -76,6 +76,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     editable: true,
                     typeAhead: true,
                     forceSelection: true,
+                    matchFieldWidth: false,
+                    anyMatch: true,
                     value: this.object.data["selectedClass"],
                     listeners: {
                         "select": this.changeClassSelect.bind(this)

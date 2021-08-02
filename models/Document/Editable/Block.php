@@ -139,7 +139,10 @@ class Block extends Model\Document\Editable implements BlockInterface
 
             $blockEndHtml = $this->blockEnd(true);
             $this->blockDestruct();
-            $this->getBlockState()->popBlock();
+            $blockState = $this->getBlockState();
+            if ($blockState->hasBlocks()) {
+                $blockState->popBlock();
+            }
 
             $templateEditableDefinitions = $editableDefCollector->getDefinitions();
             $editableDefCollector->stashPull();
@@ -235,7 +238,10 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->current = 0;
 
         // remove the current block which was set by $this->start()
-        $this->getBlockState()->popBlock();
+        $blockState = $this->getBlockState();
+        if ($blockState->hasBlocks()) {
+            $blockState->popBlock();
+        }
 
         $this->outputEditmode('</div>');
     }
@@ -255,7 +261,10 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function blockDestruct()
     {
-        $this->getBlockState()->popIndex();
+        $blockState = $this->getBlockState();
+        if ($blockState->hasIndexes()) {
+            $blockState->popIndex();
+        }
     }
 
     /**

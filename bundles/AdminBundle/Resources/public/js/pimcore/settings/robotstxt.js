@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.settings.robotstxt");
 pimcore.settings.robotstxt = Class.create({
     onFileSystem: false,
     data: {},
+    textEditors: [],
 
     initialize: function(id) {
         this.getTabPanel();
@@ -115,14 +116,39 @@ pimcore.settings.robotstxt = Class.create({
     },
 
     getEditPanel: function (siteRecord) {
-        var editArea = new Ext.form.TextArea({
-            xtype: "textarea",
-            name: 'data['+siteRecord.get('id')+']',
-            value: this.data.hasOwnProperty(siteRecord.get('id')) ? this.data[siteRecord.getId('id')] : '',
-            width: "100%",
-            height: "100%",
-            style: "font-family: 'Courier New', Courier, monospace;",
-            disabled: this.onFileSystem
+        let editorId = 'editor' + siteRecord.get('id');
+        var editorContainer = new Ext.Component({
+            html: '<div id="' + editorId + '" style="height:100%;width:100%"></div>',
+            listeners: {
+                afterrender: function (cmp) {
+                    var editor = ace.edit(editorId);
+                    editor.setTheme('ace/theme/chrome');
+
+                    //set editor file mode
+                    editor.getSession().setMode("ace/mode/text");
+
+                    editor.setOptions({
+                        showLineNumbers: true,
+                        showPrintMargin: false,
+                        maxLines: 55,
+                        minLines: 55,
+                        wrap: true,
+                        fontFamily: 'Courier New, Courier, monospace;'
+                    });
+
+                    //set data
+                    if (this.data.hasOwnProperty(siteRecord.get('id'))) {
+                        editor.setValue(this.data[siteRecord.getId('id')]);
+                        editor.clearSelection();
+                        editor.resize();
+                    }
+
+                    this.textEditors.push({
+                        'key': siteRecord.get('id'),
+                        'editor': editor
+                    })
+                }.bind(this)
+            }
         });
 
         var editPanel = new Ext.Panel({
@@ -130,7 +156,7 @@ pimcore.settings.robotstxt = Class.create({
             layout: 'fit',
             iconCls: 'pimcore_icon_robots',
             bodyStyle: "padding: 10px;",
-            items: [editArea]
+            items: [editorContainer]
         });
 
         editPanel.on("bodyresize", function (el, width, height) {
@@ -146,7 +172,7 @@ pimcore.settings.robotstxt = Class.create({
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_robotstxtput'),
             method: "PUT",
-            params: this.formPanel.form.getFieldValues(),
+            params: this.getValues(),
             success: function (response) {
                 try {
                     var data = Ext.decode(response.responseText);
@@ -160,6 +186,15 @@ pimcore.settings.robotstxt = Class.create({
                 }
             }.bind(this)
         });
+    },
+
+    getValues:  function () {
+        let res = [];
+        for(var i = 0; i < this.textEditors.length; i++) {
+            res['data['+this.textEditors[i].key+']'] = this.textEditors[i].editor.getValue();
+        }
+
+        return Ext.urlEncode(res);
     }
 });
 

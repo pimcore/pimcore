@@ -26,7 +26,7 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
      */
     public function optimizeImage(string $input, string $output): string
     {
-        $executable = $this->getExecutable();
+        $executable = Console::getExecutable($this->getExecutable());
 
         if ($executable) {
             $command = $this->getCommandArray($executable, $input, $output);

@@ -18,6 +18,7 @@ namespace Pimcore;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
 
 final class Tool
@@ -250,7 +251,7 @@ final class Tool
             'uk' => 'ua', 'uz' => 'uz', 'vi' => 'vn', 'zh' => 'cn', 'gd' => 'gb-sct', 'gd-gb' => 'gb-sct',
             'cy' => 'gb-wls', 'cy-gb' => 'gb-wls', 'fy' => 'nl', 'xh' => 'za', 'yo' => 'bj', 'zu' => 'za',
             'ta' => 'lk', 'te' => 'in', 'ss' => 'za', 'sw' => 'ke', 'so' => 'so', 'si' => 'lk', 'ii' => 'cn',
-            'zh-hans' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
+            'zh-hans' => 'cn',  'zh-hant' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
             'fil' => 'ph',
         ];
 
@@ -329,6 +330,25 @@ final class Tool
     }
 
     /**
+     * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
+     *
+     * @param Request $request
+     * @param Element\ElementInterface $element
+     *
+     * @return bool
+     */
+    public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element)
+    {
+        if (!self::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        $user = Tool\Authentication::authenticateSession($request);
+
+        return $user && $element->isAllowed('view', $user);
+    }
+
+    /**
      * @internal
      *
      * @param Request|null $request
@@ -401,7 +421,7 @@ final class Tool
     /**
      * Returns the host URL
      *
-     * @param string $useProtocol use a specific protocol
+     * @param string|null $useProtocol use a specific protocol
      * @param Request|null $request
      *
      * @return string

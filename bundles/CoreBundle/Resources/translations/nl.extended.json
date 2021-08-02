@@ -421,7 +421,7 @@
     "web2print_wkhtmltopdf_settings": "Wkhtmltopdf instellingen",
     "web2print_wkhtmltopdf_options": "Opties",
     "web2print_hostname": "Hostnaam",
-    "web2print_settings": "Web2print instelligen",
+    "web2print_settings": "Web2print instellingen",
     "php_info": "PHP info",
     "system_requirements_check": "Systeemvereisten check",
     "server_info": "Server informatie",
@@ -655,5 +655,6 @@
     "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
     "json_converter": "Formatting the Options",
     "json_converter_link": "JSON Formatter",
-    "preview_generator_reference": "Preview Generator Class or Service Name"
+    "preview_generator_reference": "Preview Generator Class or Service Name",
+    "max_characters": "Maximum Characters"
 }

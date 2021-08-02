@@ -471,6 +471,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/page.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_page_static {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/static_page.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_folder, .pimcore_icon_load_import_config {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
@@ -636,6 +640,10 @@
 
 .pimcore_icon_txt, .pimcore_icon_log, .pimcore_icon_css, .pimcore_icon_rtf {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_json {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/file-types.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video, .pimcore_icon_vob {

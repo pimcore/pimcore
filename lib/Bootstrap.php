@@ -84,7 +84,7 @@ class Bootstrap
         if (!$pimcoreConsole) {
             // skip if maintenance mode is on and the flag is not set
             if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
-                die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
+                die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution\n");
             }
         }
 
