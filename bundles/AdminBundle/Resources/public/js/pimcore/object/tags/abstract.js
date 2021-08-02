@@ -276,7 +276,7 @@ pimcore.object.tags.abstract = Class.create({
     getWrapperClassNames: function (additionalClasses = '') {
         let classString = "object_field";
 
-        if (this.getType()) {
+        if (this.type !== "undefined") {
             classString += " object_field_type_" + this.type;
         }
 

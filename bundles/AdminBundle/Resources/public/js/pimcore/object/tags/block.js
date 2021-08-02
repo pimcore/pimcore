@@ -50,7 +50,8 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             autoHeight: true,
             border: true,
             style: "margin-bottom: 10px",
-            componentCls: this.getWrapperClassNames(),            collapsible: this.fieldConfig.collapsible,
+            componentCls: this.getWrapperClassNames(),
+            collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
         };
         if(this.fieldConfig.title) {
