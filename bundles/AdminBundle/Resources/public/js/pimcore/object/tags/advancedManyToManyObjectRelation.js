@@ -98,7 +98,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             autoHeight = true;
         }
 
-        var cls = 'object_field';
+        var cls = 'object_field object_field_name_' + this.name;
         var i;
 
         var visibleFields = this.visibleFields || [];
