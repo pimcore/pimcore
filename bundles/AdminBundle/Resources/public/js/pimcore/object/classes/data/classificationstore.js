@@ -54,7 +54,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
         this.specificPanel.removeAll();
 
         this.specificPanel.add({
-            xtype: "textfield",
+            xtype: "numberfield",
             name: "labelWidth",
             fieldLabel: t("label_width"),
             value: this.datax.labelWidth

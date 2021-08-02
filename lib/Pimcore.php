@@ -231,7 +231,9 @@ class Pimcore
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
 
-        if (self::getContainer() === null) {
+        try {
+            self::getContainer();
+        } catch (\LogicException $e) {
             return;
         }
 

@@ -53,7 +53,7 @@ The following fields are available in the properties configuration.
 | Key           | Y            | This field is the key which you use in your code to retrieve the contents of the property. For example: `$document->getProperty("key");`                                                                         |
 | Type          | Y            | Specifies the type of the content which is allowed in the property. <br />Available types are: text, document, asset, object, bool (checkbox), select.                                                           |
 | Value         | N            | Here you can define a default value for this property which I added automatically to the property when it is added to a element. This field is optional. <br /> See the example configuration above for details. |
-| Configuration | N            | This field is used to configure a property. At the moment, this is used only by the property-type *select*.                                                                                                     |
+| Configuration | N            | This field is used to configure a property. At the moment, this is used only by the property-type *select*. Separate options with a comma.                                                                  |
 | Content-Type  | Y            | Defines for which element-type (document, asset or object) the property should be available.                                                                                                                     |
 
 > **Note**   

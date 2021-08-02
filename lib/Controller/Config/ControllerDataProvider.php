@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Config;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -182,7 +181,7 @@ class ControllerDataProvider
     }
 
     /**
-     * Finds templates in a certain path. If bundleName is null, the global notation (app/Resources/views)
+     * Finds templates in a certain path. If bundleName is null, the global notation (templates/)
      * will be used.
      *
      * @param string $path
@@ -192,8 +191,6 @@ class ControllerDataProvider
      */
     private function findTemplates(string $path, string $bundleName = null): array
     {
-        $fs = new Filesystem();
-
         $finder = new Finder();
         $finder
             ->files()
@@ -203,29 +200,14 @@ class ControllerDataProvider
             $finder->name($namePattern);
         }
 
+        if ($bundleName && str_ends_with($bundleName, 'Bundle')) {
+            $bundleName = substr($bundleName, 0, -6);
+        }
+
         $templates = [];
         foreach ($finder as $file) {
-            $relativePath = $fs->makePathRelative($file->getRealPath(), $path);
-
-            $relativeDir = str_replace($file->getFilename(), '', $relativePath);
-            $relativeDir = trim($relativeDir, DIRECTORY_SEPARATOR);
-            $relativeDir = trim($relativeDir, '/');
-
-            $template = null;
-
-            if (null === $bundleName) {
-                if (empty($relativeDir)) {
-                    $template = $file->getFilename();
-                } else {
-                    $template = sprintf('%s/%s', $relativeDir, $file->getFilename());
-                }
-            } else {
-                $template = sprintf('%s:%s:%s', $bundleName, $relativeDir, $file->getFilename());
-            }
-
-            if (!empty($template)) {
-                $templates[] = $template;
-            }
+            $name = $file->getRelativePathname();
+            $templates[] = $bundleName ? sprintf('@%s/%s', $bundleName, $name) : $name;
         }
 
         return $templates;

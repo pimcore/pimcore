@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
@@ -462,6 +464,8 @@ class UserController extends AdminController implements KernelControllerEventInt
 
         // unset confidential informations
         $userData = $user->getObjectVars();
+        $userData['roles'] =  array_map('intval', $user->getRoles());
+        $userData['docTypes'] =  array_map('intval', $user->getDocTypes());
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
@@ -841,17 +845,16 @@ class UserController extends AdminController implements KernelControllerEventInt
 
         $url = $twoFactor->getQRContent($proxyUser);
 
-        $code = new \Endroid\QrCode\QrCode;
-        $code->setWriterByName('png');
-        $code->setText($url);
-        $code->setSize(200);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size(200)
+            ->build();
 
-        $qrCodeFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->writeFile($qrCodeFile);
+        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
+        $result->saveToFile($qrCodeFile);
 
-        $response = new BinaryFileResponse($qrCodeFile);
-
-        return $response;
+        return new BinaryFileResponse($qrCodeFile);
     }
 
     /**

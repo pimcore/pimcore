@@ -190,7 +190,7 @@ class Geopoint extends AbstractGeo implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\GeoCoordinates) {
-            return $data->getLongitude() . ',' . $data->getLatitude();
+            return $data->getLatitude().','.$data->getLongitude();
         }
 
         return '';

@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
+use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -119,6 +120,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if ($request->get('session_expired')) {
             $params['error'] = 'error_session_expired';
         }
+        if ($request->get('deeplink')) {
+            $params['deeplink'] = true;
+        }
 
         $params['browserSupported'] = $this->detectBrowser();
         $params['debug'] = \Pimcore::inDebugMode();
@@ -131,7 +135,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
-        $csrfProtection->regenerateCsrfToken();
+        if (!$this->getAdminUser()) {
+            $csrfProtection->regenerateCsrfToken();
+        }
 
         return $this->json([
            'csrfToken' => $csrfProtection->getCsrfToken(),
@@ -172,18 +178,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
             if ($user instanceof User) {
                 if (!$user->isActive()) {
-                    $error = 'user inactive';
+                    $error = 'user_inactive';
                 }
 
                 if (!$user->getEmail()) {
-                    $error = 'user has no email address';
+                    $error = 'user_no_email_address';
                 }
 
                 if (!$user->getPassword()) {
-                    $error = 'user has no password';
+                    $error = 'user_no_password';
                 }
             } else {
-                $error = 'user unknown';
+                $error = 'user_unknown';
             }
 
             if (!$error && $user instanceof User) {
@@ -211,13 +217,15 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                         return $event->getResponse();
                     }
                 } catch (\Exception $e) {
-                    $error = 'could not send email';
+                    Logger::error('Error sending password recovery email: ' . $e->getMessage());
+                    $error = 'lost_password_email_error';
                 }
             }
 
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
+                $params['error'] = $error;
             }
         }
 
@@ -229,7 +237,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      */
-    public function deeplinkAction(Request $request)
+    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
@@ -239,18 +247,26 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $perspective = strip_tags($request->get('perspective'));
 
             if (strpos($queryString, 'token')) {
-                $url = $this->generateUrl('pimcore_admin_login', [
+                $event = new LoginRedirectEvent('pimcore_admin_login', [
                     'deeplink' => $deeplink,
                     'perspective' => $perspective,
                 ]);
+                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
+                $url = $this->generateUrl($event->getRouteName(), $event->getRouteParams());
                 $url .= '&' . $queryString;
 
                 return $this->redirect($url);
             } elseif ($queryString) {
+                $event = new LoginRedirectEvent('pimcore_admin_login', [
+                    'deeplink' => true,
+                    'perspective' => $perspective,
+                ]);
+                $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
+
                 return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,
-                    'perspective' => $perspective,
+                    'redirect' => $this->generateUrl($event->getRouteName(), $event->getRouteParams()),
                 ]);
             }
         }

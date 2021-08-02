@@ -330,6 +330,49 @@ pimcore.document.settings_abstract = Class.create({
         return fieldSet;
     },
 
+    getStaticGeneratorFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
+
+        var date = new Date(this.document.data.staticLastGenerated * 1000);
+        date = Ext.Date.format(date, "Y-m-d H:i");
+
+        return {
+            xtype:'fieldset',
+            title: t('static_generator'),
+            collapsible: true,
+            collapsed: collapsed,
+            autoHeight:true,
+            defaultType: 'textfield',
+            defaults: {
+                labelWidth: 300,
+                width: 850
+            },
+            items :[
+                {
+                    boxLabel: t('static_generator_enable'),
+                    xtype: 'checkbox',
+                    name: 'staticGeneratorEnabled',
+                    checked: this.document.data.staticGeneratorEnabled
+                },
+                {
+                    fieldLabel: t('static_generator_lifetime'),
+                    labelWidth: 300,
+                    xtype: 'numberfield',
+                    name: 'staticGeneratorLifetime',
+                    value: this.document.data.staticGeneratorLifetime,
+                    width: 400,
+                }, {
+                    xtype: "displayfield",
+                    value: t("last_generated") + ": " + date,
+                    hidden: !this.document.data.staticGeneratorEnabled
+                }
+            ]
+        };
+    },
+
     getValues: function () {
 
         if (!this.layout.rendered) {

@@ -110,6 +110,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     public function ruleGetAction(Request $request)
     {
         $target = Targeting\Rule::getById($request->get('id'));
+        $target = $target->getObjectVars();
 
         return $this->adminJson($target);
     }
@@ -278,6 +279,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = $targetGroup->getObjectVars();
 
         return $this->adminJson($targetGroup);
     }

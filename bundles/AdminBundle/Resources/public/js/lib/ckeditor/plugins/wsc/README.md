@@ -1,4 +1,4 @@
-WebSpellChecker Dialog Plugin for CKEditor 4
+WebSpellChecker Dialog plugin for CKEditor 4
 ===============================
 
 WebSpellChecker Dialog (WSC Dialog) provides distraction-free proofreading, checking the whole text’s spelling and grammar on-click in a separate pop-up window.
@@ -17,14 +17,14 @@ Demo
 ------------
 WSC Dialog plugin for CKEditor 4: https://webspellchecker.com/wsc-dialog-ckeditor4/
 
-Supported Languages
+Supported languages
 ------------
 
 The WSC Dialog plugin for CKEditor as a part of the free services supports the next languages for check spelling: American English, British English, Canadian English, Canadian French, Danish, Dutch, Finnish, French, German, Greek, Italian, Norwegian Bokmal, Spanish, Swedish.
 
 There are also additional languages and specialized dictionaries available for a commercial license, you can check the full list [here](https://webspellchecker.com/additional-dictionaries/).
 
-Get Started
+Get started
 ------------
 
 1. Clone/copy this repository contents in a new "plugins/wsc" folder in your CKEditor installation.
@@ -34,7 +34,7 @@ Get Started
 
 That's all. WSC Dialog will appear on the editor toolbar under the ABC button and will be ready to use.
 
-Supported Browsers
+Supported browsers
 -------
 
 This is the list of officially supported browsers for the WSC Dialog plugin for CKEditor 4. WSC Dialog may also work in other browsers and environments but we unable to check all of them and guarantee proper work.
@@ -56,7 +56,7 @@ Resources
 * YouTube video: https://youtu.be/bkVPZ-5T22Q
 * Term of Service: https://webspellchecker.com/terms-of-service/
 
-Technical Support or Questions
+Technical support or questions
 -------
 
 In cooperation with the CKEditor team, during the past 10 years we have simplified the installation and built the extensive amount of documentation devoted to WSC Dialog plugin for CKEditor 4 and less.
@@ -65,7 +65,7 @@ If you are experiencing any difficulties with the setup of the plugin, please ch
 
 Holders of an active subscription to the services or a commercial license have access to professional technical assistance directly from the WebSpellChecker team. [Contact us here](https://webspellchecker.com/contact-us/)!
 
-Reporting Issues
+Reporting issues
 -------
 
 Please use the [WSC Dialog plugin for CKEditor 4 GitHub issue page](https://github.com/WebSpellChecker/ckeditor-plugin-wsc/issues) to report bugs and feature requests. We will do our best to reply at our earliest convenience.

@@ -68,6 +68,11 @@ final class Site extends AbstractModel
     protected $errorDocument = '';
 
     /**
+     * @var array
+     */
+    protected $localizedErrorDocuments;
+
+    /**
      * @var bool
      */
     protected $redirectToMainDomain = false;
@@ -302,14 +307,14 @@ final class Site extends AbstractModel
     {
         $this->rootId = (int) $rootId;
 
-        $rd = Document::getById($this->rootId);
+        $rd = Document\Page::getById($this->rootId);
         $this->setRootDocument($rd);
 
         return $this;
     }
 
     /**
-     * @param Document\Page $rootDocument
+     * @param Document\Page|null $rootDocument
      *
      * @return $this
      */
@@ -358,6 +363,29 @@ final class Site extends AbstractModel
     public function getErrorDocument()
     {
         return $this->errorDocument;
+    }
+
+    /**
+     * @param mixed $localizedErrorDocuments
+     *
+     * @return $this
+     */
+    public function setLocalizedErrorDocuments($localizedErrorDocuments)
+    {
+        if (is_string($localizedErrorDocuments)) {
+            $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
+        }
+        $this->localizedErrorDocuments = $localizedErrorDocuments;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLocalizedErrorDocuments()
+    {
+        return $this->localizedErrorDocuments;
     }
 
     /**

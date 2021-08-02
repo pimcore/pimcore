@@ -19,6 +19,7 @@ framework:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         # use the native PHP session mechanism
         handler_id:  null
+        cookie_samesite: 'strict'
     php_errors:
         log: true
     assets: ~
@@ -78,9 +79,6 @@ pimcore:
     security:
         encoder_factories:
             Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
-
-    error_handling:
-        render_error_document: true
 
     bundles:
         search_paths:
@@ -173,6 +171,11 @@ pimcore:
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
+        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
+        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
+
+    routing:
+        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
 
     newsletter:
         source_adapters:
@@ -249,8 +252,6 @@ pimcore:
                 generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
 
 presta_sitemap:
-    # override default dump_directory from public to web
-    dump_directory: web
     # do not add properties by default
     defaults:
         lastmod: ~

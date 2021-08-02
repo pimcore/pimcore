@@ -12,7 +12,7 @@
         {% if element is instanceof ('\\Pimcore\\Model\\Asset') %}
             <tr>
                 <th>{{ 'mimetype'|trans([],'admin') }}</th>
-                <td>{{ element.getMimetype() }}</td>
+                <td>{{ element.getMimeType() }}</td>
             </tr>
         {% endif %}
 

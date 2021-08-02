@@ -20,6 +20,8 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 abstract class AbstractEncoderFactory implements EncoderFactoryInterface
 {

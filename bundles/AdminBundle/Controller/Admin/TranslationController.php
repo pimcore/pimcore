@@ -449,7 +449,7 @@ class TranslationController extends AdminController
                     ];
                     $list->setOrderKey($orderKey);
                 } elseif ($list->isValidOrderKey($sortingSettings['orderKey'])) {
-                    $list->setOrderKey($sortingSettings['orderKey']);
+                    $list->setOrderKey($tableName . '.' . $sortingSettings['orderKey'], false);
                 }
             }
             if ($sortingSettings['order']) {

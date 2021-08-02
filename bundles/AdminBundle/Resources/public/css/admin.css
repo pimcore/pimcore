@@ -257,12 +257,12 @@
 }
 
 .pimcore_treenode_locked .x-tree-node-text {
-    color: #3b72c0 !important;
+    color: #3b5c8a !important;
 }
 
 
 .pimcore_treenode_lockOwner .x-tree-node-text  {
-    color: #0091f8 !important;
+    color: #1d60c4 !important;
 }
 
 .pimcore_treenode_hide_plus_button .x-tree-expander {
@@ -1205,6 +1205,7 @@ span.warning {
 }
 
 .pimcore_droptarget_display div {
+    width: 100%;
     min-height: 30px;
     padding: 5px 10px 4px;
     margin-top: 0;
@@ -1995,6 +1996,10 @@ span.warning {
     height: 20px;
     float: left;
     margin-right: 5px;
+}
+.pimcore_quicksearch_picker .list-icon .class-icon {
+    width: 20px;
+    height: 20px;
 }
 
 .pimcore_quicksearch_picker .list-path {

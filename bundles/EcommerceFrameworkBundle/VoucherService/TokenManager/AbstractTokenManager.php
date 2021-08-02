@@ -134,7 +134,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
             }
 
             $cartToken = Token::getByCode($cartCodes[0]);
-            /** @var OnlineShopVoucherSeries $cartTokenSettings */
+            /** @var AbstractVoucherTokenType $cartTokenSettings */
             $cartTokenSettings = OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
                 throw new VoucherServiceException('OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.', VoucherServiceException::ERROR_CODE_ONLY_TOKEN_PER_CART_ALREADY_ADDED);

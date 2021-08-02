@@ -95,9 +95,9 @@ abstract class AbstractModel implements ModelInterface
             } else {
                 $dao = self::locateDaoClass($myClass);
             }
-        } elseif ($key) {
+        } else {
             $delimiter = '_'; // old prefixed class style
-            if (strpos($key, '\\') !== false) {
+            if (str_contains($key, '\\') !== false) {
                 $delimiter = '\\'; // that's the new with namespaces
             }
 

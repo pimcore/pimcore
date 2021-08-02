@@ -43,6 +43,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -235,10 +236,14 @@ abstract class Kernel extends SymfonyKernel
         register_shutdown_function(function () {
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
-            if (null !== $container = $this->getContainer()) {
+            try {
+                $container = $this->getContainer();
+            } catch (\LogicException) {
+                // Container is cleared. Allow tests to finish.
+            }
+            if (isset($container) && $container instanceof ContainerInterface) {
                 $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
-
             \Pimcore::shutdown();
         });
     }
@@ -325,7 +330,7 @@ abstract class Kernel extends SymfonyKernel
         ], 60);
 
         // load development bundles only in matching environments
-        if ($this->isDebug() && in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
+        if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
                 new WebProfilerBundle(),

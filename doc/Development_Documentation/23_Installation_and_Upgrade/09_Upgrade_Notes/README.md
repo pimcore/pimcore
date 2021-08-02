@@ -1,5 +1,43 @@
 # Upgrade Notes
 
+## 10.1.0
+- [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
+  be removed in Pimcore 11.
+- [InstallBundle] Installer preconfiguration path changed from `app/config/installer.yml` to `config/installer.yaml`.
+- [Core] composer.json: `symfony/symfony` package requirement has been replaced by `symfony/*` individual bundles. **Note for Bundles**: if you are using `symfony/symfony` dependency, it will now conflict with package `pimcore/pimcore`. Please move your bundle requirements to Symfony individual component packages.
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files).
+- [Glossary] `pimcoreglossary()` tag has been deprecated in favor of `pimcore_glossary` Twig filter and will be removed in Pimcore 11.
+- Bumped `google/apiclient` to 2.10 version - Use proper namespaces for API references.
+- Bumped `endroid/qr-code` to version 4.
+- [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
+- [Password encoding] Pimcore Password Encoder factory has been deprecated in favor of new Password Hasher factory, to align with Symfony authentication system. The default factory is used as default and to switch to new Password hasher factory, please enable through config `factory_type` as follows:
+```yaml
+pimcore:
+    security:
+        factory_type: password_hasher
+
+        # the password hasher factory as defined in services.yml
+        password_hasher_factories:
+            App\Model\DataObject\User: website_demo.security.password_hasher_factory
+```
+and use new service handler:
+```yaml
+services:
+    website_demo.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+        arguments:
+            - Pimcore\Security\Encoder\PasswordFieldEncoder
+            - ['password']
+```
+- [Session] Default setting for `framework.session.cookie_samesite` changed to `strict`. 
+  For more information about the possible impact on your project, please have a look at the [docs of set-cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite). 
+  If you prefer to stay on the old session cookie behavior, please add the following to your project configuration: 
+```yaml
+framework:
+    session:
+        cookie_samesite: 'lax'
+```  
+
 ## 10.0.0
 
 ### System Requirements
@@ -34,7 +72,7 @@
 
 - `Pimcore\Model\Tool\Tracking\Event` has been removed.
 - `Pimcore\Tool\Archive` has been removed.
-- The object query table will now consider the fallback language. If you want to keep the old behavior set `pimcore.objects.ignore_localized_query_fallback` in your configuration.  
+- The object query table will now consider the fallback language. If you want to keep the old behavior set `pimcore.objects.ignore_localized_query_fallback` in your configuration.
 - Removed QR Codes.
 - Remove Linfo Integration.
 - [Ecommerce][IndexService] Removed FactFinder integration.
@@ -68,20 +106,20 @@
 - Removed `Pimcore\Model\Element\Reference\Placeholder` class.
 - Removed `pimcore.routing.defaults`. Use `pimcore.documents.default_controller` instead.
 - Removed `\Pimcore\Tool::getRoutingDefaults()`, `PageSnippet::$module|$action|get/setAction()|get/setModule()`, `DocType::$module|$action|get/setAction()|get/setModule()`, `Staticroute::$module|$action|get/setAction()|get/setModule()`.
-- Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead. 
+- Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead.
 - Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead.
-- Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead. 
+- Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead.
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
 - Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
-- Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.  
+- Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
 - Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
 - Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
 - Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
 - Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.
-- Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.   
+- Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.
 - [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction`
 - Bumped `codeception/codeception` to "^4.1.12".
 - Pimcore Bundle Migrations: Extending the functionality of `DoctrineMigrationsBundle` is not any longer possible the way we did it in the past. Therefore we're switching to standard Doctrine migrations, this means also that migration sets are not supported anymore and that the available migrations have to be configured manually or by using flex.
@@ -103,6 +141,7 @@
     $existingObject->save(); //validation error
     ```
 - [Data Objects] ManyToMany Relation Types: throws exception if multiple assignments passed without enabling Multiple assignments on class definition.
+- [Data Objects] ReverseManyToManyObjectRelation - now supports reverse relations from ManyToOneRelation field and has been renamed to ReverseObjectRelation with BC layer.
 - [Data Object] Table Data-Type always return an array.
 - [Data Object] `Model::getById()` & `Model::getByPath()` do not catch exceptions anymore.
 - Added methods `getArgument($key)`, `setArgument($key, $value)`, `getArguments()`, `setArguments(array $args = [])`, `hasArgument($key)` to `Pimcore\Model\Element\ElementInterface\ElementEventInterface`.
@@ -150,9 +189,9 @@
 - Replaced `Ramsey/Uuid` with `Symfony/Uuid`.
 - Matomo Integration has been removed.
 - `Pimcore\Tool\Console::exec()` method has been removed. Use Symfony\Component\Process\Process instead.
-- `\Pimcore\Tool\Console::getOptions()` method has been removed.   
-- `\Pimcore\Tool\Console::getOptionString()` method has been removed.   
-- `\Pimcore\Tool\Console::checkCliExecution()` method has been removed.   
+- `\Pimcore\Tool\Console::getOptions()` method has been removed.
+- `\Pimcore\Tool\Console::getOptionString()` method has been removed.
+- `\Pimcore\Tool\Console::checkCliExecution()` method has been removed.
 - `Pimcore\Twig\Extension\Templating\Navigation::buildNavigation()` method has been removed.
 - `Pimcore\Tool\Mime` class has been removed. Use `Symfony\Component\Mime\MimeTypes` instead.
 - [Documents] Areabricks: location changed from `Areas` to `areas` with BC layer.
@@ -171,7 +210,7 @@
 - `\Pimcore\Model\DataObject\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Google\Cse::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Helper\RobotsTxt` has been removed
-- `\Pimcore\Tool\Frontend::getSiteKey()` method has been removed.  
+- `\Pimcore\Tool\Frontend::getSiteKey()` method has been removed.
 - `\Pimcore\Model\User::getUsername()` has been removed, use `User::getName()` instead.
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead.
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
@@ -258,10 +297,10 @@
   - Removed configuration node `worker_mode` in `index_service` configuration
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is
   implemented in `AbstractConfig` this should not have any consequences.
-- [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).  
+- [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).
 - [Ecommerce][PricingManager] Added two new interfaces `ProductActionInterface` and `CartActionInterface`. All actions
   need to implement either of it - otherwise they will not be considered anymore in price calculation.
-- [Web2Print] 
+- [Web2Print]
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
      should be backwards compatible to older versions.
@@ -307,8 +346,8 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
-- [Email & Newsletter] `\Pimcore\Mail::setEnableLayoutOnRendering/getEnableLayoutOnRendering()` methods have been removed, with Twig they are just not necessary anymore. 
-- [Email & Newsletter] `\Pimcore\Mail::isValidEmailAddress()` method has been removed, use `EmailValidator` instead.  
+- [Email & Newsletter] `\Pimcore\Mail::setEnableLayoutOnRendering/getEnableLayoutOnRendering()` methods have been removed, with Twig they are just not necessary anymore.
+- [Email & Newsletter] `\Pimcore\Mail::isValidEmailAddress()` method has been removed, use `EmailValidator` instead.
 - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.

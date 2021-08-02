@@ -25,7 +25,7 @@ trait LabelTrait
      *
      * @internal
      *
-     * @var string|int
+     * @var int
      */
     public $labelWidth = 100;
 
@@ -37,23 +37,19 @@ trait LabelTrait
     public $labelAlign = 'left';
 
     /**
-     * @param string|int $labelWidth
+     * @param int $labelWidth
      *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
-        if (is_numeric($labelWidth)) {
-            $labelWidth = (int)$labelWidth;
-        }
-
-        $this->labelWidth = $labelWidth;
+        $this->labelWidth = (int)$labelWidth;
 
         return $this;
     }
 
     /**
-     * @return string|int
+     * @return int
      */
     public function getLabelWidth()
     {

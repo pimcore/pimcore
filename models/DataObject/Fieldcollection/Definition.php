@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -36,7 +37,13 @@ class Definition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['containerType'] = 'fieldcollection';
             $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -131,6 +138,10 @@ class Definition extends Model\AbstractModel
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
                 $fd->preSave($this);
             }
@@ -185,7 +196,7 @@ class Definition extends Model\AbstractModel
 
             $exportedClass = var_export($clone, true);
 
-            $data = '<?php ';
+            $data = '<?php';
             $data .= "\n\n";
             $data .= $infoDocBlock;
             $data .= "\n\n";
@@ -202,7 +213,7 @@ class Definition extends Model\AbstractModel
         }
 
         // create class file
-        $cd = '<?php ';
+        $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
@@ -217,9 +228,8 @@ class Definition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
-
-        $cd .= "\n\n";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
+        $cd .= '{' . "\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 
@@ -327,15 +337,12 @@ class Definition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
-        $cd .= "Fields Summary: \n";
+        $cd = '/**' . "\n";
+        $cd .= "Fields Summary:\n";
 
         $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
 
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }

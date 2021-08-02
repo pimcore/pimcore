@@ -13,6 +13,8 @@ The select editable generates select-box component in Editmode.
 | `width`  | integer | Width of the select box in pixel                                                   |
 | `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode |
 | `defaultValue`  | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().                          |
+| `required` | boolean  | (default: false) set to true to make field value required for publish    |
+
 ## Methods
 
 | Name        | Return | Description                                                           |

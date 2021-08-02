@@ -26,7 +26,8 @@ abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
     Data\LazyLoadingSupportInterface,
-    Data\EqualComparisonInterface
+    Data\EqualComparisonInterface,
+    Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 
@@ -428,9 +429,9 @@ abstract class AbstractRelations extends Data implements
      *
      * @internal
      *
-     * @param array|null $data*
+     * @param array|null $data
      *
-     * @throws \Exception
+     * @throws Element\ValidationException
      */
     public function performMultipleAssignmentCheck($data)
     {
@@ -450,7 +451,7 @@ abstract class AbstractRelations extends Data implements
                     }
 
                     if ($elementHash === null) {
-                        throw new \Exception('Passing relations without ID or type not allowed anymore!');
+                        throw new Element\ValidationException('Passing relations without ID or type not allowed anymore!');
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
                     } else {
@@ -461,7 +462,7 @@ abstract class AbstractRelations extends Data implements
                             $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
                         }
 
-                        throw new \Exception($message);
+                        throw new Element\ValidationException($message);
                     }
                 }
             }

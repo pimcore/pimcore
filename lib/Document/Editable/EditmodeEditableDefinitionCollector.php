@@ -32,7 +32,7 @@ final class EditmodeEditableDefinitionCollector
     private array $editableDefinitions = [];
 
     /**
-     * @var Editable[]
+     * @var array
      */
     private array $stash = [];
 
@@ -76,13 +76,13 @@ final class EditmodeEditableDefinitionCollector
 
     public function stashPush(): void
     {
-        $this->stash = $this->editableDefinitions;
+        array_push($this->stash, $this->editableDefinitions);
         $this->editableDefinitions = [];
     }
 
     public function stashPull(): void
     {
-        $this->editableDefinitions = $this->stash;
+        $this->editableDefinitions = array_pop($this->stash);
     }
 
     /**

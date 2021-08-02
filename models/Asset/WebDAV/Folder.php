@@ -79,7 +79,7 @@ class Folder extends DAV\Collection
         $asset = null;
 
         if (is_string($name)) {
-            $name = Element\Service::getValidKey(substr($name, strrpos($name, '/') + 1), 'asset');
+            $name = Element\Service::getValidKey(basename($name), 'asset');
 
             $parentPath = $this->asset->getRealFullPath();
             if ($parentPath === '/') {

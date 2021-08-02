@@ -297,7 +297,10 @@ class GridHelperService
                                 ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                             $fieldConditions[] = $brickCondition;
                         }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+
+                        if (!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+                        }
                     } else {
                         $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
                                 ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
@@ -307,7 +310,7 @@ class GridHelperService
                     $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
-                    if (is_array($filter['value'])) {
+                    if (is_array($filter['value'] ?? false)) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
                             $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
@@ -317,7 +320,7 @@ class GridHelperService
                             $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
                     } else {
-                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
+                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'] ?? null, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                     }
                 } elseif (in_array('o_' . $filterField, $systemFields)) {
                     // system field
@@ -428,7 +431,7 @@ class GridHelperService
                     );
                 }
 
-                $havings = $featureAndSlugFilters['featureConditions'];
+                $havings = $featureAndSlugFilters['featureConditions'] ?? null;
                 if ($havings) {
                     $havings = implode(' AND ', $havings);
                     $select->having($havings);
@@ -632,7 +635,7 @@ class GridHelperService
         if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
             $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
             $list->setOrderKey($orderKey);
-            $list->setGroupBy('o_id');
+            $list->setGroupBy('oo_id');
 
             $parts = explode('_', $orderKey);
 

@@ -82,7 +82,7 @@ interface PriceInfoInterface
     /**
      * Returns product
      *
-     * @return CheckoutableInterface
+     * @return CheckoutableInterface|null
      */
     public function getProduct();
 }

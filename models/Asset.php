@@ -16,6 +16,7 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
@@ -368,9 +369,13 @@ class Asset extends Element\AbstractElement
                     }
                 }
             } else {
-                $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
-                if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                if (is_dir($data['sourcePath'])) {
+                    $mimeType = 'directory';
+                } else {
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
+                    if (is_file($data['sourcePath'])) {
+                        $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                    }
                 }
 
                 unset($data['sourcePath']);
@@ -451,7 +456,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
-            'text' => ['/text/', '/xml$/'],
+            'text' => ['/text/', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
@@ -532,15 +537,18 @@ class Asset extends Element\AbstractElement
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
-                            $differentOldPath = $oldPath;
-                            $this->getDao()->updateWorkspaces();
-                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         } catch (UnableToMoveFile $e) {
-                            //nothing to do
+                            //update children, if unable to move parent
+                            $this->updateChildPaths($storage, $oldPath);
                         }
 
+                        $this->getDao()->updateWorkspaces();
+
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         $this->relocateThumbnails($oldPath);
                     }
 
@@ -684,43 +692,24 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
-        // use current file name in order to prevent problems when filename has changed
-        // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $path = $this->getDao()->getCurrentFullPath();
-        if (!$path) {
-            // this is happen during a restore from the recycle bin
-            $path = $this->getRealFullPath();
-        }
-
+        $path = $this->getRealFullPath();
         $typeChanged = false;
 
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
-                $sourceUri = stream_get_meta_data($src)['uri'];
 
-                try {
-                    $targetUri = stream_get_meta_data($storage->readStream($path));
-                } catch (\Exception $e) {
-                    $targetUri = null;
+                $dbPath = $this->getDao()->getCurrentFullPath();
+                if ($dbPath !== $path && $storage->fileExists($dbPath)) {
+                    $storage->delete($dbPath);
                 }
 
-                if ($targetUri !== $sourceUri) {
-                    if ($storage->fileExists($path)) {
-                        // We don't open a stream on existing files, because they could be possibly used by versions
-                        // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                        // versioning information persists. Using the stream on the existing file would overwrite the
-                        // contents of the inode and therefore leads to wrong version data
-                        $storage->delete($path);
-                    }
-
-                    $storage->writeStream($path, $src);
-                }
+                $storage->writeStream($path, $src);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
                 $mimeType = $storage->mimeType($path);
-                $this->setMimetype($mimeType);
+                $this->setMimeType($mimeType);
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());
@@ -1313,7 +1302,7 @@ class Asset extends Element\AbstractElement
 
             if (!$isRewindable) {
                 $tempFile = $this->getTemporaryFile();
-                $dest = fopen($tempFile, 'w+', false, File::getContext());
+                $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
         } elseif (is_null($stream)) {
@@ -1564,7 +1553,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return string
      */
-    public function getMimetype()
+    public function getMimeType()
     {
         return $this->mimetype;
     }
@@ -1574,7 +1563,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setMimetype($mimetype)
+    public function setMimeType($mimetype)
     {
         $this->mimetype = $mimetype;
 
@@ -1842,7 +1831,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Asset $parent
+     * @param Asset|null $parent
      *
      * @return $this
      */
@@ -1875,10 +1864,10 @@ class Asset extends Element\AbstractElement
     public function __wakeup()
     {
         if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
+            // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
             $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
-                $this->setFilename($originalElement->getFilename());
+                $this->setParentId($originalElement->getParentId());
                 $this->setPath($originalElement->getRealPath());
             }
         }
@@ -1979,6 +1968,30 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param FilesystemOperator $storage
+     * @param string $oldPath
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
+    {
+        try {
+            $children = $storage->listContents($oldPath, true);
+            foreach ($children as $child) {
+                if ($child['type'] === 'file') {
+                    $src  = $child['path'];
+                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
+                    $storage->move($src, $dest);
+                }
+            }
+
+            $storage->deleteDirectory($oldPath);
+        } catch (UnableToMoveFile $e) {
+            // noting to do
+        }
+    }
+
+    /**
      * @param string $oldPath
      *
      * @throws \League\Flysystem\FilesystemException
@@ -1990,6 +2003,20 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
+            //remove source parent folder thumbnails
+            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                $storage->delete($item['path']);
+            }
+
+            //remove destination parent folder thumbnails
+            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                $storage->delete($item['path']);
+            }
+
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
@@ -2001,8 +2028,13 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            //required in case if there is only renaming on parent
-            $storage->move($oldPath, $this->getRealFullPath());
+            //required in case if renaming or moving parent folder
+            try {
+                $storage->move($oldPath, $this->getRealFullPath());
+            } catch (UnableToMoveFile $e) {
+                //update children, if unable to move parent
+                $this->updateChildPaths($storage, $oldPath);
+            }
         } catch (UnableToMoveFile $e) {
             // noting to do
         }

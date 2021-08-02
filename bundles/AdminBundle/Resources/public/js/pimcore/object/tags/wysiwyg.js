@@ -194,6 +194,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig = mergeObject(eConfig, elementCustomConfig);
         }
 
+        if(!isNaN(this.fieldConfig.maxCharacters) && this.fieldConfig.maxCharacters > 0) {
+            var maxChars = this.fieldConfig.maxCharacters;
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: maxChars
+            }
+        } else {
+            eConfig.wordcount = {
+                showParagraphs: false,
+                showWordCount: false,
+                showCharCount: true,
+                maxCharCount: -1
+            }
+        }
+
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
 
@@ -290,7 +307,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectration: true});
+                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectratio: true});
 
                 if(typeof node.data.imageWidth != "undefined") {
                     if(node.data.imageWidth < defaultWidth

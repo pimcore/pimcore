@@ -52,7 +52,7 @@ class Xliff12Escaper
             $parts = explode('>', $match);
             $parts[0] .= '>';
             foreach ($parts as $part) {
-                if (!empty(trim($part))) {
+                if (!empty(trim($part)) || trim($part) === '0') {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);
                         if (in_array($tagName, self::SELFCLOSING_TAGS)) {
@@ -102,11 +102,8 @@ class Xliff12Escaper
                 $content = html_entity_decode($el->textContent, null, 'UTF-8');
                 $el->ownerDocument->textContent = $content;
             }
-            $content = $xml->html();
+            $content = $xml->text();
         }
-
-        //parse comments
-        $content = strtr($content, ['&lt;!--' => '<!--', '--&gt;' => '-->']);
 
         return $content;
     }

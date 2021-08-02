@@ -26,7 +26,7 @@ use Pimcore\Navigation\Page\Url;
 /**
  * @internal
  */
-final class Builder
+class Builder
 {
     /**
      * @var RequestHelper

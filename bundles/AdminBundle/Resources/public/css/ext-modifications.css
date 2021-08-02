@@ -209,6 +209,12 @@
     margin-right: 8px;
 }
 
+.x-grid-item {
+    color: #404040;
+    font: 300 13px/19px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background-color: #fff;
+}
+
 .x-grid-item-alt {
     background-color: #f6f6f6;
 }
@@ -709,12 +715,6 @@ body > .x-mask {
     font-size: 13px;
     font-weight: 300;
     font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
-}
-
-.x-grid-item {
-    color: #404040;
-    font: 300 13px/19px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
-    background-color: #fff;
 }
 
 /* watermark */

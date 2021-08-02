@@ -684,6 +684,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
+                // exception for classification store. if there are no items then it is empty by definition.
+                // consequence is that we have to preserve the metadata information
+                // see https://github.com/pimcore/pimcore/issues/9329
+                if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Classificationstore && $level == 0) {
+                    $this->objectData[$key]['metaData'] = $value['metaData'] ?? [];
+                    $this->objectData[$key]['inherited'] = true;
+                }
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
                 $this->metaData[$key]['objectid'] = $object->getId();
@@ -965,8 +972,26 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $object = DataObject::getById($request->get('id'));
         if ($object) {
-            $object->setChildrenSortBy($request->get('sortBy'));
-            $object->setChildrenSortOrder($request->get('childrenSortOrder'));
+            $sortBy = $request->get('sortBy');
+            $sortOrder = $request->get('childrenSortOrder');
+
+            $currentSortBy = $object->getChildrenSortBy();
+
+            $object->setChildrenSortBy($sortBy);
+            $object->setChildrenSortOrder($sortOrder);
+
+            if ($currentSortBy != $sortBy) {
+                $user = Tool\Admin::getCurrentUser();
+
+                if (!$user->isAdmin()) {
+                    return $this->json(['success' => false, 'message' => 'Changing the sort method is only allowed for admin users']);
+                }
+
+                if ($sortBy == 'index') {
+                    $this->reindexBasedOnSortOrder($object, $sortOrder);
+                }
+            }
+
             $object->save();
 
             return $this->json(['success' => true]);
@@ -1079,76 +1104,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $this->adminJson(['success' => $success]);
     }
 
-    /**
-     * @param DataObject\AbstractObject $updatedObject
-     * @param int $newIndex
-     */
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
+    private function executeInsideTransaction(callable $fn)
     {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $newIndex) {
-                    $object = DataObject\Concrete::getById($objectId);
-                    if ($object && $latestVersion = $object->getLatestVersion()) {
-                        // don't renew references (which means loading the target elements)
-                        // Not needed as we just save a new version with the updated index
-                        $object = $latestVersion->loadData(false);
-                        if ($newIndex !== $object->getIndex()) {
-                            $object->setIndex($newIndex);
-                        }
-                        $latestVersion->save();
-                    }
-                };
 
-                $list = new DataObject\Listing();
-                $updatedObject->saveIndex($newIndex);
-
-                Db::get()->executeUpdate(
-                    'UPDATE '.$list->getDao()->getTableName().' o,
-                    (
-                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
-                        FROM '.$list->getDao()->getTableName().',
-                        (SELECT @n := -1) variable
-                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
-                        "','", [
-                            DataObject::OBJECT_TYPE_OBJECT,
-                            DataObject::OBJECT_TYPE_VARIANT,
-                            DataObject::OBJECT_TYPE_FOLDER,
-                        ]
-                    ).'\')
-                            ORDER BY o_index, o_id=?
-                        ) tmp
-                    ) order_table
-                    SET o.o_index = order_table.newIndex
-                    WHERE o.o_id=order_table.o_id',
-                    [
-                        $newIndex,
-                        $updatedObject->getId(),
-                        $updatedObject->getParentId(),
-                        $updatedObject->getId(),
-                    ]
-                );
-
-                $db = Db::get();
-                $siblings = $db->fetchAll(
-                    'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
-                    ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
-                    [$updatedObject->getParentId(), $updatedObject->getId()]
-                );
-                $index = 0;
-
-                foreach ($siblings as $sibling) {
-                    if ($index == $newIndex) {
-                        $index++;
-                    }
-
-                    $updateLatestVersionIndex($sibling['o_id'], $index);
-                    $index++;
-
-                    DataObject::clearDependentCacheByObjectId($sibling['o_id']);
-                }
+                $fn();
 
                 Db::get()->commit();
 
@@ -1174,6 +1137,129 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
+     * @param DataObject\AbstractObject $parentObject
+     * @param string $currentSortOrder
+     */
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    {
+        $fn = function () use ($parentObject, $currentSortOrder) {
+            $list = new DataObject\Listing();
+
+            Db::get()->executeUpdate(
+                'UPDATE '.$list->getDao()->getTableName().' o,
+                    (
+                    SELECT newIndex, o_id FROM (
+                        SELECT @n := @n +1 AS newIndex, o_id
+                        FROM '.$list->getDao()->getTableName().',
+                                (SELECT @n := -1) variable
+                                 WHERE o_parentId = ? ORDER BY o_key ' . $currentSortOrder
+                               .') tmp
+                    ) order_table
+                    SET o.o_index = order_table.newIndex
+                    WHERE o.o_id=order_table.o_id',
+                [
+                    $parentObject->getId(),
+                ]
+            );
+
+            $db = Db::get();
+            $children = $db->fetchAll(
+                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
+                .' WHERE o_parentId = ? ORDER BY o_index ASC',
+                [$parentObject->getId()]
+            );
+            $index = 0;
+
+            foreach ($children as $child) {
+                $this->updateLatestVersionIndex($child['o_id'], $child['o_modificationDate']);
+                $index++;
+
+                DataObject::clearDependentCacheByObjectId($child['o_id']);
+            }
+        };
+
+        $this->executeInsideTransaction($fn);
+    }
+
+    private function updateLatestVersionIndex($objectId, $newIndex)
+    {
+        $object = DataObject\Concrete::getById($objectId);
+
+        if (
+            $object &&
+            $object->getType() != DataObject::OBJECT_TYPE_FOLDER &&
+            $latestVersion = $object->getLatestVersion()
+        ) {
+            // don't renew references (which means loading the target elements)
+            // Not needed as we just save a new version with the updated index
+            $object = $latestVersion->loadData(false);
+            if ($newIndex !== $object->getIndex()) {
+                $object->setIndex($newIndex);
+            }
+            $latestVersion->save();
+        }
+    }
+
+    /**
+     * @param DataObject\AbstractObject $updatedObject
+     * @param int $newIndex
+     */
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
+    {
+        $fn = function () use ($updatedObject, $newIndex) {
+            $list = new DataObject\Listing();
+            $updatedObject->saveIndex($newIndex);
+
+            Db::get()->executeUpdate(
+                'UPDATE '.$list->getDao()->getTableName().' o,
+                    (
+                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                        FROM '.$list->getDao()->getTableName().',
+                        (SELECT @n := -1) variable
+                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
+                    "','", [
+                        DataObject::OBJECT_TYPE_OBJECT,
+                        DataObject::OBJECT_TYPE_VARIANT,
+                        DataObject::OBJECT_TYPE_FOLDER,
+                    ]
+                ).'\')
+                            ORDER BY o_index, o_id=?
+                        ) tmp
+                    ) order_table
+                    SET o.o_index = order_table.newIndex
+                    WHERE o.o_id=order_table.o_id',
+                [
+                    $newIndex,
+                    $updatedObject->getId(),
+                    $updatedObject->getParentId(),
+                    $updatedObject->getId(),
+                ]
+            );
+
+            $db = Db::get();
+            $siblings = $db->fetchAll(
+                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
+                ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                [$updatedObject->getParentId(), $updatedObject->getId()]
+            );
+            $index = 0;
+
+            foreach ($siblings as $sibling) {
+                if ($index == $newIndex) {
+                    $index++;
+                }
+
+                $this->updateLatestVersionIndex($sibling['o_id'], $index);
+                $index++;
+
+                DataObject::clearDependentCacheByObjectId($sibling['o_id']);
+            }
+        };
+
+        $this->executeInsideTransaction($fn);
+    }
+
+    /**
      * @Route("/save", name="pimcore_admin_dataobject_dataobject_save", methods={"POST", "PUT"})
      *
      * @param Request $request
@@ -1192,6 +1278,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $objectFromVersion = $object !== $objectFromDatabase;
         $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
+        if ($objectFromVersion) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+        }
 
         // data
         $data = [];
@@ -1225,7 +1318,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object, ['objectFromVersion' => $objectFromVersion]));
                     }
                 }
             }
@@ -1267,11 +1360,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if (($request->get('task') == 'publish') || ($request->get('task') == 'unpublish')) {
-            if ($data) {
-                if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
-                    return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
-                }
-            }
+            // disabled for now: see different approach [Elements] Show users who are working on the same element #9381
+            // https://github.com/pimcore/pimcore/issues/9381
+            //            if ($data) {
+            //                if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
+            //                    return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
+            //                }
+            //            }
 
             $object->save();
             $treeData = $this->getTreeNodeConfig($object);
@@ -1291,7 +1386,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'treeData' => $treeData,
             ]);
         } elseif ($request->get('task') == 'session') {
-            DataObject\Service::saveElementToSession($object);
+            //TODO https://github.com/pimcore/pimcore/issues/9536
+            DataObject\Service::saveElementToSession($object, '', false);
 
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
@@ -1500,6 +1596,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
+        if (method_exists($object, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields */
+            $localizedFields = $object->getLocalizedFields();
+            $localizedFields->setLoadedAllLazyData();
+        }
+
         DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
@@ -1539,8 +1641,20 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
 
+        if (method_exists($object1, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields1 */
+            $localizedFields1 = $object1->getLocalizedFields();
+            $localizedFields1->setLoadedAllLazyData();
+        }
+
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
+
+        if (method_exists($object2, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields2 */
+            $localizedFields2 = $object2->getLocalizedFields();
+            $localizedFields2->setLoadedAllLazyData();
+        }
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 

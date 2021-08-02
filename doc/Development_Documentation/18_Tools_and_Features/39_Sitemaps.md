@@ -1,16 +1,10 @@
 # Sitemaps
 
-<div class="alert alert-warning">
-The sitemaps integration is currently considered experimental and may be subject to change!
-</div>
-
 Pimcore includes the [`presta/sitemap-bundle`](https://github.com/prestaconcept/PrestaSitemapBundle) which adds a simple,
 yet powerful API to generate XML sitemaps. Have a look at the bundle documentation on details how the bundle works and how
 you can add sitemaps to it. The bundle exposes a way to add sitemap entries by [firing an event](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/5-Usage-Event_Listener.md)
 which you can handle to add entries to an `UrlContainerInterface`. For simple scenarios, you can directly implement such
 an event handler and start to add entries.
-
-[TOC]
 
 ## Exposing Sitemaps
 
@@ -31,7 +25,7 @@ After the route is registered, you should be able to access your sitemaps via `/
 To dump the sitemaps to static files, use the `presta:sitemaps:dump` command:
 
     $ bin/console presta:sitemaps:dump
-    Dumping all sections of sitemaps into web directory
+    Dumping all sections of sitemaps into public directory
     Created/Updated the following sitemap files:
         sitemap.default.xml
         sitemap.xml

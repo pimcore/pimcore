@@ -19,6 +19,8 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
@@ -67,7 +69,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @internal
@@ -196,6 +198,16 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
+     *
+     * @param bool $mark
+     */
+    public function setLoadedAllLazyData($mark = true)
+    {
+        $this->_loadedAllLazyData = $mark;
+    }
+
+    /**
      * Note: this is for pimcore/pimcore use only.
      *
      * @internal
@@ -220,7 +232,7 @@ final class Localizedfield extends Model\AbstractModel implements
             }
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            $this->_loadedAllLazyData = true;
+            $this->setLoadedAllLazyData();
         }
 
         foreach ($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
@@ -235,15 +247,23 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|null $object
+     * @param Concrete|Model\Element\ElementDescriptor|null $object
      * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(?Concrete $object, bool $markAsDirty = true)
+    public function setObject($object, bool $markAsDirty = true)
     {
+        if ($object instanceof Model\Element\ElementDescriptor) {
+            $object = Service::getElementById($object->getType(), $object->getId());
+        }
+
+        if (!is_null($object) && !$object instanceof Concrete) {
+            throw new \Exception('must be instance of object concrete');
+        }
+
         if ($markAsDirty) {
             $this->markAllLanguagesAsDirty();
         }
@@ -460,7 +480,7 @@ final class Localizedfield extends Model\AbstractModel implements
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading() && !$this->_loadedAllLazyData) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -534,7 +554,13 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
+            if (!$fieldDefinition instanceof PreGetDataInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', PreGetDataInterface::class));
+            }
+
             $data = $fieldDefinition->preGetData(
                 $this,
                 [
@@ -613,7 +639,14 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
-        if (method_exists($fieldDefinition, 'preSetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof PreSetDataInterface || method_exists($fieldDefinition, 'preSetData')) {
+            if (!$fieldDefinition instanceof PreSetDataInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', PreSetDataInterface::class));
+            }
+
             $value = $fieldDefinition->preSetData(
                 $this,
                 $value,

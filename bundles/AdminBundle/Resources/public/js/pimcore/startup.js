@@ -62,7 +62,8 @@ Ext.require([
     'Ext.ux.grid.SubTable',
     'Ext.window.Toast',
     'Ext.slider.Single',
-    'Ext.form.field.Tag'
+    'Ext.form.field.Tag',
+    'Ext.ux.TabMiddleButtonClose'
 ]);
 
 Ext.ariaWarn = Ext.emptyFn;
@@ -887,7 +888,7 @@ Ext.onReady(function () {
     var quickSearchTpl = new Ext.XTemplate(
         '<tpl for=".">',
             '<li role="option" unselectable="on" class="x-boundlist-item">' +
-                '<div class="list-icon {iconCls}"></div>' +
+                '<div class="list-icon {iconCls}"><tpl if="icon"><img class="class-icon" src="{icon}"></tpl></div>' +
                 '<div class="list-path" title="{fullpath}">{fullpathList}</div>' +
             '</li>',
         '</tpl>'

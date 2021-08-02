@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Extension\ColumnType;
 
@@ -184,25 +184,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Found conflict with document path "' . $slug . '"');
+                        throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
-                        throw new Model\Element\ValidationException('slug must be at least 2 characters long and start with slash');
+                        throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
-                    $slug = substr($slug, 1);
-                    $slug = preg_replace('/\/$/', '', $slug);
 
-                    $parts = explode('/', $slug);
-                    for ($i = 0; $i < count($parts); $i++) {
-                        $part = $parts[$i];
-                        if (strlen($part) === 0) {
-                            throw new Model\Element\ValidationException('Slug ' . $slug .' not valid');
-                        }
-                        $sanitizedKey = Model\Element\Service::getValidKey($part, 'document');
-                        if ($sanitizedKey != $part) {
-                            throw new Model\Element\ValidationException('Slug part ' . $part .' not valid');
-                        }
+                    if (strpos($slug, '//') !== false || !filter_var('https://example.com' . $slug, FILTER_VALIDATE_URL)) {
+                        throw new Model\Element\ValidationException('Slug "' . $slug . '" is not valid');
                     }
                 }
             }
@@ -633,71 +623,64 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array
+     * { @inheritdoc }
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
-        if ($object instanceof Model\DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+        if ($container instanceof Model\DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container);
 
-                $object->setObjectVar($this->getName(), $data);
-                $this->markLazyloadedFieldAsLoaded($object);
+                $container->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($object instanceof Model\Element\DirtyIndicatorInterface) {
-                    $object->markFieldDirty($this->getName(), false);
+                if ($container instanceof Model\Element\DirtyIndicatorInterface) {
+                    $container->markFieldDirty($this->getName(), false);
                 }
             }
-        } elseif ($object instanceof Model\DataObject\Localizedfield) {
+        } elseif ($container instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
-            if ($this->getLazyLoading() && $object->getObject()) {
-                $container = $object->getObject()->getObjectVar($object->getFieldname());
-                if ($container instanceof Model\DataObject\Fieldcollection) {
-                    $container->loadLazyField($object->getObject(), $object->getType(), $object->getFieldname(), $object->getIndex(), $this->getName());
+        } elseif ($container instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+            if ($this->getLazyLoading() && $container->getObject()) {
+                $subContainer = $container->getObject()->getObjectVar($container->getFieldname());
+                if ($subContainer instanceof Model\DataObject\Fieldcollection) {
+                    $subContainer->loadLazyField($container->getObject(), $container->getType(), $container->getFieldname(), $container->getIndex(), $this->getName());
                 } else {
                     // if container is not available we assume that it is a newly set item
-                    $object->markLazyKeyAsLoaded($this->getName());
+                    $container->markLazyKeyAsLoaded($this->getName());
                 }
             }
 
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
-            if ($this->getLazyLoading() && $object->getObject()) {
-                $brickGetter = 'get' . ucfirst($object->getFieldname());
-                $container = $object->getObject()->$brickGetter();
-                if ($container instanceof Model\DataObject\Objectbrick) {
-                    $container->loadLazyField($object->getType(), $object->getFieldname(), $this->getName());
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+            if ($this->getLazyLoading() && $container->getObject()) {
+                $brickGetter = 'get' . ucfirst($container->getFieldname());
+                $subContainer = $container->getObject()->$brickGetter();
+                if ($subContainer instanceof Model\DataObject\Objectbrick) {
+                    $subContainer->loadLazyField($container->getType(), $container->getFieldname(), $this->getName());
                 } else {
-                    $object->markLazyKeyAsLoaded($this->getName());
+                    $container->markLazyKeyAsLoaded($this->getName());
                 }
             }
 
-            $data = $object->getObjectVar($this->getName());
+            $data = $container->getObjectVar($this->getName());
         }
 
         return is_array($data) ? $data : [];
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param Model\DataObject\Data\UrlSlug[]|null $data
-     * @param array $params
-     *
-     * @return array|null
+     * { @inheritdoc }
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
         if ($data === null) {
             $data = [];
         }
 
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         return $data;
     }

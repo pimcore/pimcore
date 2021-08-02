@@ -152,7 +152,7 @@ interface ProductListInterface extends PaginateListingInterface
     public function setOrderKey($orderKey);
 
     /**
-     * @return string | array
+     * @return string|array
      */
     public function getOrderKey();
 
@@ -182,7 +182,7 @@ interface ProductListInterface extends PaginateListingInterface
     public function setCategory(AbstractCategory $category);
 
     /**
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public function getCategory();
 
