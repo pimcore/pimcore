@@ -1,13 +1,10 @@
 # Security Policy
 
-## Supported Versions
-see [suppored versions here](https://github.com/pimcore/pimcore#supported-versions). 
-
 ## Reporting a Vulnerability
 
 If you think that you have found a security issue in Pimcore, 
 don’t use the bug tracker and don’t publish it publicly. 
-Instead, all security issues must be reported via [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/).
+Instead, all security issues must be reported via 📫 to security-issue📧pimcore.com .
 
 
 ## Resolving Process
