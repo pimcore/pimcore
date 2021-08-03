@@ -433,8 +433,8 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5)
     {
-        $this->db->beginTransaction();
         for ($i = 1; $i <= $maxTries; $i++) {
+            $this->db->beginTransaction();
             try {
                 $fn();
 
