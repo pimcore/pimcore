@@ -19,11 +19,7 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
         this.name = name;
         this.config = this.parseConfig(config);
         this.config.name = id + "_editable";
-
-        this.data = null;
-        if(data) {
-            this.data = new Date(intval(data) * 1000);
-        }
+        this.data = data;
     },
 
     render: function () {
@@ -35,7 +31,7 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
         }
 
         if(this.data) {
-            this.config.value = this.data;
+            this.config.value = pimcore.helpers.date.convertServerToBrowserDate(this.data);
         }
 
         this.element = new Ext.form.DateField(this.config);
@@ -48,9 +44,9 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
     getValue: function () {
         if(this.element) {
-            return this.element.getValue();
+            return pimcore.helpers.date.convertBrowserToServerTimestamp(this.element.getValue());
         } else if (this.data) {
-            return Ext.Date.format(this.data, "Y-m-d\\TH:i:s");
+            return this.data;
         }
     },
 

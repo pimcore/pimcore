@@ -73,7 +73,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             if (typeof datax.defaultValue === 'object') {
                 tmpDate = datax.defaultValue;
             } else {
-                tmpDate = new Date(datax.defaultValue * 1000);
+                tmpDate = pimcore.helpers.date.convertServerToBrowserDate(datax.defaultValue);
             }
 
             defaultDateConfig.value = tmpDate;
@@ -151,6 +151,9 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
     applyData: function ($super) {
         $super();
         this.datax.queryColumnType = this.datax.columnType;
+        if (this.datax.defaultValue) {
+            this.datax.defaultValue = pimcore.helpers.date.convertBrowserToServerTimestamp(this.datax.defaultValue);
+        }
     },
 
     applySpecialData: function (source) {

@@ -234,6 +234,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
             'main_domain' => $config['general']['domain'],
             'timezone' => $config['general']['timezone'],
+            'timezone_offset' => (int)date('Z'),
             'tile_layer_url_template' => $config['maps']['tile_layer_url_template'],
             'geocoding_url_template' => $config['maps']['geocoding_url_template'],
             'reverse_geocoding_url_template' => $config['maps']['reverse_geocoding_url_template'],

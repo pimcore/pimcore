@@ -179,7 +179,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (is_numeric($data)) {
-            return $this->getDateFromTimestamp($data / 1000);
+            return $this->getDateFromTimestamp($data);
         }
 
         return null;
@@ -194,10 +194,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
-        if ($data) {
-            $data = $data * 1000;
-        }
-
         return $this->getDataFromEditmode($data, $object, $params);
     }
 

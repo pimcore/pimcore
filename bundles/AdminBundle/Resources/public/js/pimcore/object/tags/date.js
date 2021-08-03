@@ -27,7 +27,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.defaultValue) {
             this.defaultValue = this.fieldConfig.defaultValue;
         } else if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.useCurrentDate) {
-            this.defaultValue = (new Date().getTime()) / 1000;
+            this.defaultValue = pimcore.helpers.date.convertBrowserToServerTimestamp(new Date());
         }
 
         if(this.defaultValue) {
@@ -47,8 +47,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value) {
-                    var timestamp = intval(value) * 1000;
-                    var date = new Date(timestamp);
+                    var date = pimcore.helpers.date.convertServerToBrowserDate(value);
 
                     return Ext.Date.format(date, "Y-m-d");
                 }
@@ -83,8 +82,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (this.data) {
-            var tmpDate = new Date(intval(this.data) * 1000);
-            date.value = tmpDate;
+            date.value = pimcore.helpers.date.convertServerToBrowserDate(this.data);
         }
 
         this.component = new Ext.form.DateField(date);
@@ -101,18 +99,13 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     getValue:function () {
         if (this.component.getValue()) {
-            let value = this.component.getValue();
-            if (value && typeof value.getTime == "function") {
-                return value.getTime();
-            } else {
-                return value;
-            }
+            return pimcore.helpers.date.convertBrowserToServerTimestamp(this.component.getValue());
         }
         return false;
     },
 
     getCellEditValue: function () {
-        return this.getValue() / 1000;
+        return this.getValue();
     },
 
     getName:function () {

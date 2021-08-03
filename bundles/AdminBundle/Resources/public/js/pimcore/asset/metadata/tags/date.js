@@ -23,7 +23,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
         if (typeof data !== "undefined" && data !== null) {
             this.data = data;
         } else if (fieldConfig.useCurrentDate) {
-            this.data = (new Date().getTime()) / 1000;
+            this.data = pimcore.helpers.date.convertBrowserToServerTimestamp(new Date());
         }
 
         this.fieldConfig = fieldConfig;
@@ -39,10 +39,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
             filter: this.getGridColumnFilter(field),
             renderer:function (key, value, metaData, record) {
                 if (value) {
-                    var timestamp = intval(value) * 1000;
-                    var date = new Date(timestamp);
-
-                    return Ext.Date.format(date, "Y-m-d");
+                    return Ext.Date.format(pimcore.helpers.date.convertServerToBrowserDate(value), "Y-m-d");
                 }
                 return "";
             }.bind(this, field.key)
@@ -69,8 +66,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
         date.width += date.labelWidth;
 
         if (this.data) {
-            var tmpDate = new Date(intval(this.data) * 1000);
-            date.value = tmpDate;
+            date.value = pimcore.helpers.date.convertServerToBrowserDate(this.data);
         }
 
         this.component = new Ext.form.DateField(date);
@@ -79,7 +75,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
 
     getValue:function () {
         if (this.component.getValue()) {
-            return this.component.getValue().getTime() / 1000;
+            return pimcore.helpers.date.convertBrowserToServerTimestamp(this.component.getValue());
         }
         return false;
     },
@@ -100,8 +96,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
 
     convertPredefinedGridData: function(v, r) {
         if (v && !(v instanceof Date)) {
-            var d = new Date(intval(v) * 1000);
-            return d;
+            return pimcore.helpers.date.convertServerToBrowserDate(v);
         }
         return v;
     },
@@ -109,7 +104,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
     getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
         if (value) {
             if(!(value instanceof Date)) {
-                value = new Date(value * 1000);
+                value = pimcore.helpers.date.convertServerToBrowserDate(value);
             }
             return Ext.Date.format(value, "Y-m-d");
         }
@@ -119,7 +114,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
     marshal: function(value) {
         // value used for submission
         if (value) {
-            value = value.valueOf() / 1000;
+            value = pimcore.helpers.date.convertBrowserToServerTimestamp(value);
         }
 
         return value;
@@ -128,7 +123,7 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
     unmarshal: function(value) {
         // process received and transform it to grid value
         if (value) {
-            value = new Date(intval(value) * 1000);
+            value = pimcore.helpers.date.convertServerToBrowserDate(value);
         }
 
         return value;

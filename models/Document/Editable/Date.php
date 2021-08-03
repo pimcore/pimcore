@@ -74,6 +74,10 @@ class Date extends Model\Document\Editable
      */
     public function frontend()
     {
+        if (!$this->date instanceof \DateTimeInterface) {
+            return '';
+        }
+
         $format = null;
 
         if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
@@ -81,12 +85,10 @@ class Date extends Model\Document\Editable
         } elseif (isset($this->config['format']) && $this->config['format']) {
             $format = $this->config['format'];
         } else {
-            $format = 'Y-m-d\TH:i:sO'; // ISO8601
+            return $this->date->toIso8601String();
         }
 
-        if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($format);
-        }
+        return $this->date->formatLocalized($format);
     }
 
     /**
@@ -118,9 +120,8 @@ class Date extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if (strlen($data) > 5) {
-            $timestamp = strtotime($data);
-            $this->setDateFromTimestamp($timestamp);
+        if (is_numeric($data)) {
+            $this->setDateFromTimestamp((int)$data);
         }
 
         return $this;

@@ -441,7 +441,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Date();
         $editable->setName($field);
         $dateStr = '2021-02-1' . ($seed % 10);
-        $editable->setDataFromEditmode($dateStr);
+        $editable->setDataFromEditmode(strtotime($dateStr));
         $page->setEditable($editable);
     }
 
