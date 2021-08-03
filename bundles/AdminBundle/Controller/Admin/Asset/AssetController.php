@@ -1641,7 +1641,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }, 200, [
                 'Content-Type' => 'video/mp4',
                 'Content-Length' => $fs,
-                'Accept-Ranges' => 'bytes'
+                'Accept-Ranges' => 'bytes',
             ]);
         } else {
             throw $this->createNotFoundException('Video thumbnail not found');
