@@ -605,11 +605,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * Removes reservations
-     *
-     * @param int $duration
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function cleanUpReservations($duration = 0)
     {

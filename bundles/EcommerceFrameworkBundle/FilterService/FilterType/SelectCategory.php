@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 class SelectCategory extends AbstractFilterType
 {
     /**
-     * @param FilterCategory $filterDefinition
+     * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
@@ -38,7 +38,7 @@ class SelectCategory extends AbstractFilterType
         $values = [];
 
         $availableRelations = [];
-        if ($filterDefinition->getAvailableCategories()) {
+        if (method_exists($filterDefinition, 'getAvailableCategories') && $filterDefinition->getAvailableCategories()) {
             /** @var Concrete $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
@@ -70,7 +70,7 @@ class SelectCategory extends AbstractFilterType
             'indexedValues' => $values,
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
-            'rootCategory' => $filterDefinition->getRootCategory(),
+            'rootCategory' => method_exists($filterDefinition, 'getRootCategory') ? $filterDefinition->getRootCategory() : null,
             'document' => $request->get('contentDocument'),
             'resultCount' => $productList->count(),
         ];
@@ -92,7 +92,7 @@ class SelectCategory extends AbstractFilterType
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$isReload) {
+        } elseif (empty($value) && !$isReload && method_exists($filterDefinition, 'getPreSelect')) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

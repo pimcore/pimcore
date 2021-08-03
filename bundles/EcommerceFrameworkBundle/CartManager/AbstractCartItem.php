@@ -82,7 +82,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             $count = 0;
         }
 
-        if ($this->count != $count && $this->getCart() && !$this->isLoading && $fireModified) {
+        if ($this->count !== $count && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->count = $count;
@@ -99,7 +99,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
-        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading && $fireModified) {
+        if ($this->productId !== $product->getId() && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->product = $product;
@@ -176,7 +176,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProductId($productId)
     {
-        if ($this->productId != $productId && $this->getCart() && !$this->isLoading) {
+        if ($this->productId !== $productId && $this->getCart() && !$this->isLoading) {
             $this->getCart()->modified();
         }
         $this->productId = $productId;
@@ -222,8 +222,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setSubItems($subItems)
     {
-        if ($this->getCart() && !$this->isLoading) {
-            $this->getCart()->modified();
+        $cart = $this->getCart();
+        if ($cart && !$this->isLoading) {
+            $cart->modified();
         }
 
         foreach ($subItems as $item) {

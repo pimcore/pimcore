@@ -638,10 +638,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
 
@@ -659,10 +655,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         foreach ($this->getFieldDefinitions() as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
 

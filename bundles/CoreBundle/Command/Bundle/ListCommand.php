@@ -59,7 +59,6 @@ class ListCommand extends AbstractBundleCommand
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
             $enabled = $this->bundleManager->isEnabled($bundleClass);
 
-            /** @var PimcoreBundleInterface $bundle */
             $bundle = null;
             if ($enabled) {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
@@ -95,7 +94,7 @@ class ListCommand extends AbstractBundleCommand
 
         if ($input->getOption('json')) {
             $jsonData = array_map(static function ($row) use ($returnData) {
-                return array_combine($returnData['headers'], $row) ?: [];
+                return array_combine($returnData['headers'], $row);
             }, $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
         } else {
