@@ -49,7 +49,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     /**
      * @var Document|null
      */
-    private ?Document $fallbackDocument;
+    private ?Document $fallbackDocument = null;
 
     public function __construct(
         protected RequestStack $requestStack,
