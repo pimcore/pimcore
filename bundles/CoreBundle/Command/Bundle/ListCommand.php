@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
-use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
