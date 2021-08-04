@@ -435,6 +435,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     {
         for ($i = 1; $i <= $maxTries; $i++) {
             $this->db->beginTransaction();
+
             try {
                 $fn();
 
