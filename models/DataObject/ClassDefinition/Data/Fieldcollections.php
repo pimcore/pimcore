@@ -183,7 +183,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionKey = $collectionRaw['type'];
 
                 $oIndex = null;
-                if (!isset($params['objectFromVersion'])) {
+                if (!isset($params['objectFromVersion']) || $params['objectFromVersion'] == false) {
                     $oIndex = $collectionRaw['oIndex'] ?? null;
                 }
 
