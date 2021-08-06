@@ -399,17 +399,30 @@ class ApplicationLogger implements LoggerInterface
         ], $context));
     }
 
-    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    private static function exceptionToString(\Throwable $exceptionObject, bool $includeStackTrace, bool $includePrevious = false): string
     {
-        //workaround to prevent "nesting level to deep" errors when used var_export()
-        ob_start();
-        var_dump($exceptionObject);
-        $dataDump = ob_get_clean();
+        $data = [
+            $exceptionObject->getMessage(),
+            "File: " . $exceptionObject->getFile(),
+            "Line: " . $exceptionObject->getLine(),
+            "Code: " . $exceptionObject->getCode(),
+        ];
 
-        if (!$dataDump) {
-            $dataDump = $exceptionObject->getMessage();
+        if ($includeStackTrace) {
+            $data[] = "Trace: " . $exceptionObject->getTraceAsString();
         }
 
-        return new FileObject($dataDump);
+        if ($includePrevious) {
+            $data[] = "Previous: " . self::exceptionToString($exceptionObject->getPrevious(), true);
+        }
+
+        $exceptionString =  implode(", ", $data);
+        return $exceptionString;
+    }
+    
+    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    {
+        $data = self::exceptionToString($exceptionObject, true, true);
+        return new FileObject($data);
     }
 }
