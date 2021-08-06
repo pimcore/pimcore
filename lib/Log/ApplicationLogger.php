@@ -412,7 +412,7 @@ class ApplicationLogger implements LoggerInterface
             $data[] = "Trace: " . $exceptionObject->getTraceAsString();
         }
 
-        if ($includePrevious) {
+        if ($includePrevious && $exceptionObject->getPrevious()) {
             $data[] = "Previous: " . self::exceptionToString($exceptionObject->getPrevious(), true);
         }
 
