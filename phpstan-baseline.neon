@@ -26,11 +26,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
 
 		-
-			message: "#^Instanceof between Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ClassDefinition\\\\IndexFieldSelection\\|null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelection.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
@@ -56,19 +51,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
 
 		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
