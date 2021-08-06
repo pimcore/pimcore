@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?', [$cid, $ctype]);
 
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception('Lock with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
         }
 
