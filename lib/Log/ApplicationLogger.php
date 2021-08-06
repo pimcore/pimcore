@@ -413,7 +413,7 @@ class ApplicationLogger implements LoggerInterface
         }
 
         if ($includePrevious && $exceptionObject->getPrevious()) {
-            $data[] = "Previous: " . self::exceptionToString($exceptionObject->getPrevious(), true);
+            $data[] = "Previous: " . self::exceptionToString($exceptionObject->getPrevious(), $includeStackTrace);
         }
 
         $exceptionString =  implode(", ", $data);
