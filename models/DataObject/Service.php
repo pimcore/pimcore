@@ -1879,9 +1879,9 @@ class Service extends Model\Element\Service
 
     /**
      * @internal
-     * @param $data
+     * @param ?string $data
      */
-    public static function sanitizeCsvFieldData(&$data) {
+    public static function sanitizeCsvFieldData(?string &$data) {
         if (preg_match('/^[=\+\-@]/', $data)) {
             // prevent formula injection
             // see https://www.contextis.com/en/blog/comma-separated-vulnerabilities
