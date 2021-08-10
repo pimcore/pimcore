@@ -20,7 +20,7 @@ exists, if not the default config `var/config/image-thumbnails.php` is used.
 For certain configurations which can be edited in the user interface, 
 Pimcore provides the possibility to configure them using various storage types. 
 Available storages are (in priority order): 
-- Symfony Config (YAML)
+- Symfony Config (YAML, needs container rebuild)
 - Pimcore [`SettingsStore`](../19_Development_Tools_and_Details/42_Settings_Store.md)
 - Pimcore Legacy PHP Array Config (deprecated)
 

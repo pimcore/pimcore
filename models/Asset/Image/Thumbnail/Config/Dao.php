@@ -34,7 +34,7 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
-            'settingsStoreKey' => 'pimcore_image_thumbnails',
+            'settingsStoreScope' => 'pimcore_image_thumbnails',
             'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
             'legacyConfigFile' => 'image-thumbnails.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS',

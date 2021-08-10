@@ -39,6 +39,8 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     private const WRITE_TARGET_YAML = 'yaml';
     private const WRITE_TARGET_SETTINGS_STORE = 'settings-store';
 
+    private static array $cache = [];
+
     protected array $containerConfig = [];
     protected ?string $settingsStoreScope = null;
     protected ?string $dataSource = null;
@@ -68,6 +70,11 @@ abstract class PimcoreConfigBagDao implements DaoInterface
         $this->storageDirectory = $params['storageDirectory'] ?? null;
         $this->legacyConfigFile = $params['legacyConfigFile'] ?? null;
         $this->writeTargetEnvVariableName = $params['writeTargetEnvVariableName'] ?? null;
+
+        if(!isset(self::$cache[$this->settingsStoreScope])) {
+            // initialize runtime cache
+            self::$cache[$this->settingsStoreScope] = [];
+        }
     }
 
     /**
@@ -78,18 +85,24 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     {
         $this->id = $id;
 
-        // try to load from SettingsStore
-        $data = $this->getDataFromSettingsStore($id);
+        if(isset(self::$cache[$this->settingsStoreScope][$id])) {
+            return self::$cache[$this->settingsStoreScope][$id];
+        }
 
         // try to load from container config
-        if(!$data) {
-            $data = $this->getDataFromContainerConfig($id);
+        $data = $this->getDataFromContainerConfig($id);
+
+        // try to load from SettingsStore
+        if (!$data) {
+            $data = $this->getDataFromSettingsStore($id);
         }
 
         // try to load from legacy config
-        if(!$data) {
+        if (!$data) {
             $data = $this->getDataFromLegacyConfig($id);
         }
+
+        self::$cache[$this->settingsStoreScope][$id] = $data;
 
         return $data;
     }
