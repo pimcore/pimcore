@@ -294,7 +294,7 @@ final class Config implements \ArrayAccess
                 $config = new PimcoreConfig($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } else if ($config instanceof PimcoreConfig) {
+            } elseif ($config instanceof PimcoreConfig) {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
