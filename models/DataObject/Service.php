@@ -1205,7 +1205,7 @@ class Service extends Model\Element\Service
             if (is_array($allowedLayoutIds)) {
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
-                        if (!isset($layoutDefinitions[$allowedLayoutId]) || !$layoutDefinitions[$allowedLayoutId]) {
+                        if (!isset($layoutDefinitions[$allowedLayoutId])) {
                             $customLayout = ClassDefinition\CustomLayout::getById($allowedLayoutId);
                             if (!$customLayout) {
                                 continue;
