@@ -1041,7 +1041,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
+        return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
 
     /**
@@ -1049,6 +1049,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
+        return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
 }

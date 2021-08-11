@@ -307,7 +307,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getPhpdocInputType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**
@@ -315,7 +315,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getPhpdocReturnType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**
