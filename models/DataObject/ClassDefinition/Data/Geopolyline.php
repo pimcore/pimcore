@@ -311,7 +311,7 @@ class Geopolyline extends AbstractGeo implements
      */
     public function getPhpdocInputType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**
@@ -319,7 +319,7 @@ class Geopolyline extends AbstractGeo implements
      */
     public function getPhpdocReturnType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**
