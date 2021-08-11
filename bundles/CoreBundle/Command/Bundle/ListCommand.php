@@ -84,7 +84,6 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = false;
                 $row[] = false;
                 $row[] = false;
-                $row[] = false;
                 $row[] = 0;
             }
 
