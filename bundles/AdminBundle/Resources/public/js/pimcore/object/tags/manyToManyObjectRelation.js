@@ -345,8 +345,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.fieldConfig.height = null;
         }
 
-        var cls = 'object_field object_field_type_' + this.type;
-
         var columns = this.getVisibleColumns();
         var toolbarItems = this.getEditToolbarItems();
 
@@ -454,7 +452,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 },
                 items: columns
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             autoExpandColumn: 'path',
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,

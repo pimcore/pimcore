@@ -105,7 +105,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         if (!this.fieldConfig.height) {
             autoHeight = true;
         }
-        var cls = 'object_field object_field_type_' + this.type;
 
         var toolbarItems = this.getEditToolbarItems();
 
@@ -210,7 +209,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 items: columns
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             tbar: {
                 items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",

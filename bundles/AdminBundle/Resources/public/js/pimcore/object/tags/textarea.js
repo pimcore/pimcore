@@ -65,7 +65,7 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
         };
 
         if (!this.fieldConfig.showCharCount) {
-            conf.componentCls = "object_field object_field_type_" + this.type;
+            conf.componentCls = this.getWrapperClassNames();
         }
 
         if (this.fieldConfig.labelAlign) {

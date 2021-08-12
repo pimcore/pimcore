@@ -214,7 +214,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 respectPlaceholder: true,
                 callback: this
             },
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             style: {
                 margin: '0 0 10px 0',
             },

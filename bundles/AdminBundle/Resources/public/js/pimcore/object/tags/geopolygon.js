@@ -47,7 +47,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             width: this.fieldConfig.width,
             border: true,
             style: "margin-bottom: 10px",
-            componentCls: 'object_field object_geo_field object_field_type_' + this.type,
+            componentCls: this.getWrapperClassNames('object_geo_field'),
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
                 xtype: 'button',

@@ -267,6 +267,27 @@ pimcore.object.tags.abstract = Class.create({
         }
 
         return 'calc(' + width1 + ' + ' + width2 + ')';
-    }
+    },
 
+    /**
+     * @returns {string}
+     * @param additionalClasses
+     */
+    getWrapperClassNames: function (additionalClasses = '') {
+        let classString = "object_field";
+
+        if (this.type !== "undefined") {
+            classString += " object_field_type_" + this.type;
+        }
+
+        if (this.getName()) {
+            classString += " object_field_name_" + this.getName();
+        }
+
+        if (additionalClasses.length > 0) {
+            classString += " " + additionalClasses;
+        }
+
+        return classString;
+    },
 });
