@@ -145,9 +145,14 @@ class PublicServicesController extends Controller
                     $headers = [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                        'Content-Type' => $imageThumbnail->getMimeType(),
-                        'Content-Length' => fstat($thumbnailStream)['size'],
+                        'Content-Type' => $imageThumbnail->getMimeType()
                     ];
+
+
+                    $stats = fstat($thumbnailStream);
+                    if (is_array($stats)) {
+                        $headers['Content-Length'] = $stats['size'];
+                    }
 
                     $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
