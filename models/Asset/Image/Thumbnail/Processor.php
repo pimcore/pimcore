@@ -299,7 +299,7 @@ class Processor
             // sorry for the goto/label - but in this case it makes life really easier and the code more readable
             prepareTransformations:
 
-            foreach ($transformations as $transformation) {
+            foreach ($transformations as &$transformation) {
                 if (!empty($transformation) && !$transformation['isApplied'] ?? true) {
                     $arguments = [];
 
