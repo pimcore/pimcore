@@ -157,7 +157,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     {
         $writeLocation = $this->getWriteTarget();
 
-        if ($writeLocation === "yaml") {
+        if ($writeLocation === self::WRITE_TARGET_YAML) {
             $this->writeYaml($id, $data);
         } else if ($writeLocation === self::WRITE_TARGET_SETTINGS_STORE) {
             $settingsStoreData = json_encode($data);
