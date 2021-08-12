@@ -261,7 +261,7 @@ class TranslationController extends AdminController
         foreach ($translations as $t) {
             $tempRow = [];
             foreach ($columns as $key) {
-                $value = array_key_exists($key, $t) ? $t[$key] : null;
+                $value = $t[$key] ?? null;
                 //clean value of evil stuff such as " and linebreaks
                 if (is_string($value)) {
                     $value = Tool\Text::removeLineBreaks($value);
