@@ -119,7 +119,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
         return [
             'label' => $filterDefinition->getLabel(),
             'fieldname' => $field,
-            'currentValue' => $currentFilter[$field],
+            'currentValue' => $currentFilter[$field] ?? null,
             'values' => $keyCollection,
             'metaData' => $filterDefinition->getMetaData(),
         ];
