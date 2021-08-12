@@ -409,15 +409,14 @@ class ApplicationLogger implements LoggerInterface
         ];
 
         if ($includeStackTrace) {
-            $data[] = "Trace: " . $exceptionObject->getTraceAsString();
+            $data[] = "Trace:\n" . $exceptionObject->getTraceAsString();
         }
 
         if ($includePrevious && $exceptionObject->getPrevious()) {
-            $data[] = "Previous: " . self::exceptionToString($exceptionObject->getPrevious(), $includeStackTrace);
+            $data[] = "\nPrevious:\n" . self::exceptionToString($exceptionObject->getPrevious(), $includeStackTrace);
         }
 
-        $exceptionString =  implode(", ", $data);
-        return $exceptionString;
+        return implode("\n", $data);
     }
     
     private static function createExceptionFileObject(\Throwable $exceptionObject)
