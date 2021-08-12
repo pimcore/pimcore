@@ -41,7 +41,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function (disabled) {
         var sliderConfig = {
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             plugins: new Ext.slider.Tip()
         };
 
@@ -119,7 +119,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             items: items,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

@@ -65,7 +65,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         };
 
         if (!this.fieldConfig.showCharCount) {
-            input.componentCls = "object_field object_field_type_" + this.type;
+            input.componentCls = this.getWrapperClassNames();
         }
 
         if (this.data) {

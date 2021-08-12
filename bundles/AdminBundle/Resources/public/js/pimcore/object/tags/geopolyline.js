@@ -45,7 +45,7 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
             style: "margin-bottom: 10px",
             height: this.fieldConfig.height,
             width: this.fieldConfig.width,
-            componentCls: 'object_field object_geo_field object_field_type_' + this.type,
+            componentCls: this.getWrapperClassNames('object_geo_field'),
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
                 xtype: 'button',
