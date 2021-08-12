@@ -61,13 +61,12 @@ classes (you can find more details in the [Parent Class for Objects section](../
 By saving the object class, for each Objectbrick field of this class, the own data class is created with getters for each 
 allowed Objectbrick. In our example, this data class would looks like this.
 
-The getter `$product->getBricks()` returns an instance of this class filled with the Objectbricks of the `$product`. 
-By calling the getter, the Objectbrick class with its attribute getter is returned.
+By calling the getter of the field of the Brick, the Objectbrick class is returned.
 
 ```php
 //receiving data of a Objectbrick
 $product = DataObject\Product::getById(4);
-$tiretype = $product->getBricks()->getTire()->getTiretype();
+$tiretype = $product->getTire()->getTiretype();
 ```
 
 Setting data works the same way as retrieving data. 
@@ -76,7 +75,7 @@ For all getters there are corresponding setters. By saving an object, all bricks
 ```php
 //setting data of a Objectbrick
 $product = DataObject\Product::getById(4);
-$product->getBricks()->getTire()->setTiretype("Winter");
+$product->getTire()->setTiretype("Winter");
 $product->save();
 ```
 
@@ -85,30 +84,25 @@ $product->save();
 $product = new DataObject\Product();
 $product->setKey("testproduct");
 $product->setParent(DataObject\Product::getById(4));
- 
+
 $product->setName("testproduct");
- 
+
 $tireBrick = new DataObject\Objectbrick\Data\Tire($product);
 $tireBrick->setTiretype("allyear");
-$product->getBricks()->setTire($tireBrick);
+$tireBrick->setFieldname("tire");
+$product->setTire($tireBrick);
 $product->save();
 ```
 
 ### Deleting ObjectBricks via code
 
 ```php
-//remove all ObjectBricks from an ObjectBrick field
-$product->getBricks()->delete($product);
-$product->save();
-```
-
-```php
-$productBricks = $product->getBricks();
 $tireBrick = $productBricks->getTire();
- 
+
 if ($tireBrick) {
-    $tireBrick->setDoDelete(true);
+    $tireBrick->delete($product);
 }
+$product->setTire(null);
 $product->save();
 ```
 
