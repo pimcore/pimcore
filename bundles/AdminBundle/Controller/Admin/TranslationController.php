@@ -474,7 +474,14 @@ class TranslationController extends AdminController
             $list->load();
 
             $translations = [];
+            $searchString = $request->get('searchString');
             foreach ($list->getTranslations() as $t) {
+                //Reload translation to get complete data,
+                //if translation fetched based on the text not key
+                if ($searchString && !strpos($searchString, $t->getKey())) {
+                    $t = Translation::getByKey($t->getKey());
+                }
+
                 $translations[] = array_merge(
                     $this->prefixTranslations($t->getTranslations()),
                     [
