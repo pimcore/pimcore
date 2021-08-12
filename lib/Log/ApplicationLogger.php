@@ -403,9 +403,9 @@ class ApplicationLogger implements LoggerInterface
     {
         $data = [
             $exceptionObject->getMessage(),
-            "File: " . $exceptionObject->getFile(),
-            "Line: " . $exceptionObject->getLine(),
-            "Code: " . $exceptionObject->getCode(),
+            'File: ' . $exceptionObject->getFile(),
+            'Line: ' . $exceptionObject->getLine(),
+            'Code: ' . $exceptionObject->getCode(),
         ];
 
         if ($includeStackTrace) {
@@ -418,10 +418,11 @@ class ApplicationLogger implements LoggerInterface
 
         return implode("\n", $data);
     }
-    
+
     private static function createExceptionFileObject(\Throwable $exceptionObject)
     {
         $data = self::exceptionToString($exceptionObject, true, true);
+
         return new FileObject($data);
     }
 }
