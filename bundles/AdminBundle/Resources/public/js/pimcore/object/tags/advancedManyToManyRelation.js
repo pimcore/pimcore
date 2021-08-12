@@ -95,7 +95,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             autoHeight = true;
         }
 
-        var cls = 'object_field';
         var i;
 
         var columns = [];
@@ -380,7 +379,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     }.bind(this)
                 }
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
