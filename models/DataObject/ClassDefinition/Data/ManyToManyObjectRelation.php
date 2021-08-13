@@ -98,7 +98,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public $optimizedAdminLoading = false;
 
-
     /**
      * @internal
      *
@@ -856,7 +855,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
-
 
     /**
      * @return bool
