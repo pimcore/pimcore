@@ -41,6 +41,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * @internal
@@ -62,6 +63,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
     /**
      * @Route("/", name="pimcore_admin_index", methods={"GET"})
+     * @Template(template="@PimcoreAdmin/Admin/Index/index.html.twig")
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -111,7 +113,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $this->eventDispatcher->dispatch($settingsEvent, AdminEvents::INDEX_ACTION_SETTINGS);
         $templateParams['settings'] = $settingsEvent->getSettings();
 
-        return $this->render('@PimcoreAdmin/Admin/Index/index.html.twig', $templateParams);
+        return $templateParams;
     }
 
     /**
