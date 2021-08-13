@@ -429,13 +429,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             viewConfig: {
                 markDirty: false,
-                enableTextSelection: true,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -630,7 +632,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
-            enableTextSelection: true,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 listeners: {
                     afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data);

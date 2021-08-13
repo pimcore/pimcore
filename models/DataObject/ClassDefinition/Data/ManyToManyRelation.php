@@ -126,6 +126,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public $documentTypes = [];
 
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public $enableTextSelection = false;
+
     /**
      * @return bool
      */
@@ -909,6 +917,23 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEnableTextSelection(): bool
+    {
+        return $this->enableTextSelection;
+    }
+
+    /**
+     * @param bool $enableTextSelection
+     */
+    public function setEnableTextSelection(bool $enableTextSelection): void
+    {
+        $this->enableTextSelection = $enableTextSelection;
+    }
+
 
     /**
      * {@inheritdoc}
