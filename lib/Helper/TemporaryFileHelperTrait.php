@@ -33,7 +33,7 @@ trait TemporaryFileHelperTrait
      */
     protected static function getLocalFileFromStream($stream): string
     {
-        if (!stream_is_local($stream) || stream_get_meta_data($stream)['uri'] == 'php://temp') {
+        if (!stream_is_local($stream) || stream_get_meta_data($stream)['uri'] === 'php://temp') {
             $stream = self::getTemporaryFileFromStream($stream);
         }
 
