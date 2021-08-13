@@ -104,9 +104,9 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
     public function add(Command $command)
     {
-        $definition = $command->getDefinition();
-
         if ($command instanceof DoctrineCommand) {
+            $definition = $command->getDefinition();
+
             // add filter option
             $definition->addOption(new InputOption(
                 'prefix',

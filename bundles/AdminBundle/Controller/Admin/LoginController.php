@@ -259,7 +259,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 return $this->redirect($url);
             } elseif ($queryString) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
-                    'deeplink' => true,
+                    'deeplink' => 'true',
                     'perspective' => $perspective,
                 ]);
                 $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);

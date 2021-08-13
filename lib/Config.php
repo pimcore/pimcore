@@ -291,10 +291,10 @@ final class Config implements \ArrayAccess
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
-                $config = new \Pimcore\Config\Config($settingsArray, true);
+                $config = new PimcoreConfig($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } else {
+            } elseif ($config instanceof PimcoreConfig) {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
@@ -315,10 +315,10 @@ final class Config implements \ArrayAccess
     /**
      * @internal
      *
-     * @param Config\Config $config
+     * @param Config\Config|null $config
      * @param string|null $language
      */
-    public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
+    public static function setWebsiteConfig(?PimcoreConfig $config, $language = null)
     {
         \Pimcore\Cache\Runtime::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }

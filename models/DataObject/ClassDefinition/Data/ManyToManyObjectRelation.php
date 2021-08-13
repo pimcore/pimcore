@@ -101,6 +101,13 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
+     * @var bool
+     */
+    public $enableTextSelection = false;
+
+    /**
+     * @internal
+     *
      * @var array
      */
     public $visibleFieldDefinitions = [];
@@ -847,6 +854,22 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function setOptimizedAdminLoading($optimizedAdminLoading)
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableTextSelection(): bool
+    {
+        return $this->enableTextSelection;
+    }
+
+    /**
+     * @param bool $enableTextSelection
+     */
+    public function setEnableTextSelection(bool $enableTextSelection): void
+    {
+        $this->enableTextSelection = $enableTextSelection;
     }
 
     /**

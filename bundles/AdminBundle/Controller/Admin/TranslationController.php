@@ -261,7 +261,7 @@ class TranslationController extends AdminController
         foreach ($translations as $t) {
             $tempRow = [];
             foreach ($columns as $key) {
-                $value = $t[$key];
+                $value = $t[$key] ?? null;
                 //clean value of evil stuff such as " and linebreaks
                 if (is_string($value)) {
                     $value = Tool\Text::removeLineBreaks($value);
@@ -474,7 +474,14 @@ class TranslationController extends AdminController
             $list->load();
 
             $translations = [];
+            $searchString = $request->get('searchString');
             foreach ($list->getTranslations() as $t) {
+                //Reload translation to get complete data,
+                //if translation fetched based on the text not key
+                if ($searchString && !strpos($searchString, $t->getKey())) {
+                    $t = Translation::getByKey($t->getKey());
+                }
+
                 $translations[] = array_merge(
                     $this->prefixTranslations($t->getTranslations()),
                     [
