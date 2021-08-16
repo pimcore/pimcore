@@ -391,7 +391,9 @@ class Processor
                 $image->save($tmpFsPath, $format, $config->getQuality());
                 $stream = fopen($tmpFsPath, 'rb');
                 $storage->writeStream($storagePath, $stream);
-                fclose($stream);
+                if(is_resource($stream)) {
+                    fclose($stream);
+                }
                 unlink($tmpFsPath);
 
                 $generated = true;
