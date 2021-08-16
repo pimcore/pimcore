@@ -26,7 +26,6 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
- * @method onCreateQuery(callable $callback)
  * @method onCreateQueryBuilder(?callable $callback)
  * @method array loadIdPathList()
  */

@@ -282,7 +282,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
     {
-        $latestVersion = $document->getLatestVersion($this->getUser()->getId());
+        $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
@@ -341,7 +341,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     protected function handleTask($task, $page)
     {
         if ($task == 'publish' || $task == 'version') {
-            $page->deleteAutoSaveVersions($this->getUser()->getId());
+            $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
     }
 }
