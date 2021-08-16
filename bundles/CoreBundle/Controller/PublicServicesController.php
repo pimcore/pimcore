@@ -15,6 +15,9 @@
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use function date;
+use function fstat;
+use function is_array;
 use Pimcore\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
@@ -30,9 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
-use function date;
-use function fstat;
-use function is_array;
 use function time;
 
 /**
@@ -149,7 +149,7 @@ class PublicServicesController extends Controller
                     $headers = [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                        'Content-Type' => $imageThumbnail->getMimeType()
+                        'Content-Type' => $imageThumbnail->getMimeType(),
                     ];
 
                     $stats = fstat($thumbnailStream);
