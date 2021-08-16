@@ -951,5 +951,6 @@
     "save_draft": "Save draft",
     "selected_grid_columns": "Selected grid columns",
     "ungrouped": "ungrouped",
-    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?"
+    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?",
+    "config_not_writeable": "Not writable because this is a preconfigured configuration"
 }
