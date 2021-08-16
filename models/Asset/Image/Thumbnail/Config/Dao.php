@@ -30,7 +30,7 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
      */
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
@@ -61,7 +61,6 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
         if ($data) {
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
-
         } else {
             throw new Model\Exception\NotFoundException(sprintf(
                 'Thumbnail with ID "%s" does not exist.',
@@ -126,12 +125,12 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
                     'image' => [
                         'thumbnails' => [
                             'definitions' => [
-                                $id => $data
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         parent::writeYaml($id, $data);
@@ -153,9 +152,6 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
         }
     }
 
-    /**
-     *
-     */
     protected function autoClearTempFiles()
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
