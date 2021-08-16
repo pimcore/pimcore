@@ -32,24 +32,34 @@ abstract class PimcoreConfigBagDao implements DaoInterface
      * @deprecated Will be removed in Pimcore 11
      */
     private const DATA_SOURCE_LEGACY = 'legacy';
+
     private const DATA_SOURCE_CONFIG = 'config';
+
     private const DATA_SOURCE_SETTINGS_STORE = 'settings-store';
 
     public const WRITE_TARGET_DISABLED = 'disabled';
+
     private const WRITE_TARGET_YAML = 'yaml';
+
     private const WRITE_TARGET_SETTINGS_STORE = 'settings-store';
 
     private static array $cache = [];
 
     protected array $containerConfig = [];
+
     protected ?string $settingsStoreScope = null;
+
     protected ?string $dataSource = null;
+
     protected ?string $storageDirectory = null;
+
     protected ?string $writeTargetEnvVariableName = null;
+
     private ?string $id = null;
 
     /**
      * @deprecated Will be removed in Pimcore 11
+     *
      * @var string|null
      */
     protected ?string $legacyConfigFile = null;
@@ -71,7 +81,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
         $this->legacyConfigFile = $params['legacyConfigFile'] ?? null;
         $this->writeTargetEnvVariableName = $params['writeTargetEnvVariableName'] ?? null;
 
-        if(!isset(self::$cache[$this->settingsStoreScope])) {
+        if (!isset(self::$cache[$this->settingsStoreScope])) {
             // initialize runtime cache
             self::$cache[$this->settingsStoreScope] = [];
         }
@@ -79,13 +89,14 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @param string $id
+     *
      * @return mixed|null
      */
     protected function getDataByName(string $id)
     {
         $this->id = $id;
 
-        if(isset(self::$cache[$this->settingsStoreScope][$id])) {
+        if (isset(self::$cache[$this->settingsStoreScope][$id])) {
             return self::$cache[$this->settingsStoreScope][$id];
         }
 
@@ -115,17 +126,18 @@ abstract class PimcoreConfigBagDao implements DaoInterface
         return array_merge(
             SettingsStore::getIdsByScope($this->settingsStoreScope),
             array_keys($this->containerConfig),
-            $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()): [],
+            $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()) : [],
         );
     }
 
     /**
      * @param string $id
+     *
      * @return mixed|null
      */
     private function getDataFromContainerConfig(string $id)
     {
-        if(isset($this->containerConfig[$id])) {
+        if (isset($this->containerConfig[$id])) {
             $this->dataSource = self::DATA_SOURCE_CONFIG;
         }
 
@@ -134,13 +146,14 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @param string $id
+     *
      * @return mixed|null
      */
     private function getDataFromSettingsStore(string $id)
     {
         $settingsStoreEntryData = null;
         $settingsStoreEntry = SettingsStore::get($id, $this->settingsStoreScope);
-        if($settingsStoreEntry) {
+        if ($settingsStoreEntry) {
             $settingsStoreEntryData = json_decode($settingsStoreEntry->getData(), true);
             $this->dataSource = self::DATA_SOURCE_SETTINGS_STORE;
         }
@@ -151,6 +164,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     /**
      * @param string $id
      * @param array $data
+     *
      * @throws \Exception
      */
     protected function saveData(string $id, $data)
@@ -159,7 +173,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
         if ($writeLocation === self::WRITE_TARGET_YAML) {
             $this->writeYaml($id, $data);
-        } else if ($writeLocation === self::WRITE_TARGET_SETTINGS_STORE) {
+        } elseif ($writeLocation === self::WRITE_TARGET_SETTINGS_STORE) {
             $settingsStoreData = json_encode($data);
             SettingsStore::set($id, $settingsStoreData, 'string', $this->settingsStoreScope);
         }
@@ -168,6 +182,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     /**
      * @param string $id
      * @param array $data
+     *
      * @throws \Exception
      */
     protected function writeYaml(string $id, $data): void
@@ -186,13 +201,14 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
         // invalidate container config cache
         $systemConfigFile = Config::locateConfigFile('system.yml');
-        if($systemConfigFile) {
+        if ($systemConfigFile) {
             touch($systemConfigFile);
         }
     }
 
     /**
      * @return string Can be either yaml (var/config/...) or "settings-store". defaults to "yaml"
+     *
      * @throws \Exception
      */
     public function getWriteTarget(): string
@@ -213,11 +229,12 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @param string $id
+     *
      * @return string
      */
     private function getVarConfigFile(string $id): string
     {
-        return $this->storageDirectory . "/" . $id . ".yaml";
+        return $this->storageDirectory . '/' . $id . '.yaml';
     }
 
     /**
@@ -225,14 +242,14 @@ abstract class PimcoreConfigBagDao implements DaoInterface
      */
     public function isWriteable(): bool
     {
-        if($this->getWriteTarget() === self::WRITE_TARGET_DISABLED) {
+        if ($this->getWriteTarget() === self::WRITE_TARGET_DISABLED) {
             return false;
-        } elseif($this->dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
+        } elseif ($this->dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
             return true;
-        } elseif($this->dataSource === self::DATA_SOURCE_LEGACY) {
+        } elseif ($this->dataSource === self::DATA_SOURCE_LEGACY) {
             return true;
-        } elseif($this->dataSource === self::DATA_SOURCE_CONFIG) {
-            if(file_exists($this->getVarConfigFile($this->id))) {
+        } elseif ($this->dataSource === self::DATA_SOURCE_CONFIG) {
+            if (file_exists($this->getVarConfigFile($this->id))) {
                 return true;
             }
         }
@@ -242,6 +259,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @param string $id
+     *
      * @throws \Exception
      */
     protected function deleteData(string $id): void
@@ -251,22 +269,23 @@ abstract class PimcoreConfigBagDao implements DaoInterface
             if (file_exists($filename)) {
                 unlink($filename);
             } else {
-                throw new \Exception("Only configurations inside the var/config directory can be deleted");
+                throw new \Exception('Only configurations inside the var/config directory can be deleted');
             }
-        } elseif($this->dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
+        } elseif ($this->dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
             SettingsStore::delete($id, $this->settingsStoreScope);
-        } elseif($this->dataSource === self::DATA_SOURCE_LEGACY) {
+        } elseif ($this->dataSource === self::DATA_SOURCE_LEGACY) {
             $this->getLegacyStore()->delete($id);
         }
     }
 
     /**
      * @deprecated Will be removed in Pimcore 11
+     *
      * @return PhpArrayFileTable
      */
     private function getLegacyStore(): PhpArrayFileTable
     {
-        if(self::$legacyStore === null) {
+        if (self::$legacyStore === null) {
             $file = Config::locateConfigFile($this->legacyConfigFile);
             self::$legacyStore = PhpArrayFileTable::get($file);
         }
@@ -276,18 +295,20 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @deprecated Will be removed in Pimcore 11
+     *
      * @param string $id
+     *
      * @return mixed|null
      */
     private function getDataFromLegacyConfig(string $id)
     {
-        if(!$this->legacyConfigFile) {
+        if (!$this->legacyConfigFile) {
             return null;
         }
 
         $data = $this->getLegacyStore()->fetchAll();
 
-        if(isset($data[$id])) {
+        if (isset($data[$id])) {
             $this->dataSource = self::DATA_SOURCE_LEGACY;
         }
 

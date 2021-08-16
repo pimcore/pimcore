@@ -1106,7 +1106,7 @@ class SettingsController extends AdminController
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_thumbnails',
                         'cls' => 'pimcore_treenode_disabled',
-                        'writeable' => $item->isWriteable()
+                        'writeable' => $item->isWriteable(),
                     ];
             } else {
                 $thumbnails[] = [
@@ -1115,7 +1115,7 @@ class SettingsController extends AdminController
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_thumbnails',
                     'cls' => 'pimcore_treenode_disabled',
-                    'writeable' => $item->isWriteable()
+                    'writeable' => $item->isWriteable(),
                 ];
             }
         }
