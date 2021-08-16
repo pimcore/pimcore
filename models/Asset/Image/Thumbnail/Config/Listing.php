@@ -55,6 +55,7 @@ class Listing extends Model\Listing\JsonListing
 
     /**
      * Alias of getThumbnails()
+     *
      * @return Model\Asset\Image\Thumbnail\Config[]|null
      */
     public function load()

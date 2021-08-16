@@ -15,9 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config\Listing;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
-use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @internal
@@ -33,7 +31,7 @@ class Dao extends Config\Dao
     {
         $configs = [];
 
-        foreach($this->loadIdList() as $name) {
+        foreach ($this->loadIdList() as $name) {
             $configs[] = Config::getByName($name);
         }
 
