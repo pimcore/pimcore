@@ -1374,7 +1374,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $newObject = DataObject::getById($object->getId(), true);
 
             if ($request->get('task') == 'publish') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             return $this->adminJson([
@@ -1411,7 +1411,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($request->get('task') == 'version') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -2315,7 +2315,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {
-        $latestVersion = $object->getLatestVersion($this->getUser()->getId());
+        $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
