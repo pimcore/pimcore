@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model;
 
 /**
- * @method Model\Asset\Image\Thumbnail\Config[] load()
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing\Dao getDao()
  */
 class Listing extends Model\Listing\JsonListing
@@ -36,7 +35,7 @@ class Listing extends Model\Listing\JsonListing
     public function getThumbnails()
     {
         if ($this->thumbnails === null) {
-            $this->getDao()->load();
+            $this->getDao()->loadList();
         }
 
         return $this->thumbnails;
@@ -52,5 +51,14 @@ class Listing extends Model\Listing\JsonListing
         $this->thumbnails = $thumbnails;
 
         return $this;
+    }
+
+    /**
+     * Alias of getThumbnails()
+     * @return Model\Asset\Image\Thumbnail\Config[]|null
+     */
+    public function load()
+    {
+        return $this->getThumbnails();
     }
 }
