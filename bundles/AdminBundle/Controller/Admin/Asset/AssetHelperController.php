@@ -763,6 +763,7 @@ class AssetHelperController extends AdminController
                     }
                     $dataRows[] = $data;
                 }
+                $dataRows = Element\Service::escapeCsvRecord($dataRows);
                 $csv[] = $dataRows;
             }
         }

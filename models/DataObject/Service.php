@@ -1808,7 +1808,7 @@ class Service extends Model\Element\Service
                 if (!isset($mappedFieldnames[$field])) {
                     $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
                 }
-                self::sanitizeCsvFieldData($fieldData);
+
                 $objectData[$field] = $fieldData;
             }
 
@@ -1870,23 +1870,13 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);;
+                $rowData = self::escapeCsvRecord($rowData);
+                $data[] = $rowData;
             }
         }
 
         return $data;
-    }
-
-    /**
-     * @internal
-     * @param ?string $data
-     */
-    public static function sanitizeCsvFieldData(?string &$data) {
-        if (preg_match('/^[=\+\-@]/', $data)) {
-            // prevent formula injection
-            // see https://www.contextis.com/en/blog/comma-separated-vulnerabilities
-            $data = "'" . $data;
-        }
     }
 
     /**

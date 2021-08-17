@@ -22,6 +22,7 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
@@ -110,6 +111,7 @@ class Csv
                 $redirect->getActive(),
                 $expiry,
             ];
+            $data = Service::escapeCsvRecord($data);
 
             $writer->insertOne($data);
         }
