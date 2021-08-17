@@ -1798,7 +1798,6 @@ class Service extends Model\Element\Service
                     if (!isset($mappedFieldnames[$localizedFieldKey])) {
                         $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
                     }
-                    self::sanitizeCsvFieldData($fieldData);
                     $objectData[$localizedFieldKey] = $fieldData;
                 }
 

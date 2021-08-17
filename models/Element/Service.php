@@ -1555,7 +1555,7 @@ class Service extends Model\AbstractModel
      * @return array
      */
     public static function escapeCsvRecord(array $rowData): array {
-        if (!self::$formatter) {
+        if (self::$formatter === null) {
             self::$formatter = new EscapeFormula("'", ['=', '-' , '+', '@']);
         }
         $rowData = self::$formatter->escapeRecord($rowData);
