@@ -491,7 +491,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength()) {
+        if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }
 
