@@ -53,7 +53,7 @@ class Service extends Model\AbstractModel
 {
 
     /**
-     * @var EscapeFormula
+     * @var EscapeFormula|null
      */
     private static ?EscapeFormula $formatter = null;
 
