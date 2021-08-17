@@ -376,6 +376,27 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             value: this.datax.allowMultipleAssignments
         });
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("disable_delete"),
+            name: "disableDelete",
+            value: this.datax.disableDelete
+        });
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("disable_add"),
+            name: "disableAdd",
+            value: this.datax.disableAdd
+        });
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("disable_create"),
+            name: "disableCreate",
+            value: this.datax.disableCreate
+        });
+
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
@@ -597,6 +618,9 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                     pathFormatterClass: source.datax.pathFormatterClass,
                     enableBatchEdit: source.datax.enableBatchEdit,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,
+                    disableDelete: source.datax.disableDelete,
+                    disableAdd: source.datax.disableAdd,
+                    disableCreate: source.datax.disableCreate,
                     optimizedAdminLoading: source.datax.optimizedAdminLoading
                 });
         }

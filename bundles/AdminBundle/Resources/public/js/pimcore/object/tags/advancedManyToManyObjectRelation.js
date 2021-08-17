@@ -319,7 +319,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             ]
         });
 
-        if (!readOnly) {
+        if (!readOnly && !this.fieldConfig.disableDelete) {
             columns.push({
                 xtype: 'actioncolumn',
                 menuText: t('remove'),
@@ -337,8 +337,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             });
         }
 
-        var toolbarItems = this.getEditToolbarItems(readOnly);
-
+        var toolbarItems = this.getEditToolbarItems(
+            readOnly,
+            this.fieldConfig.disableDelete,
+            this.fieldConfig.disableAdd,
+            this.fieldConfig.disableCreate
+        );
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1,

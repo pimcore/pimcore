@@ -546,7 +546,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return this.component;
     },
 
-    getEditToolbarItems: function (readOnly) {
+    getEditToolbarItems: function (readOnly, disableDelete, disableAdd, disableCreate) {
+        disableDelete = disableDelete || false;
+        disableAdd = disableAdd || false;
+        disableCreate = disableCreate || false;
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -564,18 +567,23 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                {
+            if (!disableDelete) {
+                toolbarItems = toolbarItems.concat([{
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
                     handler: this.empty.bind(this)
-                },
-                {
+                }]);
+            }
+            if (!disableAdd) {
+                toolbarItems = toolbarItems.concat([{
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()]);
+                }]);
+            }
+            if (!disableCreate) {
+                toolbarItems = toolbarItems.concat([this.getCreateControl()]);
+            }
         }
 
         return toolbarItems;
