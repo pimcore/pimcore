@@ -77,7 +77,7 @@ final class Requirements
         // MySQL version
         $checks[] = new Check(
             [
-                'name' => 'InnoDB Support',
+                'name' => 'MySQL version >= 8.0',
                 'state' => version_compare($db->fetchOne('SELECT VERSION()'), 8, '>=')
             ]
         );
