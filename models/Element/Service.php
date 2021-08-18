@@ -23,7 +23,6 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
-use League\Csv\Writer;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -51,7 +50,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Service extends Model\AbstractModel
 {
-
     /**
      * @var EscapeFormula|null
      */
@@ -1552,14 +1550,16 @@ class Service extends Model\AbstractModel
      * @internal
      *
      * @param array $rowData
+     *
      * @return array
      */
-    public static function escapeCsvRecord(array $rowData): array {
+    public static function escapeCsvRecord(array $rowData): array
+    {
         if (self::$formatter === null) {
-            self::$formatter = new EscapeFormula("'", ['=', '-' , '+', '@']);
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
         }
         $rowData = self::$formatter->escapeRecord($rowData);
+
         return $rowData;
     }
-
 }

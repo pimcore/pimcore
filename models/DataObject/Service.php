@@ -1810,8 +1810,6 @@ class Service extends Model\Element\Service
 
                 $objectData[$field] = $fieldData;
             }
-
-
         }
 
         if ($returnMappedFieldNames) {
@@ -1869,7 +1867,7 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);;
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
                 $rowData = self::escapeCsvRecord($rowData);
                 $data[] = $rowData;
             }
