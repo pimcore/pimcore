@@ -74,6 +74,14 @@ final class Requirements
     {
         $checks = [];
 
+        // MySQL version
+        $checks[] = new Check(
+            [
+                'name' => 'InnoDB Support',
+                'state' => version_compare($db->fetchOne('SELECT VERSION()'), 8, '>=')
+            ]
+        );
+
         // storage engines
         $engines = $db->fetchCol('SHOW ENGINES;');
 
