@@ -1807,6 +1807,7 @@ class Service extends Model\Element\Service
                 if (!isset($mappedFieldnames[$field])) {
                     $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
                 }
+
                 $objectData[$field] = $fieldData;
             }
         }
@@ -1866,7 +1867,9 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::escapeCsvRecord($rowData);
+                $data[] = $rowData;
             }
         }
 
