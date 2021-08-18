@@ -1618,7 +1618,7 @@ pimcore.document.tree = Class.create({
                     fieldLabel: t("error_page") + " (" + availableLanguages[language] + ")",
                     name: "errorDocument.localized." + language,
                     fieldCls: "input_drop_target",
-                    value: localizedErrorDocumentsData[language] ? localizedErrorDocumentsData[language] : '',
+                    value: (localizedErrorDocumentsData && localizedErrorDocumentsData[language]) ? localizedErrorDocumentsData[language] : '',
                     labelWidth: 200,
                     width: 500,
                     xtype: "textfield",
