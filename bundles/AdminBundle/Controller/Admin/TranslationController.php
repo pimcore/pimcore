@@ -219,12 +219,14 @@ class TranslationController extends AdminController
         }
 
         foreach ($translationObjects as $t) {
+            $row = $t->getTranslations();
+            $row = Element\Service::escapeCsvRecord($row);
             $translations[] = array_merge(
                 ['key' => $t->getKey(),
                     'creationDate' => $t->getCreationDate(),
                     'modificationDate' => $t->getModificationDate(),
                 ],
-                $t->getTranslations()
+                $row
             );
         }
 
