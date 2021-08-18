@@ -17,7 +17,7 @@ body:
 
               - Bug was verified on the latest supported version.
                 You can use our public demo as well to verify bugs: https://demo.pimcore.fun/admin/ (`admin` / `demo`)
-              - This is not a security issue -> use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/) instead.
+              - This is not a security issue -> see [our security policy](https://github.com/pimcore/pimcore/security/policy) instead.
               - You are not able to provide a pull request that fixes the issue.
               - There's no existing ticket for the same issue.
 
