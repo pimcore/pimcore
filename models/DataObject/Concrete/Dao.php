@@ -266,6 +266,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                             'fieldname' => $key,
                         ]);
                     if (is_array($insertDataArray)) {
+                        $this->model->set($key, $insertDataArray);
                         $data = array_merge($data, $insertDataArray);
                     }
                 } else {
@@ -276,6 +277,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                             'fieldname' => $key,
                         ]);
                     $data[$key] = $insertData;
+                    $this->model->set($key, $insertData);
                 }
             }
         }
