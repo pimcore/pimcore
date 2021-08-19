@@ -26,14 +26,6 @@ services:
             - ~
             - ~
 
-    workflow.marking_store.multiple_state:
-        class: Symfony\Component\Workflow\MarkingStore\MethodMarkingStore
-        abstract: true
-
-    workflow.marking_store.single_state:
-        class: Symfony\Component\Workflow\MarkingStore\MethodMarkingStore
-        abstract: true
-
     workflow.registry:
         class: Symfony\Component\Workflow\Registry
 
