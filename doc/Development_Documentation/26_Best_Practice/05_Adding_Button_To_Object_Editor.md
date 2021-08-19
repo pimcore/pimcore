@@ -20,7 +20,7 @@ pimcore.plugin.sample = Class.create(pimcore.plugin.admin, {
 
     postOpenObject: function (object, type) {
         
-        if (object.data.general.o_className == 'ShopProduct') {
+        if (object.data.general.o_className === 'ShopProduct') {
     
             object.toolbar.add({
                 text: t('show-pdf'),
