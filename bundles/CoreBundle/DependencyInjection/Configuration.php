@@ -1790,6 +1790,32 @@ final class Configuration implements ConfigurationInterface
                                 })
                                 ->thenInvalid('"supports" or "support_strategy" should be configured.')
                             ->end()
+                            ->validate()
+                                ->ifTrue(function($v) {
+
+                                    if(($v['type'] ?? 'workflow') === 'state_machine') {
+
+                                        foreach ($v['transitions'] ?? [] as $transition) {
+
+                                            if(count($transition['to']) > 1) {
+                                                return true;
+                                            }
+
+                                        }
+
+                                        foreach ($v['globalActions'] ?? [] as $transition) {
+
+                                            if(count($transition['to']) > 1) {
+                                                return true;
+                                            }
+
+                                        }
+                                    }
+
+                                    return false;
+                                })
+                                ->thenInvalid('Type `state_machine` does not support multiple `to` definitions for transitions and global actions. Change definition or type to `workflow`.')
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
