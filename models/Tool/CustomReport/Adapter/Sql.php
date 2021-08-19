@@ -76,7 +76,7 @@ class Sql extends AbstractAdapter
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchRow($sql);
-            if($res) {
+            if ($res) {
                 return array_keys($res);
             }
 
