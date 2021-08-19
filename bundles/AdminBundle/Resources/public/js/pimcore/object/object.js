@@ -52,7 +52,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     getData: function () {
         var params = {id: this.id};
-        if (this.options !== undefined && this.options.layoutId !== null) {
+        if (this.options !== undefined) {
             params.layoutId = this.options.layoutId;
         }
 
