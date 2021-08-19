@@ -76,8 +76,11 @@ class Sql extends AbstractAdapter
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchRow($sql);
+            if($res) {
+                return array_keys($res);
+            }
 
-            return array_keys($res);
+            return [];
         }
 
         throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
