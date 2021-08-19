@@ -84,12 +84,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.layoutDefinitions = bricksData.layoutDefinitions;
 
         this.component.insert(0, this.getControls());
-        if (this.data.length > 0) {
-            for (var i = 0; i < this.data.length; i++) {
-                if (this.data[i] != null) {
-                    this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
-                }
+        for (var i = 0; i < this.data.length; i++) {
+            if (this.data[i] != null) {
+                this.preventDelete[this.data[i].type] = this.data[i].inherited;
+                this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
             }
         }
 
