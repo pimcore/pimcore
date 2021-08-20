@@ -123,11 +123,11 @@ abstract class PimcoreConfigBagDao implements DaoInterface
      */
     protected function loadIdList(): array
     {
-        return array_merge(
+        return array_unique(array_merge(
             SettingsStore::getIdsByScope($this->settingsStoreScope),
             array_keys($this->containerConfig),
             $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()) : [],
-        );
+        ));
     }
 
     /**
