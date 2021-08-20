@@ -89,28 +89,28 @@ class LocationAwareConfigRepository
 
 
     /**
-     * @param string $id
+     * @param string $key
      *
      * @return mixed|null
      */
-    private function getDataFromContainerConfig(string $id, ?string &$dataSource)
+    private function getDataFromContainerConfig(string $key, ?string &$dataSource)
     {
-        if (isset($this->containerConfig[$id])) {
+        if (isset($this->containerConfig[$key])) {
             $dataSource = self::DATA_SOURCE_CONFIG;
         }
 
-        return $this->containerConfig[$id] ?? null;
+        return $this->containerConfig[$key] ?? null;
     }
 
     /**
-     * @param string $id
+     * @param string $key
      *
      * @return mixed|null
      */
-    private function getDataFromSettingsStore(string $id, ?string &$dataSource)
+    private function getDataFromSettingsStore(string $key, ?string &$dataSource)
     {
         $settingsStoreEntryData = null;
-        $settingsStoreEntry = SettingsStore::get($id, $this->settingsStoreScope);
+        $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
         if ($settingsStoreEntry) {
             $settingsStoreEntryData = json_decode($settingsStoreEntry->getData(), true);
             $dataSource = self::DATA_SOURCE_SETTINGS_STORE;
@@ -122,11 +122,11 @@ class LocationAwareConfigRepository
     /**
      * @deprecated Will be removed in Pimcore 11
      *
-     * @param string $id
+     * @param string $key
      *
      * @return mixed|null
      */
-    private function getDataFromLegacyConfig(string $id, ?string &$dataSource)
+    private function getDataFromLegacyConfig(string $key, ?string &$dataSource)
     {
         if (!$this->legacyConfigFile) {
             return null;
@@ -134,11 +134,11 @@ class LocationAwareConfigRepository
 
         $data = $this->getLegacyStore()->fetchAll();
 
-        if (isset($data[$id])) {
+        if (isset($data[$key])) {
             $dataSource = self::DATA_SOURCE_LEGACY;
         }
 
-        return $data[$id] ?? null;
+        return $data[$key] ?? null;
     }
 
     /**
@@ -241,13 +241,13 @@ class LocationAwareConfigRepository
 
 
     /**
-     * @param string $id
+     * @param string $key
      *
      * @return string
      */
-    private function getVarConfigFile(string $id): string
+    private function getVarConfigFile(string $key): string
     {
-        return $this->storageDirectory . '/' . $id . '.yaml';
+        return $this->storageDirectory . '/' . $key . '.yaml';
     }
 
 
@@ -268,7 +268,7 @@ class LocationAwareConfigRepository
 
 
     /**
-     * @param string $id
+     * @param string $key
      *
      * @throws \Exception
      */
