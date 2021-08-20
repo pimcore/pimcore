@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method bool isWriteable()
  * @method string getWriteTarget()
- * @method void delete()*
+ * @method void delete()
  * @method void save()
  */
 final class Config extends Model\AbstractModel
