@@ -76,8 +76,7 @@ Assets are the DAM part of Pimcore. Store, manage and organize digital files suc
 The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multi-lingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
 
 #### Demo (Community Edition)
-_Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
-_Admin-URL_ (dev): [https://x.pimcore.fun/admin/](https://x.pimcore.fun/admin/)  
+_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 
