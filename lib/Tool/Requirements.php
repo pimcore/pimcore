@@ -74,14 +74,6 @@ final class Requirements
     {
         $checks = [];
 
-        // MySQL version
-        $checks[] = new Check(
-            [
-                'name' => 'MySQL version >= 8.0',
-                'state' => version_compare($db->fetchOne('SELECT VERSION()'), 8, '>='),
-            ]
-        );
-
         // storage engines
         $engines = $db->fetchCol('SHOW ENGINES;');
 
