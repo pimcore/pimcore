@@ -122,12 +122,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @var float|null
      */
-    protected $conditionPriceFrom = null;
+    protected $conditionPriceFrom;
 
     /**
      * @var float|null
      */
-    protected $conditionPriceTo = null;
+    protected $conditionPriceTo;
 
     /**
      * @var array
@@ -1038,7 +1038,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->doLoadGroupByValues();
         }
 
-        $results = $this->preparedGroupByValuesResults[$fieldname];
+        $results = $this->preparedGroupByValuesResults[$fieldname] ?? null;
         if ($results) {
             if ($countValues) {
                 return $results;

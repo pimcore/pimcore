@@ -16,6 +16,8 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Runtime;
+use Pimcore\Config\Config as PimcoreConfig;
+use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User\UserRole;
@@ -289,10 +291,10 @@ final class Config implements \ArrayAccess
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
-                $config = new \Pimcore\Config\Config($settingsArray, true);
+                $config = new PimcoreConfig($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } else {
+            } elseif ($config instanceof PimcoreConfig) {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
@@ -313,10 +315,10 @@ final class Config implements \ArrayAccess
     /**
      * @internal
      *
-     * @param Config\Config $config
+     * @param Config\Config|null $config
      * @param string|null $language
      */
-    public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
+    public static function setWebsiteConfig(?PimcoreConfig $config, $language = null)
     {
         \Pimcore\Cache\Runtime::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -357,25 +359,38 @@ final class Config implements \ArrayAccess
     }
 
     /**
+     * @return PimcoreConfig
+     *
+     * @throws \Exception
+     *
      * @internal
      * @static
-     *
-     * @return \Pimcore\Config\Config
      */
-    public static function getReportConfig()
+    public static function getReportConfig(): PimcoreConfig
     {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_report')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_report');
+        $config = null;
+        if (Runtime::isRegistered('pimcore_config_report')) {
+            $config = Runtime::get('pimcore_config_report');
         } else {
             try {
-                $file = self::locateConfigFile('reports.php');
-                $config = static::getConfigInstance($file);
-            } catch (\Exception $e) {
-                $config = new \Pimcore\Config\Config([]);
-            }
+                $configJson = SettingsStore::get(
+                    ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
+                );
 
-            self::setReportConfig($config);
+                if ($configJson) {
+                    $configArray = json_decode($configJson->getData(), true);
+                    $config = new PimcoreConfig($configArray);
+                }
+            } catch (\Exception $e) {
+                // nothing to do
+            }
         }
+
+        if (!$config) {
+            $config = new PimcoreConfig([]);
+        }
+
+        self::setReportConfig($config);
 
         return $config;
     }

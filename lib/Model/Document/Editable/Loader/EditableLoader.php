@@ -23,7 +23,7 @@ use Pimcore\Model\Document\Editable;
 /**
  * @internal
  */
-final class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
+class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
 {
     /**
      * {@inheritdoc}

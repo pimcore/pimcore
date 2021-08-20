@@ -1184,7 +1184,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     private function updateLatestVersionIndex($objectId, $newIndex)
     {
         $object = DataObject\Concrete::getById($objectId);
-        if ($object && $latestVersion = $object->getLatestVersion()) {
+
+        if (
+            $object &&
+            $object->getType() != DataObject::OBJECT_TYPE_FOLDER &&
+            $latestVersion = $object->getLatestVersion()
+        ) {
             // don't renew references (which means loading the target elements)
             // Not needed as we just save a new version with the updated index
             $object = $latestVersion->loadData(false);
@@ -1369,7 +1374,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $newObject = DataObject::getById($object->getId(), true);
 
             if ($request->get('task') == 'publish') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             return $this->adminJson([
@@ -1406,7 +1411,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($request->get('task') == 'version') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -2310,7 +2315,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {
-        $latestVersion = $object->getLatestVersion($this->getUser()->getId());
+        $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {

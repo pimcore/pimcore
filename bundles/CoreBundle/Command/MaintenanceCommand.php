@@ -28,24 +28,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MaintenanceCommand extends AbstractCommand
 {
     /**
-     * @var ExecutorInterface
-     */
-    private $maintenanceExecutor;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param ExecutorInterface $maintenanceExecutor
      * @param LoggerInterface $logger
      */
-    public function __construct(ExecutorInterface $maintenanceExecutor, LoggerInterface $logger)
+    public function __construct(private ExecutorInterface $maintenanceExecutor, private LoggerInterface $logger)
     {
-        $this->maintenanceExecutor = $maintenanceExecutor;
-        $this->logger = $logger;
-
         parent::__construct();
     }
 

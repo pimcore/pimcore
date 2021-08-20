@@ -19,9 +19,19 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface
+class Select extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    \JsonSerializable,
+    NormalizerInterface,
+    LayoutDefinitionEnrichmentInterface,
+    FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -424,7 +434,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    public function enrichFieldDefinition($context = [])
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -441,14 +454,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete|null $object
-     * @param array $context additional contextual data
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -496,7 +504,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         );
 
         if ($optionsProvider) {
-            $context = $params['context'] ? $params['context'] : [];
+            $context = $params['context'] ?? [];
             $context['object'] = $object;
             if ($object) {
                 $context['class'] = $object->getClass();
@@ -506,7 +514,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             $options = $optionsProvider->{'getOptions'}($context, $this);
             $this->setOptions($options);
 
-            if ($params['purpose'] == 'editmode') {
+            if (isset($params['purpose']) && $params['purpose'] == 'editmode') {
                 $result = $data;
             } else {
                 $result = ['value' => $data ?? null, 'options' => $this->getOptions()];

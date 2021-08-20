@@ -85,6 +85,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
+        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
@@ -139,6 +140,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
+        $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
@@ -336,6 +338,24 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $factoryMapping = [];
         foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
+            $factoryMapping[$className] = new Reference($factoryConfig['id']);
+        }
+
+        $definition->replaceArgument(1, $factoryMapping);
+    }
+
+    /**
+     * Handle pimcore.security.password_hasher_factories mapping
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    private function configurePasswordHashers(ContainerBuilder $container, array $config)
+    {
+        $definition = $container->findDefinition('pimcore.security.password_hasher_factory');
+
+        $factoryMapping = [];
+        foreach ($config['security']['password_hasher_factories'] as $className => $factoryConfig) {
             $factoryMapping[$className] = new Reference($factoryConfig['id']);
         }
 

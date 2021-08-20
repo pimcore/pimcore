@@ -671,7 +671,7 @@ class AssetHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
+        $delimiter = $settings['delimiter'] ?? ';';
         $language = str_replace('default', '', $request->get('language'));
 
         $list = new Asset\Listing();
@@ -763,6 +763,7 @@ class AssetHelperController extends AdminController
                     }
                     $dataRows[] = $data;
                 }
+                $dataRows = Element\Service::escapeCsvRecord($dataRows);
                 $csv[] = $dataRows;
             }
         }

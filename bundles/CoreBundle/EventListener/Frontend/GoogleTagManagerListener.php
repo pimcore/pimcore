@@ -51,21 +51,6 @@ class GoogleTagManagerListener
     use PreviewRequestTrait;
 
     /**
-     * @var SiteIdProvider
-     */
-    private $siteIdProvider;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var EngineInterface
-     */
-    private $templatingEngine;
-
-    /**
      * @var array
      */
     private $headBlocks = [
@@ -82,13 +67,10 @@ class GoogleTagManagerListener
     ];
 
     public function __construct(
-        SiteIdProvider $siteIdProvider,
-        EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine
+        private SiteIdProvider $siteIdProvider,
+        private EventDispatcherInterface $eventDispatcher,
+        private EngineInterface $templatingEngine
     ) {
-        $this->siteIdProvider = $siteIdProvider;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->templatingEngine = $templatingEngine;
     }
 
     public function onKernelResponse(ResponseEvent $event)

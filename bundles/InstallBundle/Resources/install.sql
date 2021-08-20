@@ -187,6 +187,8 @@ CREATE TABLE `documents_page` (
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
+  `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
+  `staticGeneratorLifetime` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -466,6 +468,7 @@ CREATE TABLE `sites` (
   `domains` text,
   `rootId` int(11) unsigned DEFAULT NULL,
   `errorDocument` varchar(255) DEFAULT NULL,
+  `localizedErrorDocuments` text,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',

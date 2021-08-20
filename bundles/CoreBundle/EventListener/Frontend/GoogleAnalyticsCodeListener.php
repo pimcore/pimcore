@@ -22,6 +22,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -35,15 +36,10 @@ class GoogleAnalyticsCodeListener
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
     use PreviewRequestTrait;
+    use StaticPageContextAwareTrait;
 
-    /**
-     * @var Tracker
-     */
-    private $tracker;
-
-    public function __construct(Tracker $tracker)
+    public function __construct(private Tracker $tracker)
     {
-        $this->tracker = $tracker;
     }
 
     public function onKernelResponse(ResponseEvent $event)
@@ -53,12 +49,14 @@ class GoogleAnalyticsCodeListener
         }
 
         $request = $event->getRequest();
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest() && !$this->matchesStaticPageContext($request)) {
             return;
         }
 
         // only inject analytics code on non-admin requests
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        // and check for static page context for CLI generation
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)
+            && !$this->matchesStaticPageContext($request)) {
             return;
         }
 

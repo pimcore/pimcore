@@ -172,7 +172,7 @@ class Ffmpeg extends Adapter
             // add some global arguments
             array_push($command, '-threads', '0');
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            array_unshift($command, 'ffmpeg', '-i', realpath($this->file));
+            array_unshift($command, self::getFfmpegCli(), '-i', realpath($this->file));
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
@@ -294,7 +294,7 @@ class Ffmpeg extends Adapter
     public function destroy()
     {
         if (file_exists($this->getConversionLogFile())) {
-            Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+            Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
         }
 

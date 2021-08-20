@@ -28,16 +28,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DisableCommand extends AbstractBundleCommand
 {
-    /**
-     * @var PostStateChange
-     */
-    private $postStateChangeHelper;
-
-    public function __construct(PimcoreBundleManager $bundleManager, PostStateChange $postStateChangeHelper)
+    public function __construct(PimcoreBundleManager $bundleManager, private PostStateChange $postStateChangeHelper)
     {
         parent::__construct($bundleManager);
-
-        $this->postStateChangeHelper = $postStateChangeHelper;
     }
 
     protected function configure()

@@ -34,6 +34,11 @@ class ElementAdminStyleEvent extends Event
     const CONTEXT_EDITOR = 2;
 
     /**
+     * Style needed for quicksearch
+     */
+    const CONTEXT_SEARCH = 3;
+
+    /**
      * @var int
      */
     protected $context;
@@ -95,7 +100,7 @@ class ElementAdminStyleEvent extends Event
     }
 
     /**
-     * Returns the context. CONTEXT_TREE or CONTEXT_EDITOR.
+     * Returns the context. e.g. CONTEXT_TREE or CONTEXT_EDITOR.
      *
      * @return null|int
      */

@@ -113,7 +113,7 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if (($data['baseunit'] ?? null) === -1) {
+                    if (($data['baseunit'] ?? null) == -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);
@@ -132,6 +132,10 @@ class QuantityValueController extends AdminController
                 $id = $data['id'];
                 if (Unit::getById($id)) {
                     throw new \Exception('unit with ID [' . $id . '] already exists');
+                }
+
+                if (mb_strlen($id) > 50) {
+                    throw new \Exception('The maximal character length for the unit ID is 50 characters, the provided ID has ' . mb_strlen($id) . ' characters.');
                 }
 
                 $unit = new Unit();

@@ -78,7 +78,7 @@ final class Requirements
         $checks[] = new Check(
             [
                 'name' => 'MySQL version >= 8.0',
-                'state' => version_compare($db->fetchOne('SELECT VERSION()'), 8, '>=')
+                'state' => version_compare($db->fetchOne('SELECT VERSION()'), 8, '>='),
             ]
         );
 

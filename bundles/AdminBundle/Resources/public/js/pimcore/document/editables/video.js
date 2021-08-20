@@ -39,10 +39,18 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
         }
         this.button = button;
         var emptyContainer = element.query(".pimcore_editable_video_empty")[0];
-        if(emptyContainer) {
+        if (emptyContainer) {
+            //we have to update container id for video editable inside non-reloadable blocks
+            //https://github.com/pimcore/pimcore/issues/9969
+            emptyContainer.id = 'video_' + uniqid();
             emptyContainer = Ext.get(emptyContainer);
             emptyContainer.on("click", this.openEditor.bind(this));
         }
+
+        if(this.config["required"]) {
+            this.required = this.config["required"];
+        }
+        this.checkValue();
     },
 
     openEditor: function () {
@@ -78,6 +86,20 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
         window.dndManager.enable();
 
         this.window.hide();
+    },
+
+    checkValue: function (mark) {
+        var data = this.data;
+
+        if(typeof data.path == 'undefined' || data.path === null || data.path == '') {
+            value = null;
+        } else {
+            value = 'ok';
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.button, this, mark);
+        }
     },
 
     getValue: function () {

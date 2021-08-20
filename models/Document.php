@@ -43,6 +43,8 @@ class Document extends Element\AbstractElement
      *
      * @internal
      *
+     * @deprecated will be removed in Pimcore 11. Use getTypes() method.
+     *
      * @var array
      */
     public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
@@ -201,7 +203,9 @@ class Document extends Element\AbstractElement
      */
     public static function getTypes()
     {
-        return self::$types;
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+
+        return $documentsConfig['types'];
     }
 
     /**
@@ -461,19 +465,19 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new DocumentEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DocumentEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DocumentEvent($this);
+            $failureEvent = new DocumentEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
@@ -1197,7 +1201,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param int $published
+     * @param bool $published
      *
      * @return Document
      */
@@ -1322,18 +1326,6 @@ class Document extends Element\AbstractElement
         }
 
         $this->setInDumpState(false);
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $type
-     */
-    public static function addDocumentType($type)
-    {
-        if (!in_array($type, self::$types)) {
-            self::$types[] = $type;
-        }
     }
 
     /**

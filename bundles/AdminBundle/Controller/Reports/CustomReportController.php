@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Tool\CustomReport;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -423,6 +424,7 @@ class CustomReportController extends ReportsControllerBase
         }
 
         foreach ($result['data'] as $row) {
+            $row = Service::escapeCsvRecord($row);
             fputcsv($fp, array_values($row), ';');
         }
 

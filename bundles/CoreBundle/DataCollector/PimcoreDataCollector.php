@@ -27,15 +27,9 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
-    /**
-     * @var PimcoreContextResolver
-     */
-    protected $contextResolver;
-
     public function __construct(
-        PimcoreContextResolver $contextResolver
+        protected PimcoreContextResolver $contextResolver
     ) {
-        $this->contextResolver = $contextResolver;
     }
 
     public function collect(Request $request, Response $response, ?\Throwable $exception = null)

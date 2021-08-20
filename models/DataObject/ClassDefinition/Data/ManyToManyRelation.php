@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -125,6 +125,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @var array
      */
     public $documentTypes = [];
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public $enableTextSelection = false;
 
     /**
      * @return bool
@@ -580,34 +587,31 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array
+     * { @inheritdoc }
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if (!$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if (!$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container);
 
-                $object->setObjectVar($this->getName(), $data);
-                $this->markLazyloadedFieldAsLoaded($object);
+                $container->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($object instanceof Element\DirtyIndicatorInterface) {
-                    $object->markFieldDirty($this->getName(), false);
+                if ($container instanceof Element\DirtyIndicatorInterface) {
+                    $container->markFieldDirty($this->getName(), false);
                 }
             }
-        } elseif ($object instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            parent::loadLazyFieldcollectionField($object);
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            parent::loadLazyBrickField($object);
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($container);
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($container);
+            $data = $container->getObjectVar($this->getName());
         }
 
         if (DataObject::doHideUnpublished() and is_array($data)) {
@@ -625,19 +629,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array|null $data
-     * @param array $params
-     *
-     * @return array|null
+     * { @inheritdoc }
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
         if ($data === null) {
             $data = [];
         }
 
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         return $data;
     }
@@ -714,25 +714,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Element\ElementInterface[]
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
 
         return $data;
@@ -929,6 +915,22 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function isOptimizedAdminLoading(): bool
     {
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableTextSelection(): bool
+    {
+        return $this->enableTextSelection;
+    }
+
+    /**
+     * @param bool $enableTextSelection
+     */
+    public function setEnableTextSelection(bool $enableTextSelection): void
+    {
+        $this->enableTextSelection = $enableTextSelection;
     }
 
     /**

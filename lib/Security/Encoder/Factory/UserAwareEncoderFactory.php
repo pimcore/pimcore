@@ -34,6 +34,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *          arguments:
  *              - Pimcore\Security\Encoder\PasswordFieldEncoder
  *              - ['password']
+ *
+ * @deprecated
  */
 class UserAwareEncoderFactory extends AbstractEncoderFactory
 {
@@ -50,7 +52,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException(sprintf(
                 'Need an instance of UserInterface to build an encoder, "%s" given',
-                is_object($user) ? get_class($user) : gettype($user)
+                get_debug_type($user)
             ));
         }
 

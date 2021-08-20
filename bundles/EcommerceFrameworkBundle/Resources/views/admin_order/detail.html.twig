@@ -279,7 +279,11 @@
                                     {{ order.getCustomerStreet() }}<br/>
                                     {{ order.getCustomerZip() ~ ' - ' ~ order.getCustomerCity() }}<br/>
                                     {% if(order.getCustomerCountry()) %}
-                                        {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
+                                        {%  if order.getCustomerCountry() in regionArray|keys %}
+                                            {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
+                                        {% else %}
+                                            {{ order.getCustomerCountry()|upper }}<br/>
+                                        {% endif %}                                        
                                     {% endif %}
 
                                     {% if order.getCustomer() and attribute(order.getCustomer(), 'email') is defined %}

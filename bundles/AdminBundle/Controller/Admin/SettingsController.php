@@ -234,11 +234,14 @@ class SettingsController extends AdminController
     {
         $type = $request->get('type');
         $subType = $request->get('subType');
+        $group = $request->get('group');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            $item->expand();
-            $result[] = $item->getObjectVars();
+            if ($group === null || $group === $item->getGroup()) {
+                $item->expand();
+                $result[] = $item->getObjectVars();
+            }
         }
 
         return $this->adminJson(['data' => $result, 'success' => true]);
@@ -407,14 +410,23 @@ class SettingsController extends AdminController
             // nothing to do
         }
 
+        // localized error pages
+        $localizedErrorPages = [];
+
         // fallback languages
         $fallbackLanguages = [];
         $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
+
         foreach ($languages as $language) {
             if (isset($values['general.fallbackLanguages.' . $language])) {
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
+            }
+
+            // localized error pages
+            if (isset($values['documents.error_pages.localized.' . $language])) {
+                $localizedErrorPages[$language] = $values['documents.error_pages.localized.' . $language];
             }
 
             if ($localeService->isLocale($language)) {
@@ -444,6 +456,7 @@ class SettingsController extends AdminController
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default'],
+                    'localized' => $localizedErrorPages,
                 ],
             ],
             'objects' => [
@@ -1083,7 +1096,7 @@ class SettingsController extends AdminController
                         'iconCls' => 'pimcore_icon_folder',
                         'group' => $item->getGroup(),
                         'children' => [],
-                        ];
+                    ];
                 }
                 $groups[$item->getGroup()]['children'][] =
                     [

@@ -23,8 +23,10 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface
 {
+    use DataObject\Traits\ClassSavedTrait;
+
     /**
      * Static type of this element
      *
@@ -247,7 +249,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
             $data = [];
 
-            if ($fielddefinition instanceof ManyToOneRelation) {
+            if ($fielddefinition instanceof ManyToOneRelation && isset($relations[0])) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
@@ -467,19 +469,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param Objectbrick|null $value
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function preSetData($object, $value, $params = [])
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
-        if ($value instanceof DataObject\Objectbrick) {
-            $value->setFieldname($this->getName());
+        if ($data instanceof DataObject\Objectbrick) {
+            $data->setFieldname($this->getName());
         }
 
-        return $value;
+        return $data;
     }
 
     /**
@@ -550,19 +548,19 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
 
         $key = $this->getName();
-        $code = '';
 
         $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
 
-        $code .= '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration .  " {\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
-        $code .= "\t" . 'if(!$data) { ' . "\n";
+        $code .= "\t" . 'if (!$data) { ' . "\n";
 
-        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
+        $code .= "\t\t" . 'if (\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
@@ -570,13 +568,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        if (method_exists($this, 'preGetData')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -821,25 +820,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Model\Element\ElementInterface
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data instanceof DataObject\Objectbrick) {
             $items = $data->getItems();
@@ -853,7 +838,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (method_exists($fd, 'rewriteIds')) {
+                    //TODO Pimcore 11: remove method_exists BC layer
+                    if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if (!$fd instanceof IdRewriterInterface) {
+                            trigger_deprecation('pimcore/pimcore', '10.1',
+                                sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                                'Implement the %s interface instead.', IdRewriterInterface::class));
+                        }
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -890,9 +881,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
+                        //TODO Pimcore 11 remove method_exists call
                         if (method_exists($fd, 'classSaved')) {
-                            if (!$fd instanceof Localizedfields) {
-                                // defer creation
+                            // defer creation
+                            if (!$fd instanceof DataContainerAwareInterface) {
                                 $fd->classSaved($class);
                             }
                         }

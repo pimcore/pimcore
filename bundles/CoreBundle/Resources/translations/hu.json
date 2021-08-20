@@ -940,5 +940,16 @@
     "draft": "Piszkozat",
     "auto_save": "Automaikus mentés",
     "save_draft": "Piszkozat mentése",
-    "selected_grid_columns": "Kiválaszott rács oszlopok"
+    "selected_grid_columns": "Kiválaszott rács oszlopok",
+    "ungrouped": "nem csoportosított",
+    "reindex_warning": "Váltás index alapú sorrendre újraindexelést okoz. Biztos folytatod?",
+    "static_generator": "Static Page Generator",
+    "static_generator_enable": "Enable server side static rendering",
+    "static_generator_lifetime": "Lifetime (in minutes) for static page (optional)",
+    "last_generated": "Last generated",
+    "user_inactive": "User is not active",
+    "user_no_email_address": "User has no email address",
+    "user_no_password": "User has no password",
+    "user_unknown": "User unknown",
+    "lost_password_email_error": "Could not send password recovery email"
 }

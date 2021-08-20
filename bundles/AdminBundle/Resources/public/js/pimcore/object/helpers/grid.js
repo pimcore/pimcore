@@ -320,6 +320,9 @@ pimcore.object.helpers.grid = Class.create({
                 }
 
                 gridColumns.push(columnConfig);
+            } else if(field.key == "index") {
+                gridColumns.push({text: t("index") + " (System)", width: this.getColumnWidth(field, 160), sortable: false,
+                    dataIndex: "index", editable: false});
             } else if(field.key == "creationDate") {
                 gridColumns.push({text: t("creationdate") + " (System)", width: this.getColumnWidth(field, 160), sortable: true,
                     dataIndex: "creationDate", filter: 'date', editable: false, locked: this.getColumnLock(field), renderer: function(d) {
