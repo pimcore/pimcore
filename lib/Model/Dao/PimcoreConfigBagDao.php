@@ -101,11 +101,11 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     /**
      * Hook to prepare config data structure for yaml
      *
-     * @param $id
-     * @param $data
+     * @param string $id
+     * @param mixed $data
      * @return mixed
      */
-    protected function prepareDataStructureForYaml($id, $data)
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
         return $data;
     }

@@ -118,7 +118,7 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml($id, $data)
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
         return [
             'pimcore' => [

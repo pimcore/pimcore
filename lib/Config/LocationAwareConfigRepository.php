@@ -185,8 +185,8 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
-     * @param $data
-     * @param null $yamlStructureCallback
+     * @param mixed $data
+     * @param null|callable $yamlStructureCallback
      * @throws \Exception
      */
     public function saveConfig(string $key, $data, $yamlStructureCallback = null) {
