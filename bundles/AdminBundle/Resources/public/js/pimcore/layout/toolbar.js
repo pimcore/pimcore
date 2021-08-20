@@ -86,7 +86,6 @@ pimcore.layout.toolbar = Class.create({
                                 text: data[i],
                                 iconCls: "pimcore_nav_icon_dashboards",
                                 handler: function (key) {
-                                    key = key.replace(/\s/g, '_');
                                     try {
                                         pimcore.globalmanager.get("layout_portal_" + key).activate();
                                     }
