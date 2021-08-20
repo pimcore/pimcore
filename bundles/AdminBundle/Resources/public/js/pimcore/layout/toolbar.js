@@ -86,6 +86,7 @@ pimcore.layout.toolbar = Class.create({
                                 text: data[i],
                                 iconCls: "pimcore_nav_icon_dashboards",
                                 handler: function (key) {
+                                    key = key.replace(/\s/g, '_');
                                     try {
                                         pimcore.globalmanager.get("layout_portal_" + key).activate();
                                     }
@@ -101,7 +102,7 @@ pimcore.layout.toolbar = Class.create({
                             text: t("add"),
                             iconCls: "pimcore_nav_icon_add",
                             handler: function () {
-                                Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
+                                var prompt = Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
@@ -138,6 +139,9 @@ pimcore.layout.toolbar = Class.create({
                                         }
                                     }
                                 );
+                                prompt.textField.on('keyUp', function(el){
+                                    el.setValue(el.getValue().replace(/\W/g, ''));
+                                }, this);
                             }.bind(this)
                         });
                     }.bind(this)
