@@ -259,25 +259,26 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model,
-                        [
-                            'isUpdate' => $isUpdate,
-                            'owner' => $this->model,
-                            'fieldname' => $key,
-                        ]);
+                    $fieldDefinitionParams = [
+                        'isUpdate' => $isUpdate,
+                        'owner' => $this->model,
+                        'fieldname' => $key,
+                    ];
+
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
                     if (is_array($insertDataArray)) {
-                        $this->model->set($key, $insertDataArray);
                         $data = array_merge($data, $insertDataArray);
+                        $this->model->set($key, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
                     }
                 } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model,
-                        [
-                            'isUpdate' => $isUpdate,
-                            'owner' => $this->model,
-                            'fieldname' => $key,
-                        ]);
+                    $fieldDefinitionParams = [
+                        'isUpdate' => $isUpdate,
+                        'owner' => $this->model,
+                        'fieldname' => $key,
+                    ];
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
                     $data[$key] = $insertData;
-                    $this->model->set($key, $insertData);
+                    $this->model->set($key, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
             }
         }
