@@ -20,7 +20,8 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete()
  * @method void save()
  */
@@ -137,7 +138,10 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     {
         try {
             $report = new self();
-            $report->getDao()->getByName($name);
+
+            /** @var Model\Tool\CustomReport\Config\Dao $dao */
+            $dao = $report->getDao();
+            $dao->getByName($name);
 
             return $report;
         } catch (Model\Exception\NotFoundException $e) {
@@ -158,13 +162,15 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         if ($user) {
             $items = $list->getDao()->loadForGivenUser($user);
         } else {
-            $items = $list->getDao()->load();
+            $items = $list->getDao()->loadList();
         }
 
         foreach ($items as $item) {
             $reports[] = [
                 'id' => $item->getName(),
                 'text' => $item->getName(),
+                'cls' => 'pimcore_treenode_disabled',
+                'writeable' => $item->isWriteable()
             ];
         }
 
@@ -602,5 +608,11 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $data['sharedRoleIds'] = $this->getSharedRoleIds();
 
         return $data;
+    }
+
+    public function __clone()
+    {
+        $this->dao = clone $this->dao;
+        $this->dao->setModel($this);
     }
 }
