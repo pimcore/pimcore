@@ -273,13 +273,12 @@ class LocationAwareConfigRepository
      */
     public function deleteData(string $key, ?string $dataSource): void
     {
+        if(!$this->isWriteable($key)) {
+            throw new \Exception('You are trying to delete a non-writable configuration.');
+        }
+
         if ($dataSource === self::LOCATION_SYMFONY_CONFIG) {
-            $filename = $this->getVarConfigFile($key);
-            if (file_exists($filename)) {
-                unlink($filename);
-            } else {
-                throw new \Exception('Only configurations inside the var/config directory can be deleted');
-            }
+            unlink($this->getVarConfigFile($key));
         } elseif ($dataSource === self::LOCATION_SETTINGS_STORE) {
             SettingsStore::delete($key, $this->settingsStoreScope);
         } elseif ($dataSource === self::LOCATION_LEGACY) {
