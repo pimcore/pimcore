@@ -482,5 +482,4 @@ final class Config extends Model\AbstractModel
         $this->dao = clone $this->dao;
         $this->dao->setModel($this);
     }
-
 }

@@ -26,7 +26,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['assets']['video']['thumbnails']['definitions'],
@@ -119,12 +119,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                     'video' => [
                         'thumbnails' => [
                             'definitions' => [
-                                $id => $data
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
