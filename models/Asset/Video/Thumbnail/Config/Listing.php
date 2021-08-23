@@ -53,9 +53,9 @@ class Listing extends Model\Listing\JsonListing
         return $this;
     }
 
-
     /**
      * Alias of getThumbnails()
+     *
      * @return Model\Asset\Video\Thumbnail\Config[]|null
      */
     public function load()

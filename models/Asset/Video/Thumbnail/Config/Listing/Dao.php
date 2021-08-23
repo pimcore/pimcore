@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config\Listing;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 /**
@@ -25,7 +24,6 @@ use Pimcore\Model\Asset\Video\Thumbnail\Config;
  */
 class Dao extends Config\Dao
 {
-
     /**
      * @return array
      */
