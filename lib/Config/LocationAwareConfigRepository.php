@@ -155,7 +155,10 @@ class LocationAwareConfigRepository
      */
     public function isWriteable(string $key, ?string $dataSource): bool
     {
-        if ($this->getWriteTarget() === self::WRITE_TARGET_DISABLED) {
+        $writeTarget = $this->getWriteTarget();
+        if ($writeTarget === self::WRITE_TARGET_YAML && !\Pimcore::getKernel()->isDebug()) {
+            return false;
+        } elseif ($writeTarget === self::WRITE_TARGET_DISABLED) {
             return false;
         } elseif ($dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
             return true;
@@ -191,14 +194,6 @@ class LocationAwareConfigRepository
         }
 
         return $writeLocation;
-    }
-
-    /**
-     * @return bool
-     */
-    public function needsContainerRebuildOnWrite(): bool
-    {
-        return !\Pimcore::getKernel()->isDebug() && ($this->getWriteTarget() === self::WRITE_TARGET_YAML);
     }
 
     /**
