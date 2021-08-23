@@ -1443,6 +1443,7 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->prototype('scalar')->end()
                                 ->end()
+                                ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a workflow, for example via bundles, etc.')->end()
                                 ->booleanNode('enabled')
                                     ->defaultTrue()
                                     ->info('Can be used to enable or disable the workflow.')
