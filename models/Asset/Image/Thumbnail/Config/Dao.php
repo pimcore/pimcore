@@ -23,7 +23,7 @@ use Pimcore\Tool\Console;
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PimcoreConfigBagDao
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     /**
      * {@inheritdoc}
