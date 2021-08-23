@@ -69,7 +69,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
             return self::$cache[$this->settingsStoreScope][$id];
         }
 
-        list($data, $this->dataSource) = $this->locationAwareConfigRepository->loadConfigurationByConfigKey($id);
+        list($data, $this->dataSource) = $this->locationAwareConfigRepository->loadConfigByKey($id);
 
         self::$cache[$this->settingsStoreScope][$id] = $data;
 
@@ -81,7 +81,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
      */
     protected function loadIdList(): array
     {
-        return $this->locationAwareConfigRepository->fetchAllConfigsForNamespace();
+        return $this->locationAwareConfigRepository->fetchAllKeys();
     }
 
     /**

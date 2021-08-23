@@ -64,7 +64,7 @@ class LocationAwareConfigRepository
     }
 
 
-    public function loadConfigurationByConfigKey(string $key) {
+    public function loadConfigByKey(string $key) {
 
         $dataSource = null;
 
@@ -219,7 +219,7 @@ class LocationAwareConfigRepository
 
         if(!file_exists($yamlFilename)) {
 
-            list($existingData, $dataSource) = $this->loadConfigurationByConfigKey($key);
+            list($existingData, $dataSource) = $this->loadConfigByKey($key);
             if ($dataSource && $dataSource !== self::DATA_SOURCE_LEGACY) {
                 // this configuration already exists so check if it is writeable
                 // this is only the case if it comes from var/config or from the legacy file, or the settings-store
@@ -291,7 +291,7 @@ class LocationAwareConfigRepository
     /**
      * @return array
      */
-    public function fetchAllConfigsForNamespace(): array
+    public function fetchAllKeys(): array
     {
         return array_merge(
             SettingsStore::getIdsByScope($this->settingsStoreScope),
