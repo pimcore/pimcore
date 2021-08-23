@@ -26,8 +26,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['custom_report']['definitions'],
