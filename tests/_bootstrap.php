@@ -28,6 +28,7 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 $_ENV['PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS'] = 'settings-store';
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();

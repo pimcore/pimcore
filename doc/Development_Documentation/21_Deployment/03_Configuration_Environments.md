@@ -36,4 +36,5 @@ The following options are available:
 Available environment variables are: 
 ```bash
 PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=settings-store
+PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS=settings-store
 ```
