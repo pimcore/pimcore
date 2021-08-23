@@ -111,9 +111,9 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
     /**
      * {@inheritdoc}
      */
-    protected function writeYaml($id, $data): void
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
-        $data = [
+        return [
             'pimcore' => [
                 'assets' => [
                     'video' => [
@@ -126,7 +126,5 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
                 ]
             ]
         ];
-
-        parent::writeYaml($id, $data);
     }
 }
