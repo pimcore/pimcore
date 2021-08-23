@@ -153,22 +153,18 @@ class LocationAwareConfigRepository
     /**
      * @return bool
      */
-    public function isWriteable(string $key, ?string $dataSource): bool
+    public function isWriteable(?string $key = null, ?string $dataSource = null): bool
     {
+        $key = $key ?: uniqid('pimcore_random_key_', true);
         $writeTarget = $this->getWriteTarget();
+
         if ($writeTarget === self::WRITE_TARGET_YAML && !\Pimcore::getKernel()->isDebug()) {
             return false;
         } elseif ($writeTarget === self::WRITE_TARGET_DISABLED) {
             return false;
-        } elseif ($dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
-            return true;
-        } elseif ($dataSource === self::DATA_SOURCE_LEGACY) {
-            return true;
-        } elseif ($dataSource === self::DATA_SOURCE_CONFIG) {
-            if (file_exists($this->getVarConfigFile($key))) {
-                return true;
-            }
-
+        } elseif ($dataSource && $dataSource !== self::DATA_SOURCE_LEGACY && $dataSource !== $writeTarget) {
+            return false;
+        } elseif ($dataSource === self::DATA_SOURCE_CONFIG && !file_exists($this->getVarConfigFile($key))) {
             return false;
         }
 
