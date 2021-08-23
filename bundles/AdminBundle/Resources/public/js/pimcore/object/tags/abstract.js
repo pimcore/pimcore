@@ -259,6 +259,9 @@ pimcore.object.tags.abstract = Class.create({
     },
 
     sumWidths: function (width1, width2) {
+        if (/^\d+$/.test(width1) && /^\d+$/.test(width2)) {
+            return parseInt(width1) + parseInt(width2);
+        }
         if (/^\d+$/.test(width1)) {
             width1 += 'px';
         }
