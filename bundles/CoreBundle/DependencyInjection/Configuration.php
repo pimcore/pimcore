@@ -1299,7 +1299,7 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('definitions')
                                 ->normalizeKeys(false)
-								->prototype('array')
+                                ->prototype('array')
                                     ->children()
                                         ->scalarNode('id')->end()
                                         ->scalarNode('name')->end()
