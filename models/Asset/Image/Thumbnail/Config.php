@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @method bool needsContainerRebuildOnWrite()
  * @method bool isWriteable()
  * @method string getWriteTarget()
  * @method void delete(bool $forceClearTempFiles = false)
