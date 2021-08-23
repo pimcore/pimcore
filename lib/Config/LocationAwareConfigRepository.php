@@ -165,9 +165,11 @@ class LocationAwareConfigRepository
             if (file_exists($this->getVarConfigFile($key))) {
                 return true;
             }
+
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     /**
