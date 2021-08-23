@@ -20,7 +20,7 @@ use Pimcore\Config;
 /**
  * @internal
  */
-abstract class PimcoreConfigBagDao implements DaoInterface
+abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 {
     use DaoTrait;
 

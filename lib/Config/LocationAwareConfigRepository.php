@@ -26,17 +26,13 @@ class LocationAwareConfigRepository
     /**
      * @deprecated Will be removed in Pimcore 11
      */
-    private const DATA_SOURCE_LEGACY = 'legacy';
+    private const LOCATION_LEGACY = 'legacy';
 
-    private const DATA_SOURCE_CONFIG = 'config';
+    private const LOCATION_SYMFONY_CONFIG = 'config';
 
-    private const DATA_SOURCE_SETTINGS_STORE = 'settings-store';
+    private const LOCATION_SETTINGS_STORE = 'settings-store';
 
-    public const WRITE_TARGET_DISABLED = 'disabled';
-
-    private const WRITE_TARGET_YAML = 'yaml';
-
-    private const WRITE_TARGET_SETTINGS_STORE = 'settings-store';
+    private const LOCATION_DISABLED = 'disabled';
 
     protected array $containerConfig = [];
 
@@ -105,7 +101,7 @@ class LocationAwareConfigRepository
     private function getDataFromContainerConfig(string $key, ?string &$dataSource)
     {
         if (isset($this->containerConfig[$key])) {
-            $dataSource = self::DATA_SOURCE_CONFIG;
+            $dataSource = self::LOCATION_SYMFONY_CONFIG;
         }
 
         return $this->containerConfig[$key] ?? null;
@@ -122,7 +118,7 @@ class LocationAwareConfigRepository
         $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
         if ($settingsStoreEntry) {
             $settingsStoreEntryData = json_decode($settingsStoreEntry->getData(), true);
-            $dataSource = self::DATA_SOURCE_SETTINGS_STORE;
+            $dataSource = self::LOCATION_SETTINGS_STORE;
         }
 
         return $settingsStoreEntryData;
@@ -144,7 +140,7 @@ class LocationAwareConfigRepository
         $data = $this->getLegacyStore()->fetchAll();
 
         if (isset($data[$key])) {
-            $dataSource = self::DATA_SOURCE_LEGACY;
+            $dataSource = self::LOCATION_LEGACY;
         }
 
         return $data[$key] ?? null;
@@ -158,13 +154,13 @@ class LocationAwareConfigRepository
         $key = $key ?: uniqid('pimcore_random_key_', true);
         $writeTarget = $this->getWriteTarget();
 
-        if ($writeTarget === self::WRITE_TARGET_YAML && !\Pimcore::getKernel()->isDebug()) {
+        if ($writeTarget === self::LOCATION_SYMFONY_CONFIG && !\Pimcore::getKernel()->isDebug()) {
             return false;
-        } elseif ($writeTarget === self::WRITE_TARGET_DISABLED) {
+        } elseif ($writeTarget === self::LOCATION_DISABLED) {
             return false;
-        } elseif ($dataSource && $dataSource !== self::DATA_SOURCE_LEGACY && $dataSource !== $writeTarget) {
+        } elseif ($dataSource === self::LOCATION_SYMFONY_CONFIG && !file_exists($this->getVarConfigFile($key))) {
             return false;
-        } elseif ($dataSource === self::DATA_SOURCE_CONFIG && !file_exists($this->getVarConfigFile($key))) {
+        } elseif ($dataSource && $dataSource !== self::LOCATION_LEGACY && $dataSource !== $writeTarget) {
             return false;
         }
 
@@ -182,10 +178,10 @@ class LocationAwareConfigRepository
         if ($env) {
             $writeLocation = $env;
         } else {
-            $writeLocation = self::WRITE_TARGET_YAML;
+            $writeLocation = self::LOCATION_SYMFONY_CONFIG;
         }
 
-        if (!in_array($writeLocation, [self::WRITE_TARGET_SETTINGS_STORE, self::WRITE_TARGET_YAML, self::WRITE_TARGET_DISABLED])) {
+        if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
         }
 
@@ -203,13 +199,13 @@ class LocationAwareConfigRepository
     {
         $writeLocation = $this->getWriteTarget();
 
-        if ($writeLocation === self::WRITE_TARGET_YAML) {
+        if ($writeLocation === self::LOCATION_SYMFONY_CONFIG) {
             if (is_callable($yamlStructureCallback)) {
                 $data = $yamlStructureCallback($key, $data);
             }
 
             $this->writeYaml($key, $data);
-        } elseif ($writeLocation === self::WRITE_TARGET_SETTINGS_STORE) {
+        } elseif ($writeLocation === self::LOCATION_SETTINGS_STORE) {
             $settingsStoreData = json_encode($data);
             SettingsStore::set($key, $settingsStoreData, 'string', $this->settingsStoreScope);
         }
@@ -227,7 +223,7 @@ class LocationAwareConfigRepository
 
         if (!file_exists($yamlFilename)) {
             list($existingData, $dataSource) = $this->loadConfigByKey($key);
-            if ($dataSource && $dataSource !== self::DATA_SOURCE_LEGACY) {
+            if ($dataSource && $dataSource !== self::LOCATION_LEGACY) {
                 // this configuration already exists so check if it is writeable
                 // this is only the case if it comes from var/config or from the legacy file, or the settings-store
                 // however, we never want to write it back to the legacy file
@@ -238,7 +234,7 @@ class LocationAwareConfigRepository
 
         File::put($yamlFilename, Yaml::dump($data, 50));
 
-        // invalidate container config cache
+        // invalidate container config cache if debug flag on kernel is set
         $systemConfigFile = Config::locateConfigFile('system.yml');
         if ($systemConfigFile) {
             touch($systemConfigFile);
@@ -277,16 +273,15 @@ class LocationAwareConfigRepository
      */
     public function deleteData(string $key, ?string $dataSource): void
     {
-        if ($dataSource === self::DATA_SOURCE_CONFIG) {
-            $filename = $this->getVarConfigFile($key);
-            if (file_exists($filename)) {
-                unlink($filename);
-            } else {
-                throw new \Exception('Only configurations inside the var/config directory can be deleted');
-            }
-        } elseif ($dataSource === self::DATA_SOURCE_SETTINGS_STORE) {
+        if(!$this->isWriteable($key)) {
+            throw new \Exception('You are trying to delete a non-writable configuration.');
+        }
+
+        if ($dataSource === self::LOCATION_SYMFONY_CONFIG) {
+            unlink($this->getVarConfigFile($key));
+        } elseif ($dataSource === self::LOCATION_SETTINGS_STORE) {
             SettingsStore::delete($key, $this->settingsStoreScope);
-        } elseif ($dataSource === self::DATA_SOURCE_LEGACY) {
+        } elseif ($dataSource === self::LOCATION_LEGACY) {
             $this->getLegacyStore()->delete($key);
         }
     }
