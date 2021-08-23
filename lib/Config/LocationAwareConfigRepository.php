@@ -71,8 +71,7 @@ class LocationAwareConfigRepository
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
-    )
-    {
+    ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
         $this->storageDirectory = $storageDirectory;
