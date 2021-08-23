@@ -42,6 +42,8 @@ class LocationAwareConfigRepository
 
     protected ?string $writeTargetEnvVariableName = null;
 
+    protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
+
     /**
      * @deprecated Will be removed in Pimcore 11
      *
@@ -59,14 +61,23 @@ class LocationAwareConfigRepository
      * @param string|null $settingsStoreScope
      * @param string|null $storageDirectory
      * @param string|null $writeTargetEnvVariableName
+     * @param string|null $defaultWriteLocation
      * @param string|null $legacyConfigFile
      */
-    public function __construct(array $containerConfig, ?string $settingsStoreScope, ?string $storageDirectory, ?string $writeTargetEnvVariableName, ?string $legacyConfigFile = null)
+    public function __construct(
+        array $containerConfig,
+        ?string $settingsStoreScope,
+        ?string $storageDirectory,
+        ?string $writeTargetEnvVariableName,
+        ?string $defaultWriteLocation = null,
+        ?string $legacyConfigFile = null,
+    )
     {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
         $this->storageDirectory = $storageDirectory;
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
+        $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
         $this->legacyConfigFile = $legacyConfigFile;
     }
 
@@ -178,7 +189,7 @@ class LocationAwareConfigRepository
         if ($env) {
             $writeLocation = $env;
         } else {
-            $writeLocation = self::LOCATION_SYMFONY_CONFIG;
+            $writeLocation = $this->defaultWriteLocation;
         }
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
