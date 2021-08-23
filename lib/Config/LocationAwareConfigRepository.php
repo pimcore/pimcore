@@ -26,13 +26,13 @@ class LocationAwareConfigRepository
     /**
      * @deprecated Will be removed in Pimcore 11
      */
-    private const LOCATION_LEGACY = 'legacy';
+    public const LOCATION_LEGACY = 'legacy';
 
-    private const LOCATION_SYMFONY_CONFIG = 'symfony-config';
+    public const LOCATION_SYMFONY_CONFIG = 'symfony-config';
 
-    private const LOCATION_SETTINGS_STORE = 'settings-store';
+    public const LOCATION_SETTINGS_STORE = 'settings-store';
 
-    private const LOCATION_DISABLED = 'disabled';
+    public const LOCATION_DISABLED = 'disabled';
 
     protected array $containerConfig = [];
 
