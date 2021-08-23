@@ -184,6 +184,14 @@ class LocationAwareConfigRepository
     }
 
     /**
+     * @return bool
+     */
+    public function needsContainerRebuildOnWrite(): bool
+    {
+        return !\Pimcore::getKernel()->isDebug() && ($this->getWriteTarget() === self::WRITE_TARGET_YAML);
+    }
+
+    /**
      * @param string $key
      * @param mixed $data
      * @param null|callable $yamlStructureCallback
