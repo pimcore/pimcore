@@ -170,7 +170,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
                 'id' => $item->getName(),
                 'text' => $item->getName(),
                 'cls' => 'pimcore_treenode_disabled',
-                'writeable' => $item->isWriteable()
+                'writeable' => $item->isWriteable(),
             ];
         }
 
