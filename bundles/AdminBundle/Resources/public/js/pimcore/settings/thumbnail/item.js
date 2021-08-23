@@ -49,15 +49,7 @@ pimcore.settings.thumbnail.item = Class.create({
             buttonConfig.tooltip = t("config_not_writeable");
         }
 
-        if(this.data.needsContainerRebuildOnWrite) {
-            panelButtons.push({
-                xtype: "tbtext",
-                text: t("needs_manual_container_rebuild_after_saving")
-            });
-        }
-
         panelButtons.push(buttonConfig);
-
 
         this.mediaPanel = new Ext.TabPanel({
             autoHeight: true,

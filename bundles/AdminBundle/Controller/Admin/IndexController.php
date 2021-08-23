@@ -252,7 +252,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
 
-            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->getWriteTarget() !== Config\LocationAwareConfigRepository::WRITE_TARGET_DISABLED,
+            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
         ];
 
         $this

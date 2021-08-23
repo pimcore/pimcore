@@ -657,7 +657,6 @@
   "classificationstore_group_by_key": "Group by key",
   "allow_to_create_new_object":  "Allow to create a new object in relation field",
   "puppeteer_documentation": "Puppeteer",
-  "needs_manual_container_rebuild_after_saving": "Note: changes are not getting applied until manual rebuild of the container.",
   "web2print_headlesschrome_documentation": "Option Documentation",
   "web2print_headlesschrome_documentation_additions": "Additional Options",
   "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
