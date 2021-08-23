@@ -66,6 +66,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("dashboards"),
                     iconCls: "pimcore_nav_icon_dashboards",
                     hideOnClick: false,
+                    itemId: 'pimcore_menu_file_dashboards',
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
@@ -220,6 +221,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t('help'),
                     iconCls: "pimcore_nav_icon_help",
                     cls: "pimcore_main_menu",
+                    itemId: 'pimcore_menu_file_help',
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -293,6 +295,7 @@ pimcore.layout.toolbar = Class.create({
                 extrasItems.push({
                     text: t("translations"),
                     iconCls: "pimcore_nav_icon_translations",
+                    itemId: 'pimcore_menu_extras_translations',
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -364,6 +367,7 @@ pimcore.layout.toolbar = Class.create({
                 extrasItems.push({
                     text: t("email"),
                     iconCls: "pimcore_nav_icon_email",
+                    itemId: 'pimcore_menu_extras_email',
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -451,6 +455,7 @@ pimcore.layout.toolbar = Class.create({
                         text: t("system_infos_and_tools"),
                         iconCls: "pimcore_nav_icon_info",
                         hideOnClick: false,
+                        itemId: 'pimcore_menu_extras_system_info',
                         menu: {
                             cls: "pimcore_navigation_flyout",
                             shadow: false,
@@ -495,6 +500,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("personalization") + " / " + t("targeting"),
                     iconCls: "pimcore_nav_icon_usergroup",
                     hideOnClick: false,
+                    itemId: 'pimcore_menu_marketing_personalization',
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
@@ -548,6 +554,7 @@ pimcore.layout.toolbar = Class.create({
                     marketingItems.push({
                         text: t("search_engine_optimization"),
                         iconCls: "pimcore_nav_icon_seo",
+                        itemId: 'pimcore_menu_marketing_seo',
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -687,6 +694,7 @@ pimcore.layout.toolbar = Class.create({
                         text: t("users") + " / " + t("roles"),
                         iconCls: "pimcore_nav_icon_users",
                         hideOnClick: false,
+                        itemId: 'pimcore_menu_settings_users',
                         menu: {
                             cls: "pimcore_navigation_flyout",
                             shadow: false,
@@ -700,6 +708,7 @@ pimcore.layout.toolbar = Class.create({
                 settingsItems.push({
                     text: t("thumbnails"),
                     iconCls: "pimcore_nav_icon_thumbnails",
+                    itemId: 'pimcore_menu_settings_thumbnails',
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -722,6 +731,7 @@ pimcore.layout.toolbar = Class.create({
                 var objectMenu = {
                     text: t("data_objects"),
                     iconCls: "pimcore_nav_icon_object",
+                    itemId: 'pimcore_menu_settings_data_objects',
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -901,6 +911,7 @@ pimcore.layout.toolbar = Class.create({
                         text: t("cache"),
                         iconCls: "pimcore_nav_icon_clear_cache",
                         hideOnClick: false,
+                        itemId: 'pimcore_menu_settings_cache',
                         menu: {
                             cls: "pimcore_navigation_flyout",
                             shadow: false,
