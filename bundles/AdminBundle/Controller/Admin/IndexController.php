@@ -25,10 +25,8 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
-use Pimcore\Model\Dao\PimcoreConfigBagDao;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
 use Pimcore\Tool;
@@ -254,7 +252,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
 
-            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->getWriteTarget() !== PimcoreConfigBagDao::WRITE_TARGET_DISABLED,
+            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->getWriteTarget() !== Config\LocationAwareConfigRepository::WRITE_TARGET_DISABLED,
         ];
 
         $this

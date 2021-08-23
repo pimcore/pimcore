@@ -1212,6 +1212,7 @@ class SettingsController extends AdminController
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
         $data = $pipe->getObjectVars();
         $data['writeable'] = $pipe->isWriteable();
+        $data['needsContainerRebuildOnWrite'] = $pipe->needsContainerRebuildOnWrite();
 
         return $this->adminJson($data);
     }
