@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -113,6 +114,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
+        $route->setDefault(ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS, true);
 
         return $route;
     }
