@@ -1,23 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Console;
 
+use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
+use Pimcore\Migrations\FilteredMigrationsRepository;
+use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Tool\Admin;
 use Pimcore\Version;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -27,8 +32,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
+ *
+ * @internal
  */
-class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
+final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
     /**
      * Constructor.
@@ -57,11 +64,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 
         $this->setDispatcher($dispatcher);
 
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
-            if ($event->getInput()->getOption('no-debug')) {
-                \Pimcore::setDebugMode(false);
-            }
-
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
@@ -69,6 +72,11 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
                 $event->getOutput()->writeln('Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...');
 
                 Admin::activateMaintenanceMode($maintenanceModeId);
+            }
+
+            if ($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
+                $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
+                $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
             }
         });
 
@@ -92,5 +100,22 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $inputDefinition->addOption(new InputOption('maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
 
         return $inputDefinition;
+    }
+
+    public function add(Command $command)
+    {
+        if ($command instanceof DoctrineCommand) {
+            $definition = $command->getDefinition();
+
+            // add filter option
+            $definition->addOption(new InputOption(
+                'prefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Optional prefix filter for version classes, eg. Pimcore\Bundle\CoreBundle\Migrations'
+            ));
+        }
+
+        return parent::add($command);
     }
 }

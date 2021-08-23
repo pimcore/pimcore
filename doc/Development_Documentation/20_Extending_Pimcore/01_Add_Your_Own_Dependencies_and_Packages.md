@@ -14,9 +14,8 @@ composer require mtdowling/cron-expression
 You can install third party bundles via composer as shown above (as Pimcore is a standard Symfony application, you should
 be able to use any third-party Symfony bundle).
 
-To load a bundle with the application, it must first be registered on the kernel (see [bundles documentation](http://symfony.com/doc/3.4/bundles.html)).
-By default there's a `registerBundles` method on the `AppKernel` which is expected to return a list of bundles to load. As
-Pimcore defines a list of default bundles in its base kernel and priority can be important for config auto loading, the
+To load a bundle with the application, it must first be enabled in `config/bundles.php` (see [bundles documentation](https://symfony.com/doc/5.2/bundles.html)).
+As Pimcore defines a `registerBundles` method base Kernel class, which is returns a list of default bundles and priority can be important for config auto loading, the
 Pimcore Kernel exposes a `registerBundlesToCollection`  method which allows to add bundles to a `BundleCollection` with
 an optional priority (higher priority is loaded first) and a list of environments to handle (e.g. load only in `dev`
 environment).
@@ -29,10 +28,12 @@ As an example, register a third party bundle on the collection:
 ```php
 <?php
 
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\Kernel;
+namespace App;
 
-class AppKernel extends Kernel
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\Kernel as PimcoreKernel;
+
+class Kernel extends PimcoreKernel
 {
     /**
      * Adds bundles to register to the bundle collection. The collection is able
@@ -42,8 +43,8 @@ class AppKernel extends Kernel
      */
     public function registerBundlesToCollection(BundleCollection $collection)
     {
-        if (class_exists('\\AppBundle\\AppBundle')) {
-            $collection->addBundle(new \AppBundle\AppBundle);
+        if (class_exists('\\XYZBundle\\XYZBundle')) {
+            $collection->addBundle(new \XYZBundle\XYZBundle);
         }
 
         // add a custom third-party bundle here with a high priority and only for dev environment
@@ -65,21 +66,3 @@ You can also enable pimcore bundles manually by adding them via code as shown ab
 can't be enabled or disabled through the extension manager. Instead, the extension manager will only expose functionality
 to interact with the bundle installer (install/uninstall/update). 
 
-## Version Checking
-To avoid compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
-has following requirement `pimcore/core-version` that defines its current version: 
-
-```json
-{
-    ...
-    "require": {
-        ...
-        "pimcore/core-version": "5.0.0",
-        ...
-    }
-    ...
-}
-```
-
-If your components have the same requirement to the versions they can work with, composer prevents you from installing your components
-to an unsupported version of Pimcore due to version conflicts to the requirement `pimcore/core-version`. 

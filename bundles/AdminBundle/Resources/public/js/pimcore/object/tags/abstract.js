@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.abstract");
@@ -256,6 +256,41 @@ pimcore.object.tags.abstract = Class.create({
             metaData.tdStyle = 'text-decoration: line-through;color: #777;';
         }
         return value;
-    }
+    },
 
+    sumWidths: function (width1, width2) {
+        if (/^\d+$/.test(width1) && /^\d+$/.test(width2)) {
+            return parseInt(width1) + parseInt(width2);
+        }
+        if (/^\d+$/.test(width1)) {
+            width1 += 'px';
+        }
+        if (/^\d+$/.test(width2)) {
+            width2 += 'px';
+        }
+
+        return 'calc(' + width1 + ' + ' + width2 + ')';
+    },
+
+    /**
+     * @returns {string}
+     * @param additionalClasses
+     */
+    getWrapperClassNames: function (additionalClasses = '') {
+        let classString = "object_field";
+
+        if (this.type !== "undefined") {
+            classString += " object_field_type_" + this.type;
+        }
+
+        if (this.getName()) {
+            classString += " object_field_name_" + this.getName();
+        }
+
+        if (additionalClasses.length > 0) {
+            classString += " " + additionalClasses;
+        }
+
+        return classString;
+    },
 });

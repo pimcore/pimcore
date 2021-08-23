@@ -8,7 +8,7 @@ services:
     # REQUEST + ROUTING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener: ~
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\RoutingListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:
         calls:
@@ -58,6 +58,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentStackListener: ~
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 
     #
     # CONTROLLER HANDLING
@@ -86,8 +87,6 @@ services:
     #
 
     Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener:
-        arguments:
-            $renderErrorPage: '%pimcore.response_exception_listener.render_error_document%'
         calls:
             - [setLogger, ['@logger']]
 
@@ -144,3 +143,8 @@ services:
 
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\WebDebugToolbarListener:
+        arguments:
+            $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
+            $debugToolbarListener: '@?web_profiler.debug_toolbar'

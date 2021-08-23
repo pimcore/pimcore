@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -19,47 +18,64 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
+class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use DataObject\Traits\SimpleNormalizerTrait;
+
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
     public $fieldtype = 'table';
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $cols;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $colsFixed;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $rows;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $rowsFixed;
@@ -67,22 +83,30 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Default data
      *
+     * @internal
+     *
      * @var string
      */
     public $data = '';
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $columnConfigActivated = false;
 
     /**
+     * @internal
+     *
      * @var array
      */
     public $columnConfig = [];
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var string
      */
@@ -91,19 +115,14 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Type for the column
      *
+     * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array|string';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -111,19 +130,22 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -131,13 +153,16 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -296,14 +321,19 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if (empty($data)) {
+            // if it is empty then there is no need to serialize anything
+            return null;
+        }
+
         if (is_array($data)) {
             //make sure only array values are stored to DB
             $data = $this->convertDataToValueArray($data);
@@ -315,18 +345,18 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array|null
+     * @return array
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
-        if ($unserializedData === null) {
-            return $unserializedData;
+        if ($data === null || $unserializedData === null) {
+            return [];
         }
 
         //set array keys based on column configuration if set
@@ -356,7 +386,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param string|array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -383,11 +413,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -472,14 +502,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -491,14 +516,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -511,27 +529,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if (is_array($value)) {
-            return $value;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -553,11 +551,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -637,5 +632,214 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function isEqual($oldValue, $newValue): bool
     {
         return $this->isEqualArray($oldValue, $newValue);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGetterCode($class)
+    {
+        $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        $code .= $this->getPreGetValueHookCode($key);
+
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof  PreGetDataInterface || method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n\n";
+        }
+
+        // insert this line if inheritance from parent objects is allowed
+        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
+            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t" . '}' . "\n\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n\n";
+
+        $code .= "\t" . 'return $data ?? [];' . "\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGetterCodeObjectbrick($brickClass)
+    {
+        $key = $this->getName();
+
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        if ($this->supportsInheritance()) {
+            $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n\n";
+
+        $code .= "\t" . 'return $data ?? [];' . "\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    {
+        $key = $this->getName();
+
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$container = $this;' . "\n";
+            $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t" . 'return $data ?? [];' . "\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGetterCodeLocalizedfields($class)
+    {
+        $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
+
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+            $code .= $this->getPreGetValueHookCode($key);
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
+
+        $code .= "\treturn " . '$data ?? []' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
     }
 }

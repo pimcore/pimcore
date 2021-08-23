@@ -7,26 +7,32 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Config;
 
 use Pimcore\Event\Admin\Report\SettingsEvent;
 use Pimcore\Event\Admin\ReportEvents;
-use Pimcore\File;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles writing/merging report config and emitting an event on config save.
+ *
+ * @internal
  */
-class ReportConfigWriter
+final class ReportConfigWriter
 {
+    const REPORT_SETTING_ID = 'reports';
+
+    const REPORT_SETTING_SCOPE = 'pimcore';
+
     /**
      * @var EventDispatcherInterface
      */
@@ -37,6 +43,9 @@ class ReportConfigWriter
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function write(array $settings)
     {
         $settingsEvent = new SettingsEvent($settings);
@@ -47,9 +56,11 @@ class ReportConfigWriter
 
         $settings = $settingsEvent->getSettings();
 
-        File::putPhpFile(
-            $this->getConfigFile(),
-            to_php_data_file_format($settings)
+        SettingsStore::set(
+            self::REPORT_SETTING_ID,
+            json_encode($settings),
+            'string',
+            self::REPORT_SETTING_SCOPE
         );
     }
 

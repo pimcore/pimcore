@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.inputQuantityValue");
@@ -85,7 +85,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             queryMode: 'local'
         };
 
-        if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
+        if(this.data && this.data.unit != null) {
             options.value = this.data.unit;
         } else {
             options.value = -1;
@@ -102,7 +102,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             labelWidth: labelWidth,
             combineErrors: false,
             items: [this.inputField, this.unitField],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
@@ -115,7 +115,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 try {
                     metaData.tdCls += " grid_value_inherited";
                 } catch (e) {
@@ -124,7 +124,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             }
 
             if (value) {
-                return value.value + " " + value.unit;
+                return (value.value ? value.value : "") + " " + value.unitAbbr;
             } else {
                 return "";
             }

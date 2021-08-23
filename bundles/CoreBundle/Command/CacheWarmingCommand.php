@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -20,6 +21,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class CacheWarmingCommand extends AbstractCommand
 {
     /**
@@ -108,7 +112,7 @@ class CacheWarmingCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -123,6 +127,7 @@ class CacheWarmingCommand extends AbstractCommand
             $documentTypes = $this->getArrayOption('documentTypes', 'validDocumentTypes', 'document type');
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type');
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
+            $objectClasses = $this->input->getOption('classes');
         } catch (\InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
@@ -140,8 +145,9 @@ class CacheWarmingCommand extends AbstractCommand
         }
 
         if (in_array('object', $types)) {
-            $this->writeWarmingMessage('object', $objectTypes);
-            Warming::objects($objectTypes);
+            $extraInfo = count($objectClasses) ? ' from class: ' . implode(',', $objectClasses) : '';
+            $this->writeWarmingMessage('object', $objectTypes, $extraInfo);
+            Warming::objects($objectTypes, $objectClasses);
         }
 
         return 0;
@@ -151,13 +157,17 @@ class CacheWarmingCommand extends AbstractCommand
      * @param string $type
      * @param array $types
      */
-    protected function writeWarmingMessage($type, $types)
+    protected function writeWarmingMessage($type, $types, $extra = '')
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
         if (null !== $types && count($types) > 0) {
             $output .= sprintf(' for types %s', $this->humanList($types, 'and', '<info>%s</info>'));
         } else {
             $output .= sprintf(' for <info>all</info> types');
+        }
+
+        if (!empty($extra)) {
+            $output .= $extra;
         }
 
         $output .= '...';
@@ -218,6 +228,7 @@ class CacheWarmingCommand extends AbstractCommand
             foreach ($input as $value) {
                 if (!in_array($value, $this->$property)) {
                     $message = sprintf('Invalid %s: %s', $singular, $value);
+
                     throw new \InvalidArgumentException($message);
                 }
             }

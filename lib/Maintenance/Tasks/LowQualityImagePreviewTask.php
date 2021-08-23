@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -20,7 +21,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
-final class LowQualityImagePreviewTask implements TaskInterface
+/**
+ * @internal
+ */
+class LowQualityImagePreviewTask implements TaskInterface
 {
     /**
      * @var LoggerInterface
@@ -46,9 +50,8 @@ final class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute()
     {
-        if (!$this->lock->isAcquired() && date('H') <= 4) {
+        if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            $this->lock->acquire();
             $this->logger->debug('Execute low quality image preview generation');
 
             $listing = new Asset\Listing();
@@ -66,7 +69,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
                 /** @var Asset\Image[] $images */
                 $images = $listing->load();
                 foreach ($images as $image) {
-                    if (!file_exists($image->getLowQualityPreviewFileSystemPath())) {
+                    if (!$image->getLowQualityPreviewDataUri()) {
                         try {
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();

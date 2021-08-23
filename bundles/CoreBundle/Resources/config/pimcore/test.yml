@@ -3,6 +3,10 @@ framework:
     session:
         storage_id: session.storage.mock_file
     profiler: false
+    mailer:
+        transports:
+            main: 'null://null'
+            newsletter: 'null://null'
 
 web_profiler:
     toolbar: false

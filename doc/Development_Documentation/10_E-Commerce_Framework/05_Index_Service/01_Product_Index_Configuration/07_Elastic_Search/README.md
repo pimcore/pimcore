@@ -1,16 +1,16 @@
-# Special Aspects for Elastic Search
-Basically elastic search worker works as described in the [optimized architecture](../README.md). 
-Currently Elastic Search 5 and Elastic Search 6 are supported. 
+# Special Aspects for Elasticsearch
+Basically Elasticsearch worker works as described in the [optimized architecture](../README.md). 
+Currently, Elasticsearch 7 is supported. 
 
 ## Installation
 To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.
 
 ## Index Configuration
-Elastic search provides a couple of additional configuration options for the index to utilize elastic search features. 
+Elasticsearch provides a couple of additional configuration options for the index to utilize elasticsearch features. 
 See [Configuration Details](01_Configuration_Details.md) for more information. 
 
 ## Reindexing Mode
-It is possible that Elastic Search cannot update the mapping, e.g. if data types of attributes change on the fly. 
+It is possible that elasticsearch cannot update the mapping, e.g. if data types of attributes change on the fly. 
 For this case, a reindex is necessary. If it is necessary, a native ES reindex is executed automatically during
 `bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure`.
 
@@ -25,12 +25,12 @@ To manually start a reindex, following command can be used: `bin/console ecommer
 
 ## Indexing of Classification Store Attributes
 
-With Elastic Search it is possible to index all attributes of [Classification Store](../../../../05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
+With elasticsearch it is possible to index all attributes of [Classification Store](../../../../05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
 data without defining an attribute for each single classification store key.   
 
 For details see [Filter Classification Store](../../../07_Filter_Service/03_Elastic_Search/01_Filter_Classification_Store.md) 
 in Filter Service documentation. 
 
 ## Synonyms 
-Pimcore provides an out-of-the box integration for synonyms in elastic search. 
+Pimcore provides an out-of-the box integration for synonyms in elasticsearch. 
 See [Synonyms](./02_Synonyms.md) for details. 

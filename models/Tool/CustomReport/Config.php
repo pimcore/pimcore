@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\CustomReport;
@@ -20,7 +18,10 @@ namespace Pimcore\Model\Tool\CustomReport;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ * @internal
+ *
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete()
  * @method void save()
  */
@@ -29,116 +30,121 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $sql = '';
+    protected $sql = '';
 
     /**
      * @var array
      */
-    public $dataSourceConfig = [];
+    protected $dataSourceConfig = [];
 
     /**
      * @var array
      */
-    public $columnConfiguration = [];
+    protected $columnConfiguration = [];
 
     /**
      * @var string
      */
-    public $niceName = '';
+    protected $niceName = '';
 
     /**
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
      * @var string
      */
-    public $groupIconClass = '';
+    protected $groupIconClass = '';
 
     /**
      * @var string
      */
-    public $iconClass = '';
+    protected $iconClass = '';
 
     /**
      * @var bool
      */
-    public $menuShortcut;
+    protected $menuShortcut;
 
     /**
      * @var string
      */
-    public $reportClass;
+    protected $reportClass;
 
     /**
      * @var string
      */
-    public $chartType;
+    protected $chartType;
 
     /**
      * @var string
      */
-    public $pieColumn;
+    protected $pieColumn;
 
     /**
      * @var string
      */
-    public $pieLabelColumn;
+    protected $pieLabelColumn;
 
     /**
      * @var string
      */
-    public $xAxis;
+    protected $xAxis;
 
     /**
      * @var string|array
      */
-    public $yAxis;
+    protected $yAxis;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var bool
      */
-    public $shareGlobally;
+    protected $shareGlobally;
 
     /**
      * @var string[]
      */
-    public $sharedUserNames;
+    protected $sharedUserNames;
 
     /**
      * @var string[]
      */
-    public $sharedRoleNames;
+    protected $sharedRoleNames;
 
     /**
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
         try {
             $report = new self();
-            $report->getDao()->getByName($name);
+
+            /** @var Model\Tool\CustomReport\Config\Dao $dao */
+            $dao = $report->getDao();
+            $dao->getByName($name);
 
             return $report;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -156,13 +162,15 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         if ($user) {
             $items = $list->getDao()->loadForGivenUser($user);
         } else {
-            $items = $list->getDao()->load();
+            $items = $list->getDao()->loadList();
         }
 
         foreach ($items as $item) {
             $reports[] = [
                 'id' => $item->getName(),
                 'text' => $item->getName(),
+                'cls' => 'pimcore_treenode_disabled',
+                'writeable' => $item->isWriteable(),
             ];
         }
 
@@ -600,5 +608,11 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $data['sharedRoleIds'] = $this->getSharedRoleIds();
 
         return $data;
+    }
+
+    public function __clone()
+    {
+        $this->dao = clone $this->dao;
+        $this->dao->setModel($this);
     }
 }

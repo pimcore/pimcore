@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
@@ -21,8 +22,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionConfigurator implements SessionConfiguratorInterface
 {
     const ATTRIBUTE_BAG_CART = 'ecommerceframework_cart';
+
     const ATTRIBUTE_BAG_ENVIRONMENT = 'ecommerceframework_environment';
+
     const ATTRIBUTE_BAG_PRICING_ENVIRONMENT = 'ecommerceframework_pricing_environment';
+
     const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
     /**
@@ -39,7 +43,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function configure(SessionInterface $session)
     {
@@ -64,9 +68,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
 
         foreach ($bagNames as $bagName) {
             $sessionBag = $session->getBag($bagName);
-            if ($sessionBag) {
-                $sessionBag->clear();
-            }
+            $sessionBag->clear();
         }
     }
 }

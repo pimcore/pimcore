@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
@@ -24,6 +25,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Logger;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
@@ -34,6 +36,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @internal
+ */
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
@@ -55,7 +60,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
@@ -295,7 +300,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
                 $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
             } catch (\Throwable $e) {
-                $this->get('monolog.logger.pimcore')->error($e);
+                Logger::error($e);
             }
         }
 
@@ -353,11 +358,11 @@ class ExtensionManagerController extends AdminController implements KernelContro
         try {
             /** @var PimcoreBundleInterface $bundle */
             $bundle = new $bundleName();
-            $bundle->setContainer($this->container);
+            $bundle->setContainer(\Pimcore::getContainer());
 
             return $bundle;
         } catch (\Exception $e) {
-            $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
+            Logger::error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
                 'error' => $e->getMessage(),
             ]);
@@ -426,7 +431,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     {
         if ($iframePath = $bundle->getAdminIframePath()) {
             if ($iframePath instanceof RouteReferenceInterface) {
-                return $this->get('router')->generate(
+                return $this->generateUrl(
                     $iframePath->getRoute(),
                     $iframePath->getParameters(),
                     $iframePath->getType()
@@ -482,11 +487,12 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
-            $output = $installer->getOutputWriter()->getOutput();
+            /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
+            $output = $installer->getOutput();
             if (!empty($output)) {
                 $converter = new AnsiToHtmlConverter(null);
 
-                $converted = Encoding::fixUTF8($output);
+                $converted = Encoding::fixUTF8($output->fetch());
                 $converted = $converter->convert($converted);
 
                 if (!$decorated) {

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -33,21 +31,18 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
-        try {
-            $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $id);
-        } catch (\Exception $e) {
-        }
+        $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $id);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Document with the ID ' . $id . " doesn't exists");
+            throw new  Model\Exception\NotFoundException('document with id ' . $id . ' not found');
         }
     }
 
@@ -56,7 +51,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -71,10 +66,10 @@ class Dao extends Model\Element\Dao
                 'prettyUrl' => $path,
             ]);
 
-            if ($data['id']) {
+            if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new \Exception("document with path $path doesn't exist");
+                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
             }
         }
     }
@@ -103,7 +98,9 @@ class Dao extends Model\Element\Dao
     {
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
-        if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+        $validTables = $documentsConfig['valid_tables'];
+        if (in_array($this->model->getType(), $validTables)) {
             $typeSpecificTable = 'documents_' . $this->model->getType();
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
@@ -221,6 +218,7 @@ class Dao extends Model\Element\Dao
     public function getCurrentFullPath()
     {
         $path = null;
+
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', $this->model->getId());
         } catch (\Exception $e) {
@@ -482,7 +480,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_document WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC  LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_document WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC  LIMIT 1');
 
             if ($permissionsParent) {
                 return true;

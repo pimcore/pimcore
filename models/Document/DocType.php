@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -29,12 +27,16 @@ class DocType extends Model\AbstractModel
     /**
      * ID of the document-type
      *
+     * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * Name of the document-type
+     *
+     * @internal
      *
      * @var string
      */
@@ -43,31 +45,25 @@ class DocType extends Model\AbstractModel
     /**
      * Group of document-types
      *
+     * @internal
+     *
      * @var string
      */
     protected $group;
 
     /**
-     * @var string
-     */
-    protected $module;
-
-    /**
      * The specified controller
+     *
+     * @internal
      *
      * @var string
      */
     protected $controller;
 
     /**
-     * The specified action
-     *
-     * @var string
-     */
-    protected $action;
-
-    /**
      * The specified template
+     *
+     * @internal
      *
      * @var string
      */
@@ -76,24 +72,39 @@ class DocType extends Model\AbstractModel
     /**
      * Type, must be one of the following: page,snippet,email
      *
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $priority = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $modificationDate;
+
+    /**
+     * @internal
+     *
+     * @var null|int
+     */
+    protected $staticGeneratorEnabled;
 
     /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
@@ -125,14 +136,6 @@ class DocType extends Model\AbstractModel
         $type->save();
 
         return $type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
     }
 
     /**
@@ -173,18 +176,6 @@ class DocType extends Model\AbstractModel
     public function getTemplate()
     {
         return $this->template;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -288,26 +279,6 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
      * @param int $modificationDate
      *
      * @return $this
@@ -345,5 +316,21 @@ class DocType extends Model\AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getStaticGeneratorEnabled(): ?int
+    {
+        return $this->staticGeneratorEnabled;
+    }
+
+    /**
+     * @param null|int $staticGeneratorEnabled
+     */
+    public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
+    {
+        $this->staticGeneratorEnabled = $staticGeneratorEnabled;
     }
 }

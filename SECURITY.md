@@ -1,20 +1,14 @@
 # Security Policy
 
-## Supported Versions
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 6.8.x   | :white_check_mark: |
-
 ## Reporting a Vulnerability
 
-If you think that you have found a security issue in Pimcore, 
+If you think that you have found a security issue, 
 don’t use the bug tracker and don’t publish it publicly. 
-Instead, all security issues must be reported via [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/).
+Instead, all security issues must be reported via 📫 to [security-issue@pimcore.com](mailto:security-issue@pimcore.com).
 
 
 ## Resolving Process
-Every submitted security issue is handled with top priority by the core-team by following these steps: 
+Every submitted security issue is handled with top priority by following these steps: 
 
 1. Confirm the vulnerability
 2. Determine the severity

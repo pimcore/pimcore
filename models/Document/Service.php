@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document;
@@ -43,6 +41,7 @@ class Service extends Model\Element\Service
      * @var Model\User|null
      */
     protected $_user;
+
     /**
      * @var array
      */
@@ -99,7 +98,7 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
+    private static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
     {
         if ($document instanceof Document) {
             $document->save();
@@ -152,7 +151,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -207,7 +206,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -230,7 +229,7 @@ class Service extends Model\Element\Service
         }
 
         if ($language) {
-            $new->setProperty('language', 'text', $language, false);
+            $new->setProperty('language', 'text', $language, false, true);
         }
 
         $new->save();
@@ -272,7 +271,6 @@ class Service extends Model\Element\Service
             $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
-            $target->setAction($source->getAction());
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {
@@ -299,6 +297,8 @@ class Service extends Model\Element\Service
      * @param Document $document
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridDocumentData($document)
     {
@@ -317,7 +317,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Document $doc
      *
@@ -385,6 +385,8 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
+     * @internal
+     *
      * @param Document $document
      * @param array $rewriteConfig
      * @param array $params
@@ -448,6 +450,8 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * @internal
+     *
      * @param string $url
      *
      * @return Document|null
@@ -520,6 +524,8 @@ class Service extends Model\Element\Service
     /**
      * Get the nearest document by path. Used to match nearest document for a static route.
      *
+     * @internal
+     *
      * @param string|Request $path
      * @param bool $ignoreHardlinks
      * @param array $types
@@ -556,6 +562,7 @@ class Service extends Model\Element\Service
                 if ($document = Document::getByPath($p)) {
                     if (empty($types) || in_array($document->getType(), $types)) {
                         $document = $this->nearestPathCache[$cacheKey] = $document;
+
                         break;
                     }
                 } elseif (Model\Site::isSiteRequest()) {
@@ -569,6 +576,7 @@ class Service extends Model\Element\Service
                     if ($sitePrettyDocId) {
                         if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
                             $document = $this->nearestPathCache[$cacheKey] = $sitePrettyDoc;
+
                             break;
                         }
                     }
@@ -601,6 +609,8 @@ class Service extends Model\Element\Service
      * @return bool
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public static function generatePagePreview($id, $request = null, $hostUrl = null)
     {
@@ -609,7 +619,7 @@ class Service extends Model\Element\Service
         /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
-            $hostUrl = Tool::getHostUrl(false, $request);
+            $hostUrl = Tool::getHostUrl(null, $request);
         }
 
         $url = $hostUrl . $doc->getRealFullPath();

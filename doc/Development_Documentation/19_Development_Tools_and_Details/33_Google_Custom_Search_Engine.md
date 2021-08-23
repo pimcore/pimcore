@@ -29,19 +29,26 @@ So now we got the search engine ID and a server API key which we need to finish 
 configuration in Pimcore. 
 
 ### Server API Key
-Open the system settings in Pimcore and paste the API key into the marked field below and 
-save. 
-
-![Pimcore Google CSE Setup](../img/cse3.png)
+Configure the API key in `simple_api_key` config in config.yaml as follows:
+```yaml
+pimcore:
+    services:
+        google:
+            client_id: 73893596983.apps.googleusercontent.com
+            email: 73893596983@developer.gserviceaccount.com
+            simple_api_key: AIzaSyCo9Wj49hYJWW2WgOju4iMYNTvdcBxmyQ8
+            browser_api_key: AIzaSyBJX16kWAmUVEz1c1amzp2iKqAfumbcoQQ
+```
 
 ### Search engine ID
 The search engine ID is used in your controller/action to configure the search service: 
 `\Pimcore\Google\Cse::search()`.
 
 The place of interest (parameter cx) is marked with a comment in the code example below.
- 
+
 
 ### Code Example
+> Please note: These are examples from old demo application. Please adapt to the latest code style for implementation.
 
 #### Controller Action
 See: https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Controller/AdvancedController.php#L85-L85
@@ -51,4 +58,3 @@ See: https://github.com/pimcore/demo-basic/tree/master/app/Resources/views/Advan
 
 #### Partial View Script (includes/paging.php)
 See: https://github.com/pimcore/demo-basic/tree/master/app/Resources/views/Includes/paging.html.php
-

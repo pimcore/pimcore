@@ -22,14 +22,14 @@ For setting up an Assortment Tenant, following steps are necessary:
 - **Implementation of a Tenant Config:**
 The Tenant Config class is the central configuration of an assortment tenant, defines which products are available for 
 the tenant and provides the connection to the used *Product Index* implementation. It needs to implement 
-[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/ConfigInterface.php). 
+[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface`](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/IndexService/Config/ConfigInterface.php). 
 For detailed information see in-source documentation of the interface. Following implementations are provided by the framework 
 and may be extended:
    - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql`: Provides a simple mysql implementation of 
    the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ConfigOptimizedMysql`: Provides an optimized mysql implementation 
   of the product index.
-  - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elastic search](https://www.elastic.co/) 
+  - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elasticsearch](https://www.elastic.co/) 
   implementation of the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic`: Provides a default [findologic](https://www.findologic.com/) 
   implementation of the product index.
@@ -49,7 +49,7 @@ services:
 
 
 ### Setting current Assortment Tenant for Frontend
-The [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/EnvironmentInterface.php#L22-L22) 
+The [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EnvironmentInterface.php#L22-L22) 
 provides following methods to set the current Assortment Tenant when working with *Product Lists* in Code: 
 ```php
 <?php
@@ -110,7 +110,7 @@ assortment tenant.
 ### Implementing an Assortment Subtenant for MySQL
 The mapping which product is assigned to with subtenant is done with an additional mapping table. The necessary 
 joins and conditions are implemented within additional methods within 
-[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/MysqlConfigInterface.php): 
+[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface`](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/IndexService/Config/MysqlConfigInterface.php): 
  
 ```php
     /**
@@ -160,10 +160,10 @@ In order to populate the additional mapping data, also following methods have to
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
 ```
 
-For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
+For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
 
 
-### Implementing an Assortment Subtenant for Elastic Search
+### Implementing an Assortment Subtenant for Elasticsearch
 
 In order to populate the additional mapping data, the following method has to be implemented: 
 
@@ -180,8 +180,8 @@ In order to populate the additional mapping data, the following method has to be
 
 ```
 
-For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultElasticSearchSubTenantConfig.php).
+For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultElasticSearchSubTenantConfig.php).
 
 ---
 
-> Note: This is currently only implemented for MySQL and Elastic Search based product index implementations. 
+> Note: This is currently only implemented for MySQL and elasticsearch based product index implementations. 

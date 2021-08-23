@@ -1,21 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\Runtime;
@@ -30,23 +33,30 @@ use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 abstract class Kernel extends SymfonyKernel
 {
+    use MicroKernelTrait {
+        registerContainerConfiguration as microKernelRegisterContainerConfiguration;
+        registerBundles as microKernelRegisterBundles;
+    }
+
     /**
      * @var Extension\Config
      */
@@ -62,7 +72,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getRootDir()
     {
-        return PIMCORE_APP_ROOT;
+        return PIMCORE_PROJECT_ROOT;
     }
 
     /**
@@ -92,11 +102,53 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
+    protected function configureContainer(ContainerConfigurator $container): void
+    {
+        $projectDir = realpath($this->getProjectDir());
+
+        $container->import($projectDir . '/config/{packages}/*.yaml');
+        $container->import($projectDir . '/config/{packages}/'.$this->environment.'/*.yaml');
+
+        if (is_file($projectDir . '/config/services.yaml')) {
+            $container->import($projectDir . '/config/services.yaml');
+            $container->import($projectDir . '/config/{services}_'.$this->environment.'.yaml');
+        } elseif (is_file($path = $projectDir . '/config/services.php')) {
+            (require $path)($container->withPath($path), $this);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureRoutes(RoutingConfigurator $routes): void
+    {
+        $projectDir = realpath($this->getProjectDir());
+
+        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import($projectDir . '/config/{routes}/*.yaml');
+
+        if (is_file($projectDir . '/config/routes.yaml')) {
+            $routes->import($projectDir . '/config/routes.yaml');
+        } elseif (is_file($path = $projectDir . '/config/routes.php')) {
+            (require $path)($routes->withPath($path), $this);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) {
             $this->registerExtensionConfigFileResources($container);
         });
+
+        $bundleConfigLocator = new BundleConfigLocator($this);
+        foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
+            $loader->load($bundleConfig);
+        }
+
+        $this->microKernelRegisterContainerConfiguration($loader);
 
         //load system configuration
         $systemConfigFile = Config::locateConfigFile('system.yml');
@@ -104,16 +156,13 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        $bundleConfigLocator = new BundleConfigLocator($this);
-        foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
-            $loader->load($bundleConfig);
+        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports'] as $configDir) {
+            $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
+            if (is_dir($configDir)) {
+                // @phpstan-ignore-next-line
+                $loader->import($configDir);
+            }
         }
-
-        $configRealPath = realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
-        if ($configRealPath === false) {
-            throw new InvalidConfigurationException('File ' . $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml  cannot be found.');
-        }
-        $loader->load($configRealPath);
     }
 
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
@@ -142,7 +191,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function boot()
     {
@@ -163,7 +212,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function shutdown()
     {
@@ -172,11 +221,11 @@ abstract class Kernel extends SymfonyKernel
             $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
         }
 
-        return parent::shutdown();
+        parent::shutdown();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initializeContainer()
     {
@@ -195,10 +244,14 @@ abstract class Kernel extends SymfonyKernel
         register_shutdown_function(function () {
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
-            if (null !== $container = $this->getContainer()) {
+            try {
+                $container = $this->getContainer();
+            } catch (\LogicException) {
+                // Container is cleared. Allow tests to finish.
+            }
+            if (isset($container) && $container instanceof ContainerInterface) {
                 $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
-
             \Pimcore::shutdown();
         });
     }
@@ -211,6 +264,12 @@ abstract class Kernel extends SymfonyKernel
     public function registerBundles(): array
     {
         $collection = $this->createBundleCollection();
+
+        if (is_file($this->getProjectDir().'/config/bundles.php')) {
+            $flexBundles = [];
+            array_push($flexBundles, ...$this->microKernelRegisterBundles());
+            $collection->addBundles($flexBundles);
+        }
 
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
@@ -262,13 +321,14 @@ abstract class Kernel extends SymfonyKernel
             new SecurityBundle(),
             new TwigBundle(),
             new MonologBundle(),
-            new SwiftmailerBundle(),
             new DoctrineBundle(),
+            new DoctrineMigrationsBundle(),
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
+            new FlysystemBundle(),
         ], 100);
 
         // pimcore bundles
@@ -364,13 +424,6 @@ abstract class Kernel extends SymfonyKernel
         $defaultTimezone = @date_default_timezone_get();
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
-        }
-
-        // check some system variables
-        $requiredVersion = '7.3';
-        if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
-            $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
-            Tool::exitWithError($m);
         }
     }
 }

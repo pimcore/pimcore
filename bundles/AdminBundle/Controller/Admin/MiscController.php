@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -21,102 +22,40 @@ use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Tool\Storage;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
+ *
+ * @internal
  */
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
-     *
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableModulesAction(ControllerDataProvider $provider)
-    {
-        // convert to normal array
-        $bundles = array_values($provider->getBundles());
-
-        sort($bundles, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function (BundleInterface $bundle) {
-            return [
-                'name' => $bundle->getName(),
-            ];
-        }, $bundles);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
+     * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
      */
-    public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
+    public function getAvailableControllerReferencesAction(Request $request, ControllerDataProvider $provider)
     {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
+        $controllerReferences = $provider->getControllerReferences();
 
-        sort($controllers, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function ($controller) {
+        $result = array_map(function ($controller) {
             return [
                 'name' => $controller,
             ];
-        }, $controllers);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
-    {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = $routingDefaults['bundle'];
-        }
-
-        $controller = $request->get('controllerName');
-        if (empty($controller)) {
-            $controller = $routingDefaults['controller'];
-        }
-
-        $actions = $provider->getActions($controller, $bundle);
-
-        sort($actions, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function ($action) {
-            return [
-                'name' => $action,
-            ];
-        }, $actions);
+        }, $controllerReferences);
 
         return $this->adminJson([
             'data' => $result,
@@ -154,11 +93,11 @@ class MiscController extends AdminController
      *
      * @return Response
      */
-    public function jsonTranslationsSystemAction(Request $request)
+    public function jsonTranslationsSystemAction(Request $request, TranslatorInterface $translator)
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
+        /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
         $translations = $translator->getCatalogue($language)->all('admin');
@@ -172,8 +111,7 @@ class MiscController extends AdminController
             }
         }
 
-        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
-        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
+        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';');
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;
@@ -188,25 +126,33 @@ class MiscController extends AdminController
      */
     public function scriptProxyAction(Request $request)
     {
-        $allowedFileTypes = ['js', 'css'];
-        $scripts = explode(',', $request->get('scripts'));
-
-        if ($request->get('scriptPath')) {
-            $scriptPath = PIMCORE_WEB_ROOT . $request->get('scriptPath');
+        if ($storageFile = $request->get('storageFile')) {
+            $fileExtension = \Pimcore\File::getFileExtension($storageFile);
+            $storage = Storage::get('admin');
+            $scriptsContent = $storage->read($storageFile);
         } else {
-            $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/';
-        }
+            trigger_deprecation('pimcore/pimcore', '10.1', 'Calling /admin/misc/script-proxy without the parameter storageFile is deprecated and will not work in Pimcore 11.');
+            $allowedFileTypes = ['js', 'css'];
+            $scripts = explode(',', $request->get('scripts'));
 
-        $scriptsContent = '';
-        foreach ($scripts as $script) {
-            $filePath = $scriptPath . $script;
-            if (is_file($filePath) && is_readable($filePath) && in_array(\Pimcore\File::getFileExtension($script), $allowedFileTypes)) {
-                $scriptsContent .= file_get_contents($filePath);
+            if ($request->get('scriptPath')) {
+                $scriptPath = PIMCORE_WEB_ROOT . $request->get('scriptPath');
+            } else {
+                $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/';
             }
+
+            $scriptsContent = '';
+            foreach ($scripts as $script) {
+                $filePath = $scriptPath . $script;
+                if (is_file($filePath) && is_readable($filePath) && in_array(\Pimcore\File::getFileExtension($script), $allowedFileTypes)) {
+                    $scriptsContent .= file_get_contents($filePath);
+                }
+            }
+
+            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
         }
 
         if (!empty($scriptsContent)) {
-            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
             $contentType = 'text/javascript';
             if ($fileExtension == 'css') {
                 $contentType = 'text/css';
@@ -300,7 +246,7 @@ class MiscController extends AdminController
         ]);
     }
 
-    /* FILEEXPLORER */
+    // FILEEXPLORER
 
     /**
      * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})
@@ -590,8 +536,9 @@ class MiscController extends AdminController
 
         $limit = (int)$request->get('limit');
         $offset = (int)$request->get('start');
-        $sort = $request->get('sort');
-        $dir = $request->get('dir');
+        $sortInfo = ($request->get('sort') ? json_decode($request->get('sort'), true)[0] : []);
+        $sort = $sortInfo['property'] ?? null;
+        $dir = $sortInfo['direction'] ?? null;
         $filter = $request->get('filter');
         if (!$limit) {
             $limit = 20;

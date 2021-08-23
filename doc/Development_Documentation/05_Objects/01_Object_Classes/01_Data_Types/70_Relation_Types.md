@@ -51,7 +51,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
  
-$object = DataObject::getById(12345)
+$object = DataObject::getById(12345);
  
 $object->setMyManyToOneField(Document::getById(23));
 
@@ -84,11 +84,11 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 Related items that are unpublished are normally not returned. You can disable this behavior like this:
 ```php
 //also include unpublished relations form now on
-DataObject\AbstractObject::setHideUnpublished(false);
+DataObject::setHideUnpublished(false);
 //get a related object that is either published or unpublished
 $relationObject = $relation->getObject();
 //return to normal behavior
-DataObject\AbstractObject::setHideUnpublished(true);
+DataObject::setHideUnpublished(true);
 ```
 
 
@@ -115,24 +115,24 @@ All the other functionality is the same as with the normal objects data type.
 #### Access objects with metadata via PHP API
 ```php
 use Pimcore\Model\DataObject;
-  
+
 $object = DataObject::getById(73585);
- 
+
 //getting list of assigned objects with metadata (array of DataObject\Data\ObjectMetadata)
 $objects = $object->getMetadata();
- 
+
 //get first object of list
 $relation = $objects[0];
- 
+
 //get relation object
 $relationObject = $relation->getObject();
- 
+
 //access meta data via getters (getter = key of metadata column)
 $metaText = $relation->getText();
 $metaNumber = $relation->getNumber();
 $metaSelect = $relation->getSelect();
 $metaBool = $relation->getBool();
- 
+
 //setting data via setter
 $relation->setText("MetaText2");
 $relation->setNumber(5512);
@@ -143,15 +143,15 @@ $object->save();
 
 ```php
 use Pimcore\Model\DataObject;
-  
+
 //load your object (in this object we save the metadata objects)
 $object = DataObject::getById(73585);
-  
+
 //create a empty array for your metadata objects
 $objectArray = [];
-  
+
 //loop throu the objectlist (or array ...) and create object metadata
-foreach( $yourObjectsList as $yourObject ){
+foreach ($yourObjectsList as $yourObject) {
   
     //create the objectmetadata Object, "yourObject" is the referenced object
     $objectMetadata = new DataObject\Data\ObjectMetadata('metadata', ['text', 'number'],  $yourObject);
@@ -159,14 +159,14 @@ foreach( $yourObjectsList as $yourObject ){
     $objectMetadata->setText('Metadata');
     //set into the metadata field (named Number) the value 23
     $objectMetadata->setNumber(23);
-  
+
     //add to the empty "objectArray" array
     $objectArray[] = $objectMetadata;
 }
-  
+
 //set the metadataArray to your object
 $object->setMetadata($objectArray);
-  
+
 // now save all
 $object->save();
 ```
@@ -185,20 +185,21 @@ with `ElementMetadata`.
 
 ```php
 use Pimcore\Model\DataObject;
- 
+use Pimcore\Model\Document;
+
 $referencedElement = Document::getById(123);
 $references = [];
-$elementMetadata = new DataObject\Data\ElementMetadata('metadata', ['text', 'number'], referencedElement );
- 
+$elementMetadata = new DataObject\Data\ElementMetadata('metadata', ['text', 'number'], $referencedElement);
+
 //set into the metadata field (named text) the value "my lovely text"
 $elementMetadata->setText('my lovely text');
- 
+
 //set into the metadata field (named Number) the value 23
 $elementMetadata->setNumber(23);
- 
- 
+
+
 $references[] = $elementMetadata;
- 
+
 //set the metadata array to your object
 $object->setMetadata($references); 
 ```
@@ -210,7 +211,7 @@ $object->setMetadata($references);
 
 Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
 Many-To-Many relations it is easy to produce a huge amount of relations, which makes the object or an object list slow 
-in loading. 
+in loading.
 
 As a solution to this dilemma, Many-To-Many relational data types can be classified as `lazy loading` 
 in the class definition.
@@ -219,7 +220,6 @@ in the class definition.
 
 Attributes which are lazy loaded, are only loaded from the `database/cache` when their getter is called. In the 
 example above this would mean, that the Many-To-Many relational data is only loaded when calling `$object->getMyManyToManyField();`.
-
 
 
 ## Dependencies

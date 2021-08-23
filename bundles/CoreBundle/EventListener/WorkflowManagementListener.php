@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -33,51 +34,27 @@ use Pimcore\Workflow\Place;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Workflow\Registry;
 
+/**
+ * @internal
+ */
 class WorkflowManagementListener implements EventSubscriberInterface
 {
     /**
      * @var bool
      */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
-
-    /**
-     * @var Registry
-     */
-    private $workflowRegistry;
-
-    /**
-     * @var Place\StatusInfo
-     */
-    private $placeStatusInfo;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var ActionsButtonService
-     */
-    private $actionsButtonService;
-
-    public function __construct(Manager $workflowManager, Registry $workflowRegistry, Place\StatusInfo $placeStatusInfo, RequestStack $requestStack, ActionsButtonService $actionsButtonService)
-    {
-        $this->workflowManager = $workflowManager;
-        $this->workflowRegistry = $workflowRegistry;
-        $this->placeStatusInfo = $placeStatusInfo;
-        $this->requestStack = $requestStack;
-        $this->actionsButtonService = $actionsButtonService;
+    public function __construct(
+        private Manager $workflowManager,
+        private Place\StatusInfo $placeStatusInfo,
+        private RequestStack $requestStack,
+        private ActionsButtonService $actionsButtonService
+    ) {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -190,25 +167,32 @@ class WorkflowManagementListener implements EventSubscriberInterface
             $permissionsRespected = false;
             foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
                 if (!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
-                    $data['userPermissions'] = array_merge((array)$data['userPermissions'], $placeConfig->getUserPermissions($workflow, $element));
+                    $data['userPermissions'] = array_merge(
+                        (array)$data['userPermissions'],
+                        $placeConfig->getUserPermissions($workflow, $element)
+                    );
 
                     if ($element instanceof ConcreteObject) {
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
-                        $hasSelectedCustomLayout = $this->requestStack->getMasterRequest() && $this->requestStack->getMasterRequest()->query->has('layoutId') && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
+                        $hasSelectedCustomLayout = $this->requestStack->getMasterRequest(
+                            ) && $this->requestStack->getMasterRequest()->query->has(
+                                'layoutId'
+                            ) && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
 
                         if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
-
                             //load the new layout into the object container
                             $validLayouts = DataObject\Service::getValidLayouts($element);
 
                             //check that the layout id is valid before trying to load
                             if (!empty($validLayouts)) {
-
                                 // check user permissions again
-                                if ($validLayouts && $validLayouts[$workflowLayoutId]) {
+                                if ($validLayouts[$workflowLayoutId]) {
                                     $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                                     $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                                    DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));
+                                    DataObject\Service::enrichLayoutDefinition(
+                                        $customLayoutDefinition,
+                                        $e->getArgument('object')
+                                    );
                                     $data['layout'] = $customLayoutDefinition;
                                     $data['currentLayoutId'] = $workflowLayoutId;
                                 }

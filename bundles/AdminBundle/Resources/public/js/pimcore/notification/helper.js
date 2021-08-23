@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 pimcore.registerNS("pimcore.notification.helper.x");
 
@@ -83,7 +83,8 @@ pimcore.notification.helper.showNotifications = function (notifications) {
             height: 150,
             closable: true,
             autoClose: false,
-            tools: tools
+            tools: tools,
+            align: "br"
         });
         notification.show();
     }
@@ -92,6 +93,7 @@ pimcore.notification.helper.showNotifications = function (notifications) {
 pimcore.notification.helper.markAsRead = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_markasread', {id: id}),
+        method: 'PUT',
         success: function (response) {
             if (callback) {
                 callback();
@@ -116,6 +118,7 @@ pimcore.notification.helper.openDetails = function (id, callback) {
         success: function (response) {
             response = Ext.decode(response.responseText);
             if (!response.success) {
+                Ext.MessageBox.alert(t("error"), t("element_not_found"));
                 return;
             }
             pimcore.notification.helper.openDetailsWindow(
@@ -156,6 +159,7 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
 pimcore.notification.helper.delete = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_delete', {id: id}),
+        method: 'DELETE',
         success: function (response) {
             if (callback) {
                 callback();
@@ -167,6 +171,7 @@ pimcore.notification.helper.delete = function (id, callback) {
 pimcore.notification.helper.deleteAll = function (callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_deleteall'),
+        method: 'DELETE',
         success: function (response) {
             if (callback) {
                 callback();

@@ -1,23 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config\Listing;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 /**
@@ -25,31 +22,22 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Config\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('image-thumbnails');
-    }
-
     /**
-     * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
-     *
      * @return array
      */
-    public function load()
+    public function loadList()
     {
-        $properties = [];
-        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $configs = [];
 
-        foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData['id']);
+        foreach ($this->loadIdList() as $name) {
+            $configs[] = Config::getByName($name);
         }
 
-        $this->model->setThumbnails($properties);
+        $this->model->setThumbnails($configs);
 
-        return $properties;
+        return $configs;
     }
 
     /**
@@ -57,9 +45,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return count($this->loadIdList());
     }
 }

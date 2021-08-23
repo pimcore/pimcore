@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.search");
@@ -76,6 +76,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     editable: true,
                     typeAhead: true,
                     forceSelection: true,
+                    matchFieldWidth: false,
+                    anyMatch: true,
                     value: this.object.data["selectedClass"],
                     listeners: {
                         "select": this.changeClassSelect.bind(this)
@@ -289,12 +291,21 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview',
-                enableTextSelection: true
+                enableTextSelection: true,
+                listeners: {
+                    refresh: function (dataview) {
+                        Ext.each(dataview.panel.columns, function (column) {
+                            if (column.autoSizeColumn === true) {
+                                column.autoSize();
+                            }
+                        })
+                    }
+                },
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                    var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].dataIndex == 'id' || columnName[cellIndex].dataIndex == 'fullpath') {
+                    var columns = grid.grid.getColumnManager().getColumns();
+                    if (columns[cellIndex].dataIndex == 'id' || columns[cellIndex].dataIndex == 'fullpath') {
                         var data = this.store.getAt(rowIndex);
                         pimcore.helpers.openObject(data.get("id"), data.get("type"));
                     }

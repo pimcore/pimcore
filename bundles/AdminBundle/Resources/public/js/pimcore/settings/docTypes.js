@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.document.doctypes");
@@ -72,38 +72,17 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.TextField({})
             },
             {
-                text: t('bundle') + "(" + t('optional') + ")",
-                flex: 50,
-                sortable: true,
-                dataIndex: 'module',
-                editor: new Ext.form.ComboBox({
-                    store: new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailablemodules'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    triggerAction: "all",
-                    displayField: 'name'
-                })
-            },
-            {
                 text: t("controller"),
-                flex: 50,
+                flex: 200,
                 sortable: true,
                 dataIndex: 'controller',
                 editor: new Ext.form.ComboBox({
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailablecontrollers'),
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -111,68 +90,17 @@ pimcore.settings.document.doctypes = Class.create({
                         },
                         fields: ["name"]
                     }),
-                    queryMode: 'local',
                     triggerAction: "all",
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     displayField: 'name',
                     valueField: 'name',
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params: {
-                                    moduleName: currentRecord[0].data.module
-                                },
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
-                    }
-                })
-            },
-            {
-                text: t("action"),
-                flex: 50,
-                sortable: true,
-                dataIndex: 'action',
-                editor: new Ext.form.ComboBox({
-                    store: new Ext.data.Store({
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailableactions'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    queryMode: 'local',
-                    triggerAction: "all",
-                    displayField: 'name',
-                    valueField: 'name',
-                    matchFieldWidth: false,
-                    listConfig: {
-                        maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params: {
-                                    controllerName: currentRecord[0].data.controller,
-                                    moduleName: currentRecord[0].data.module
-                                },
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
                     }
                 })
             },
@@ -201,15 +129,6 @@ pimcore.settings.document.doctypes = Class.create({
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            el.getStore().reload({
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
                     }
                 })
             },
@@ -235,6 +154,27 @@ pimcore.settings.document.doctypes = Class.create({
                     editable: false,
                     triggerAction: "all"
                 })
+            },
+            {
+                xtype: 'checkcolumn',
+                text: t("static"),
+                dataIndex: 'staticGeneratorEnabled',
+                width: 40,
+                renderer: function (value, metaData, record) {
+                    return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
+                },
+                listeners: {
+                    beforecheckchange: function (el, rowIndex, checked, eOpts) {
+                        if (this.store.getAt(rowIndex).get("type") !== "page") {
+                            record.set('staticGeneratorEnabled', false);
+                            return false;
+                        }
+                    }.bind(this),
+                    checkChange: function (column, rowIndex, checked, eOpts) {
+                        var record = this.store.getAt(rowIndex);
+                        record.set('staticGeneratorEnabled', checked);
+                    }.bind(this)
+                }
             },
             {
                 text: t("creationDate"),
@@ -337,6 +277,8 @@ pimcore.settings.document.doctypes = Class.create({
                 forceFit: true
             }
         });
+
+        pimcore.plugin.broker.fireEvent("prepareDocumentTypesGrid", this.grid, this);
 
         return this.grid;
     },

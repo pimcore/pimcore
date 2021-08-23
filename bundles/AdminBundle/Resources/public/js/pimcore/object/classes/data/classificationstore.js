@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.classificationstore");
@@ -54,10 +54,10 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
         this.specificPanel.removeAll();
 
         this.specificPanel.add({
-                    xtype: "numberfield",
-                    name: "labelWidth",
-                    fieldLabel: t("label_width"),
-                    value: this.datax.labelWidth
+            xtype: "numberfield",
+            name: "labelWidth",
+            fieldLabel: t("label_width"),
+            value: this.datax.labelWidth
         });
 
         this.specificPanel.add({
@@ -152,7 +152,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
                     allowedGroupIds: source.datax.allowedGroupIds,
                     hideEmptyData: source.datax.hideEmptyData,
                     disallowAddRemove: source.datax.disallowAddRemove,
-                    storeId: source.datax.storeId 
+                    storeId: source.datax.storeId
                 });
         }
     }

@@ -7,23 +7,26 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Console;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Implements a ConsoleOutput with configurable output. Useful when needing to catch both output
  * and error output in a buffered output.
+ *
+ * @internal
  */
 class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
 {
@@ -116,5 +119,13 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
     public function setErrorOutput(OutputInterface $error)
     {
         $this->errorOutput = $error;
+    }
+
+    public function section(): ConsoleSectionOutput
+    {
+        $sections = [];
+        $stream = @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
+
+        return new ConsoleSectionOutput($stream, $sections, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
     }
 }

@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Node;
@@ -20,6 +20,9 @@ namespace Pimcore\Twig\Node;
 use Twig\Compiler;
 use Twig\Node\Node;
 
+/**
+ * @internal
+ */
 class AssetCompressNode extends Node
 {
     public function __construct(Node $body, $lineno, $tag = 'pimcoreassetcompress')
@@ -33,6 +36,6 @@ class AssetCompressNode extends Node
             ->addDebugInfo($this)
             ->write("ob_start();\n")
             ->subcompile($this->getNode('body'))
-            ->write("\n; echo trim(str_replace(\"\n\", '', ob_get_clean())); \n");
+            ->write("\n; echo trim(str_replace(\"\n\", '', ob_get_clean()));\n");
     }
 }

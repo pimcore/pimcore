@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -20,16 +19,31 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
+class Multiselect extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    \JsonSerializable,
+    NormalizerInterface,
+    LayoutDefinitionEnrichmentInterface,
+    FieldDefinitionEnrichmentInterface,
+    DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
@@ -38,42 +52,62 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Available options to select
      *
+     * @internal
+     *
      * @var array|null
      */
     public $options;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $height;
+    public $height = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $renderType;
 
-    /** Options provider class
+    /**
+     * Options provider class
+     *
+     * @internal
+     *
      * @var string
      */
     public $optionsProviderClass;
 
-    /** Options provider data
+    /**
+     * Options provider data
+     *
+     * @internal
+     *
      * @var string
      */
     public $optionsProviderData;
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var string
      */
@@ -82,18 +116,15 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Type for the column
      *
+     * @internal
+     *
      * @var string
      */
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
+     * @internal
      *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $dynamicOptions = false;
@@ -119,7 +150,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -127,19 +158,22 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -147,13 +181,16 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -201,7 +238,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -255,7 +292,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -315,14 +352,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws Model\Element\ValidationException
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -334,14 +366,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -354,22 +379,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return explode(',', $importValue);
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -412,21 +422,25 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator == '=') {
+        if ($operator === '=') {
             $name = $params['name'] ? $params['name'] : $this->name;
+
+            $db = \Pimcore\Db::get();
+            $key = $db->quoteIdentifier($name);
+            if (!empty($params['brickPrefix'])) {
+                $key = $params['brickPrefix'].$key;
+            }
+
             $value = "'%,".$value.",%'";
 
-            return '`'.$name.'` LIKE '.$value.' ';
+            return $key.' LIKE '.$value.' ';
         }
 
         return null;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -453,7 +467,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
             $html = '<ul>';
 
             foreach ($this->options as $option) {
-                if ($map[$option['value']]) {
+                if ($map[$option['value']] ?? false) {
                     $value = $option['key'];
                     $html .= '<li>' . $value . '</li>';
                 }
@@ -512,7 +526,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    public function enrichFieldDefinition($context = [])
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -529,14 +546,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * Override point for enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -597,6 +609,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return $existingData;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
@@ -623,5 +638,92 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+
+        if ($this->getOptionsProviderClass()) {
+            $blockedVars[] = 'options';
+        }
+
+        return $blockedVars;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string[]|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string[]|null';
+    }
+
+    /**
+     * Perform sanity checks, see #5010.
+     *
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function preSave($containerDefinition, $params = [])
+    {
+        /** @var ?DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
+        if ($optionsProvider) {
+            $context = [];
+            $context['fieldname'] = $this->getName();
+
+            $options = $optionsProvider->getOptions($context, $this);
+        } else {
+            $options = $this->getOptions();
+        }
+        if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
+            return $containsComma || str_contains($option['value'], ',');
+        }, false)) {
+            throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
+        }
+    }
+
+    /**
+     * @param mixed $containerDefinition
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function postSave($containerDefinition, $params = [])
+    {
+        // nothing to do
     }
 }

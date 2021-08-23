@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -33,53 +34,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  *  - if request is a sub-request, try to read document from master request
  *  - if all fails, try to find the nearest document by path
+ *
+ * @internal
  */
 class DocumentFallbackListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
-
-    /**
-     * @var Document\Service
-     */
-    protected $documentService;
-
-    /**
      * @var array
      */
-    protected $options;
+    protected array $options;
 
     /**
-     * @var Document
+     * @var Document|null
      */
-    private $fallbackDocument;
+    private ?Document $fallbackDocument = null;
 
     public function __construct(
-        RequestStack $requestStack,
-        DocumentResolver $documentResolver,
-        SiteResolver $siteResolver,
-        Document\Service $documentService,
+        protected RequestStack $requestStack,
+        protected DocumentResolver $documentResolver,
+        protected SiteResolver $siteResolver,
+        protected Document\Service $documentService,
         array $options = []
     ) {
-        $this->requestStack = $requestStack;
-        $this->documentResolver = $documentResolver;
-        $this->siteResolver = $siteResolver;
-        $this->documentService = $documentService;
-
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);
 

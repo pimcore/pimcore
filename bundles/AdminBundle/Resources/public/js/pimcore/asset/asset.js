@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.asset");
@@ -29,13 +29,18 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     getDataComplete: function (response) {
-
         try {
             this.data = Ext.decode(response.responseText);
 
             if (typeof this.data.editlock == "object") {
                 pimcore.helpers.lockManager(this.id, "asset", this.type, this.data);
                 throw "asset is locked";
+            }
+
+            if(this.type !== this.data.type) {
+                pimcore.helpers.closeAsset(this.id);
+                pimcore.helpers.openAsset(this.id, this.data.type);
+                return;
             }
 
             this.addTab();

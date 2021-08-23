@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
@@ -24,12 +22,19 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Asset\Video\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        parent::configure();
-        $this->setFile('video-thumbnails');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['assets']['video']['thumbnails']['definitions'],
+            'settingsStoreScope' => 'pimcore_video_thumbnails',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
+            'legacyConfigFile' => 'video-thumbnails.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS',
+        ]);
     }
 
     /**
@@ -43,13 +48,20 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setName($id);
         }
 
-        $data = $this->db->getById($this->model->getName());
+        $data = $this->getDataByName($this->model->getName());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
-            throw new \Exception('Thumbnail with id: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Thumbnail with ID "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 
@@ -66,7 +78,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['name', 'description', 'group', 'items',
+        $allowedProperties = ['name', 'description', 'group', 'items', 'medias',
             'videoBitrate', 'audioBitrate', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
@@ -75,7 +87,7 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
-        $this->db->insertOrUpdate($data, $this->model->getName());
+        $this->saveData($this->model->getName(), $data);
         $this->autoClearTempFiles();
     }
 
@@ -84,7 +96,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete()
     {
-        $this->db->delete($this->model->getName());
+        $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
     }
 
@@ -94,5 +106,25 @@ class Dao extends Model\Dao\PhpArrayTable
         if ($enabled) {
             $this->model->clearTempFiles();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'assets' => [
+                    'video' => [
+                        'thumbnails' => [
+                            'definitions' => [
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

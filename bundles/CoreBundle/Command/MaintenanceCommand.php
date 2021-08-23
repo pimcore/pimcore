@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -21,27 +22,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class MaintenanceCommand extends AbstractCommand
 {
-    /**
-     * @var ExecutorInterface
-     */
-    private $maintenanceExecutor;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @param ExecutorInterface $maintenanceExecutor
      * @param LoggerInterface $logger
      */
-    public function __construct(ExecutorInterface $maintenanceExecutor, LoggerInterface $logger)
+    public function __construct(private ExecutorInterface $maintenanceExecutor, private LoggerInterface $logger)
     {
-        $this->maintenanceExecutor = $maintenanceExecutor;
-        $this->logger = $logger;
-
         parent::__construct();
     }
 
@@ -83,7 +74,7 @@ class MaintenanceCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

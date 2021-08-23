@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -23,6 +24,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
@@ -35,57 +37,28 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Handles element setup logic from request. Basically this does what the init() method
- * on the ZF frontend controller did.
+ * Handles element setup logic from request.
+ *
+ * @internal
  */
 class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var UserLoader
-     */
-    protected $userLoader;
-
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    public const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
 
     public function __construct(
-        DocumentResolver $documentResolver,
-        EditmodeResolver $editmodeResolver,
-        RequestHelper $requestHelper,
-        UserLoader $userLoader,
-        DocumentTargetingConfigurator $targetingConfigurator
+        protected DocumentResolver $documentResolver,
+        protected EditmodeResolver $editmodeResolver,
+        protected RequestHelper $requestHelper,
+        protected UserLoader $userLoader,
+        private DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->requestHelper = $requestHelper;
-        $this->userLoader = $userLoader;
-        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -126,7 +99,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document);
+                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
                 $this->handleObjectParams($request);
             }
 
@@ -193,10 +166,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @param Request $request
      * @param Document|null $document
+     * @param User $user
      *
      * @return Document|null
      */
-    protected function handleAdminUserDocumentParams(Request $request, ?Document $document)
+    private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user)
     {
         if (!$document) {
             return null;
@@ -204,7 +178,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document);
+            $document = $this->handleEditmode($document, $user);
         }
 
         // document preview
@@ -251,10 +225,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     /**
      * @param Document $document
+     * @param User $user
      *
-     * @return mixed|Document|Document\PageSnippet
+     * @return Document
      */
-    protected function handleEditmode(Document $document)
+    protected function handleEditmode(Document $document, User $user)
     {
         // check if there is the document in the session
         if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
@@ -269,12 +244,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             ]);
 
             // set the latest available version for editmode if there is no doc in the session
-            $latestVersion = $document->getLatestVersion();
-            if ($latestVersion) {
-                $latestDoc = $latestVersion->loadData();
+            if ($document instanceof Document\PageSnippet) {
+                $latestVersion = $document->getLatestVersion($user->getId());
+                if ($latestVersion) {
+                    $latestDoc = $latestVersion->loadData();
 
-                if ($latestDoc instanceof Document\PageSnippet) {
-                    $document = $latestDoc;
+                    if ($latestDoc instanceof Document\PageSnippet) {
+                        $document = $latestDoc;
+                    }
                 }
             }
         }

@@ -1,22 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Carbon\Carbon;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
@@ -137,7 +140,7 @@ class DefaultService implements ServiceInterface
         $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);
         $offer->setPublished(true);
-        $offer->setDateCreated(new \DateTime());
+        $offer->setDateCreated(new Carbon());
 
         return $offer;
     }
@@ -164,20 +167,17 @@ class DefaultService implements ServiceInterface
         $offerItem->setCartItemKey($item->getItemKey());
         $offerItem->setKey($item->getProduct()->getId() . '_' . $item->getItemKey());
 
+        $product = $item->getProduct();
         $offerItem->setAmount($item->getCount());
-        $offerItem->setProduct($item->getProduct());
-        if ($item->getProduct()) {
-            $offerItem->setProductName($item->getProduct()->getOSName());
-            $offerItem->setProductNumber($item->getProduct()->getOSProductNumber());
+        $offerItem->setProduct($product);
+        if ($product instanceof CheckoutableInterface) {
+            $offerItem->setProductName($product->getOSName());
+            $offerItem->setProductNumber($product->getOSProductNumber());
         }
 
         $offerItem->setComment($item->getComment());
 
-        $price = Decimal::zero();
-        if ($item->getTotalPrice()) {
-            $price = $item->getTotalPrice()->getAmount();
-        }
-
+        $price = $item->getTotalPrice()->getAmount();
         $price = $this->priceTransformationHook($price);
 
         $offerItem->setOriginalTotalPrice($price->asString());
@@ -213,11 +213,7 @@ class DefaultService implements ServiceInterface
 
         $offerItem->setComment($cartItem->getComment());
 
-        $price = Decimal::zero();
-        if ($cartItem->getTotalPrice()) {
-            $price = $cartItem->getTotalPrice()->getAmount();
-        }
-
+        $price = $cartItem->getTotalPrice()->getAmount();
         $price = $this->priceTransformationHook($price);
 
         $originalTotalPrice = Decimal::create($offerItem->getOriginalTotalPrice());

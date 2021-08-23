@@ -1,18 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
@@ -29,6 +30,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/notification")
+ *
+ * @internal
  */
 class NotificationController extends AdminController
 {
@@ -102,7 +105,17 @@ class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $id = (int) $request->get('id', 0);
-        $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+
+        try {
+            $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+        } catch (\UnexpectedValueException $e) {
+            return $this->adminJson(
+                [
+                    'success' => false,
+                ]
+            );
+        }
+
         $data = $service->format($notification);
 
         return $this->adminJson([
@@ -123,7 +136,7 @@ class NotificationController extends AdminController
     {
         $this->checkPermission('notifications');
 
-        $filter = ['recipient = ?' => (int) $this->getAdminUser()->getId()];
+        $filter = ['recipient' => (int) $this->getAdminUser()->getId()];
         $parser = new NotificationServiceFilterParser($request);
 
         foreach ($parser->parse() as $key => $val) {
@@ -182,7 +195,7 @@ class NotificationController extends AdminController
     }
 
     /**
-     * @Route("/mark-as-read", name="pimcore_admin_notification_markasread")
+     * @Route("/mark-as-read", name="pimcore_admin_notification_markasread", methods={"PUT"})
      *
      * @param Request $request
      * @param NotificationService $service
@@ -200,7 +213,7 @@ class NotificationController extends AdminController
     }
 
     /**
-     * @Route("/delete", name="pimcore_admin_notification_delete")
+     * @Route("/delete", name="pimcore_admin_notification_delete", methods={"DELETE"})
      *
      * @param Request $request
      * @param NotificationService $service
@@ -218,7 +231,7 @@ class NotificationController extends AdminController
     }
 
     /**
-     * @Route("/delete-all", name="pimcore_admin_notification_deleteall")
+     * @Route("/delete-all", name="pimcore_admin_notification_deleteall", methods={"DELETE"})
      *
      * @param Request $request
      * @param NotificationService $service

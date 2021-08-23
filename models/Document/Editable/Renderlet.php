@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -25,7 +23,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -35,12 +32,16 @@ class Renderlet extends Model\Document\Editable
     /**
      * Contains the ID of the linked object
      *
+     * @internal
+     *
      * @var int|null
      */
     protected $id;
 
     /**
      * Contains the object
+     *
+     * @internal
      *
      * @var Document|Asset|DataObject|null
      */
@@ -49,6 +50,8 @@ class Renderlet extends Model\Document\Editable
     /**
      * Contains the type
      *
+     * @internal
+     *
      * @var string|null
      */
     protected $type;
@@ -56,14 +59,14 @@ class Renderlet extends Model\Document\Editable
     /**
      * Contains the subtype
      *
+     * @internal
+     *
      * @var string|null
      */
     protected $subtype;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -71,9 +74,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -103,9 +104,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -113,27 +112,36 @@ class Renderlet extends Model\Document\Editable
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
-        if (!$this->config['controller'] && !$this->config['action']) {
-            if (is_null($this->config)) {
-                $this->config = [];
-            }
-            $this->config += Tool::getRoutingDefaults();
+        if (!is_array($this->config)) {
+            $this->config = [];
         }
 
-        if (method_exists($this->o, 'isPublished')) {
-            if (!$this->o->isPublished()) {
-                return '';
-            }
+        if (empty($this->config['controller']) && !empty($this->config['template'])) {
+            $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
+
+        if (empty($this->config['controller'])) {
+            // this can be the case e.g. in \Pimcore\Model\Search\Backend\Data::setDataFromElement() where
+            // this method is called without the config, so it would just render the default controller with the default template
+            return '';
+        }
+
+        $this->load();
 
         if ($this->o instanceof Element\ElementInterface) {
+            if (method_exists($this->o, 'isPublished')) {
+                if (!$this->o->isPublished()) {
+                    return '';
+                }
+            }
+
             // apply best matching target group (if any)
             if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
                 $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
+            $blockparams = ['controller', 'template'];
 
             $params = [
                 'template' => isset($this->config['template']) ? $this->config['template'] : null,
@@ -149,18 +157,8 @@ class Renderlet extends Model\Document\Editable
                 }
             }
 
-            $moduleOrBundle = null;
-
-            if (isset($this->config['bundle'])) {
-                $moduleOrBundle = $this->config['bundle'];
-            } elseif (isset($this->config['module'])) {
-                $moduleOrBundle = $this->config['module'];
-            }
-
             return $editableHandler->renderAction(
                 $this->config['controller'],
-                $this->config['action'],
-                $moduleOrBundle,
                 $params
             );
         }
@@ -169,11 +167,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -189,11 +183,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -221,7 +211,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -251,7 +241,7 @@ class Renderlet extends Model\Document\Editable
      *
      * @internal param mixed $data
      */
-    public function getObjectType($object = null)
+    private function getObjectType($object = null)
     {
         $this->load();
 
@@ -266,7 +256,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -280,7 +270,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -301,7 +291,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {
@@ -348,7 +338,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Object|null $o
      *
      * @return Document\Editable\Renderlet
      */
@@ -360,7 +350,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return Asset|Document|Object
+     * @return Asset|Document|Object|null
      */
     public function getO()
     {

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -18,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
+ *
+ * @internal
  */
 class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
@@ -176,7 +180,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
     {
         $name = $request->get('name');
         $storeId = $request->get('storeId');
-        $alreadyExist = false;
         $config = Classificationstore\CollectionConfig::getByName($name, $storeId);
 
         if (!$config) {
@@ -186,7 +189,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $config->save();
         }
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => true, 'id' => $config->getName()]);
     }
 
     /**
@@ -271,7 +274,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $storeId = $request->get('storeId');
         $storeId = $storeId ? $storeId : $storeIdFromDefinition;
 
-        $conditionParts[] = ' (storeId = ' . $storeId . ')';
+        $conditionParts[] = ' (storeId = ' . $db->quote($storeId) . ')';
 
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
@@ -414,7 +417,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
 
         if ($request->get('storeId')) {
-            $conditionParts[] = '(storeId = ' . $request->get('storeId') . ')';
+            $conditionParts[] = '(storeId = ' . $db->quote($request->get('storeId')) . ')';
         }
 
         if ($request->get('filter')) {
@@ -644,16 +647,19 @@ class ClassificationstoreController extends AdminController implements KernelCon
     /**
      * @Route("/list-stores", name="pimcore_admin_dataobject_classificationstore_liststores", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function listStoresAction(Request $request)
+    public function listStoresAction()
     {
-        $list = new Classificationstore\StoreConfig\Listing();
-        $list = $list->load();
+        $storeConfigs = [];
+        $storeConfigListing = new Classificationstore\StoreConfig\Listing();
+        $storeConfigListing->load();
 
-        return $this->adminJson($list);
+        foreach ($storeConfigListing as $storeConfig) {
+            $storeConfigs[] = $storeConfig->getObjectVars();
+        }
+
+        return $this->adminJson($storeConfigs);
     }
 
     /**
@@ -787,6 +793,11 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $limit = 15;
         $orderKey = 'name';
         $order = 'ASC';
+        $relationIds = $request->get('relationIds');
+
+        if ($relationIds) {
+            $relationIds = json_decode($relationIds, true);
+        }
 
         if ($request->get('dir')) {
             $order = $request->get('dir');
@@ -794,6 +805,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
             $order = $sortingSettings['order'];
@@ -806,7 +818,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         if ($request->get('limit')) {
             $limit = $request->get('limit');
+        } elseif (is_array($relationIds)) {
+            $limit = count($relationIds);
         }
+
         if ($request->get('start')) {
             $start = $request->get('start');
         }
@@ -816,6 +831,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($limit > 0) {
             $list->setLimit($limit);
         }
+
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
@@ -826,10 +842,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
-            $count = 0;
-
             foreach ($filters as $f) {
-                $count++;
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -840,15 +853,15 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $conditionParts[] = ' groupId = ' . $list->quote($groupId);
         }
 
-        $relationIds = $request->get('relationIds');
         if ($relationIds) {
-            $relationIds = json_decode($relationIds, true);
             $relationParts = [];
+
             foreach ($relationIds as $relationId) {
                 $keyId = $relationId['keyId'];
                 $groupId = $relationId['groupId'];
                 $relationParts[] = '(keyId = ' . $list->quote($keyId) . ' AND groupId = ' . $list->quote($groupId) . ')';
             }
+
             $conditionParts[] = '(' . implode(' OR ', $relationParts) . ')';
         }
 
@@ -861,11 +874,11 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $rootElement = [];
 
         $data = [];
-        /** @var Classificationstore\KeyGroupRelation $config */
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
             $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+            DataObject\Service::enrichLayoutDefinition($definition);
 
             $item = [
                 'keyId' => $config->getKeyId(),
@@ -963,7 +976,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             foreach ($groupsData as $groupItem) {
                 $groupId = $groupItem['groupId'];
-                if (!$allowedGroupIds || ($allowedGroupIds && in_array($groupId, $allowedGroupIds))) {
+                if (!$allowedGroupIds || in_array($groupId, $allowedGroupIds)) {
                     $groupIdList[] = $groupId;
                 }
             }
@@ -1012,7 +1025,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
                     $context['keyId'] = $keyData->getKeyId();
                     $context['groupId'] = $groupId;
                     $context['keyDefinition'] = $definition;
-                    if (method_exists($definition, 'enrichLayoutDefinition')) {
+
+                    //TODO Pimcore 11: remove method_exists BC layer
+                    if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                        if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                            trigger_deprecation('pimcore/pimcore', '10.1',
+                                'Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                                'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class);
+                        }
                         $definition = $definition->enrichLayoutDefinition($object, $context);
                     }
 
@@ -1092,7 +1112,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $context['keyId'] = $keyData->getKeyId();
             $context['groupId'] = $groupId;
             $context['keyDefinition'] = $definition;
-            if (method_exists($definition, 'enrichLayoutDefinition')) {
+
+            //TODO Pimcore 11: remove method_exists BC layer
+            if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
+                if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
+                    trigger_deprecation('pimcore/pimcore', '10.1',
+                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
+                }
                 $definition = $definition->enrichLayoutDefinition($object, $context);
             }
 
@@ -1143,21 +1170,16 @@ class ClassificationstoreController extends AdminController implements KernelCon
                     $keyIdList = $keyIdList->load();
                     if ($keyIdList) {
                         $keyIds = [];
-                        /** @var Classificationstore\KeyGroupRelation $keyEntry */
                         foreach ($keyIdList as $keyEntry) {
                             $keyIds[] = $keyEntry->getKeyId();
                         }
 
-                        if ($keyIds) {
-                            $keyCriteria = ' id in (' . implode(',', $keyIds) . ')';
-                        }
+                        $keyCriteria = ' id in (' . implode(',', $keyIds) . ')';
                     }
                 }
             }
 
-            if ($keyCriteria) {
-                $conditionParts[] = $keyCriteria;
-            }
+            $conditionParts[] = $keyCriteria;
         }
 
         $start = 0;
@@ -1340,27 +1362,24 @@ class ClassificationstoreController extends AdminController implements KernelCon
     public function addPropertyAction(Request $request)
     {
         $name = $request->get('name');
-        $alreadyExist = false;
         $storeId = $request->get('storeId');
 
-        if (!$alreadyExist) {
-            $definition = [
-                'fieldtype' => 'input',
-                'name' => $name,
-                'title' => $name,
-                'datatype' => 'data',
-            ];
-            $config = new Classificationstore\KeyConfig();
-            $config->setName($name);
-            $config->setTitle($name);
-            $config->setType('input');
-            $config->setStoreId($storeId);
-            $config->setEnabled(1);
-            $config->setDefinition(json_encode($definition));
-            $config->save();
-        }
+        $definition = [
+            'fieldtype' => 'input',
+            'name' => $name,
+            'title' => $name,
+            'datatype' => 'data',
+        ];
+        $config = new Classificationstore\KeyConfig();
+        $config->setName($name);
+        $config->setTitle($name);
+        $config->setType('input');
+        $config->setStoreId($storeId);
+        $config->setEnabled(1);
+        $config->setDefinition(json_encode($definition));
+        $config->save();
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => true, 'id' => $config->getName()]);
     }
 
     /**
@@ -1433,7 +1452,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $result = [];
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
-        /** @var Classificationstore\StoreConfig $item */
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),

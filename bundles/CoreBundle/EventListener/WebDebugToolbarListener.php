@@ -1,101 +1,82 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\RequestMatcherFactory;
-use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as BaseWebDebugToolbarListener;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Disables the web debug toolbar for frontend requests by admins (iframes inside admin interface)
+ *
+ * @internal
  */
-class WebDebugToolbarListener extends BaseWebDebugToolbarListener
+class WebDebugToolbarListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var RequestMatcherFactory
-     */
-    protected $requestMatcherFactory;
-
-    /**
-     * @var array
-     */
-    protected $excludeRoutes = [];
-
     /**
      * @var RequestMatcherInterface[]
      */
     protected $excludeMatchers;
 
-    /**
-     * @param RequestHelper $requestHelper
-     */
-    public function setRequestHelper(RequestHelper $requestHelper)
-    {
-        $this->requestHelper = $requestHelper;
+    public function __construct(
+        protected RequestHelper $requestHelper,
+        protected RequestMatcherFactory $requestMatcherFactory,
+        protected ?SymfonyWebDebugToolbarListener $debugToolbarListener,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected array $excludeRoutes
+    ) {
     }
 
     /**
-     * @param RequestMatcherFactory $requestMatcherFactory
+     * {@inheritdoc}
      */
-    public function setRequestMatcherFactory(RequestMatcherFactory $requestMatcherFactory)
+    public static function getSubscribedEvents()
     {
-        $this->requestMatcherFactory = $requestMatcherFactory;
+        return [
+            KernelEvents::REQUEST => ['onKernelResponse', -118],
+        ];
     }
 
     /**
-     * @param array $excludeRoutes
+     * @param RequestEvent $event
      */
-    public function setExcludeRoutes(array $excludeRoutes)
+    public function onKernelResponse(RequestEvent $event)
     {
-        $this->excludeRoutes = $excludeRoutes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function injectToolbar(Response $response, Request $request, array $nonces)
-    {
-        // only show toolbar for frontend-admin requests if requested
-        $request = $this->requestHelper->getCurrentRequest();
-
-        // parameter pimcore_enable_wdt allows us to override if toolbar is shown or not
-        $enableParam = (bool)$request->get('pimcore_enable_wdt');
-
-        if (!$enableParam) {
-            // do not show toolbar on frontend-admin requests
-            if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
-                return;
-            }
-
-            // do not show toolbar on excluded routes (pimcore.web_profiler.toolbar.excluded_routes config entry)
-            foreach ($this->getExcludeMatchers() as $excludeMatcher) {
-                if ($excludeMatcher->matches($request)) {
-                    return;
-                }
-            }
+        if (!$event->isMasterRequest()) {
+            return;
         }
 
-        parent::injectToolbar($response, $request, $nonces);
+        $request = $event->getRequest();
+
+        // do not show toolbar on frontend-admin requests
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+            $this->disableWebDebugToolbar();
+        }
+
+        // do not show toolbar on excluded routes (pimcore.web_profiler.toolbar.excluded_routes config entry)
+        foreach ($this->getExcludeMatchers() as $excludeMatcher) {
+            if ($excludeMatcher->matches($request)) {
+                $this->disableWebDebugToolbar();
+            }
+        }
     }
 
     /**
@@ -108,5 +89,12 @@ class WebDebugToolbarListener extends BaseWebDebugToolbarListener
         }
 
         return $this->excludeMatchers;
+    }
+
+    protected function disableWebDebugToolbar(): void
+    {
+        if ($this->debugToolbarListener) {
+            $this->eventDispatcher->removeSubscriber($this->debugToolbarListener);
+        }
     }
 }

@@ -59,11 +59,8 @@ pimcore:
                 # Define a custom service to handle the logic. Take a look at the Symfony docs for more details.
                 service:              ~
 
-            # Will get way over initial_place and adds the possibility to add multiple initial places.
+            # Possibility to add multiple initial places.
             initial_markings:     []
-
-            # DEPRECATED: Will be applied when the current place is empty.
-            initial_place:        null
 
             places:
 
@@ -225,7 +222,16 @@ pimcore:
 
                                     # Will be passed to the underlying Pimcore data object field type. Can be used to configure the options of a select box for example.
                                     fieldTypeSettings:    []
-
+                                    
+                            # Configure the output of custom HTML for a transition.
+                            customHtml:
+                            
+                                # Define a custom service for rendering custom HTML within the note modal.
+                                service: 'App\Service\Workflow\CustomHtmlService'
+                                
+                                # Set position of custom HTML inside modal (top, center, bottom; default=top).
+                                position: 'top'
+                            
                         # Css class to define the icon which will be used in the actions button in the backend.
                         iconClass:            ~
                         # Forces an object layout after the transition was performed.
@@ -301,4 +307,13 @@ pimcore:
                                 required:             false
                                 setterFn:             ~
                                 fieldTypeSettings:    []
+                                
+                        # Configure the output of custom HTML for a transition.
+                        customHtml:
+                        
+                            # Define a custom service for rendering custom HTML within the note modal.
+                            service: 'App\Service\Workflow\CustomHtmlService'
+                            
+                            # Set position of custom HTML inside modal (top, center, bottom; default=top).
+                            position: 'top'                                
 ```

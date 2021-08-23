@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Tool\CustomReport;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -24,6 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/custom-report")
+ *
+ * @internal
  */
 class CustomReportController extends ReportsControllerBase
 {
@@ -148,8 +152,10 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        $data = $report->getObjectVars();
+        $data['writeable'] = $report->isWriteable();
 
-        return $this->adminJson($report);
+        return $this->adminJson($data);
     }
 
     /**
@@ -200,10 +206,9 @@ class CustomReportController extends ReportsControllerBase
         }
 
         $configuration = json_decode($request->get('configuration'));
-        $configuration = $configuration[0];
+        $configuration = $configuration[0] ?? null;
 
         $success = false;
-        $columns = null;
         $errorMessage = null;
 
         $result = [];
@@ -254,7 +259,6 @@ class CustomReportController extends ReportsControllerBase
         $list = new CustomReport\Config\Listing();
         $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
-        /** @var CustomReport\Config $report */
         foreach ($items as $report) {
             $reports[] = [
                 'name' => $report->getName(),
@@ -384,7 +388,7 @@ class CustomReportController extends ReportsControllerBase
 
         $sort = $request->get('sort');
         $dir = $request->get('dir');
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $filters = $request->get('filter') ? json_decode(urldecode($request->get('filter')), true) : null;
         $drillDownFilters = $request->get('drillDownFilters', null);
         $includeHeaders = $request->get('headers', false);
 
@@ -399,10 +403,6 @@ class CustomReportController extends ReportsControllerBase
         }
 
         $configuration = $config->getDataSourceConfig();
-        //if many rows returned as an array than use the first row. Fixes: #782
-        $configuration = is_array($configuration)
-            ? $configuration[0]
-            : $configuration;
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
@@ -415,6 +415,8 @@ class CustomReportController extends ReportsControllerBase
         if (!($exportFile = $request->get('exportFile'))) {
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
+        } else {
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
         }
 
         $fp = fopen($exportFile, 'a');
@@ -424,6 +426,7 @@ class CustomReportController extends ReportsControllerBase
         }
 
         foreach ($result['data'] as $row) {
+            $row = Service::escapeCsvRecord($row);
             fputcsv($fp, array_values($row), ';');
         }
 
@@ -433,7 +436,7 @@ class CustomReportController extends ReportsControllerBase
         $progress = $progress > 1 ? 1 : $progress;
 
         return new JsonResponse([
-            'exportFile' => $exportFile,
+            'exportFile' => basename($exportFile),
             'offset' => $offset,
             'progress' => $progress,
             'finished' => empty($result['data']) || count($result['data']) < $limit,
@@ -451,6 +454,7 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
         if ($exportFile = $request->get('exportFile')) {
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . basename($exportFile);
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
@@ -458,6 +462,7 @@ class CustomReportController extends ReportsControllerBase
 
             return $response;
         }
+
         throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 }

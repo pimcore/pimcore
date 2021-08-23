@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
@@ -27,18 +28,20 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  * serializer.
  *
  * @see \Symfony\Component\Serializer\Serializer
+ *
+ * @internal
  */
-class SerializerPass implements CompilerPassInterface
+final class SerializerPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('pimcore_admin.serializer')) {
+        if (!$container->hasDefinition('Pimcore\\Admin\\Serializer')) {
             return;
         }
 
-        $definition = $container->getDefinition('pimcore_admin.serializer');
+        $definition = $container->getDefinition('Pimcore\\Admin\\Serializer');
 
         // Looks for all the services tagged "serializer.normalizer" and adds them to the Serializer service
         $normalizers = $this->findAndSortTaggedServices('pimcore_admin.serializer.normalizer', $container);

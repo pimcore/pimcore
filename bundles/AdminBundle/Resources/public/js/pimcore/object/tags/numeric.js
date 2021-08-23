@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.numeric");
@@ -83,7 +83,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type
+            componentCls: this.getWrapperClassNames(),
+            mouseWheelEnabled: false
         };
 
         if (!isNaN(this.data)) {
@@ -105,7 +106,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            input.width += input.labelWidth;
+            input.width = this.sumWidths(input.width, input.labelWidth);
         }
 
         if (this.fieldConfig["unsigned"]) {
@@ -138,7 +139,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
         };
 
         if (!isNaN(this.data)) {

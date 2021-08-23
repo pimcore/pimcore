@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -78,7 +79,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     protected $synonymProviders = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param SynonymProviderInterface[] $synonymProviders
      */
@@ -138,6 +139,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->clientConfig = $options['client_config'];
         $this->indexSettings = $options['index_settings'];
         $this->elasticSearchClientParams = $options['es_client_params'];
+
+        //add default type for elasticsearch
+        if (empty($this->elasticSearchClientParams['indexType'])) {
+            $this->elasticSearchClientParams['indexType'] = '_doc';
+        }
     }
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
@@ -185,17 +191,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $parts;
     }
 
-    /**
-     * returns the full field name
-     *
-     * @param string $fieldName
-     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
-     *
-     * @return string
-     */
+    /** @inheritDoc */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-        if ($this->fieldMapping[$fieldName]) {
+        if (isset($this->fieldMapping[$fieldName])) {
             return $this->fieldMapping[$fieldName];
         }
 
@@ -203,7 +202,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         if ($considerSubFieldNames) {
             $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
             foreach ($fieldNameParts as $fieldNamePart) {
-                if ($this->fieldMapping[$fieldNamePart]) {
+                if (isset($this->fieldMapping[$fieldNamePart])) {
                     return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
                 }
             }
@@ -212,14 +211,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $fieldName;
     }
 
-    /**
-     * returns short field name based on full field name
-     * also considers subfield names like name.analyzed etc.
-     *
-     * @param string $fullFieldName
-     *
-     * @return false|int|string
-     */
+    /** @inheritDoc */
     public function getReverseMappedFieldName($fullFieldName)
     {
         //check for direct match of field name
@@ -255,10 +247,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getClientConfig($property = null)
     {
-        return $property
-            ? $this->clientConfig[$property]
-            : $this->clientConfig
-            ;
+        if ($property) {
+            return $this->clientConfig[$property] ?? null;
+        }
+
+        return $this->clientConfig;
     }
 
     /**
@@ -332,7 +325,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

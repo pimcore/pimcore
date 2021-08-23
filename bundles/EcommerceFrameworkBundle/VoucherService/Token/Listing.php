@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Token[] load()
@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @param string $key
@@ -67,21 +67,21 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if ($filter['creation_from']) {
+            if (isset($filter['creation_from'])) {
                 $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
             }
 
-            if ($filter['creation_to']) {
+            if (isset($filter['creation_to'])) {
                 $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
-            if ($this->isValidOrderKey($filter['sort_criteria'])) {
+            if ($this->isValidOrderKey($filter['sort_criteria'] ?? '')) {
                 $this->setOrderKey($filter['sort_criteria']);
             } else {
                 $this->setOrderKey('timestamp');
             }
 
-            if ($filter['sort_order'] == 'ASC') {
+            if (($filter['sort_order'] ?? false) == 'ASC') {
                 $this->setOrder('ASC');
             } else {
                 $this->setOrder('DESC');
@@ -145,13 +145,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $tmp = new self();
-        if ($tmp->isValidOrderKey($params['sort_criteria'])) {
+        if ($tmp->isValidOrderKey($params['sort_criteria'] ?? '')) {
             $query .= ' ORDER BY ' . $params['sort_criteria'];
         } else {
             $query .= ' ORDER BY timestamp';
         }
 
-        if ($params['sort_order'] == 'ASC') {
+        if (($params['sort_order'] ?? false) == 'ASC') {
             $query .= ' ASC';
         } else {
             $query .= ' DESC';
@@ -176,6 +176,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -189,6 +190,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         $params[] = $seriesId;
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -208,6 +210,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -299,6 +302,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db->beginTransaction();
+
         try {
             $db->executeQuery($reservationsQuery, $params);
             $db->executeQuery($tokensQuery, $params);
@@ -346,18 +350,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
 
     /**
      * @param array $tokens
+     *
+     * @return static
      */
     public function setTokens($tokens)
     {
         return $this->setData($tokens);
-    }
-
-    /**
-     * @return \Pimcore\Model\DataObject\Listing|AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

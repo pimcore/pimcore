@@ -3,7 +3,7 @@
 ## What is the license for Pimcore?
 Pimcore and all contributed files hosted on pimcore.org or in the official Git repository are available under two different licenses: 
 * GNU General Public License version 3 (GPLv3)
-* Pimcore Enterprise License (PEL)
+* Pimcore Commercial License (PCL)
 If you don't have a separate written licensing agreement between you and Pimcore GmbH then always GPLv3 applies to you.  
 
 The following FAQ covers only GPLv3. 
@@ -22,7 +22,7 @@ We require that all files (PHP, JavaScript, CSS, images, etc.) that are not part
 
 ## Copyright & contributions
 All Pimcore contributors retain copyright on their code, but agree to release it under the same licenses as Pimcore. 
-If you are unable or unwilling to contribute a patch under the GPL version 3 and the Pimcore enterprise license, do not submit a patch.
+If you are unable or unwilling to contribute a patch under the GPL version 3 and the Pimcore Commercial License, do not submit a patch.
 
 ## I want to release my work under a different license than GPLv3, is that possible? 
 No. You can only release your work under any GPL version 3 or later compatible license. 

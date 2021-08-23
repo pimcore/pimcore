@@ -1,40 +1,43 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
 use Pimcore\Db;
 
+/**
+ * @internal
+ */
 class Sql extends AbstractAdapter
 {
     /**
-     * @param array|null $filters
-     * @param string|null $sort
-     * @param string|null $dir
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param array|null $fields
-     * @param array|null $drillDownFilters
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
         $db = Db::get();
+
+        if ($fields === null) {
+            $columns = $this->fullConfig->getColumnConfiguration();
+            $fields = [];
+            foreach ($columns as $column) {
+                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
+                    $fields[] = $column['name'];
+                }
+            }
+        }
 
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
@@ -60,11 +63,7 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param \stdClass $configuration
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getColumns($configuration)
     {
@@ -73,20 +72,18 @@ class Sql extends AbstractAdapter
             $sql = $this->buildQueryString($configuration);
         }
 
-        $res = null;
-        $errorMessage = null;
-        $columns = null;
-
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchRow($sql);
-            $columns = array_keys($res);
-        } else {
-            throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+            if ($res) {
+                return array_keys($res);
+            }
+
+            return [];
         }
 
-        return $columns;
+        throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
     /**
@@ -184,7 +181,9 @@ class Sql extends AbstractAdapter
 
                     switch ($operator) {
                         case 'like':
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+
                             break;
                         case 'lt':
                         case 'gt':
@@ -198,13 +197,18 @@ class Sql extends AbstractAdapter
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
                                     $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+
                                     break;
                                 }
                             }
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
+
                             break;
                         case '=':
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
+
                             break;
                     }
                 }
@@ -232,16 +236,12 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param array $filters
-     * @param string $field
-     * @param array $drillDownFilters
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, $field);
+        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, (empty($filters) ? $field : null));
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);

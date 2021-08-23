@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.report.custom.report");
@@ -539,6 +539,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     createCsv: function (btn, exportFile, offset) {
         let filterData = this.store.getFilters().items;
+        let proxy = this.store.getProxy();
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_reports_customreport_createcsv'),
             params: {

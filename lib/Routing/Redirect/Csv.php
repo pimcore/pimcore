@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Redirect;
@@ -22,12 +22,16 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @internal
+ */
 class Csv
 {
     /**
@@ -58,6 +62,14 @@ class Csv
      */
     private $importResolver;
 
+    /**
+     * @param Redirect\Listing $list
+     *
+     * @return Writer
+     *
+     * @throws \League\Csv\CannotInsertRecord
+     * @throws \League\Csv\Exception
+     */
     public function createExportWriter(Redirect\Listing $list): Writer
     {
         $writer = Writer::createFromPath('php://temp');
@@ -69,7 +81,6 @@ class Csv
 
         $writer->insertOne($this->columns);
 
-        /** @var Redirect $redirect */
         foreach ($list->getRedirects() as $redirect) {
             $target = $redirect->getTarget();
 
@@ -100,6 +111,7 @@ class Csv
                 $redirect->getActive(),
                 $expiry,
             ];
+            $data = Service::escapeCsvRecord($data);
 
             $writer->insertOne($data);
         }
@@ -107,6 +119,13 @@ class Csv
         return $writer;
     }
 
+    /**
+     * @param string $filename
+     *
+     * @return array
+     *
+     * @throws \League\Csv\Exception
+     */
     public function import(string $filename): array
     {
         if (!file_exists($filename) || !is_readable($filename)) {
@@ -120,7 +139,6 @@ class Csv
 
         $dialect = Admin::determineCsvDialect($filename);
 
-        /** @var Reader $reader */
         $reader = Reader::createFromString($content);
         $reader->setOutputBOM(Reader::BOM_UTF8);
         $reader->setDelimiter($dialect->delimiter);
@@ -157,6 +175,11 @@ class Csv
         return $stats;
     }
 
+    /**
+     * @param array $record
+     *
+     * @return array
+     */
     private function preprocessImportData(array $record): array
     {
         // normalize data to types (string, int, ...) or null
@@ -168,6 +191,12 @@ class Csv
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $stats
+     *
+     * @return mixed|Redirect|null
+     */
     private function processImportData(array $data, array &$stats)
     {
         $redirect = null;
@@ -193,6 +222,9 @@ class Csv
         return $redirect;
     }
 
+    /**
+     * @return ArrayNormalizer
+     */
     private function getImportNormalizer(): ArrayNormalizer
     {
         if (null !== $this->importNormalizer) {
@@ -254,6 +286,9 @@ class Csv
         return $this->importNormalizer;
     }
 
+    /**
+     * @return OptionsResolver
+     */
     private function getImportResolver(): OptionsResolver
     {
         if (null !== $this->importResolver) {
@@ -276,7 +311,7 @@ class Csv
         $resolver->setAllowedTypes('statusCode', ['int']);
         $resolver->setAllowedValues('statusCode', array_map(function ($code) {
             return (int)$code;
-        }, array_keys(Redirect::$statusCodes)));
+        }, array_keys(Redirect::getStatusCodes())));
 
         $resolver->setAllowedTypes('priority', ['int']);
         $resolver->setAllowedValues('priority', array_merge(range(1, 10), [99]));

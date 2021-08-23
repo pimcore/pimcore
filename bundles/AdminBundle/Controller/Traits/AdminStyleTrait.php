@@ -1,25 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
 
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
+use Pimcore\Model\Element\AdminStyle;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
 
+/**
+ * @internal
+ */
 trait AdminStyleTrait
 {
     /**
@@ -31,9 +34,16 @@ trait AdminStyleTrait
      */
     protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
     {
-        $adminStyle = Service::getElementAdminStyle($element, $context);
-        $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
+        $adminStyle = $event->getAdminStyle();
+
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
+        if (!$data['iconCls']) {
+            $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        } else {
+            $data['icon'] = null;
+        }
         if ($adminStyle->getElementCssClass() !== false) {
             if (!isset($data['cls'])) {
                 $data['cls'] = '';

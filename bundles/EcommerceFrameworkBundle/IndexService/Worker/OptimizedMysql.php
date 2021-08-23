@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
@@ -28,6 +29,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store';
+
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup';
 
     /**
@@ -39,11 +41,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      * @param OptimizedMysqlConfig $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string|null $workerMode
      */
-    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }

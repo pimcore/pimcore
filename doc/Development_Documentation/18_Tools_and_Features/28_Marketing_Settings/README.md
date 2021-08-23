@@ -5,7 +5,6 @@ The `Marketing Settings` give you the possibility to configure marketing-specifi
 - [Google Analytics](./05_Analytics.md)
 - Google Search Console
 - Google Tag Manager
-- [Matomo](./07_Piwik.md)
 
 
 ## Google Analytics
@@ -22,9 +21,3 @@ possibilities through:
 * the `GoogleTagManagerEvents::CODE_HEAD` and `GoogleTagManagerEvents::CODE_BODY` events, each defining a set of customizable
   blocks
 * a dedicated template for both events which can be customized from an event listener
-
-
-## Matomo
-
-Similar to Google Analytics, a Matomo tracking code can be automatically injected into each response. See [Matomo](./07_Piwik.md)
-for details.

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -20,8 +21,6 @@ use Psr\Log\LoggerInterface;
 class Db
 {
     /**
-     * @static
-     *
      * @return \Pimcore\Db\ConnectionInterface
      */
     public static function getConnection()
@@ -40,8 +39,6 @@ class Db
     }
 
     /**
-     * @static
-     *
      * @return \Pimcore\Db\ConnectionInterface|Connection
      */
     public static function get()
@@ -55,18 +52,17 @@ class Db
     }
 
     /**
-     * @static
+     * @internal
      *
      * @return LoggerInterface
+     *
+     * @internal
      */
     public static function getLogger()
     {
         return \Pimcore::getContainer()->get('monolog.logger.doctrine');
     }
 
-    /**
-     * @static
-     */
     public static function close()
     {
         $db = \Pimcore::getContainer()->get('database_connection');

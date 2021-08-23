@@ -7,19 +7,17 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -27,6 +25,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
 
+/**
+ * @internal
+ */
 class GridHelperService
 {
     /**
@@ -173,7 +174,7 @@ class GridHelperService
      *
      * @return string
      */
-    public function getFilterCondition($filterJson, ClassDefinition $class): string
+    public function getFilterCondition($filterJson, ClassDefinition $class, $tablePrefix = null): string
     {
         $systemFields = Model\DataObject\Service::getSystemFields();
 
@@ -233,7 +234,7 @@ class GridHelperService
                     //if the definition doesn't exist check for object brick
                     $keyParts = explode('~', $filterField);
 
-                    if (substr($filterField, 0, 1) == '~') {
+                    if (substr($filterField, 0, 1) === '~') {
                         // not needed for now
 //                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
@@ -296,7 +297,10 @@ class GridHelperService
                                 ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                             $fieldConditions[] = $brickCondition;
                         }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+
+                        if (!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+                        }
                     } else {
                         $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
                                 ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
@@ -306,17 +310,17 @@ class GridHelperService
                     $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
-                    if (is_array($filter['value'])) {
+                    if (is_array($filter['value'] ?? false)) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
+                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                         }
 
                         if (!empty($fieldConditions)) {
                             $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
                     } else {
-                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
+                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'] ?? null, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                     }
                 } elseif (in_array('o_' . $filterField, $systemFields)) {
                     // system field
@@ -392,7 +396,13 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $featureJoins,
+                $class,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -400,28 +410,28 @@ class GridHelperService
                 foreach ($featureJoins as $featureJoin) {
                     $fieldname = $featureJoin['fieldname'];
                     $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
-                    if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
+                    if (isset($alreadyJoined[$mappedKey])) {
                         continue;
                     }
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->joinLeft(
-                        [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
+                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_classificationstore_data_' . $class->getId(),
+                        $mappedKey,
                         '('
                         . $mappedKey . '.o_id = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
                         . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
-                        . ')',
-                        [
-                            $mappedKey => 'value',
-                        ]
+                        . ')'
                     );
                 }
 
-                $havings = $featureAndSlugFilters['featureConditions'];
+                $havings = $featureAndSlugFilters['featureConditions'] ?? null;
                 if ($havings) {
                     $havings = implode(' AND ', $havings);
                     $select->having($havings);
@@ -441,7 +451,12 @@ class GridHelperService
     {
         if ($slugJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $slugJoins,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -453,15 +468,15 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
                     $table = $me->getDao()->getTableName();
 
-                    $select->joinLeft(
-                        [$mappedKey => 'object_url_slugs'],
+                    $select->addSelect('slug AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_url_slugs',
+                        $mappedKey,
                         '('
                         . $mappedKey . '.objectId = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ')',
-                        [
-                            $mappedKey => 'slug',
-                        ]
+                        . ')'
                     );
                 }
 
@@ -487,7 +502,6 @@ class GridHelperService
         $colMappings = [
             'key' => 'o_key',
             'filename' => 'o_key',
-            'fullpath' => ['o_path', 'o_key'],
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
@@ -521,9 +535,12 @@ class GridHelperService
         }
         if ($sortingSettings['orderKey'] !== null && strlen($sortingSettings['orderKey']) > 0) {
             $orderKey = $sortingSettings['orderKey'];
-            if (!(substr($orderKey, 0, 1) == '~')) {
+            if (substr($orderKey, 0, 1) !== '~') {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
+                } elseif ($orderKey === 'fullpath') {
+                    $orderKey = 'CAST(CONCAT(o_path, o_key) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $doNotQuote = true;
                 } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                     $doNotQuote = true;
@@ -539,19 +556,21 @@ class GridHelperService
                         $db = Db::get();
                         $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
                         $doNotQuote = true;
-                    } else {
-                        if (count($orderKeyParts) == 2) {
-                            $orderKey = $orderKeyParts[1];
-                        }
+                    } elseif (count($orderKeyParts) === 2) {
+                        $orderKey = $orderKeyParts[0].'.'.$orderKeyParts[1];
+                        $doNotQuote = true;
                     }
+                } else {
+                    $orderKey = $list->getDao()->getTableName().'.'.$orderKey;
+                    $doNotQuote = true;
                 }
             }
         }
 
         $conditionFilters = [];
 
-        if ($requestParams['specificId'] ?? false) {
-            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
+        if (($requestParams['specificId'] ?? false) && is_numeric($requestParams['specificId'])) {
+            $conditionFilters[] = 'oo_id = ' . (int) $requestParams['specificId'];
         }
 
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
@@ -578,7 +597,7 @@ class GridHelperService
 
         // create filter condition
         if (!empty($requestParams['filter'])) {
-            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
+            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class, $list->getDao()->getTableName());
             $featureAndSlugFilters = $this->getFeatureAndSlugFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureAndSlugFilters) {
                 $featureJoins = array_merge($featureJoins, $featureAndSlugFilters['featureJoins']);
@@ -593,7 +612,7 @@ class GridHelperService
         if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
-                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
+                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE maintype = "object" AND MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
             }
         }
 
@@ -616,7 +635,7 @@ class GridHelperService
         if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
             $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
             $list->setOrderKey($orderKey);
-            $list->setGroupBy('o_id');
+            $list->setGroupBy('oo_id');
 
             $parts = explode('_', $orderKey);
 
@@ -643,7 +662,7 @@ class GridHelperService
         }
 
         if ($class->getShowVariants()) {
-            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+            $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT]);
         }
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureAndSlugFilters);

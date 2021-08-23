@@ -1,21 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -76,12 +76,19 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         }
 
         if ($codes = $this->getCodes()) {
-            $viewParamsBag['paginator'] = new Paginator(new ArrayAdapter($codes));
+            /** @var PaginatorInterface $paginator */
+            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+            $paginator = $paginator->paginate(
+                (array)$codes,
+                $params['page'] ?? 1,
+                isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+            );
+            $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($codes);
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'];
-        $viewParamsBag['msg']['success'] = $params['success'];
+        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
+        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
 
         $viewParamsBag['settings'] = [
             'bundle_ecommerce_voucherservice_settings-token' => $this->getConfiguration()->getToken(),
@@ -132,6 +139,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $query =
                 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES (?,?,?)
@@ -141,7 +149,6 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
             return trim($this->configuration->getToken());
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;
