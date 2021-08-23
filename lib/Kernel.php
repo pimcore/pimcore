@@ -165,7 +165,6 @@ abstract class Kernel extends SymfonyKernel
             // @phpstan-ignore-next-line
             $loader->import(PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails/');
         }
-
     }
 
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
