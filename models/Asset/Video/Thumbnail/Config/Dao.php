@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Asset\Video\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PimcoreConfigBagDao
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
