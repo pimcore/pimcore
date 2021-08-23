@@ -23,29 +23,22 @@ use Pimcore\Model\Tool\CustomReport\Config;
  *
  * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('custom-reports');
-    }
 
     /**
-     * @return Config[]
+     * @return array
      */
-    public function load()
+    public function loadList()
     {
-        $properties = [];
-        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $configs = [];
 
-        foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData['id']);
+        $idList = $this->loadIdList();
+        foreach ($idList as $name) {
+            $configs[] = Config::getByName($name);
         }
 
-        $this->model->setReports($properties);
-
-        return $properties;
+        return $configs;
     }
 
     /**
@@ -55,7 +48,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function loadForGivenUser(Model\User $user)
     {
-        $allConfigs = $this->load();
+        $allConfigs = $this->loadList();
 
         if ($user->isAdmin()) {
             return $allConfigs;
@@ -80,9 +73,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return count($this->loadIdList());
     }
 }
