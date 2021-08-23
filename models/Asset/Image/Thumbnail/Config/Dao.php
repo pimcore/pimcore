@@ -114,7 +114,6 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
