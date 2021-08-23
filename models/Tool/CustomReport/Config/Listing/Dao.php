@@ -25,7 +25,6 @@ use Pimcore\Model\Tool\CustomReport\Config;
  */
 class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
 {
-
     /**
      * @return array
      */
