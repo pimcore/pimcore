@@ -130,16 +130,6 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     }
 
     /**
-     * @return bool
-     *
-     * @throws \Exception
-     */
-    public function needsContainerRebuildOnWrite(): bool
-    {
-        return $this->locationAwareConfigRepository->needsContainerRebuildOnWrite();
-    }
-
-    /**
      * @param string $id
      *
      * @throws \Exception
