@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Config;
 
 use Pimcore\Config;
@@ -10,7 +23,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
 {
-
     /**
      * @deprecated Will be removed in Pimcore 11
      */
@@ -46,7 +58,6 @@ class LocationAwareConfigRepository
      */
     private ?PhpArrayFileTable $legacyStore = null;
 
-
     /**
      * @param array $containerConfig
      * @param string|null $settingsStoreScope
@@ -63,9 +74,8 @@ class LocationAwareConfigRepository
         $this->legacyConfigFile = $legacyConfigFile;
     }
 
-
-    public function loadConfigByKey(string $key) {
-
+    public function loadConfigByKey(string $key)
+    {
         $dataSource = null;
 
         // try to load from container config
@@ -83,10 +93,9 @@ class LocationAwareConfigRepository
 
         return [
             $data,
-            $dataSource
+            $dataSource,
         ];
     }
-
 
     /**
      * @param string $key
@@ -161,7 +170,6 @@ class LocationAwareConfigRepository
         return false;
     }
 
-
     /**
      * @return string Can be either yaml (var/config/...) or "settings-store". defaults to "yaml"
      *
@@ -195,15 +203,15 @@ class LocationAwareConfigRepository
      * @param string $key
      * @param mixed $data
      * @param null|callable $yamlStructureCallback
+     *
      * @throws \Exception
      */
-    public function saveConfig(string $key, $data, $yamlStructureCallback = null) {
-
+    public function saveConfig(string $key, $data, $yamlStructureCallback = null)
+    {
         $writeLocation = $this->getWriteTarget();
 
         if ($writeLocation === self::WRITE_TARGET_YAML) {
-
-            if(is_callable($yamlStructureCallback)) {
+            if (is_callable($yamlStructureCallback)) {
                 $data = $yamlStructureCallback($key, $data);
             }
 
@@ -212,7 +220,6 @@ class LocationAwareConfigRepository
             $settingsStoreData = json_encode($data);
             SettingsStore::set($key, $settingsStoreData, 'string', $this->settingsStoreScope);
         }
-
     }
 
     /**
@@ -225,8 +232,7 @@ class LocationAwareConfigRepository
     {
         $yamlFilename = $this->getVarConfigFile($key);
 
-        if(!file_exists($yamlFilename)) {
-
+        if (!file_exists($yamlFilename)) {
             list($existingData, $dataSource) = $this->loadConfigByKey($key);
             if ($dataSource && $dataSource !== self::DATA_SOURCE_LEGACY) {
                 // this configuration already exists so check if it is writeable
@@ -235,7 +241,6 @@ class LocationAwareConfigRepository
 
                 throw new \Exception(sprintf('Configuration can only be written to %s, however the config comes from a different source', $yamlFilename));
             }
-
         }
 
         File::put($yamlFilename, Yaml::dump($data, 50));
@@ -247,7 +252,6 @@ class LocationAwareConfigRepository
         }
     }
 
-
     /**
      * @param string $key
      *
@@ -257,7 +261,6 @@ class LocationAwareConfigRepository
     {
         return $this->storageDirectory . '/' . $key . '.yaml';
     }
-
 
     /**
      * @deprecated Will be removed in Pimcore 11
@@ -273,7 +276,6 @@ class LocationAwareConfigRepository
 
         return $this->legacyStore;
     }
-
 
     /**
      * @param string $key

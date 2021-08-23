@@ -93,7 +93,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     protected function saveData(string $id, $data)
     {
         $dao = $this;
-        $this->locationAwareConfigRepository->saveConfig($id, $data, function($id, $data) use ($dao) {
+        $this->locationAwareConfigRepository->saveConfig($id, $data, function ($id, $data) use ($dao) {
             return $dao->prepareDataStructureForYaml($id, $data);
         });
     }
@@ -103,6 +103,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
      *
      * @param string $id
      * @param mixed $data
+     *
      * @return mixed
      */
     protected function prepareDataStructureForYaml(string $id, $data)
@@ -130,6 +131,7 @@ abstract class PimcoreConfigBagDao implements DaoInterface
 
     /**
      * @return bool
+     *
      * @throws \Exception
      */
     public function needsContainerRebuildOnWrite(): bool
@@ -146,5 +148,4 @@ abstract class PimcoreConfigBagDao implements DaoInterface
     {
         $this->locationAwareConfigRepository->deleteData($id, $this->dataSource);
     }
-
 }
