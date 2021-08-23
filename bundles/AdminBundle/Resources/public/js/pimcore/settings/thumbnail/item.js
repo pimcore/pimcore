@@ -51,7 +51,6 @@ pimcore.settings.thumbnail.item = Class.create({
 
         panelButtons.push(buttonConfig);
 
-
         this.mediaPanel = new Ext.TabPanel({
             autoHeight: true,
             plugins: [Ext.create('Ext.ux.TabReorderer', {})]

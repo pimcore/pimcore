@@ -23,7 +23,7 @@ use Pimcore\Tool\Console;
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PimcoreConfigBagDao
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     /**
      * {@inheritdoc}
@@ -117,9 +117,9 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
     /**
      * {@inheritdoc}
      */
-    protected function writeYaml($id, $data): void
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
-        $data = [
+        return [
             'pimcore' => [
                 'assets' => [
                     'image' => [
@@ -132,8 +132,6 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
                 ],
             ],
         ];
-
-        parent::writeYaml($id, $data);
     }
 
     /**
