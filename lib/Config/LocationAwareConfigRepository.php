@@ -273,7 +273,7 @@ class LocationAwareConfigRepository
      */
     public function deleteData(string $key, ?string $dataSource): void
     {
-        if(!$this->isWriteable($key)) {
+        if (!$this->isWriteable($key)) {
             throw new \Exception('You are trying to delete a non-writable configuration.');
         }
 
