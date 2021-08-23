@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Tool\CustomReport\Config $model
  */
-class Dao extends Model\Dao\PimcoreConfigBagDao
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
@@ -102,9 +102,9 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
     /**
      * {@inheritdoc}
      */
-    protected function writeYaml($id, $data): void
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
-        $data = [
+        return [
             'pimcore' => [
                 'custom_report' => [
                     'definitions' => [
@@ -113,7 +113,5 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
                 ],
             ],
         ];
-
-        parent::writeYaml($id, $data);
     }
 }
