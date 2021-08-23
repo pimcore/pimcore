@@ -18,9 +18,10 @@ namespace Pimcore\Model\Asset\Video\Thumbnail;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Asset\Video\Thumbnail\Config\Dao getDao()
- * @method void save()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete()
+ * @method void save()
  */
 final class Config extends Model\AbstractModel
 {
@@ -127,7 +128,9 @@ final class Config extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->getDao()->getByName($name);
+                /** @var Model\Asset\Video\Thumbnail\Config\Dao $dao */
+                $dao = $thumbnail->getDao();
+                $dao->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -473,4 +476,11 @@ final class Config extends Model\AbstractModel
     {
         $this->group = $group;
     }
+
+    public function __clone()
+    {
+        $this->dao = clone $this->dao;
+        $this->dao->setModel($this);
+    }
+
 }
