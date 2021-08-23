@@ -152,8 +152,10 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        $data = $report->getObjectVars();
+        $data['writeable'] = $report->isWriteable();
 
-        return $this->adminJson($report);
+        return $this->adminJson($data);
     }
 
     /**
