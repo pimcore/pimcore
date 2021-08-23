@@ -29,7 +29,7 @@ This feature is currently supported by the following configurations:
 
 You can change the write target individually for each type by using environment variables.
 The following options are available: 
-- `yaml` - write configs as Symfony Config as YAML files to `/var/config/.../example.yaml`
+- `symfony-config` - write configs as Symfony Config as YAML files to `/var/config/.../example.yaml`
 - `settings-store` - write configs to the `SettingsStore`
 - `disabled` - do not allow to edit/write configs at all
 

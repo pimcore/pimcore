@@ -28,7 +28,7 @@ class LocationAwareConfigRepository
      */
     private const LOCATION_LEGACY = 'legacy';
 
-    private const LOCATION_SYMFONY_CONFIG = 'config';
+    private const LOCATION_SYMFONY_CONFIG = 'symfony-config';
 
     private const LOCATION_SETTINGS_STORE = 'settings-store';
 
