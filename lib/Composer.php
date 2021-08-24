@@ -90,7 +90,10 @@ class Composer
         try {
             $process = static::executeCommand($event, $consoleDir,
                 ['internal:migration-helpers', '--is-installed'], 30, false);
-            $isInstalled = (bool) trim($process->getOutput());
+
+            if($process->getExitCode() === 0 && trim($process->getOutput()) === '1') {
+                $isInstalled = true;
+            }
         } catch (\Throwable $e) {
             // noting to do
         }
