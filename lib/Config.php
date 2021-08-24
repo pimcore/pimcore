@@ -45,7 +45,7 @@ final class Config implements \ArrayAccess
      * @param  mixed $offset
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return self::getSystemConfiguration($offset) !== null;
@@ -57,7 +57,7 @@ final class Config implements \ArrayAccess
      *
      * @throws \Exception
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \Exception("modifying the config isn't allowed");
@@ -67,7 +67,7 @@ final class Config implements \ArrayAccess
      * @param  mixed $offset
      * @throws \Exception
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \Exception("modifying the config isn't allowed");
@@ -77,7 +77,7 @@ final class Config implements \ArrayAccess
      * @param string $offset
      * @return array|null
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return self::getSystemConfiguration($offset);
