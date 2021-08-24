@@ -300,7 +300,7 @@ class Processor
             prepareTransformations:
 
             foreach ($transformations as &$transformation) {
-                if (!empty($transformation) && (isset($transformation['isApplied']) && !$transformation['isApplied'])) {
+                if (!empty($transformation) && !isset($transformation['isApplied'])) {
                     $arguments = [];
 
                     if (is_string($transformation['method'])) {
