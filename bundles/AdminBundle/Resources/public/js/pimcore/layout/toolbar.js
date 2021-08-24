@@ -107,7 +107,7 @@ pimcore.layout.toolbar = Class.create({
                             iconCls: "pimcore_nav_icon_add",
                             itemId: 'pimcore_menu_file_dashboards_add',
                             handler: function () {
-                                Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
+                                var prompt = Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
@@ -144,6 +144,9 @@ pimcore.layout.toolbar = Class.create({
                                         }
                                     }
                                 );
+                                prompt.textField.on('keyUp', function(el){
+                                    el.setValue(el.getValue().replace(/\W/g, ''));
+                                }, this);
                             }.bind(this)
                         });
                     }.bind(this)
