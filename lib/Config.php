@@ -44,8 +44,8 @@ final class Config implements \ArrayAccess
     /**
      * @see    ArrayAccess::offsetExists()
      *
+     * #[ReturnTypeWillChange]
      * @param  mixed $offset
-     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -54,8 +54,7 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @see    ArrayAccess::offsetSet()
-     *
+     * #[ReturnTypeWillChange]
      * @param  mixed $offset
      * @param  mixed $value
      *
@@ -67,10 +66,8 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @see    ArrayAccess::offsetUnset()
-     *
+     * #[ReturnTypeWillChange]
      * @param  mixed $offset
-     *
      * @throws \Exception
      */
     public function offsetUnset($offset)
@@ -79,8 +76,8 @@ final class Config implements \ArrayAccess
     }
 
     /**
+     * #[ReturnTypeWillChange]
      * @param string $offset
-     *
      * @return array|null
      */
     public function offsetGet($offset)
