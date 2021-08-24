@@ -32,7 +32,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         try {
             this.data = Ext.decode(response.responseText);
 
-            if (!this.data.success && this.options && this.options.ignoreNotFoundError) {
+            if (this.data.success === false && this.options && this.options.ignoreNotFoundError) {
                 return;
             }
 
