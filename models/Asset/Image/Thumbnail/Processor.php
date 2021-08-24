@@ -368,11 +368,11 @@ class Processor
                     ksort($arguments);
                     if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
                         $transformation['method']($image);
-                        $transformation['isApplied'] = true;
                     } elseif (method_exists($image, $transformation['method'])) {
                         call_user_func_array([$image, $transformation['method']], $arguments);
-                        $transformation['isApplied'] = true;
                     }
+
+                    $transformation['isApplied'] = true;
                 }
             }
         }
