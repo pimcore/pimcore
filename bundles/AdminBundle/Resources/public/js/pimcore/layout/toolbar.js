@@ -89,7 +89,7 @@ pimcore.layout.toolbar = Class.create({
                             this.dashboardMenu.menu.add(new Ext.menu.Item({
                                 text: data[i],
                                 iconCls: "pimcore_nav_icon_dashboards",
-                                itemId: 'pimcore_menu_file_dashboards_' + data[i],
+                                itemId: 'pimcore_menu_file_dashboards_custom_' + data[i],
                                 handler: function (key) {
                                     try {
                                         pimcore.globalmanager.get("layout_portal_" + key).activate();
@@ -105,7 +105,7 @@ pimcore.layout.toolbar = Class.create({
                         this.dashboardMenu.menu.add({
                             text: t("add"),
                             iconCls: "pimcore_nav_icon_add",
-                            itemId: 'pimcore_menu_file_dashboard_add',
+                            itemId: 'pimcore_menu_file_dashboards_add',
                             handler: function () {
                                 Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
