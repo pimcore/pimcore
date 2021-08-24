@@ -343,6 +343,22 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab.mask();
 
+        try {
+            pimcore.plugin.broker.fireEvent('preSaveObject', this, 'object');
+        } catch (e) {
+            if (e instanceof pimcore.error.ValidationException) {
+                this.tab.unmask();
+                pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
+                return false;
+            }
+
+            if (e instanceof pimcore.error.ActionCancelledException) {
+                this.tab.unmask();
+                pimcore.helpers.showNotification(t("Info"), 'Object folder not saved: ' + e.message, 'info');
+                return false;
+            }
+        }
+
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_savefolder', {task: task}),
             method: "PUT",
@@ -353,6 +369,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         this.resetChanges();
+
+                        pimcore.plugin.broker.fireEvent("postSaveObject", this);
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"),

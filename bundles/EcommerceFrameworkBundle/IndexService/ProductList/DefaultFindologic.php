@@ -97,7 +97,7 @@ class DefaultFindologic implements ProductListInterface
     protected $groupedValues;
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $conditions = [];
 

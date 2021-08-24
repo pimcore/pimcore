@@ -129,7 +129,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     renderer: function (value) {
                         return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
                     },
-                    width: 200
+                    flex: 1
                 },
                 {
                     text: t("value"),
@@ -138,7 +138,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     editor: new Ext.form.TextField({
                         allowBlank: false
                     }),
-                    width: 200
+                    flex: 1
                 },
                 {
                     xtype: 'actioncolumn',

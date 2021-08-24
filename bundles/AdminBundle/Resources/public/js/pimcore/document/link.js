@@ -30,7 +30,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         var user = pimcore.globalmanager.get("user");
 
         if (this.isAllowed("properties")) {
-            this.properties = new pimcore.document.properties(this, "document");
+            this.properties = new pimcore.document.properties(this, "document", true);
         }
 
         if (this.isAllowed("settings")) {

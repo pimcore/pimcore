@@ -134,7 +134,7 @@ trait Parallelization
      */
     private function lock($name = null, $blocking = false)
     {
-        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName());
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName(), 86400);
 
         if (!$this->lock->acquire($blocking)) {
             $this->lock = null;
@@ -154,5 +154,13 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsolePath(): string
+    {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

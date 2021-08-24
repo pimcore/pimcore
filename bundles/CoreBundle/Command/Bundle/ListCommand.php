@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
-use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -59,7 +58,6 @@ class ListCommand extends AbstractBundleCommand
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
             $enabled = $this->bundleManager->isEnabled($bundleClass);
 
-            /** @var PimcoreBundleInterface $bundle */
             $bundle = null;
             if ($enabled) {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
@@ -86,7 +84,6 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = false;
                 $row[] = false;
                 $row[] = false;
-                $row[] = false;
                 $row[] = 0;
             }
 
@@ -95,7 +92,7 @@ class ListCommand extends AbstractBundleCommand
 
         if ($input->getOption('json')) {
             $jsonData = array_map(static function ($row) use ($returnData) {
-                return array_combine($returnData['headers'], $row) ?: [];
+                return array_combine($returnData['headers'], $row);
             }, $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
         } else {

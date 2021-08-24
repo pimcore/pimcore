@@ -102,7 +102,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 },
                 this.deleteButton
             ],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

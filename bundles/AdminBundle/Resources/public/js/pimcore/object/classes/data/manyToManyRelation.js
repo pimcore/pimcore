@@ -192,6 +192,13 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                         fieldLabel: t("path_formatter_service"),
                         name: 'pathFormatterClass',
                         value: this.datax.pathFormatterClass
+                    },
+                    {
+                        xtype: "checkbox",
+                        fieldLabel: t("enable_text_selection"),
+                        width: 600,
+                        name: "enableTextSelection",
+                        value: this.datax.enableTextSelection
                     }
                 ]
             },

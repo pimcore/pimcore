@@ -42,47 +42,22 @@ class DocumentFallbackListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
-
-    /**
-     * @var Document\Service
-     */
-    protected $documentService;
-
-    /**
      * @var array
      */
-    protected $options;
+    protected array $options;
 
     /**
      * @var Document|null
      */
-    private $fallbackDocument;
+    private ?Document $fallbackDocument = null;
 
     public function __construct(
-        RequestStack $requestStack,
-        DocumentResolver $documentResolver,
-        SiteResolver $siteResolver,
-        Document\Service $documentService,
+        protected RequestStack $requestStack,
+        protected DocumentResolver $documentResolver,
+        protected SiteResolver $siteResolver,
+        protected Document\Service $documentService,
         array $options = []
     ) {
-        $this->requestStack = $requestStack;
-        $this->documentResolver = $documentResolver;
-        $this->siteResolver = $siteResolver;
-        $this->documentService = $documentService;
-
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);
 

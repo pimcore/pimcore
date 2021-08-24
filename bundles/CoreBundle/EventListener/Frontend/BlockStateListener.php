@@ -36,16 +36,10 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     use PimcoreContextAwareTrait;
 
     /**
-     * @var BlockStateStack
-     */
-    protected $blockStateStack;
-
-    /**
      * @param BlockStateStack $blockStateStack
      */
-    public function __construct(BlockStateStack $blockStateStack)
+    public function __construct(protected BlockStateStack $blockStateStack)
     {
-        $this->blockStateStack = $blockStateStack;
     }
 
     /**

@@ -20,6 +20,8 @@ use Pimcore\Db\PhpArrayFileTable;
 
 /**
  * @internal
+ *
+ * @deprecated Will be removed in Pimcore 11
  */
 abstract class PhpArrayTable implements DaoInterface
 {

@@ -1643,12 +1643,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $storage = Tool\Storage::get('thumbnail');
         if ($storage->fileExists($storagePath)) {
+            $fs = $storage->fileSize($storagePath);
             $stream = $storage->readStream($storagePath);
 
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [
                 'Content-Type' => 'video/mp4',
+                'Content-Length' => $fs,
+                'Accept-Ranges' => 'bytes',
             ]);
         } else {
             throw $this->createNotFoundException('Video thumbnail not found');

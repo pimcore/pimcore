@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleExce
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
@@ -464,11 +465,12 @@ class OrderManager implements OrderManagerInterface
             $orderItem->setKey($key);
         }
 
+        $product = $item->getProduct();
         $orderItem->setAmount($item->getCount());
-        $orderItem->setProduct($item->getProduct());
-        if ($item->getProduct()) {
-            $orderItem->setProductName($item->getProduct()->getOSName());
-            $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
+        $orderItem->setProduct($product);
+        if ($product instanceof CheckoutableInterface) {
+            $orderItem->setProductName($product->getOSName());
+            $orderItem->setProductNumber($product->getOSProductNumber());
         }
         $orderItem->setComment($item->getComment());
 

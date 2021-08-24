@@ -54,7 +54,7 @@ And in the frontend of the application:
 ### Example for `getCurrent()`
 
 ```twig
-{% set myBlock = pimcore_block('contentblock') %}
+{% set myBlock = pimcore_block('contentblock', {'reload': true}) %}
 {% for i in myBlock.iterator %}
     {% if myBlock.current > 0 %}
         Insert this line only after the first iteration<br />
@@ -63,6 +63,9 @@ And in the frontend of the application:
     <h2>{{ pimcore_input('subline') }}</h2>
 {% endfor %}
 ```
+
+> **IMPORTANT**
+> If you want to change content structure dynamically for each index in editmode, then it is required to use `reload=true` config.
 
 ### Using Manual Mode
 

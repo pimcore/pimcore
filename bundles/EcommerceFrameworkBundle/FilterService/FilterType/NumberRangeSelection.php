@@ -127,8 +127,8 @@ class NumberRangeSelection extends AbstractFilterType
         } elseif ($rawValue == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
-            $value['from'] = $filterDefinition->getPreSelectFrom();
-            $value['to'] = $filterDefinition->getPreSelectTo();
+            $value['from'] = method_exists($filterDefinition, 'getPreSelectFrom') ? $filterDefinition->getPreSelectFrom() : null;
+            $value['to'] = method_exists($filterDefinition, 'getPreSelectTo') ? $filterDefinition->getPreSelectTo() : null;
         }
 
         $currentFilter[$field] = $value;

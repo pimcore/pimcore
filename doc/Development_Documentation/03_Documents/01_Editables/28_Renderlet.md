@@ -90,7 +90,7 @@ Of course, to limit access to the renderlet, you can use the `type` configuratio
 
 ### Create View
 
-Now you have to create the template file at: `website/views/scripts/content/my-gallery.php`
+Now you have to create the template file at: `templates/content/my_gallery.html.twig`
 
 ```twig
 {% if assets %}

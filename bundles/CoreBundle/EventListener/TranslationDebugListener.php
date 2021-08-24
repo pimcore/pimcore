@@ -28,22 +28,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class TranslationDebugListener implements EventSubscriberInterface
 {
-    /**
-     * @var Translator
-     */
-    private $translator;
-
-    /**
-     * @var string
-     */
-    private $parameterName;
-
     public function __construct(
-        Translator $translator,
-        string $parameterName
+        private Translator $translator,
+        private string $parameterName
     ) {
-        $this->translator = $translator;
-        $this->parameterName = $parameterName;
     }
 
     /**

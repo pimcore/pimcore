@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Mail;
 use Pimcore\Model\Element\ElementInterface;
@@ -382,6 +383,9 @@ class EmailController extends AdminController
         if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
+
+        // Simulate a frontend request to prefix assets
+        $request->attributes->set(RequestHelper::ATTRIBUTE_FRONTEND_REQUEST, true);
 
         $mail = new Mail();
 

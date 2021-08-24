@@ -421,7 +421,7 @@ final class Tool
     /**
      * Returns the host URL
      *
-     * @param string $useProtocol use a specific protocol
+     * @param string|null $useProtocol use a specific protocol
      * @param Request|null $request
      *
      * @return string

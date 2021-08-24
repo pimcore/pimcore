@@ -109,15 +109,7 @@ class Processor
             ];
         }
 
-        if (!$fileSystemPath && $asset instanceof Asset) {
-            $fileSystemPath = $asset->getLocalFile();
-        }
-
-        if (is_resource($fileSystemPath)) {
-            $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
-        }
-
-        $fileExt = File::getFileExtension(basename($fileSystemPath));
+        $fileExt = File::getFileExtension($asset->getFilename());
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
@@ -171,7 +163,7 @@ class Processor
 
         $fileExtension = $format;
         if ($format == 'original') {
-            $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+            $fileExtension = $fileExt;
         } elseif ($format === 'pjpeg' || $format === 'jpeg') {
             $fileExtension = 'jpg';
         }
@@ -200,6 +192,14 @@ class Processor
         }
 
         // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
+        if (!$fileSystemPath && $asset instanceof Asset) {
+            $fileSystemPath = $asset->getLocalFile();
+        }
+
+        if (is_resource($fileSystemPath)) {
+            $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
+        }
+
         if (!file_exists($fileSystemPath)) {
             throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
         }
@@ -299,20 +299,12 @@ class Processor
             // sorry for the goto/label - but in this case it makes life really easier and the code more readable
             prepareTransformations:
 
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
+            foreach ($transformations as &$transformation) {
+                if (!empty($transformation) && !isset($transformation['isApplied'])) {
                     $arguments = [];
 
                     if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (in_array($transformation['method'], ['cropPercent'])) {
-                            //avoid double cropping in case of $highResFactor re-calculation (goto prepareTransformations)
-                            if ($imageCropped) {
-                                continue;
-                            }
-                            $imageCropped = true;
-                        }
 
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
@@ -371,6 +363,8 @@ class Processor
                     } elseif (method_exists($image, $transformation['method'])) {
                         call_user_func_array([$image, $transformation['method']], $arguments);
                     }
+
+                    $transformation['isApplied'] = true;
                 }
             }
         }
@@ -391,7 +385,9 @@ class Processor
                 $image->save($tmpFsPath, $format, $config->getQuality());
                 $stream = fopen($tmpFsPath, 'rb');
                 $storage->writeStream($storagePath, $stream);
-                fclose($stream);
+                if (is_resource($stream)) {
+                    fclose($stream);
+                }
                 unlink($tmpFsPath);
 
                 $generated = true;

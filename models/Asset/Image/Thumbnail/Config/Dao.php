@@ -23,12 +23,22 @@ use Pimcore\Tool\Console;
  *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    /**
+     * {@inheritdoc}
+     */
     public function configure()
     {
-        parent::configure();
-        $this->setFile('image-thumbnails');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
+            'settingsStoreScope' => 'pimcore_image_thumbnails',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
+            'legacyConfigFile' => 'image-thumbnails.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS',
+        ]);
     }
 
     /**
@@ -42,9 +52,13 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setName($id);
         }
 
-        $data = $this->db->getById($this->model->getName());
+        $data = $this->getDataByName($this->model->getName());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
@@ -62,7 +76,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function exists(string $name): bool
     {
-        return (bool) $this->db->getById($this->model->getName());
+        return (bool) $this->getDataByName($this->model->getName());
     }
 
     /**
@@ -90,18 +104,34 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
+        $this->saveData($this->model->getName(), $data);
+
         if ($forceClearTempFiles) {
-            $this->db->insertOrUpdate($data, $this->model->getName());
             $this->model->clearTempFiles();
-        } else {
-            $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
-
-            $this->db->insertOrUpdate($data, $this->model->getName());
-
-            if ($thumbnailDefinitionAlreadyExisted) {
-                $this->autoClearTempFiles();
-            }
+        } elseif ($this->dataSource) {
+            // thumbnail already existed
+            $this->autoClearTempFiles();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'assets' => [
+                    'image' => [
+                        'thumbnails' => [
+                            'definitions' => [
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -111,7 +141,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete($forceClearTempFiles = false)
     {
-        $this->db->delete($this->model->getName());
+        $this->deleteData($this->model->getName());
 
         if ($forceClearTempFiles) {
             $this->model->clearTempFiles();

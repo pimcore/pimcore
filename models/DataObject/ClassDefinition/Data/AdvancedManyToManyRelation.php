@@ -1064,7 +1064,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+        return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
 
     /**
@@ -1072,6 +1072,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+        return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
 }

@@ -105,7 +105,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         if (!this.fieldConfig.height) {
             autoHeight = true;
         }
-        var cls = 'object_field object_field_type_' + this.type;
 
         var toolbarItems = this.getEditToolbarItems();
 
@@ -187,12 +186,15 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             multiSelect: true,
             viewConfig: {
                 markDirty: false,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -210,7 +212,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 items: columns
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             tbar: {
                 items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
@@ -412,7 +414,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
-            enableTextSelection: true,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);

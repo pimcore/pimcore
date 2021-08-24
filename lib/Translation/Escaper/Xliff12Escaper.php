@@ -102,11 +102,8 @@ class Xliff12Escaper
                 $content = html_entity_decode($el->textContent, null, 'UTF-8');
                 $el->ownerDocument->textContent = $content;
             }
-            $content = $xml->html();
+            $content = $xml->text();
         }
-
-        //parse comments
-        $content = strtr($content, ['&lt;!--' => '<!--', '--&gt;' => '-->']);
 
         return $content;
     }

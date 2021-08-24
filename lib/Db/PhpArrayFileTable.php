@@ -19,6 +19,8 @@ use Pimcore\File;
 
 /**
  * @internal
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 final class PhpArrayFileTable
 {

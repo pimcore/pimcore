@@ -656,5 +656,10 @@
     "json_converter": "Beállítások formázása",
     "json_converter_link": "JSON formázó",
     "preview_generator_reference": "Előnézet generáló osztály vagy szolgáltatás",
-    "max_characters": "Maximum Characters"
+    "max_characters": "Maximum karakter",
+    "min_length": "Min Length",
+    "calculatedValue_calculatortype": "Calculator type",
+    "calculatedValue_calculatortype_class": "Class",
+    "calculatedValue_calculatortype_expression": "Expression",
+    "calculatedValue_calculatorexpression": "Calculator expression"
 }

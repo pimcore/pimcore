@@ -102,7 +102,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @var array<string[]>
+     * @var array
      */
     protected $conditions = [];
 

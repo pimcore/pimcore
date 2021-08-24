@@ -942,5 +942,14 @@
     "save_draft": "Enregistrer le brouillon",
     "selected_grid_columns": "Colonnes de grille sélectionnées",
     "ungrouped": "dégroupé",
-    "reindex_warning": "Le changement de l'ordre de tri de alphabétique à indexé réindexera tous les éléments. Voulez-vous continuer ?"
+    "reindex_warning": "Le changement de l'ordre de tri de alphabétique à indexé réindexera tous les éléments. Voulez-vous continuer ?",
+    "static_generator": "Générateur de pages statiques",
+    "static_generator_enable": "Activer le rendu statique côté serveur",
+    "static_generator_lifetime": "Durée de vie (en minutes) pour la page statique (facultatif)",
+    "last_generated": "Dernière génération",
+    "user_inactive": "L'utilisateur n'est pas actif",
+    "user_no_email_address": "L'utilisateur n'a pas d'adresse e-mail",
+    "user_no_password": "L'utilisateur n'a pas de mot de passe",
+    "user_unknown": "Utilisateur inconnu",
+    "lost_password_email_error": "Impossible d'envoyer l'e-mail de récupération du mot de passe"
 }

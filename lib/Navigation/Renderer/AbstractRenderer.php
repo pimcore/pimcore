@@ -110,10 +110,10 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMinDepth($minDepth = null)
     {
-        if (null === $minDepth || is_int($minDepth)) {
-            $this->_minDepth = $minDepth;
-        } else {
+        if (null !== $minDepth) {
             $this->_minDepth = (int) $minDepth;
+        } else {
+            $this->_minDepth = null;
         }
 
         return $this;
@@ -138,10 +138,10 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMaxDepth($maxDepth = null)
     {
-        if (null === $maxDepth || is_int($maxDepth)) {
-            $this->_maxDepth = $maxDepth;
-        } else {
+        if (null !== $maxDepth) {
             $this->_maxDepth = (int) $maxDepth;
+        } else {
+            $this->_maxDepth = null;
         }
 
         return $this;

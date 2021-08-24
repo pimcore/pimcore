@@ -30,7 +30,7 @@ pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             inputType: "password",
             listeners: {
                 afterrender: function (cmp) {

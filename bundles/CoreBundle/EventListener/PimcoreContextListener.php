@@ -36,25 +36,13 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
 
     /**
-     * @var PimcoreContextResolver
-     */
-    protected $resolver;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @param PimcoreContextResolver $resolver
      * @param RequestStack $requestStack
      */
     public function __construct(
-        PimcoreContextResolver $resolver,
-        RequestStack $requestStack
+        protected PimcoreContextResolver $resolver,
+        protected RequestStack $requestStack
     ) {
-        $this->resolver = $resolver;
-        $this->requestStack = $requestStack;
     }
 
     /**

@@ -1104,6 +1104,8 @@ class SettingsController extends AdminController
                         'text' => $item->getName(),
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_thumbnails',
+                        'cls' => 'pimcore_treenode_disabled',
+                        'writeable' => $item->isWriteable(),
                     ];
             } else {
                 $thumbnails[] = [
@@ -1111,6 +1113,8 @@ class SettingsController extends AdminController
                     'text' => $item->getName(),
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_thumbnails',
+                    'cls' => 'pimcore_treenode_disabled',
+                    'writeable' => $item->isWriteable(),
                 ];
             }
         }
@@ -1205,8 +1209,10 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+        $data = $pipe->getObjectVars();
+        $data['writeable'] = $pipe->isWriteable();
 
-        return $this->adminJson($pipe->getObjectVars());
+        return $this->adminJson($data);
     }
 
     /**
@@ -1293,7 +1299,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var Asset\Image\Thumbnail\Config $item */
+        /** @var Asset\Video\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
@@ -1314,6 +1320,8 @@ class SettingsController extends AdminController
                         'text' => $item->getName(),
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_videothumbnails',
+                        'cls' => 'pimcore_treenode_disabled',
+                        'writeable' => $item->isWriteable(),
                     ];
             } else {
                 $thumbnails[] = [
@@ -1321,6 +1329,8 @@ class SettingsController extends AdminController
                     'text' => $item->getName(),
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_videothumbnails',
+                    'cls' => 'pimcore_treenode_disabled',
+                    'writeable' => $item->isWriteable(),
                 ];
             }
         }
@@ -1388,7 +1398,10 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe->getObjectVars());
+        $data = $pipe->getObjectVars();
+        $data['writeable'] = $pipe->isWriteable();
+
+        return $this->adminJson($data);
     }
 
     /**

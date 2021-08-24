@@ -14,6 +14,8 @@ In order to set a checkbox value, a bool value needs to be passed to the accordi
 $object->setCheckbox(true);
 ```
 
+If inheritance is activated in the corresponding DataObject class, a trashcan icon is displayed next to the checkbox. This can be used to reset the value of the checkbox in order to guarantee inheritance from parents again.
+
 ## Boolean Select
 
 A `Boolean Select` is kind of a tri-state checkbox which is rendered as a select datatype in the admin UI.
