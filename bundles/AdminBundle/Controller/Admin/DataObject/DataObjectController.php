@@ -531,19 +531,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $objectData['validLayouts'] = [];
 
                 foreach ($validLayouts as $validLayout) {
-                    if($validLayout->getId() != $currentLayoutId) {
+                    if ($validLayout->getId() != $currentLayoutId) {
                         $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                     }
                 }
 
                 $user = Tool\Admin::getCurrentUser();
-
-                if (!is_null($currentLayoutId)) {
-                    if ($currentLayoutId == '0' && !$user->isAdmin()) {
-                        $first = reset($validLayouts);
-                        $currentLayoutId = $first->getId();
-                    }
-                }
 
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
                     $layout = DataObject\Service::getSuperLayoutDefinition($object);
@@ -551,10 +544,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 } elseif (!empty($currentLayoutId)) {
                     // check if user has sufficient rights
                     if (is_array($validLayouts) && $validLayouts[$currentLayoutId]) {
-                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
-
-                        $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                        $objectData['layout'] = $customLayoutDefinition;
+                        $objectData['layout'] = $validLayouts[$currentLayoutId]->getLayoutDefinitions();
                     } else {
                         $currentLayoutId = 0;
                     }
