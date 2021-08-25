@@ -481,7 +481,9 @@ class TranslationController extends AdminController
                 //Reload translation to get complete data,
                 //if translation fetched based on the text not key
                 if ($searchString && !strpos($searchString, $t->getKey())) {
-                    $t = Translation::getByKey($t->getKey());
+                    if (!$t = Translation::getByKey($t->getKey(), $domain)) {
+                        continue;
+                    }
                 }
 
                 $translations[] = array_merge(
