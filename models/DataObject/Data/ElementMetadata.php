@@ -141,7 +141,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $this->markMeDirty(false);
+        return $return;
     }
 
     /**
