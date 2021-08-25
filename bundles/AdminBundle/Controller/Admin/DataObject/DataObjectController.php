@@ -523,11 +523,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     }
                 }
             }
+
             if (!empty($validLayouts)) {
-                $objectData['validLayouts'] = [ ];
+                $objectData['validLayouts'] = [];
 
                 foreach ($validLayouts as $validLayout) {
-                    $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
+                    if((string)$validLayout->getId() !== "0") {
+                        $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
+                    }
                 }
 
                 $user = Tool\Admin::getCurrentUser();
