@@ -170,7 +170,10 @@ pimcore.settings.recyclebin = Class.create({
             bbar: this.pagingtoolbar,
             stripeRows: true,
             selModel: this.selectionColumn,
-            plugins: ['pimcore.gridfilters'],
+            plugins: [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }],
             columns: typesColumns,
             tbar: toolbar,
             listeners: {

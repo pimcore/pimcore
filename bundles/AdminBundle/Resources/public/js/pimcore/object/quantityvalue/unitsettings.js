@@ -191,7 +191,13 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: ['pimcore.gridfilters', this.cellEditing],
+            plugins: [
+                {
+                    ptype: 'pimcore.gridfilters',
+                    menuFilterText: t('filter')
+                },
+                this.cellEditing
+            ],
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,

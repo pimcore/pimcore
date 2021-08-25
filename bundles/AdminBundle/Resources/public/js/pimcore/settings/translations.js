@@ -265,7 +265,10 @@ pimcore.settings.translations = Class.create({
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                "pimcore.gridfilters",
+                {
+                    ptype: 'pimcore.gridfilters',
+                    menuFilterText: t('filter')
+                },
                 this.cellEditing
             ],
             tbar: toolbar,

@@ -229,7 +229,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             bbar: this.pagingtoolbar,
             columns: this.gridColumns,
             columnLines: true,
-            plugins: ['pimcore.gridfilters'],
+            plugins: [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }],
             stripeRows: true,
             trackMouseOver: true,
             forceFit: false,

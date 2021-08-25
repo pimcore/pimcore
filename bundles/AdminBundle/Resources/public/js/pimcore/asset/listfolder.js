@@ -259,7 +259,13 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             columns : gridColumns,
             enableLocking: true,
             bufferedRenderer: false,
-            plugins: [this.cellEditing, 'pimcore.gridfilters'],
+            plugins: [
+                this.cellEditing,
+                {
+                    ptype: 'pimcore.gridfilters',
+                    menuFilterText: t('filter')
+                }
+            ],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
             selModel: gridHelper.getSelectionColumn(),

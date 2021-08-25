@@ -510,7 +510,10 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             bbar: this.pagingtoolbar,
             columns: this.gridColumns,
             columnLines: true,
-            plugins: ['pimcore.gridfilters'],
+            plugins: [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }],
             stripeRows: true,
             trackMouseOver: true,
             viewConfig: {

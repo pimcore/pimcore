@@ -173,7 +173,10 @@ pimcore.element.notes = Class.create({
                 }]
             });
 
-            var plugins = ['pimcore.gridfilters'];
+            var plugins = [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }];
 
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,

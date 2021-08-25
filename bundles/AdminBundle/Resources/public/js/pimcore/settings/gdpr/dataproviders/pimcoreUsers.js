@@ -151,7 +151,10 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
             loadMask: true,
             columnLines: true,
             stripeRows: true,
-            plugins: ['pimcore.gridfilters'],
+            plugins: [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }],
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview'

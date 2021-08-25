@@ -267,7 +267,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         var plugins = [this.cellEditing];
         if (needGridFilter) {
-            plugins.push('pimcore.gridfilters');
+            plugins.push({
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            });
         }
 
         if (!needGridFilter) {

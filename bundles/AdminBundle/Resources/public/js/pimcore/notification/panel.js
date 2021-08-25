@@ -169,7 +169,10 @@ pimcore.notification.panel = Class.create({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: ['pimcore.gridfilters'],
+            plugins: [{
+                ptype: 'pimcore.gridfilters',
+                menuFilterText: t('filter')
+            }],
             columns: typesColumns,
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
