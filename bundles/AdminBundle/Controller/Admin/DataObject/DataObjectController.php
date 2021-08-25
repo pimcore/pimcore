@@ -492,7 +492,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
-            $currentLayoutId = $request->get('layoutId', null);
+            $currentLayoutId = $request->get('layoutId', 0);
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
@@ -504,8 +504,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $ok = true;
                 }
             }
-            if (!$ok && count($validLayouts) > 0) {
-                $currentLayoutId = reset($validLayouts)->getId();
+
+            if (!$ok) {
+                $currentLayoutId = null;
             }
 
             //master layout has id 0 so we check for is_null()
@@ -520,6 +521,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         }
                     }
                 }
+            }
+
+            if ($currentLayoutId === null && count($validLayouts) > 0) {
+                $currentLayoutId = reset($validLayouts)->getId();
             }
 
             if (!empty($validLayouts)) {
