@@ -500,7 +500,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             //Uses first valid layout instead of admin layout when empty
             $ok = false;
             foreach ($validLayouts as $layout) {
-                if ($currentLayoutId !== null && $currentLayoutId == $layout->getId()) {
+                if ($currentLayoutId == $layout->getId()) {
                     $ok = true;
                 }
             }
@@ -510,8 +510,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             //master layout has id 0 so we check for is_null()
-            if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
-                if (count($validLayouts) == 1) {
+            if ($currentLayoutId === null && !empty($validLayouts)) {
+                if (count($validLayouts) === 1) {
                     $firstLayout = reset($validLayouts);
                     $currentLayoutId = $firstLayout->getId();
                 } else {
