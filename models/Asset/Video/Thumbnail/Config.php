@@ -479,7 +479,7 @@ final class Config extends Model\AbstractModel
 
     public function __clone()
     {
-        if($this->dao) {
+        if ($this->dao) {
             $this->dao = clone $this->dao;
             $this->dao->setModel($this);
         }
