@@ -161,18 +161,17 @@ final class WorkflowPass implements CompilerPassInterface
                     $markingStoreDefinition->addArgument($places);
                 }
 
-                if($markingStoreType === 'single_state') {
+                if ($markingStoreType === 'single_state') {
                     $markingStoreDefinition->addArgument(true);
                 }
 
-                if($markingStoreType === 'multiple_state') {
+                if ($markingStoreType === 'multiple_state') {
                     $markingStoreDefinition->addArgument(false);
                 }
 
                 foreach ($workflowConfig['marking_store']['arguments'] ?? [] as $argument) {
                     $markingStoreDefinition->addArgument($argument);
                 }
-
             } elseif (!is_null($markingStoreService)) {
                 $markingStoreDefinition = new Reference($markingStoreService);
             }
