@@ -58,6 +58,6 @@ trait Text
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return htmlspecialchars($data);
+        return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
 }
