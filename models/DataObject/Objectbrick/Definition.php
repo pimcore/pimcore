@@ -595,7 +595,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t\t\t" . '}' . "\n";
                         $cd .= "\t\t\t" . "}\n";
                         $cd .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-                        $cd .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+                        $cd .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
                         $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";
                     }
