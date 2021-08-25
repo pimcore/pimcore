@@ -531,9 +531,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $objectData['validLayouts'] = [];
 
                 foreach ($validLayouts as $validLayout) {
-                    if ($validLayout->getId() != $currentLayoutId) {
-                        $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
-                    }
+                    $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
 
                 $user = Tool\Admin::getCurrentUser();
@@ -542,12 +540,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $layout = DataObject\Service::getSuperLayoutDefinition($object);
                     $objectData['layout'] = $layout;
                 } elseif (!empty($currentLayoutId)) {
-                    // check if user has sufficient rights
-                    if (is_array($validLayouts) && isset($validLayouts[$currentLayoutId])) {
-                        $objectData['layout'] = $validLayouts[$currentLayoutId]->getLayoutDefinitions();
-                    } else {
-                        $currentLayoutId = 0;
-                    }
+                    $objectData['layout'] = $validLayouts[$currentLayoutId]->getLayoutDefinitions();
                 }
 
                 $objectData['currentLayoutId'] = $currentLayoutId;
