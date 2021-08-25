@@ -543,7 +543,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectData['layout'] = $layout;
                 } elseif (!empty($currentLayoutId)) {
                     // check if user has sufficient rights
-                    if (is_array($validLayouts) && $validLayouts[$currentLayoutId]) {
+                    if (is_array($validLayouts) && isset($validLayouts[$currentLayoutId])) {
                         $objectData['layout'] = $validLayouts[$currentLayoutId]->getLayoutDefinitions();
                     } else {
                         $currentLayoutId = 0;
