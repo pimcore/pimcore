@@ -158,6 +158,10 @@ class Dao extends Model\Dao\AbstractDao
                     $data[$fieldName] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
+
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    $this->model->markFieldDirty($fieldName, false);
+                }
             }
         }
 

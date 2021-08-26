@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         ];
 
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fieldName => $fd) {
-            $getter = 'get' . ucfirst($fd->getName());
+            $getter = 'get' . ucfirst($fieldName);
 
             if ($fd instanceof CustomResourcePersistingInterface) {
                 if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
@@ -87,6 +87,10 @@ class Dao extends Model\Dao\AbstractDao
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data[$fd->getName()] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
+                }
+
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    $this->model->markFieldDirty($fieldName, false);
                 }
             }
         }
