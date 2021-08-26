@@ -440,8 +440,8 @@ class Select extends Data implements
      */
     public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
-        $this->doEnrichDefinitionDefinition(null, $context, $this->getName(),
-            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $this->doEnrichDefinitionDefinition(null, $this->getName(),
+            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
 
         return $this;
     }
@@ -451,8 +451,8 @@ class Select extends Data implements
      */
     public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
-        $this->doEnrichDefinitionDefinition($object, $context, $this->getName(),
-            'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $this->doEnrichDefinitionDefinition($object, $this->getName(),
+            'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
 
         return $this;
     }
