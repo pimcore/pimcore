@@ -52,7 +52,7 @@ trait SelectionProviderTrait
             DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
-            if ($mode == DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT) {
+            if ($this instanceof Data\Select) {
                 $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
                 $this->setDefaultValue($defaultValue);
             }
