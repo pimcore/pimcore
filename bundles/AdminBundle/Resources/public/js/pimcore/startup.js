@@ -226,6 +226,8 @@ Ext.onReady(function () {
                 }
             } else if(jsonData && jsonData['type'] === 'ValidationException') {
                 pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
+            } else if(jsonData && jsonData['type'] === 'ConfigWriteException') {
+                pimcore.helpers.showNotification(t("error"), t("config_not_writeable"), "error", errorMessage);
             } else if (response.status === 403) {
                 pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
             } else {

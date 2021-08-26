@@ -18,9 +18,10 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 
 /**
- * @method DocType\Dao getDao()
- * @method void save()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete()
+ * @method void save()
  */
 class DocType extends Model\AbstractModel
 {
@@ -332,5 +333,13 @@ class DocType extends Model\AbstractModel
     public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }
