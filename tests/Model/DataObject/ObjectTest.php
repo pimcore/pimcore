@@ -160,4 +160,19 @@ class ObjectTest extends ModelTestCase
         $object->save();
         $this->assertGreaterThanOrEqual($currentTime, $object->getModificationDate(), 'Expected auto assigned modification date');
     }
+
+    /**
+     * Verifies that an object can be saved with custom modification date.
+     *
+     */
+    public function testDefaultValueSavedToVersion()
+    {
+        $object = TestHelper::createEmptyObject();
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+
+        $this->assertEquals('default', $latestVersion->getData()->getInputWithDefault(), 'Expected default value saved to version');
+    }
 }

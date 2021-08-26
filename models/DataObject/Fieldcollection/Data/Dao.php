@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname(),
         ];
 
-        foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
+        foreach ($this->model->getDefinition()->getFieldDefinitions() as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
             if ($fd instanceof CustomResourcePersistingInterface) {
@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
                     'context' => [
                         'containerType' => 'fieldcollection',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' => $this->model->getFieldname(),
+                        'fieldname' => $fieldName,
                         'index' => $index,
                     ],
                 ]);
@@ -73,15 +73,20 @@ class Dao extends Model\Dao\AbstractDao
             }
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
+                    $fieldDefinitionParams = [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
-                    ]);
+                    ];
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
                 } else {
-                    $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
+                    $fieldDefinitionParams = [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                         'fieldname' => $fd->getName(),
-                    ]);
+                    ];
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
+                    $data[$fd->getName()] = $insertData;
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
             }
         }

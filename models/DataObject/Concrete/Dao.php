@@ -201,18 +201,18 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $untouchable = [];
         $db = Db::get();
 
-        foreach ($fieldDefinitions as $key => $fd) {
+        foreach ($fieldDefinitions as $fieldName => $fd) {
             if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                if (!$this->model->isLazyKeyLoaded($fieldName) || $fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
-                    $untouchable[] = $key;
+                    $untouchable[] = $fieldName;
                 }
             }
 
             if (!DataObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
-                    if (!in_array($key, $untouchable)) {
-                        $untouchable[] = $key;
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($fieldName)) {
+                    if (!in_array($fieldName, $untouchable)) {
+                        $untouchable[] = $fieldName;
                     }
                 }
             }
@@ -237,8 +237,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         $data = [];
         $data['oo_id'] = $this->model->getId();
-        foreach ($fieldDefinitions as $key => $fd) {
-            $getter = 'get' . ucfirst($key);
+        foreach ($fieldDefinitions as $fieldName => $fd) {
+            $getter = 'get' . ucfirst($fieldName);
 
             if ($fd instanceof CustomResourcePersistingInterface) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
@@ -248,7 +248,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         'containerType' => 'object',
                     ],
                     'owner' => $this->model,
-                    'fieldname' => $key,
+                    'fieldname' => $fieldName,
                 ]
                 ;
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
@@ -262,23 +262,23 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $fieldDefinitionParams = [
                         'isUpdate' => $isUpdate,
                         'owner' => $this->model,
-                        'fieldname' => $key,
+                        'fieldname' => $fieldName,
                     ];
 
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
-                        $this->model->set($key, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
+                        $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
                     }
                 } else {
                     $fieldDefinitionParams = [
                         'isUpdate' => $isUpdate,
                         'owner' => $this->model,
-                        'fieldname' => $key,
+                        'fieldname' => $fieldName,
                     ];
                     $insertData = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
-                    $data[$key] = $insertData;
-                    $this->model->set($key, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
+                    $data[$fieldName] = $insertData;
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
             }
         }
