@@ -209,9 +209,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             //Fix old serialized data protected properties with \0*\0 prefix
             //https://github.com/pimcore/pimcore/issues/9973
-            $data = preg_replace_callback ( '!s:(\d+):" \* (.*?)";!', function($match) {
-                return ($match[1] == strlen($match[2])) ? $match[0] : 's:' . strlen($match[2]) .   ':"' . $match[2] . '";';
-            },$data);
+            if (str_contains($data, ':" * ')) {
+                $data = preg_replace_callback ( '!s:(\d+):" \* (.*?)";!', function($match) {
+                    return ($match[1] == strlen($match[2])) ? $match[0] : 's:' . strlen($match[2]) .   ':"' . $match[2] . '";';
+                },$data);
+            }
 
             $unserializedData = Serialize::unserialize($data);
             $result = [];
