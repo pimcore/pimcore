@@ -210,7 +210,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
                     if (is_array($fd->getColumnType())) {
-                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)];
+                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fieldName, $language, true),
                             $object,
