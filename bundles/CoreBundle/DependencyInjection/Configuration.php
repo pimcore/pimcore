@@ -687,6 +687,15 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->booleanNode('allow_processing_unpublished_elements_for_url_slug')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                                ->end()
+                            ->defaultFalse()
+                        ->end()
                     ->end();
         $classDefinitionsNode = $objectsNode
             ->children()
