@@ -100,10 +100,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             }
         }
         $this->saveData($this->model->getId(), $data);
-
-        if (!$this->model->getId()) {
-            $this->model->setId($this->db->getLastInsertId());
-        }
     }
 
     /**

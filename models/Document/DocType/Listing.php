@@ -55,7 +55,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @return Model\Document\DocType
+     * @return Model\Document\DocType[]
      */
     public function load()
     {

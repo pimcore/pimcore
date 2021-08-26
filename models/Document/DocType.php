@@ -20,6 +20,7 @@ use Pimcore\Model;
 /**
  * @method bool isWriteable()
  * @method string getWriteTarget()
+ * @method \Pimcore\Model\Document\DocType\Dao getDao()
  * @method void delete()
  * @method void save()
  */
