@@ -67,8 +67,8 @@ trait SelectionProviderTrait
      */
     public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
-        $this->doEnrichDefinitionDefinition(null, $context, $this->getName(),
-            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $this->doEnrichDefinitionDefinition(null, $this->getName(),
+            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
 
         return $this;
     }
