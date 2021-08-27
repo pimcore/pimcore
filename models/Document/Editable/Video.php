@@ -637,13 +637,13 @@ class Video extends Model\Document\Editable
             $additional_params = '';
 
             $clipConfig = [];
-            if (is_array($config['config']['clip'])) {
+            if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
                 $clipConfig = $config['config']['clip'];
             }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['vimeo'])) {
+            if (array_key_exists('vimeo', $config) && is_array($config['vimeo'])) {
                 $configurations = array_merge($clipConfig, $config['vimeo']);
             }
 
@@ -696,9 +696,15 @@ class Video extends Model\Document\Editable
         }
 
         if ($dailymotionId) {
-            $width = $config['width'] ?? '100%';
+            $width = '100%';
+            if (array_key_exists('width', $config)) {
+                $width = $config['width'];
+            }
 
-            $height = $config['height'] ?? '300';
+            $height = '300';
+            if (array_key_exists('height', $config)) {
+                $height = $config['height'];
+            }
 
             $valid_dailymotion_prams = [
                 'autoplay',
@@ -707,11 +713,14 @@ class Video extends Model\Document\Editable
 
             $additional_params = '';
 
-            $clipConfig = is_array($config['config']['clip']) ? $config['config']['clip'] : [];
+            $clipConfig = [];
+            if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
+                $clipConfig = $config['config']['clip'];
+            }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['dailymotion'])) {
+            if (array_key_exists('dailymotion', $config) && is_array($config['dailymotion'])) {
                 $configurations = array_merge($clipConfig, $config['dailymotion']);
             }
 
