@@ -30,7 +30,7 @@ trait SelectionProviderTrait
      * @param string $purpose
      * @param string $mode
      */
-    protected function doEnrichDefinitionDefinition(/*?DataObject\Concrete */ $object, string $fieldname, string $purpose, string $mode, /**  array */ $context = []) {
+    protected function doEnrichDefinitionDefinition(/*?Concrete */ $object, string $fieldname, string $purpose, string $mode, /**  array */ $context = []) {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
@@ -60,27 +60,5 @@ trait SelectionProviderTrait
             $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
             $this->dynamicOptions = !$hasStaticOptions;
         }
-    }
-
-    /**
-     * { @inheritdoc }
-     */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
-    {
-        $this->doEnrichDefinitionDefinition(null, $this->getName(),
-            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
-    {
-        $this->doEnrichDefinitionDefinition($object, $context, $this->getName(),
-            'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
-
-        return $this;
     }
 }
