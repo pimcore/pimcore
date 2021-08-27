@@ -123,6 +123,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
 
+        /** @deprecated  Deprecated, will become default behavior in Pimcore 11 */
         if ($this->config['objects']['allow_processing_unpublished_elements_for_url_slug']) {
             $route->setDefault(ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS, true);
         }
