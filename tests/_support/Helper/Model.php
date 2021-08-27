@@ -451,6 +451,10 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
+            /** @var ClassDefinition\Data\Input $inputWithDefault */
+            $inputWithDefault = $this->createDataChild('input', 'inputWithDefault');
+            $inputWithDefault->setDefaultValue('default');
+            $panel->addChild($inputWithDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
