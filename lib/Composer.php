@@ -174,7 +174,9 @@ class Composer
         $command = array_merge($command, $cmd);
 
         //$event->getIO()->write('Run command: ' . implode(' ', $command), false);
-
+        if (substr(php_uname(), 0, 7) == "Windows") {
+            $command = implode(' ', $command);
+        }
         $process = new Process($command, null, null, null, $timeout);
         $process->run(function ($type, $buffer) use ($event, $writeBuffer) {
             if ($writeBuffer) {
