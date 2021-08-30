@@ -1,5 +1,9 @@
 parameters:
 	ignoreErrors:
+        -
+            message: "#^Comparison operation \"\\>\\=\" between int\\<0, max\\> and 0 is always true\\.$#"
+            count: 1
+            path: bundles/AdminBundle/Controller/Searchadmin/SearchController.php
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
