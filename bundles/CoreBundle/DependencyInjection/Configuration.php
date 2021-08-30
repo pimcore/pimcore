@@ -174,6 +174,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addWeb2PrintNode($rootNode);
 
         return $treeBuilder;
     }
@@ -1228,6 +1229,45 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('usespecific')
                             ->defaultFalse()
                         ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Adds configuration tree for the web2print configuration
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addWeb2PrintNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('web2print')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+						->booleanNode('enableInDefaultView')->end()
+						->scalarNode('generalTool')->end()
+						->scalarNode('generalDocumentSaveMode')->end()
+						->scalarNode('pdfreactorVersion')->end()
+						->scalarNode('pdfreactorProtocol')->end()
+						->scalarNode('pdfreactorServer')->end()
+						->scalarNode('pdfreactorServerPort')->end()
+						->scalarNode('pdfreactorBaseUrl')->end()
+						->scalarNode('pdfreactorApiKey')->end()
+						->scalarNode('pdfreactorLicence')->end()
+                        ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
+						->booleanNode('pdfreactorEnableDebugMode')->end()
+						->scalarNode('wkhtmltopdfBin')->end()
+                        ->arrayNode('wkhtml2pdfOptions')
+                            ->normalizeKeys(false)
+                            ->children()
+                                ->scalarNode('print-media-type')->end()
+                                ->scalarNode('page-size')->end()
+                            ->end()
+                        ->end()
+						->scalarNode('wkhtml2pdfHostname')->end()
+                        ->scalarNode('headlessChromeSettings')->end()
                     ->end()
                 ->end()
             ->end();

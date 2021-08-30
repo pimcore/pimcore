@@ -577,6 +577,10 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
+        unset($values["documentation"]);
+        unset($values["additions"]);
+        unset($values["json_converter"]);
+
         if ($values['wkhtml2pdfOptions']) {
             $optionArray = [];
             $lines = explode("\n", $values['wkhtml2pdfOptions']);
@@ -591,8 +595,7 @@ class SettingsController extends AdminController
             $values['wkhtml2pdfOptions'] = $optionArray;
         }
 
-        $configFile = \Pimcore\Config::locateConfigFile('web2print.php');
-        File::putPhpFile($configFile, to_php_data_file_format($values));
+        \Pimcore\Web2Print\Config::save($values);
 
         return $this->adminJson(['success' => true]);
     }

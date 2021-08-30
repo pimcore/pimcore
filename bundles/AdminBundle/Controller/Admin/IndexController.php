@@ -255,6 +255,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable' => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
             'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
+            'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable()
         ];
 
         $this

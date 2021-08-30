@@ -38,4 +38,5 @@ Available environment variables are:
 PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=settings-store
 PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS=settings-store
+PIMCORE_WRITE_TARGET_WEB2PRINT=settings-store
 ```
