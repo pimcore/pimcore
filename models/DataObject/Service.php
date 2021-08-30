@@ -979,7 +979,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return array
+     * @return DataObject\ClassDefinition\CustomLayout[]
      */
     public static function getValidLayouts(Concrete $object)
     {

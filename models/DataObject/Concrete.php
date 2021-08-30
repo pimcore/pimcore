@@ -109,7 +109,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * returns the class ID of the current object class
      *
-     * @return int
+     * @return string
      */
     public static function classId()
     {
