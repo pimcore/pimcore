@@ -36,7 +36,7 @@ final class Config {
     private const LEGACY_FILE = 'web2print.php';
 
     /**
-     * @return LocationAwareConfigRepository|null
+     * @return LocationAwareConfigRepository
      */
     private static function getRepository()
     {
