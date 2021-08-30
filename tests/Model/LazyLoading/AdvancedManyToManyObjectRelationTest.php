@@ -92,14 +92,14 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
         $object->setAdvancedObjects($relatedObjects);
         $object->save();
-        $this->assertFalse($object->isDirty('advancedObjects'), 'Advanced relation must not be dirty after saving');
+        $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty after saving');
 
         Cache\Runtime::clear();
         $object = LazyLoading::getByPath('/lazy1');
-        $this->assertFalse($object->isDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
+        $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
 
         $relatedObjects[0]->setMetadataUpper('some-other-metadata');
-        $this->assertTrue($object->isDirty('advancedObjects'), 'Advanced relation must be dirty after changing a metadata field');
+        $this->assertTrue($object->isFieldDirty('advancedObjects'), 'Advanced relation must be dirty after changing a metadata field');
     }
 
     public function testLocalizedClassAttributes()
