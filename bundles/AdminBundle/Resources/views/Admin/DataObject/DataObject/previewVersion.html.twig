@@ -7,7 +7,7 @@
 
 <body>
 
-
+{% set htmlTypes = ['image', 'wysiwyg', 'imageGallery', 'hotspotimage', 'rgbaColor', 'table', 'structuredTable', 'manyToManyObjectRelation', 'manyToManyRelation', 'manyToOneRelation'] %}
 {% set fields = object.getClass().getFieldDefinitions()  %}
 
 <table class="preview" border="0" cellpadding="0" cellspacing="0">
@@ -51,7 +51,12 @@
                         <td>{{ lfd.getName() }}</td>
                         <td>
                                 {% if object.getValueForFieldName(fieldName) %}
-                                    {{ lfd.getVersionPreview(object.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) | raw }}
+                                    {% if lfd.getFieldtype() in htmlTypes %}
+                                            {{ lfd.getVersionPreview(object.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) | raw }}
+                                    {% else %}
+                                        {{ lfd.getVersionPreview(object.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) }}
+                                    {% endif %}
+
                                 {% endif %}
                         </td>
                     </tr>
@@ -81,7 +86,12 @@
                                             {% if brickValue %}
                                                 {% set localizedBrickValues = brickValue.getLocalizedFields() %}
                                                 {% set localizedBrickValue = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
+                                            {% if localizedFieldDefinition.getFieldtype() in htmlTypes %}
                                                 {{ localizedFieldDefinition.getVersionPreview(localizedBrickValue) | raw }}
+                                            {% else %}
+                                                {{ localizedFieldDefinition.getVersionPreview(localizedBrickValue) }}
+                                            {% endif %}
+
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -94,7 +104,12 @@
                             <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                 <td>{{ asAllowedType|capitalize ~ " - " ~ lfd.getTitle()|trans([],'admin')  }}</td>
                                 <td>{{ lfd.getName() }}</td>
-                                <td>{{ value | raw }}</td>
+                                {% if lfd.getFieldtype() in htmlTypes %}
+                                    <td>{{ value | raw }}</td>
+                                {% else %}
+                                    <td>{{ value }}</td>
+                                {% endif %}
+
                             </tr>
                         {% endif %}
                     {% endif %}
@@ -162,7 +177,12 @@
                         <tr {% if loop.index is odd %}class="odd"{% endif %}>
                             <td>{{ fieldItem.getType() ~ " - " ~ fieldKey.getTitle()|trans([],'admin') }}</td>
                             <td>{{ fieldKey.getName() }}</td>
-                            <td>{{ fieldKey.getVersionPreview(value) | raw }}</td>
+                            {% if fieldItem.getType() in htmlTypes %}
+                                <td>{{ fieldKey.getVersionPreview(value) | raw }}</td>
+                            {% else %}
+                                <td>{{ fieldKey.getVersionPreview(value) }}</td>
+                            {% endif %}
+
                         </tr>
                     {% endfor %}
                 {% endfor %}
@@ -171,7 +191,11 @@
             <tr {% if loop.index is odd %}class="odd"{% endif %}>
                 <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                 <td>{{ definition.getName() }}</td>
-                <td>{{ definition.getVersionPreview(object.getValueForFieldName(fieldName)) | raw }}</td>
+                {% if definition.getFieldtype() in htmlTypes %}
+                    <td>{{ definition.getVersionPreview(object.getValueForFieldName(fieldName)) | raw }}</td>
+                {% else %}
+                    <td>{{ definition.getVersionPreview(object.getValueForFieldName(fieldName)) }}</td>
+                {% endif %}
             </tr>
         {% endif %}
     {% endfor %}
