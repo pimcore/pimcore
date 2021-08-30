@@ -98,7 +98,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object = LazyLoading::getByPath('/lazy1');
         $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
 
-        $object->setAdvancedObjects()[0]->setMetadataUpper('some-other-metadata');
+        $object->getAdvancedObjects()[0]->setMetadataUpper('some-other-metadata');
         $this->assertTrue($object->isFieldDirty('advancedObjects'), 'Advanced relation must be dirty after changing a metadata field');
     }
 
