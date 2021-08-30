@@ -522,7 +522,6 @@ class SearchController extends AdminController
         $count = count($parts) - 1;
         $shortPath = '';
 
-        // @phpstan-ignore-next-line
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
             if (strlen($shortPath) <= 50 || $i === 0) {
