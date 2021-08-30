@@ -518,7 +518,7 @@ class SearchController extends AdminController
      */
     protected function shortenPath($path)
     {
-        $parts = explode('/', trim($path, '/'));
+        $parts = explode('/', trim($path, '/')) ?? [];
         $count = count($parts) - 1;
         $shortPath = '';
 

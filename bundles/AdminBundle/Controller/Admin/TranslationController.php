@@ -1078,13 +1078,16 @@ class TranslationController extends AdminController
                     libxml_clear_errors();
                     $html = $doc->saveHTML();
 
-                    $bodyStart = strpos($html, '<body>') + 6;
-                    $bodyEnd = strpos($html, '</body>');
-                    if ($bodyStart && $bodyEnd) {
-                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
-                    }
+                    $bodyStart = strpos($html, '<body>');
+                    if ($bodyStart !== FALSE) {
+                        $bodyStart = $bodyStart + 6;
+                        $bodyEnd = strpos($html, '</body>');
+                        if ($bodyEnd) {
+                            $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                        }
 
-                    $output .= $html;
+                        $output .= $html;
+                    }
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
