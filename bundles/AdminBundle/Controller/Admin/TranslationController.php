@@ -1080,10 +1080,10 @@ class TranslationController extends AdminController
                     libxml_clear_errors();
                     $html = $doc->saveHTML();
 
-                    $bodyStart = strpos($html, '<body>') + 6;
+                    $bodyStart = strpos($html, '<body>');
                     $bodyEnd = strpos($html, '</body>');
                     if ($bodyStart && $bodyEnd) {
-                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                        $html = substr($html, $bodyStart + 6, $bodyEnd - $bodyStart);
                     }
 
                     $output .= $html;
