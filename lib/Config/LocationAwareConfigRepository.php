@@ -46,6 +46,11 @@ class LocationAwareConfigRepository
 
     /**
      * @deprecated Will be removed in Pimcore 11
+     */
+    protected mixed $loadLegacyConfigCallback;
+
+    /**
+     * @deprecated Will be removed in Pimcore 11
      *
      * @var string|null
      */
@@ -63,6 +68,7 @@ class LocationAwareConfigRepository
      * @param string|null $writeTargetEnvVariableName
      * @param string|null $defaultWriteLocation
      * @param string|null $legacyConfigFile
+     * @param mixed $loadLegacyConfigCallback
      */
     public function __construct(
         array $containerConfig,
@@ -71,6 +77,7 @@ class LocationAwareConfigRepository
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
+        mixed $loadLegacyConfigCallback = null
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
@@ -78,6 +85,7 @@ class LocationAwareConfigRepository
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
         $this->legacyConfigFile = $legacyConfigFile;
+        $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
     }
 
     public function loadConfigByKey(string $key)
@@ -143,6 +151,11 @@ class LocationAwareConfigRepository
      */
     private function getDataFromLegacyConfig(string $key, ?string &$dataSource)
     {
+        $callback = $this->loadLegacyConfigCallback;
+        if (is_callable($callback)) {
+            return $callback($this);
+        }
+
         if (!$this->legacyConfigFile) {
             return null;
         }
