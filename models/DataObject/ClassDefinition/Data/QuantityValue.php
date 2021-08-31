@@ -383,7 +383,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
 
-            return $data->getValue() . $unit;
+            return htmlspecialchars($data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
         }
 
         return '';

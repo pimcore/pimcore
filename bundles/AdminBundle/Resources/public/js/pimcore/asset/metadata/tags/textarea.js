@@ -107,7 +107,7 @@ pimcore.asset.metadata.tags.textarea = Class.create(pimcore.asset.metadata.tags.
 
     getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
         if (value) {
-            return nl2br(value);
+            return nl2br(Ext.util.Format.htmlEncode(value));
         } else {
             return "";
         }
