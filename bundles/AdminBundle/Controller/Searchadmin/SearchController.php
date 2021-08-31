@@ -524,7 +524,7 @@ class SearchController extends AdminController
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i === 0) {
+            if (strlen($shortPath) <= 50 || $i == 0) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');
