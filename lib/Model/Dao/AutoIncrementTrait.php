@@ -20,12 +20,16 @@ namespace Pimcore\Model\Dao;
  */
 trait AutoIncrementTrait
 {
-    /**
-     * @param array $ids
-     * @return int
-     */
-    public function getNextId(array $ids): int
+    public function getNextId($listingClass): int
     {
+
+        $listing = new $listingClass();
+        $listing = $listing->load();
+
+        $ids = array_map(function($item) {
+            return $item->getId();
+        }, $listing);
+
         return max($ids) + 1;
     }
 

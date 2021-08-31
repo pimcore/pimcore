@@ -32,7 +32,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter("pimcore.config");
 
         parent::configure([
-            'containerConfig' => $config['documents']['doctype']['definitions'],
+            'containerConfig' => $config['documents']['doc_types']['definitions'],
             'settingsStoreScope' => 'pimcore_document_types',
             'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/document-types',
             'legacyConfigFile' => 'document-types.php',
@@ -75,12 +75,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $listing = new Listing();
-            $listing = $listing->load();
-            $listing = array_map(function(Model\Document\DocType $item) {
-                return $item->getId();
-            }, $listing);
-            $id = $this->getNextId($listing);
+            $id = $this->getNextId(Listing::class);
             $this->model->setId($id);
         }
         $ts = time();
@@ -118,7 +113,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         return [
             'pimcore' => [
                 'documents' => [
-                    'doctype' => [
+                    'doc_types' => [
                         'definitions' => [
                             $id => $data
                         ]

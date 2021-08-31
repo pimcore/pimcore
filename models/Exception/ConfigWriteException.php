@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Element;
+namespace Pimcore\Model\Exception;
 
 class ConfigWriteException extends \Exception
 {

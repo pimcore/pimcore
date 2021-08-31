@@ -728,7 +728,7 @@ final class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
-                 ->arrayNode('doctype')
+                 ->arrayNode('doc_types')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('definitions')

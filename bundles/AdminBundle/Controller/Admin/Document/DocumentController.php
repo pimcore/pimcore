@@ -25,7 +25,7 @@ use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
-use Pimcore\Model\Element\ConfigWriteException;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
