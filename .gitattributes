@@ -3,7 +3,7 @@
 
 bundles/AdminBundle/Resources/public/js/lib/* linguist-vendored
 
-# Exclude build/test files from archive
+# Exclude build/test files from archive to reduce ZIP size for composer dist download
 /.github export-ignore
 /doc export-ignore
 /tests export-ignore
