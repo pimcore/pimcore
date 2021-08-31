@@ -251,7 +251,7 @@ pimcore.asset.metadata.tags.manyToOneRelation = Class.create(pimcore.asset.metad
 
     getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
         if (value) {
-            value =  nl2br(value);
+            value =  nl2br(Ext.util.Format.htmlEncode(value));
         } else {
             value =  "";
         }

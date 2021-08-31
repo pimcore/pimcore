@@ -459,7 +459,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 })
             };
 
-            if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
+            if (this.data["validLayouts"] && this.data.validLayouts.length >= 1) {
                 reloadConfig.xtype = "splitbutton";
 
                 var menu = [];
