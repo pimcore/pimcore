@@ -309,13 +309,6 @@ pimcore.settings.thumbnail.item = Class.create({
     },
 
     save: function () {
-        var reload = false;
-        var newGroup = this.groupField.getValue();
-        if (newGroup != this.data.group) {
-            this.data.group = newGroup;
-            reload = true;
-        }
-
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_thumbnailupdate'),
             method: "PUT", params: this.getData(),

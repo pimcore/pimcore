@@ -347,7 +347,11 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        if (data.records.length === 1 && data.records[0].data.elementType === "document" && data.records[0].data.type !== "folder") {
+                        if (data.records.length === 1 && (
+                            data.records[0].data.elementType === "document" ||
+                            data.records[0].data.elementType === "asset" ||
+                            data.records[0].data.elementType === "object")
+                            && data.records[0].data.type !== "folder") {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         }
                     },
@@ -359,7 +363,11 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         }
 
                         data = data.records[0].data;
-                        if (data.type !== "folder" && data.elementType === "document") {
+                        if (data.type !== "folder" && (
+                            data.elementType === "document" ||
+                            data.elementType === "asset" ||
+                            data.elementType === "object")
+                            ) {
                             internalTypeField.setValue(data.elementType);
                             linkTypeField.setValue('internal');
                             pathField.setValue(data.path);

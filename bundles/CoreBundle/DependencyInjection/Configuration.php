@@ -1466,6 +1466,7 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->prototype('scalar')->end()
                                 ->end()
+                                ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a workflow, for example via bundles, etc.')->end()
                                 ->booleanNode('enabled')
                                     ->defaultTrue()
                                     ->info('Can be used to enable or disable the workflow.')
@@ -1930,6 +1931,26 @@ final class Configuration implements ConfigurationInterface
                                     return !$v['supports'] && !isset($v['support_strategy']);
                                 })
                                 ->thenInvalid('"supports" or "support_strategy" should be configured.')
+                            ->end()
+                            ->validate()
+                                ->ifTrue(function ($v) {
+                                    if (($v['type'] ?? 'workflow') === 'state_machine') {
+                                        foreach ($v['transitions'] ?? [] as $transition) {
+                                            if (count($transition['to']) > 1) {
+                                                return true;
+                                            }
+                                        }
+
+                                        foreach ($v['globalActions'] ?? [] as $transition) {
+                                            if (count($transition['to']) > 1) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+
+                                    return false;
+                                })
+                                ->thenInvalid('Type `state_machine` does not support multiple `to` definitions for transitions and global actions. Change definition or type to `workflow`.')
                             ->end()
                         ->end()
                     ->end()

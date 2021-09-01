@@ -17,9 +17,6 @@ namespace Pimcore\Model\Dao;
 
 use Pimcore\Config;
 
-/**
- * @internal
- */
 abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 {
     use DaoTrait;

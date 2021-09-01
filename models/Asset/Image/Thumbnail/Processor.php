@@ -299,20 +299,12 @@ class Processor
             // sorry for the goto/label - but in this case it makes life really easier and the code more readable
             prepareTransformations:
 
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
+            foreach ($transformations as &$transformation) {
+                if (!empty($transformation) && !isset($transformation['isApplied'])) {
                     $arguments = [];
 
                     if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (in_array($transformation['method'], ['cropPercent'])) {
-                            //avoid double cropping in case of $highResFactor re-calculation (goto prepareTransformations)
-                            if ($imageCropped) {
-                                continue;
-                            }
-                            $imageCropped = true;
-                        }
 
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
@@ -371,6 +363,8 @@ class Processor
                     } elseif (method_exists($image, $transformation['method'])) {
                         call_user_func_array([$image, $transformation['method']], $arguments);
                     }
+
+                    $transformation['isApplied'] = true;
                 }
             }
         }

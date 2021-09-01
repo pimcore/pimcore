@@ -581,7 +581,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
                 foreach (current($data) as $cellData) {
                     $html .= '<th>';
-                    $html .= htmlentities($columConfig[$index]['label']);
+                    $html .= htmlspecialchars($columConfig[$index]['label'], ENT_QUOTES, 'UTF-8');
                     $html .= '</td>';
                     $index++;
                 }
@@ -593,7 +593,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
-                        $html .= htmlentities($cell);
+                        $html .= htmlspecialchars($cell, ENT_QUOTES, 'UTF-8');
                         $html .= '</td>';
                     }
                 }
@@ -701,7 +701,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n\n";
         }
@@ -749,7 +749,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }
