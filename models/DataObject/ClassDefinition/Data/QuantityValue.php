@@ -661,4 +661,16 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return null;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty($data)
+    {
+        if($data instanceof Model\DataObject\Data\QuantityValue) {
+            return empty($data->getValue()) && empty($data->getUnitId());
+        }
+
+        return parent::isEmpty($data);
+    }
 }
