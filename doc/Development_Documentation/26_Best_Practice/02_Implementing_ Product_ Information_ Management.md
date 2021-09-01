@@ -21,8 +21,8 @@ To summarize, in this section, you learned about the concept of PIM and the bene
 
 In the previous section, you learned about the concept of Product Information Management. As the name suggests, in a PIM system, it’s mandatory to create a class that represents the products, and this is what we are going to do in this section.
 
-Pimcore does not set any constraints as far as the concept of products is concerned, so we can simply create a class named Product and define all the attributes that reflect our needs. So, as you learned in Chapter 5, Exploring Objects and Classes, just go through **Settings | Data Objects | Classes, and create a new class named Product**.
-If you followed the instructions provided in the Technical requirements section, you should find an already defined Product class. Please note that this is just a plausible definition of the concept of a product and that you can add or remove class attributes according to your needs. You can see what this class looks like in the following screenshot:
+Pimcore does not set any constraints as far as the concept of products is concerned, so we can simply create a class named Product and define all the attributes that reflect our needs. Just go through **Settings | Data Objects | Classes**, and create a new class named Product.
+If you installed the Pimcore Demo Package, you will find an already defined Product class. Please note that this is just a plausible definition of the concept of a product and that you can add or remove class attributes according to your needs. You can see how a class can look like in the following screenshot:
 
 ![Product class](./img/pim_management/Picture2.png)
 
@@ -33,7 +33,7 @@ Let’s describe the various class components that are shown in the previous scr
 - **Composition**: In this panel, you can find an advanced many-to-many relation component to relate the product to the materials that compose the product. In this relation, you can set the percentage of the various materials to define the composition.
 - **Attributes**: In this panel, we have defined attributes that can be used to represent the product variants, such as color and size. For the color attribute, we have defined a relationship with a dedicated class.
 - **Images**: As the name suggests, this panel is designed to contain the product images. In particular, we used a **Fieldcollection** to administer an undefined number of images.
-  For the sake of completeness, in the following screenshot, you will see the other class definitions:
+For the sake of completeness, in the following screenshot, you will see the other class definitions:
 
 ![Class definitions](./img/pim_management/Picture3.png)
 
@@ -46,7 +46,7 @@ As you can see in the previous screenshot, the structure of the created product 
 To summarize, in this section, we have seen how to define a Product entity. We have presented a possible implementation of the product concept, but this concept has no fixed definition in terms of attributes, so you can choose to create attributes that better reflect your needs. Besides, we have defined other secondary classes to relate the products to other concepts such as categories, materials, and colors. This is useful for keeping this information linked to a product without the need to replicate them in all products.
 In the following section, you will learn how to create product variants in order to create configurable products.
 
-### Creating Product Variants
+## Creating Product Variants
 
 In the previous section, you have seen how to define a Product entity and an example of product object creation. In this section, you will learn how to enable the inheritance for the Product class to create product variants and define configurable products. Later in this section, we will see some **PHP: Hypertext Preprocessor (PHP)** code examples that will show how to practically use variants during development.
 
@@ -141,7 +141,7 @@ In the previous code snippet, you can see how to initialize a product listing. F
 
 In these first two examples, you have learned how to retrieve existing variants. In the following example, you will see how to create a new variant instead.
 
-##### Creating a new Variant
+#### Creating a new Variant
 
 In the previous examples, you learned how to query for existing variants. In this example, you will learn how to create a product variant.
 
@@ -170,7 +170,7 @@ To summarize, in this section, you learned how to enable variants for the Produc
 
 In the following section, you will learn how to create bundled products and how to create a service that listens to events fired after certain operations are made—for example, to automatically calculate one or more product field values when a product is saved.
 
-###### Creating a Bundle Product
+## Creating a Bundle Product
 
 In the previous section, you learned how to enable and create product variants and how to practically use them in code examples. In this section, you will learn how to define bundle products.
 
@@ -178,7 +178,7 @@ In marketing, the concept of Product Bundling is a practice of offering a set of
 
 Through this chapter, we will first see how to modify our previously created Product class to define bundle products. Then, we will discover how to automatically perform operations on product save to calculate the bundle price.
 
-###### Defining bundle products
+### Defining bundle products
 
 In this section, you will learn how to modify the Product class to be able to define bundle products. The easiest solution is to create a self-referenced relation attribute with the Product class itself. This will let you choose the products that will form the bundle from the previously created products.
 
@@ -209,7 +209,7 @@ In the previous screenshot, you can see that this attribute is marked as Not edi
 
 To summarize, in this section, you learned how to alter the Product class to define bundle products. In the following section, you will learn how to create a listener class that listens for an event fired by the product save operation, which will allow you to automatically calculate the bundle price.
 
-###### Creating an Event Listener
+### Creating an Event Listener
 
 In the previous section, you learned how to define bundle products. In common scenarios, the price of a bundle product is less than the sum of the individual price of the products it’s composed of. It may be useful to automatically calculate the price of a bundle product with a predefined rule, instead of manually inserting this value.
 
@@ -282,13 +282,13 @@ To summarize, in this section, you learned the concept of product bundling and h
 
 In the following section, you will learn how to extend the Product class to manage different types of products without the need to create a specific class for each product.
 
-###### Managing different Product Types
+## Managing different Product Types
 
 In the previous section, you learned how to define bundle products. In this section, you will learn how to manage different types of products without creating a different class for each product type. If you need to manage a heterogeneous set of products, such as shirts and shoes, you will probably need specific attributes to better represent these concepts.
 Surely, we could create two different classes for shirts and shoes, but we will need to define redundant fields for both classes to describe properties that are shared between them—for example, the title, price, description, and so on.
 
 With *Objectbricks*, we just need to create little sets of attributes to describe specific fields and allow our class to dynamically add these bricks. As the name suggests, class objects can be composed of one or more bricks added to the common attributes.
-Before creating *Objectbrick* definitions, we need to create an attribute in the Product class to accommodate the various bricks. To create this attribute, just right-click on a panel component inside the class definition and select Add Data Component | Structured | Objectbricks, fill in the attribute name, and click on the Save button to apply the changes. In the following screenshot, you can see an example of this:
+Before creating *Objectbrick* definitions, we need to create an attribute in the Product class to accommodate the various bricks. To create this attribute, just right-click on a panel component inside the class definition and select **Add Data Component | Structured | Objectbricks**, fill in the attribute name, and click on the Save button to apply the changes. In the following screenshot, you can see an example of this:
 
 ![Objectbricks attribute](./img/pim_management/Picture11.png)
 
@@ -308,7 +308,7 @@ To summarize, in this section, you learned how to manage different types of prod
 
 In the next section, you will learn how to configure a workflow that will let you control the product information completeness step by step.
 
-###### Working with workflows
+## Working with workflows
 
 A workflow consists of a sequence of processes and tasks that represent the work that must be done to reach a common goal. Typically, we may think about workflows as a graph.
 Pimcore Workflow Management provides configuration of multiple workflows on Assets, Documents, and *DataObjects*, to support data maintenance processes, element life cycles, and various other processes. Pimcore workflows are based on the Symfony workflow component and extend it with specific features. Before starting the configuration of a Pimcore workflow, let’s describe the basics concepts of the Symfony workflow component, as follows:
@@ -321,7 +321,7 @@ Pimcore Workflow Management provides configuration of multiple workflows on Asse
 6. **Transition Guard**: Defines a criterion that defines if a transition is currently allowed or not.
    By reading the following sections, you will learn how to properly configure a Pimcore workflow. We will start by defining a custom layout for the Product class and will then see how to set up a workflow that will guide the completion of product information.
 
-###### Configuring a Custom Layout
+### Configuring a Custom Layout
 
 As mentioned before, in the various places of a workflow we can show a custom view for the element. This is made possible by configuring custom layouts on the corresponding class.
 To create a custom layout, just open the class definition and click on the Configure custom layouts button. When that button is clicked, a new modal window is opened, and you can add a new custom layout or load a previously created one. To create a new layout, just click on the Add button. In the modal that will open, you can write the new layout name and identifier (ID), as you can see in the following screenshot:
@@ -337,7 +337,7 @@ Once you have initialized the custom layout, you can specify which attributes yo
 As you can see in the previous screenshot, the configuration modal is composed of two main panels. In the left panel, you will find the previously defined class structure, while in the right panel you can drag and drop the attributes you want to show in the custom layout from the left panel.
 For each attribute, you can decide to change some properties, such as the possibility to edit the attribute itself. Once you have configured the custom layout, you can click on the Save button to apply the changes.
 Now that you have seen how to configure custom layouts, let’s see how to use them in a workflow configuration.
-Configuring a Pimcore Workflow
+### Configuring a Pimcore Workflow
 
 In the previous section, you learned how to configure custom layouts for Pimcore classes. In this section, you will learn how to configure Pimcore workflows and how to use the previously created custom layouts.
 As with many other services, Pimcore workflows must be defined in the **config.yaml** file of the Pimcore project or the same file of a specific bundle. In this section, you will learn how to properly configure a workflow.
@@ -419,7 +419,7 @@ As you can see in the previous screenshot, when the user clicks on the transitio
 
 To summarize, in this section, you learned how to configure a Pimcore workflow. By defining custom layouts, you can force users to fill in product information step by step, to ensure data completion. In particular, you learned how to define places for the workflow and how to configure workflow transitions.
 
-###### Summary
+## Summary
 
 In this tutorial, you learned the concept of Product Information Management by defining a Product entity and providing practical examples. In the first section of the chapter, you first learned what a PIM is and which are its main features. Then, you learned how to create and configure a Product class, according to your needs.
 
@@ -430,4 +430,6 @@ In particular, you have seen a code example showing how to calculate the price o
 After that, you learned how to use Objectbricks to extend the Product class, attaching groups of attributes useful to define specific concepts. This is useful if you want to represent different kinds of products without creating a class for each kind, to avoid the redundancy of common attributes.
 
 In the last section, you learned how to configure custom layouts for Pimcore classes and how to use them in Pimcore workflow configurations. Through a concrete example, you learned how to configure a workflow to fill in product information step by step.
-In the next chapter, you will learn how to expose products and other entities to the outside through the Pimcore DataHub bundle and how to turn Pimcore into a Master Data Management (MDM) platform.
+## Learn more
+This was a sample chapter from the book _Modernizing Enterprise CMS Using Pimcore by Daniele Fontani, Marco Guiducci, Francesa Minà available at Packt Publishing (2021)_. You can purchase the full book at [https://www.packtpub.com/product/modernizing-enterprise-cms-using-pimcore/9781801075404](url)
+```.
