@@ -102,7 +102,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      */
     public function delete()
     {
-        $this->deleteData($this->model->getName());
+        $this->deleteData($this->model->getId());
     }
 
     /**
