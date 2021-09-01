@@ -724,7 +724,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         }
 
