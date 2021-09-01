@@ -189,5 +189,4 @@ class InputQuantityValue extends QuantityValue
 
         return null;
     }
-
 }
