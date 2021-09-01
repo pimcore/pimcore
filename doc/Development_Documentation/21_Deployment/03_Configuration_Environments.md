@@ -26,6 +26,7 @@ Available storages are (in priority order):
 
 This feature is currently supported by the following configurations: 
 - Custom reports
+- Document types
 - Image thumbnails 
 - Video thumbnails
 
