@@ -369,10 +369,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     {
                         text: t('save_close'),
                         iconCls: "pimcore_icon_save",
-                        handler: function() {
-                            this.save("version");
-                            this.close();
-                        }.bind(this)
+                        handler: this.saveClose.bind(this)
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
@@ -821,7 +818,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
-                    this.tab.unmask();
+                    if (this.tab) {
+                        this.tab.unmask();
+                    }
 
                     if (typeof callback == "function") {
                         callback();

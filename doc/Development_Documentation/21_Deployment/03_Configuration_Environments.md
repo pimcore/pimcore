@@ -25,10 +25,13 @@ Available storages are (in priority order):
 - Pimcore Legacy PHP Array Config (deprecated)
 
 This feature is currently supported by the following configurations: 
+- Custom reports
 - Image thumbnails 
 - Custom reports
 - Video thumbnails
 - Web2Print Settings
+- Video thumbnails
+
 
 You can change the write target individually for each type by using environment variables.
 The following options are available: 
@@ -42,4 +45,3 @@ PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=settings-store
 PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS=settings-store
 PIMCORE_WRITE_TARGET_WEB2PRINT=settings-store
-```
