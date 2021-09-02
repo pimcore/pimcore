@@ -345,9 +345,9 @@ class Multiselect extends Data implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            return implode(',', array_map($data, function ($v) {
+            return implode(',', array_map(function ($v) {
                 return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-            }));
+            }, $data));
         }
 
         return null;
