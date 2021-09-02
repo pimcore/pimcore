@@ -286,7 +286,7 @@ pimcore.settings.document.doctypes = Class.create({
                         text: t('add'),
                         handler: this.onAdd.bind(this),
                         iconCls: "pimcore_icon_add",
-                        disabled: !pimcore.settings['image-thumbnails-writeable']
+                        disabled: !pimcore.settings['document-types-writeable']
                     }
                 ]
             },
