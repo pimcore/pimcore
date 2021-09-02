@@ -217,7 +217,7 @@ pimcore.settings.document.doctypes = Class.create({
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
                         if (rec.data.writeable) {
-                            klass += "pimcore_icon_delete";
+                            klass += "pimcore_icon_minus";
                         }
                         return klass;
                     },
