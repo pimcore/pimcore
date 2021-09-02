@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -53,7 +54,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         protected EditmodeResolver $editmodeResolver,
         protected RequestHelper $requestHelper,
         protected UserLoader $userLoader,
-        private DocumentTargetingConfigurator $targetingConfigurator
+        private DocumentTargetingConfigurator $targetingConfigurator,
+        private Config $config
     ) {
     }
 
@@ -93,6 +95,20 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
                     $document->getFullPath(),
                 ]);
+
+                if(
+                    (
+                        ($request->get('object') && $request->get('urlSlug')) ||
+                        $request->get('pimcore_request_source') == 'staticroute'
+                    ) &&
+                    !$this->config['objects']['allow_processing_unpublished_elements_for_url_slug']
+                ) {
+                    trigger_deprecation(
+                        'pimcore/pimcore',
+                        '10.2',
+                        '`allow_processing_unpublished_elements_for_url_slug` is deprecated, in Pimcore 11 it will always be `true`'
+                    );
+                }
 
                 throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
             }
