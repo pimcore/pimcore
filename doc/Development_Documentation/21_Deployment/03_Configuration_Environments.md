@@ -27,10 +27,8 @@ Available storages are (in priority order):
 This feature is currently supported by the following configurations: 
 - Custom reports
 - Image thumbnails 
-- Custom reports
 - Video thumbnails
 - Web2Print Settings
-- Video thumbnails
 
 
 You can change the write target individually for each type by using environment variables.
