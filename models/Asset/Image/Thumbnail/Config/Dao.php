@@ -33,7 +33,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
+            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'] ?? [],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
             'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
             'legacyConfigFile' => 'image-thumbnails.php',
