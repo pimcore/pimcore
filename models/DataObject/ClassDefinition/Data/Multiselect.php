@@ -346,9 +346,9 @@ class Multiselect extends Data implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            return implode(',', array_map($data, function ($v) {
+            return implode(',', array_map(function ($v) {
                 return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-            }));
+            }, $data));
         }
 
         return null;
@@ -659,7 +659,12 @@ class Multiselect extends Data implements
             $context = [];
             $context['fieldname'] = $this->getName();
 
-            $options = $optionsProvider->getOptions($context, $this);
+            try {
+                $options = $optionsProvider->getOptions($context, $this);
+            } catch (\Exception $e) {
+                // error from getOptions => no values => no comma => no problems
+                $options = null;
+            }
         } else {
             $options = $this->getOptions();
         }
