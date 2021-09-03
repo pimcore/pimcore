@@ -406,11 +406,6 @@ pimcore.element.helpers.gridColumnConfig = {
                 return;
             }
 
-            if (fieldInfo.layout.layout.noteditable) {
-                Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
-                return;
-            }
-
             var tagType = fieldInfo.layout.type;
             var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
             editor.setObject(this.object);
