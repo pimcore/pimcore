@@ -709,7 +709,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $type->setValues($data);
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 if (!(new DocType())->isWriteable()) {
                     throw new ConfigWriteException();
