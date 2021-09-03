@@ -24,12 +24,11 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-
     use Model\Dao\AutoIncrementTrait;
 
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['documents']['doc_types']['definitions'] ?? [],
@@ -87,7 +86,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled' ];
+            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
@@ -115,12 +114,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 'documents' => [
                     'doc_types' => [
                         'definitions' => [
-                            $id => $data
-                        ]
-                    ]
-                ]
-            ]
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
-
 }

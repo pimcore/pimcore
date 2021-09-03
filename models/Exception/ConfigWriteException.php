@@ -17,5 +17,4 @@ namespace Pimcore\Model\Exception;
 
 class ConfigWriteException extends \Exception
 {
-
 }

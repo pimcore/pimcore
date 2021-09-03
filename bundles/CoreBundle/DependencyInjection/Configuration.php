@@ -1971,6 +1971,4 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
             ->end();
     }
-
-
 }

@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Document\DocType\Dao
 {
-
     /**
      * @return array
      */
