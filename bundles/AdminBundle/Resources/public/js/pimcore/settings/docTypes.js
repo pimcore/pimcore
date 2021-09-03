@@ -160,7 +160,7 @@ pimcore.settings.document.doctypes = Class.create({
                 xtype: 'checkcolumn',
                 text: t("static"),
                 dataIndex: 'staticGeneratorEnabled',
-                width: 40,
+                width: 50,
                 renderer: function (value, metaData, record) {
                     return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
                 },

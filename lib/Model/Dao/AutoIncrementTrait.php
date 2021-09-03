@@ -27,7 +27,7 @@ trait AutoIncrementTrait
         $listing = $listing->load();
 
         $ids = array_map(function($item) {
-            return $item->getId();
+            return (int) $item->getId();
         }, $listing);
 
         return max($ids) + 1;

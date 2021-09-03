@@ -31,7 +31,7 @@ class DocType extends Model\AbstractModel
      *
      * @internal
      *
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -111,7 +111,7 @@ class DocType extends Model\AbstractModel
     /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
-     * @param int $id
+     * @param string $id
      *
      * @return self|null
      */
@@ -119,7 +119,7 @@ class DocType extends Model\AbstractModel
     {
         try {
             $docType = new self();
-            $docType->getDao()->getById((int)$id);
+            $docType->getDao()->getById($id);
 
             return $docType;
         } catch (\Exception $e) {
@@ -149,7 +149,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -193,13 +193,13 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }

@@ -43,7 +43,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int|null $id
+     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -86,7 +86,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'group', 'module', 'controller',
+        $allowedProperties = ['name', 'group', 'module', 'controller',
             'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled' ];
 
         foreach ($dataRaw as $key => $value) {

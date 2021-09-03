@@ -735,7 +735,6 @@ final class Configuration implements ConfigurationInterface
                         ->normalizeKeys(false)
                             ->prototype('array')
                                 ->children()
-                                    ->scalarNode('id')->isRequired()->end()
                                     ->scalarNode('name')->end()
                                     ->scalarNode('group')->end()
                                     ->scalarNode('module')->end()
