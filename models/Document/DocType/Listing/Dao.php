@@ -22,26 +22,17 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Document\DocType\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Document\DocType\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('document-types');
-    }
 
     /**
-     * Loads a list of document-types for the specicifies parameters, returns an array of Document\DocType elements
-     *
      * @return array
      */
-    public function load()
+    public function loadList()
     {
-        $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-
         $docTypes = [];
-        foreach ($docTypesData as $docTypeData) {
-            $docTypes[] = Model\Document\DocType::getById($docTypeData['id']);
+        foreach ($this->loadIdList() as $id) {
+            $docTypes[] = Model\Document\DocType::getById($id);
         }
 
         $this->model->setDocTypes($docTypes);
@@ -54,8 +45,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
+        $amount = count($this->loadIdList());
 
         return $amount;
     }

@@ -22,18 +22,28 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Document\DocType $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+
+    use Model\Dao\AutoIncrementTrait;
+
     public function configure()
     {
-        parent::configure();
-        $this->setFile('document-types');
+        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+
+        parent::configure([
+            'containerConfig' => $config['documents']['doc_types']['definitions'] ?? [],
+            'settingsStoreScope' => 'pimcore_document_types',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/document-types',
+            'legacyConfigFile' => 'document-types.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_DOCUMENT_TYPES',
+        ]);
     }
 
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int|null $id
+     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -43,11 +53,19 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setId($id);
         }
 
-        $data = $this->db->getById($this->model->getId());
-        if (isset($data['id'])) {
+        $data = $this->getDataByName($this->model->getId());
+
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Doc-type with id ' . $this->model->getId() . " doesn't exist");
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Document Type with ID "%s" does not exist.',
+                $this->model->getId()
+            ));
         }
     }
 
@@ -56,6 +74,10 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function save()
     {
+        if (!$this->model->getId()) {
+            $id = $this->getNextId(Listing::class);
+            $this->model->setId($id);
+        }
         $ts = time();
         if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate($ts);
@@ -64,19 +86,15 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
+        $allowedProperties = ['name', 'group', 'module', 'controller',
+            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled' ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
                 $data[$key] = $value;
             }
         }
-        $this->db->insertOrUpdate($data, $this->model->getId());
-
-        if (!$this->model->getId()) {
-            $this->model->setId($this->db->getLastInsertId());
-        }
+        $this->saveData($this->model->getId(), $data);
     }
 
     /**
@@ -84,6 +102,25 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete()
     {
-        $this->db->delete($this->model->getId());
+        $this->deleteData($this->model->getId());
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'documents' => [
+                    'doc_types' => [
+                        'definitions' => [
+                            $id => $data
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
 }

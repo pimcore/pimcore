@@ -728,6 +728,28 @@ final class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                 ->arrayNode('doc_types')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('name')->end()
+                                    ->scalarNode('group')->end()
+                                    ->scalarNode('module')->end()
+                                    ->scalarNode('controller')->end()
+                                    ->scalarNode('template')->end()
+                                    ->scalarNode('type')->end()
+                                    ->integerNode('priority')->end()
+                                    ->integerNode('creationDate')->end()
+                                    ->integerNode('modificationDate')->end()
+                                    ->scalarNode('staticGeneratorEnabled')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -1949,4 +1971,6 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
             ->end();
     }
+
+
 }
