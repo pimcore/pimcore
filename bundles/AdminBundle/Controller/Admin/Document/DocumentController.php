@@ -24,6 +24,8 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\DocType;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
@@ -663,7 +665,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
             if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                $docTypes[] = $type->getObjectVars();
+                $data = $type->getObjectVars();
+                $data['writeable'] = $type->isWriteable();
+                $docTypes[] = $data;
             }
         }
 
@@ -686,6 +690,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $type = Document\DocType::getById($id);
+                if (!$type->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $type->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -695,11 +702,22 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 // save type
                 $type = Document\DocType::getById($data['id']);
 
+                if (!$type->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
+
                 $type->setValues($data);
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new DocType())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
+
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -709,7 +727,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         }
 

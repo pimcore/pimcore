@@ -21,6 +21,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Element\ValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,6 +83,11 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
+            }
+
+            if($ex instanceof ConfigWriteException) {
+                $data['type'] = 'ConfigWriteException';
+                $code = 422;
             }
 
             $data['message'] = $message;

@@ -26,6 +26,7 @@ Available storages are (in priority order):
 
 This feature is currently supported by the following configurations: 
 - Custom reports
+- Document types
 - Image thumbnails 
 - Video thumbnails
 
@@ -40,4 +41,5 @@ Available environment variables are:
 PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=settings-store
 PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS=settings-store
+PIMCORE_WRITE_TARGET_DOCUMENT_TYPES=settings-store
 ```
