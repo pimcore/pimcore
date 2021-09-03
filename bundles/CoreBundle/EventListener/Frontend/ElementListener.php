@@ -96,7 +96,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                     $document->getFullPath(),
                 ]);
 
-                if(
+                if (
                     (
                         ($request->get('object') && $request->get('urlSlug')) ||
                         $request->get('pimcore_request_source') == 'staticroute'
