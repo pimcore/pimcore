@@ -101,12 +101,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                         ($request->get('object') && $request->get('urlSlug')) ||
                         $request->get('pimcore_request_source') == 'staticroute'
                     ) &&
-                    !$this->config['objects']['allow_processing_unpublished_elements_for_url_slug']
+                    !$this->config['routing']['allow_processing_unpublished_fallback_document']
                 ) {
                     trigger_deprecation(
                         'pimcore/pimcore',
                         '10.2',
-                        '`allow_processing_unpublished_elements_for_url_slug` is deprecated, in Pimcore 11 it will always be `true`'
+                        'Blocking routes where the underlying fallback document is unpublished is deprecated and will be
+                        removed in Pimcore 11. If you rely on this behavior please change your controllers accordingly and
+                        set the config option `pimcore.routing.allow_processing_unpublished_fallback_document=true`'
                     );
                 }
 

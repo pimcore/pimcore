@@ -125,7 +125,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
-            $this->config['objects']['allow_processing_unpublished_elements_for_url_slug']
+            $this->config['routing']['allow_processing_unpublished_fallback_document']
         );
 
         return $route;
