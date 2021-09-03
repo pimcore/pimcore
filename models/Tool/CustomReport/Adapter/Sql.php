@@ -130,6 +130,13 @@ class Sql extends AbstractAdapter
             }
         }
 
+        if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
+            if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
+                $sql .= ' GROUP BY ';
+            }
+            $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
+        }
+
         if ($drillDownFilters) {
             $havingParts = [];
             $db = Db::get();
@@ -142,13 +149,6 @@ class Sql extends AbstractAdapter
             if ($havingParts) {
                 $sql .= ' HAVING ' . implode(' AND ', $havingParts);
             }
-        }
-
-        if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
-                $sql .= ' GROUP BY ';
-            }
-            $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
         }
 
         return $sql;
