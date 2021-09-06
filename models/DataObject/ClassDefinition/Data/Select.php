@@ -196,7 +196,7 @@ class Select extends Data implements
      *
      * @return $this
      */
-    public function setOptions(array $options = null)
+    public function setOptions(?array $options = [])
     {
         $this->options = [];
         foreach($options as $option) {
