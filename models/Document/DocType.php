@@ -18,9 +18,11 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 
 /**
- * @method DocType\Dao getDao()
- * @method void save()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
+ * @method \Pimcore\Model\Document\DocType\Dao getDao()
  * @method void delete()
+ * @method void save()
  */
 class DocType extends Model\AbstractModel
 {
@@ -29,7 +31,7 @@ class DocType extends Model\AbstractModel
      *
      * @internal
      *
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -109,7 +111,7 @@ class DocType extends Model\AbstractModel
     /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
-     * @param int $id
+     * @param string $id
      *
      * @return self|null
      */
@@ -117,7 +119,7 @@ class DocType extends Model\AbstractModel
     {
         try {
             $docType = new self();
-            $docType->getDao()->getById((int)$id);
+            $docType->getDao()->getById($id);
 
             return $docType;
         } catch (\Exception $e) {
@@ -147,7 +149,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -191,13 +193,13 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -332,5 +334,13 @@ class DocType extends Model\AbstractModel
     public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }

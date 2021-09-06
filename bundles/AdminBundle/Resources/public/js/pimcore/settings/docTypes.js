@@ -82,6 +82,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoLoad: true,
                         proxy: {
                             type: 'ajax',
+                            batchActions: false,
                             url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
@@ -159,7 +160,7 @@ pimcore.settings.document.doctypes = Class.create({
                 xtype: 'checkcolumn',
                 text: t("static"),
                 dataIndex: 'staticGeneratorEnabled',
-                width: 40,
+                width: 50,
                 renderer: function (value, metaData, record) {
                     return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
                 },
@@ -213,8 +214,14 @@ pimcore.settings.document.doctypes = Class.create({
                 menuText: t('delete'),
                 width: 30,
                 items: [{
+                    getClass: function (v, meta, rec) {
+                        var klass = "pimcore_action_column ";
+                        if (rec.data.writeable) {
+                            klass += "pimcore_icon_minus";
+                        }
+                        return klass;
+                    },
                     tooltip: t('delete'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -242,7 +249,16 @@ pimcore.settings.document.doctypes = Class.create({
 
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                validateedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        editor.cancelEdit();
+                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                        return false;
+                    }
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -269,12 +285,16 @@ pimcore.settings.document.doctypes = Class.create({
                     {
                         text: t('add'),
                         handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
+                        iconCls: "pimcore_icon_add",
+                        disabled: !pimcore.settings['document-types-writeable']
                     }
                 ]
             },
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             }
         });
 

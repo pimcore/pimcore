@@ -729,6 +729,28 @@ final class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                 ->arrayNode('doc_types')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('name')->end()
+                                    ->scalarNode('group')->end()
+                                    ->scalarNode('module')->end()
+                                    ->scalarNode('controller')->end()
+                                    ->scalarNode('template')->end()
+                                    ->scalarNode('type')->end()
+                                    ->integerNode('priority')->end()
+                                    ->integerNode('creationDate')->end()
+                                    ->integerNode('modificationDate')->end()
+                                    ->scalarNode('staticGeneratorEnabled')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -890,6 +912,20 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('allow_processing_unpublished_fallback_document')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                            ->defaultFalse()
+                            ->setDeprecated(
+                                'pimcore/pimcore',
+                                '10.1',
+                                'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                            )
+                        ->end()
                         ->arrayNode('direct_route_document_types')
                             ->scalarPrototype()->end()
                         ->end()
