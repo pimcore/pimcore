@@ -142,7 +142,7 @@ class Dao extends Model\Dao\AbstractDao
                     ];
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
-                    $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
                 } else {
                     $fieldDefinitionParams = [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
@@ -156,7 +156,7 @@ class Dao extends Model\Dao\AbstractDao
                     ];
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data[$fieldName] = $insertData;
-                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
                 }
 
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
