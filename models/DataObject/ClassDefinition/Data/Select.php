@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -195,9 +196,16 @@ class Select extends Data implements
      *
      * @return $this
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
-        $this->options = $options;
+        $this->options = [];
+        foreach($options as $option) {
+            if(!array_key_exists('key', $option) || !array_key_exists('value', $option)) {
+                throw new InvalidArgumentException('Please provide select options as associative array with fields "key" and "value"');
+            }
+
+            $this->options[] = $options;
+        }
 
         return $this;
     }
