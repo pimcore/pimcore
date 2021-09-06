@@ -47,7 +47,7 @@ final class Config {
             ];
 
             /* @deprecated legacy will be removed in Pimcore 11 */
-            $loadLegacyConfigCallback = function($legacyRepo, $dataSource) {
+            $loadLegacyConfigCallback = function($legacyRepo, &$dataSource) {
                 $file = \Pimcore\Config::locateConfigFile(self::LEGACY_FILE);
                 if (is_file($file)) {
                     $content = include($file);
