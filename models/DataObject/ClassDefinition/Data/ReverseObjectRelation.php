@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -176,11 +177,43 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * {@inheritdoc}
+     * @param DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return null
      */
-    public function getForCsvExport($object, $params = [])
+    public function load($object, $params = [])
     {
-        return '';
+        $db = Db::get();
+
+        if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
+            $relations = $db->fetchAll('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
+        } else {
+            return null;
+        }
+
+        $relations = array_map(static function ($relation) {
+            $relation['dest_id'] = $relation['src_id'];
+            unset($relation['src_id']);
+            return $relation;
+        }, $relations);
+
+        // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
+        // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
+        usort($relations, static function ($a, $b) {
+            if ($a['index'] == $b['index']) {
+                return 0;
+            }
+
+            return ($a['index'] < $b['index']) ? -1 : 1;
+        });
+
+        $data = $this->loadData($relations, $object, $params);
+        if ($object instanceof Model\Element\DirtyIndicatorInterface) {
+            $object->markFieldDirty($this->getName(), false);
+        }
+
+        return $data['data'];
     }
 
     /**
@@ -207,6 +240,20 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function isOptimizedAdminLoading(): bool
     {
         return true;
+    }
+
+    protected function enrichDataRow($object, $params, &$classId, &$relation = [])
+    {
+        if (!$relation) {
+            $relation = [];
+        }
+
+        if ($object instanceof DataObject\Concrete) {
+            $relation['dest_id'] = $object->getId();
+            $relation['ownertype'] = 'object';
+
+            $classId = $this->getOwnerClassId();
+        }
     }
 }
 
