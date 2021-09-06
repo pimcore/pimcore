@@ -203,7 +203,7 @@ class Select extends Data implements
             foreach ($options as $option) {
                 $option = (array)$option; // support stdclass option
                 if (!array_key_exists('key', $option) || !array_key_exists('value', $option)) {
-                    throw new InvalidArgumentException('Please provide select options as associative array with fields "key" and "value"');
+                    throw new InvalidArgumentException('Please provide select options as associative array with fields "key" and "value", '.json_encode($option));
                 }
 
                 $this->options[] = $options;
