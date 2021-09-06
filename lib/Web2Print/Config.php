@@ -47,11 +47,13 @@ final class Config {
             ];
 
             /* @deprecated legacy will be removed in Pimcore 11 */
-            $loadLegacyConfigCallback = function($legacyRepo) {
+            $loadLegacyConfigCallback = function($legacyRepo, $dataSource) {
                 $file = \Pimcore\Config::locateConfigFile(self::LEGACY_FILE);
                 if (is_file($file)) {
                     $content = include($file);
                     if (is_array($content)) {
+                        $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
+
                         return $content;
                     }
                 }
