@@ -158,8 +158,9 @@ final class Thumbnail
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
-            // if no correct thumbnail config is given use the original image as thumbnail
-            if (!$this->config) {
+            $isSvg = $this->asset->getMimetype() == 'image/svg+xml' ? true : false;
+            // if no correct thumbnail config is given or image is svg use the original image as thumbnail
+            if (!$this->config || $isSvg) {
                 $this->pathReference = [
                     'type' => 'asset',
                     'src' => $this->asset->getRealFullPath(),
