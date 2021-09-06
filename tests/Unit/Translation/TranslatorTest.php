@@ -41,6 +41,7 @@ class TranslatorTest extends TestCase
     protected $translations = [
         'en' => [
             'simple_key' => 'EN Text',
+            'fallback_key' => 'EN Fallback',
             'Text As Key' => 'EN Text',
             'text_params' => 'Text with %Param1% and %Param2%',
             'count_key' => '%count% Count',
@@ -52,6 +53,7 @@ class TranslatorTest extends TestCase
         ],
         'de' => [
             'simple_key' => 'DE Text',
+            'fallback_key' => '',
             'Text As Key' => '',
             'text_params' => '',
             'count_key' => '',
@@ -115,6 +117,10 @@ class TranslatorTest extends TestCase
         //Translate fr
         $this->translator->setLocale('fr');
         $this->assertEquals($this->translations['fr']['simple_key'], $this->translator->trans('simple_key'));
+
+        //Returns Fallback("en") value
+        $this->translator->setLocale('de');
+        $this->assertEquals($this->translations['en']['fallback_key'], $this->translator->trans('fallback_key'));
     }
 
     public function testTranslateTextAsKey()
