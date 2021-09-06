@@ -198,8 +198,8 @@ class Select extends Data implements
      */
     public function setOptions(?array $options)
     {
-        $this->options = [];
         if(is_array($options)) {
+            $this->options = [];
             foreach ($options as $option) {
                 if (!array_key_exists('key', $option) || !array_key_exists('value', $option)) {
                     throw new InvalidArgumentException('Please provide select options as associative array with fields "key" and "value"');
@@ -207,6 +207,8 @@ class Select extends Data implements
 
                 $this->options[] = $options;
             }
+        } else {
+            $this->options = null;
         }
 
         return $this;
