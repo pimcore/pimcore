@@ -99,7 +99,7 @@ final class Sanitycheck extends Model\AbstractModel
     {
         $sanityCheck = new Sanitycheck();
         $sanityCheck->getDao()->getNext();
-        if ($sanityCheck->getId() and $sanityCheck->getType()) {
+        if ($sanityCheck->getId() && $sanityCheck->getType()) {
             return $sanityCheck;
         } else {
             return null;

@@ -92,7 +92,7 @@ class Hardlink extends Document
         $tags = parent::getCacheTags($tags);
 
         if ($this->getSourceDocument()) {
-            if ($this->getSourceDocument()->getId() != $this->getId() and !array_key_exists($this->getSourceDocument()->getCacheTag(), $tags)) {
+            if ($this->getSourceDocument()->getId() != $this->getId() && !array_key_exists($this->getSourceDocument()->getCacheTag(), $tags)) {
                 $tags = $this->getSourceDocument()->getCacheTags($tags);
             }
         }

@@ -176,7 +176,7 @@ class DataObjects extends Elements implements DataProviderInterface
             }
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
+        if (is_array($classnames) && !empty($classnames[0])) {
             $conditionClassnameParts = [];
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);

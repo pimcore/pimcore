@@ -450,13 +450,13 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data && $data->getData() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
                 $data->setData(Asset::getById($idMapping['asset'][$data->getData()->getId()]));
             }
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
                 $data->setPoster(Asset::getById($idMapping['asset'][$data->getPoster()->getId()]));
             }
         }

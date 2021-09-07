@@ -389,7 +389,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory()) {
+        if (!$omitMandatoryCheck && $this->getMandatory()) {
             $empty = true;
             if (!empty($data)) {
                 $dataArray = $data->getData();
@@ -406,7 +406,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             }
         }
 
-        if (!empty($data) and !$data instanceof DataObject\Data\StructuredTable) {
+        if (!empty($data) && !$data instanceof DataObject\Data\StructuredTable) {
             throw new Model\Element\ValidationException('invalid table data');
         }
     }

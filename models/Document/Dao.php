@@ -359,7 +359,7 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
-        if ($user and !$user->isAdmin()) {
+        if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
