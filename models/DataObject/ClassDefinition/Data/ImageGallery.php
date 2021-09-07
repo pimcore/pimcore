@@ -487,8 +487,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param mixed $data
-     * @param false $omitMandatoryCheck
+     * @param DataObject\Data\ImageGallery|null $data
+     * @param bool $omitMandatoryCheck
      * @param array $params
      *
      * @throws Element\ValidationException
