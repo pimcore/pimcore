@@ -310,7 +310,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         if ($this->getMandatory() && !$omitMandatoryCheck && !$this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
-
     }
 
     /**
