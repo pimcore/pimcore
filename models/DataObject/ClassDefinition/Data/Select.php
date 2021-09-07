@@ -198,7 +198,7 @@ class Select extends Data implements
      */
     public function setOptions(?array $options)
     {
-        if(is_array($options)) {
+        if (is_array($options)) {
             $this->options = [];
             foreach ($options as $option) {
                 if (!array_key_exists('key', $option) || !array_key_exists('value', $option)) {
