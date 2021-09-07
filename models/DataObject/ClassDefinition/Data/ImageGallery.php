@@ -487,6 +487,22 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
+     * @param mixed $data
+     * @param false $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if ($data === null || empty($data->getItems()) || $data->getItems()[0]->getImage() === null) {
+            throw new Model\Element\ValidationException('[ ' . $this->getName() . " ] At least 1 image should be uploaded!");
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck);
+    }
+
+    /**
      * @param DataObject\Data\ImageGallery|null $data
      *
      * @return bool
