@@ -27,15 +27,15 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByOrderState($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByProduct($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByProductNumber($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByProductName($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByAmount($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByTotalNetPrice($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByTotalPrice($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getByComment($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem getBySubItems($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByOrderState($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProduct($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductNumber($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductName($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByAmount($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalNetPrice($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalPrice($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByComment($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getBySubItems($value, $limit = 0, $offset = 0)
 */
 
 class OnlineShopOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
@@ -74,7 +74,7 @@ public function getOrderState(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderState");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -108,7 +108,7 @@ public function getProduct(): ?\Pimcore\Model\Element\AbstractElement
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("product");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -154,7 +154,7 @@ public function getProductNumber(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("productNumber");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -188,7 +188,7 @@ public function getProductName(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("productName");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -222,7 +222,7 @@ public function getAmount(): ?float
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("amount");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -258,7 +258,7 @@ public function getTotalNetPrice(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("totalNetPrice");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -294,7 +294,7 @@ public function getTotalPrice(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("totalPrice");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -330,7 +330,7 @@ public function getTaxInfo(): array
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxInfo");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -363,7 +363,7 @@ public function getPricingRules()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("pricingRules");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -397,7 +397,7 @@ public function getComment(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("comment");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -431,7 +431,7 @@ public function getSubItems(): array
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("subItems");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -475,8 +475,8 @@ public function setSubItems(?array $subItems)
 public function getCustomized(): ?\Pimcore\Model\DataObject\Objectbrick
 {
 	$data = $this->customized;
-	if (!$data) { 
-		if (\Pimcore\Tool::classExists("\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem\\Customized")) { 
+	if (!$data) {
+		if (\Pimcore\Tool::classExists("\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem\\Customized")) {
 			$data = new \Pimcore\Model\DataObject\OnlineShopOrderItem\Customized($this, "customized");
 			$this->customized = $data;
 		} else {
@@ -485,7 +485,7 @@ public function getCustomized(): ?\Pimcore\Model\DataObject\Objectbrick
 	}
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("customized");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}

@@ -18,9 +18,9 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken getByTokenId($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken getByToken($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken getByVoucherSeries($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByTokenId($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByToken($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByVoucherSeries($value, $limit = 0, $offset = 0)
 */
 
 class OnlineShopVoucherToken extends Concrete
@@ -50,7 +50,7 @@ public function getTokenId(): ?float
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("tokenId");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -86,7 +86,7 @@ public function getToken(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("token");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -120,7 +120,7 @@ public function getVoucherSeries(): ?\Pimcore\Model\Element\AbstractElement
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("voucherSeries");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}

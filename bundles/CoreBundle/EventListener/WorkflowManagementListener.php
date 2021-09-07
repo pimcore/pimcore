@@ -183,19 +183,16 @@ class WorkflowManagementListener implements EventSubscriberInterface
                             //load the new layout into the object container
                             $validLayouts = DataObject\Service::getValidLayouts($element);
 
-                            //check that the layout id is valid before trying to load
-                            if (!empty($validLayouts)) {
-                                // check user permissions again
-                                if ($validLayouts[$workflowLayoutId]) {
-                                    $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
-                                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                                    DataObject\Service::enrichLayoutDefinition(
-                                        $customLayoutDefinition,
-                                        $e->getArgument('object')
-                                    );
-                                    $data['layout'] = $customLayoutDefinition;
-                                    $data['currentLayoutId'] = $workflowLayoutId;
-                                }
+                            // check user permissions again
+                            if (isset($validLayouts[$workflowLayoutId])) {
+                                $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
+                                $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                                DataObject\Service::enrichLayoutDefinition(
+                                    $customLayoutDefinition,
+                                    $e->getArgument('object')
+                                );
+                                $data['layout'] = $customLayoutDefinition;
+                                $data['currentLayoutId'] = $workflowLayoutId;
                             }
                         }
                     }

@@ -230,10 +230,10 @@ class ContentControllerTest extends WebTestCase
 
 If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/10.x/config/packages/test/config.yaml)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config/packages/test/config.yaml](https://github.com/pimcore/pimcore/blob/10.x/.github/ci/files/config/packages/test/config.yaml#L19)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
-recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely. What to use depends highly on your environment and your tests - if you have
+recommended) or remove/alter the customized `doctrine` section from `config/packages/test/config.yaml` completely. What to use depends highly on your environment and your tests - if you have
 tests which make changes to the database you'll probably want to run them on a different database with a predefined data
 set. The example below just passes the DB connection as env variable:
 

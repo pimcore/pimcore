@@ -1472,6 +1472,10 @@ span.warning {
     color: #fff;
 }
 
+.pimcore_grid_row_disabled {
+    background-color: #d0d0d0;
+}
+
 .pimcore_main_toolbar .x-btn.x-btn-disabled {
     background-color: #484B4E;
     opacity: 1;

@@ -466,6 +466,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $link->setValues($value);
 
             return $link;
+        } elseif ($value instanceof DataObject\Data\Link) {
+            return $value;
         }
 
         return null;

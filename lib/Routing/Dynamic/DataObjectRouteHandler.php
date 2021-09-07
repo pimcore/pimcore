@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -46,6 +48,11 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $requestHelper;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
@@ -53,11 +60,13 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
-        RequestHelper $requestHelper
+        RequestHelper $requestHelper,
+        Config $config
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
+        $this->config = $config;
     }
 
     /**
@@ -113,6 +122,11 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
+
+        $route->setDefault(
+            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
+            $this->config['routing']['allow_processing_unpublished_fallback_document']
+        );
 
         return $route;
     }

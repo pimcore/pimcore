@@ -58,10 +58,6 @@ trait Text
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        // remove all <script> tags, to prevent XSS in the version preview
-        // this should normally be filtered in the project specific controllers/action (/website folder) but just to be sure
-        $data = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $data);
-
-        return $data;
+        return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
 }

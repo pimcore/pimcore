@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -82,6 +83,11 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
+            }
+
+            if ($ex instanceof ConfigWriteException) {
+                $data['type'] = 'ConfigWriteException';
+                $code = 422;
             }
 
             $data['message'] = $message;
