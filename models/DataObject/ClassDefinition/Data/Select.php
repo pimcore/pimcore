@@ -192,7 +192,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param array $options
+     * @param array|null $options
      *
      * @return $this
      */
