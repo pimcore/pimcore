@@ -47,8 +47,37 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             this.config.width = Ext.get(this.id).getWidth() ?? Ext.get(this.id).getWidth() - 2;
         }
 
-        this.element = new Ext.form.TextField(this.config);
+        var buttons = [
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_open",
+                style: "margin-left: 5px;",
+                handler: this.openElement.bind(this)
+            }, {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                style: "margin-left: 5px",
+                handler: this.empty.bind(this)
+            }, {
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                style: "margin-left: 5px",
+                handler: this.openSearchEditor.bind(this)
+            }
+        ];
 
+        this.buttonsForm = Ext.create('Ext.form.FieldContainer', {
+            layout: 'hbox',
+            items: buttons
+        });
+
+        // Create temporary element with only icons, get its width, subtract total width with 
+        // created element width and then destroy temporary element
+        this.buttonsForm.render(this.id);
+        this.config.width = this.config.width - Ext.get(this.buttonsForm.id).getWidth();
+        this.buttonsForm.destroy();
+
+        this.element = new Ext.form.TextField(this.config);
 
         this.element.on("render", function (el) {
             // register at global DnD manager
@@ -62,22 +91,7 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             element.setValue(this.data.path);
         }.bind(this));
 
-        var items = [this.element, {
-            xtype: "button",
-            iconCls: "pimcore_icon_open",
-            style: "margin-left: 5px",
-            handler: this.openElement.bind(this)
-        }, {
-            xtype: "button",
-            iconCls: "pimcore_icon_delete",
-            style: "margin-left: 5px",
-            handler: this.empty.bind(this)
-        }, {
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            style: "margin-left: 5px",
-            handler: this.openSearchEditor.bind(this)
-        }];
+        var items = [this.element].concat(buttons);
 
         this.composite = Ext.create('Ext.form.FieldContainer', {
             layout: 'hbox',
