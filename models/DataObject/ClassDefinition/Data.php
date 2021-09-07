@@ -167,8 +167,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 $isEmpty = false;
             }
         }
-
-        if (!empty($data)) {
+        if (is_array($data) || is_iterable($data)) {
+            foreach ($data as $d) {
+                if (!empty($d)) {
+                    $isEmpty = false;
+                    break;
+                }
+            }
+        } elseif (!empty($data)) {
             $isEmpty = false;
         }
 
