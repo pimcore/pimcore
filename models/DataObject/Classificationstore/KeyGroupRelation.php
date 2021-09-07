@@ -86,6 +86,22 @@ final class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
+     * @param int|null $keyId
+     * @param int|null $groupId
+     */
+    public function getById($keyId = null, $groupId = null)
+    {
+        try {
+            $config = new self();
+            $config->getDao()->getById((int)$keyId, (int)$groupId);
+
+            return $config;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * @return int
      */
     public function getGroupId()

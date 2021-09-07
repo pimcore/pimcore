@@ -61,6 +61,22 @@ final class CollectionGroupRelation extends Model\AbstractModel
     }
 
     /**
+     * @param int|null $colId
+     * @param int|null $groupId
+     */
+    public function getById($colId = null, $groupId = null)
+    {
+        try {
+            $config = new self();
+            $config->getDao()->getById((int)$colId, (int)$groupId);
+
+            return $config;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * @return int
      */
     public function getGroupId()
