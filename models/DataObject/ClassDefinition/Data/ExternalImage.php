@@ -303,7 +303,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param bool $omitMandatoryCheck
      * @param array $params
      *
-     * @throws Element\ValidationException
+     * @throws Model\Element\ValidationException
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
