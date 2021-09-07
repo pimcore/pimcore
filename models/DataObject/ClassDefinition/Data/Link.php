@@ -254,7 +254,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $dependencies = [];
 
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -285,7 +285,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getCacheTags($data, array $tags = [])
     {
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -372,7 +372,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $id = $data->getInternal();
             $type = $data->getInternalType();
 
-            if (array_key_exists($type, $idMapping) and array_key_exists($id, $idMapping[$type])) {
+            if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                 $data->setInternal($idMapping[$type][$id]);
             }
         }
