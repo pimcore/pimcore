@@ -35,6 +35,11 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 ./bin/console pimcore:deployment:classes-rebuild
 ```
 
+To create new classes from your configuration files in the database you can use the create-classes option. With the env variable `PIMCORE_CLASS_DIRECTORY` you can specify the directory to search for your class definitions if you do not want pimcore to search in `var/classes` or `/config/pimcore/classes`.
+
+```bash
+./bin/console pimcore:deployment:classes-rebuild  --create-classes
+```
 
 As an alternative also class export to json-files and the class import commands can be used. 
 
