@@ -89,7 +89,7 @@ final class KeyGroupRelation extends Model\AbstractModel
      * @param int|null $keyId
      * @param int|null $groupId
      */
-    public function getById($keyId = null, $groupId = null)
+    public static function getById($keyId = null, $groupId = null)
     {
         try {
             $config = new self();
