@@ -311,7 +311,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
             throw new Model\Element\ValidationException('[ ' . $this->getName() . " ] should not be empty!");
         }
 
-        parent::checkValidity($data, $omitMandatoryCheck);
     }
 
     /**
