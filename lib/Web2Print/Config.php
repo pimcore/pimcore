@@ -27,8 +27,7 @@ final class Config {
 
     private const CONFIG_ID = 'pimcore_web2print';
 
-    /** @var LocationAwareConfigRepository|null  */
-    private static $locationAwareConfigRepository = null;
+    private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
     /**
      * @deprecated Will be removed in Pimcore 11
