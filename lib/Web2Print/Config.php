@@ -25,7 +25,7 @@ use Pimcore\Logger;
  */
 final class Config {
 
-    private const CONFIG_ID = 'pimcore_web2print';
+    private const CONFIG_ID = 'web_to_print';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
@@ -40,10 +40,13 @@ final class Config {
     private static function getRepository()
     {
         if (!self::$locationAwareConfigRepository) {
-            $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-            $config = [
-                self::CONFIG_ID => $config['web2print']
-            ];
+            $config = [];
+            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+            if(isset($containerConfig['documents']['web_to_print']['generalTool'])) {
+                $config = [
+                    self::CONFIG_ID => $containerConfig['documents']['web_to_print']
+                ];
+            }
 
             /* @deprecated legacy will be removed in Pimcore 11 */
             $loadLegacyConfigCallback = function($legacyRepo, &$dataSource) {
@@ -61,9 +64,9 @@ final class Config {
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
-                'pimcore_web2print',
-                PIMCORE_CONFIGURATION_DIRECTORY . '/web2print' ?? null,
-                'PIMCORE_WRITE_TARGET_WEB2PRINT',
+                'pimcore_web_to_print',
+                PIMCORE_CONFIGURATION_DIRECTORY . '/web_to_print',
+                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
                 null,
                 self::LEGACY_FILE,
                 $loadLegacyConfigCallback
@@ -96,10 +99,17 @@ final class Config {
      */
     public static function save(array $data) {
         $repository = self::getRepository();
+
+        unset($data['pdf_creation_php_memory_limit']);
+        unset($data['default_controller_print_page']);
+        unset($data['default_controller_print_container']);
+
         $repository->saveConfig(self::CONFIG_ID, $data, function ($key, $data) {
             return [
                 "pimcore" => [
-                    "web2print" => $data
+                    "documents" => [
+                        'web_to_print' => $data
+                    ]
                 ]
             ];
         });

@@ -174,7 +174,6 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
-        $this->addWeb2PrintNode($rootNode);
 
         return $treeBuilder;
     }
@@ -860,6 +859,22 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('default_controller_print_container')
                                 ->defaultValue('App\\Controller\\Web2printController::containerAction')
                             ->end()
+                            ->booleanNode('enableInDefaultView')->end()
+                            ->scalarNode('generalTool')->end()
+                            ->scalarNode('generalDocumentSaveMode')->end()
+                            ->scalarNode('pdfreactorVersion')->end()
+                            ->scalarNode('pdfreactorProtocol')->end()
+                            ->scalarNode('pdfreactorServer')->end()
+                            ->scalarNode('pdfreactorServerPort')->end()
+                            ->scalarNode('pdfreactorBaseUrl')->end()
+                            ->scalarNode('pdfreactorApiKey')->end()
+                            ->scalarNode('pdfreactorLicence')->end()
+                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
+                            ->booleanNode('pdfreactorEnableDebugMode')->end()
+                            ->scalarNode('wkhtmltopdfBin')->end()
+                            ->variableNode('wkhtml2pdfOptions')->end()
+                            ->scalarNode('wkhtml2pdfHostname')->end()
+                            ->scalarNode('headlessChromeSettings')->end()
                         ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
@@ -1265,39 +1280,6 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('usespecific')
                             ->defaultFalse()
                         ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    /**
-     * Adds configuration tree for the web2print configuration
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addWeb2PrintNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('web2print')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-						->booleanNode('enableInDefaultView')->end()
-						->scalarNode('generalTool')->end()
-						->scalarNode('generalDocumentSaveMode')->end()
-						->scalarNode('pdfreactorVersion')->end()
-						->scalarNode('pdfreactorProtocol')->end()
-						->scalarNode('pdfreactorServer')->end()
-						->scalarNode('pdfreactorServerPort')->end()
-						->scalarNode('pdfreactorBaseUrl')->end()
-						->scalarNode('pdfreactorApiKey')->end()
-						->scalarNode('pdfreactorLicence')->end()
-                        ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
-						->booleanNode('pdfreactorEnableDebugMode')->end()
-						->scalarNode('wkhtmltopdfBin')->end()
-                        ->variableNode('wkhtml2pdfOptions')->end()
-						->scalarNode('wkhtml2pdfHostname')->end()
-                        ->scalarNode('headlessChromeSettings')->end()
                     ->end()
                 ->end()
             ->end();
