@@ -86,22 +86,6 @@ final class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @param int|null $keyId
-     * @param int|null $groupId
-     */
-    public static function getById($keyId = null, $groupId = null)
-    {
-        try {
-            $config = new self();
-            $config->getDao()->getById((int)$keyId, (int)$groupId);
-
-            return $config;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
-    /**
      * @return int
      */
     public function getGroupId()
@@ -253,14 +237,13 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     public static function getByGroupAndKeyId($groupId, $keyId)
     {
-        $relation = new KeyGroupRelation\Listing();
-        $relation->setCondition('groupId = ' . $relation->quote($groupId) . ' and keyId = ' . $relation->quote($keyId));
-        $relation->setLimit(1);
-        $relation = $relation->load();
-        if ($relation) {
-            return $relation[0];
-        }
+        try {
+            $relation = new self();
+            $relation->getDao()->getById((int)$keyId, (int)$groupId);
 
-        return null;
+            return $relation;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
