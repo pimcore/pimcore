@@ -222,7 +222,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.buildColumnConfigMenu();
 
         var exportButtons = this.getExportButtons();
-        var firstButton = exportButtons.pop();
+        var firstButton = exportButtons.shift();
 
         this.exportButton = new Ext.SplitButton({
             text: firstButton.text,
