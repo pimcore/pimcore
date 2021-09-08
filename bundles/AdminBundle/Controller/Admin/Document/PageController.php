@@ -290,7 +290,9 @@ class PageController extends DocumentControllerBase
     {
         $document = Document\Page::getById($request->get('id'));
         if ($document instanceof Document\Page) {
-            return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
+            return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
+                'Content-Type' => 'image/jpg'
+            ]);
         }
 
         throw $this->createNotFoundException('Page not found');
