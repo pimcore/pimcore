@@ -63,7 +63,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                             params = Ext.merge(params, item.crop);
                         }
                         var url = Routing.generate(route, params);
-                        var tag = '<img style="padding-left: 3px" src="'+url+'">';
+                        var tag = '<img style="padding-left: 3px" src="'+url+'" loading="lazy">';
 
                         content += tag;
                     }

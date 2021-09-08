@@ -49,7 +49,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                             frame: true
                         };
                         var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', params);
-                        return '<img src="'+path+'" />';
+                        return '<img src="'+path+'" loading="lazy" />';
                     }
 
                     var params = {
@@ -61,7 +61,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
                     var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', params);
 
-                    return '<img src="'+path+'" style="width:88px; height:88px;"  />';
+                    return '<img src="'+path+'" style="width:88px; height:88px;" loading="lazy" />';
                 }
             }.bind(this, field.key)
         };

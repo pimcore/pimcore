@@ -74,7 +74,7 @@ class SearchBackendListener implements EventSubscriberInterface
     {
         $element = $e->getElement();
         $searchEntry = Data::getForElement($element);
-        if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
+        if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->setDataFromElement($element);
             $searchEntry->save();
         } else {

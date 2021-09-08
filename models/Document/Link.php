@@ -118,7 +118,7 @@ class Link extends Model\Document
 
         if ($this->getLinktype() === 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                if ($this->getObject()->getId() != $this->getId() and !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
+                if ($this->getObject()->getId() != $this->getId() && !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
                     $tags = $this->getObject()->getCacheTags($tags);
                 }
             }

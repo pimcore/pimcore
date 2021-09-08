@@ -142,7 +142,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return $return;
-        } elseif (is_array($data) and count($data) === 0) {
+        } elseif (is_array($data) && count($data) === 0) {
             //give empty array if data was not null
             return [];
         } else {
@@ -365,7 +365,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -378,7 +378,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 }
 
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or !($o instanceof DataObject\Concrete)) {
+                if (!$allowClass || !($o instanceof DataObject\Concrete)) {
                     if (!$allowClass && $o instanceof DataObject\Concrete) {
                         $id = $o->getId();
                     } else {
@@ -465,7 +465,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {

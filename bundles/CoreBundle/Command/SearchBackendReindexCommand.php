@@ -82,7 +82,7 @@ class SearchBackendReindexCommand extends AbstractCommand
                         }
 
                         $searchEntry = Search\Backend\Data::getForElement($element);
-                        if ($searchEntry instanceof Search\Backend\Data and $searchEntry->getId() instanceof Search\Backend\Data\Id) {
+                        if ($searchEntry instanceof Search\Backend\Data && $searchEntry->getId() instanceof Search\Backend\Data\Id) {
                             $searchEntry->setDataFromElement($element);
                         } else {
                             $searchEntry = new Search\Backend\Data($element);
