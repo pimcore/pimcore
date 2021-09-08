@@ -577,9 +577,9 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        unset($values["documentation"]);
-        unset($values["additions"]);
-        unset($values["json_converter"]);
+        unset($values['documentation']);
+        unset($values['additions']);
+        unset($values['json_converter']);
 
         if ($values['wkhtml2pdfOptions']) {
             $optionArray = [];

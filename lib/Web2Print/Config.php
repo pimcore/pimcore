@@ -16,15 +16,12 @@
 namespace Pimcore\Web2Print;
 
 use Pimcore\Config\LocationAwareConfigRepository;
-use Pimcore\Db\PhpArrayFileTable;
-use Pimcore\File;
-use Pimcore\Logger;
 
 /**
  * @internal
  */
-final class Config {
-
+final class Config
+{
     private const CONFIG_ID = 'web_to_print';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
@@ -42,14 +39,14 @@ final class Config {
         if (!self::$locationAwareConfigRepository) {
             $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            if(isset($containerConfig['documents']['web_to_print']['generalTool'])) {
+            if (isset($containerConfig['documents']['web_to_print']['generalTool'])) {
                 $config = [
-                    self::CONFIG_ID => $containerConfig['documents']['web_to_print']
+                    self::CONFIG_ID => $containerConfig['documents']['web_to_print'],
                 ];
             }
 
-            /* @deprecated legacy will be removed in Pimcore 11 */
-            $loadLegacyConfigCallback = function($legacyRepo, &$dataSource) {
+            // @deprecated legacy will be removed in Pimcore 11
+            $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
                 $file = \Pimcore\Config::locateConfigFile(self::LEGACY_FILE);
                 if (is_file($file)) {
                     $content = include($file);
@@ -59,6 +56,7 @@ final class Config {
                         return $content;
                     }
                 }
+
                 return null;
             };
 
@@ -72,32 +70,38 @@ final class Config {
                 $loadLegacyConfigCallback
             );
         }
+
         return self::$locationAwareConfigRepository;
     }
 
     /**
      * @return bool
      */
-    public static function isWriteable(): bool {
+    public static function isWriteable(): bool
+    {
         return self::getRepository()->isWriteable();
     }
 
     /**
      * @return \Pimcore\Config\Config
      */
-    public static function get(): \Pimcore\Config\Config {
+    public static function get(): \Pimcore\Config\Config
+    {
         $repository = self::getRepository();
 
         list($config, $dataSource) = $repository->loadConfigByKey(self::CONFIG_ID);
         $config = new \Pimcore\Config\Config($config);
+
         return $config;
     }
 
     /**
      * @param array $data
+     *
      * @throws \Exception
      */
-    public static function save(array $data) {
+    public static function save(array $data)
+    {
         $repository = self::getRepository();
 
         unset($data['pdf_creation_php_memory_limit']);
@@ -106,11 +110,11 @@ final class Config {
 
         $repository->saveConfig(self::CONFIG_ID, $data, function ($key, $data) {
             return [
-                "pimcore" => [
-                    "documents" => [
-                        'web_to_print' => $data
-                    ]
-                ]
+                'pimcore' => [
+                    'documents' => [
+                        'web_to_print' => $data,
+                    ],
+                ],
             ];
         });
     }
