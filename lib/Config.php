@@ -462,13 +462,7 @@ final class Config implements \ArrayAccess
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_web2print')) {
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_web2print');
         } else {
-            try {
-                $file = self::locateConfigFile('web2print.php');
-                $config = static::getConfigInstance($file);
-            } catch (\Exception $e) {
-                $config = new \Pimcore\Config\Config([]);
-            }
-
+            $config = \Pimcore\Web2Print\Config::get();
             self::setWeb2PrintConfig($config);
         }
 
