@@ -153,7 +153,7 @@ class LocationAwareConfigRepository
     {
         $callback = $this->loadLegacyConfigCallback;
         if (is_callable($callback)) {
-            return $callback($this);
+            return $callback($this, $dataSource);
         }
 
         if (!$this->legacyConfigFile) {
