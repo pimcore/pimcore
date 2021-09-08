@@ -66,7 +66,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getByColAndGroupId($colId = null, $groupId = null)
+    public static function getByGroupAndColId($groupId = null, $colId = null)
     {
         try {
             $config = new self();
