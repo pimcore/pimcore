@@ -63,6 +63,8 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @param int|null $colId
      * @param int|null $groupId
+     *
+     * @return self|null
      */
     public static function getByColAndGroupId($colId = null, $groupId = null)
     {
