@@ -29,9 +29,10 @@ trait AutoIncrementTrait
             return (int) $item->getId();
         }, $listing);
 
-        if(count($ids)) {
+        if (count($ids)) {
             return max($ids) + 1;
         }
+
         return 1;
     }
 }
