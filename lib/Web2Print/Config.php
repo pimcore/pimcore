@@ -25,7 +25,7 @@ use Pimcore\Logger;
  */
 final class Config {
 
-    const CONFIG_ID = 'pimcore_web2print';
+    private const CONFIG_ID = 'pimcore_web2print';
 
     /** @var LocationAwareConfigRepository|null  */
     private static $locationAwareConfigRepository = null;
