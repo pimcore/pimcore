@@ -226,7 +226,7 @@ class BlockTest extends ModelTestCase
         $reference = TestHelper::createEmptyObject();
         $source = $this->createBlockObject();
         $data = [
-            'lblockadvancedRelations' => new BlockElement('lblockadvancedRelations', 'advancedManyToManyRelation', $reference),
+            'lblockadvancedRelations' => new BlockElement('lblockadvancedRelations', 'advancedManyToManyRelation', [$reference]),
         ];
         $source->setLtestblock([$data], 'de');
         $source->save();
@@ -238,7 +238,7 @@ class BlockTest extends ModelTestCase
 
         //update block element - manyToManyRelations
         $referenceNew = TestHelper::createEmptyObject();
-        $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData($referenceNew);
+        $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData([$referenceNew]);
         $source->save();
 
         //reload target and fetch source
@@ -247,7 +247,7 @@ class BlockTest extends ModelTestCase
 
         $loadedReference = $sourceFromRef->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
 
-        $this->assertEquals($referenceNew->getId(), $loadedReference->getId());
+        $this->assertEquals($referenceNew->getId(), $loadedReference[0]->getId());
 
         if (!$cacheEnabled) {
             Cache::disable();
