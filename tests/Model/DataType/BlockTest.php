@@ -238,7 +238,7 @@ class BlockTest extends ModelTestCase
 
         //update block element - manyToManyRelations
         $referenceNew = TestHelper::createEmptyObject();
-        $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData([new DataObject\Data\ElementMetadata($referenceNew)]);
+        $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData([new DataObject\Data\ElementMetadata('lblockadvancedRelations', [], $referenceNew)]);
         $source->save();
 
         //reload target and fetch source
