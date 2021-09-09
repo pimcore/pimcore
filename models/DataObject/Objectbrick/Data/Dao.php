@@ -130,30 +130,22 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
+                $fieldDefinitionParams = [
+                    'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                    'fieldname' => $fieldName,
+                    'isUpdate' => $isBrickUpdate,
+                    'context' => [
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $this->model->getType(),
+                        'fieldname' => $this->model->getFieldname(),
+                    ],
+                ];
                 if (is_array($fd->getColumnType())) {
-                    $fieldDefinitionParams = [
-                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'isUpdate' => $isBrickUpdate,
-                        'context' => [
-                            'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname(),
-                        ],
-                    ];
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
                     $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
                 } else {
-                    $fieldDefinitionParams = [
-                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'fieldname' => $fieldName,
-                        'isUpdate' => $isBrickUpdate,
-                        'context' => [
-                            'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname(),
-                        ],
-                    ];
+
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data[$fieldName] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
