@@ -438,8 +438,11 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     this.initPreviewImage();
                     var area = this.displayPanel.getEl().down('img');
                     if(area) {
+                        area.setStyle('min-width', "200px");
+                        area.setStyle('min-height', "200px");
                         area.setStyle('max-width', (width - 340) + "px");
                         area.setStyle('max-height', (height - 40) + "px");
+                        area.setStyle('object-fit', "contain");
                     }
                 }
             }.bind(this));
