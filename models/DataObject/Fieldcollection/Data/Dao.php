@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
                     'context' => [
                         'containerType' => 'fieldcollection',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' => $fieldName,
+                        'fieldname' => $this->model->getFieldname(),
                         'index' => $index,
                     ],
                 ]);
