@@ -245,7 +245,7 @@ class BlockTest extends ModelTestCase
         $target = DataObject::getById($target->getId(), true);
         $sourceFromRef = $target->getHref();
 
-        $loadedReference = $sourceFromRef->getLtestblock('de')[0]['blockmanyToManyRelations']->getData();
+        $loadedReference = $sourceFromRef->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
 
         $this->assertEquals($referenceNew->getId(), $loadedReference->getId());
 
