@@ -977,8 +977,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     $fd->checkValidity($value, $omitMandatoryCheck, $params);
                                     DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
-                                    die($e);
-                                    if (!$e instanceof Model\Element\ValidationException) {
+                                    if ($e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
                                     $exceptionClass = get_class($e);
@@ -986,7 +985,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
-                                die($e);
                                 if ($e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
