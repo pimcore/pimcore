@@ -150,11 +150,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                                 DataObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
-                                if (!$e instanceof Model\Element\ValidationException) {
+                                if ($e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
-                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                                 $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
