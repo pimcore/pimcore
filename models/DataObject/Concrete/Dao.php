@@ -258,24 +258,19 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 // pimcore saves the values with getDataForResource
-                if (is_array($fd->getColumnType())) {
-                    $fieldDefinitionParams = [
-                        'isUpdate' => $isUpdate,
-                        'owner' => $this->model,
-                        'fieldname' => $fieldName,
-                    ];
 
+                $fieldDefinitionParams = [
+                    'isUpdate' => $isUpdate,
+                    'owner' => $this->model,
+                    'fieldname' => $fieldName,
+                ];
+                if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
                         $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));
                     }
                 } else {
-                    $fieldDefinitionParams = [
-                        'isUpdate' => $isUpdate,
-                        'owner' => $this->model,
-                        'fieldname' => $fieldName,
-                    ];
                     $insertData = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
                     $data[$fieldName] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
