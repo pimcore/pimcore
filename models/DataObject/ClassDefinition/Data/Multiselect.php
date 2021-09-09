@@ -345,7 +345,9 @@ class Multiselect extends Data implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            return implode(',', $data);
+            return implode(',', array_map(function ($v) {
+                return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+            }, $data));
         }
 
         return null;
@@ -356,11 +358,11 @@ class Multiselect extends Data implements
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!is_array($data) and !empty($data)) {
+        if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException('Invalid multiselect data');
         }
     }
@@ -705,7 +707,12 @@ class Multiselect extends Data implements
             $context = [];
             $context['fieldname'] = $this->getName();
 
-            $options = $optionsProvider->getOptions($context, $this);
+            try {
+                $options = $optionsProvider->getOptions($context, $this);
+            } catch (\Exception $e) {
+                // error from getOptions => no values => no comma => no problems
+                $options = null;
+            }
         } else {
             $options = $this->getOptions();
         }

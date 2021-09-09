@@ -16,7 +16,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     forbiddenNames: [
         "abstract", "class", "data", "folder", "list", "permissions", "resource", "dao", "concrete", "items",
-        "object", "interface"
+        "object", "interface", "default"
     ],
 
     getTabPanel: function () {

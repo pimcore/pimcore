@@ -109,7 +109,7 @@ class CacheExtension extends AbstractExtension
      */
     public function end()
     {
-        if ($this->captureEnabled[$this->key]) {
+        if ($this->captureEnabled[$this->key] ?? false) {
             $this->captureEnabled[$this->key] = false;
 
             $tags = ['in_template'];

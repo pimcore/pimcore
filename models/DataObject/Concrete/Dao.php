@@ -131,7 +131,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
             ORDER BY `index` ASC", $params);
 
-        if (is_array($relations) and count($relations) > 0) {
+        if (is_array($relations) && count($relations) > 0) {
             return $relations;
         } else {
             return [];

@@ -155,4 +155,12 @@ trait Parallelization
             $this->lock = null;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsolePath(): string
+    {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
+    }
 }

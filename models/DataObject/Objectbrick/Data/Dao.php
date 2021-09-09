@@ -422,7 +422,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.type='document'
             ORDER BY `index` ASC", $params);
 
-        if (is_array($relations) and count($relations) > 0) {
+        if (is_array($relations) && count($relations) > 0) {
             return $relations;
         } else {
             return [];
