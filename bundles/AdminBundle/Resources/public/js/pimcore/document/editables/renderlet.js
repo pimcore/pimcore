@@ -55,7 +55,11 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
             dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
             this.getBody().setStyle({
-                overflow: "auto"
+                overflow: 'auto',
+            });
+
+            this.getBodyWrap().setStyle({
+                overflowY: 'auto',
             });
 
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
@@ -137,6 +141,11 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         }
 
         return Ext.dd.DropZone.prototype.dropAllowed;
+    },
+
+    getBodyWrap: function () {
+        var bodyId = this.element.getEl().query("." + Ext.baseCSSPrefix + "panel-bodyWrap")[0].getAttribute("id");
+        return Ext.get(bodyId);
     },
 
     getBody: function () {
