@@ -52,7 +52,7 @@ The code below shows how to use renderlet to create gallery based on it.
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
-            "controller" : "App\\Controller\\ContentController::myGallery",
+            "controller" : "App\\Controller\\ContentController::myGalleryAction",
             "title" : "Drag an asset folder here to get a gallery",
             "height" : 400
         })
