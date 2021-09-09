@@ -186,109 +186,108 @@ class GridHelperService
             $filters = json_decode($filterJson, true);
 
             foreach ($filters as $filter) {
-                if (isset($filter['value'])) {
+                $operator = '=';
+
+                $filterField = $filter['property'];
+                $filterOperator = $filter['operator'];
+
+                if ($filter['type'] == 'string') {
+                    $operator = 'LIKE';
+                } elseif ($filter['type'] == 'date') {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
+                    $filter['value'] = strtotime($filter['value']);
+                } elseif ($filter['type'] == 'list') {
                     $operator = '=';
+                } elseif ($filter['type'] == 'boolean') {
+                    $operator = '=';
+                    $filter['value'] = (int)$filter['value'];
+                } else {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
+                }
 
-                    $filterField = $filter['property'];
-                    $filterOperator = $filter['operator'];
+                $field = $class->getFieldDefinition($filterField);
+                $brickField = null;
+                $brickKey = null;
+                $brickType = null;
+                $brickDescriptor = null;
+                $isLocalized = false;
+                if (!$field) {
 
-                    if ($filter['type'] == 'string') {
-                        $operator = 'LIKE';
-                    } elseif ($filter['type'] == 'date') {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
+                    // if the definition doesn't exist check for a localized field
+                    $localized = $class->getFieldDefinition('localizedfields');
+                    if ($localized instanceof ClassDefinition\Data\Localizedfields) {
+                        $field = $localized->getFieldDefinition($filterField);
+                    }
+
+                    //if the definition doesn't exist check for object brick
+                    $keyParts = explode('~', $filterField);
+
+                    if (substr($filterField, 0, 1) === '~') {
+                        // not needed for now
+//                            $type = $keyParts[1];
+//                            $field = $keyParts[2];
+//                            $keyid = $keyParts[3];
+                    } elseif (count($keyParts) > 1) {
+                        $brickType = $keyParts[0];
+                        $brickKey = $keyParts[1];
+
+                        if (strpos($brickType, '?') !== false) {
+                            $brickDescriptor = substr($brickType, 1);
+                            $brickDescriptor = json_decode($brickDescriptor, true);
+                            $brickType = $brickDescriptor['containerKey'];
                         }
-                        $filter['value'] = strtotime($filter['value']);
-                    } elseif ($filter['type'] == 'list') {
-                        $operator = '=';
-                    } elseif ($filter['type'] == 'boolean') {
-                        $operator = '=';
-                        $filter['value'] = (int)$filter['value'];
+
+                        $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
+                        $field = $class->getFieldDefinition($key);
+
+                        $brickClass = Objectbrick\Definition::getByKey($brickType);
+
+                        $brickFieldKey = $brickDescriptor ? $brickDescriptor['brickfield'] : $brickKey;
+
+                        $brickClassDefinitions = $brickClass->getFieldDefinitions();
+                        if (array_key_exists($brickFieldKey, $brickClassDefinitions)) {
+                            $brickField = $brickClass->getFieldDefinition($brickFieldKey);
+                        } else {
+                            /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
+                            $localizedFields = $brickClass->getFieldDefinition('localizedfields');
+                            if ($localizedFields) {
+                                $brickField = $localizedFields->getFieldDefinition($brickFieldKey);
+                                $isLocalized = true;
+                            }
+                        }
+                    }
+                }
+                if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
+                    // custom field
+                    if ($brickDescriptor) {
+                        $brickFilterField = $brickDescriptor['fieldname'];
                     } else {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
-                        }
+                        $brickFilterField = $field->getName();
                     }
 
-                    $field = $class->getFieldDefinition($filterField);
-                    $brickField = null;
-                    $brickKey = null;
-                    $brickType = null;
-                    $brickDescriptor = null;
-                    $isLocalized = false;
-                    if (!$field) {
+                    $db = \Pimcore\Db::get();
 
-                        // if the definition doesn't exist check for a localized field
-                        $localized = $class->getFieldDefinition('localizedfields');
-                        if ($localized instanceof ClassDefinition\Data\Localizedfields) {
-                            $field = $localized->getFieldDefinition($filterField);
-                        }
-
-                        //if the definition doesn't exist check for object brick
-                        $keyParts = explode('~', $filterField);
-
-                        if (substr($filterField, 0, 1) === '~') {
-                            // not needed for now
-                            //                            $type = $keyParts[1];
-                            //                            $field = $keyParts[2];
-                            //                            $keyid = $keyParts[3];
-                        } elseif (count($keyParts) > 1) {
-                            $brickType = $keyParts[0];
-                            $brickKey = $keyParts[1];
-
-                            if (strpos($brickType, '?') !== false) {
-                                $brickDescriptor = substr($brickType, 1);
-                                $brickDescriptor = json_decode($brickDescriptor, true);
-                                $brickType = $brickDescriptor['containerKey'];
-                            }
-
-                            $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
-                            $field = $class->getFieldDefinition($key);
-
-                            $brickClass = Objectbrick\Definition::getByKey($brickType);
-
-                            $brickFieldKey = $brickDescriptor ? $brickDescriptor['brickfield'] : $brickKey;
-
-                            $brickClassDefinitions = $brickClass->getFieldDefinitions();
-                            if (array_key_exists($brickFieldKey, $brickClassDefinitions)) {
-                                $brickField = $brickClass->getFieldDefinition($brickFieldKey);
-                            } else {
-                                /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
-                                $localizedFields = $brickClass->getFieldDefinition('localizedfields');
-                                if ($localizedFields) {
-                                    $brickField = $localizedFields->getFieldDefinition($brickFieldKey);
-                                    $isLocalized = true;
-                                }
-                            }
+                    if ($isLocalized) {
+                        $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+                    } else {
+                        if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
+                            $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
+                        } else {
+                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
                         }
                     }
-                    if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
-                        // custom field
-                        if ($brickDescriptor) {
-                            $brickFilterField = $brickDescriptor['fieldname'];
-                        } else {
-                            $brickFilterField = $field->getName();
-                        }
-
-                        $db = \Pimcore\Db::get();
-
-                        if ($isLocalized) {
-                            $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
-                        } else {
-                            if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
-                                $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
-                            } else {
-                                $brickPrefix = $db->quoteIdentifier($brickType) . '.';
-                            }
-                        }
 
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
@@ -299,46 +298,45 @@ class GridHelperService
                             $fieldConditions[] = $brickCondition;
                         }
 
-                            if (!empty($fieldConditions)) {
-                                $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
-                            }
-                        } else {
-                            $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
-                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
-                            $conditionPartsFilters[] = $brickCondition;
+                        if (!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
-                    } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
-                        $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
-                    } elseif ($field instanceof ClassDefinition\Data) {
-                        // custom field
-                        if (is_array($filter['value'] ?? false)) {
-                            $fieldConditions = [];
-                            foreach ($filter['value'] as $filterValue) {
-                                $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix . '.' : null)]);
-                            }
+                    } else {
+                        $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
+                                ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
+                        $conditionPartsFilters[] = $brickCondition;
+                    }
+                } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
+                    $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
+                } elseif ($field instanceof ClassDefinition\Data) {
+                    // custom field
+                    if (is_array($filter['value'] ?? false)) {
+                        $fieldConditions = [];
+                        foreach ($filter['value'] as $filterValue) {
+                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
+                        }
 
-                            if (!empty($fieldConditions)) {
-                                $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
-                            }
-                        } else {
-                            $conditionPartsFilters[] = $field->getFilterCondition($filter['value'] ?? null, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix . '.' : null)]);
+                        if (!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
-                    } elseif (in_array('o_' . $filterField, $systemFields)) {
-                        // system field
-                        if ($filterField == 'fullpath') {
-                            $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
-                        } elseif ($filterField == 'key') {
-                            $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
-                        } elseif ($filterField == 'id') {
-                            $conditionPartsFilters[] = 'oo_id ' . $operator . ' ' . $db->quote($filter['value']);
+                    } else {
+                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'] ?? null, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
+                    }
+                } elseif (in_array('o_' . $filterField, $systemFields)) {
+                    // system field
+                    if ($filterField == 'fullpath') {
+                        $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                    } elseif ($filterField == 'key') {
+                        $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                    } elseif ($filterField == 'id') {
+                        $conditionPartsFilters[] = 'oo_id ' . $operator . ' ' . $db->quote($filter['value']);
+                    } else {
+                        if ($filter['type'] == 'date' && $operator == '=') {
+                            //if the equal operator is chosen with the date type, condition has to be changed
+                            $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                            $conditionPartsFilters[] = '`o_' . $filterField . '` BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                         } else {
-                            if ($filter['type'] == 'date' && $operator == '=') {
-                                //if the equal operator is chosen with the date type, condition has to be changed
-                                $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                                $conditionPartsFilters[] = '`o_' . $filterField . '` BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
-                            } else {
-                                $conditionPartsFilters[] = '`o_' . $filterField . '` ' . $operator . ' ' . $db->quote($filter['value']);
-                            }
+                            $conditionPartsFilters[] = '`o_' . $filterField . '` ' . $operator . ' ' . $db->quote($filter['value']);
                         }
                     }
                 }
