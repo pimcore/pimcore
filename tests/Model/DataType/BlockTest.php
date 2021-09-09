@@ -226,7 +226,7 @@ class BlockTest extends ModelTestCase
         $reference = TestHelper::createEmptyObject();
         $source = $this->createBlockObject();
         $data = [
-            'blockmanyToManyRelations' => new BlockElement('blockmanyToManyRelations', 'advancedManyToManyRelation', $reference),
+            'lblockadvancedRelations' => new BlockElement('lblockadvancedRelations', 'advancedManyToManyRelation', $reference),
         ];
         $source->setLtestblock([$data], 'de');
         $source->save();
@@ -238,7 +238,7 @@ class BlockTest extends ModelTestCase
 
         //update block element - manyToManyRelations
         $referenceNew = TestHelper::createEmptyObject();
-        $source->getLtestblock('de')[0]['blockmanyToManyRelations']->setData($referenceNew);
+        $source->getLtestblock('de')[0]['lblockadvancedRelations']->setData($referenceNew);
         $source->save();
 
         //reload target and fetch source
