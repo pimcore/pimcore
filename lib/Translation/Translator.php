@@ -215,13 +215,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         !empty($translationTerm)) {
                         $translationKey = $translation['key'];
 
-                        if (empty($translationTerm)) {
-                            $translationTerm = $translationKey;
-
+                        if (empty($translationTerm) && $debugAdminTranslations) {
                             //wrap non-translated keys with "+", if debug admin translations is enabled
-                            if ($debugAdminTranslations) {
-                                $translationTerm = '+' . $translationTerm. '+';
-                            }
+                            $translationTerm = '+' . $translationKey. '+';
                         }
 
                         if (empty($translation['type']) || $translation['type'] === 'simple') {
