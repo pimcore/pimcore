@@ -62,69 +62,79 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
         if (!limitReached) {
             amountDiv = Ext.get(element).query('.pimcore_block_amount[data-name="' + this.name + '"]')[0];
-            amountBox = new Ext.form.ComboBox({
-                cls: "pimcore_block_amount_select",
-                store: this.getAmountValues(),
-                value: 1,
-                mode: "local",
-                editable: false,
-                triggerAction: "all",
-                width: 45
-            });
-            amountBox.render(amountDiv);
+            if (amountDiv) {
+                amountBox = new Ext.form.ComboBox({
+                    cls: "pimcore_block_amount_select",
+                    store: this.getAmountValues(),
+                    value: 1,
+                    mode: "local",
+                    editable: false,
+                    triggerAction: "all",
+                    width: 45
+                });
+                amountBox.render(amountDiv);
+            }
 
             plusDiv = Ext.get(element).query('.pimcore_block_plus[data-name="' + this.name + '"]')[0];
-            plusButton = new Ext.Button({
-                cls: "pimcore_block_button_plus",
-                hidden: true,
-                iconCls: "pimcore_icon_plus",
-                listeners: {
-                    "click": this.addBlock.bind(this, element, amountBox)
-                }
-            });
-            plusButton.render(plusDiv);
+            if (plusDiv) {
+                plusButton = new Ext.Button({
+                    cls: "pimcore_block_button_plus",
+                    hidden: true,
+                    iconCls: "pimcore_icon_plus",
+                    listeners: {
+                        "click": this.addBlock.bind(this, element, amountBox)
+                    }
+                });
+                plusButton.render(plusDiv);
+            }
         }
 
         // minus button
         minusButton = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"] .pimcore_block_button_minus')[0];
         if (typeof minusButton === 'undefined') {
             minusDiv = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"]')[0];
-            minusButton = new Ext.Button({
-                cls: "pimcore_block_button_minus",
-                iconCls: "pimcore_icon_minus",
-                listeners: {
-                    "click": this.removeBlock.bind(this, element)
-                }
-            });
-            minusButton.render(minusDiv);
+            if (minusDiv) {
+                minusButton = new Ext.Button({
+                    cls: "pimcore_block_button_minus",
+                    iconCls: "pimcore_icon_minus",
+                    listeners: {
+                        "click": this.removeBlock.bind(this, element)
+                    }
+                });
+                minusButton.render(minusDiv);
+            }
         }
 
         // up button
         upButton = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"] .pimcore_block_button_up')[0];
         if (typeof upButton === 'undefined') {
             upDiv = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"]')[0];
-            upButton = new Ext.Button({
-                cls: "pimcore_block_button_up",
-                iconCls: "pimcore_icon_up",
-                listeners: {
-                    "click": this.moveBlockUp.bind(this, element)
-                }
-            });
-            upButton.render(upDiv);
+            if (upDiv) {
+                upButton = new Ext.Button({
+                    cls: "pimcore_block_button_up",
+                    iconCls: "pimcore_icon_up",
+                    listeners: {
+                        "click": this.moveBlockUp.bind(this, element)
+                    }
+                });
+                upButton.render(upDiv);
+            }
         }
 
         // down button
         downButton = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"] .pimcore_block_button_down')[0];
         if (typeof downButton === 'undefined') {
             downDiv = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"]')[0];
-            downButton = new Ext.Button({
-                cls: "pimcore_block_button_down",
-                iconCls: "pimcore_icon_down",
-                listeners: {
-                    "click": this.moveBlockDown.bind(this, element)
-                }
-            });
-            downButton.render(downDiv);
+            if (downDiv) {
+                downButton = new Ext.Button({
+                    cls: "pimcore_block_button_down",
+                    iconCls: "pimcore_icon_down",
+                    listeners: {
+                        "click": this.moveBlockDown.bind(this, element)
+                    }
+                });
+                downButton.render(downDiv);
+            }
         }
     },
 
