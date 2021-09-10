@@ -77,17 +77,6 @@ class Image extends Model\Asset
         $this->clearThumbnailsOnSave = false; // reset to default
 
         parent::update($params);
-
-        // now directly create "system" thumbnails (eg. for the tree, ...)
-        if ($this->getDataChanged()) {
-            try {
-                $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-                $this->generateLowQualityPreview();
-            } catch (\Exception $e) {
-                Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
-                Logger::error($e);
-            }
-        }
     }
 
     /**
