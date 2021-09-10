@@ -31,7 +31,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
- * Class Pattern
+ * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {

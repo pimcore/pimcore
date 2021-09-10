@@ -84,10 +84,9 @@ class Bracket implements BracketInterface
                 case BracketInterface::OPERATOR_AND:
                     if ($check === false) {
                         return false;
-                    } else {
-                        //consider current state with check, if not default.
-                        $state = ($state === null) ? $check : ($check && $state);
                     }
+                    //consider current state with check, if not default.
+                    $state = $state ?? true;
 
                     break;
 
@@ -95,10 +94,9 @@ class Bracket implements BracketInterface
                 case BracketInterface::OPERATOR_AND_NOT:
                     if ($check === true) {
                         return false;
-                    } else {
-                        //consider current state with check, if not default.
-                        $state = ($state === null) ? !$check : (!$check && $state);
                     }
+                    //consider current state with check, if not default.
+                    $state = $state ?? true;
 
                     break;
 
@@ -122,13 +120,11 @@ class Bracket implements BracketInterface
     {
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
-            if ($condition) {
-                $cond = [
-                    'operator' => $this->operator[$num],
-                    'condition' => json_decode($condition->toJSON()),
-                ];
-                $json['conditions'][] = $cond;
-            }
+            $cond = [
+                'operator' => $this->operator[$num],
+                'condition' => json_decode($condition->toJSON()),
+            ];
+            $json['conditions'][] = $cond;
         }
 
         return json_encode($json);
