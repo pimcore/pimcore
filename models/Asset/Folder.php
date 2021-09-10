@@ -98,6 +98,7 @@ class Folder extends Model\Asset
 
     /**
      * @internal
+     *
      * @return resource|null
      *
      * @throws \Doctrine\DBAL\Exception

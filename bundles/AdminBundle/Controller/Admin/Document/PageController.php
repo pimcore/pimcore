@@ -291,7 +291,7 @@ class PageController extends DocumentControllerBase
         $document = Document\Page::getById($request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
-                'Content-Type' => 'image/jpg'
+                'Content-Type' => 'image/jpg',
             ]);
         }
 

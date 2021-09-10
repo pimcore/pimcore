@@ -24,7 +24,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use ImageTrait;
+
     use Extension\QueryColumnType;
 
     /**

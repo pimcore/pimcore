@@ -24,6 +24,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class LogoutEvent extends Event
 {
     use RequestAwareTrait;
+
     use ResponseAwareTrait;
 
     /**

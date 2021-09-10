@@ -40,6 +40,7 @@ use Symfony\Component\Routing\RouterInterface;
 class EditmodeListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
 
     /**

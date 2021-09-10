@@ -22,7 +22,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
-use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()

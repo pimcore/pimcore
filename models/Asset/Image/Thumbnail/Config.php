@@ -264,6 +264,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return Config
      */
     public static function getPreviewConfig()
