@@ -1152,14 +1152,8 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
 
         var thumbnail = record.data["thumbnail"];
         if (thumbnail) {
-            var srcset = thumbnail + ' 1x';
-            var thumbnailHdpi = record.data["thumbnailHdpi"];
-            if(thumbnailHdpi) {
-                    srcset += ', ' + thumbnailHdpi + " 2x";
-            }
-
             imageHtml = '<div class="thumb"><img src="' + uriPrefix + thumbnail
-                + '" onload="this.parentNode.className += \' complete\';" srcset="' + srcset + '" /></div>';
+                + '" onload="this.parentNode.className += \' complete\';" /></div>';
         }
 
         if (imageHtml) {
@@ -1207,6 +1201,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
                 'body { margin:0; padding: 0; } ' +
                 '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; min-height: 300px; } ' +
                 '.complete { border:none; border-radius: 0; background:none; max-width: 100%; }' +
+                '.complete img { max-width: 100%; }' +
                 '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
                 '</style>' +
                 imageHtml;

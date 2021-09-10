@@ -98,24 +98,21 @@ class Folder extends Model\Asset
 
     /**
      * @internal
-     *
-     * @param bool $hdpi
-     *
      * @return resource|null
      *
      * @throws \Doctrine\DBAL\Exception
      * @throws \League\Flysystem\FilesystemException
      */
-    public function getPreviewImage(bool $hdpi = false)
+    public function getPreviewImage()
     {
         $storage = Storage::get('thumbnail');
         $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
             rtrim($this->getRealFullPath(), '/'),
             $this->getId(),
-            ($hdpi ? '-hdpi' : '')
+            '-hdpi'
         );
 
-        $tileThumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig($hdpi);
+        $tileThumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
 
         $limit = 42;
         $db = \Pimcore\Db::get();
