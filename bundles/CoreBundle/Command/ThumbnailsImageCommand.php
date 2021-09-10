@@ -212,17 +212,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                     $thumbnailsToGenerate = [];
                 }
 
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
 
-                if (!$input->getOption('skip-high-res')) {
-                    $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
-                }
             } elseif (!$input->getOption('thumbnails')) {
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
-
-                if (!$input->getOption('skip-high-res')) {
-                    $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
-                }
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
             }
         }
 
