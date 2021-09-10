@@ -163,7 +163,7 @@ Ext.onReady(function () {
         'X-pimcore-extjs-version-minor': Ext.getVersion().getMinor()
     });
     Ext.Ajax.on('requestexception', function (conn, response, options) {
-        console.log("xhr request failed");
+        console.error("xhr request to " + options.url + " failed");
 
         var jsonData = response.responseJson;
         if (!jsonData) {
