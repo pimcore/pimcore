@@ -162,8 +162,7 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
-     * Verifies that an object can be saved with custom modification date.
-     *
+     * Verifies that when an object gets saved default values of fields get saved to the version
      */
     public function testDefaultValueSavedToVersion()
     {
