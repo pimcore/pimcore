@@ -153,7 +153,6 @@ class PriceInfo implements PriceInfoInterface
             $env = $this->getEnvironment();
 
             foreach ($this->getRules() as $rule) {
-                // @var RuleInterface $rule
                 $env->setRule($rule);
 
                 // execute rule

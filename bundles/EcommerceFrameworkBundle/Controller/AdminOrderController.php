@@ -209,7 +209,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
-        // @var AbstractOrder $order
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -293,8 +292,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                 if ($field instanceof ManyToOneRelation) {
                     $classes = $field->getClasses();
                     if (count($classes) === 1) {
+                        /** @var \Pimcore\Model\DataObject\Concrete $class */
                         $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
-                        // @var \Pimcore\Model\DataObject\Concrete $class
 
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
@@ -320,13 +319,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $arrTimeline = [];
         $date = new \DateTime();
         foreach ($orderAgent->getFullChangeLog() as $note) {
-            // @var \Pimcore\Model\Element\Note $note
-
             $quantity = null;
 
             // get avatar
             $user = User::getById($note->getUser());
-            // @var \Pimcore\Model\User $user
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
             // group events
@@ -388,7 +384,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -422,8 +417,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
+        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -456,8 +450,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
+        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

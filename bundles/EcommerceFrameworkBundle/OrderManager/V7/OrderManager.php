@@ -545,7 +545,7 @@ class OrderManager implements OrderManagerInterface
      */
     public function createOrderList()
     {
-        // @var OrderListInterface $orderList
+        /** @var OrderListInterface $orderList */
         $orderList = new $this->options['list_class'];
         $orderList->setItemClassName($this->options['list_item_class']);
 

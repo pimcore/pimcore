@@ -236,7 +236,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @param mixed $classId
+     * @param string $classId
      *
      * @return $this
      *

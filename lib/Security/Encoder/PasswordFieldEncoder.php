@@ -91,19 +91,20 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
 
     /**
      * @return Password
+     *
+     * @throws RuntimeException
      */
     protected function getFieldDefinition()
     {
-        // @var Password $passwordField
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
 
-        if (!$field || !$field instanceof Password) {
+        if (!$field instanceof Password) {
             throw new RuntimeException(sprintf(
                 'Field %s for user type %s is expected to be of type %s, %s given',
                 $this->fieldName,
                 get_class($this->user),
                 Password::class,
-                is_object($field) ? get_class($field) : gettype($field)
+                get_debug_type($field)
             ));
         }
 

@@ -116,7 +116,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
             ->addChild('attributes');
 
         $attributes = $xml->allAttributes->attributes;
-        // @var \SimpleXMLElement $attributes
 
         // add optional fields
         if (array_key_exists('salesFrequency', $data['data'])) {

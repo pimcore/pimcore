@@ -25,12 +25,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
-    // @var AbstractVoucherTokenType
+    /**
+     * @var AbstractVoucherTokenType
+     */
     public $configuration;
 
+    /**
+     * @var int
+     */
     public $seriesId;
 
-    // @var AbstractVoucherSeries
+    /**
+     * @var AbstractVoucherSeries
+     */
     public $series;
 
     /**
@@ -58,8 +65,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     /**
      * @param string $code
      * @param CartInterface $cart
-     *
-     * @return mixed
      *
      * @throws VoucherServiceException When validation fails for any reason
      */

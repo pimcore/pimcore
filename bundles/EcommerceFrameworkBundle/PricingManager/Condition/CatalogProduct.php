@@ -61,7 +61,6 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         foreach ($productsPool as $currentProduct) {
             // check all valid products
             foreach ($this->getProducts() as $product) {
-                // @var AbstractProduct $product
 
                 /** @var Concrete $currentProductCheck */
                 $currentProductCheck = $currentProduct;
@@ -90,7 +89,6 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
 
         // add categories
         foreach ($this->getProducts() as $product) {
-            // @var AbstractProduct $product
             $json['products'][] = [
                 $product->getId(),
                 $product->getFullPath(),

@@ -374,8 +374,6 @@ class CheckoutManager implements CheckoutManagerInterface
      */
     protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
-
-        // @var OrderManager $orderManager
         $orderManager = $this->orderManagers->getOrderManager();
 
         if (!$provider->isRecurringPaymentEnabled()) {
@@ -408,7 +406,6 @@ class CheckoutManager implements CheckoutManagerInterface
         //verify recurring payment
         $orderManager = $this->orderManagers->getOrderManager();
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
-        // @var RecurringPaymentInterface $paymentProvider
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 

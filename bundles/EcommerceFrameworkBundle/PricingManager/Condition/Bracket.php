@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class Bracket implements BracketInterface
 {
     /**
-     * @var array|ConditionInterface
+     * @var ConditionInterface[]
      */
     protected $conditions = [];
 
@@ -62,8 +62,6 @@ class Bracket implements BracketInterface
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
-            // @var ConditionInterface $condition
-
             //The first condition shouldn't have an operator.
             //https://github.com/pimcore/pimcore/pull/7902
             $operator = $this->operator[$num];
@@ -125,7 +123,6 @@ class Bracket implements BracketInterface
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
             if ($condition) {
-                // @var ConditionInterface $condition
                 $cond = [
                     'operator' => $this->operator[$num],
                     'condition' => json_decode($condition->toJSON()),
