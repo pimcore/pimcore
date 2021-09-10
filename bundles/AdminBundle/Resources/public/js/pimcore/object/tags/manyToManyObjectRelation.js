@@ -205,17 +205,13 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
                     if (data.success) {
-                        this.store.add({
-                            id: data.id,
-                            fullpath: parent + "/" + pimcore.helpers.getValidFilename(name, "object"),
-                            type: className
-                        });
-                        pimcore.helpers.openElement(data.id, "object", "object");
                         var initData = {
                             id: data.id
                         };
 
                         this.loadObjectData(initData, this.visibleFields);
+                        pimcore.helpers.openElement(data.id, "object", "object");
+
                         this.window.close();
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", data.message);

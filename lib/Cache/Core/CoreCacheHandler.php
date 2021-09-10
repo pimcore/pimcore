@@ -295,6 +295,12 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function load($key)
     {
+        if (!$this->enabled) {
+            $this->logger->debug('Not loading object {key} from cache (deactivated)', ['key' => $key]);
+
+            return false;
+        }
+
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
