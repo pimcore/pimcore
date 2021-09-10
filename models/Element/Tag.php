@@ -80,7 +80,7 @@ final class Tag extends Model\AbstractModel
             $tag->getDao()->getById($id);
 
             return $tag;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

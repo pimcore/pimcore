@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('target with id ' . $this->model->getId() . " doesn't exist");
+            throw new Model\Exception\NotFoundException('target with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 

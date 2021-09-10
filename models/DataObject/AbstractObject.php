@@ -353,7 +353,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                     Cache::save($object, $cacheKey);
                 } else {
-                    throw new \Exception('No entry for object id ' . $id);
+                    throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
                 return null;

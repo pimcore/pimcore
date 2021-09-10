@@ -93,7 +93,7 @@ final class Predefined extends Model\AbstractModel
             $property->getDao()->getById($id);
 
             return $property;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

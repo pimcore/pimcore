@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Notification\Dao getDao()
@@ -119,7 +120,7 @@ class Notification extends AbstractModel
                 $notification = new self();
                 $notification->getDao()->getById($id);
                 Cache\Runtime::set($cacheKey, $notification);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 $notification = null;
             }
         }

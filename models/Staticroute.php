@@ -148,7 +148,7 @@ final class Staticroute extends AbstractModel
                 $route->setId((int)$id);
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         }
