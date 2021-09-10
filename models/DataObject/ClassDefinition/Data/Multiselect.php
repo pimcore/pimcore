@@ -41,6 +41,7 @@ class Multiselect extends Data implements
     use Extension\QueryColumnType;
 
     use DataObject\Traits\SimpleNormalizerTrait;
+
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**

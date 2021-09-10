@@ -765,7 +765,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $params = [
             'id' => $asset->getId(),
             'treepreview' => true,
-            '_dc' => $asset->getModificationDate()
+            '_dc' => $asset->getModificationDate(),
         ];
 
         if ($asset instanceof Asset\Image) {

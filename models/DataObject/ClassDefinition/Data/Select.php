@@ -43,6 +43,7 @@ class Select extends Data implements
     use DataObject\Traits\SimpleNormalizerTrait;
 
     use DataObject\Traits\DefaultValueTrait;
+
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
