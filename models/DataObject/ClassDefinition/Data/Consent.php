@@ -24,6 +24,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**

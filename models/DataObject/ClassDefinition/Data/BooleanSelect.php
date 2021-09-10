@@ -29,8 +29,11 @@ class BooleanSelect extends Data implements
     NormalizerInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /** storage value for yes */

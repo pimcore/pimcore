@@ -56,7 +56,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
+
     use ElementEditLockHelperTrait;
+
     use ApplySchedulerDataTrait;
 
     /**

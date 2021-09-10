@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\LabelTrait;
 class Panel extends Model\DataObject\ClassDefinition\Layout
 {
     use IconTrait;
+
     use LabelTrait;
 
     /**

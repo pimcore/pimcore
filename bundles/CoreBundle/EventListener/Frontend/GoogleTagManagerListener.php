@@ -46,8 +46,11 @@ class GoogleTagManagerListener
     const BLOCK_BODY_AFTER_NOSCRIPT_TAG = 'afterNoscriptTag';
 
     use EnabledTrait;
+
     use ResponseInjectionTrait;
+
     use PimcoreContextAwareTrait;
+
     use PreviewRequestTrait;
 
     /**

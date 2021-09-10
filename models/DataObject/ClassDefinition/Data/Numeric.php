@@ -22,14 +22,19 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
+
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
+
     }
+
     use Extension\QueryColumnType {
         getQueryColumnType as public genericGetQueryColumnType;
+
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;

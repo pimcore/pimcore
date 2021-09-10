@@ -27,6 +27,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\DefaultValueTrait;
 
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**

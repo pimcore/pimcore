@@ -29,7 +29,9 @@ use Pimcore\Tool\Serialize;
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
+
     use Extension\ColumnType;
+
     use DataObject\Traits\ClassSavedTrait;
 
     /**
