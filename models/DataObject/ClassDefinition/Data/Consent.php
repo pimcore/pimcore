@@ -198,6 +198,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
             $noteId = $note->getId();
         }
+        elseif ($oldData instanceof DataObject\Data\Consent) {
+            $noteId = $oldData->getNoteId();
+        }
 
         return new DataObject\Data\Consent($data, $noteId);
     }
