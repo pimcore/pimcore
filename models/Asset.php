@@ -1677,6 +1677,34 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param string $name
+     * @param string|null $language
+     *
+     * @return self
+     */
+    public function removeMetadata(string $name, ?string $language = null)
+    {
+        if ($name) {
+            $tmp = [];
+            $name = str_replace('~', '---', $name);
+            if (!is_array($this->metadata)) {
+                $this->metadata = [];
+            }
+
+            foreach ($this->metadata as $item) {
+                if ($item['name'] != $name || $language != $item['language']) {
+                    $tmp[] = $item;
+                }
+            }
+
+            $this->metadata = $tmp;
+            $this->setHasMetaData(!empty($this->metadata));
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string|null $name
      * @param string|null $language
      * @param bool $strictMatch
