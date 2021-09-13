@@ -24,8 +24,8 @@ The main idea for this configuration is to
 * only the classes `Category` (class id: 5) and `Subarticle` (class id: SUBARTICLE) should be enabled to be added. `Category` is only allowed to be added on the first level of the object tree. `Subarticle` is available in the context menu on the first three levels of the object tree.   
 
 > **Note**
-> Depending on your configuration you need to set "showroot" to true, if you have more than a certain amount of child nodes at your root level.
-> Because for pagination to work properly, there needs to be one root object only.
+> Be aware: for tree pagination to work properly, there needs to be a parent node available. 
+> If you have more than a certain amount of child nodes at your root level, you might need to set "showroot" to true because of that.  
 
 ```php
 <?php
