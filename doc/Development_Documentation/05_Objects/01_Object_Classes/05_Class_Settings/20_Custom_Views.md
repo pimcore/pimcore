@@ -23,6 +23,10 @@ The main idea for this configuration is to
 * do NOT show all blog articles which have the text "magnis" in their English title.
 * only the classes `Category` (class id: 5) and `Subarticle` (class id: SUBARTICLE) should be enabled to be added. `Category` is only allowed to be added on the first level of the object tree. `Subarticle` is available in the context menu on the first three levels of the object tree.   
 
+> **Note**
+> Depending on your configuration you need to set "showroot" to true, if you have more than a certain amount of child nodes at your root level.
+> Because for pagination to work properly, there needs to be one root object only.
+
 ```php
 <?php
 // config/pimcore/customviews.php
