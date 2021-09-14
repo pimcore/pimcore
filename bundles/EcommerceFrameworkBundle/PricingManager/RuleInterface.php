@@ -67,7 +67,7 @@ interface RuleInterface
     /**
      * @param string|null $locale
      *
-     * @return string mixed
+     * @return string|null
      */
     public function getDescription($locale = null);
 
@@ -91,7 +91,7 @@ interface RuleInterface
     public function setActions(array $action);
 
     /**
-     * @return array|ActionInterface
+     * @return ActionInterface[]
      */
     public function getActions();
 

@@ -83,7 +83,7 @@ class Rule extends AbstractModel implements RuleInterface
     protected ?ConditionInterface $condition = null;
 
     /**
-     * @var array|ActionInterface
+     * @var ActionInterface[]
      */
     protected $action = [];
 
@@ -291,7 +291,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param array $action
+     * @param ActionInterface[] $action
      *
      * @return RuleInterface
      */
@@ -303,7 +303,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return array|ActionInterface
+     * @return ActionInterface[]
      */
     public function getActions()
     {

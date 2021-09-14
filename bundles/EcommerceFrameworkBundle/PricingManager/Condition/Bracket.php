@@ -27,7 +27,7 @@ class Bracket implements BracketInterface
     protected $conditions = [];
 
     /**
-     * @var array|BracketInterface::OPERATOR_*
+     * @var string[] BracketInterface::OPERATOR_*
      */
     protected $operator = [];
 
