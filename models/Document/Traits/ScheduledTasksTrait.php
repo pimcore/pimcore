@@ -62,17 +62,14 @@ trait ScheduledTasksTrait
     public function saveScheduledTasks()
     {
         $scheduledTasks = $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($scheduledTasks) && count($scheduledTasks) > 0) {
-            /** @var Task $task */
-            foreach ($scheduledTasks as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('document');
-                $task->save();
-            }
+        $ignoreIds = [];
+        foreach ($scheduledTasks as $task) {
+            $task->setDao(null);
+            $task->setCid($this->getId());
+            $task->setCtype('document');
+            $task->save();
+            $ignoreIds[] = $task->getId();
         }
+        $this->getDao()->deleteAllTasks($ignoreIds);
     }
 }

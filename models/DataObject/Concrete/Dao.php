@@ -433,8 +433,17 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         parent::delete();
     }
 
-    public function deleteAllTasks()
+    /**
+     * Deletes all scheduled tasks assigned to the object.
+     *
+     * @param int[] $ignoreIds
+     */
+    public function deleteAllTasks(array $ignoreIds = [])
     {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'object']);
+        $where = '`cid`=' . $this->db->quote($this->model->getId()) . ' AND `ctype` = "object"';
+        if ($ignoreIds) {
+            $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+        }
+        $this->db->deleteWhere('schedule_tasks', $where);
     }
 }

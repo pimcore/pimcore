@@ -285,9 +285,18 @@ class Dao extends Model\Element\Dao
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
     }
 
-    public function deleteAllTasks()
+    /**
+     * Deletes all scheduled tasks assigned to the asset.
+     *
+     * @param int[] $ignoreIds
+     */
+    public function deleteAllTasks(array $ignoreIds = [])
     {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
+        $where = '`cid`=' . $this->db->quote($this->model->getId()) . ' AND `ctype` = "asset"';
+        if ($ignoreIds) {
+            $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+        }
+        $this->db->deleteWhere('schedule_tasks', $where);
     }
 
     /**

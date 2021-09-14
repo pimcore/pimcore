@@ -1783,18 +1783,16 @@ class Asset extends Element\AbstractElement
 
     private function saveScheduledTasks()
     {
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('asset');
-                $task->save();
-            }
+        $scheduledTasks = $this->getScheduledTasks();
+        $ignoreIds = [];
+        foreach ($scheduledTasks as $task) {
+            $task->setDao(null);
+            $task->setCid($this->getId());
+            $task->setCtype('asset');
+            $task->save();
+            $ignoreIds[] = $task->getId();
         }
+        $this->getDao()->deleteAllTasks($ignoreIds);
     }
 
     /**

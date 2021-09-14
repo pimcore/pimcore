@@ -322,10 +322,16 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes all scheduled tasks assigned to the document.
+     *
+     * @param int[] $ignoreIds
      */
-    public function deleteAllTasks()
+    public function deleteAllTasks(array $ignoreIds = [])
     {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'document']);
+        $where = '`cid`=' . $this->db->quote($this->model->getId()) . ' AND `ctype` = "document"';
+        if ($ignoreIds) {
+            $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+        }
+        $this->db->deleteWhere('schedule_tasks', $where);
     }
 
     /**
