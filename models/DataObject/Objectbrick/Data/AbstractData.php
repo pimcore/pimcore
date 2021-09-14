@@ -54,7 +54,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @var int|null
