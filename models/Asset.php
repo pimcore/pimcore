@@ -1692,9 +1692,10 @@ class Asset extends Element\AbstractElement
             }
 
             foreach ($this->metadata as $item) {
-                if ($item['name'] != $name || $language != $item['language']) {
-                    $tmp[] = $item;
+                if ($item['name'] === $name && ($language == $item['language'] || $language === '*')) {
+                    continue;
                 }
+                $tmp[] = $item;
             }
 
             $this->metadata = $tmp;
