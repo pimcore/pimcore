@@ -81,10 +81,13 @@ $asset->getMetadata("title", "en");
  $asset->addMetadata("title", "input", "the new title", "en");
  ```
 
-##### Setting Data
+##### Removing Data
  ```php
  // Remove the English title
  $asset->removeMetadata("title", "en");
+
+ // Remove the title in all languages
+ $asset->removeMetadata("title", "*");
  ```
 
 ### Predefined System Metadata
