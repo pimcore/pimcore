@@ -61,7 +61,7 @@ trait ScheduledTasksTrait
         return $this;
     }
 
-    public function saveScheduledTasks(): void
+    public function saveScheduledTasks()
     {
         $scheduledTasks = $this->getScheduledTasks();
         $ignoreIds = [];
