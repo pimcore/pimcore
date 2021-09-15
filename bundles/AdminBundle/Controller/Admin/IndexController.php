@@ -259,6 +259,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
             'document-types-writeable' => (new DocType())->isWriteable(),
             'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable(),
+            'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
         ];
 
         $this

@@ -34,6 +34,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
@@ -263,6 +264,9 @@ class SettingsController extends AdminController
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $property = Property\Predefined::getById($id);
+                if (!$property->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $property->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -271,6 +275,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $property = Property\Predefined::getById($data['id']);
+                if (!$property->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 if (is_array($data['ctype'])) {
                     $data['ctype'] = implode(',', $data['ctype']);
                 }
@@ -278,8 +285,14 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
+                $responseData = $property->getObjectVars();
+                $responseData['writeable'] = $property->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new Property\Predefined())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -289,7 +302,10 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
+                $responseData = $property->getObjectVars();
+                $responseData['writeable'] = $property->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of types
@@ -319,7 +335,9 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getProperties())) {
                 foreach ($list->getProperties() as $property) {
-                    $properties[] = $property->getObjectVars();
+                    $data = $property->getObjectVars();
+                    $data['writeable'] = $property->isWriteable();
+                    $properties[] = $data;
                 }
             }
 
