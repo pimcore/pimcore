@@ -47,6 +47,7 @@ use Symfony\Component\Mime\MimeTypes;
 class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
+
     use TemporaryFileHelperTrait;
 
     /**
