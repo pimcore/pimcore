@@ -709,10 +709,9 @@ class Multiselect extends Data implements
             $context = [];
             $context['fieldname'] = $this->getName();
 
-            try{
+            try {
                 $options = $optionsProvider->getOptions($context, $this);
-            }
-            catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 // error from getOptions => no values => no comma => no problems
                 $options = null;
             }
