@@ -33,6 +33,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * @internal
@@ -236,23 +237,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($this->getClass()->getAllowInherit()) {
             $this->getDao()->saveChildData();
         }
-    }
-
-    /**
-     * @internal
-     */
-    public function saveScheduledTasks(): void
-    {
-        $scheduledTasks = $this->getScheduledTasks();
-        $ignoreIds = [];
-        foreach ($scheduledTasks as $task) {
-            $task->setDao(null);
-            $task->setCid($this->getId());
-            $task->setCtype('object');
-            $task->save();
-            $ignoreIds[] = $task->getId();
-        }
-        $this->getDao()->deleteAllTasks($ignoreIds);
     }
 
     /**
@@ -532,32 +516,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         return $this->omitMandatoryCheck;
-    }
-
-    /**
-     * @return Model\Schedule\Task[]
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Model\Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='object'", $this->getId());
-            $this->scheduledTasks = $taskList->load();
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return self
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
     }
 
     /**

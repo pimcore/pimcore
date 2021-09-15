@@ -25,7 +25,7 @@ use Pimcore\Model\Document;
  */
 class Link extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * Contains the ID of the internal ID
