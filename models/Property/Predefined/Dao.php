@@ -28,7 +28,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['properties']['predefined']['definitions'] ?? [],
@@ -52,11 +52,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $data = $this->getDataByName($this->model->getId());
 
-        if($data && $id != null) {
+        if ($data && $id != null) {
             $data['id'] = $id;
         }
 
-        if($data) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf(
@@ -79,13 +79,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $key = $this->model->getKey();
 
         $list = new Listing();
-        $properties = array_filter($list->getProperties(), function($item) use($key) {
-                return $item->getKey() == $key;
-            }
+        $properties = array_filter($list->getProperties(), function ($item) use ($key) {
+            return $item->getKey() == $key;
+        }
         );
 
         if (count($properties) && $properties[0]->getId()) {
-                $this->assignVariablesToModel($properties[0]);
+            $this->assignVariablesToModel($properties[0]);
         } else {
             throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
         }
@@ -137,11 +137,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 'properties' => [
                     'predefined' => [
                         'definitions' => [
-                            $id => $data
-                        ]
-                    ]
-                ]
-            ]
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
