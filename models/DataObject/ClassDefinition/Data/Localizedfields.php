@@ -982,7 +982,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
                                     $exceptionClass = get_class($e);
 
-                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                    $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                    $subItems = $e->getSubItems();
+                                    array_unshift($subItems, $e);
+                                    $newException->setSubItems($subItems);
+
+                                    throw $newException;
                                 }
                             } else {
                                 if ($e instanceof Model\Element\ValidationException) {
