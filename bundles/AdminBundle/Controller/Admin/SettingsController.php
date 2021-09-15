@@ -35,6 +35,8 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
+use Pimcore\Model\Property\Predefined;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
