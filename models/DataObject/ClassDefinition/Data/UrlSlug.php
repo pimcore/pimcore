@@ -245,7 +245,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         ];
         $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
         $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
-        $db->query('DELETE FROM object_url_slugs WHERE ' . implode(' AND ', $conditionParts));
+        $db->query('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
         // now save the new data
         if (is_array($slugs) && !empty($slugs)) {
             /** @var Model\DataObject\Data\UrlSlug $slug */
@@ -258,7 +258,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
                 // relation needs to be an array with src_id, dest_id, type, fieldname
                 try {
-                    $db->insert('object_url_slugs', $slug);
+                    $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
                 } catch (\Exception $e) {
                     Logger::error($e);
                     if ($e instanceof UniqueConstraintViolationException) {
@@ -272,7 +272,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                             try {
                                 $existingSlug->getAction();
                             } catch (\Exception $e) {
-                                $db->insert('object_url_slugs', $slug);
+                                $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
 
                                 return;
                             }
@@ -417,7 +417,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         if (!isset($params['isUpdate']) || !$params['isUpdate']) {
             $db = Db::get();
-            $db->delete('object_url_slugs', ['objectId' => $object->getId()]);
+            $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
         }
     }
 

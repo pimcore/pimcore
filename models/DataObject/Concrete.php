@@ -908,7 +908,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         $descriptor['objectId'] = $this->getId();
 
-        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+        return $this->doRetrieveData($descriptor, DataObject\Data\UrlSlug::TABLE_NAME);
     }
 
     /**

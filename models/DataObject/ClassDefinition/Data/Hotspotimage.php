@@ -26,8 +26,11 @@ use Pimcore\Tool\Serialize;
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use ImageTrait;
+
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\QueryColumnType;
 
     /**
@@ -651,7 +654,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
             $image = $value->getImage();
             if ($image) {
-                $type = Element\Service::getType($image);
+                $type = Element\Service::getElementType($image);
                 $id = $image->getId();
                 $result['image'] = [
                     'type' => $type,

@@ -182,7 +182,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             return $this;
         }
 
-        $elementType = Model\Element\Service::getType($element);
+        $elementType = Model\Element\Service::getElementType($element);
         $elementId = $element->getId();
         $this->setElementTypeAndId($elementType, $elementId);
 

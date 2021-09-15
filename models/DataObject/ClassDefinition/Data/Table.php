@@ -24,7 +24,9 @@ use Pimcore\Tool\Serialize;
 class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     use DataObject\Traits\SimpleNormalizerTrait;

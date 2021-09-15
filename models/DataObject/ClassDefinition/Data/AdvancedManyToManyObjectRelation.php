@@ -28,6 +28,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
@@ -922,7 +923,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'element' => [

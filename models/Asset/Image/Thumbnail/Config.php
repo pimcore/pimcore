@@ -265,11 +265,9 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param bool $hdpi
-     *
      * @return Config
      */
-    public static function getPreviewConfig($hdpi = false)
+    public static function getPreviewConfig()
     {
         $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
         $thumbnail = null;
@@ -292,9 +290,7 @@ final class Config extends Model\AbstractModel
             $thumbnail->setFormat('PJPEG');
         }
 
-        if ($hdpi) {
-            $thumbnail->setHighResolution(2);
-        }
+        $thumbnail->setHighResolution(2);
 
         return $thumbnail;
     }
