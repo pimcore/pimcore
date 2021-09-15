@@ -2003,7 +2003,7 @@ final class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet();
 
         $predefinedPropertiesNode
-        -> children()
+        ->children()
             ->arrayNode('predefined')
                 ->addDefaultsIfNotSet()
                 ->children()
