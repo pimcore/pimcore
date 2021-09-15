@@ -24,6 +24,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**
@@ -196,6 +197,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 $note = $service->insertRevokeNote($object, $this->getName());
             }
             $noteId = $note->getId();
+        } elseif ($oldData instanceof DataObject\Data\Consent) {
+            $noteId = $oldData->getNoteId();
         }
 
         return new DataObject\Data\Consent($data, $noteId);
@@ -293,7 +296,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 

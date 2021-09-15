@@ -225,7 +225,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
-                $params['error'] = $error;
             }
         }
 

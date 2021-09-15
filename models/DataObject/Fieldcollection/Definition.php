@@ -29,7 +29,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInter
 class Definition extends Model\AbstractModel
 {
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
+
     use DataObject\Traits\LocateFileTrait;
+
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**

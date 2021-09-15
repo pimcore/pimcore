@@ -95,7 +95,7 @@ class Service extends Model\Element\Service
                     }
                 }
             }
-            if (is_array($dataKeys) and count($dataKeys) > 0) {
+            if (is_array($dataKeys) && count($dataKeys) > 0) {
                 $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
@@ -1044,7 +1044,7 @@ class Service extends Model\Element\Service
      */
     public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
     {
-        if ($insideDataType && $layout instanceof ClassDefinition\Data and !is_a($layout, $targetClass)) {
+        if ($insideDataType && $layout instanceof ClassDefinition\Data && !is_a($layout, $targetClass)) {
             $targetList[$layout->getName()] = $layout;
         }
 

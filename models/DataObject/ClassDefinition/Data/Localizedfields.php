@@ -27,7 +27,9 @@ use Pimcore\Tool;
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
+
     use Layout\Traits\LabelTrait;
+
     use DataObject\Traits\ClassSavedTrait;
 
     /**

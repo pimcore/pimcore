@@ -25,6 +25,7 @@ use Pimcore\Tool\Serialize;
 class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**
@@ -484,6 +485,22 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return $data;
+    }
+
+    /**
+     * @param DataObject\Data\ImageGallery|null $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if ($this->getMandatory() && !$omitMandatoryCheck && ($data === null || empty($data->getItems()) || $data->getItems()[0]->getImage() === null)) {
+            throw new Model\Element\ValidationException('[ ' . $this->getName() . ' ] At least 1 image should be uploaded!');
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck);
     }
 
     /**

@@ -24,7 +24,9 @@ use Pimcore\Tool\Serialize;
 class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     use DataObject\Traits\SimpleNormalizerTrait;
@@ -506,11 +508,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!empty($data) and !is_array($data)) {
+        if (!empty($data) && !is_array($data)) {
             throw new Model\Element\ValidationException('Invalid table data');
         }
     }
@@ -701,7 +703,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n\n";
         }
@@ -749,7 +751,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }

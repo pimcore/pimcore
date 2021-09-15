@@ -755,7 +755,7 @@ class Image extends Model\Document\Editable
      */
     public function rewriteIds($idMapping)
     {
-        if (array_key_exists('asset', $idMapping) and array_key_exists($this->getId(), $idMapping['asset'])) {
+        if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);
 
             // reset marker & hotspot information

@@ -107,13 +107,13 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      */
-    protected function markMeDirty()
+    protected function markMeDirty($dirty = true)
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
-            $this->_owner->markFieldDirty($this->_fieldname, true);
+            $this->_owner->markFieldDirty($this->_fieldname, $dirty);
         }
         if ($this->_language && $this->_owner instanceof Localizedfield) {
-            $this->_owner->markLanguageAsDirty($this->_language);
+            $this->_owner->markLanguageAsDirty($this->_language, $dirty);
         }
     }
 }

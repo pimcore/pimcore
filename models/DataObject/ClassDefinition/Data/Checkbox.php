@@ -23,9 +23,11 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**
@@ -180,7 +182,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 

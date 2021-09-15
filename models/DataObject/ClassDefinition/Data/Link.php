@@ -26,8 +26,11 @@ use Pimcore\Tool\Serialize;
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\ObjectVarTrait;
 
     /**
@@ -254,7 +257,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $dependencies = [];
 
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -285,7 +288,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getCacheTags($data, array $tags = [])
     {
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -372,7 +375,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $id = $data->getInternal();
             $type = $data->getInternalType();
 
-            if (array_key_exists($type, $idMapping) and array_key_exists($id, $idMapping[$type])) {
+            if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                 $data->setInternal($idMapping[$type][$id]);
             }
         }
@@ -466,6 +469,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $link->setValues($value);
 
             return $link;
+        } elseif ($value instanceof DataObject\Data\Link) {
+            return $value;
         }
 
         return null;

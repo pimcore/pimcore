@@ -56,7 +56,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
+
     use ElementEditLockHelperTrait;
+
     use ApplySchedulerDataTrait;
 
     /**
@@ -840,7 +842,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             if ($allowUpdate) {
-                if ($request->get('filename') != $asset->getFilename() and !$asset->isAllowed('rename')) {
+                if ($request->get('filename') != $asset->getFilename() && !$asset->isAllowed('rename')) {
                     unset($updateData['filename']);
                     Logger::debug('prevented renaming asset because of missing permissions ');
                 }

@@ -53,7 +53,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
+
     use ElementEditLockHelperTrait;
+
     use ApplySchedulerDataTrait;
 
     /**
@@ -1303,7 +1305,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
                         $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 or count($toDelete) > 0) {
+                        if (count($toAdd) > 0 || count($toDelete) > 0) {
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
