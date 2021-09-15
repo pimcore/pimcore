@@ -34,7 +34,6 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
-use Pimcore\Model\Property\Predefined;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -291,7 +290,7 @@ class SettingsController extends AdminController
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                if (!(new Predefined())->isWriteable()) {
+                if (!(new Property\Predefined())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
                 $data = $this->decodeJson($request->get('data'));
