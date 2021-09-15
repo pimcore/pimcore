@@ -199,8 +199,14 @@ pimcore.settings.metadata.predefined = Class.create({
                 menuText: t('delete'),
                 width: 40,
                 items: [{
+                    getClass: function(v, meta, rec) {
+                        var klass = "pimcore_action_column ";
+                        if(rec.data.writeable) {
+                            klass += "pimcore_icon_minus";
+                        }
+                        return klass;
+                    },
                     tooltip: t('delete'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -246,6 +252,13 @@ pimcore.settings.metadata.predefined = Class.create({
                     });
 
                     editor.editors.clear();
+                },
+                validateedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        editor.cancelEdit();
+                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                        return false;
+                    }
                 }
             }
         });
@@ -277,7 +290,10 @@ pimcore.settings.metadata.predefined = Class.create({
                     rowupdated: this.updateRows.bind(this, "rowupdated"),
                     refresh: this.updateRows.bind(this, "refresh")
                 },
-                forceFit: true
+                forceFit: true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             },
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -285,7 +301,8 @@ pimcore.settings.metadata.predefined = Class.create({
                     {
                         text: t('add'),
                         handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
+                        iconCls: "pimcore_icon_add",
+                        disabled: !pimcore.settings['predefined-asset-metadata-writeable']
                     },"->",{
                         text: t("filter") + "/" + t("search"),
                         xtype: "tbtext",

@@ -19,7 +19,6 @@ namespace Pimcore\Model\Metadata\Predefined;
  * @internal
  *
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
- * @method \Pimcore\Model\Metadata\Predefined[] load()
  * @method int getTotalCount()
  */
 class Listing extends \Pimcore\Model\Listing\JsonListing
@@ -35,7 +34,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     public function getDefinitions()
     {
         if ($this->definitions === null) {
-            $this->getDao()->load();
+            $this->getDao()->loadList();
         }
 
         return $this->definitions;
@@ -74,21 +73,20 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
         }
 
         if (is_array($subTypes)) {
-            $list->setFilter(function ($row) use ($subTypes) {
-                if (empty($row['targetSubtype'])) {
+            return array_filter($list->load(), function($item) use($subTypes) {
+                if (empty($item->getTargetSubtype)) {
                     return true;
                 }
 
-                if (in_array($row['targetSubtype'], $subTypes)) {
+                if (in_array($item->getTargetSubtype(), $subTypes)) {
                     return true;
                 }
 
                 return false;
             });
         }
-        $list = $list->load();
 
-        return $list;
+        return null;
     }
 
     /**
@@ -102,25 +100,30 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     {
         $list = new self();
 
-        $list->setFilter(function ($row) use ($key, $language, $targetSubtype) {
-            if ($row['name'] != $key) {
+        $definitions = array_filter($list->load(), function($item) use($key, $language, $targetSubtype) {
+            if ($item->getName() != $key) {
                 return false;
             }
 
-            if ($language && $language != $row['language']) {
+            if ($language && $language != $item->getLanguage()) {
                 return false;
             }
 
-            if ($targetSubtype && $targetSubtype != $row['targetSubtype']) {
+            if ($targetSubtype && $targetSubtype != $item->getTargetSubtype()) {
                 return false;
             }
+
+            return true;
         });
 
-        $list = $list->load();
-        if ($list) {
-            return $list[0];
-        }
+        return $definitions[0] ?? null;
+    }
 
-        return null;
+    /**
+     * @return \Pimcore\Model\Metadata\Predefined[]
+     */
+    public function load()
+    {
+        return $this->getDefinitions();
     }
 }

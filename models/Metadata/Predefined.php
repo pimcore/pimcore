@@ -25,11 +25,13 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
  * @method void save()
  * @method void delete()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  */
 final class Predefined extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -94,7 +96,7 @@ final class Predefined extends Model\AbstractModel
     protected $modificationDate;
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return self|null
      */
@@ -211,13 +213,13 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -367,6 +369,14 @@ final class Predefined extends Model\AbstractModel
             $this->data = $instance->unmarshal($this->data);
         } catch (UnsupportedException $e) {
             Logger::error('could not resolve asset metadata implementation for ' . $this->type);
+        }
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
         }
     }
 }
