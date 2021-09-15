@@ -473,7 +473,7 @@ class GridHelperService
                     $select->addSelect('slug AS ' . $mappedKey);
                     $select->leftJoin(
                         $table,
-                        'object_url_slugs',
+                        DataObject\Data\UrlSlug::TABLE_NAME,
                         $mappedKey,
                         '('
                         . $mappedKey . '.objectId = ' . $table . '.o_id'
