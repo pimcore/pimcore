@@ -660,7 +660,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if (is_array($value)) {
             $result = [];
             foreach ($value as $element) {
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'type' => $type,

@@ -246,7 +246,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function unlockPropagate()
     {
-        $type = Service::getType($this);
+        $type = Service::getElementType($this);
 
         $ids = $this->getDao()->unlockPropagate();
 
@@ -411,9 +411,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);
         if ($userId) {
-            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1 AND userId = ?', [Service::getType($this), $this->getId(), $userId]);
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1 AND userId = ?', [Service::getElementType($this), $this->getId(), $userId]);
         } else {
-            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1', [Service::getType($this), $this->getId()]);
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1', [Service::getElementType($this), $this->getId()]);
         }
 
         foreach ($list->load() as $version) {
