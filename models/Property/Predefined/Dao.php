@@ -73,7 +73,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      */
     public function getByKey($key = null)
     {
-        $foundKey = null;
         if ($key != null) {
             $this->model->setKey($key);
         }
