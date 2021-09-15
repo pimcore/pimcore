@@ -109,7 +109,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $element = $e->getElement();
 
         $list = new WorkflowState\Listing;
-        $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getType($element)]);
+        $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getElementType($element)]);
 
         foreach ($list->load() as $item) {
             $item->delete();

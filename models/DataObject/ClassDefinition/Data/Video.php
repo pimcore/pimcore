@@ -532,7 +532,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $poster = $value->getPoster();
             if ($poster) {
                 $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
+                    'type' => Model\Element\Service::getElementType($poster),
                     'id' => $poster->getId(),
                 ];
             }
@@ -541,7 +541,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
+                    'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),
                 ];
             } else {
