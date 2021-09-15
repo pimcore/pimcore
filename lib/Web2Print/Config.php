@@ -16,6 +16,7 @@
 namespace Pimcore\Web2Print;
 
 use Pimcore\Config\LocationAwareConfigRepository;
+use Pimcore\Model\Exception\ConfigWriteException;
 
 /**
  * @internal
@@ -107,6 +108,10 @@ final class Config
         unset($data['pdf_creation_php_memory_limit']);
         unset($data['default_controller_print_page']);
         unset($data['default_controller_print_container']);
+
+        if (!$repository->isWriteable()) {
+            throw new ConfigWriteException();
+        }
 
         $repository->saveConfig(self::CONFIG_ID, $data, function ($key, $data) {
             return [
