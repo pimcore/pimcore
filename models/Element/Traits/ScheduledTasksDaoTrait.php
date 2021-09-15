@@ -30,7 +30,7 @@ trait ScheduledTasksDaoTrait
     public function deleteAllTasks(array $ignoreIds = [])
     {
         $type = Service::getElementType($this->model);
-        $where = '`cid`=' . $this->db->quote($this->model->getId()) . ' AND `ctype`=' . $this->db->quote($type);
+        $where = '`cid` = ' . $this->db->quote($this->model->getId()) . ' AND `ctype` = ' . $this->db->quote($type);
         if ($ignoreIds) {
             $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
         }

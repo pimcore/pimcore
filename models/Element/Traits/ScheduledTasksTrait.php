@@ -41,7 +41,7 @@ trait ScheduledTasksTrait
         if ($this->scheduledTasks === null) {
             $taskList = new Listing();
             $ctype = Service::getElementType($this);
-            $taskList->setCondition('cid = ? AND ctype=?', [$this->getId(), $ctype]);
+            $taskList->setCondition('`cid` = ? AND `ctype` = ?', [$this->getId(), $ctype]);
 
             $this->setScheduledTasks($taskList->load());
         }
