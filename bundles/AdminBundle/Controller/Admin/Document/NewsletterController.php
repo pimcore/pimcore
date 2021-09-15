@@ -351,7 +351,7 @@ class NewsletterController extends DocumentControllerBase
      *
      * @throws Exception
      */
-    public function sendAction(Request $request): JsonResponse
+    public function sendAction(Request $request, MessageBusInterface $messageBus): JsonResponse
     {
         /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
@@ -371,7 +371,7 @@ class NewsletterController extends DocumentControllerBase
             'progress' => 0,
         ], 'newsletter');
 
-        $this->container->get(MessageBusInterface::class)->dispatch(
+        $messageBus->dispatch(
             new Pimcore\Messenger\SendNewsletterMessage($document->getTmpStoreId(), \Pimcore\Tool::getHostUrl())
         );
 

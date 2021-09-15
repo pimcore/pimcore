@@ -31,11 +31,15 @@ framework:
     messenger:
         transports:
             pimcore_core: "doctrine://default"
+            pimcore_maintenance: "doctrine://default"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
-            'Pimcore\Messenger\ClearThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
-
+            'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+        buses:
+            maintenance.bus:
+                middleware:
+                    - validation
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"

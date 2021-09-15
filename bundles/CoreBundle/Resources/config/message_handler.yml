@@ -6,10 +6,12 @@ services:
         tags:
             - { name: messenger.message_handler }
 
-    Pimcore\Messenger\Handler\ClearThumbnailsHandler:
+    Pimcore\Messenger\Handler\VideoConvertHandler:
         tags:
             - { name: messenger.message_handler }
 
-    Pimcore\Messenger\Handler\VideoConvertHandler:
+    Pimcore\Messenger\Handler\MaintenanceTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
         tags:
             - { name: messenger.message_handler }

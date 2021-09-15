@@ -158,9 +158,13 @@ class Dao extends Model\Dao\PimcoreConfigBagDao
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
-                new ClearThumbnailsMessage('image', $this->model->getName())
-            );
+            $arguments = [
+                'pimcore:thumbnails:clear',
+                '--type=image',
+                '--name='.$this->model->getName(),
+            ];
+
+            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), $arguments);
         }
     }
 }

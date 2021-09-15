@@ -70,6 +70,12 @@ class MaintenanceCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Run the jobs, regardless if they\'re locked or not'
             )
+            ->addOption(
+                'async',
+                'a',
+                InputOption::VALUE_NONE,
+                'Run the Jobs async using Symfony Messenger'
+            )
         ;
     }
 
@@ -81,7 +87,12 @@ class MaintenanceCommand extends AbstractCommand
         $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
 
-        $this->maintenanceExecutor->executeMaintenance($validJobs, $excludedJobs, (bool) $input->getOption('force'));
+        $this->maintenanceExecutor->executeMaintenance(
+            $validJobs,
+            $excludedJobs,
+            (bool) $input->getOption('force'),
+            (bool) $input->getOption('async')
+        );
 
         $this->logger->info('All maintenance-jobs finished!');
 

@@ -15,19 +15,19 @@
 
 namespace Pimcore\Messenger;
 
-class ClearThumbnailsMessage
+class MaintenanceTaskMessage
 {
-    public function __construct(protected string $type, protected string $name)
+    public function __construct(protected string $name, protected bool $force)
     {
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getForce(): bool
+    {
+        return $this->force;
     }
 }
