@@ -30,7 +30,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
  */
 abstract class PageSnippet extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * @internal
