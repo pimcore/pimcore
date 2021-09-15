@@ -28,42 +28,42 @@ class Task extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * @var int
      */
-    public $version;
+    protected $version;
 
     /**
      * @var bool
      */
-    public $active;
+    protected $active;
 
     /**
      * @var null|int
      */
-    public $userId;
+    protected $userId;
 
     /**
      * @param int $id
