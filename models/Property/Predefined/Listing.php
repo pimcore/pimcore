@@ -55,7 +55,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-    * @param \Pimcore\Model\Property\Predefined[]
+     * @return Model\Property\Predefined[]|null
      */
     public function load()
     {

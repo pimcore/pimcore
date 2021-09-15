@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @method bool isWriteable()
  * @method string getWriteTarget()
- * @method Pimcore\Model\Property\Predefined\Dao getDao()
+ * @method \Pimcore\Model\Property\Predefined\Dao getDao()
  * @method void delete()
  * @method void save()
  */
