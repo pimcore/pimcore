@@ -141,8 +141,14 @@ pimcore.settings.properties.predefined = Class.create({
                 menuText: t('delete'),
                 width: 30,
                 items: [{
+                    getClass: function(v, meta, rec) {
+                      var klass = "pimcore_action_column ";
+                      if(rec.data.writeable) {
+                          klass += "pimcore_icon_minus";
+                      }
+                      return klass;
+                    },
                     tooltip: t('delete'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -192,7 +198,16 @@ pimcore.settings.properties.predefined = Class.create({
         ];
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                validateedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        editor.cancelEdit();
+                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                        return false;
+                    }
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -219,7 +234,8 @@ pimcore.settings.properties.predefined = Class.create({
                     {
                         text: t('add'),
                         handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
+                        iconCls: "pimcore_icon_add",
+                        disabled: !pimcore.settings['predefined-properties-writeable']
                     },"->",{
                         text: t("filter") + "/" + t("search"),
                         xtype: "tbtext",
@@ -229,7 +245,10 @@ pimcore.settings.properties.predefined = Class.create({
                 ]
             },
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             }
         });
 

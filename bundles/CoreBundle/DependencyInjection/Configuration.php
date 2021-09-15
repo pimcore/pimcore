@@ -174,6 +174,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addPredefinedPropertiesNode($rootNode);
 
         return $treeBuilder;
     }
@@ -1986,5 +1987,52 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->addDefaultsIfNotSet()
             ->end();
+    }
+
+    /**
+     * Add predefined properties specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPredefinedPropertiesNode(ArrayNodeDefinition $rootNode)
+    {
+        $predefinedPropertiesNode = $rootNode
+            ->children()
+            ->arrayNode('properties')
+            ->ignoreExtraKeys()
+            ->addDefaultsIfNotSet();
+
+        $predefinedPropertiesNode
+        -> children()
+            ->arrayNode('predefined')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('description')->end()
+                                ->scalarNode('key')->end()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('data')->end()
+                                ->scalarNode('config')->end()
+                                ->scalarNode('ctype')->end()
+                                ->booleanNode('inheritable')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                        ->end()
+                                ->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 }
