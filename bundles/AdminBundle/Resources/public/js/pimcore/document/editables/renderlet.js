@@ -37,7 +37,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
             this.defaultHeight = this.config.defaultHeight;
         }
         if (!this.config.height) {
-            this.config.height = this.defaultHeight;
+            this.config.height = 'auto';
         }
 
         this.config.name = id + "_editable";
@@ -58,9 +58,11 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
                 overflow: 'auto',
             });
 
-            this.getBodyWrap().setStyle({
-                overflowY: 'auto',
-            });
+            if (this.config.height !== 'auto') {
+                this.getBodyWrap().setStyle({
+                    overflowY: 'auto',
+                });
+            }
 
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
             this.getBody().addCls("pimcore_editable_snippet_empty");
