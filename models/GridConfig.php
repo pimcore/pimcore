@@ -16,6 +16,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Db;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\GridConfig\Dao getDao()
@@ -83,11 +84,13 @@ class GridConfig extends AbstractModel
      * @param int $id
      *
      * @return GridConfig
+     *
+     * @throws NotFoundException
      */
     public static function getById($id)
     {
         if (!$id) {
-            throw new \Exception('config not found');
+            throw new NotFoundException('config not found');
         }
         $config = new self();
         $config->getDao()->getById($id);

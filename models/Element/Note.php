@@ -101,7 +101,7 @@ final class Note extends Model\AbstractModel
             $note->getDao()->getById($id);
 
             return $note;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

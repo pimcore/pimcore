@@ -28,6 +28,7 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
@@ -137,7 +138,7 @@ final class Version extends AbstractModel
             $version->getDao()->getById($id);
 
             return $version;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }

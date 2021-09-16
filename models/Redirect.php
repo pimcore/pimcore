@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -147,7 +148,7 @@ final class Redirect extends AbstractModel
             $redirect->getDao()->getById($id);
 
             return $redirect;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -168,7 +169,7 @@ final class Redirect extends AbstractModel
             $redirect->getDao()->getByExactMatch($request, $site, $override);
 
             return $redirect;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }

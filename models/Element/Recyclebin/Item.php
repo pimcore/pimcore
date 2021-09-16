@@ -106,7 +106,7 @@ class Item extends Model\AbstractModel
             $item->getDao()->getById($id);
 
             return $item;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

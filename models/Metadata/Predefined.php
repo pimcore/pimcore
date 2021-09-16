@@ -105,7 +105,7 @@ final class Predefined extends Model\AbstractModel
             $metadata->getDao()->getById($id);
 
             return $metadata;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

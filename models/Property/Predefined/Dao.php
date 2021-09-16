@@ -42,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @param string|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
