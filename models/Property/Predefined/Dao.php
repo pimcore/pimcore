@@ -79,13 +79,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $key = $this->model->getKey();
 
         $list = new Listing();
-        $properties = array_filter($list->getProperties(), function($item) use($key) {
+        $properties = array_values(array_filter($list->getProperties(), function($item) use($key) {
                 return $item->getKey() == $key;
             }
-        );
+        ));
 
-        if (count($properties)) {
-                $this->assignVariablesToModel($properties);
+        if (count($properties) && $properties[0]->getId()) {
+                $this->assignVariablesToModel($properties[0]);
         } else {
             throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
         }
