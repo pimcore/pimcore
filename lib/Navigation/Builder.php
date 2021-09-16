@@ -134,7 +134,7 @@ class Builder
         $activePages = [];
 
         if ($this->requestHelper->hasMasterRequest()) {
-            $request = $this->requestHelper->getMasterRequest();
+            $request = $this->requestHelper->getMainRequest();
 
             // try to find a page matching exactly the request uri
             $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
