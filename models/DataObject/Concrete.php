@@ -86,15 +86,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * Contains all scheduled tasks
-     *
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
-
-    /**
      * @internal
      *
      * @var bool|null
