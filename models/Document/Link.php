@@ -354,7 +354,7 @@ class Link extends Model\Document
         trigger_deprecation(
             'pimcore/pimcore',
             '10.0',
-            'The Link::setObject() method is deprecated, use Link::setObject() instead.'
+            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
         );
 
         return $this->setElement($object);
