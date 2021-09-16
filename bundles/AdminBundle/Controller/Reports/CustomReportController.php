@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Tool\CustomReport;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -78,6 +79,11 @@ class CustomReportController extends ReportsControllerBase
 
         if (!$report) {
             $report = new CustomReport\Config();
+            if (!$report->isWriteable()) {
+                throw new ConfigWriteException();
+            }
+
+
             $report->setName($request->get('name'));
             $report->save();
 
@@ -99,6 +105,10 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $report->delete();
 
         return $this->adminJson(['success' => true]);
@@ -170,6 +180,10 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $data = $this->decodeJson($request->get('configuration'));
 
         if (!is_array($data['yAxis'])) {

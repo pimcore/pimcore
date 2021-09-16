@@ -1193,10 +1193,18 @@ class SettingsController extends AdminController
 
         if (!$pipe) {
             $pipe = new Asset\Image\Thumbnail\Config();
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
+
             $pipe->setName($request->get('name'));
             $pipe->save();
 
             $success = true;
+        } else {
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
         }
 
         return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
@@ -1214,6 +1222,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $pipe->delete();
 
         return $this->adminJson(['success' => true]);
@@ -1249,6 +1262,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
         $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
@@ -1381,10 +1399,18 @@ class SettingsController extends AdminController
 
         if (!$pipe) {
             $pipe = new Asset\Video\Thumbnail\Config();
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
+
             $pipe->setName($request->get('name'));
             $pipe->save();
 
             $success = true;
+        } else {
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
         }
 
         return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
@@ -1402,6 +1428,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $pipe->delete();
 
         return $this->adminJson(['success' => true]);
@@ -1438,6 +1469,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
         $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
