@@ -33,6 +33,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -115,7 +116,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $asset = clone $asset;
-        $asset->getScheduledTasks();
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
@@ -206,6 +206,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :
             $request->getSchemeAndHttpHost() . $frontendPath;
+
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $asset->getScheduledTasks()
+        );
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

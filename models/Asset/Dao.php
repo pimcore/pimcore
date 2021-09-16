@@ -29,6 +29,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
@@ -283,11 +285,6 @@ class Dao extends Model\Element\Dao
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
-    }
-
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
     }
 
     /**

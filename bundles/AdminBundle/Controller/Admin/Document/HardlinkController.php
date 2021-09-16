@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -87,9 +88,14 @@ class HardlinkController extends DocumentControllerBase
         $link = clone $link;
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-        $link->getScheduledTasks();
 
         $data = $link->getObjectVars();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $link->getScheduledTasks()
+        );
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);

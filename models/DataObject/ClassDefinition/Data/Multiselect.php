@@ -664,7 +664,7 @@ class Multiselect extends Data implements
 
             try {
                 $options = $optionsProvider->getOptions($context, $this);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // error from getOptions => no values => no comma => no problems
                 $options = null;
             }

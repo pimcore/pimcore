@@ -26,6 +26,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
@@ -318,14 +320,6 @@ class Dao extends Model\Element\Dao
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_document', ['cid' => $this->model->getId()]);
-    }
-
-    /**
-     * Deletes all scheduled tasks assigned to the document.
-     */
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'document']);
     }
 
     /**
