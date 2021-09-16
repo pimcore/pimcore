@@ -70,7 +70,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         }
 
         // master request already has a state on the stack
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             return;
         }
 

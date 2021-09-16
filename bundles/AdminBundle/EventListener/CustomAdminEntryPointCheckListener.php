@@ -54,7 +54,7 @@ class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if ($event->isMasterRequest() && $this->customAdminPathIdentifier && $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
+        if ($event->isMainRequest() && $this->customAdminPathIdentifier && $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             if ($this->customAdminPathIdentifier !== $request->cookies->get('pimcore_custom_admin')) {
                 // display standard 404 error page, we don't expose that /admin exists but access is prohibited
                 throw new NotFoundHttpException();

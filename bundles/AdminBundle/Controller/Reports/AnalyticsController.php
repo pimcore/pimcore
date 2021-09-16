@@ -507,8 +507,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

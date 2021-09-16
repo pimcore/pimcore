@@ -2324,8 +2324,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

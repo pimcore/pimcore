@@ -1608,8 +1608,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
