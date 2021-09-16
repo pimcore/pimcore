@@ -312,7 +312,7 @@ pimcore.settings.thumbnail.item = Class.create({
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_thumbnailupdate'),
             method: "PUT", params: this.getData(),
-            success: this.saveOnComplete.bind(this, reload)
+            success: this.saveOnComplete.bind(this)
 
         });
     },
