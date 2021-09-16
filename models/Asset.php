@@ -207,13 +207,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
-
-    /**
-     * @internal
-     *
      * @var bool
      */
     protected $_dataChanged = false;
