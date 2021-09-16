@@ -83,7 +83,6 @@ class CustomReportController extends ReportsControllerBase
                 throw new ConfigWriteException();
             }
 
-
             $report->setName($request->get('name'));
             $report->save();
 
