@@ -174,10 +174,10 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
                     if ($element instanceof ConcreteObject) {
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
-                        $hasSelectedCustomLayout = $this->requestStack->getMasterRequest(
-                            ) && $this->requestStack->getMasterRequest()->query->has(
+                        $hasSelectedCustomLayout = $this->requestStack->getMainRequest(
+                            ) && $this->requestStack->getMainRequest()->query->has(
                                 'layoutId'
-                            ) && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
+                            ) && $this->requestStack->getMainRequest()->query->get('layoutId') !== '';
 
                         if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
                             //load the new layout into the object container

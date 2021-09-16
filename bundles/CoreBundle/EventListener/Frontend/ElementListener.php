@@ -85,7 +85,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $document = $this->documentResolver->getDocument($request);
             $adminRequest =
                 $this->requestHelper->isFrontendRequestByAdmin($request) ||
-                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
+                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMainRequest());
 
             $user = null;
             if ($adminRequest) {
