@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method \Pimcore\Model\Glossary\Dao getDao()
  * @method void delete()
@@ -105,7 +107,7 @@ class Glossary extends AbstractModel
             $glossary->getDao()->getById();
 
             return $glossary;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }

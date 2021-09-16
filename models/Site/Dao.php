@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -27,13 +28,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', $id);
         if (empty($data['id'])) {
-            throw new \Exception(sprintf('Unable to load site with ID `%s`', $id));
+            throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }
@@ -41,13 +42,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getByRootId($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM sites WHERE rootId = ?', $id);
         if (empty($data['id'])) {
-            throw new \Exception(sprintf('Unable to load site with ID `%s`', $id));
+            throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $domain
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getByDomain($domain)
     {
@@ -89,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if (empty($data['id'])) {
-                throw new \Exception('there is no site for the requested domain: `' . $domain . '´');
+                throw new NotFoundException('there is no site for the requested domain: `' . $domain . '´');
             }
         }
         $this->assignVariablesToModel($data);

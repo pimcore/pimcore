@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Cart\Dao getDao()
@@ -107,7 +108,7 @@ class Cart extends AbstractCart implements CartInterface
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
-                // @var Cart $cart
+                /** @var Cart $cart */
                 $cart = new $cartClass;
                 $cart->getDao()->getById($id);
 
@@ -122,7 +123,7 @@ class Cart extends AbstractCart implements CartInterface
                 }
 
                 Runtime::set($cacheKey, $cart);
-            } catch (\Exception $ex) {
+            } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 
                 return null;

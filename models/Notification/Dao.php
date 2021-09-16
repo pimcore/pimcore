@@ -19,6 +19,7 @@ namespace Pimcore\Model\Notification;
 
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Element;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 
@@ -34,7 +35,7 @@ class Dao extends AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById(int $id): void
     {
@@ -44,7 +45,7 @@ class Dao extends AbstractDao
         if ($data === false) {
             $message = sprintf('Notification with id %d not found', $id);
 
-            throw new \Exception($message);
+            throw new NotFoundException($message);
         }
 
         $this->assignVariablesToModel($data);

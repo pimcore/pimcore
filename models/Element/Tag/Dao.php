@@ -28,13 +28,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM tags WHERE id = ?', $id);
         if (!$data) {
-            throw new \Exception('Tag item with id ' . $id . ' not found');
+            throw new Model\Exception\NotFoundException('Tag item with id ' . $id . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
