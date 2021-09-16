@@ -93,8 +93,8 @@ class Link extends Model\Document
     {
         $dependencies = parent::resolveDependencies();
 
-        if ($this->getLinktype() == 'internal') {
-            $element = $this->getObject();
+        if ($this->getLinktype() === 'internal') {
+            $element = $this->getElement();
 
             if ($element instanceof Document || $element instanceof Asset) {
                 $key = $this->getInternalType() . '_' . $element->getId();
@@ -117,9 +117,10 @@ class Link extends Model\Document
         $tags = parent::getCacheTags($tags);
 
         if ($this->getLinktype() === 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                if ($this->getObject()->getId() != $this->getId() && !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
-                    $tags = $this->getObject()->getCacheTags($tags);
+            $element = $this->getElement();
+            if ($element instanceof Document || $element instanceof Asset) {
+                if ($element->getId() != $this->getId() && !array_key_exists($element->getCacheTag(), $tags)) {
+                    $tags = $element->getCacheTags($tags);
                 }
             }
         }
@@ -135,14 +136,15 @@ class Link extends Model\Document
     public function getHref()
     {
         $path = '';
-        if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                $path = $this->getObject()->getFullPath();
+        if ($this->getLinktype() === 'internal') {
+            $element = $this->getElement();
+            if ($element instanceof Document || $element instanceof Asset) {
+                $path = $element->getFullPath();
             } else {
-                if ($this->getObject() instanceof Model\DataObject\Concrete) {
-                    if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
+                if ($element instanceof Model\DataObject\Concrete) {
+                    if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                         $path = $linkGenerator->generate(
-                            $this->getObject(),
+                            $element,
                             [
                                 'document' => $this,
                                 'context' => $this,
@@ -168,11 +170,14 @@ class Link extends Model\Document
     public function getRawHref()
     {
         $rawHref = '';
-        if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset ||
-                ($this->getObject() instanceof Model\DataObject\Concrete)
+        if ($this->getLinktype() === 'internal') {
+            $element = $this->getElement();
+            if (
+                $element instanceof Document ||
+                $element instanceof Asset ||
+                $element instanceof Model\DataObject\Concrete
             ) {
-                $rawHref = $this->getObject()->getFullPath();
+                $rawHref = $element->getFullPath();
             }
         } else {
             $rawHref = $this->getDirect();
@@ -328,6 +333,12 @@ class Link extends Model\Document
      */
     public function getObject()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Link::getObject() method is deprecated, use Link::getElement() instead.'
+        );
+
         return $this->getElement();
     }
 
@@ -340,6 +351,12 @@ class Link extends Model\Document
      */
     public function setObject($object)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
+        );
+
         return $this->setElement($object);
     }
 
