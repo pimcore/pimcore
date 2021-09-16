@@ -84,8 +84,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             }
         );
 
-        if (count($properties) && $properties[0]->getId()) {
-                $this->assignVariablesToModel($properties[0]);
+        if (count($properties)) {
+                $this->assignVariablesToModel($properties);
         } else {
             throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
         }
