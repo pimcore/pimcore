@@ -219,7 +219,7 @@ final class Config implements \ArrayAccess
             } elseif (Tool::isFrontendRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 // we cannot use the document resolver service here, because we need the document on the master request
-                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMasterRequest()->get(DynamicRouter::CONTENT_KEY);
+                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {

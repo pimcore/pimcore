@@ -49,14 +49,24 @@ abstract class AbstractRequestResolver
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
      * @return Request
      */
     protected function getMasterRequest()
     {
-        if (!$this->requestStack->getMasterRequest()) {
-            throw new \LogicException('A master request must be available.');
+        return $this->getMainRequest();
+    }
+
+
+    /**
+     * @return Request
+     */
+    protected function getMainRequest(): Request
+    {
+        if (!$this->requestStack->getMainRequest()) {
+            throw new \LogicException('A main request must be available.');
         }
 
-        return $this->requestStack->getMasterRequest();
+        return $this->requestStack->getMainRequest();
     }
 }

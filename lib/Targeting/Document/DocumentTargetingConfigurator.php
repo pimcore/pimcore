@@ -116,7 +116,7 @@ class DocumentTargetingConfigurator
             return false;
         }
 
-        $request = $this->requestHelper->getMasterRequest();
+        $request = $this->requestHelper->getMainRequest();
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
             return false;
         }
