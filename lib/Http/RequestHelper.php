@@ -78,9 +78,18 @@ class RequestHelper
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11, use getMainRequest() instead
      * @return bool
      */
     public function hasMasterRequest(): bool
+    {
+        return $this->hasMainRequest();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMainRequest(): bool
     {
         return null !== $this->requestStack->getMainRequest();
     }
