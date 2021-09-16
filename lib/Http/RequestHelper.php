@@ -87,6 +87,7 @@ class RequestHelper
 
     /**
      * @deprecated will be removed in Pimcore 11 - use getMainRequest() instead
+     *
      * @return Request
      */
     public function getMasterRequest(): Request

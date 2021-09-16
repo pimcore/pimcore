@@ -50,13 +50,13 @@ abstract class AbstractRequestResolver
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @return Request
      */
     protected function getMasterRequest()
     {
         return $this->getMainRequest();
     }
-
 
     /**
      * @return Request
