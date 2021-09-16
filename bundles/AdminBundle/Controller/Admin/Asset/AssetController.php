@@ -896,7 +896,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             // browser plugin
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
 
-            $server->exec();
+            $server->start();
         } catch (\Exception $e) {
             Logger::error($e);
         }
