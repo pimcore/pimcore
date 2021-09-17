@@ -72,7 +72,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             $request = $event->getRequest();
             if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
                 return;

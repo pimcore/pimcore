@@ -2709,8 +2709,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

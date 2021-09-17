@@ -133,7 +133,7 @@ class Builder
         // set active path
         $activePages = [];
 
-        if ($this->requestHelper->hasMasterRequest()) {
+        if ($this->requestHelper->hasMainRequest()) {
             $request = $this->requestHelper->getMainRequest();
 
             // try to find a page matching exactly the request uri

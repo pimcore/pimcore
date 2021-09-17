@@ -154,7 +154,7 @@ class FullPageCacheListener
 
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -324,7 +324,7 @@ class FullPageCacheListener
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

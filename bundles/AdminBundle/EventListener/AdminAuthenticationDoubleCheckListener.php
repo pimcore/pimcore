@@ -88,7 +88,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
