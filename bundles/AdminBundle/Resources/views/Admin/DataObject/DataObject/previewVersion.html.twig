@@ -114,11 +114,7 @@
                     {% set languages = validLanguages|merge(languages) %}
                 {% endif %}
 
-                {% for activeGroupId, enabled in activeGroups %}
-                    {% if activeGroups[activeGroupId] is empty %}
-                        continue;
-                    {% endif %}
-
+                {% for activeGroupId, enabled in activeGroups|filter(activeGroupId => activeGroups[activeGroupId] is not empty) %}
                     {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
                     {% if groupDefinition is not empty %}
                         {% set keyGroupRelations = groupDefinition.getRelations() %}
