@@ -65,7 +65,7 @@
     "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0.0",
     "lcobucci/jwt": "^4.0",
-    "league/csv": "^9.1",
+    "league/csv": "^9.7",
     "mjaschen/phpgeo": "^3.0",
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.7",
