@@ -32,12 +32,11 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         }
 
         // height management
-        this.defaultHeight = 100;
         if (this.config.defaultHeight) {
             this.defaultHeight = this.config.defaultHeight;
         }
         if (!this.config.height) {
-            this.config.height = this.defaultHeight;
+            this.config.height = this.data.id ? 'auto' : this.defaultHeight;
         }
 
         this.config.name = id + "_editable";
@@ -53,16 +52,6 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
             // register at global DnD manager
             dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
-
-            this.getBody().setStyle({
-                overflow: 'auto',
-            });
-
-            if (this.config.height !== 'auto') {
-                this.getBodyWrap().setStyle({
-                    overflowY: 'auto',
-                });
-            }
 
             this.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
             this.getBody().addCls("pimcore_editable_snippet_empty");
@@ -213,8 +202,13 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
     },
 
     updateDimensions: function () {
+        if(this.config.height !== 'auto'){
+            this.getBodyWrap().setStyle({
+                overflowY: 'auto',
+            });
+        }
         this.getBody().setStyle({
-            height: "auto"
+            height: 'auto',
         });
     },
 
