@@ -37,7 +37,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
             this.defaultHeight = this.config.defaultHeight;
         }
         if (!this.config.height) {
-            this.config.height = 'auto';
+            this.config.height = this.defaultHeight;
         }
 
         this.config.name = id + "_editable";
