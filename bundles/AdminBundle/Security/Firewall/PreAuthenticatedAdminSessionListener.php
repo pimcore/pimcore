@@ -71,7 +71,7 @@ class PreAuthenticatedAdminSessionListener
             $user = new User($pimcoreUser);
 
             $token = new PreAuthenticatedAdminToken($user, '', $this->providerKey);
-            $token->setUser($user->getUsername());
+            $token->setUser($user->getUserIdentifier());
 
             try {
                 $authenticatedToken = $this->authenticationManager->authenticate($token);
@@ -79,7 +79,7 @@ class PreAuthenticatedAdminSessionListener
             } catch (AuthenticationException $e) {
                 // clear token on auth failure
                 $storedToken = $this->tokenStorage->getToken();
-                if ($storedToken instanceof PreAuthenticatedAdminToken && $storedToken->getProviderKey() === $this->providerKey) {
+                if ($storedToken instanceof PreAuthenticatedAdminToken && $storedToken->getFirewallName() === $this->providerKey) {
                     $this->tokenStorage->setToken(null);
                 }
             }

@@ -36,8 +36,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

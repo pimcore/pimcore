@@ -118,12 +118,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function onKernelControllerEvent(ControllerEvent $event)
         {
-            $isMasterRequest = $event->isMasterRequest();
-            if (!$isMasterRequest) {
+            if (!$event->isMainRequest()) {
                 return;
             }
-
-            $request = $event->getRequest();
 
             // PHP 7.0 compatibility of adminer (throws some warnings)
             ini_set('display_errors', 0);

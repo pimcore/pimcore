@@ -1544,8 +1544,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

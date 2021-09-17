@@ -61,7 +61,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     {
         $request = $event->getRequest();
 
-        if ($event->isMasterRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
+        if ($event->isMainRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
             $context = $this->resolver->getPimcoreContext($request);
 
             if ($context) {

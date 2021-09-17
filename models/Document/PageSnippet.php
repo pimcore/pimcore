@@ -578,8 +578,10 @@ abstract class PageSnippet extends Model\Document
     {
         if (!$scheme) {
             $scheme = 'http://';
+
+            /** @var RequestHelper $requestHelper */
             $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
-            if ($requestHelper->hasMasterRequest()) {
+            if ($requestHelper->hasMainRequest()) {
                 $scheme = $requestHelper->getMainRequest()->getScheme() . '://';
             }
         }

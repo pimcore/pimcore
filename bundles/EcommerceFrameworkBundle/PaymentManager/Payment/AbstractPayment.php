@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Model\DataObject\Listing\Concrete;
-use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractPayment implements PaymentInterface
@@ -67,12 +66,12 @@ abstract class AbstractPayment implements PaymentInterface
 
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
     {
-        throw new NotImplementedException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
     }
 
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])
     {
-        throw new NotImplementedException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
     }
 
     /**

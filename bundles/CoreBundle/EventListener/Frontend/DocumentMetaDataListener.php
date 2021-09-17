@@ -63,7 +63,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // just add meta data on master request
-        if (!$event->isMasterRequest() && !$event->getRequest()->attributes->get(self::FORCE_INJECTION)) {
+        if (!$event->isMainRequest() && !$event->getRequest()->attributes->get(self::FORCE_INJECTION)) {
             return;
         }
 
