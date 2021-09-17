@@ -290,7 +290,7 @@ pimcore.asset.metadata.grid = Class.create({
                 tbarItems.push(
                     new Ext.SplitButton({
                         text: t('add_predefined_metadata_definitions'),
-                        handler: this.handleAddPredefinedDefinitions.bind(this, null),
+                        handler: this.handleAddPredefinedDefinitions.bind(this, "default"),
                         menu: new Ext.menu.Menu({
                             items: predefinedMetadataGroups
                         }),
