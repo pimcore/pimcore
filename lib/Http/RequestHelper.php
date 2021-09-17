@@ -83,6 +83,12 @@ class RequestHelper
      */
     public function hasMasterRequest(): bool
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.2',
+            sprintf('%s is deprecated, please use RequestHelper::hasMainRequest() instead.', __METHOD__)
+        );
+
         return $this->hasMainRequest();
     }
 
