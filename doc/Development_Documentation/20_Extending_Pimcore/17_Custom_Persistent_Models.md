@@ -173,6 +173,39 @@ class Dao extends AbstractDao {
         $this->assignVariablesToModel($data);
     }
 
+    public function assignVariablesToModel($data){
+        $vars = get_object_vars($this->model);
+ 
+        $buffer = [];
+ 
+        $validColumns = $this->getValidTableColumns($this->tableName);
+ 
+        if(count($vars))
+            foreach ($vars as $k => $v) {
+ 
+                if(!in_array($k, $validColumns))
+                    continue;
+ 
+                $getter = "set" . $this->camelize($k);
+ 
+                if(!is_callable([$this->model, $getter]))
+                    continue;
+ 
+                     $value = $this->model->$getter($data[$k]);
+ 
+                if(is_bool($value))
+                    $value = (int)$value;
+ 
+                $buffer[$k] = $value;
+            }
+            
+    }
+
+    public function camelize($input, $separator = '_')
+    {
+        return str_replace($separator, '', ucwords($input, $separator));
+    }
+    
     /**
      * save vote
      */
