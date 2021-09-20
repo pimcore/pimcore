@@ -260,7 +260,7 @@ pimcore.element.properties = Class.create({
                         sortable: true
                     },
                     {
-                        text: t("name"),
+                        text: t("key"),
                         dataIndex: 'name',
                         getEditor: function() {
                             return new Ext.form.TextField({
