@@ -205,7 +205,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
