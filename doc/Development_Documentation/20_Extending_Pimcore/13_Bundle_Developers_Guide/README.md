@@ -37,6 +37,9 @@ $ bin/console pimcore:generate:bundle
 
 # generate bundle with a given name and don't ask questions
 $ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
+
+# activate bundle
+$ bin/console pimcore:bundle:enable FooBundle
 ```
 
 ## Common tasks
