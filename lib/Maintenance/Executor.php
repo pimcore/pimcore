@@ -94,7 +94,7 @@ final class Executor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false, bool $async = false)
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false)
     {
         $this->setLastExecution();
 
@@ -115,14 +115,9 @@ final class Executor implements ExecutorInterface
                 continue;
             }
 
-            if ($async) {
-                $this->messageBus->dispatch(
-                    new MaintenanceTaskMessage($name, $force)
-                );
-            }
-            else {
-                $this->executeTask($name, $force);
-            }
+            $this->messageBus->dispatch(
+                new MaintenanceTaskMessage($name, $force)
+            );
         }
     }
 

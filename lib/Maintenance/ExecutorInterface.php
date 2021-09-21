@@ -29,7 +29,7 @@ interface ExecutorInterface
      * @param array $excludedJobs
      * @param bool $force
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false, bool $async = false);
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false);
 
     /**
      * @param string $name

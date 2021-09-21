@@ -91,8 +91,7 @@ class MaintenanceCommand extends AbstractCommand
         $this->maintenanceExecutor->executeMaintenance(
             $validJobs,
             $excludedJobs,
-            (bool)$input->getOption('force'),
-            $async
+            (bool)$input->getOption('force')
         );
 
         if (!$async) {
@@ -106,7 +105,7 @@ class MaintenanceCommand extends AbstractCommand
             $command = $this->getApplication()->find('messenger:consume');
 
             $arguments = [
-                'receivers' => ['pimcore_core'],
+                'receivers' => ['pimcore_core', 'pimcore_maintenance'],
                 '--time-limit' => 5 * 60,
             ];
 
