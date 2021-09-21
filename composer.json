@@ -167,7 +167,7 @@
   "require-dev": {
     "cache/integration-tests": "dev-master",
     "codeception/codeception": "^4.1.12",
-    "codeception/module-symfony": "^2.0.0",
+    "codeception/module-symfony": "^2.0.2",
     "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^0.12.85",
     "phpstan/phpstan-symfony": "^0.12.32",
