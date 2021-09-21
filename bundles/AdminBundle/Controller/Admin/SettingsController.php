@@ -238,8 +238,8 @@ class SettingsController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            $itemGroup = $item->getGroup() ?? "";
-            if ($group === "default" || $group === $itemGroup) {
+            $itemGroup = $item->getGroup() ?? '';
+            if ($group === 'default' || $group === $itemGroup) {
                 $item->expand();
                 $result[] = $item->getObjectVars();
             }
