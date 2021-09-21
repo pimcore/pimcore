@@ -34,7 +34,7 @@ class Dao extends Model\Property\Predefined\Dao
     {
         $properties = [];
 
-        foreach($this->loadIdList() as $id) {
+        foreach ($this->loadIdList() as $id) {
             $properties[] = Model\Property\Predefined::getById($id);
         }
 
