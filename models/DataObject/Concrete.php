@@ -185,7 +185,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                             if ($subItem instanceof Model\Element\ValidationException) {
                                 $contextStack = $subItem->getContextStack();
                                 if ($contextStack) {
-                                    $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
+                                    $subItemMessage .= '[ ' . $contextStack[0] . ' ]';
                                 }
                             }
                             $subItemParts[] = $subItemMessage;
