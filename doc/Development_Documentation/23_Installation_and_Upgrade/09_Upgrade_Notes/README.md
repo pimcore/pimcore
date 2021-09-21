@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.1.4
+- [Maintenance] Maintenance Commands are now handled with Symfony Messenger. The `pimcore:maintenance` command will trigger the maintenance messages to the bus. You should now also add `bin/console messenger:consume pimcore_core pimcore_maintenance` as a Cron Job
+
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
   be removed in Pimcore 11.

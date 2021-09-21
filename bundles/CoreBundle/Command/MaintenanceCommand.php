@@ -96,6 +96,13 @@ class MaintenanceCommand extends AbstractCommand
         );
 
         if (!$async) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.1',
+                'Running Maintenance Command without --async and not having the messenger consume message yourself is deprecated and will be removed from Pimcore in 10.2.',
+                __CLASS__
+            );
+
             $command = $this->getApplication()->find('messenger:consume');
 
             $arguments = [
