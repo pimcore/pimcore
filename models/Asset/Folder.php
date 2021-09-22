@@ -161,6 +161,11 @@ class Folder extends Model\Asset
                 }
 
                 if ($tileThumb) {
+                    if(!$tileThumb->exists()) {
+                        // only generate if all necessary thumbs are available
+                        return null;
+                    }
+
                     $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 

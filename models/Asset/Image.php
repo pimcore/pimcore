@@ -18,11 +18,13 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -44,35 +46,6 @@ class Image extends Model\Asset
      */
     protected function update($params = [])
     {
-        if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated') || !$this->getCustomSetting('embeddedMetaDataExtracted')) {
-            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
-            // because the file is written in parent::update();
-            $tmpFile = $this->getTemporaryFile();
-
-            if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated')) {
-                // getDimensions() might fail, so assume `false` first
-                $imageDimensionsCalculated = false;
-
-                try {
-                    $dimensions = $this->getDimensions($tmpFile, true);
-                    if ($dimensions && $dimensions['width']) {
-                        $this->setCustomSetting('imageWidth', $dimensions['width']);
-                        $this->setCustomSetting('imageHeight', $dimensions['height']);
-                        $imageDimensionsCalculated = true;
-                    }
-                } catch (\Exception $e) {
-                    Logger::error('Problem getting the dimensions of the image with ID ' . $this->getId());
-                }
-
-                // this is to be downward compatible so that the controller can check if the dimensions are already calculated
-                // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
-                // calculate the dimensions on every request an also will create a version, ...
-                $this->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
-            }
-
-            $this->handleEmbeddedMetaData(true, $tmpFile);
-        }
-
         $this->clearThumbnails($this->clearThumbnailsOnSave);
         $this->clearThumbnailsOnSave = false; // reset to default
 
@@ -80,36 +53,19 @@ class Image extends Model\Asset
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
-            try {
-                $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-                $this->generateLowQualityPreview();
-            } catch (\Exception $e) {
-                Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
-                Logger::error($e);
-            }
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new AssetUpdateTasksMessage($this->getId())
+            );
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
      */
-    protected function postPersistData()
-    {
-        if ($this->getDataChanged()) {
-            if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
-                $this->detectFaces();
-            }
-
-            if (!isset($this->customSettings['disableFocalPointDetection'])) {
-                $this->detectFocalPoint();
-            }
-        }
-    }
-
-    private function detectFocalPoint()
+    public function detectFocalPoint(): bool
     {
         if ($this->getCustomSetting('focalPointX') && $this->getCustomSetting('focalPointY')) {
-            return;
+            return false;
         }
 
         if ($faceCordintates = $this->getCustomSetting('faceCoordinates')) {
@@ -127,22 +83,26 @@ class Image extends Model\Asset
 
             $this->setCustomSetting('focalPointX', $focalPointX);
             $this->setCustomSetting('focalPointY', $focalPointY);
+
+            return true;
         }
+
+        return false;
     }
 
     /**
      * @internal
      */
-    public function detectFaces()
+    public function detectFaces(): ?bool
     {
         if ($this->getCustomSetting('faceCoordinates')) {
-            return;
+            return false;
         }
 
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
 
         if (!$config['enabled']) {
-            return;
+            return false;
         }
 
         $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
@@ -177,8 +137,12 @@ class Image extends Model\Asset
                 }
 
                 $this->setCustomSetting('faceCoordinates', $faceCoordinates);
+
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
