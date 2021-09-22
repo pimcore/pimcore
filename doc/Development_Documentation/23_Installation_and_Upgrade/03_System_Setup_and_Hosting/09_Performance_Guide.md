@@ -294,8 +294,78 @@ Total:          3    6   1.3      6      10
 ```
 
 ### In-Template Caching
-Make use of [in-template caching](../../02_MVC/02_Template/02_Template_Extensions/README.md).
+Pimcore provides a Twig extension `pimcore_cache` for in-template caching, which is used to cache some parts directly in the template,
+independent of the global caching functionality. This can be useful for templates which needs a lot
+of calculation or require a huge amount of objects e.g., Navigation.
+
+You can cache part of a template like:
+
+```twig
+{% set cache = pimcore_cache("main_navigation_cache", 60) %}
+{% if not cache.start() %}
+    {% set navStartNode = document.getProperty('navigation_root') %}
+
+    {% if not navStartNode is instanceof('\\Pimcore\\Model\\Document') %}
+        {% set navStartNode = pimcore_document(1) %}
+    {% endif %}
+
+    {% set mainNavigation =  app_navigation_data_links(document, navStartNode) %}
+    <div class="container">
+        ...
+        {{
+            pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
+                maxDepth: 2,
+                ulClass: {
+                    0: 'navbar-nav menu-links ml-4 m-auto',
+                    1: 'dropdown dropdown-menu',
+                    'default': 'dropdown-menu dropdown-submenu'
+                }
+            })
+        }}
+        ...
+    </div>
+{% endif %}
+```
+
+Read more about `pimcore_cache` [here](../../02_MVC/02_Template/02_Template_Extensions/README.md).
+
+#### Benchmarks:
+On running command, `ab -n 100 -c 20 http://localhost/en/Magazine`
+
+- Before Changes
+```bash
+Time taken for tests:   0.808 seconds
+Time per request:       161.603 [ms] (mean)
+Time per request:       8.080 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:    48  137  35.8    135     207
+Waiting:       45  133  35.4    130     204
+Total:         49  137  35.7    135     207
+```
+
+- After Changes
+```bash
+Time taken for tests:   0.644 seconds
+Time per request:       128.881 [ms] (mean)
+Time per request:       6.444 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:    41  113  28.6    114     175
+Waiting:       34  109  28.3    111     169
+Total:         42  113  28.4    114     175
+```
 
 ### Varnish Cache
-Install and setup [Varnish](https://www.varnish-cache.org/) cache and make use of ESI (Pimcore sends the right headers for Varnish if full-page cache is enabled).
+The Varnish Cache is a so-called reverse proxy, that is placed in front of a server, which is responsible for delivering website content. On initial request, the varnish cache saves a copy of the server reponse in memory. In the event of subsequent requests, the response is sent directly from the memory, bypassing the server. This leads to faster response time, as no processing is required on the server side.
+
+#### Edge Side Includes (ESI)
+
+> Note: Pimcore sends the right headers for Varnish if full-page cache is enabled
+
+Read more about [Varnish](https://www.varnish-cache.org/).
 
