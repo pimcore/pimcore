@@ -35,6 +35,7 @@ framework:
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
+            'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
 # Twig Configuration
 twig:
