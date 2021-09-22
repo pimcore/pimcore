@@ -637,13 +637,13 @@ class Video extends Model\Document\Editable
             $additional_params = '';
 
             $clipConfig = [];
-            if (is_array($config['config']['clip'])) {
+            if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
                 $clipConfig = $config['config']['clip'];
             }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['vimeo'])) {
+            if (isset($config['vimeo']) && is_array($config['vimeo'])) {
                 $configurations = array_merge($clipConfig, $config['vimeo']);
             }
 
