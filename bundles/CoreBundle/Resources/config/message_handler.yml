@@ -10,6 +10,10 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Messenger\Handler\CleanupThumbnailsHandler:
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\MaintenanceTaskHandler:
         arguments:
             - '@Pimcore\Maintenance\Executor'
