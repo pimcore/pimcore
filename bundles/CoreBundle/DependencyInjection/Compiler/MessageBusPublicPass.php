@@ -28,6 +28,6 @@ final class MessageBusPublicPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $container->findDefinition(MessageBusInterface::class)->setPublic(true);
+        $container->getAlias(MessageBusInterface::class)->setPublic(true);
     }
 }

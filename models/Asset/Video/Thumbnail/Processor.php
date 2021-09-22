@@ -176,7 +176,11 @@ class Processor
         $asset->save();
         Model\Version::enable();
 
-        $instance->convert();
+        $instance->save();
+
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new VideoConvertMessage($instance->getProcessId())
+        );
 
         return $instance;
     }
@@ -318,15 +322,6 @@ class Processor
     public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
     {
         $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
-    }
-
-    public function convert()
-    {
-        $this->save();
-
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
-            new VideoConvertMessage($this->getProcessId())
-        );
     }
 
     /**
