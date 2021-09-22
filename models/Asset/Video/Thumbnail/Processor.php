@@ -20,7 +20,6 @@ use Pimcore\Logger;
 use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
