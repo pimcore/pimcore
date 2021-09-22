@@ -109,6 +109,17 @@ class MaintenanceCommand extends AbstractCommand
                 '--time-limit' => 5 * 60,
             ];
 
+            if($this->output->isVerbose()) {
+                // delegate verbosity to messenger:consume
+                $verbosityMapping = [
+                    OutputInterface::VERBOSITY_DEBUG => 'vvv',
+                    OutputInterface::VERBOSITY_VERY_VERBOSE => 'vv',
+                    OutputInterface::VERBOSITY_VERBOSE => 'v',
+                ];
+
+                $arguments['--' . $verbosityMapping[$this->output->getVerbosity()]] = null;
+            }
+
             $input = new ArrayInput($arguments);
             $command->run($input, $output);
         }
