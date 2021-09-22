@@ -707,11 +707,11 @@ class Video extends Model\Document\Editable
 
             $additional_params = '';
 
-            $clipConfig = is_array($config['config']['clip']) ? $config['config']['clip'] : [];
+            $clipConfig = isset($config['config']['clip']) && is_array($config['config']['clip']) ? $config['config']['clip'] : [];
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['dailymotion'])) {
+            if (isset($config['dailymotion']) && is_array($config['dailymotion'])) {
                 $configurations = array_merge($clipConfig, $config['dailymotion']);
             }
 
