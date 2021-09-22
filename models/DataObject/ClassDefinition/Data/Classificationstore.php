@@ -836,6 +836,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         if ($subItems) {
             $messages = array_map(function (Model\Element\ValidationException $validationException) {
                 $validationException->addContext($this->getName());
+
                 return $validationException->getMessage();
             }, $subItems);
 
