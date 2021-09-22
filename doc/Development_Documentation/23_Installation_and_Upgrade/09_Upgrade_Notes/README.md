@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.2.0
+- [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production). 
+
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
   be removed in Pimcore 11.

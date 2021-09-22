@@ -17,11 +17,13 @@ namespace Pimcore\Model\Asset\Video\Thumbnail;
 
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -322,10 +324,10 @@ class Processor
     public function convert()
     {
         $this->save();
-        Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), [
-            'internal:video-converter',
-            $this->getProcessId(),
-        ]);
+
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new VideoConvertMessage($this->getProcessId())
+        );
     }
 
     /**
