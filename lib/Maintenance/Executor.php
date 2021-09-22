@@ -51,8 +51,7 @@ final class Executor implements ExecutorInterface
         LoggerInterface $logger,
         LockFactory $lockFactory,
         private MessageBusInterface $messageBus
-    )
-    {
+    ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
         $this->lockFactory = $lockFactory;

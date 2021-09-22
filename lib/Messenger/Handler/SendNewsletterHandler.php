@@ -38,6 +38,7 @@ class SendNewsletterHandler
 
         if (null === $tmpStore) {
             Logger::alert(sprintf('No sending configuration for %s found. Cannot send newsletter.', $sendingId));
+
             return;
         }
 
@@ -45,6 +46,7 @@ class SendNewsletterHandler
 
         if ($data['inProgress']) {
             Logger::alert('Cannot send newsletters because there\'s already one active sending process.');
+
             return;
         }
 
@@ -109,6 +111,7 @@ class SendNewsletterHandler
                         $sendingId
                     )
                 );
+
                 return;
             }
 
@@ -159,6 +162,7 @@ class SendNewsletterHandler
                         $sendingId
                     )
                 );
+
                 return;
             }
 
