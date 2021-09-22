@@ -112,12 +112,12 @@ class MaintenanceCommand extends AbstractCommand
             if($this->output->isVerbose()) {
                 // delegate verbosity to messenger:consume
                 $verbosityMapping = [
-                    OutputInterface::VERBOSITY_DEBUG => 'vvv',
-                    OutputInterface::VERBOSITY_VERY_VERBOSE => 'vv',
-                    OutputInterface::VERBOSITY_VERBOSE => 'v',
+                    OutputInterface::VERBOSITY_DEBUG => 3,
+                    OutputInterface::VERBOSITY_VERY_VERBOSE => 2,
+                    OutputInterface::VERBOSITY_VERBOSE => 1,
                 ];
 
-                $arguments['--' . $verbosityMapping[$this->output->getVerbosity()]] = null;
+                $arguments['--verbose'] = $verbosityMapping[$output->getVerbosity()];
             }
 
             $input = new ArrayInput($arguments);
