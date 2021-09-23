@@ -3,7 +3,7 @@
 When developing a high traffic website, it is a common practice to focus on performance measures and incorporate changes to make the website even more performant. A highly optimized website drives more traffic and increases the customer base.
 To optimize the website performance, we recommend below tools and configuration. The load test performance benchmarks are noted in each section, based on [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) commandline tool, for insights on comparing the average loading time of a page, before and after applying these changes.
 
-Before we start with the load testing, it is important to turn off dev & debug mode by setting environment variables `APP_ENV=prod` & `PIMCORE_DEV_MODE=false`, so as to replicate production environment scenarios. Also, it is important to run `pimcore:maintenance` job to optimize thumbnails and clear tmp files
+Before we start with the load testing, it is important to turn off dev & debug mode by setting environment variables `APP_ENV=prod` & `PIMCORE_DEV_MODE=false`, to replicate the production environment scenario.
 
 ### PHP 8 Opcache & JIT compiler
 Pimcore X or higher version, requires PHP version >= 8.0, that means we can use and easily take the benefits of newly introduced features in PHP. 
