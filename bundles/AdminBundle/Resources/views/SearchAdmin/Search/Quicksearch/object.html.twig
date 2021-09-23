@@ -27,57 +27,45 @@
                     {% set break = true %}
                 {% endfor %}
             {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
-                {% set storedata = definition.getVersionPreview(element.getValueForFieldName(fieldName)) %}
+                {% set storedata = element.getValueForFieldName(fieldName) %}
 
-                {% set existingGroups = [] %}
                 {% set activeGroups = [] %}
 
                 {% if storedata %}
                     {% set activeGroups = storedata.getActiveGroups() %}
                 {% endif %}
-
-                {% for activeGroupId, enabled in activeGroups %}
-                    {% set arr = existingGroups|merge({activeGroupId: activeGroupId}) %}
-                {% endfor %}
-
-                {% if existingGroups is not empty %}
+                {% if activeGroups is not empty %}
                     {% set languages = ['default'] %}
                     {% if definition.isLocalized() %}
                         {% set languages = validLanguages|merge(languages) %}
                     {% endif %}
 
-                    {% for activeGroupId, enabled in existingGroups %}
-                        {% if activeGroups[activeGroupId] is not empty %}
-                            {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
-                            {% if groupDefinition is not empty %}
-                                {% set keyGroupRelations = groupDefinition.getRelations() %}
+                    {% for activeGroupId, enabled in activeGroups|filter(activeGroupId => activeGroups[activeGroupId] is not empty) %}
+                        {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
+                        {% if groupDefinition is not empty %}
+                            {% set keyGroupRelations = groupDefinition.getRelations() %}
 
-                                {% for keyGroupRelation in keyGroupRelations %}
-                                    {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+                            {% for keyGroupRelation in keyGroupRelations %}
+                                {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
 
-                                    {% if keyDef is not empty %}
-                                        {% for language in languages %}
-                                            {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                {% if keyDef is not empty %}
+                                    {% for language in languages %}
+                                        {% set keyData = storedata ? storedata.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
 
-                                            {% set preview = keyDef.getVersionPreview(keyData) %}
-                                            {% set trClass2 = (c % 2) ? 'odd' : '' %}
-                                            <tr class=" {{ trClass2 }}">
-                                                <td>{{ definition.getTitle()|trans([],'admin') }}</td>
-                                                <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
-                                                {% if isImportPreview or isNew %}
-                                                    {{ preview }}
-                                                {% endif %}
-                                            </tr>
-                                            {% set c = c + 1 %}
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
+                                        {% set preview = keyDef.getVersionPreview(keyData) %}
+                                        <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                                            <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                                            <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " ~ language : ""  }}</td>
+                                            {% if isImportPreview is not defined or isNew is not defined %}
+                                                <td>{{ preview | raw }}</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-
-
             {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
                 {% for asAllowedType in definition.getAllowedTypes() %}
                     {% set collectionDef = pimcore_object_brick_definition_key(asAllowedType) %}
