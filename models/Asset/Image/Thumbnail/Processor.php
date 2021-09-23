@@ -175,7 +175,7 @@ class Processor
 
         // check for existing and still valid thumbnail
         if ($storage->fileExists($storagePath)) {
-            if($storage->lastModified($storagePath) >= $asset->getModificationDate()) {
+            if ($storage->lastModified($storagePath) >= $asset->getModificationDate()) {
                 return [
                     'src' => $storagePath,
                     'type' => 'thumbnail',
@@ -388,7 +388,6 @@ class Processor
                 if ($optimizedFormat) {
                     $format = $image->getContentOptimizedFormat();
                 }
-
 
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
                 $image->save($tmpFsPath, $format, $config->getQuality());
