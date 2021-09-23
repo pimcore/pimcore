@@ -600,6 +600,9 @@ class Installer
 
             $pdoCacheAdapter = new PdoAdapter($db);
             $pdoCacheAdapter->createTable();
+
+            $doctrineTransportConn = new \Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection([], $db);
+            $doctrineTransportConn->setup();
         }
 
         if ($this->importDatabaseData) {
