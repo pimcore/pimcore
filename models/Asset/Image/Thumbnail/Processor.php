@@ -218,6 +218,8 @@ class Processor
 
             $lock->acquire(true);
 
+            $startTime = microtime(true);
+
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
 
@@ -237,8 +239,6 @@ class Processor
                 if (!$image->load($fileSystemPath, ['asset' => $asset])) {
                     throw new \Exception(sprintf('Unable to generate thumbnail for asset %s from source image %s', $asset->getId(), $fileSystemPath));
                 }
-
-                $startTime = microtime(true);
 
                 $transformations = $config->getItems();
 
