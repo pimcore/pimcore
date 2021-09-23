@@ -710,6 +710,7 @@ final class User extends User\UserRole
                 return Tool::getValidLanguages();
             }
         }
+
         return $mergedWebsiteTranslationLanguagesEdit;
     }
 
@@ -746,6 +747,7 @@ final class User extends User\UserRole
         if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
             return Tool::getValidLanguages();
         }
+
         return $mergedWebsiteTranslationLanguagesView;
     }
 
