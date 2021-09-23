@@ -3,7 +3,7 @@
 When developing a high traffic website, it is a common practice to focus on performance measures and incorporate changes to make the website even more performant. A highly optimized website drives more traffic and increases the customer base.
 To optimize the website performance, we recommend below tools and configuration. The load test performance benchmarks are noted in each section, based on [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) commandline tool, for insights on comparing the average loading time of a page, before and after applying these changes.
 
-Before we start with the load testing, it is important to turn off dev & debug mode by setting environment variables `APP_ENV=prod` & `PIMCORE_DEV_MODE=false` so as to replicate production environment scenario.
+Before we start with the load testing, it is important to turn off dev & debug mode by setting environment variables `APP_ENV=prod` & `PIMCORE_DEV_MODE=false`, so as to replicate production environment scenarios. Also, it is important to run `pimcore:maintenance` job to optimize thumbnails and clear tmp files
 
 ### PHP 8 Opcache & JIT compiler
 Pimcore X or higher version, requires PHP version >= 8.0, that means we can use and easily take the benefits of newly introduced features in PHP. 
@@ -95,10 +95,8 @@ Opcache preloading was introduced in PHP 7.4, a feature that could improve the p
 
 In order to enable Opcache preloading, configure these settings in your ini configuration:
 ```ini
-opcache.preload=/var/www/home/config/preload.php
-
-; required for opcache.preload:
 opcache.preload_user=www-data
+opcache.preload=/var/www/html/var/cache/prod/App_KernelProdContainer.preload.php
 ```
 
 Note: `memory_limit` should be set to at least `200M` when using preloading with Pimcore.
@@ -106,14 +104,34 @@ Note: `memory_limit` should be set to at least `200M` when using preloading with
 It is also possible to mark which classes should be preloaded or not by using Symfony service tags [container.preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-preload) & [container.no_preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-nopreload).
 
 #### Benchmarks:
-On running command, `ab -n 100 -c 20 http://localhost/en`
+On running command, `ab -n 100 -c 20 http://localhost/en/shop/Products/Cars/Economy-Cars/Fiat-500~p104`
 
 - Before Changes
 ```bash
+Time taken for tests:   0.577 seconds
+Time per request:       115.394 [ms] (mean)
+Time per request:       5.770 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:    35   99  23.1    112     127
+Waiting:       33   97  23.1    109     125
+Total:         35   99  22.9    112     127
 ```
 
 - After Changes
 ```bash
+Time taken for tests:   0.468 seconds
+Time per request:       93.522 [ms] (mean)
+Time per request:       4.676 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:    32   80  17.8     79     111
+Waiting:       30   78  17.7     76     110
+Total:         33   81  17.6     79     111
 ```
 
 ### MySQL/MariaDB Optimizations
@@ -146,14 +164,34 @@ query_cache_limit=256K
 - you can also use Mysql Tuning script for more optimizations [mysqltuner.pl](https://github.com/rackerhacker/MySQLTuner-perl)
 
 #### Benchmarks:
-On running command, `ab -n 100 -c 20 http://localhost/en`
+On running command, `ab -n 100 -c 20 http://localhost/en/shop/Products/Cars/Economy-Cars~c547`
 
 - Before Changes
 ```bash
+Time taken for tests:   2.515 seconds
+Time per request:       503.024 [ms] (mean)
+Time per request:       25.151 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:   124  453 116.0    457     727
+Waiting:      121  448 115.3    453     724
+Total:        124  454 115.9    458     727
 ```
 
 - After Changes
 ```bash
+Time taken for tests:   2.251 seconds
+Time per request:       450.187 [ms] (mean)
+Time per request:       22.509 [ms] (mean, across all concurrent requests)
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.3      0       1
+Processing:   123  401  83.0    413     542
+Waiting:      120  397  82.5    408     539
+Total:        123  401  82.8    413     542
 ```
 
 ### Pimcore Caching (Redis)
@@ -363,9 +401,16 @@ Total:         42  113  28.4    114     175
 ### Varnish Cache
 The Varnish Cache is a so-called reverse proxy, that is placed in front of a server, which is responsible for delivering website content. On initial request, the varnish cache saves a copy of the server reponse in memory. In the event of subsequent requests, the response is sent directly from the memory, bypassing the server. This leads to faster response time, as no processing is required on the server side.
 
-#### Edge Side Includes (ESI)
-
 > Note: Pimcore sends the right headers for Varnish if full-page cache is enabled
 
-Read more about [Varnish](https://www.varnish-cache.org/).
+#### Edge Side Includes (ESI)
+Edge Side Includes is a markup to manage page fragments, which can be cached and merged into one page. These fragments can have individual cache policies and can be shared on multiple pages.
 
+Varnish supports 2 main ESI tags, which are:
+```
+esi:include
+esi:remove
+```
+
+Symfony has a built-in support for ESI. [Read Here](https://symfony.com/doc/current/http_cache/esi.html).
+Read more about [Varnish](https://www.varnish-cache.org/).
