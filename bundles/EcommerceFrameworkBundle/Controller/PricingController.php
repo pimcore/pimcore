@@ -59,8 +59,6 @@ class PricingController extends AdminController implements KernelControllerEvent
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            // @var  RuleInterface $rule
-
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();
                 $title = 'Verhalten: ' . $rule->getBehavior();
