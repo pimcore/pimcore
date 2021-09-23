@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ShippingInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
