@@ -175,7 +175,6 @@ final class Configuration implements ConfigurationInterface
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
-        $this->addPredefinedAssetMetadataNode($rootNode);
 
         return $treeBuilder;
     }
@@ -628,6 +627,35 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('predefined')
+                            ->children()
+                                ->arrayNode('definitions')
+                                ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('name')->end()
+                                            ->scalarNode('description')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('language')->end()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('data')->end()
+                                            ->scalarNode('targetSubtype')->end()
+                                            ->scalarNode('config')->end()
+                                            ->booleanNode('inheritable')
+                                                ->beforeNormalization()
+                                                ->ifString()
+                                                ->then(function ($v) {
+                                                    return (bool)$v;
+                                                })
+                                                ->end()
+                                            ->end()
+                                            ->integerNode('creationDate')->end()
+                                            ->integerNode('modificationDate')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('class_definitions')
                             ->children()
                                 ->arrayNode('data')
@@ -2026,54 +2054,6 @@ final class Configuration implements ConfigurationInterface
                                             return (bool)$v;
                                         })
                                         ->end()
-                                ->end()
-                                ->integerNode('creationDate')->end()
-                                ->integerNode('modificationDate')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    /**
-     * Add predefined asset metadata specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addPredefinedAssetMetadataNode(ArrayNodeDefinition $rootNode)
-    {
-        $predefinedAssetMetadata = $rootNode
-            ->children()
-            ->arrayNode('metadata')
-            ->ignoreExtraKeys()
-            ->addDefaultsIfNotSet();
-
-        $predefinedAssetMetadata
-        -> children()
-            ->arrayNode('predefined')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('definitions')
-                    ->normalizeKeys(false)
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('description')->end()
-                                ->scalarNode('group')->end()
-                                ->scalarNode('language')->end()
-                                ->scalarNode('type')->end()
-                                ->scalarNode('data')->end()
-                                ->scalarNode('targetSubtype')->end()
-                                ->scalarNode('config')->end()
-                                ->booleanNode('inheritable')
-                                    ->beforeNormalization()
-                                    ->ifString()
-                                        ->then(function ($v) {
-                                            return (bool)$v;
-                                        })
-                                    ->end()
                                 ->end()
                                 ->integerNode('creationDate')->end()
                                 ->integerNode('modificationDate')->end()
