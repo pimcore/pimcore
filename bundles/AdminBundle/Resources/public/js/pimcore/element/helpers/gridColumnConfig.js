@@ -779,6 +779,10 @@ pimcore.element.helpers.gridColumnConfig = {
             params["only_unreferenced"] = this.checkboxOnlyUnreferenced.getValue();
         }
 
+        var fields = this.getGridConfig().columns;
+        var fieldKeys = Object.keys(fields);
+        params["fields[]"] = fieldKeys;
+
         return params;
 
     }
