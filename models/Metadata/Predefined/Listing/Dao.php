@@ -33,7 +33,7 @@ class Dao extends Model\Metadata\Predefined\Dao
     public function loadList()
     {
         $properties = [];
-        foreach($this->loadIdList() as $id) {
+        foreach ($this->loadIdList() as $id) {
             $properties[] = Model\Metadata\Predefined::getById($id);
         }
 
