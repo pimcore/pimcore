@@ -17,7 +17,6 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use Pimcore\Tool\Console;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**

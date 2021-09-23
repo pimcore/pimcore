@@ -132,7 +132,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      * enable customer query
      * table alias: customer
      *
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */

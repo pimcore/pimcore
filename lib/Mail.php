@@ -139,8 +139,8 @@ class Mail extends Email
         if (is_array($headers)) {
             $options = $headers;
 
-            $headers = $options['headers'] instanceof Headers ? $options['headers'] : null;
-            $body = $options['body'] instanceof AbstractPart ? $options['body'] : null;
+            $headers = ($options['headers'] ?? null) instanceof Headers ? $options['headers'] : null;
+            $body = ($options['body'] ?? null) instanceof AbstractPart ? $options['body'] : null;
             parent::__construct($headers, $body);
 
             if ($options['subject'] ?? false) {
