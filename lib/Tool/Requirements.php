@@ -19,6 +19,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use Symfony\Component\Process\Process;
 
 /**
  * @internal
@@ -614,6 +615,16 @@ final class Requirements
             'link' => 'http://www.php.net/imagick',
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
+
+        if(class_exists('Imagick')) {
+            $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline('convert -list configure | grep DELEGATES');
+            $imageMagickLcmsDelegateInstalledProcess->run();
+            $checks[] = new Check([
+                'name' => 'ImageMagick LCMS delegate',
+                'link' => 'https://talk.pimcore.org/t/cmyk-to-rgb-displaying-as-negative/908/17',
+                'state' => str_contains($imageMagickLcmsDelegateInstalledProcess->getOutput(), 'lcms') ? Check::STATE_OK : Check::STATE_WARNING,
+            ]);
+        }
 
         // APCu
         $checks[] = new Check([
