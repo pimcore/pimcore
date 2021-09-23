@@ -20,7 +20,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
