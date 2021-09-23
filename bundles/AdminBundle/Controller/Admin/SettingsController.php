@@ -151,6 +151,9 @@ class SettingsController extends AdminController
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $metadata = Metadata\Predefined::getById($id);
+                if (!$metadata->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $metadata->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -159,7 +162,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $metadata = Metadata\Predefined::getById($data['id']);
-
+                if (!$metadata->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $metadata->setValues($data);
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
@@ -171,8 +176,14 @@ class SettingsController extends AdminController
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
+                $responseData = $metadata->getObjectVars();
+                $responseData['writeable'] = $metadata->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new Metadata\Predefined())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -188,7 +199,10 @@ class SettingsController extends AdminController
 
                 $metadata->save();
 
-                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
+                $responseData = $metadata->getObjectVars();
+                $responseData['writeable'] = $metadata->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of types
@@ -213,8 +227,9 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getDefinitions())) {
                 foreach ($list->getDefinitions() as $metadata) {
-                    $metadata->expand();
-                    $properties[] = $metadata->getObjectVars();
+                    $data = $metadata->getObjectVars();
+                    $data['writeable'] = $metadata->isWriteable();
+                    $properties[] = $data;
                 }
             }
 
@@ -242,7 +257,9 @@ class SettingsController extends AdminController
             $itemGroup = $item->getGroup() ?? '';
             if ($group === 'default' || $group === $itemGroup) {
                 $item->expand();
-                $result[] = $item->getObjectVars();
+                $data = $item->getObjectVars();
+                $data['writeable'] = $item->isWriteable();
+                $result[] = $data;
             }
         }
 
