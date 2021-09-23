@@ -173,6 +173,22 @@ class Processor
         $storagePath = $thumbDir . '/' . $filename;
         $storage = Storage::get('thumbnail');
 
+        // check for existing and still valid thumbnail
+        if ($storage->fileExists($storagePath)) {
+            if($storage->lastModified($storagePath) >= $asset->getModificationDate()) {
+                return [
+                    'src' => $storagePath,
+                    'type' => 'thumbnail',
+                    'storagePath' => $storagePath,
+                ];
+            } else {
+                // delete the file if it's not valid anymore, otherwise writing the actual data from
+                // the local tmp-file to the real storage a bit further down doesn't work, as it has a
+                // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
+                $storage->delete($storagePath);
+            }
+        }
+
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
         // the configuration is saved for later use in
         // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
@@ -186,29 +202,7 @@ class Processor
 
             return [
                 'src' => $storagePath,
-                'type' => $storage->fileExists($storagePath) ? 'thumbnail' : 'deferred',
-                'storagePath' => $storagePath,
-            ];
-        }
-
-        // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
-        if (!$fileSystemPath && $asset instanceof Asset) {
-            $fileSystemPath = $asset->getLocalFile();
-        }
-
-        if (is_resource($fileSystemPath)) {
-            $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
-        }
-
-        if (!file_exists($fileSystemPath)) {
-            throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
-        }
-
-        // check for existing and still valid thumbnail
-        if ($storage->fileExists($storagePath) && $storage->lastModified($storagePath) >= $asset->getModificationDate()) {
-            return [
-                'src' => $storagePath,
-                'type' => 'thumbnail',
+                'type' => 'deferred',
                 'storagePath' => $storagePath,
             ];
         }
@@ -218,169 +212,184 @@ class Processor
         $image->setPreserveMetaData($config->isPreserveMetaData());
         $image->setPreserveAnimation($config->getPreserveAnimation());
 
-        if (!$image->load($fileSystemPath, ['asset' => $asset])) {
-            throw new \Exception(sprintf('Unable to generate thumbnail for asset %s from source image %s', $asset->getId(), $fileSystemPath));
-        }
-
-        $startTime = microtime(true);
-
-        $transformations = $config->getItems();
-
-        // check if the original image has an orientation exif flag
-        // if so add a transformation at the beginning that rotates and/or mirrors the image
-        if (function_exists('exif_read_data')) {
-            $exif = @exif_read_data($fileSystemPath);
-            if (is_array($exif)) {
-                if (array_key_exists('Orientation', $exif)) {
-                    $orientation = (int)$exif['Orientation'];
-
-                    if ($orientation > 1) {
-                        $angleMappings = [
-                            2 => 180,
-                            3 => 180,
-                            4 => 180,
-                            5 => 90,
-                            6 => 90,
-                            7 => 90,
-                            8 => 270,
-                        ];
-
-                        if (array_key_exists($orientation, $angleMappings)) {
-                            array_unshift($transformations, [
-                                'method' => 'rotate',
-                                'arguments' => [
-                                    'angle' => $angleMappings[$orientation],
-                                ],
-                            ]);
-                        }
-
-                        // values that have to be mirrored, this is not very common, but should be covered anyway
-                        $mirrorMappings = [
-                            2 => 'vertical',
-                            4 => 'horizontal',
-                            5 => 'vertical',
-                            7 => 'horizontal',
-                        ];
-
-                        if (array_key_exists($orientation, $mirrorMappings)) {
-                            array_unshift($transformations, [
-                                'method' => 'mirror',
-                                'arguments' => [
-                                    'mode' => $mirrorMappings[$orientation],
-                                ],
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (is_array($transformations) && count($transformations) > 0) {
-            $sourceImageWidth = PHP_INT_MAX;
-            $sourceImageHeight = PHP_INT_MAX;
-            if ($asset instanceof Asset\Image) {
-                $sourceImageWidth = $asset->getWidth();
-                $sourceImageHeight = $asset->getHeight();
-            }
-
-            $highResFactor = $config->getHighResolution();
-            $imageCropped = false;
-
-            $calculateMaxFactor = function ($factor, $original, $new) {
-                $newFactor = $factor * $original / $new;
-                if ($newFactor < 1) {
-                    // don't go below factor 1
-                    $newFactor = 1;
-                }
-
-                return $newFactor;
-            };
-
-            // sorry for the goto/label - but in this case it makes life really easier and the code more readable
-            prepareTransformations:
-
-            foreach ($transformations as &$transformation) {
-                if (!empty($transformation) && !isset($transformation['isApplied'])) {
-                    $arguments = [];
-
-                    if (is_string($transformation['method'])) {
-                        $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (is_array($transformation['arguments'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                $position = array_search($key, $mapping);
-                                if ($position !== false) {
-
-                                    // high res calculations if enabled
-                                    if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
-                                            ['width', 'height', 'x', 'y'])) {
-                                        if ($highResFactor && $highResFactor > 1) {
-                                            $value *= $highResFactor;
-                                            $value = (int)ceil($value);
-
-                                            if (!isset($transformation['arguments']['forceResize']) || !$transformation['arguments']['forceResize']) {
-                                                // check if source image is big enough otherwise adjust the high-res factor
-                                                if (in_array($key, ['width', 'x'])) {
-                                                    if ($sourceImageWidth < $value) {
-                                                        $highResFactor = $calculateMaxFactor(
-                                                            $highResFactor,
-                                                            $sourceImageWidth,
-                                                            $value
-                                                        );
-                                                        goto prepareTransformations;
-                                                    }
-                                                } elseif (in_array($key, ['height', 'y'])) {
-                                                    if ($sourceImageHeight < $value) {
-                                                        $highResFactor = $calculateMaxFactor(
-                                                            $highResFactor,
-                                                            $sourceImageHeight,
-                                                            $value
-                                                        );
-                                                        goto prepareTransformations;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    // inject the focal point
-                                    if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
-                                        $value = [
-                                            'x' => $asset->getCustomSetting('focalPointX'),
-                                            'y' => $asset->getCustomSetting('focalPointY'),
-                                        ];
-                                    }
-
-                                    $arguments[$position] = $value;
-                                }
-                            }
-                        }
-                    }
-
-                    ksort($arguments);
-                    if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
-                        $transformation['method']($image);
-                    } elseif (method_exists($image, $transformation['method'])) {
-                        call_user_func_array([$image, $transformation['method']], $arguments);
-                    }
-
-                    $transformation['isApplied'] = true;
-                }
-            }
-        }
-
-        if ($optimizedFormat) {
-            $format = $image->getContentOptimizedFormat();
-        }
-
         if (!$storage->fileExists($storagePath)) {
             $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($storagePath);
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
             $lock->acquire(true);
 
+            $startTime = microtime(true);
+
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
+
+                // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
+                if (!$fileSystemPath) {
+                    $fileSystemPath = $asset->getLocalFile();
+                }
+
+                if (is_resource($fileSystemPath)) {
+                    $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
+                }
+
+                if (!file_exists($fileSystemPath)) {
+                    throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
+                }
+
+                if (!$image->load($fileSystemPath, ['asset' => $asset])) {
+                    throw new \Exception(sprintf('Unable to generate thumbnail for asset %s from source image %s', $asset->getId(), $fileSystemPath));
+                }
+
+                $transformations = $config->getItems();
+
+                // check if the original image has an orientation exif flag
+                // if so add a transformation at the beginning that rotates and/or mirrors the image
+                if (function_exists('exif_read_data')) {
+                    $exif = @exif_read_data($fileSystemPath);
+                    if (is_array($exif)) {
+                        if (array_key_exists('Orientation', $exif)) {
+                            $orientation = (int)$exif['Orientation'];
+
+                            if ($orientation > 1) {
+                                $angleMappings = [
+                                    2 => 180,
+                                    3 => 180,
+                                    4 => 180,
+                                    5 => 90,
+                                    6 => 90,
+                                    7 => 90,
+                                    8 => 270,
+                                ];
+
+                                if (array_key_exists($orientation, $angleMappings)) {
+                                    array_unshift($transformations, [
+                                        'method' => 'rotate',
+                                        'arguments' => [
+                                            'angle' => $angleMappings[$orientation],
+                                        ],
+                                    ]);
+                                }
+
+                                // values that have to be mirrored, this is not very common, but should be covered anyway
+                                $mirrorMappings = [
+                                    2 => 'vertical',
+                                    4 => 'horizontal',
+                                    5 => 'vertical',
+                                    7 => 'horizontal',
+                                ];
+
+                                if (array_key_exists($orientation, $mirrorMappings)) {
+                                    array_unshift($transformations, [
+                                        'method' => 'mirror',
+                                        'arguments' => [
+                                            'mode' => $mirrorMappings[$orientation],
+                                        ],
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (is_array($transformations) && count($transformations) > 0) {
+                    $sourceImageWidth = PHP_INT_MAX;
+                    $sourceImageHeight = PHP_INT_MAX;
+                    if ($asset instanceof Asset\Image) {
+                        $sourceImageWidth = $asset->getWidth();
+                        $sourceImageHeight = $asset->getHeight();
+                    }
+
+                    $highResFactor = $config->getHighResolution();
+                    $imageCropped = false;
+
+                    $calculateMaxFactor = function ($factor, $original, $new) {
+                        $newFactor = $factor * $original / $new;
+                        if ($newFactor < 1) {
+                            // don't go below factor 1
+                            $newFactor = 1;
+                        }
+
+                        return $newFactor;
+                    };
+
+                    // sorry for the goto/label - but in this case it makes life really easier and the code more readable
+                    prepareTransformations:
+
+                    foreach ($transformations as &$transformation) {
+                        if (!empty($transformation) && !isset($transformation['isApplied'])) {
+                            $arguments = [];
+
+                            if (is_string($transformation['method'])) {
+                                $mapping = self::$argumentMapping[$transformation['method']];
+
+                                if (is_array($transformation['arguments'])) {
+                                    foreach ($transformation['arguments'] as $key => $value) {
+                                        $position = array_search($key, $mapping);
+                                        if ($position !== false) {
+
+                                            // high res calculations if enabled
+                                            if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
+                                                    ['width', 'height', 'x', 'y'])) {
+                                                if ($highResFactor && $highResFactor > 1) {
+                                                    $value *= $highResFactor;
+                                                    $value = (int)ceil($value);
+
+                                                    if (!isset($transformation['arguments']['forceResize']) || !$transformation['arguments']['forceResize']) {
+                                                        // check if source image is big enough otherwise adjust the high-res factor
+                                                        if (in_array($key, ['width', 'x'])) {
+                                                            if ($sourceImageWidth < $value) {
+                                                                $highResFactor = $calculateMaxFactor(
+                                                                    $highResFactor,
+                                                                    $sourceImageWidth,
+                                                                    $value
+                                                                );
+                                                                goto prepareTransformations;
+                                                            }
+                                                        } elseif (in_array($key, ['height', 'y'])) {
+                                                            if ($sourceImageHeight < $value) {
+                                                                $highResFactor = $calculateMaxFactor(
+                                                                    $highResFactor,
+                                                                    $sourceImageHeight,
+                                                                    $value
+                                                                );
+                                                                goto prepareTransformations;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            // inject the focal point
+                                            if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
+                                                $value = [
+                                                    'x' => $asset->getCustomSetting('focalPointX'),
+                                                    'y' => $asset->getCustomSetting('focalPointY'),
+                                                ];
+                                            }
+
+                                            $arguments[$position] = $value;
+                                        }
+                                    }
+                                }
+                            }
+
+                            ksort($arguments);
+                            if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
+                                $transformation['method']($image);
+                            } elseif (method_exists($image, $transformation['method'])) {
+                                call_user_func_array([$image, $transformation['method']], $arguments);
+                            }
+
+                            $transformation['isApplied'] = true;
+                        }
+                    }
+                }
+
+                if ($optimizedFormat) {
+                    $format = $image->getContentOptimizedFormat();
+                }
+
+
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
                 $image->save($tmpFsPath, $format, $config->getQuality());
                 $stream = fopen($tmpFsPath, 'rb');
