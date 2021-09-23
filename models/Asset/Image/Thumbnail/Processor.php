@@ -173,24 +173,6 @@ class Processor
         $storagePath = $thumbDir . '/' . $filename;
         $storage = Storage::get('thumbnail');
 
-        // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in
-        // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
-        // so that it can be used also with dynamic configurations
-        if ($deferred) {
-            // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
-            if (!Config::exists($config->getName())) {
-                $configId = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
-                TmpStore::add($configId, $config, 'thumbnail_deferred');
-            }
-
-            return [
-                'src' => $storagePath,
-                'type' => $storage->fileExists($storagePath) ? 'thumbnail' : 'deferred',
-                'storagePath' => $storagePath,
-            ];
-        }
-
         // check for existing and still valid thumbnail
         if ($storage->fileExists($storagePath)) {
             if($storage->lastModified($storagePath) >= $asset->getModificationDate()) {
@@ -205,6 +187,24 @@ class Processor
                 // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
                 $storage->delete($storagePath);
             }
+        }
+
+        // deferred means that the image will be generated on-the-fly (when requested by the browser)
+        // the configuration is saved for later use in
+        // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
+        // so that it can be used also with dynamic configurations
+        if ($deferred) {
+            // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
+            if (!Config::exists($config->getName())) {
+                $configId = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
+                TmpStore::add($configId, $config, 'thumbnail_deferred');
+            }
+
+            return [
+                'src' => $storagePath,
+                'type' => 'deferred',
+                'storagePath' => $storagePath,
+            ];
         }
 
         // transform image
