@@ -73,7 +73,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
         }
 
         if (is_array($subTypes)) {
-            return array_filter($list->load(), function($item) use($subTypes) {
+            return array_filter($list->load(), function ($item) use ($subTypes) {
                 if (empty($item->getTargetSubtype)) {
                     return true;
                 }
@@ -100,7 +100,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     {
         $list = new self();
 
-        $definitions = array_filter($list->load(), function($item) use($key, $language, $targetSubtype) {
+        $definitions = array_filter($list->load(), function ($item) use ($key, $language, $targetSubtype) {
             if ($item->getName() != $key) {
                 return false;
             }

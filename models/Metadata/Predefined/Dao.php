@@ -28,7 +28,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['assets']['metadata']['predefined']['definitions'] ?? [],
@@ -52,11 +52,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $data = $this->getDataByName($this->model->getId());
 
-        if($data && $id != null) {
+        if ($data && $id != null) {
             $data['id'] = $id;
         }
 
-        if($data) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Predefined asset metadata with id: ' . $this->model->getId() . ' does not exist');
@@ -72,7 +72,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function getByNameAndLanguage($name = null, $language = null)
     {
         $list = new Listing();
-        $definitions = array_values(array_filter($list->getDefinitions(), function($item) use($name, $language) {
+        $definitions = array_values(array_filter($list->getDefinitions(), function ($item) use ($name, $language) {
             $return = true;
             if ($name && $item->getName() != $name) {
                 $return = false;
@@ -138,12 +138,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                     'metadata' => [
                         'predefined' => [
                             'definitions' => [
-                                $id => $data
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
