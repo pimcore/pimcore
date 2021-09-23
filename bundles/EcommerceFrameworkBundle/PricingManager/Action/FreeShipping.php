@@ -34,8 +34,6 @@ class FreeShipping implements ActionInterface, CartActionInterface
 
         $list = $priceCalculator->getModificators();
         foreach ($list as &$modificator) {
-            // @var CartPriceModificatorInterface $modificator
-
             // remove shipping charge
             if ($modificator instanceof ShippingInterface) {
                 $modificator->setCharge(Decimal::zero());
