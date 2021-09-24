@@ -88,7 +88,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->generateLowQualityPreview();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
         }
     }
