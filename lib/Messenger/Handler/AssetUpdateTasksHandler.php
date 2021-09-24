@@ -76,7 +76,7 @@ class AssetUpdateTasksHandler
 
         try {
             $image->handleEmbeddedMetaData(true);
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
         }
 
