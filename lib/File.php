@@ -244,10 +244,11 @@ class File
     /**
      * @param FilesystemOperator $storage
      * @param string $storagePath
+     *
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath) {
-
+    public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath)
+    {
         if ($storagePath === '.') {
             return;
         }
