@@ -90,7 +90,17 @@ pimcore.settings.properties.predefined = Class.create({
         var inheritableCheck = new Ext.grid.column.Check({
             text: t("inheritable"),
             dataIndex: "inheritable",
-            width: 50
+            width: 50,
+            listeners: {
+                beforecheckchange: function (el, rowIndex, checked, record) {
+                    if(!record.data.writeable) {
+                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
         });
 
         var contentTypesStore = Ext.create('Ext.data.ArrayStore', {
