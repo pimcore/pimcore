@@ -947,15 +947,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     },
 
     getRelationFilterCondition: function (editor) {
-        var filterResult = [];
-        editor.store.getData().items.forEach(
+        var filterResult = editor.store.getData().items.map(
             function (item) {
-                 filterResult.push(item.data.type + "|" + item.data.id);
-            }
-        );
-        filterResult = filterResult.join(',');
+                return item.data.type + "|" + item.data.id;
+            });
 
-        return filterResult;
+        return filterResult.join(',');
     },
 
     getCellEditValue: function () {

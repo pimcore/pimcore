@@ -102,14 +102,12 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     },
 
     getRelationFilterCondition: function (editor) {
-        var filterResult = [];
-            editor.store.getData().items.forEach(
+        var filterResult = editor.store.getData().items.map(
                 function (item) {
-                     filterResult.push(item.data.type + "|" + item.data.id);
+                     return item.data.type + "|" + item.data.id;
                 });
-            filterResult = filterResult.join(',');
 
-         return filterResult;
+         return filterResult.join(',');
     },
 
     getLayoutEdit: function () {
