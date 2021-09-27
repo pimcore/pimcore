@@ -630,6 +630,7 @@ final class Requirements
                     $lcmsInstalled = true;
                     break;
                 }
+                $line = strtok($separator);
             }
 
             $checks[] = new Check([
