@@ -713,15 +713,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
-        if ($asset->getType() == 'image') {
+        if ($asset instanceof Asset\Image) {
             try {
-                $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                if($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                }
 
                 // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
-                if ($asset->getCustomSetting('imageWidth') && $asset->getCustomSetting('imageHeight')) {
+                if ($asset->getCustomSetting('imageDimensionsCalculated')) {
                     $tmpAsset['imageWidth'] = $asset->getCustomSetting('imageWidth');
                     $tmpAsset['imageHeight'] = $asset->getCustomSetting('imageHeight');
                 }
+
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of image, seems to be broken.');
             }
