@@ -55,7 +55,7 @@ class Mail extends Email
      *
      * @var int|null
      */
-    private $documentId;
+    private ?int $documentId = null;
 
     /**
      * Contains the dynamic Params for the Twig engine
