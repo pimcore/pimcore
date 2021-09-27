@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Pimcore\Db;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -65,6 +66,7 @@ class GeneratePagePreviews extends AbstractCommand
     protected function fetchItems(InputInterface $input) {
 
         $docs = new \Pimcore\Model\Document\Listing();
+        $db = Db::get();
 
         $parentIdOrPath = $input->getOption('parent');
         if($parentIdOrPath) {
@@ -75,7 +77,7 @@ class GeneratePagePreviews extends AbstractCommand
                 $parent = Document::getByPath($parentIdOrPath);
             }
             if ($parent instanceof Document) {
-                $conditions[] = "path LIKE '" . $docs->escapeLike($parent->getRealFullPath()) . "/%'";
+                $conditions[] = "path LIKE " . $db->quote($parent->getRealFullPath() . "%");
             } else {
                 $this->writeError($parentIdOrPath . ' is not a valid id or path!');
                 exit(1);
@@ -84,7 +86,7 @@ class GeneratePagePreviews extends AbstractCommand
 
         $regex = $input->getOption('regex');
         if($regex)
-            $conditions[] = "path NOT REGEXP '" . $regex . "'";
+            $conditions[] = "path NOT REGEXP " . $db->quote($regex);
 
         $filter = "type = 'page'";
         if(isset($conditions)) {
