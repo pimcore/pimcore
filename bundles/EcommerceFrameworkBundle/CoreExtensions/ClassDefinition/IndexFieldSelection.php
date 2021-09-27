@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\Concrete;
 class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Data\Extension\ColumnType;
+
     use Data\Extension\QueryColumnType;
 
     /**
@@ -227,7 +228,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param IndexFieldSelection|null $data
+     * @param ObjectData\IndexFieldSelection|null $data
      * @param Concrete|null $object
      * @param mixed $params
      *

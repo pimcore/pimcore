@@ -15,8 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document\Traits;
+namespace Pimcore\Model\Element\Traits;
 
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Schedule\Task\Listing;
 
@@ -28,9 +29,9 @@ trait ScheduledTasksTrait
     /**
      * Contains all scheduled tasks
      *
-     * @var Task[]
+     * @var Task[]|null
      */
-    protected $scheduledTasks = null;
+    protected $scheduledTasks;
 
     /**
      * @return Task[] the $scheduledTasks
@@ -39,7 +40,8 @@ trait ScheduledTasksTrait
     {
         if ($this->scheduledTasks === null) {
             $taskList = new Listing();
-            $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
+            $ctype = Service::getElementType($this);
+            $taskList->setCondition('`cid` = ? AND `ctype` = ?', [$this->getId(), $ctype]);
 
             $this->setScheduledTasks($taskList->load());
         }
@@ -62,17 +64,15 @@ trait ScheduledTasksTrait
     public function saveScheduledTasks()
     {
         $scheduledTasks = $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($scheduledTasks) && count($scheduledTasks) > 0) {
-            /** @var Task $task */
-            foreach ($scheduledTasks as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('document');
-                $task->save();
-            }
+        $ignoreIds = [];
+        $ctype = Service::getElementType($this);
+        foreach ($scheduledTasks as $task) {
+            $task->setDao(null);
+            $task->setCid($this->getId());
+            $task->setCtype($ctype);
+            $task->save();
+            $ignoreIds[] = $task->getId();
         }
+        $this->getDao()->deleteAllTasks($ignoreIds);
     }
 }

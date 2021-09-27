@@ -193,6 +193,12 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
+                boxLabel: t("enable_text_selection"),
+                name: "enableTextSelection",
+                value: this.datax.enableTextSelection
+            });
+            this.specificPanel.add({
+                xtype: "checkbox",
                 boxLabel: t("allow_to_create_new_object"),
                 name: "allowToCreateNewObject",
                 value: this.datax.allowToCreateNewObject
@@ -209,6 +215,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 value: t('async_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom"
             });
+
         }
 
         return this.layout;

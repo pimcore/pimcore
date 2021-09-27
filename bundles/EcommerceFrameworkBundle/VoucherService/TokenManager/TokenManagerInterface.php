@@ -130,11 +130,13 @@ interface TokenManagerInterface
     public function insertOrUpdateVoucherSeries();
 
     /**
-     * @return  int
+     * @return int
      */
     public function getFinalTokenLength();
 
     /**
+     * Removes reservations
+     *
      * @param int $duration
      *
      * @return bool

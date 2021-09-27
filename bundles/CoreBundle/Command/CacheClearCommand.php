@@ -32,13 +32,9 @@ class CacheClearCommand extends AbstractCommand
 {
     protected static $defaultName = 'pimcore:cache:clear';
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(private EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct();
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     protected function configure()

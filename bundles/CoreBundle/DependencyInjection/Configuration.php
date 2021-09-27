@@ -711,6 +711,14 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('types')
+                    ->info('list of supported document types')
+                    ->scalarPrototype()->end()
+                ->end()
+                ->arrayNode('valid_tables')
+                    ->info('list of supported documents_* tables')
+                    ->scalarPrototype()->end()
+                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -797,6 +805,9 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('direct_route_document_types')
+                            ->scalarPrototype()->end()
+                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -1778,6 +1789,26 @@ final class Configuration implements ConfigurationInterface
                                     return !$v['supports'] && !isset($v['support_strategy']);
                                 })
                                 ->thenInvalid('"supports" or "support_strategy" should be configured.')
+                            ->end()
+                            ->validate()
+                                ->ifTrue(function ($v) {
+                                    if (($v['type'] ?? 'workflow') === 'state_machine') {
+                                        foreach ($v['transitions'] ?? [] as $transition) {
+                                            if (count($transition['to']) > 1) {
+                                                return true;
+                                            }
+                                        }
+
+                                        foreach ($v['globalActions'] ?? [] as $transition) {
+                                            if (count($transition['to']) > 1) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+
+                                    return false;
+                                })
+                                ->thenInvalid('Type `state_machine` does not support multiple `to` definitions for transitions and global actions. Change definition or type to `workflow`.')
                             ->end()
                         ->end()
                     ->end()

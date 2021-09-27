@@ -34,6 +34,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
+    use Model\Element\Traits\ScheduledTasksTrait;
+
     /**
      * @internal
      *
@@ -84,15 +86,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * Contains all scheduled tasks
-     *
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
-
-    /**
      * @internal
      *
      * @var bool|null
@@ -109,7 +102,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * returns the class ID of the current object class
      *
-     * @return int
+     * @return string
      */
     public static function classId()
     {
@@ -190,7 +183,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         foreach ($subItems as $subItem) {
                             $subItemMessage = $subItem->getMessage();
                             if ($subItem instanceof Model\Element\ValidationException) {
-                                $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
+                                $contextStack = $subItem->getContextStack();
+                                if ($contextStack) {
+                                    $subItemMessage .= '[ ' . $contextStack[0] . ' ]';
+                                }
                             }
                             $subItemParts[] = $subItemMessage;
                         }
@@ -235,26 +231,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         if ($this->getClass()->getAllowInherit()) {
             $this->getDao()->saveChildData();
-        }
-    }
-
-    /**
-     * @internal
-     */
-    public function saveScheduledTasks(): void
-    {
-        // update scheduled tasks
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('object');
-                $task->save();
-            }
         }
     }
 
@@ -535,32 +511,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         return $this->omitMandatoryCheck;
-    }
-
-    /**
-     * @return Model\Schedule\Task[]
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Model\Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='object'", $this->getId());
-            $this->scheduledTasks = $taskList->load();
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return self
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
     }
 
     /**

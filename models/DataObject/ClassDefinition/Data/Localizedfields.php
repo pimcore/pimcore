@@ -27,7 +27,9 @@ use Pimcore\Tool;
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
+
     use Layout\Traits\LabelTrait;
+
     use DataObject\Traits\ClassSavedTrait;
 
     /**
@@ -142,14 +144,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     public $permissionView;
 
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     public $permissionEdit;
 
@@ -638,10 +640,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
 
@@ -659,10 +657,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         foreach ($this->getFieldDefinitions() as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
 
@@ -1255,7 +1249,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionView(): ?array
     {
@@ -1263,7 +1257,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param string|array|null $permissionView
+     * @param array|null $permissionView
      */
     public function setPermissionView($permissionView): void
     {
@@ -1271,7 +1265,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionEdit(): ?array
     {
@@ -1279,7 +1273,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param string|array|null $permissionEdit
+     * @param array|null $permissionEdit
      */
     public function setPermissionEdit($permissionEdit): void
     {

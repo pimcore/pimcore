@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -158,13 +159,12 @@ class PricingManager implements PricingManagerInterface
 
         $categories = [];
         foreach ($cart->getItems() as $item) {
-            if ($product = $item->getProduct()) {
-                if (method_exists($product, 'getCategories')) {
-                    $productCategories = $product->getCategories();
-                    if (is_array($productCategories)) {
-                        foreach ($productCategories as $c) {
-                            $categories[$c->getId()] = $c;
-                        }
+            $product = $item->getProduct();
+            if ($product instanceof CheckoutableInterface && method_exists($product, 'getCategories')) {
+                $productCategories = $product->getCategories();
+                if (is_array($productCategories)) {
+                    foreach ($productCategories as $c) {
+                        $categories[$c->getId()] = $c;
                     }
                 }
             }

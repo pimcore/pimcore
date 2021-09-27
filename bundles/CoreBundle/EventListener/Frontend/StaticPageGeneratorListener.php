@@ -40,34 +40,15 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class StaticPageGeneratorListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
+
     use StaticPageContextAwareTrait;
 
-    /**
-     * @var StaticPageGenerator
-     */
-    protected $staticPageGenerator;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    public function __construct(StaticPageGenerator $staticPageGenerator, DocumentResolver $documentResolver, RequestHelper $requestHelper, Config $config)
-    {
-        $this->staticPageGenerator = $staticPageGenerator;
-        $this->documentResolver = $documentResolver;
-        $this->requestHelper = $requestHelper;
-        $this->config = $config;
+    public function __construct(
+        protected StaticPageGenerator $staticPageGenerator,
+        protected DocumentResolver $documentResolver,
+        protected RequestHelper $requestHelper,
+        private Config $config
+    ) {
     }
 
     /**
@@ -118,10 +99,12 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
                 $content = $storage->read($filename);
                 $date = date(\DateTime::ISO8601, $storage->lastModified($filename));
 
-                $reponse = new Response($content, Response::HTTP_OK, [
+                $reponse = new Response(
+                    $content, Response::HTTP_OK, [
                     'Content-Type' => 'text/html',
                     'X-Pimcore-Static-Page-Last-Modified' => $date,
-                ]);
+                ]
+                );
 
                 $event->setResponse($reponse);
             }

@@ -509,30 +509,32 @@
     font-size: 11px;
 }
 
-.asset_folder_preview .thumb{
-    width: 250px;
-    height: 250px;
-}
-
-.asset_folder_preview .thumb td {
-    width: 250px;
-    height: 250px;
-}
-
 .asset_folder_preview .thumb-wrap{
     float: left;
+    width: 250px;
+    height: 250px;
     margin: 4px;
     margin-right: 0;
     padding: 5px;
     background: #ececec;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-.asset_folder_preview .thumb-wrap span{
+.asset_folder_preview .thumb{
+    width: 250px;
+    max-height: 220px;
+}
+
+.asset_folder_preview .filename {
     display: block;
     overflow: hidden;
     text-align: center;
     width: 250px;
+    position: absolute;
+    bottom: 3px;
+    left: 0;
 }
 
 .asset_folder_preview .x-view-over{
@@ -1996,6 +1998,10 @@ span.warning {
     height: 20px;
     float: left;
     margin-right: 5px;
+}
+.pimcore_quicksearch_picker .list-icon .class-icon {
+    width: 20px;
+    height: 20px;
 }
 
 .pimcore_quicksearch_picker .list-path {

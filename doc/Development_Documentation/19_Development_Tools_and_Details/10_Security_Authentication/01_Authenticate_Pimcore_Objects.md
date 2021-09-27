@@ -143,7 +143,7 @@ services:
     website_demo.security.password_hasher_factory:
         class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
         arguments:
-            - Pimcore\Security\Encoder\PasswordFieldEncoder
+            - Pimcore\Security\Hasher\PasswordFieldHasher
             - ['password']
 ```
 

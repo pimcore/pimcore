@@ -23,8 +23,11 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -368,11 +371,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data);
         }
 
-        if (!empty($data) and !is_numeric($data)) {
+        if (!empty($data) && !is_numeric($data)) {
             throw new Model\Element\ValidationException('invalid slider data');
         }
     }

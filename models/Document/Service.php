@@ -619,7 +619,7 @@ class Service extends Model\Element\Service
         /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
-            $hostUrl = Tool::getHostUrl(false, $request);
+            $hostUrl = Tool::getHostUrl(null, $request);
         }
 
         $url = $hostUrl . $doc->getRealFullPath();

@@ -26,6 +26,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
@@ -98,7 +100,9 @@ class Dao extends Model\Element\Dao
     {
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
-        if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+        $validTables = $documentsConfig['valid_tables'];
+        if (in_array($this->model->getType(), $validTables)) {
             $typeSpecificTable = 'documents_' . $this->model->getType();
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
@@ -319,14 +323,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Deletes all scheduled tasks assigned to the document.
-     */
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'document']);
-    }
-
-    /**
      * Quick check if there are children.
      *
      * @param bool|null $includingUnpublished
@@ -357,7 +353,7 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
-        if ($user and !$user->isAdmin()) {
+        if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 

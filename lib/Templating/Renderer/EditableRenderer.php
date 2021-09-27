@@ -40,7 +40,7 @@ class EditableRenderer implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
-    private ?EditmodeEditableDefinitionCollector $configCollector;
+    protected ?EditmodeEditableDefinitionCollector $configCollector;
 
     /**
      * @param EditableLoaderInterface $editableLoader

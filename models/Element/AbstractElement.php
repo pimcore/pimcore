@@ -28,6 +28,7 @@ use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface, DirtyIndicatorInterface
 {
     use ElementDumpStateTrait;
+
     use DirtyIndicatorTrait;
 
     /**

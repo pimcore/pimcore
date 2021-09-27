@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM gridconfigs WHERE id = ?', $id);
 
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception('gridconfig with id ' . $id . ' not found');
         }
 

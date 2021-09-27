@@ -170,6 +170,13 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.specificPanel.add({
             xtype: "checkbox",
+            boxLabel: t("enable_text_selection"),
+            name: "enableTextSelection",
+            value: this.datax.enableTextSelection
+        });
+
+        this.specificPanel.add({
+            xtype: "checkbox",
             boxLabel: t("enable_batch_edit_columns"),
             name: "enableBatchEdit",
             value: this.datax.enableBatchEdit

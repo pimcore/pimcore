@@ -68,17 +68,10 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit:function () {
 
-        var width = 200;
-        if (this.fieldConfig.width) {
-            width = this.fieldConfig.width;
-        }
-
         this.textLabel = Ext.create('Ext.Panel', {
             style: "margin-bottom: 10px;",
-            html: this.data.noteContent,
-            width: width
+            html: this.data.noteContent
         });
-
 
         this.checkBox = Ext.create('Ext.form.field.Checkbox', {
             name: this.fieldConfig.name,
@@ -91,25 +84,27 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
             }
         });
 
-
-        var labelWidth = 200;
-        if (this.fieldConfig.labelWidth) {
-            labelWidth = this.fieldConfig.labelWidth;
-        }
-
-        this.component = Ext.create('Ext.form.FieldContainer', {
+        var componentCfg = {
             layout: 'vbox',
             margin: '0 0 10 0',
             fieldLabel: this.fieldConfig.title,
-            labelWidth: labelWidth,
             combineErrors: false,
-            width: width,
             items: [this.checkBox, this.textLabel],
             componentCls: "object_field object_field_type_" + this.type,
             isDirty: function() {
                 return this.checkBox.isDirty()
             }.bind(this)
-        });
+        };
+
+        if (this.fieldConfig.labelWidth) {
+            componentCfg.labelWidth = this.fieldConfig.labelWidth;
+        }
+
+        if (this.fieldConfig.width) {
+            componentCfg.width = this.fieldConfig.width;
+        }
+
+        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
         return this.component;
     },

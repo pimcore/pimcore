@@ -38,6 +38,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;
+
     use DocumentTreeConfigTrait;
 
     protected function preSendDataActions(&$data, Model\Document $document, ?Version $draftVersion = null)
@@ -144,7 +145,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            // ensure editable are loaded
             $document->getEditables();
+        } else {
+            // ensure no editables (e.g. from session, version, ...) are still referenced
+            $document->setEditables([]);
         }
 
         if ($request->get('data')) {
@@ -278,7 +283,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
     {
-        $latestVersion = $document->getLatestVersion($this->getUser()->getId());
+        $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
@@ -337,7 +342,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     protected function handleTask($task, $page)
     {
         if ($task == 'publish' || $task == 'version') {
-            $page->deleteAutoSaveVersions($this->getUser()->getId());
+            $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
     }
 }

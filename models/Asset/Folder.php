@@ -54,7 +54,7 @@ class Folder extends Model\Asset
     public function setChildren($children)
     {
         $this->children = $children;
-        if (is_array($children) and count($children) > 0) {
+        if (is_array($children) && count($children) > 0) {
             $this->hasChildren = true;
         } else {
             $this->hasChildren = false;

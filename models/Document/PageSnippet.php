@@ -30,7 +30,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
  */
 abstract class PageSnippet extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * @internal
@@ -132,7 +132,7 @@ abstract class PageSnippet extends Model\Document
         $this->getEditables();
         $this->getDao()->deleteAllEditables();
 
-        if (is_array($this->getEditables()) and count($this->getEditables()) > 0) {
+        if (is_array($this->getEditables()) && count($this->getEditables()) > 0) {
             foreach ($this->getEditables() as $name => $editable) {
                 if (!$editable->getInherited()) {
                     $editable->setDao(null);

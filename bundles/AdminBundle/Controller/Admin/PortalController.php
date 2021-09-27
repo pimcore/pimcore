@@ -92,7 +92,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         $dashboards = $this->dashboardHelper->getAllDashboards();
         $key = trim($request->get('key'));
 
-        if ($dashboards[$key]) {
+        if (isset($dashboards[$key])) {
             return $this->adminJson(['success' => false, 'message' => 'name_already_in_use']);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);

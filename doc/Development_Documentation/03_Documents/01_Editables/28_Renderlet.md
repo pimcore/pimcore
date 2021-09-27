@@ -52,7 +52,7 @@ The code below shows how to use renderlet to create gallery based on it.
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
-            "controller" : "App\\Controller\\ContentController::myGallery",
+            "controller" : "App\\Controller\\ContentController::myGalleryAction",
             "title" : "Drag an asset folder here to get a gallery",
             "height" : 400
         })
@@ -90,7 +90,7 @@ Of course, to limit access to the renderlet, you can use the `type` configuratio
 
 ### Create View
 
-Now you have to create the template file at: `website/views/scripts/content/my-gallery.php`
+Now you have to create the template file at: `templates/content/my_gallery.html.twig`
 
 ```twig
 {% if assets %}

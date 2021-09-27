@@ -54,6 +54,7 @@ abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
+
         registerBundles as microKernelRegisterBundles;
     }
 

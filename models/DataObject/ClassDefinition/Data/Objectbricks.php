@@ -249,7 +249,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
             $data = [];
 
-            if ($fielddefinition instanceof ManyToOneRelation) {
+            if ($fielddefinition instanceof ManyToOneRelation && isset($relations[0])) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
@@ -558,9 +558,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
-        $code .= "\t" . 'if (!$data) { ' . "\n";
+        $code .= "\t" . 'if (!$data) {' . "\n";
 
-        $code .= "\t\t" . 'if (\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
+        $code .= "\t\t" . 'if (\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) {' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";

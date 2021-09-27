@@ -40,7 +40,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
 
         $quantityScaleKey = (string) $quantityScale;
 
-        if (!array_key_exists($quantityScaleKey, $this->priceInfos[$pId]) || !$this->priceInfos[$pId][$quantityScaleKey]) {
+        if (empty($this->priceInfos[$pId][$quantityScaleKey])) {
             $priceInfo = $this->initPriceInfoInstance($quantityScale, $product, $products);
             $this->priceInfos[$pId][$quantityScaleKey] = $priceInfo;
         }

@@ -35,7 +35,7 @@ class MultiSelectCategory extends AbstractFilterType
             throw new InvalidConfigException('invalid configuration');
         }
 
-        if ($filterDefinition->getAvailableCategories()) {
+        if (method_exists($filterDefinition, 'getAvailableCategories') && $filterDefinition->getAvailableCategories()) {
             /** @var ElementInterface $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[(string) $rel->getId()] = true;

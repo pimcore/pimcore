@@ -278,6 +278,8 @@ pimcore.settings.document.doctypes = Class.create({
             }
         });
 
+        pimcore.plugin.broker.fireEvent("prepareDocumentTypesGrid", this.grid, this);
+
         return this.grid;
     },
 

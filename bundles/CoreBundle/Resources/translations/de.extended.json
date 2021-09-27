@@ -134,7 +134,7 @@
     "mobile": "Mobil",
     "group_by_path": "Nach Pfad gruppieren",
     "flush": "Ausgabepuffer leeren (flush)",
-    "show_close_warning": "Warnung beim schließen anzeigen",
+    "show_close_warning": "Warnung beim Schließen anzeigen",
     "matching_text": "Textübereinstimmung",
     "any": "irgend",
     "http_method": "HTTP Methode",
@@ -656,5 +656,10 @@
     "json_converter": "Die Optionen formatieren",
     "json_converter_link": "JSON Formatierer",
     "preview_generator_reference": "Vorschau Generator Klasse oder Dienstname",
-    "max_characters": "Maximum Characters"
+    "max_characters": "Maximale Zeichen",
+    "min_length": "Min Length",
+    "calculatedValue_calculatortype": "Calculator type",
+    "calculatedValue_calculatortype_class": "Class",
+    "calculatedValue_calculatortype_expression": "Expression",
+    "calculatedValue_calculatorexpression": "Calculator expression"
 }

@@ -283,9 +283,9 @@ trait ImageThumbnailTrait
      *
      * @param array $pathReference
      *
-     * @return string
+     * @return string|null
      */
-    protected function convertToWebPath(array $pathReference): string
+    protected function convertToWebPath(array $pathReference): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;

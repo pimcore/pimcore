@@ -941,6 +941,15 @@
     "auto_save": "Automatisch speichern",
     "save_draft": "Entwurf speichern",
     "selected_grid_columns": "Ausgewählte Grid-Spalten",
-    "ungrouped": "ungrouped",
-    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?"
+    "ungrouped": "nicht gruppiert",
+    "reindex_warning": "Wenn Sie von der alphabetischen in die manuelle Sortierreihenfolge ändern, werden alle Elemente neu indiziert. Möchten Sie fortfahren?",
+    "static_generator": "Static Page Generator",
+    "static_generator_enable": "Enable server side static rendering",
+    "static_generator_lifetime": "Lifetime (in minutes) for static page (optional)",
+    "last_generated": "Last generated",
+    "user_inactive": "User is not active",
+    "user_no_email_address": "User has no email address",
+    "user_no_password": "User has no password",
+    "user_unknown": "User unknown",
+    "lost_password_email_error": "Could not send password recovery email"
 }

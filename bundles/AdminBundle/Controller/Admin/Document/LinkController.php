@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -93,11 +94,16 @@ class LinkController extends DocumentControllerBase
         $link->setObject(null);
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-        $link->getScheduledTasks();
 
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $link->getScheduledTasks()
+        );
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);

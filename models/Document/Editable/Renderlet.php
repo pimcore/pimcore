@@ -338,7 +338,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Object|null $o
      *
      * @return Document\Editable\Renderlet
      */
@@ -393,7 +393,7 @@ class Renderlet extends Model\Document\Editable
     public function rewriteIds($idMapping)
     {
         $type = (string) $this->type;
-        if ($type && array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+        if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->setId($idMapping[$this->type][$this->getId()]);
             $this->setO(null);
         }

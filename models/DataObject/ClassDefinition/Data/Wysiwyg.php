@@ -26,9 +26,13 @@ use Pimcore\Tool\Text;
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -305,7 +309,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
@@ -372,25 +376,28 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
         $data = $this->getDataFromObjectParam($container, $params);
-        $html = new DomCrawler($data);
-        $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-        /** @var \DOMElement $el */
-        foreach ($es as $el) {
-            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
-                $type = $el->getAttribute('pimcore_type');
-                $id = (int) $el->getAttribute('pimcore_id');
+        if ($data) {
+            $html = new DomCrawler($data);
+            $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-                if ($idMapping[$type][$id] ?? false) {
-                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
+            /** @var \DOMElement $el */
+            foreach ($es as $el) {
+                if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                    $type = $el->getAttribute('pimcore_type');
+                    $id = (int) $el->getAttribute('pimcore_id');
+
+                    if ($idMapping[$type][$id] ?? false) {
+                        $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
+                    }
                 }
             }
+
+            $data = $html->html();
+
+            $html->clear();
+            unset($html);
         }
-
-        $data = $html->html();
-
-        $html->clear();
-        unset($html);
 
         return $data;
     }

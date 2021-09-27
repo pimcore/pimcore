@@ -143,7 +143,10 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
+        $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
+        $this->markMeDirty(false);
+
+        return $return;
     }
 
     /**
@@ -255,7 +258,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function getObjectId()
     {
-        return $this->objectId;
+        return (int) $this->objectId;
     }
 
     /**

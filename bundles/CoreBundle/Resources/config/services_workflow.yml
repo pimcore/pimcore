@@ -19,6 +19,13 @@ services:
         class: Pimcore\Workflow\MarkingStore\StateTableMarkingStore
         abstract: true
 
+    workflow.marking_store.multiple_state:
+        class: Symfony\Component\Workflow\MarkingStore\MethodMarkingStore
+        abstract: true
+
+    workflow.marking_store.single_state:
+        class: Symfony\Component\Workflow\MarkingStore\MethodMarkingStore
+        abstract: true
 
     workflow.marking_store.data_object_splitted_state:
         class: Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore

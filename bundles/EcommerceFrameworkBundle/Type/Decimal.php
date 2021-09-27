@@ -146,7 +146,7 @@ class Decimal
         } else {
             throw new \TypeError(
                 'Expected (int, float, string, self), but received ' .
-                (is_object($amount) ? get_class($amount) : gettype($amount))
+                get_debug_type($amount)
             );
         }
     }
@@ -762,7 +762,7 @@ class Decimal
         throw new \InvalidArgumentException(sprintf(
             'Value "%s" with type "%s" is no valid operand',
             (is_scalar($operand)) ? $operand : (string)$operand,
-            (is_object($operand) ? get_class($operand) : gettype($operand))
+            get_debug_type($operand)
         ));
     }
 

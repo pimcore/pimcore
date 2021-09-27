@@ -221,7 +221,7 @@ final class StateConfig
         } elseif (!is_array($options)) {
             throw new \InvalidArgumentException(sprintf(
                 'Expected options as bool or as array, but got %s',
-                is_object($options) ? get_class($options) : gettype($options)
+                get_debug_type($options)
             ));
         }
 

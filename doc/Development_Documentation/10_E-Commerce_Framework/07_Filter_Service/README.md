@@ -168,7 +168,7 @@ $filterDefinition = //TODO ...get from somewhere;
 
 // create and init filter service
 $filterService = $ecommerceFactory->getFilterService();
-\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $productListing, $params, $viewModel, $filterService, true);
+(new \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper)->setupProductList($filterDefinition, $productListing, $params, $filterService, true, true);
 $templateParams['filterService'] = $filterService;
 $templateParams['filterDefinition'] = $filterDefinition;
 

@@ -43,7 +43,7 @@ trait AllowDocumentRelationTrait
         $allowed = true;
         if (!$this->getDocumentsAllowed()) {
             $allowed = false;
-        } elseif ($this->getDocumentsAllowed() and is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
+        } elseif ($this->getDocumentsAllowed() && is_array($allowedDocumentTypes) && count($allowedDocumentTypes) > 0) {
             //check for allowed asset types
             $allowedTypes = [];
             foreach ($allowedDocumentTypes as $t) {

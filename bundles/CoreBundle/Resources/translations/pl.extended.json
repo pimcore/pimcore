@@ -458,7 +458,7 @@
     "data_cache": "Cache danych",
     "log_search_type": "Typ logowania",
     "quantityValue_field": "Wartość Ilościowa",
-    "calculatedValue_explanation": "See the official documentation to learn more about which methods need to be implemented",
+    "calculatedValue_explanation": "See the official documentation to learn more about defining expressions or classes",
     "calculatedValue_field": "Obliczona Wartość",
     "web2print_baseURL": "Bazowy URL",
     "web2print_baseURL_txt": "BaseURL for PDFreactor. This is prefixed to each relative url in print templates when creating PDFs.",
@@ -656,5 +656,10 @@
     "json_converter": "Formatting the Options",
     "json_converter_link": "JSON Formatter",
     "preview_generator_reference": "Preview Generator Class or Service Name",
-    "max_characters": "Maximum Characters"
+    "max_characters": "Maximum Characters",
+    "min_length": "Min Length",
+    "calculatedValue_calculatortype": "Calculator type",
+    "calculatedValue_calculatortype_class": "Class",
+    "calculatedValue_calculatortype_expression": "Expression",
+    "calculatedValue_calculatorexpression": "Calculator expression"
 }

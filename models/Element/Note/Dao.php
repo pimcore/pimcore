@@ -36,9 +36,10 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM notes WHERE id = ?', $id);
 
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception('Note item with id ' . $id . ' not found');
         }
+
         $this->assignVariablesToModel($data);
 
         // get key-value data

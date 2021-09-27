@@ -27,16 +27,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InternalMigrationHelpersCommand extends AbstractCommand
 {
-    private FilteredTableMetadataStorage $metadataStorage;
-
-    private DependencyFactory $dependencyFactory;
-
-    public function __construct(DependencyFactory $dependencyFactory, FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
+    public function __construct(private DependencyFactory $dependencyFactory, private FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
     {
         parent::__construct($name);
-
-        $this->metadataStorage = $metadataStorage;
-        $this->dependencyFactory = $dependencyFactory;
     }
 
     protected function configure()

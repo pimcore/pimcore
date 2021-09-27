@@ -42,6 +42,44 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
 
         $super();
 
+
+        const calculatorClass = Ext.create('Ext.form.TextField', {
+            width: 600,
+            fieldLabel: t('calculatedValue_calculatorclass'),
+            labelWidth: 140,
+            name: 'calculatorClass',
+            value: this.datax.calculatorClass,
+            hidden: this.datax.calculatorType == 'expression'
+        });
+        const calculatorExpression = Ext.create('Ext.form.TextField', {
+            width: 600,
+            fieldLabel: t('calculatedValue_calculatorexpression'),
+            labelWidth: 140,
+            name: 'calculatorExpression',
+            value: this.datax.calculatorExpression,
+            hidden: this.datax.calculatorType == 'class'
+        });
+
+        const calculatorType = Ext.create('Ext.form.ComboBox', {
+            xtype: 'textfield',
+            fieldLabel: t('calculatedValue_calculatortype'),
+            labelWidth: 140,
+            name: 'calculatorType',
+            displayField: 'name',
+            valueField: 'value',
+            store: [
+                { value: 'class', name: t('calculatedValue_calculatortype_class') },
+                { value: 'expression', name: t('calculatedValue_calculatortype_expression') },
+            ],
+            listeners: {
+                change: function(combo, newValue, oldValue) {
+                    calculatorExpression.setVisible(newValue == 'expression');
+                    calculatorClass.setVisible(newValue == 'class');
+                }
+            },
+            value: this.datax.calculatorType
+        });
+
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
@@ -75,14 +113,9 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
                 value: this.datax.columnLength,
                 labelWidth: 140
             },
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("calculatedValue_calculatorclass"),
-                labelWidth: 140,
-                name: 'calculatorClass',
-                value: this.datax.calculatorClass
-            },
+            calculatorType,
+            calculatorClass,
+            calculatorExpression,
             {
                 xtype: "displayfield",
                 hideLabel: true,

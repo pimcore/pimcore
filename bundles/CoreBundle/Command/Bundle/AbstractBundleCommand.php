@@ -27,16 +27,9 @@ use Symfony\Component\Console\Input\InputOption;
  */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
-    /**
-     * @var PimcoreBundleManager
-     */
-    protected $bundleManager;
-
-    public function __construct(PimcoreBundleManager $bundleManager, ?string $name = null)
+    public function __construct(protected PimcoreBundleManager $bundleManager, ?string $name = null)
     {
         parent::__construct($name);
-
-        $this->bundleManager = $bundleManager;
     }
 
     protected function configureDescriptionAndHelp(string $description, string $help = null): self

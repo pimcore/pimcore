@@ -32,47 +32,17 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
     /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var RequestMatcherFactory
-     */
-    protected $requestMatcherFactory;
-
-    /**
-     * @var array
-     */
-    protected $excludeRoutes = [];
-
-    /**
      * @var RequestMatcherInterface[]
      */
     protected $excludeMatchers;
 
-    /**
-     * @var SymfonyWebDebugToolbarListener|null
-     */
-    protected $debugToolbarListener;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
     public function __construct(
-        RequestHelper $requestHelper,
-        RequestMatcherFactory $requestMatcherFactory,
-        ?SymfonyWebDebugToolbarListener $debugToolbarListener,
-        EventDispatcherInterface $eventDispatcher,
-        array $excludeRoutes
+        protected RequestHelper $requestHelper,
+        protected RequestMatcherFactory $requestMatcherFactory,
+        protected ?SymfonyWebDebugToolbarListener $debugToolbarListener,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected array $excludeRoutes
     ) {
-        $this->requestHelper = $requestHelper;
-        $this->requestMatcherFactory = $requestMatcherFactory;
-        $this->excludeRoutes = $excludeRoutes;
-        $this->debugToolbarListener = $debugToolbarListener;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

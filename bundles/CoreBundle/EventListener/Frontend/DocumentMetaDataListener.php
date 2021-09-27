@@ -33,26 +33,14 @@ class DocumentMetaDataListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
-
-    /**
-     * @var DocumentResolverService
-     */
-    protected $documentResolverService;
-
-    /**
-     * @var HeadMeta
-     */
-    protected $headMeta;
+    public const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
 
     /**
      * @param DocumentResolverService $documentResolverService
      * @param HeadMeta $headMeta
      */
-    public function __construct(DocumentResolverService $documentResolverService, HeadMeta $headMeta)
+    public function __construct(protected DocumentResolverService $documentResolverService, protected HeadMeta $headMeta)
     {
-        $this->documentResolverService = $documentResolverService;
-        $this->headMeta = $headMeta;
     }
 
     /**

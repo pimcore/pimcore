@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Ternary operator condition is always false\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Bundle/ListCommand.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
@@ -14,16 +9,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -39,11 +24,6 @@ parameters:
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
-
-		-
-			message: "#^Instanceof between Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ClassDefinition\\\\IndexFieldSelection\\|null and Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelection.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -71,54 +51,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Interpreter/DefaultClassificationStore.php
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/AbstractWorker.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractVoucherSeries.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 3
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -131,69 +66,14 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PriceSystem/CachingPriceSystem.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Tools/SessionConfigurator.php
-
-		-
 			message: "#^Call to function is_scalar\\(\\) with Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
 
 		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 2
-			path: lib/Config/Config.php
-
-		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: lib/Db/Connection.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
-
-		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: lib/Extension/Bundle/Config/StateConfig.php
 
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
@@ -204,16 +84,6 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Mail.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: lib/Navigation/Renderer/AbstractRenderer.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
-			count: 1
-			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
 
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"

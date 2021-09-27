@@ -34,11 +34,8 @@ class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInte
 
     protected $documents;
 
-    protected $documentStack;
-
-    public function __construct(DocumentStack $documentStack)
+    public function __construct(protected DocumentStack $documentStack)
     {
-        $this->documentStack = $documentStack;
     }
 
     /**

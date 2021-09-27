@@ -53,13 +53,13 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'indexedValues' => $values,
             'document' => $this->request->get('contentDocument'),
             'fieldname' => $filterDefinition->getField(),
-            'rootCategory' => $filterDefinition->getRootCategory(),
+            'rootCategory' => method_exists($filterDefinition, 'getRootCategory') ? $filterDefinition->getRootCategory() : null,
             'resultCount' => $productList->count(),
         ];
     }
 
     /**
-     * @param FilterCategory $filterDefinition
+     * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      * @param array $params
@@ -74,7 +74,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$isReload) {
+        } elseif (empty($value) && !$isReload && method_exists($filterDefinition, 'getPreSelect')) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

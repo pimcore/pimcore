@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
-use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends AbstractFilterType
 {
@@ -38,7 +37,7 @@ class NumberRange extends AbstractFilterType
     }
 
     /**
-     * @param FilterNumberRange $filterDefinition
+     * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      * @param array $params
@@ -52,8 +51,8 @@ class NumberRange extends AbstractFilterType
         $value = $params[$field] ?? null;
 
         if (empty($value)) {
-            $value['from'] = $filterDefinition->getPreSelectFrom();
-            $value['to'] = $filterDefinition->getPreSelectTo();
+            $value['from'] = method_exists($filterDefinition, 'getPreSelectFrom') ? $filterDefinition->getPreSelectFrom() : null;
+            $value['to'] = method_exists($filterDefinition, 'getPreSelectTo') ? $filterDefinition->getPreSelectTo() : null;
         }
 
         $currentFilter[$field] = $value;

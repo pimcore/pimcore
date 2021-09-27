@@ -55,7 +55,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
             'fieldname' => self::FIELDNAME,
-            'rootCategory' => $filterDefinition->getRootCategory(),
+            'rootCategory' => method_exists($filterDefinition, 'getRootCategory') ? $filterDefinition->getRootCategory() : null,
             'resultCount' => $productList->count(),
         ];
     }

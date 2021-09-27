@@ -16,8 +16,10 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -37,6 +39,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SearchController extends AdminController
 {
+    use AdminStyleTrait;
+
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
      *
@@ -173,7 +177,7 @@ class SearchController extends AdminController
             }
         }
 
-        if (is_array($types) and !empty($types[0])) {
+        if (is_array($types) && !empty($types[0])) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -184,7 +188,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) and !empty($subtypes[0])) {
+        if (is_array($subtypes) && !empty($subtypes[0])) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -192,7 +196,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
+        if (is_array($classnames) && !empty($classnames[0])) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -480,11 +484,7 @@ class SearchController extends AdminController
                     'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
-                if ($element instanceof Asset) {
-                    $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
-                } else {
-                    $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
-                }
+                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
@@ -524,7 +524,7 @@ class SearchController extends AdminController
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i === 0) {
+            if (strlen($shortPath) <= 50 || $i == 0) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');

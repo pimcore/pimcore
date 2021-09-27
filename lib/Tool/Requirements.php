@@ -322,6 +322,25 @@ final class Requirements
             'state' => $queryCheck ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
+        // With RECURSIVE
+        $queryCheck = true;
+
+        try {
+            $db->query(
+                'WITH RECURSIVE counter AS (
+                    SELECT 1 as n UNION ALL SELECT n + 1 FROM counter WHERE n < 10
+                )
+                SELECT * from counter'
+            );
+        } catch (\Exception $e) {
+            $queryCheck = false;
+        }
+
+        $checks[] = new Check([
+            'name' => 'WITH RECURSIVE',
+            'state' => $queryCheck ? Check::STATE_OK : Check::STATE_ERROR,
+        ]);
+
         return $checks;
     }
 

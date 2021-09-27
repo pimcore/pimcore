@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM schedule_tasks WHERE id = ?', $id);
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception('there is no task for the requested id');
         }
         $this->assignVariablesToModel($data);

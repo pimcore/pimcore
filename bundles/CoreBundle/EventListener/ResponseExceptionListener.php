@@ -38,49 +38,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
-
-    /**
-     * @var DocumentRenderer
-     */
-    protected $documentRenderer;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var ConnectionInterface
-     */
-    protected $db;
-
-    /**
-     * @var Document\Service
-     */
-    protected $documentService;
-
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
 
     /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
+     * @param Config $config
+     * @param Document\Service $documentService
+     * @param SiteResolver $siteResolver
      */
     public function __construct(
-        DocumentRenderer $documentRenderer,
-        ConnectionInterface $db,
-        Config $config,
-        Document\Service $documentService,
-        SiteResolver $siteResolver
+        protected DocumentRenderer $documentRenderer,
+        protected ConnectionInterface $db,
+        protected Config $config,
+        protected Document\Service $documentService,
+        protected SiteResolver $siteResolver
     ) {
-        $this->documentRenderer = $documentRenderer;
-        $this->db = $db;
-        $this->config = $config;
-        $this->documentService = $documentService;
-        $this->siteResolver = $siteResolver;
     }
 
     /**

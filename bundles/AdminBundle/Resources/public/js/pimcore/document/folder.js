@@ -31,7 +31,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         if (this.isAllowed("properties")) {
             try {
-                this.properties = new pimcore.document.properties(this, "document");
+                this.properties = new pimcore.document.properties(this, "document", true);
             } catch (e) {
                 console.log(e);
             }

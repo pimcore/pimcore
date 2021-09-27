@@ -31,9 +31,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
+
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;
+
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 

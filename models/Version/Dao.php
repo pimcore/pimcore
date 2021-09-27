@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM versions WHERE id = ?', $id);
 
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception('version with id ' . $id . ' not found');
         }
 

@@ -47,7 +47,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         height: 88,
                         frame: true
                     });
-                    return '<img src="' + path + '" />';
+                    return '<img src="' + path + '" loading="lazy" />';
                 }
             }.bind(this, field.key)
         };

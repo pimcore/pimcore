@@ -324,7 +324,6 @@ final class Config implements Countable, Iterator, ArrayAccess
      */
     public function merge(Config $merge)
     {
-        /** @var Config $value */
         foreach ($merge as $key => $value) {
             if (array_key_exists($key, $this->data)) {
                 if (is_int($key)) {

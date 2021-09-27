@@ -46,4 +46,11 @@ init-connect='SET NAMES utf8mb4'
 lower_case_table_names=1
 ```
 
-Setting `lower_case_table_names=1` makes sure that tables for Pimcore classes are created in lower case even though their class names contain capital letters.
+Setting `lower_case_table_names=1` makes sure that tables for Pimcore classes are created in lower case even though their class names contain capital letters. Starting with MySQL 8, you can no longer set the `lower_case_table_names` option after the data directory has been initialized. If the directory was already initialized with a different `lower_case_table_names` setting, MySQL will fail to start (`Different lower_case_table_names settings for server and data dictionary`). To fix this, place the `pimcore.cnf` file in the config directory, remove the MySQL data directory and run `mysqld --initialize`. This will delete all databases, so backup the existing databases with `mysqldump` before deleting the data directory.
+
+```bash
+rm -rf /var/lib/mysql
+mkdir /var/lib/mysql
+chown mysql:mysql /var/lib/mysql
+mysqld --initialize
+```

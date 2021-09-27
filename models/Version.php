@@ -193,7 +193,7 @@ final class Version extends AbstractModel
 
         $data = $this->getData();
         // if necessary convert the data to save it to filesystem
-        if (is_object($data) or is_array($data)) {
+        if (is_object($data) || is_array($data)) {
 
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
             $fromRuntime = null;

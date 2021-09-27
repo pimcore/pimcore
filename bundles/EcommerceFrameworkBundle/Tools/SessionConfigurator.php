@@ -68,9 +68,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
 
         foreach ($bagNames as $bagName) {
             $sessionBag = $session->getBag($bagName);
-            if ($sessionBag) {
-                $sessionBag->clear();
-            }
+            $sessionBag->clear();
         }
     }
 }

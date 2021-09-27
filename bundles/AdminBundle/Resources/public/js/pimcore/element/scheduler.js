@@ -38,6 +38,7 @@ pimcore.element.scheduler = Class.create({
                     d = new Date(intval(rawTask.date) * 1000);
 
                     td = [
+                        rawTask.id,
                         d,
                         Ext.Date.format(d, "H:i"),
                         rawTask.action
@@ -53,6 +54,7 @@ pimcore.element.scheduler = Class.create({
             }
 
             var storeFields = [
+                "id",
                 {
                     name: "date",
                     convert: function (v, rec) {
@@ -62,16 +64,17 @@ pimcore.element.scheduler = Class.create({
                         }
                         return ret;
                     }
-                }, {
-                name: "time",
-                convert: function (v, rec) {
-                    var ret = v;
-                    if (v instanceof Date) {
-                        ret = Ext.Date.format(v, "H:i");
+                },
+                {
+                    name: "time",
+                    convert: function (v, rec) {
+                        var ret = v;
+                        if (v instanceof Date) {
+                            ret = Ext.Date.format(v, "H:i");
+                        }
+                        return ret;
                     }
-                    return ret;
-                }
-            },
+                },
                 "action"
             ];
 

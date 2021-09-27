@@ -33,6 +33,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -56,7 +57,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
+
     use ElementEditLockHelperTrait;
+
     use ApplySchedulerDataTrait;
 
     /**
@@ -113,7 +116,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $asset = clone $asset;
-        $asset->getScheduledTasks();
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
@@ -205,6 +207,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :
             $request->getSchemeAndHttpHost() . $frontendPath;
+
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $asset->getScheduledTasks()
+        );
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -840,7 +849,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             if ($allowUpdate) {
-                if ($request->get('filename') != $asset->getFilename() and !$asset->isAllowed('rename')) {
+                if ($request->get('filename') != $asset->getFilename() && !$asset->isAllowed('rename')) {
                     unset($updateData['filename']);
                     Logger::debug('prevented renaming asset because of missing permissions ');
                 }
@@ -1643,12 +1652,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $storage = Tool\Storage::get('thumbnail');
         if ($storage->fileExists($storagePath)) {
+            $fs = $storage->fileSize($storagePath);
             $stream = $storage->readStream($storagePath);
 
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [
                 'Content-Type' => 'video/mp4',
+                'Content-Length' => $fs,
+                'Accept-Ranges' => 'bytes',
             ]);
         } else {
             throw $this->createNotFoundException('Video thumbnail not found');

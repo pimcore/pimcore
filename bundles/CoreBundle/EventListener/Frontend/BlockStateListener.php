@@ -33,19 +33,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-    use PimcoreContextAwareTrait;
 
-    /**
-     * @var BlockStateStack
-     */
-    protected $blockStateStack;
+    use PimcoreContextAwareTrait;
 
     /**
      * @param BlockStateStack $blockStateStack
      */
-    public function __construct(BlockStateStack $blockStateStack)
+    public function __construct(protected BlockStateStack $blockStateStack)
     {
-        $this->blockStateStack = $blockStateStack;
     }
 
     /**

@@ -26,10 +26,15 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+
     use Extension\QueryColumnType;
+
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
+
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**
@@ -125,6 +130,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @var array
      */
     public $documentTypes = [];
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public $enableTextSelection = false;
 
     /**
      * @return bool
@@ -250,7 +262,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return $return;
-        } elseif (is_array($data) and count($data) === 0) {
+        } elseif (is_array($data) && count($data) === 0) {
             //give empty array if data was not null
             return [];
         } else {
@@ -497,7 +509,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
@@ -607,7 +619,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -908,6 +920,22 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function isOptimizedAdminLoading(): bool
     {
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableTextSelection(): bool
+    {
+        return $this->enableTextSelection;
+    }
+
+    /**
+     * @param bool $enableTextSelection
+     */
+    public function setEnableTextSelection(bool $enableTextSelection): void
+    {
+        $this->enableTextSelection = $enableTextSelection;
     }
 
     /**

@@ -31,6 +31,7 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -45,6 +46,8 @@ use Symfony\Component\Mime\MimeTypes;
  */
 class Asset extends Element\AbstractElement
 {
+    use ScheduledTasksTrait;
+
     use TemporaryFileHelperTrait;
 
     /**
@@ -200,13 +203,6 @@ class Asset extends Element\AbstractElement
      * @var bool|null
      */
     protected $hasSiblings;
-
-    /**
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
 
     /**
      * @internal
@@ -1753,48 +1749,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='asset'", $this->getId());
-            $this->setScheduledTasks($taskList->load());
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return $this
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
-    }
-
-    private function saveScheduledTasks()
-    {
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('asset');
-                $task->save();
-            }
-        }
     }
 
     /**

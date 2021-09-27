@@ -93,6 +93,7 @@ pimcore.notification.helper.showNotifications = function (notifications) {
 pimcore.notification.helper.markAsRead = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_markasread', {id: id}),
+        method: 'PUT',
         success: function (response) {
             if (callback) {
                 callback();
@@ -158,6 +159,7 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
 pimcore.notification.helper.delete = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_delete', {id: id}),
+        method: 'DELETE',
         success: function (response) {
             if (callback) {
                 callback();
@@ -169,6 +171,7 @@ pimcore.notification.helper.delete = function (id, callback) {
 pimcore.notification.helper.deleteAll = function (callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_deleteall'),
+        method: 'DELETE',
         success: function (response) {
             if (callback) {
                 callback();

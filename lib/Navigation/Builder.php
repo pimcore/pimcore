@@ -26,7 +26,7 @@ use Pimcore\Navigation\Page\Url;
 /**
  * @internal
  */
-final class Builder
+class Builder
 {
     /**
      * @var RequestHelper
@@ -309,7 +309,7 @@ final class Builder
                 continue;
             }
 
-            if (($child instanceof Document\Folder or $child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
+            if (($child instanceof Document\Folder || $child instanceof Document\Page || $child instanceof Document\Link) && $child->getProperty('navigation_name')) {
                 $path = $child->getFullPath();
                 if ($child instanceof Document\Link) {
                     $path = $child->getHref();

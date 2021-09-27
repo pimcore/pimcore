@@ -28,13 +28,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GenerateStaticPagesCommand extends AbstractCommand
 {
-    protected StaticPageGenerator $staticPageGenerator;
-
-    public function __construct(StaticPageGenerator $staticPageGenerator)
+    public function __construct(protected StaticPageGenerator $staticPageGenerator)
     {
         parent::__construct();
-
-        $this->staticPageGenerator = $staticPageGenerator;
     }
 
     protected function configure()

@@ -33,22 +33,8 @@ use Twig\Environment;
 class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @var Environment
-     */
-    protected $twig;
 
     /**
      * @var array
@@ -56,13 +42,10 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     protected $globalsStack = [];
 
     public function __construct(
-        DocumentResolver $documentResolver,
-        EditmodeResolver $editmodeResolver,
-        Environment $twig
+        protected DocumentResolver $documentResolver,
+        protected EditmodeResolver $editmodeResolver,
+        protected Environment $twig
     ) {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->twig = $twig;
     }
 
     /**

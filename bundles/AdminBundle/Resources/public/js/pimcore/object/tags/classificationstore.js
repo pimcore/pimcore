@@ -65,16 +65,18 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 var currentLanguage = this.frontendLanguages[i];
 
                 var metadataForLanguage = this.metaData[currentLanguage];
-                var dataKeys = Object.keys(metadataForLanguage);
+                if (metadataForLanguage) {
+                    var dataKeys = Object.keys(metadataForLanguage);
 
-                for (var k = 0; k < dataKeys.length; k++) {
-                    var dataKey = dataKeys[k];
-                    var metadataForKey = metadataForLanguage[dataKey];
-                    if (metadataForKey.inherited) {
-                        this.keysToWatch.push({
-                            lang: currentLanguage,
-                            key: dataKey
-                        });
+                    for (var k = 0; k < dataKeys.length; k++) {
+                        var dataKey = dataKeys[k];
+                        var metadataForKey = metadataForLanguage[dataKey];
+                        if (metadataForKey.inherited) {
+                            this.keysToWatch.push({
+                                lang: currentLanguage,
+                                key: dataKey
+                            });
+                        }
                     }
                 }
             }
@@ -578,11 +580,15 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var newGroupIds = [];
 
-        for (var groupId in data) {
+        var dataArray = Object.values(data);
+        dataArray.sort((a, b) => (a.sorter > b.sorter) ? 1 : -1);
+
+        dataArray.forEach(function(groupData) {
+            var groupId = groupData.id;
             if (!this.activeGroups[groupId]) {
                 newGroupIds.push(groupId);
             }
-        }
+        }, this);
 
         if (
             this.fieldConfig.maxItems > 0 &&

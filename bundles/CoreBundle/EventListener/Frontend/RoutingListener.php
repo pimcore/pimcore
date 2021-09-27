@@ -42,40 +42,17 @@ class RoutingListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var RedirectHandler
-     */
-    protected $redirectHandler;
-
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
      * @param RequestHelper $requestHelper
      * @param RedirectHandler $redirectHandler
      * @param SiteResolver $siteResolver
+     * @param Config $config
      */
     public function __construct(
-        RequestHelper $requestHelper,
-        RedirectHandler $redirectHandler,
-        SiteResolver $siteResolver,
-        Config $config
+        protected RequestHelper $requestHelper,
+        protected RedirectHandler $redirectHandler,
+        protected SiteResolver $siteResolver,
+        protected Config $config
     ) {
-        $this->requestHelper = $requestHelper;
-        $this->redirectHandler = $redirectHandler;
-        $this->siteResolver = $siteResolver;
-        $this->config = $config;
     }
 
     /**

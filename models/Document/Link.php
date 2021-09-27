@@ -25,7 +25,7 @@ use Pimcore\Model\Document;
  */
 class Link extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * Contains the ID of the internal ID
@@ -118,7 +118,7 @@ class Link extends Model\Document
 
         if ($this->getLinktype() === 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                if ($this->getObject()->getId() != $this->getId() and !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
+                if ($this->getObject()->getId() != $this->getId() && !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
                     $tags = $this->getObject()->getCacheTags($tags);
                 }
             }
