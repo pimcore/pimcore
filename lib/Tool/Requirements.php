@@ -19,6 +19,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use Symfony\Component\Process\Process;
 
 /**
  * @internal
@@ -614,6 +615,30 @@ final class Requirements
             'link' => 'http://www.php.net/imagick',
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
+
+        if(class_exists('Imagick')) {
+            $convertExecutablePath = \Pimcore\Tool\Console::getExecutable('convert');
+            $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline($convertExecutablePath.' -list configure');
+            $imageMagickLcmsDelegateInstalledProcess->run();
+
+            $lcmsInstalled = false;
+            $separator = "\r\n";
+            $line = strtok($imageMagickLcmsDelegateInstalledProcess->getOutput(), $separator);
+
+            while ($line !== false) {
+                if(str_contains($line, 'DELEGATES') && str_contains($line, 'lcms')) {
+                    $lcmsInstalled = true;
+                    break;
+                }
+                $line = strtok($separator);
+            }
+
+            $checks[] = new Check([
+                'name' => 'ImageMagick LCMS delegate',
+                'link' => 'https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Requirements.html#page_Recommended-or-Optional-Modules-Extensions',
+                'state' => $lcmsInstalled ? Check::STATE_OK : Check::STATE_WARNING,
+            ]);
+        }
 
         // APCu
         $checks[] = new Check([
