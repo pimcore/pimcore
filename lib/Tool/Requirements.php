@@ -617,12 +617,25 @@ final class Requirements
         ]);
 
         if(class_exists('Imagick')) {
-            $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline('convert -list configure | grep DELEGATES');
+            $convertExecutablePath = \Pimcore\Tool\Console::getExecutable('convert');
+            $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline($convertExecutablePath.' -list configure');
             $imageMagickLcmsDelegateInstalledProcess->run();
+
+            $lcmsInstalled = false;
+            $separator = "\r\n";
+            $line = strtok($imageMagickLcmsDelegateInstalledProcess->getOutput(), $separator);
+
+            while ($line !== false) {
+                if(str_contains($line, 'DELEGATES') && str_contains($line, 'lcms')) {
+                    $lcmsInstalled = true;
+                    break;
+                }
+            }
+
             $checks[] = new Check([
                 'name' => 'ImageMagick LCMS delegate',
-                'link' => 'https://talk.pimcore.org/t/cmyk-to-rgb-displaying-as-negative/908/17',
-                'state' => str_contains($imageMagickLcmsDelegateInstalledProcess->getOutput(), 'lcms') ? Check::STATE_OK : Check::STATE_WARNING,
+                'link' => 'https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Requirements.html#page_Recommended-or-Optional-Modules-Extensions',
+                'state' => $lcmsInstalled ? Check::STATE_OK : Check::STATE_WARNING,
             ]);
         }
 
