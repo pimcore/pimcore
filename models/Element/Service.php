@@ -1227,11 +1227,11 @@ class Service extends Model\AbstractModel
                     $reflectionProperty->setAccessible(true);
                     $value = $reflectionProperty->getValue($object);
 
-                    $matches = $value instanceof ElementInterface;
+                    $matches = $value instanceof ElementInterface || $value instanceof DataObject\Data\ElementMetadata || $value instanceof DataObject\Data\ObjectMetadata || $value instanceof DataObject\Data\Hotspotimage;
                     if(!$matches && is_array($value)) {
                         $matches = true;
                         foreach($value as $valueItem) {
-                            if(!$valueItem instanceof ElementInterface) {
+                            if(!$valueItem instanceof ElementInterface && !$valueItem instanceof DataObject\Data\ElementMetadata && !$valueItem instanceof DataObject\Data\ObjectMetadata && !$valueItem instanceof DataObject\Data\Hotspotimage) {
                                 $matches = false;
                             }
                         }
