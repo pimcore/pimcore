@@ -96,7 +96,7 @@ class Document extends Model\Asset
 
         if (!$this->getCustomSetting('document_page_count')) {
             Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-            $this->addToAssetUpdateTaskQueue();
+            $this->addToUpdateTaskQueue();
 
             return new Document\ImageThumbnail(null);
         }

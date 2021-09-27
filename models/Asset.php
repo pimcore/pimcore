@@ -596,9 +596,7 @@ class Asset extends Element\AbstractElement
 
             if($this->getDataChanged()) {
                 if(in_array($this->getType(), ['image', 'video', 'document'])) {
-                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
-                        new AssetUpdateTasksMessage($this->getId())
-                    );
+                    $this->addToUpdateTaskQueue();
                 }
             }
 
@@ -2044,5 +2042,15 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             // noting to do
         }
+    }
+
+    /**
+     * @internal
+     */
+    protected function addToUpdateTaskQueue(): void
+    {
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new AssetUpdateTasksMessage($this->getId())
+        );
     }
 }
