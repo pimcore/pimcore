@@ -19,3 +19,7 @@ services:
             - '@Pimcore\Maintenance\Executor'
         tags:
             - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\SearchBackendHandler:
+        tags:
+            - { name: messenger.message_handler }
