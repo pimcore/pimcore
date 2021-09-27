@@ -29,6 +29,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class SearchBackendListener implements EventSubscriberInterface
 {
+
+    public function __construct(
+        private MessageBusInterface $messageBus
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -55,7 +61,7 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPostAddElement(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        $this->messageBus->dispatch(
             new SearchBackendMessage($element->getType(), $element->getId())
         );
     }
@@ -77,7 +83,7 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPostUpdateElement(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        $this->messageBus->dispatch(
             new SearchBackendMessage($element->getType(), $element->getId())
         );
     }
