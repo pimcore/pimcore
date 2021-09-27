@@ -16,32 +16,27 @@ trait RelationFilterConditionParser
 {
     /**
      * Parses filter value of a relation field and creates the filter condition
-     * @param $value
-     * @param $operator
-     * @param $name
+     * @param string $value
+     * @param string $operator
+     * @param string $name
      * @return string
      */
     public function getRelationFilterCondition($value, $operator, $name)
     {
         if ($operator == '=') {
-            $value = "'%," . $value . ",%'";
-            return '`' . $name . '` LIKE ' . $value . ' ';
-        } elseif ($operator == 'LIKE') {
-            $result = $name . " IS NULL";
-            $values = explode(',', (string)$value ?? '');
-            if (is_array($values) && !empty($values)) {
-                $fieldConditions = [];
-                foreach ($values as $value) {
-                    if (empty($value)) {
-                        continue;
-                    }
-                    $fieldConditions[] = '`' . $name . "` LIKE '%" . $value . "%' ";
-                }
-                if (!empty($fieldConditions)) {
-                    $result = '(' . implode(' AND ', $fieldConditions) . ')';
-                }
-            }
-            return $result;
+            return '`' . $name . '` LIKE ' . "'%," . $value . ",%'";
         }
+        $result = $name . " IS NULL";
+        $values = explode(',', (string)$value ?? '');
+        if (is_array($values) && !empty($values)) {
+            $fieldConditions = array_map(function ($value) use ($name) {
+                return '`' . $name . "` LIKE '%" . $value . "%' ";
+            }, array_filter($values));
+            if (!empty($fieldConditions)) {
+                $result = '(' . implode(' AND ', $fieldConditions) . ')';
+            }
+        }
+
+        return $result;
     }
 }
