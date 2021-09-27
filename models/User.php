@@ -745,6 +745,10 @@ final class User extends User\UserRole
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations()
     {
+        if ($this->isAdmin()) {
+            return Tool::getValidLanguages();
+        }
+
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
         if (empty($mergedWebsiteTranslationLanguagesView)) {
             return Tool::getValidLanguages();
