@@ -27,6 +27,7 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -36,6 +37,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -591,6 +593,15 @@ class Asset extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+
+            if($this->getDataChanged()) {
+                if(in_array($this->getType(), ['image', 'video', 'document'])) {
+                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                        new AssetUpdateTasksMessage($this->getId())
+                    );
+                }
+            }
+
             $this->setDataChanged(false);
 
             $postEvent = new AssetEvent($this, $params);

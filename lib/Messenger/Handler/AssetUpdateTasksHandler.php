@@ -33,6 +33,10 @@ class AssetUpdateTasksHandler
 
         if($asset instanceof Asset\Image) {
             $this->processImage($asset);
+        } elseif ($asset instanceof Asset\Document && !$asset->getCustomSetting('document_page_count')) {
+            $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
+            $asset->processPageCount();
+            $this->saveAsset($asset);
         }
     }
 

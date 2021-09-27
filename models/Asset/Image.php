@@ -50,13 +50,6 @@ class Image extends Model\Asset
         $this->clearThumbnailsOnSave = false; // reset to default
 
         parent::update($params);
-
-        // now directly create "system" thumbnails (eg. for the tree, ...)
-        if ($this->getDataChanged()) {
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
-                new AssetUpdateTasksMessage($this->getId())
-            );
-        }
     }
 
     /**
