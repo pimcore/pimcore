@@ -616,7 +616,7 @@ final class Requirements
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        if(class_exists('Imagick')) {
+        if (class_exists('Imagick')) {
             $convertExecutablePath = \Pimcore\Tool\Console::getExecutable('convert');
             $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline($convertExecutablePath.' -list configure');
             $imageMagickLcmsDelegateInstalledProcess->run();
@@ -626,8 +626,9 @@ final class Requirements
             $line = strtok($imageMagickLcmsDelegateInstalledProcess->getOutput(), $separator);
 
             while ($line !== false) {
-                if(str_contains($line, 'DELEGATES') && str_contains($line, 'lcms')) {
+                if (str_contains($line, 'DELEGATES') && str_contains($line, 'lcms')) {
                     $lcmsInstalled = true;
+
                     break;
                 }
                 $line = strtok($separator);
