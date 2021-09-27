@@ -17,14 +17,11 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
-use Pimcore\Logger;
-use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -47,7 +44,7 @@ class Image extends Model\Asset
     protected function update($params = [])
     {
         if ($this->getDataChanged()) {
-            foreach(['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
+            foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
                 $this->removeCustomSetting($key);
             }
         }

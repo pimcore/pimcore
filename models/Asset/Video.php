@@ -40,7 +40,7 @@ class Video extends Model\Asset
     protected function update($params = [])
     {
         if ($this->getDataChanged()) {
-            foreach(['duration', 'videoWidth', 'videoHeight'] as $key) {
+            foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
                 $this->removeCustomSetting($key);
             }
         }
@@ -173,6 +173,7 @@ class Video extends Model\Asset
 
     /**
      * @internal
+     *
      * @param string|null $filePath
      *
      * @return float|null
@@ -197,6 +198,7 @@ class Video extends Model\Asset
 
     /**
      * @internal
+     *
      * @return array|null
      *
      * @throws \Exception

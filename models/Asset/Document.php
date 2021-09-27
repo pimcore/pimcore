@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Tool\TmpStore;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

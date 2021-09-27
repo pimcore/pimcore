@@ -715,7 +715,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset instanceof Asset\Image) {
             try {
-                if($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
+                if ($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
                 }
 
@@ -724,7 +724,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     $tmpAsset['imageWidth'] = $asset->getCustomSetting('imageWidth');
                     $tmpAsset['imageHeight'] = $asset->getCustomSetting('imageHeight');
                 }
-
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of image, seems to be broken.');
             }
