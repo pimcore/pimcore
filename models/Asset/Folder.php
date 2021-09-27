@@ -161,7 +161,7 @@ class Folder extends Model\Asset
                 }
 
                 if ($tileThumb) {
-                    if(!$tileThumb->exists()) {
+                    if (!$tileThumb->exists()) {
                         // only generate if all necessary thumbs are available
                         return null;
                     }

@@ -594,8 +594,8 @@ class Asset extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            if($this->getDataChanged()) {
-                if(in_array($this->getType(), ['image', 'video', 'document'])) {
+            if ($this->getDataChanged()) {
+                if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
                 }
             }

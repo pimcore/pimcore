@@ -39,6 +39,7 @@ trait EmbeddedMetaDataTrait
 
     /**
      * @internal
+     *
      * @param bool $useExifTool
      * @param string|null $filePath
      *
