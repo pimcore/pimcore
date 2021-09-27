@@ -46,6 +46,12 @@ class Image extends Model\Asset
      */
     protected function update($params = [])
     {
+        if ($this->getDataChanged()) {
+            foreach(['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
+                $this->removeCustomSetting($key);
+            }
+        }
+
         $this->clearThumbnails($this->clearThumbnailsOnSave);
         $this->clearThumbnailsOnSave = false; // reset to default
 

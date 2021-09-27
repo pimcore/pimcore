@@ -37,6 +37,8 @@ class AssetUpdateTasksHandler
             $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
             $asset->processPageCount();
             $this->saveAsset($asset);
+        } elseif ($asset instanceof Asset\Video) {
+            $this->processVideo($asset);
         }
     }
 
@@ -45,6 +47,31 @@ class AssetUpdateTasksHandler
         Version::disable();
         $asset->save();
         Version::enable();
+    }
+
+    private function processVideo(Asset\Video $asset): void
+    {
+        try {
+            $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
+        } catch (\Exception $e) {
+            Logger::err('Unable to get duration of video: ' . $asset->getId());
+        }
+
+        try {
+            $dimensions = $asset->getDimensionsFromBackend();
+            if ($dimensions) {
+                $asset->setCustomSetting('videoWidth', $dimensions['width']);
+                $asset->setCustomSetting('videoHeight', $dimensions['height']);
+            } else {
+                $asset->removeCustomSetting('videoWidth');
+                $asset->removeCustomSetting('videoHeight');
+            }
+        } catch (\Exception $e) {
+            Logger::err('Unable to get dimensions of video: ' . $asset->getId());
+        }
+
+        $asset->handleEmbeddedMetaData(true);
+        $this->saveAsset($asset);
     }
 
     private function processImage(Asset\Image $image): void

@@ -39,35 +39,10 @@ class Video extends Model\Asset
      */
     protected function update($params = [])
     {
-        if ($this->getDataChanged() || !$this->getCustomSetting('duration') || !$this->getCustomSetting('embeddedMetaDataExtracted') || !$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
-            // because the file is written in parent::update();
-            $tmpFile = $this->getTemporaryFile();
-
-            if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
-                try {
-                    $this->setCustomSetting('duration', $this->getDurationFromBackend($tmpFile));
-                } catch (\Exception $e) {
-                    Logger::err('Unable to get duration of video: ' . $this->getId());
-                }
+        if ($this->getDataChanged()) {
+            foreach(['duration', 'videoWidth', 'videoHeight'] as $key) {
+                $this->removeCustomSetting($key);
             }
-
-            if ($this->getDataChanged() || !$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-                try {
-                    $dimensions = $this->getDimensionsFromBackend();
-                    if ($dimensions) {
-                        $this->setCustomSetting('videoWidth', $dimensions['width']);
-                        $this->setCustomSetting('videoHeight', $dimensions['height']);
-                    } else {
-                        $this->removeCustomSetting('videoWidth');
-                        $this->removeCustomSetting('videoHeight');
-                    }
-                } catch (\Exception $e) {
-                    Logger::err('Unable to get dimensions of video: ' . $this->getId());
-                }
-            }
-
-            $this->handleEmbeddedMetaData(true, $tmpFile);
         }
 
         $this->clearThumbnails();
@@ -197,13 +172,14 @@ class Video extends Model\Asset
     }
 
     /**
+     * @internal
      * @param string|null $filePath
      *
      * @return float|null
      *
      * @throws \Exception
      */
-    private function getDurationFromBackend(?string $filePath = null)
+    public function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
@@ -220,11 +196,12 @@ class Video extends Model\Asset
     }
 
     /**
+     * @internal
      * @return array|null
      *
      * @throws \Exception
      */
-    private function getDimensionsFromBackend()
+    public function getDimensionsFromBackend()
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
