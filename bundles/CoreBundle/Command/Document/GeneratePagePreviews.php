@@ -43,7 +43,57 @@ class GeneratePagePreviews extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 'Prefix for the document path, eg. https://example.com, if not specified, Pimcore will try use the main domain from system settings.',
                 null
+            )
+            ->addOption(
+                'parent',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                'Only create preview of objects in this folder (ID|path).'
+            )
+            ->addOption(
+                'regex',
+                'r',
+                InputOption::VALUE_OPTIONAL,
+                'All child objects matching the regex pattern will be excluded.'
             );
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return Document\Listing|void
+     */
+    protected function fetchItems(InputInterface $input) {
+
+        $docs = new \Pimcore\Model\Document\Listing();
+
+        $parentIdOrPath = $input->getOption('parent');
+        if($parentIdOrPath) {
+            if(is_numeric(($parentIdOrPath))) {
+                $parent = Document::getById($parentIdOrPath);
+            }
+            else {
+                $parent = Document::getByPath($parentIdOrPath);
+            }
+            if ($parent instanceof Document) {
+                $conditions[] = "path LIKE '" . $docs->escapeLike($parent->getRealFullPath()) . "/%'";
+            } else {
+                $this->writeError($parentIdOrPath . ' is not a valid id or path!');
+                exit(1);
+            }
+        }
+
+        $regex = $input->getOption('regex');
+        if($regex)
+            $conditions[] = "path NOT REGEXP '" . $regex . "'";
+
+        $filter = "type = 'page'";
+        if(isset($conditions)) {
+            $filter = $filter . " AND " . implode(' AND ', $conditions);
+        }
+        $docs->setCondition($filter);
+        $docs->load();
+
+        return $docs;
     }
 
     /**
@@ -62,15 +112,13 @@ class GeneratePagePreviews extends AbstractCommand
             return 1;
         }
 
-        $docs = new \Pimcore\Model\Document\Listing();
-        $docs->setCondition("type = 'page'");
-        $docs->load();
-
+        $docs = $this->fetchItems($input);
         foreach ($docs as $doc) {
             /**
              * @var Document\Page $doc
              */
             try {
+                $this->writeInfo($doc->getPath() . " " . $doc->getRealFullPath());
                 $success = Document\Service::generatePagePreview($doc->getId(), null, $hostUrl);
             } catch (\Exception $e) {
                 $this->io->error($e->getMessage());
