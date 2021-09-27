@@ -318,4 +318,19 @@ trait ImageThumbnailTrait
     {
         return self::getLocalFileFromStream($this->getStream());
     }
+
+    /**
+     * @return bool
+     */
+    public function exists(): bool
+    {
+        $pathReference = $this->getPathReference(true);
+        if ($pathReference['type'] === 'asset') {
+            return true;
+        } elseif (isset($pathReference['storagePath'])) {
+            return Storage::get('thumbnail')->fileExists($pathReference['storagePath']);
+        }
+
+        return false;
+    }
 }

@@ -14,6 +14,12 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\MaintenanceTaskHandler:
         arguments:
             - '@Pimcore\Maintenance\Executor'
