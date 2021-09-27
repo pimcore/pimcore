@@ -93,7 +93,7 @@ class Image extends Model\Asset
     /**
      * @internal
      */
-    public function detectFaces(): ?bool
+    public function detectFaces(): bool
     {
         if ($this->getCustomSetting('faceCoordinates')) {
             return false;
