@@ -120,7 +120,6 @@ class GeneratePagePreviews extends AbstractCommand
              * @var Document\Page $doc
              */
             try {
-                $this->writeInfo($doc->getPath() . " " . $doc->getRealFullPath());
                 $success = Document\Service::generatePagePreview($doc->getId(), null, $hostUrl);
             } catch (\Exception $e) {
                 $this->io->error($e->getMessage());
