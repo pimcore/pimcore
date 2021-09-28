@@ -35,10 +35,9 @@ final class CacheFallbackPass implements CompilerPassInterface
         }
 
         // set default cache.app to Pimcore default cache, if not configured differently
-        if($appCache = $container->findDefinition('cache.app')) {
-            if($appCache instanceof ChildDefinition && $appCache->getParent() === 'cache.adapter.filesystem') {
-                $container->setAlias('cache.app', 'pimcore.cache.pool.app');
-            }
+        $appCache = $container->findDefinition('cache.app');
+        if($appCache instanceof ChildDefinition && $appCache->getParent() === 'cache.adapter.filesystem') {
+            $container->setAlias('cache.app', 'pimcore.cache.pool.app');
         }
     }
 }
