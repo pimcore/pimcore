@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Alias;
-use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -32,12 +31,6 @@ final class CacheFallbackPass implements CompilerPassInterface
         if (!$container->hasDefinition('pimcore.cache.pool')) {
             $alias = new Alias('pimcore.cache.adapter.pdo_tag_aware', true);
             $container->setAlias('pimcore.cache.pool', $alias);
-        }
-
-        // set default cache.app to Pimcore default cache, if not configured differently
-        $appCache = $container->findDefinition('cache.app');
-        if ($appCache instanceof ChildDefinition && $appCache->getParent() === 'cache.adapter.filesystem') {
-            $container->setAlias('cache.app', 'pimcore.cache.pool.app');
         }
     }
 }
