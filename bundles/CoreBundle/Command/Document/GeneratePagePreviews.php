@@ -49,7 +49,7 @@ class GeneratePagePreviews extends AbstractCommand
                 'parent',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                'Only create preview of objects in this folder (ID|path).'
+                'Only create preview of documents in parent hierarchy (ID|path).'
             )
             ->addOption(
                 'regex',
