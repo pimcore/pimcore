@@ -53,7 +53,7 @@ class GeneratePagePreviews extends AbstractCommand
             )
             ->addOption(
                 'exclude-patterns',
-                'e',
+                'x',
                 InputOption::VALUE_OPTIONAL,
                 'Excludes all documents whose path property matches the regex pattern.'
             );
