@@ -84,7 +84,7 @@ class GeneratePagePreviews extends AbstractCommand
             }
         }
 
-        $regex = $input->getOption('regex');
+        $regex = $input->getOption('exclude-patterns');
         if($regex)
             $conditions[] = "path NOT REGEXP " . $db->quote($regex);
 
