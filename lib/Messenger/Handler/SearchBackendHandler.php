@@ -16,8 +16,8 @@
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\SearchBackendMessage;
-use Pimcore\Model\Search\Backend\Data;
 use Pimcore\Model\Element;
+use Pimcore\Model\Search\Backend\Data;
 
 /**
  * @internal
@@ -28,7 +28,7 @@ class SearchBackendHandler
     {
         $element = Element\Service::getElementById($message->getType(), $message->getId());
         if (!$element instanceof Element\ElementInterface) {
-           return;
+            return;
         }
 
         $searchEntry = Data::getForElement($element);
