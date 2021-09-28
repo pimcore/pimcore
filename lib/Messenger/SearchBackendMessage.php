@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class SearchBackendMessage
 {
     public function __construct(protected string $type, protected int $id)

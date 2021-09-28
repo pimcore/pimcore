@@ -23,6 +23,9 @@ use Pimcore\Model\Document\Newsletter;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 
+/**
+ * @internal
+ */
 class SendNewsletterHandler
 {
     public function __construct(protected array $pimcoreConfig, protected ServiceProviderInterface $addressProvider)

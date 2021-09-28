@@ -19,6 +19,9 @@ use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Model\Search\Backend\Data;
 use Pimcore\Model\Element;
 
+/**
+ * @internal
+ */
 class SearchBackendHandler
 {
     public function __invoke(SearchBackendMessage $message)

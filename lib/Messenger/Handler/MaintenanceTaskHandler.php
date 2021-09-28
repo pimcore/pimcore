@@ -18,6 +18,9 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Messenger\MaintenanceTaskMessage;
 
+/**
+ * @internal
+ */
 class MaintenanceTaskHandler
 {
     public function __construct(

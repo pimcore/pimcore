@@ -18,6 +18,9 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model\Asset;
 
+/**
+ * @internal
+ */
 class CleanupThumbnailsHandler
 {
     public function __invoke(CleanupThumbnailsMessage $message)
