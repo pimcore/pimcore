@@ -40,21 +40,21 @@ final class CacheFallbackPass implements CompilerPassInterface
         $appCache = $container->findDefinition('cache.app');
         if ($appCache instanceof ChildDefinition && $appCache->getParent() === 'cache.adapter.filesystem') {
 
-            $this->replaceCacheDefinition('cache.app', $container);
+            $this->replaceCacheDefinition($appCache);
 
             foreach($container->findTaggedServiceIds('cache.pool') as $id => $arguments) {
                 $cacheDef = $container->findDefinition($id);
                 if($cacheDef instanceof ChildDefinition && $cacheDef->getParent() === 'cache.app') {
-                    $this->replaceCacheDefinition($id, $container);
+                    $this->replaceCacheDefinition($cacheDef);
                 }
             }
         }
     }
 
-    private function replaceCacheDefinition(string $id, ContainerBuilder $container): void
+    private function replaceCacheDefinition(ChildDefinition $cacheDef): void
     {
-        $container->removeDefinition($id);
-        $def = new ChildDefinition('pimcore.cache.pool.app');
-        $container->setDefinition($id, $def);
+        // we need to reset the arguments, so that the change of the parent works properly
+        $cacheDef->setArguments([]);
+        $cacheDef->setParent('pimcore.cache.pool.app');
     }
 }
