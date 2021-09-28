@@ -17,9 +17,12 @@ namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -77,10 +80,9 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targetid = ? AND targettype = ?', [$id, $type]);
             if (is_array($data)) {
                 foreach ($data as $row) {
-                    $sanityCheck = new Element\Sanitycheck();
-                    $sanityCheck->setId($row['sourceid']);
-                    $sanityCheck->setType($row['sourcetype']);
-                    $sanityCheck->save();
+                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                        new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
+                    );
                 }
             }
 
