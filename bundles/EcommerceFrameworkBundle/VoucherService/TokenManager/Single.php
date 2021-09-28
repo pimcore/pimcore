@@ -26,6 +26,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
+/**
+ * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle $configuration
+ */
 class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
     protected $template;
@@ -181,9 +184,9 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function getStatistics($usagePeriod = null)
     {
-        $overallCount = $this->configuration->getUsages();
+        $overallCount = (int) $this->configuration->getUsages();
         $usageCount = Token::getByCode($this->configuration->getToken())->getUsages();
-        $reservedTokenCount = Token\Listing::getCountByReservation($this->seriesId);
+        $reservedTokenCount = (int) Token\Listing::getCountByReservation($this->seriesId);
 
         $usage = Statistic::getBySeriesId($this->seriesId, $usagePeriod);
         $this->prepareUsageStatisticData($usage, $usagePeriod);

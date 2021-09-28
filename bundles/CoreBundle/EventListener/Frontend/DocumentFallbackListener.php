@@ -103,7 +103,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             // no document found yet - try to find the nearest document by request path
             // this is only done on the master request as a sub-request's pathInfo is _fragment when
             // rendered via actions helper
@@ -125,7 +125,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
             $parentRequest = $this->requestStack->getParentRequest();
-            $masterRequest = $this->requestStack->getMasterRequest();
+            $masterRequest = $this->requestStack->getMainRequest();
 
             $eligibleRequests = [];
 
@@ -155,7 +155,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        if ($this->fallbackDocument && $event->isMasterRequest()) {
+        if ($this->fallbackDocument && $event->isMainRequest()) {
             $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
         }
     }

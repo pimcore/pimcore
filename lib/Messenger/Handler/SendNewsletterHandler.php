@@ -13,81 +13,54 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Messenger\Handler;
 
-use Exception;
-use Pimcore;
-use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Logger;
-use Pimcore\Model;
-use Pimcore\Tool\Newsletter;
-use RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Pimcore\Messenger\SendNewsletterMessage;
+use Pimcore\Model\Document\Newsletter;
+use Pimcore\Model\Tool\TmpStore;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
-/**
- * @internal
- */
-class InternalNewsletterDocumentSendCommand extends AbstractCommand
+class SendNewsletterHandler
 {
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected array $pimcoreConfig, protected ServiceProviderInterface $addressProvider)
     {
-        parent::__construct();
     }
 
-    protected function configure(): void
+    public function __invoke(SendNewsletterMessage $message)
     {
-        $this
-            ->setHidden(true)
-            ->setName('internal:newsletter-document-send')
-            ->setDescription('For internal use only')
-            ->addArgument('sendingId')->addArgument('hostUrl');
-    }
+        $sendingId = $message->getTmpStoreId();
+        $hostUrl = $this->pimcoreConfig['documents']['newsletter']['defaultUrlPrefix'] ?: $message->getHostUrl();
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws Exception
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $pimcoreSymfonyConfig = $this->container->getParameter('pimcore.config');
-        $sendingId = $input->getArgument('sendingId');
-        $hostUrl = $pimcoreSymfonyConfig['documents']['newsletter']['defaultUrlPrefix'] ?: $input->getArgument('hostUrl');
-
-        $tmpStore = Model\Tool\TmpStore::get($sendingId);
+        $tmpStore = TmpStore::get($sendingId);
 
         if (null === $tmpStore) {
             Logger::alert(sprintf('No sending configuration for %s found. Cannot send newsletter.', $sendingId));
-            exit;
+
+            return;
         }
 
         $data = $tmpStore->getData();
 
         if ($data['inProgress']) {
             Logger::alert('Cannot send newsletters because there\'s already one active sending process.');
-            exit;
+
+            return;
         }
 
         $data['inProgress'] = 1;
         $tmpStore->setData($data);
         $tmpStore->update();
 
-        /** @var Model\Document\Newsletter $document */
-        $document = Model\Document\Newsletter::getById($data['documentId']);
+        /** @var Newsletter $document */
+        $document = Newsletter::getById($data['documentId']);
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];
 
-        $serviceLocator = $this->container->get('pimcore.newsletter.address_source_adapter.factories');
-
-        if (!$serviceLocator->has($addressSourceAdapterName)) {
-            throw new RuntimeException(
+        if (!$this->addressProvider->has($addressSourceAdapterName)) {
+            throw new \RuntimeException(
                 sprintf(
                     'Cannot send newsletters because Address Source Adapter with identifier %s could not be found',
                     $addressSourceAdapterName
@@ -96,33 +69,26 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
 
         /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
-        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapterFactory = $this->addressProvider->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
-        if ($document->getSendingMode() === Newsletter::SENDING_MODE_BATCH) {
+        if ($document->getSendingMode() === \Pimcore\Tool\Newsletter::SENDING_MODE_BATCH) {
             $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId, $hostUrl);
         } else {
             $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId, $hostUrl);
         }
 
-        Model\Tool\TmpStore::delete($sendingId);
-
-        return 0;
+        TmpStore::delete($sendingId);
     }
 
     /**
-     * @param Model\Document\Newsletter $document
-     * @param AddressSourceAdapterInterface $addressAdapter
-     * @param string $sendingId
-     * @param string $hostUrl
-     *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function doSendMailInBatchMode(
-        Model\Document\Newsletter $document,
+        Newsletter $document,
         AddressSourceAdapterInterface $addressAdapter,
-        $sendingId,
-        $hostUrl
+        string $sendingId,
+        string $hostUrl
     ): void {
         $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
@@ -135,8 +101,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $pageSize = $fifth > 10 ? 10 : $minPageSize;
 
         foreach ($sendingParamContainers as $sendingParamContainer) {
-            $mail = Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
-            $tmpStore = Model\Tool\TmpStore::get($sendingId);
+            $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
+            $tmpStore = TmpStore::get($sendingId);
 
             if (null === $tmpStore) {
                 Logger::warn(
@@ -145,7 +111,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                         $sendingId
                     )
                 );
-                exit;
+
+                return;
             }
 
             if ($currentCount % $pageSize === 0) {
@@ -156,12 +123,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                 $data['progress'] = round($currentCount / $totalCount * 100, 2);
                 $tmpStore->setData($data);
                 $tmpStore->update();
-                Pimcore::collectGarbage();
+                \Pimcore::collectGarbage();
             }
 
             try {
-                Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
-            } catch (Exception $e) {
+                \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+            } catch (\Exception $e) {
                 Logger::err(sprintf('Exception while sending newsletter: %s', $e->getMessage()));
             }
 
@@ -169,17 +136,11 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param Model\Document\Newsletter $document
-     * @param AddressSourceAdapterInterface $addressAdapter
-     * @param string $sendingId
-     * @param string $hostUrl
-     */
     protected function doSendMailInSingleMode(
-        Model\Document\Newsletter $document,
+        Newsletter $document,
         AddressSourceAdapterInterface $addressAdapter,
-        $sendingId,
-        $hostUrl
+        string $sendingId,
+        string $hostUrl
     ): void {
         $totalCount = $addressAdapter->getTotalRecordCount();
 
@@ -192,7 +153,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $index = 1;
 
         while ($hasElements) {
-            $tmpStore = Model\Tool\TmpStore::get($sendingId);
+            $tmpStore = TmpStore::get($sendingId);
 
             if (null === $tmpStore) {
                 Logger::warn(
@@ -201,7 +162,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                         $sendingId
                     )
                 );
-                exit;
+
+                return;
             }
 
             $data = $tmpStore->getData();
@@ -218,9 +180,9 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                 );
 
                 try {
-                    $mail = Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
-                    Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
-                } catch (Exception $e) {
+                    $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
+                    \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+                } catch (\Exception $e) {
                     Logger::err(sprintf('Exception while sending newsletter: %s', $e->getMessage()));
                 }
 
@@ -230,7 +192,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $offset += $limit;
             $hasElements = count($sendingParamContainers);
 
-            Pimcore::collectGarbage();
+            \Pimcore::collectGarbage();
         }
     }
 }

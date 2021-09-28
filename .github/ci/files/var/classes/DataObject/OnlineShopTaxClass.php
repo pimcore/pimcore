@@ -17,7 +17,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing|\Pimcore\Model\DataObject\OnlineShopTaxClass getByTaxEntryCombinationType($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing|\Pimcore\Model\DataObject\OnlineShopTaxClass|null getByTaxEntryCombinationType($value, $limit = 0, $offset = 0)
 */
 
 class OnlineShopTaxClass extends Concrete
@@ -46,7 +46,7 @@ public function getTaxEntryCombinationType(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxEntryCombinationType");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -79,7 +79,7 @@ public function getTaxEntries()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxEntries");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}

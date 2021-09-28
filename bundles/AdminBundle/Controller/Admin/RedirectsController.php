@@ -176,12 +176,11 @@ class RedirectsController extends AdminController
     /**
      * @Route("/csv-export", name="pimcore_admin_redirects_csvexport", methods={"GET"})
      *
-     * @param Request $request
      * @param Csv $csv
      *
      * @return Response
      */
-    public function csvExportAction(Request $request, Csv $csv)
+    public function csvExportAction(Csv $csv)
     {
         $this->checkPermission('redirects');
 
@@ -200,7 +199,7 @@ class RedirectsController extends AdminController
             'redirects.csv'
         ));
 
-        $response->setContent($writer->getContent());
+        $response->setContent($writer->toString());
 
         return $response;
     }

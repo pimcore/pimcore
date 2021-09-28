@@ -32,8 +32,11 @@ use Twig\Environment;
 class TrackingCodeSubscriber implements EventSubscriberInterface
 {
     use EnabledTrait;
+
     use ResponseInjectionTrait;
+
     use PimcoreContextAwareTrait;
+
     use PreviewRequestTrait;
 
     /** @var TrackingManager */

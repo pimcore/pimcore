@@ -27,13 +27,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM schedule_tasks WHERE id = ?', $id);
-        if (!$data['id']) {
-            throw new \Exception('there is no task for the requested id');
+        if (!$data) {
+            throw new Model\Exception\NotFoundException('there is no task for the requested id');
         }
         $this->assignVariablesToModel($data);
     }

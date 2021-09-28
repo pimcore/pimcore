@@ -27,9 +27,13 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+
     use Extension\QueryColumnType;
+
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
@@ -222,7 +226,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $type = Element\Service::getType($data);
+            $type = Element\Service::getElementType($data);
             $id = $data->getId();
 
             return [[
@@ -394,7 +398,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -423,7 +427,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return Element\Service::getType($data).':'.$data->getRealFullPath();
+            return Element\Service::getElementType($data).':'.$data->getRealFullPath();
         }
 
         return '';
@@ -561,7 +565,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function normalize($value, $params = [])
     {
         if ($value) {
-            $type = Element\Service::getType($value);
+            $type = Element\Service::getElementType($value);
             $id = $value->getId();
 
             return [

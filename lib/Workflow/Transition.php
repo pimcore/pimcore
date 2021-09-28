@@ -23,6 +23,7 @@ use Pimcore\Workflow\Notification\NotificationTrait;
 class Transition extends \Symfony\Component\Workflow\Transition implements NotesAwareInterface, NotificationInterface
 {
     use NotesAwareTrait;
+
     use NotificationTrait;
 
     private $options;

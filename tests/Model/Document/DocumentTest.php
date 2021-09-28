@@ -243,7 +243,7 @@ class DocumentTest extends ModelTestCase
         $linkDocument->save();
 
         $linkDocument = Link::getById($linkDocument->getId());
-        $newTarget = $linkDocument->getObject();
+        $newTarget = $linkDocument->getElement();
         $this->assertEquals($target->getId(), $newTarget->getId());
     }
 

@@ -956,4 +956,5 @@
     "filter_by_relation_field": "Filter by relation field",
     "clear_relation_filter": "Clear active relation filter",
     "apply_filter": "Apply filter",
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs."
 }

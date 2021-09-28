@@ -29,6 +29,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
@@ -285,11 +287,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
     }
 
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
-    }
-
     /**
      * @return string|null retrieves the current full set path from DB
      */
@@ -354,7 +351,7 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
-        if ($user and !$user->isAdmin()) {
+        if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 

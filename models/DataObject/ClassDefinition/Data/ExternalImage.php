@@ -23,6 +23,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**
@@ -296,6 +297,20 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $this->previewHeight = $masterDefinition->previewHeight;
         $this->previewWidth = $masterDefinition->previewWidth;
         $this->inputWidth = $masterDefinition->inputWidth;
+    }
+
+    /**
+     * @param DataObject\Data\ExternalImage|null $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Model\Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if ($this->getMandatory() && !$omitMandatoryCheck && $this->isEmpty($data)) {
+            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+        }
     }
 
     /**

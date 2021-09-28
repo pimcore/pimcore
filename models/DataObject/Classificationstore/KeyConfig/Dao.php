@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
+            throw new Model\Exception\NotFoundException('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 

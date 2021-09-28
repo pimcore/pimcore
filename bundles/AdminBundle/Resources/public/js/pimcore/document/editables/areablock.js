@@ -305,9 +305,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
 
         //dialogBox button
-        if(dialogBoxDiv) {
+        dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+        if (dialogBoxDiv) {
             dialogBoxButton = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"] .pimcore_block_button_dialog')[0];
-            if (typeof dialogBoxButton) {
+            if (typeof dialogBoxButton === 'undefined') {
                 dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
                 dialogBoxButton = new Ext.Button({
                     cls: "pimcore_block_button_dialog",

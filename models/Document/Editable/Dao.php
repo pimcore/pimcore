@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->model->getDataForResource();
 
-        if (is_array($data) or is_object($data)) {
+        if (is_array($data) || is_object($data)) {
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 

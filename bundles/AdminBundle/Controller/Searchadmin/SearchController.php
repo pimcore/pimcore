@@ -177,7 +177,7 @@ class SearchController extends AdminController
             }
         }
 
-        if (is_array($types) and !empty($types[0])) {
+        if (is_array($types) && !empty($types[0])) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -188,7 +188,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) and !empty($subtypes[0])) {
+        if (is_array($subtypes) && !empty($subtypes[0])) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -196,7 +196,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
+        if (is_array($classnames) && !empty($classnames[0])) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -524,7 +524,7 @@ class SearchController extends AdminController
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i === 0) {
+            if (strlen($shortPath) <= 50 || $i == 0) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');

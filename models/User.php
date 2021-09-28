@@ -704,16 +704,14 @@ final class User extends User\UserRole
     public function getAllowedLanguagesForEditingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if (empty($mergedWebsiteTranslationLanguagesEdit)) {
+        if (empty($mergedWebsiteTranslationLanguagesEdit) || $this->isAdmin()) {
             $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
             if (empty($mergedWebsiteTranslationLanguagesView)) {
                 return Tool::getValidLanguages();
-            } else {
-                return $mergedWebsiteTranslationLanguagesEdit;
             }
-        } else {
-            return $mergedWebsiteTranslationLanguagesEdit;
         }
+
+        return $mergedWebsiteTranslationLanguagesEdit;
     }
 
     /**
@@ -746,11 +744,11 @@ final class User extends User\UserRole
     public function getAllowedLanguagesForViewingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-        if (empty($mergedWebsiteTranslationLanguagesView)) {
+        if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
             return Tool::getValidLanguages();
-        } else {
-            return $mergedWebsiteTranslationLanguagesView;
         }
+
+        return $mergedWebsiteTranslationLanguagesView;
     }
 
     /**

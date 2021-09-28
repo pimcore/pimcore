@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $this->model->setLayoutDefinitions($this->getLayoutData());
         } else {
-            throw new \Exception('Layout with ID ' . $id . " doesn't exist");
+            throw new Model\Exception\NotFoundException('Layout with ID ' . $id . " doesn't exist");
         }
     }
 

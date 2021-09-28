@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.fieldcollection");
 pimcore.object.fieldcollection = Class.create({
 
     forbiddenNames: [
-        "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface"
+        "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface", "default"
     ],
 
     initialize: function () {

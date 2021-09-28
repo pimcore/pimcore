@@ -232,7 +232,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     if ($currentValue instanceof ElementInterface) {
-                        $elementType = Service::getType($currentValue);
+                        $elementType = Service::getElementType($currentValue);
                         $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
 
                         return $descriptor;

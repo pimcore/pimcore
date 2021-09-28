@@ -76,8 +76,11 @@ class Sql extends AbstractAdapter
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchRow($sql);
+            if ($res) {
+                return array_keys($res);
+            }
 
-            return array_keys($res);
+            return [];
         }
 
         throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
@@ -112,7 +115,8 @@ class Sql extends AbstractAdapter
             }
             $sql .= ' ' . str_replace("\n", ' ', $config['from']);
         }
-        if (!empty($config['where']) || $drillDownFilters) {
+
+        if (!empty($config['where'])) {
             $whereParts = [];
             if (!empty($config['where'])) {
                 if (strpos(strtoupper(trim($config['where'])), 'WHERE') === 0) {
@@ -121,24 +125,30 @@ class Sql extends AbstractAdapter
                 $whereParts[] = '(' . str_replace("\n", ' ', $config['where']) . ')';
             }
 
-            if ($drillDownFilters) {
-                $db = Db::get();
-                foreach ($drillDownFilters as $field => $value) {
-                    if ($value !== '' && $value !== null) {
-                        $whereParts[] = "`$field` = " . $db->quote($value);
-                    }
-                }
-            }
-
             if ($whereParts) {
                 $sql .= ' WHERE ' . implode(' AND ', $whereParts);
             }
         }
+
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
             if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
                 $sql .= ' GROUP BY ';
             }
             $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
+        }
+
+        if ($drillDownFilters) {
+            $havingParts = [];
+            $db = Db::get();
+            foreach ($drillDownFilters as $field => $value) {
+                if ($value !== '' && $value !== null) {
+                    $havingParts[] = "$field = " . $db->quote($value);
+                }
+            }
+
+            if ($havingParts) {
+                $sql .= ' HAVING ' . implode(' AND ', $havingParts);
+            }
         }
 
         return $sql;
@@ -238,7 +248,7 @@ class Sql extends AbstractAdapter
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, (empty($filters) ? $field : null));
+        $baseQuery = $this->getBaseQuery($filters, [$field], false, $drillDownFilters);
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);

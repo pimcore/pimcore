@@ -32,6 +32,7 @@ trait Parallelization
     use WebmozartParallelization
     {
         WebmozartParallelization::configureParallelization as parentConfigureParallelization;
+
     }
 
     protected static function configureParallelization(Command $command): void
@@ -154,5 +155,13 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsolePath(): string
+    {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

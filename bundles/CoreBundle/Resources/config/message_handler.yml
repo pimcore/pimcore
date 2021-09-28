@@ -1,0 +1,27 @@
+services:
+    Pimcore\Messenger\Handler\SendNewsletterHandler:
+        arguments:
+            - '%pimcore.config%'
+            - '@pimcore.newsletter.address_source_adapter.factories'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\VideoConvertHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\CleanupThumbnailsHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\AssetUpdateTasksHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\MaintenanceTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+        tags:
+            - { name: messenger.message_handler }

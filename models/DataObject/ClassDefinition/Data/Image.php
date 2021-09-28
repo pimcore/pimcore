@@ -24,7 +24,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use ImageTrait;
+
     use Extension\QueryColumnType;
     use Data\Extension\RelationFilterConditionParser;
 
@@ -283,7 +285,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof Asset\Image) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getId(), $idMapping['asset'])) {
                 return Asset::getById($idMapping['asset'][$data->getId()]);
             }
         }

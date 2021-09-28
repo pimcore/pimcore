@@ -38,7 +38,7 @@ class Id
     public function __construct(Element\ElementInterface $webResource)
     {
         $this->id = $webResource->getId();
-        $this->type = Element\Service::getType($webResource) ?: 'unknown';
+        $this->type = Element\Service::getElementType($webResource) ?: 'unknown';
     }
 
     /**

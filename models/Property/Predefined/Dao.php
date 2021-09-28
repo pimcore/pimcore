@@ -22,18 +22,27 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Property\Predefined $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    use Model\Dao\AutoIncrementTrait;
+
     public function configure()
     {
-        parent::configure();
-        $this->setFile('predefined-properties');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['properties']['predefined']['definitions'] ?? [],
+            'settingsStoreScope' => 'pimcore_predefined_properties',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/predefined-properties',
+            'legacyConfigFile' => 'predefined-properties.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES',
+        ]);
     }
 
     /**
-     * @param int|null $id
+     * @param string|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -41,12 +50,19 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setId($id);
         }
 
-        $data = $this->db->getById($this->model->getId());
+        $data = $this->getDataByName($this->model->getId());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Predefined property with id: ' . $this->model->getId() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Predefined property with ID "%s" does not exist.',
+                $this->model->getId()
+            ));
         }
     }
 
@@ -60,19 +76,16 @@ class Dao extends Model\Dao\PhpArrayTable
         if ($key != null) {
             $this->model->setKey($key);
         }
-
         $key = $this->model->getKey();
 
-        $data = $this->db->fetchAll(function ($row) use ($key) {
-            if ($row['key'] == $key) {
-                return true;
-            }
+        $list = new Listing();
+        $properties = array_values(array_filter($list->getProperties(), function ($item) use ($key) {
+            return $item->getKey() == $key;
+        }
+        ));
 
-            return false;
-        });
-
-        if (count($data) && $data[0]['id']) {
-            $this->assignVariablesToModel($data[0]);
+        if (count($properties) && $properties[0]->getId()) {
+            $this->assignVariablesToModel($properties[0]);
         } else {
             throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
         }
@@ -83,6 +96,10 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function save()
     {
+        if (!$this->model->getId()) {
+            $id = $this->getNextId(Listing::class);
+            $this->model->setId($id);
+        }
         $ts = time();
         if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate($ts);
@@ -91,7 +108,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'description', 'key', 'type', 'data',
+        $allowedProperties = ['name', 'description', 'key', 'type', 'data',
             'config', 'ctype', 'inheritable', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
@@ -99,11 +116,7 @@ class Dao extends Model\Dao\PhpArrayTable
                 $data[$key] = $value;
             }
         }
-        $this->db->insertOrUpdate($data, $this->model->getId());
-
-        if (!$this->model->getId()) {
-            $this->model->setId($this->db->getLastInsertId());
-        }
+        $this->saveData($this->model->getId(), $data);
     }
 
     /**
@@ -111,6 +124,24 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete()
     {
-        $this->db->delete($this->model->getId());
+        $this->deleteData($this->model->getId());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'properties' => [
+                    'predefined' => [
+                        'definitions' => [
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

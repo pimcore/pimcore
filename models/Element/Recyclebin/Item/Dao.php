@@ -34,8 +34,8 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM recyclebin WHERE id = ?', $id);
 
-        if (!$data['id']) {
-            throw new \Exception('Recyclebin item with id ' . $id . ' not found');
+        if (!$data) {
+            throw new Model\Exception\NotFoundException('Recyclebin item with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);

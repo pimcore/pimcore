@@ -27,6 +27,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
@@ -150,6 +151,9 @@ class SettingsController extends AdminController
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $metadata = Metadata\Predefined::getById($id);
+                if (!$metadata->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $metadata->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -158,7 +162,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $metadata = Metadata\Predefined::getById($data['id']);
-
+                if (!$metadata->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $metadata->setValues($data);
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
@@ -170,8 +176,14 @@ class SettingsController extends AdminController
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
+                $responseData = $metadata->getObjectVars();
+                $responseData['writeable'] = $metadata->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new Metadata\Predefined())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -187,7 +199,10 @@ class SettingsController extends AdminController
 
                 $metadata->save();
 
-                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
+                $responseData = $metadata->getObjectVars();
+                $responseData['writeable'] = $metadata->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of types
@@ -212,8 +227,9 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getDefinitions())) {
                 foreach ($list->getDefinitions() as $metadata) {
-                    $metadata->expand();
-                    $properties[] = $metadata->getObjectVars();
+                    $data = $metadata->getObjectVars();
+                    $data['writeable'] = $metadata->isWriteable();
+                    $properties[] = $data;
                 }
             }
 
@@ -238,9 +254,12 @@ class SettingsController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            if ($group === null || $group === $item->getGroup()) {
+            $itemGroup = $item->getGroup() ?? '';
+            if ($group === 'default' || $group === $itemGroup) {
                 $item->expand();
-                $result[] = $item->getObjectVars();
+                $data = $item->getObjectVars();
+                $data['writeable'] = $item->isWriteable();
+                $result[] = $data;
             }
         }
 
@@ -263,6 +282,9 @@ class SettingsController extends AdminController
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $property = Property\Predefined::getById($id);
+                if (!$property->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $property->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -271,6 +293,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $property = Property\Predefined::getById($data['id']);
+                if (!$property->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 if (is_array($data['ctype'])) {
                     $data['ctype'] = implode(',', $data['ctype']);
                 }
@@ -278,8 +303,14 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
+                $responseData = $property->getObjectVars();
+                $responseData['writeable'] = $property->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new Property\Predefined())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -289,7 +320,10 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
+                $responseData = $property->getObjectVars();
+                $responseData['writeable'] = $property->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of types
@@ -319,7 +353,9 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getProperties())) {
                 foreach ($list->getProperties() as $property) {
-                    $properties[] = $property->getObjectVars();
+                    $data = $property->getObjectVars();
+                    $data['writeable'] = $property->isWriteable();
+                    $properties[] = $data;
                 }
             }
 
@@ -546,7 +582,7 @@ class SettingsController extends AdminController
         $valueArray = $values->toArray();
 
         $optionsString = [];
-        if ($valueArray['wkhtml2pdfOptions']) {
+        if ($valueArray['wkhtml2pdfOptions'] ?? false) {
             foreach ($valueArray['wkhtml2pdfOptions'] as $key => $value) {
                 $tmpStr = '--'.$key;
                 if ($value !== null && $value !== '') {
@@ -577,6 +613,10 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
+        unset($values['documentation']);
+        unset($values['additions']);
+        unset($values['json_converter']);
+
         if ($values['wkhtml2pdfOptions']) {
             $optionArray = [];
             $lines = explode("\n", $values['wkhtml2pdfOptions']);
@@ -591,8 +631,7 @@ class SettingsController extends AdminController
             $values['wkhtml2pdfOptions'] = $optionArray;
         }
 
-        $configFile = \Pimcore\Config::locateConfigFile('web2print.php');
-        File::putPhpFile($configFile, to_php_data_file_format($values));
+        \Pimcore\Web2Print\Config::save($values);
 
         return $this->adminJson(['success' => true]);
     }
@@ -1104,6 +1143,8 @@ class SettingsController extends AdminController
                         'text' => $item->getName(),
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_thumbnails',
+                        'cls' => 'pimcore_treenode_disabled',
+                        'writeable' => $item->isWriteable(),
                     ];
             } else {
                 $thumbnails[] = [
@@ -1111,6 +1152,8 @@ class SettingsController extends AdminController
                     'text' => $item->getName(),
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_thumbnails',
+                    'cls' => 'pimcore_treenode_disabled',
+                    'writeable' => $item->isWriteable(),
                 ];
             }
         }
@@ -1167,10 +1210,18 @@ class SettingsController extends AdminController
 
         if (!$pipe) {
             $pipe = new Asset\Image\Thumbnail\Config();
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
+
             $pipe->setName($request->get('name'));
             $pipe->save();
 
             $success = true;
+        } else {
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
         }
 
         return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
@@ -1188,6 +1239,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $pipe->delete();
 
         return $this->adminJson(['success' => true]);
@@ -1205,8 +1261,10 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+        $data = $pipe->getObjectVars();
+        $data['writeable'] = $pipe->isWriteable();
 
-        return $this->adminJson($pipe->getObjectVars());
+        return $this->adminJson($data);
     }
 
     /**
@@ -1221,6 +1279,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
         $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
@@ -1293,7 +1356,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var Asset\Image\Thumbnail\Config $item */
+        /** @var Asset\Video\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
@@ -1314,6 +1377,8 @@ class SettingsController extends AdminController
                         'text' => $item->getName(),
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_videothumbnails',
+                        'cls' => 'pimcore_treenode_disabled',
+                        'writeable' => $item->isWriteable(),
                     ];
             } else {
                 $thumbnails[] = [
@@ -1321,6 +1386,8 @@ class SettingsController extends AdminController
                     'text' => $item->getName(),
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_videothumbnails',
+                    'cls' => 'pimcore_treenode_disabled',
+                    'writeable' => $item->isWriteable(),
                 ];
             }
         }
@@ -1349,10 +1416,18 @@ class SettingsController extends AdminController
 
         if (!$pipe) {
             $pipe = new Asset\Video\Thumbnail\Config();
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
+
             $pipe->setName($request->get('name'));
             $pipe->save();
 
             $success = true;
+        } else {
+            if (!$pipe->isWriteable()) {
+                throw new ConfigWriteException();
+            }
         }
 
         return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
@@ -1370,6 +1445,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $pipe->delete();
 
         return $this->adminJson(['success' => true]);
@@ -1388,7 +1468,10 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe->getObjectVars());
+        $data = $pipe->getObjectVars();
+        $data['writeable'] = $pipe->isWriteable();
+
+        return $this->adminJson($data);
     }
 
     /**
@@ -1403,6 +1486,11 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe->isWriteable()) {
+            throw new ConfigWriteException();
+        }
+
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
         $mediaOrder = $this->decodeJson($request->get('mediaOrder'));

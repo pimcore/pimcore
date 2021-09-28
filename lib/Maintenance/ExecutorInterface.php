@@ -20,6 +20,8 @@ namespace Pimcore\Maintenance;
  */
 interface ExecutorInterface
 {
+    public function executeTask(string $name, bool $force = false);
+
     /**
      * Execute the Maintenance Task
      *

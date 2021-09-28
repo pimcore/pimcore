@@ -30,17 +30,17 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
 * @method static \Pimcore\Model\DataObject\FilterDefinition\Listing getList()
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByPageLimit($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByDefaultOrderByInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByOrderByAsc($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByOrderByDesc($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByAjaxReload($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByInfiniteScroll($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByLimitOnFirstLoad($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByConditionsInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByFiltersInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getByCrossSellingCategory($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition getBySimilarityFieldsInheritance($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByPageLimit($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByDefaultOrderByInheritance($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByAsc($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByDesc($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByAjaxReload($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByInfiniteScroll($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByLimitOnFirstLoad($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByConditionsInheritance($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByFiltersInheritance($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByCrossSellingCategory($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getBySimilarityFieldsInheritance($value, $limit = 0, $offset = 0)
 */
 
 class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
@@ -82,7 +82,7 @@ public function getPageLimit(): ?float
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("pageLimit");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -93,7 +93,7 @@ public function getPageLimit(): ?float
 		try {
 			return $this->getValueFromParent("pageLimit");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -126,7 +126,7 @@ public function getDefaultOrderByInheritance(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderByInheritance");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -137,7 +137,7 @@ public function getDefaultOrderByInheritance(): ?string
 		try {
 			return $this->getValueFromParent("defaultOrderByInheritance");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -167,7 +167,7 @@ public function getDefaultOrderBy()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderBy");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -201,7 +201,7 @@ public function getOrderByAsc(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByAsc");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -212,7 +212,7 @@ public function getOrderByAsc(): ?string
 		try {
 			return $this->getValueFromParent("orderByAsc");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -243,7 +243,7 @@ public function getOrderByDesc(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByDesc");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -254,7 +254,7 @@ public function getOrderByDesc(): ?string
 		try {
 			return $this->getValueFromParent("orderByDesc");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -285,7 +285,7 @@ public function getAjaxReload(): ?bool
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("ajaxReload");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -296,7 +296,7 @@ public function getAjaxReload(): ?bool
 		try {
 			return $this->getValueFromParent("ajaxReload");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -327,7 +327,7 @@ public function getInfiniteScroll(): ?bool
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("infiniteScroll");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -338,7 +338,7 @@ public function getInfiniteScroll(): ?bool
 		try {
 			return $this->getValueFromParent("infiniteScroll");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -369,7 +369,7 @@ public function getLimitOnFirstLoad(): ?float
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("limitOnFirstLoad");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -380,7 +380,7 @@ public function getLimitOnFirstLoad(): ?float
 		try {
 			return $this->getValueFromParent("limitOnFirstLoad");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -413,7 +413,7 @@ public function getConditionsInheritance(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditionsInheritance");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -424,7 +424,7 @@ public function getConditionsInheritance(): ?string
 		try {
 			return $this->getValueFromParent("conditionsInheritance");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -454,7 +454,7 @@ public function getConditions()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditions");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -488,7 +488,7 @@ public function getFiltersInheritance(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filtersInheritance");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -499,7 +499,7 @@ public function getFiltersInheritance(): ?string
 		try {
 			return $this->getValueFromParent("filtersInheritance");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -529,7 +529,7 @@ public function getFilters()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filters");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -563,7 +563,7 @@ public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractEleme
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("crossSellingCategory");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -576,7 +576,7 @@ public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractEleme
 		try {
 			return $this->getValueFromParent("crossSellingCategory");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -620,7 +620,7 @@ public function getSimilarityFieldsInheritance(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFieldsInheritance");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -631,7 +631,7 @@ public function getSimilarityFieldsInheritance(): ?string
 		try {
 			return $this->getValueFromParent("similarityFieldsInheritance");
 		} catch (InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
+			// no data from parent available, continue ...
 		}
 	}
 
@@ -661,7 +661,7 @@ public function getSimilarityFields()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFields");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}

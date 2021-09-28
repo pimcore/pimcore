@@ -27,14 +27,17 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -45,6 +48,8 @@ use Symfony\Component\Mime\MimeTypes;
  */
 class Asset extends Element\AbstractElement
 {
+    use ScheduledTasksTrait;
+
     use TemporaryFileHelperTrait;
 
     /**
@@ -200,13 +205,6 @@ class Asset extends Element\AbstractElement
      * @var bool|null
      */
     protected $hasSiblings;
-
-    /**
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
 
     /**
      * @internal
@@ -595,6 +593,13 @@ class Asset extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+
+            if ($this->getDataChanged()) {
+                if (in_array($this->getType(), ['image', 'video', 'document'])) {
+                    $this->addToUpdateTaskQueue();
+                }
+            }
+
             $this->setDataChanged(false);
 
             $postEvent = new AssetEvent($this, $params);
@@ -1677,6 +1682,35 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param string $name
+     * @param string|null $language
+     *
+     * @return self
+     */
+    public function removeMetadata(string $name, ?string $language = null)
+    {
+        if ($name) {
+            $tmp = [];
+            $name = str_replace('~', '---', $name);
+            if (!is_array($this->metadata)) {
+                $this->metadata = [];
+            }
+
+            foreach ($this->metadata as $item) {
+                if ($item['name'] === $name && ($language == $item['language'] || $language === '*')) {
+                    continue;
+                }
+                $tmp[] = $item;
+            }
+
+            $this->metadata = $tmp;
+            $this->setHasMetaData(!empty($this->metadata));
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string|null $name
      * @param string|null $language
      * @param bool $strictMatch
@@ -1753,48 +1787,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='asset'", $this->getId());
-            $this->setScheduledTasks($taskList->load());
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return $this
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
-    }
-
-    private function saveScheduledTasks()
-    {
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('asset');
-                $task->save();
-            }
-        }
     }
 
     /**
@@ -2050,5 +2042,15 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             // noting to do
         }
+    }
+
+    /**
+     * @internal
+     */
+    protected function addToUpdateTaskQueue(): void
+    {
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new AssetUpdateTasksMessage($this->getId())
+        );
     }
 }

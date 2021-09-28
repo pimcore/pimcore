@@ -95,7 +95,7 @@ final class GroupConfig extends Model\AbstractModel
             Cache\Runtime::set($cacheKey, $config);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
