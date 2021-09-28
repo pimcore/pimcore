@@ -55,7 +55,7 @@ class GeneratePagePreviews extends AbstractCommand
                 'exclude-patterns',
                 'e',
                 InputOption::VALUE_OPTIONAL,
-                'All child objects matching the regex pattern will be excluded.'
+                'Excludes all documents whose path property matches the regex pattern.'
             );
     }
 
