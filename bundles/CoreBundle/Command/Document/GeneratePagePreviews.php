@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Db;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Pimcore\Db;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -61,23 +61,23 @@ class GeneratePagePreviews extends AbstractCommand
 
     /**
      * @param InputInterface $input
+     *
      * @return Document\Listing|void
      */
-    protected function fetchItems(InputInterface $input) {
-
+    protected function fetchItems(InputInterface $input)
+    {
         $docs = new \Pimcore\Model\Document\Listing();
         $db = Db::get();
 
         $parentIdOrPath = $input->getOption('parent');
-        if($parentIdOrPath) {
-            if(is_numeric(($parentIdOrPath))) {
+        if ($parentIdOrPath) {
+            if (is_numeric(($parentIdOrPath))) {
                 $parent = Document::getById($parentIdOrPath);
-            }
-            else {
+            } else {
                 $parent = Document::getByPath($parentIdOrPath);
             }
             if ($parent instanceof Document) {
-                $conditions[] = "path LIKE " . $db->quote($parent->getRealFullPath() . "%");
+                $conditions[] = 'path LIKE ' . $db->quote($parent->getRealFullPath() . '%');
             } else {
                 $this->writeError($parentIdOrPath . ' is not a valid id or path!');
                 exit(1);
@@ -85,12 +85,13 @@ class GeneratePagePreviews extends AbstractCommand
         }
 
         $regex = $input->getOption('exclude-patterns');
-        if($regex)
-            $conditions[] = "path NOT REGEXP " . $db->quote($regex);
+        if ($regex) {
+            $conditions[] = 'path NOT REGEXP ' . $db->quote($regex);
+        }
 
         $filter = "type = 'page'";
-        if(isset($conditions)) {
-            $filter = $filter . " AND " . implode(' AND ', $conditions);
+        if (isset($conditions)) {
+            $filter = $filter . ' AND ' . implode(' AND ', $conditions);
         }
         $docs->setCondition($filter);
         $docs->load();
