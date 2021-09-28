@@ -16,9 +16,12 @@
 namespace Pimcore\Config;
 
 use Pimcore\Config;
+use Pimcore\Console\Application;
 use Pimcore\Db\PhpArrayFileTable;
 use Pimcore\File;
 use Pimcore\Model\Tool\SettingsStore;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
@@ -232,6 +235,8 @@ class LocationAwareConfigRepository
             $settingsStoreData = json_encode($data);
             SettingsStore::set($key, $settingsStoreData, 'string', $this->settingsStoreScope);
         }
+
+        $this->stopMessengerWorkers();
     }
 
     /**
@@ -257,11 +262,7 @@ class LocationAwareConfigRepository
 
         File::put($yamlFilename, Yaml::dump($data, 50));
 
-        // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yml');
-        if ($systemConfigFile) {
-            touch($systemConfigFile);
-        }
+        $this->invalidateConfigCache();
     }
 
     /**
@@ -302,11 +303,14 @@ class LocationAwareConfigRepository
 
         if ($dataSource === self::LOCATION_SYMFONY_CONFIG) {
             unlink($this->getVarConfigFile($key));
+            $this->invalidateConfigCache();
         } elseif ($dataSource === self::LOCATION_SETTINGS_STORE) {
             SettingsStore::delete($key, $this->settingsStoreScope);
         } elseif ($dataSource === self::LOCATION_LEGACY) {
             $this->getLegacyStore()->delete($key);
         }
+
+        $this->stopMessengerWorkers();
     }
 
     /**
@@ -319,5 +323,35 @@ class LocationAwareConfigRepository
             array_keys($this->containerConfig),
             $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()) : [],
         ));
+    }
+
+    private function invalidateConfigCache(): void
+    {
+        // invalidate container config cache if debug flag on kernel is set
+        $systemConfigFile = Config::locateConfigFile('system.yml');
+        if ($systemConfigFile) {
+            touch($systemConfigFile);
+        }
+    }
+
+    private function stopMessengerWorkers(): void
+    {
+        $app = new Application(\Pimcore::getKernel());
+        $app->setAutoExit(false);
+
+        $input = new ArrayInput([
+            'command' => 'messenger:stop-workers',
+            '--no-ansi' => null,
+            '--no-interaction' => null,
+        ]);
+
+        $output = new BufferedOutput();
+        $return = $app->run($input, $output);
+
+        if(0 !== $return) {
+            // return the output, don't use if you used NullOutput()
+            $content = $output->fetch();
+            throw new \Exception('Running messenger:stop-workers failed, output was: ' . $content);
+        }
     }
 }
