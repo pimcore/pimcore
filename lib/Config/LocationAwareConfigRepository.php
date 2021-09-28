@@ -348,9 +348,10 @@ class LocationAwareConfigRepository
         $output = new BufferedOutput();
         $return = $app->run($input, $output);
 
-        if(0 !== $return) {
+        if (0 !== $return) {
             // return the output, don't use if you used NullOutput()
             $content = $output->fetch();
+
             throw new \Exception('Running messenger:stop-workers failed, output was: ' . $content);
         }
     }
