@@ -341,17 +341,17 @@ class LocationAwareConfigRepository
 
         $input = new ArrayInput([
             'command' => 'messenger:stop-workers',
-            '--quiet' => null,
             '--no-ansi' => null,
             '--no-interaction' => null,
         ]);
 
         $output = new BufferedOutput();
-        $app->run($input, $output);
+        $return = $app->run($input, $output);
 
-        // return the output, don't use if you used NullOutput()
-        $content = $output->fetch();
-
-        $bar = $content;
+        if(0 !== $return) {
+            // return the output, don't use if you used NullOutput()
+            $content = $output->fetch();
+            throw new \Exception('Running messenger:stop-workers failed, output was: ' . $output);
+        }
     }
 }
