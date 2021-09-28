@@ -13,65 +13,25 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Messenger\Handler;
 
-use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
  */
-class SanitizeElementsTask implements TaskInterface
+class SanityCheckHandler
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
+    public function __invoke(SanityCheckMessage $message)
     {
-        $this->logger = $logger;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function execute()
-    {
-        $sanityCheck = Sanitycheck::getNext();
-        $count = 0;
-        while ($sanityCheck) {
-            $count++;
-            if ($count % 10 == 0) {
-                \Pimcore::collectGarbage();
-            }
-
-            $element = Service::getElementById($sanityCheck->getType(), $sanityCheck->getId(), true);
-            if ($element) {
-                try {
-                    $this->performSanityCheck($element);
-                } catch (\Exception $e) {
-                    $this->logger->error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . Service::getElementType($element) . ' ] failed');
-                }
-                $sanityCheck->delete();
-            } else {
-                $sanityCheck->delete();
-            }
-            $sanityCheck = Sanitycheck::getNext();
-
-            // reduce load on server
-            $this->logger->debug('Now timeout for 3 seconds');
-            sleep(3);
+        $element = Service::getElementById($message->getType(), $message->getId(), true);
+        if ($element) {
+            $this->performSanityCheck($element);
         }
     }
 
