@@ -18,6 +18,9 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model\Asset\Video\Thumbnail\Processor;
 
+/**
+ * @internal
+ */
 class VideoConvertHandler
 {
     public function __invoke(VideoConvertMessage $message)

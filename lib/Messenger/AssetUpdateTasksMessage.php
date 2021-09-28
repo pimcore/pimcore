@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class AssetUpdateTasksMessage
 {
     public function __construct(protected int $id)

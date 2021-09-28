@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class MaintenanceTaskMessage
 {
     public function __construct(protected string $name, protected bool $force)

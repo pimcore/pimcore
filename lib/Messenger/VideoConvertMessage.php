@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class VideoConvertMessage
 {
     public function __construct(protected string $processId)
