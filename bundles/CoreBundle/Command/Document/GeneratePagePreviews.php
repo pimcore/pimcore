@@ -52,8 +52,8 @@ class GeneratePagePreviews extends AbstractCommand
                 'Only create preview of documents in parent hierarchy (ID|path).'
             )
             ->addOption(
-                'regex',
-                'r',
+                'exclude-patterns',
+                'e',
                 InputOption::VALUE_OPTIONAL,
                 'All child objects matching the regex pattern will be excluded.'
             );
