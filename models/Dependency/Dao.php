@@ -17,7 +17,6 @@ namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Logger;
-use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
