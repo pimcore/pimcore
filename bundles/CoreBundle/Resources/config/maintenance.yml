@@ -93,13 +93,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: tmpstorecleanup }
 
-    Pimcore\Maintenance\Tasks\ImageOptimizeTask:
-        arguments:
-            - '@Pimcore\Image\Optimizer'
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: imageoptimize }
-
 
     Pimcore\Maintenance\Tasks\HousekeepingTask:
         arguments:

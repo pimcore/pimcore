@@ -29,3 +29,10 @@ services:
     Pimcore\Messenger\Handler\SearchBackendHandler:
         tags:
             - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\OptimizeImageHandler:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }

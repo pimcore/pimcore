@@ -18,10 +18,12 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
+use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -401,8 +403,9 @@ class Processor
                 $generated = true;
 
                 if ($optimizeContent) {
-                    $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
-                    TmpStore::add($tmpStoreKey, $storagePath, 'image-optimize-queue');
+                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                      new OptimizeImageMessage($storagePath)
+                    );
                 }
 
                 Logger::debug('Thumbnail ' . $storagePath . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
