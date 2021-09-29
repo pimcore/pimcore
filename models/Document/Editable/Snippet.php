@@ -151,10 +151,12 @@ class Snippet extends Model\Document\Editable
         $content = $editableHandler->renderAction($this->snippet->getController(), $params);
 
         // write contents to the cache, if output-cache is enabled
-        if (isset($params['cache']) && $params['cache'] === true) {
+        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+            $cacheTags = ['output_inline'];
+            $cacheTags[] = $cacheConfig['lifetime'] ? 'output_lifetime' : 'output';
+            Cache::save($content, $cacheKey, $cacheTags, $cacheConfig['lifetime']);
+        } elseif (isset($params['cache']) && $params['cache'] === true) {
             Cache::save($content, $cacheKey, ['output']);
-        } elseif ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 
         return $content;
