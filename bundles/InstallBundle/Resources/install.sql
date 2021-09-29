@@ -414,12 +414,6 @@ CREATE TABLE `redirects` (
   INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `sanitycheck`;
-CREATE TABLE `sanitycheck` (
-  `id` int(11) unsigned NOT NULL,
-  `type` enum('document','asset','object') NOT NULL,
-  PRIMARY KEY  (`id`,`type`)
-) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
 CREATE TABLE `schedule_tasks` (
