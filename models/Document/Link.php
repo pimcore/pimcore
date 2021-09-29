@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -24,52 +24,52 @@ use Pimcore\Model\Document;
  */
 class Link extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
-     * Contains the ID of the internal ID
+     * Contains the ID of the internal ID.
      *
      * @var int|null
      */
     protected $internal;
 
     /**
-     * Contains the type of the internal ID
+     * Contains the type of the internal ID.
      *
      * @var string
      */
     protected $internalType;
 
     /**
-     * Contains object of linked Document|Asset|DataObject
+     * Contains object of linked Document|Asset|DataObject.
      *
      * @var Document|Asset|Model\DataObject\Concrete|null
      */
     protected $object;
 
     /**
-     * Contains the direct link as plain text
+     * Contains the direct link as plain text.
      *
      * @var string
      */
     protected $direct = '';
 
     /**
-     * Type of the link (internal/direct)
+     * Type of the link (internal/direct).
      *
      * @var string
      */
     protected $linktype = 'internal';
 
     /**
-     * static type of this object
+     * static type of this object.
      *
      * @var string
      */
     protected $type = 'link';
 
     /**
-     * path of the link
+     * path of the link.
      *
      * @var string
      */
@@ -84,9 +84,9 @@ class Link extends Model\Document
     {
         $dependencies = parent::resolveDependencies();
 
-        if ($this->getLinktype() == 'internal') {
+        if ('internal' == $this->getLinktype()) {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                $key = $this->getInternalType() . '_' . $this->getObject()->getId();
+                $key = $this->getInternalType().'_'.$this->getObject()->getId();
 
                 $dependencies[$key] = [
                     'id' => $this->getObject()->getId(),
@@ -99,7 +99,7 @@ class Link extends Model\Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
+     * Resolves dependencies and create tags for caching out of them.
      *
      * @param array $tags
      *
@@ -111,7 +111,7 @@ class Link extends Model\Document
 
         $tags = parent::getCacheTags($tags);
 
-        if ($this->getLinktype() == 'internal') {
+        if ('internal' == $this->getLinktype()) {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 if ($this->getObject()->getId() != $this->getId() and !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
                     $tags = $this->getObject()->getCacheTags($tags);
@@ -123,14 +123,14 @@ class Link extends Model\Document
     }
 
     /**
-     * Returns the plain text path of the link
+     * Returns the plain text path of the link.
      *
      * @return string
      */
     public function getHref()
     {
         $path = '';
-        if ($this->getLinktype() == 'internal') {
+        if ('internal' == $this->getLinktype()) {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
             } else {
@@ -156,14 +156,14 @@ class Link extends Model\Document
     }
 
     /**
-     * Returns the plain text path of the link needed for the editmode
+     * Returns the plain text path of the link needed for the editmode.
      *
      * @return string
      */
     public function getRawHref()
     {
         $rawHref = '';
-        if ($this->getLinktype() == 'internal') {
+        if ('internal' == $this->getLinktype()) {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset ||
                 ($this->getObject() instanceof Model\DataObject\Concrete)
             ) {
@@ -177,7 +177,7 @@ class Link extends Model\Document
     }
 
     /**
-     * Returns the path of the link including the anchor and parameters
+     * Returns the path of the link including the anchor and parameters.
      *
      * @return string
      */
@@ -187,19 +187,19 @@ class Link extends Model\Document
 
         $parameters = $this->getProperty('navigation_parameters');
         if (strlen($parameters) > 0) {
-            $path .= '?' . str_replace('?', '', $parameters);
+            $path .= '?'.str_replace('?', '', $parameters);
         }
 
         $anchor = $this->getProperty('navigation_anchor');
         if (strlen($anchor) > 0) {
-            $path .= '#' . str_replace('#', '', $anchor);
+            $path .= '#'.str_replace('#', '', $anchor);
         }
 
         return $path;
     }
 
     /**
-     * Returns the id of the internal document|asset which is linked
+     * Returns the id of the internal document|asset which is linked.
      *
      * @return int
      */
@@ -209,7 +209,7 @@ class Link extends Model\Document
     }
 
     /**
-     * Returns the direct link (eg. http://www.pimcore.org/test)
+     * Returns the direct link (eg. http://www.pimcore.org/test).
      *
      * @return string
      */
@@ -219,7 +219,7 @@ class Link extends Model\Document
     }
 
     /**
-     * Returns the type of the link (internal/direct)
+     * Returns the type of the link (internal/direct).
      *
      * @return string
      */
@@ -323,11 +323,11 @@ class Link extends Model\Document
     public function setObjectFromId()
     {
         if ($this->internal) {
-            if ($this->internalType == 'document') {
+            if ('document' == $this->internalType) {
                 $this->object = Document::getById($this->internal);
-            } elseif ($this->internalType == 'asset') {
+            } elseif ('asset' == $this->internalType) {
                 $this->object = Asset::getById($this->internal);
-            } elseif ($this->internalType == 'object') {
+            } elseif ('object' == $this->internalType) {
                 $this->object = Model\DataObject\Concrete::getById($this->internal);
             }
         }
@@ -336,7 +336,7 @@ class Link extends Model\Document
     }
 
     /**
-     * returns the ready-use html for this link
+     * returns the ready-use html for this link.
      *
      * @return string
      */
@@ -352,22 +352,22 @@ class Link extends Model\Document
         ];
 
         $link = $this->getLink();
-        $link .= $this->getProperty('navigation_parameters') . $this->getProperty('navigation_anchor');
+        $link .= $this->getProperty('navigation_parameters').$this->getProperty('navigation_anchor');
 
         $attribs = [];
         foreach ($attributes as $key => $name) {
             $key = is_numeric($key) ? $name : $key;
-            $value = $this->getProperty('navigation_' . $name);
+            $value = $this->getProperty('navigation_'.$name);
             if ($value) {
-                $attribs[] = $key . '="' . $value . '"';
+                $attribs[] = $key.'="'.$value.'"';
             }
         }
 
-        return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="'.$link.'" '.implode(' ', $attribs).'>'.htmlspecialchars($this->getProperty('navigation_name')).'</a>';
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function update($params = [])
     {

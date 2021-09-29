@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.element.scheduler");
 pimcore.element.scheduler = Class.create({
 
-    initialize: function(element, type, options) {
+    initialize: function (element, type, options) {
         this.options = Ext.Object.merge({
             supportsVersions: true
         }, options);
@@ -38,6 +38,7 @@ pimcore.element.scheduler = Class.create({
                     d = new Date(intval(rawTask.date) * 1000);
 
                     td = [
+                        rawTask.id,
                         d,
                         Ext.Date.format(d, "H:i"),
                         rawTask.action
@@ -53,6 +54,7 @@ pimcore.element.scheduler = Class.create({
             }
 
             var storeFields = [
+                "id",
                 {
                     name: "date",
                     convert: function (v, rec) {
@@ -62,16 +64,17 @@ pimcore.element.scheduler = Class.create({
                         }
                         return ret;
                     }
-                }, {
-                name: "time",
-                convert: function (v, rec) {
-                    var ret = v;
-                    if (v instanceof Date) {
-                        ret = Ext.Date.format(v, "H:i");
+                },
+                {
+                    name: "time",
+                    convert: function (v, rec) {
+                        var ret = v;
+                        if (v instanceof Date) {
+                            ret = Ext.Date.format(v, "H:i");
+                        }
+                        return ret;
                     }
-                    return ret;
-                }
-            },
+                },
                 "action"
             ];
 
@@ -103,7 +106,8 @@ pimcore.element.scheduler = Class.create({
                             rootProperty: 'versions'
                         }
                     },
-                    fields: ['id', {name: 'date', convert: function (v, rec) {
+                    fields: ['id', {
+                        name: 'date', convert: function (v, rec) {
                             var d = new Date(intval(v) * 1000);
 
                             var ret = Ext.Date.format(d, "Y-m-d H:i");
@@ -116,14 +120,17 @@ pimcore.element.scheduler = Class.create({
                                 ret += " - " + rec.data.user.name;
                             }
                             return ret;
-                        }}, 'note', {name:'name', convert: function (v, rec) {
-                            if (rec.data.user) {
-                                if (rec.data.user.name) {
-                                    return rec.data.user.name;
+                        }
+                    }, 'note', {
+                            name: 'name', convert: function (v, rec) {
+                                if (rec.data.user) {
+                                    if (rec.data.user.name) {
+                                        return rec.data.user.name;
+                                    }
                                 }
+                                return null;
                             }
-                            return null;
-                        }}]
+                        }]
                 });
             }
 
@@ -135,32 +142,35 @@ pimcore.element.scheduler = Class.create({
             });
 
             var propertiesColumns = [
-                {text: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()                },
-                {text: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
+                {text: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()},
+                {
+                    text: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
                         format: "H:i",
                     })
                 },
-                {text: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
-                    triggerAction: 'all',
-                    editable: false,
-                    store: actionTypes,
-                    displayField:'name',
-                    valueField: "key",
-                    mode: 'local'
-                }),renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-                    try {
-                        var rec = actionTypes.findRecord("key", value);
-                        if (rec) {
-                            return rec.get("name");
+                {
+                    text: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
+                        triggerAction: 'all',
+                        editable: false,
+                        store: actionTypes,
+                        displayField: 'name',
+                        valueField: "key",
+                        mode: 'local'
+                    }), renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                        try {
+                            var rec = actionTypes.findRecord("key", value);
+                            if (rec) {
+                                return rec.get("name");
+                            }
                         }
-                    }
-                    catch (e) {
-                        console.log(e);
+                        catch (e) {
+                            console.log(e);
 
-                    }
+                        }
 
-                    return "";
-                }}
+                        return "";
+                    }
+                }
             ];
 
             if (this.options.supportsVersions) {
@@ -209,7 +219,7 @@ pimcore.element.scheduler = Class.create({
                 stripeRows: true,
                 trackMouseOver: true,
                 columnLines: true,
-                columns : propertiesColumns,
+                columns: propertiesColumns,
                 tbar: [
                     {
                         text: t('add'),
@@ -224,7 +234,7 @@ pimcore.element.scheduler = Class.create({
                 ],
                 plugins: [
                     this.cellEditing
-                    ]
+                ]
             });
 
 
@@ -242,20 +252,20 @@ pimcore.element.scheduler = Class.create({
         return this.layout;
     },
 
-    buildActionsColumnStore: function() {
+    buildActionsColumnStore: function () {
         var actions = [];
 
         if ("document" === this.type || "object" === this.type) {
-            if(this.element.isAllowed("publish")) {
+            if (this.element.isAllowed("publish")) {
                 actions.push(["publish", t("publish")]);
             }
 
-            if(this.element.isAllowed("unpublish")) {
+            if (this.element.isAllowed("unpublish")) {
                 actions.push(["unpublish", t("unpublish")]);
             }
         }
 
-        if(this.element.isAllowed("delete")) {
+        if (this.element.isAllowed("delete")) {
             actions.push(["delete", t("delete")]);
         }
 
@@ -297,7 +307,7 @@ pimcore.element.scheduler = Class.create({
         var value;
         for (var i = 0; i < data.length; i++) {
             value = {
-                date:  data[i].data.date,
+                date: data[i].data.date,
                 time: data[i].data.time,
                 action: data[i].data.action,
                 active: data[i].data.active

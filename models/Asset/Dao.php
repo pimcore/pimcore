@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -27,8 +27,10 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+
     /**
-     * Get the data for the object by id from database and assign it to the object (model)
+     * Get the data for the object by id from database and assign it to the object (model).
      *
      * @param int $id
      *
@@ -67,12 +69,12 @@ class Dao extends Model\Element\Dao
                 $this->model->setMetadataRaw($metadata);
             }
         } else {
-            throw new \Exception('Asset with ID ' . $id . " doesn't exists");
+            throw new \Exception('Asset with ID '.$id." doesn't exists");
         }
     }
 
     /**
-     * Get the data for the asset from database for the given path
+     * Get the data for the asset from database for the given path.
      *
      * @param string $path
      *
@@ -86,7 +88,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('asset with path: ' . $path . " doesn't exist");
+            throw new \Exception('asset with path: '.$path." doesn't exist");
         }
     }
 
@@ -183,7 +185,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($oldPath) . '%'));
+        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE '.$this->db->quote($this->db->escapeLike($oldPath).'%'));
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -192,19 +194,19 @@ class Dao extends Model\Element\Dao
 
         //update assets child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update assets set path = replace(path,'.$this->db->quote($oldPath.'/').','.$this->db->quote($this->model->getRealFullPath().'/')."), userModification = '".$userId."' where path like ".$this->db->quote($this->db->escapeLike($oldPath).'/%').';');
 
         //update assets child permission paths
-        $this->db->query('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update users_workspaces_asset set cpath = replace(cpath,'.$this->db->quote($oldPath.'/').','.$this->db->quote($this->model->getRealFullPath().'/').') where cpath like '.$this->db->quote($this->db->escapeLike($oldPath).'/%').';');
 
         //update assets child properties paths
-        $this->db->query('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update properties set cpath = replace(cpath,'.$this->db->quote($oldPath.'/').','.$this->db->quote($this->model->getRealFullPath().'/').') where cpath like '.$this->db->quote($this->db->escapeLike($oldPath).'/%').';');
 
         return $assets;
     }
 
     /**
-     * Get the properties for the object from database and assign it
+     * Get the properties for the object from database and assign it.
      *
      * @param bool $onlyInherited
      *
@@ -216,7 +218,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN ('.implode(',', $parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -246,7 +248,7 @@ class Dao extends Model\Element\Dao
 
                 $properties[$propertyRaw['name']] = $property;
             } catch (\Exception $e) {
-                Logger::error("can't add property " . $propertyRaw['name'] . ' to asset ' . $this->model->getRealFullPath());
+                Logger::error("can't add property ".$propertyRaw['name'].' to asset '.$this->model->getRealFullPath());
             }
         }
 
@@ -261,7 +263,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * deletes all properties for the object from database
+     * deletes all properties for the object from database.
      */
     public function deleteAllProperties()
     {
@@ -269,7 +271,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * deletes all metadata for the object from database
+     * deletes all metadata for the object from database.
      */
     public function deleteAllMetadata()
     {
@@ -277,7 +279,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * get versions from database, and assign it to object
+     * get versions from database, and assign it to object.
      *
      * @return Model\Version[]
      */
@@ -300,11 +302,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
     }
 
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
-    }
-
     /**
      * @return string|null retrieves the current full set path from DB
      */
@@ -321,9 +318,6 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCountForUpdate(): int
     {
         $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
@@ -337,7 +331,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * quick test if there are children
+     * quick test if there are children.
      *
      * @return bool
      */
@@ -345,11 +339,11 @@ class Dao extends Model\Element\Dao
     {
         $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? LIMIT 1', $this->model->getId());
 
-        return (bool)$c;
+        return (bool) $c;
     }
 
     /**
-     * Quick test if there are siblings
+     * Quick test if there are siblings.
      *
      * @return bool
      */
@@ -357,11 +351,11 @@ class Dao extends Model\Element\Dao
     {
         $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
 
-        return (bool)$c;
+        return (bool) $c;
     }
 
     /**
-     * returns the amount of directly children (not recursivly)
+     * returns the amount of directly children (not recursivly).
      *
      * @param Model\User $user
      *
@@ -374,7 +368,7 @@ class Dao extends Model\Element\Dao
             $userIds[] = $user->getId();
 
             $query = 'select count(*) from assets a where parentId = ?
-                            and (select list as locate from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
+                            and (select list as locate from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
         } else {
             $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
         }
@@ -390,14 +384,14 @@ class Dao extends Model\Element\Dao
     public function isLocked()
     {
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->db->escapeLike($this->model->getRealFullPath()) . '/%');
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->db->escapeLike($this->model->getRealFullPath()).'/%');
 
         if ($belowLocks > 0) {
             return true;
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='asset' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN ('.implode(',', $parentIds).") AND type='asset' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;
@@ -411,14 +405,14 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE '.$this->db->quote($this->db->escapeLike($this->model->getRealFullPath()).'/%').' OR id = '.$this->model->getId());
+        $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (".implode(',', $lockIds).')');
 
         return $lockIds;
     }
 
     /**
-     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
+     * Get latest available version, using $force always returns a version no matter if it is the same as the published one.
      *
      * @param bool $force
      *
@@ -426,7 +420,7 @@ class Dao extends Model\Element\Dao
      */
     public function getLatestVersion($force = false)
     {
-        if ($this->model->getType() != 'folder') {
+        if ('folder' != $this->model->getType()) {
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
             if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
@@ -440,14 +434,13 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
+     * @param string     $type
      * @param Model\User $user
      *
      * @return bool
      */
     public function isAllowed($type, $user)
     {
-
         // collect properties via parent - ids
         $parentIds = [1];
 
@@ -464,27 +457,27 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC  LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `'.$type.'` FROM users_workspaces_asset WHERE cid IN ('.implode(',', $parentIds).') AND userId IN ('.implode(',', $userIds).') ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, `'.$type.'` DESC  LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type == 'list') {
+            if (empty($permissionsParent) && 'list' == $type) {
                 // check for children with permissions
-                $path = $this->model->getRealFullPath() . '/';
-                if ($this->model->getId() == 1) {
+                $path = $this->model->getRealFullPath().'/';
+                if (1 == $this->model->getId()) {
                     $path = '/';
                 }
 
-                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $this->db->escapeLike($path) . '%');
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN ('.implode(',', $userIds).') AND list = 1 LIMIT 1', $this->db->escapeLike($path).'%');
                 if ($permissionsChildren) {
                     return true;
                 }
             }
         } catch (\Exception $e) {
-            Logger::warn('Unable to get permission ' . $type . ' for asset ' . $this->model->getId());
+            Logger::warn('Unable to get permission '.$type.' for asset '.$this->model->getId());
         }
 
         return false;

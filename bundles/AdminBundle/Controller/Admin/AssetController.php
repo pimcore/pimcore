@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -34,6 +34,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -67,8 +68,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/tree-get-root", name="pimcore_admin_asset_treegetroot", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function treeGetRootAction(Request $request)
@@ -78,8 +77,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/delete-info", name="pimcore_admin_asset_deleteinfo", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -91,13 +88,11 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_asset_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $asset = Asset::getById((int)$request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
@@ -112,7 +107,6 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset = clone $asset;
-        $asset->getScheduledTasks();
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
@@ -127,7 +121,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $data['data'] = false;
             }
         } elseif ($asset instanceof Asset\Document) {
-            $data['pdfPreviewAvailable'] = (bool)$this->getDocumentPreviewPdf($asset);
+            $data['pdfPreviewAvailable'] = (bool) $this->getDocumentPreviewPdf($asset);
         } elseif ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
@@ -135,13 +129,13 @@ class AssetController extends ElementControllerBase implements EventedController
                 $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
                 $thumbnail = $asset->getThumbnail($config, ['mp4']);
                 if ($thumbnail) {
-                    if ($thumbnail['status'] == 'finished') {
+                    if ('finished' == $thumbnail['status']) {
                         $videoInfo['previewUrl'] = $thumbnail['formats']['mp4'];
                         $videoInfo['width'] = $asset->getWidth();
                         $videoInfo['height'] = $asset->getHeight();
 
                         $metaData = $asset->getSphericalMetaData();
-                        if (isset($metaData['ProjectionType']) && strtolower($metaData['ProjectionType']) == 'equirectangular') {
+                        if (isset($metaData['ProjectionType']) && 'equirectangular' == strtolower($metaData['ProjectionType'])) {
                             $videoInfo['isVrVideo'] = true;
                         }
                     }
@@ -174,7 +168,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $imageInfo['dimensions']['height'] = $asset->getHeight();
             }
 
-            $imageInfo['exiftoolAvailable'] = (bool)\Pimcore\Tool\Console::getExecutable('exiftool');
+            $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
 
             if (!$asset->getEmbeddedMetaData(false)) {
                 $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
@@ -191,7 +185,14 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
+        $data['url'] = $request->getSchemeAndHttpHost().$asset->getFrontendFullPath();
+
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $asset->getScheduledTasks()
+        );
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -217,8 +218,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/tree-get-childs-by-id", name="pimcore_admin_asset_treegetchildsbyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
@@ -232,7 +231,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filter = $request->get('filter');
         $limit = intval($allParams['limit']);
         if (!is_null($filter)) {
-            if (substr($filter, -1) != '*') {
+            if ('*' != substr($filter, -1)) {
                 $filter .= '*';
             }
             $filter = str_replace('*', '%', $filter);
@@ -257,23 +256,23 @@ class AssetController extends ElementControllerBase implements EventedController
             $db = Db::get();
 
             if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote($asset->getId());
+                $condition = 'parentId =  '.$db->quote($asset->getId());
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
 
-                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' AND
+                $condition = 'parentId = '.$db->quote($asset->getId()).' AND
                 (
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$this->getAdminUser()->getId().') DESC, list DESC LIMIT 1)=1
                     or
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$this->getAdminUser()->getId().') DESC, list DESC LIMIT 1)=1
                 )';
             }
 
             if (!is_null($filter)) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
+                $condition = '('.$condition.')'.' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE '.$db->quote($filter);
             }
 
             $childsList->setCondition($condition);
@@ -328,9 +327,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/add-asset", name="pimcore_admin_asset_addasset", methods={"POST"})
      *
-     * @param Request $request
-     * @param Config $config
-     *
      * @return JsonResponse
      */
     public function addAssetAction(Request $request, Config $config)
@@ -362,9 +358,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/add-asset-compatibility", name="pimcore_admin_asset_addassetcompatibility", methods={"POST"})
      *
-     * @param Request $request
-     * @param Config $config
-     *
      * @return JsonResponse
      */
     public function addAssetCompatibilityAction(Request $request, Config $config)
@@ -392,9 +385,6 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param Request $request
-     * @param Config $config
-     *
      * @return array
      *
      * @throws \Exception
@@ -406,9 +396,9 @@ class AssetController extends ElementControllerBase implements EventedController
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];
             $sourcePath = $_FILES['Filedata']['tmp_name'];
-        } elseif ($request->get('type') == 'base64') {
+        } elseif ('base64' == $request->get('type')) {
             $filename = $request->get('filename');
-            $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/upload-base64' . uniqid() . '.tmp';
+            $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/upload-base64'.uniqid().'.tmp';
             $data = preg_replace('@^data:[^,]+;base64,@', '', $request->get('data'));
             File::put($sourcePath, base64_decode($data));
         } else {
@@ -422,18 +412,18 @@ class AssetController extends ElementControllerBase implements EventedController
             // this is for uploading folders with Drag&Drop
             // param "dir" contains the relative path of the file
             $parent = Asset::getById($request->get('parentId'));
-            $newPath = $parent->getRealFullPath() . '/' . trim($request->get('dir'), '/ ');
+            $newPath = $parent->getRealFullPath().'/'.trim($request->get('dir'), '/ ');
 
             // check if the path is outside of the asset directory
-            $newRealPath = PIMCORE_ASSET_DIRECTORY . $newPath;
+            $newRealPath = PIMCORE_ASSET_DIRECTORY.$newPath;
             $newRealPath = resolvePath($newRealPath);
-            if (strpos($newRealPath, PIMCORE_ASSET_DIRECTORY) !== 0) {
+            if (0 !== strpos($newRealPath, PIMCORE_ASSET_DIRECTORY)) {
                 throw new \Exception('not allowed');
             }
 
             $maxRetries = 5;
             $newParent = null;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
+            for ($retries = 0; $retries < $maxRetries; ++$retries) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
 
@@ -484,15 +474,13 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = null;
 
         if (!$parentAsset->isAllowed('create')) {
-            throw $this->createAccessDeniedHttpException(
-                'Missing the permission to create new assets in the folder: ' . $parentAsset->getRealFullPath()
-            );
+            throw $this->createAccessDeniedHttpException('Missing the permission to create new assets in the folder: '.$parentAsset->getRealFullPath());
         }
 
         if (is_file($sourcePath) && filesize($sourcePath) < 1) {
             throw new \Exception('File is empty!');
         } elseif (!is_file($sourcePath)) {
-            throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
+            throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of '.PIMCORE_PUBLIC_VAR);
         }
 
         $asset = Asset::create($parentId, [
@@ -520,17 +508,17 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $pathinfo = pathinfo($filename);
         $originalFilename = $pathinfo['filename'];
-        $originalFileextension = empty($pathinfo['extension']) ? '' : '.' . $pathinfo['extension'];
+        $originalFileextension = empty($pathinfo['extension']) ? '' : '.'.$pathinfo['extension'];
         $count = 1;
 
-        if ($targetPath == '/') {
+        if ('/' == $targetPath) {
             $targetPath = '';
         }
 
         while (true) {
-            if (Asset\Service::pathExists($targetPath . '/' . $filename)) {
-                $filename = $originalFilename . '_' . $count . $originalFileextension;
-                $count++;
+            if (Asset\Service::pathExists($targetPath.'/'.$filename)) {
+                $filename = $originalFilename.'_'.$count.$originalFileextension;
+                ++$count;
             } else {
                 return $filename;
             }
@@ -539,8 +527,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/replace-asset", name="pimcore_admin_asset_replaceasset", methods={"POST", "PUT"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      *
@@ -571,7 +557,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $newFileExt = File::getFileExtension($newFilename);
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
-            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
+            $newFilename = preg_replace('/\.'.$currentFileExt.'$/i', '.'.$newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
@@ -598,15 +584,13 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/add-folder", name="pimcore_admin_asset_addfolder", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function addFolderAction(Request $request)
     {
         $success = false;
         $parentAsset = Asset::getById(intval($request->get('parentId')));
-        $equalAsset = Asset::getByPath($parentAsset->getRealFullPath() . '/' . $request->get('name'));
+        $equalAsset = Asset::getByPath($parentAsset->getRealFullPath().'/'.$request->get('name'));
 
         if ($parentAsset->isAllowed('create')) {
             if (!$equalAsset) {
@@ -628,17 +612,15 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/delete", name="pimcore_admin_asset_delete", methods={"DELETE"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        if ('childs' == $request->get('type')) {
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
+            $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()).'/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -658,7 +640,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if ($asset->isLocked()) {
                     return $this->adminJson([
                         'success' => false,
-                        'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId(),
+                        'message' => 'prevented deleting asset, because it is locked: ID: '.$asset->getId(),
                     ]);
                 } else {
                     $asset->delete();
@@ -699,7 +681,7 @@ class AssetController extends ElementControllerBase implements EventedController
         ];
 
         // set type specific settings
-        if ($asset->getType() == 'folder') {
+        if ('folder' == $asset->getType()) {
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$asset->hasChildren();
             $tmpAsset['loaded'] = !$asset->hasChildren();
@@ -707,7 +689,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $folderThumbs = [];
             $children = new Asset\Listing();
-            $children->setCondition('path LIKE ?', [$children->escapeLike($asset->getRealFullPath()) . '/%']);
+            $children->setCondition('path LIKE ?', [$children->escapeLike($asset->getRealFullPath()).'/%']);
             $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
@@ -730,7 +712,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
-        if ($asset->getType() == 'image') {
+        if ('image' == $asset->getType()) {
             try {
                 $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
                 $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
@@ -748,7 +730,7 @@ class AssetController extends ElementControllerBase implements EventedController
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of image, seems to be broken.');
             }
-        } elseif ($asset->getType() == 'video') {
+        } elseif ('video' == $asset->getType()) {
             try {
                 if (\Pimcore\Video::isAvailable()) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
@@ -757,7 +739,7 @@ class AssetController extends ElementControllerBase implements EventedController
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
             }
-        } elseif ($asset->getType() == 'document') {
+        } elseif ('document' == $asset->getType()) {
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
@@ -781,11 +763,10 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param Asset $asset
      * @param bool $hdpi
      * @param bool $grid
      *
-     * @return null|string
+     * @return string|null
      */
     protected function getThumbnailUrl(Asset $asset, $hdpi = false, $grid = false)
     {
@@ -820,8 +801,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/update", name="pimcore_admin_asset_update", methods={"PUT"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      *
      * @throws \Exception
@@ -850,12 +829,12 @@ class AssetController extends ElementControllerBase implements EventedController
                     $intendedPath = $parentAsset->getRealPath();
                     $pKey = $parentAsset->getKey();
                     if (!empty($pKey)) {
-                        $intendedPath .= $parentAsset->getKey() . '/';
+                        $intendedPath .= $parentAsset->getKey().'/';
                     }
 
-                    $assetWithSamePath = Asset::getByPath($intendedPath . $asset->getKey());
+                    $assetWithSamePath = Asset::getByPath($intendedPath.$asset->getKey());
 
-                    if ($assetWithSamePath != null) {
+                    if (null != $assetWithSamePath) {
                         $allowUpdate = false;
                     }
 
@@ -880,7 +859,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
-                $msg = 'prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: ' . $asset->getId();
+                $msg = 'prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: '.$asset->getId();
                 Logger::debug($msg);
 
                 return $this->adminJson(['success' => $success, 'message' => $msg]);
@@ -903,8 +882,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
-     *
-     * @param Request $request
      */
     public function webdavAction(Request $request)
     {
@@ -917,7 +894,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
+            $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY.'/webdav-locks.dat');
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
 
@@ -937,9 +914,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
-     *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
@@ -990,7 +964,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                             $properties[$propertyName] = $property;
                         } catch (\Exception $e) {
-                            Logger::err("Can't add " . $propertyName . ' to asset ' . $asset->getRealFullPath());
+                            Logger::err("Can't add ".$propertyName.' to asset '.$asset->getRealFullPath());
                         }
                     }
 
@@ -1022,7 +996,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $asset->setUserModification($this->getAdminUser()->getId());
-            if ($request->get('task') === 'session') {
+            if ('session' === $request->get('task')) {
                 // save to session only
                 Asset\Service::saveElementToSession($asset);
             } else {
@@ -1046,8 +1020,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/publish-version", name="pimcore_admin_asset_publishversion", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -1077,8 +1049,6 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/show-version", name="pimcore_admin_asset_showversion", methods={"GET"})
      * @TemplatePhp()
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function showVersionAction(Request $request)
@@ -1091,19 +1061,17 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
-            throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
+            throw $this->createAccessDeniedHttpException('Permission denied, version id ['.$id.']');
         }
 
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
+            'PimcoreAdminBundle:Admin/Asset:showVersion'.ucfirst($asset->getType()).'.html.php',
             ['asset' => $asset]
         );
     }
 
     /**
      * @Route("/download", name="pimcore_admin_asset_download", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse
      */
@@ -1128,8 +1096,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-image-thumbnail", name="pimcore_admin_asset_downloadimagethumbnail", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse
      */
@@ -1186,13 +1152,13 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($config) {
             $thumbnailConfig = new Asset\Image\Thumbnail\Config();
-            $thumbnailConfig->setName('pimcore-download-' . $image->getId() . '-' . md5($request->get('config')));
+            $thumbnailConfig->setName('pimcore-download-'.$image->getId().'-'.md5($request->get('config')));
 
-            if ($config['resize_mode'] == 'scaleByWidth') {
+            if ('scaleByWidth' == $config['resize_mode']) {
                 $thumbnailConfig->addItem('scaleByWidth', [
                     'width' => $config['width'],
                 ]);
-            } elseif ($config['resize_mode'] == 'scaleByHeight') {
+            } elseif ('scaleByHeight' == $config['resize_mode']) {
                 $thumbnailConfig->addItem('scaleByHeight', [
                     'height' => $config['height'],
                 ]);
@@ -1206,7 +1172,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnailConfig->setQuality($config['quality']);
             $thumbnailConfig->setFormat($config['format']);
 
-            if ($thumbnailConfig->getFormat() == 'JPEG') {
+            if ('JPEG' == $thumbnailConfig->getFormat()) {
                 $thumbnailConfig->setPreserveMetaData(true);
 
                 if (empty($config['quality'])) {
@@ -1218,8 +1184,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnailFile = $this->getLocalFile($thumbnail->getFileSystemPath());
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-            if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
-                $process = new Process([$exiftool, '-overwrite_original', '-xresolution=' . (int)$config['dpi'], '-yresolution=' . (int)$config['dpi'], '-resolutionunit=inches', $thumbnailFile]);
+            if ('JPEG' == $thumbnailConfig->getFormat() && $exiftool && isset($config['dpi']) && $config['dpi']) {
+                $process = new Process([$exiftool, '-overwrite_original', '-xresolution='.(int) $config['dpi'], '-yresolution='.(int) $config['dpi'], '-resolutionunit=inches', $thumbnailFile]);
                 $process->run();
             }
         }
@@ -1227,8 +1193,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnailFile = $thumbnailFile ?: $thumbnail->getFileSystemPath();
 
             $downloadFilename = preg_replace(
-                '/\.' . preg_quote(File::getFileExtension($image->getFilename())) . '$/i',
-                '.' . $thumbnail->getFileExtension(),
+                '/\.'.preg_quote(File::getFileExtension($image->getFilename())).'$/i',
+                '.'.$thumbnail->getFileExtension(),
                 $image->getFilename()
             );
             $downloadFilename = strtolower($downloadFilename);
@@ -1249,8 +1215,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-asset", name="pimcore_admin_asset_getasset", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse
      */
@@ -1276,8 +1240,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-image-thumbnail", name="pimcore_admin_asset_getimagethumbnail", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse|JsonResponse
      */
@@ -1313,13 +1275,13 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $format = strtolower($thumbnailConfig->getFormat());
-        if ($format == 'source' || $format == 'print') {
+        if ('source' == $format || 'print' == $format) {
             $thumbnailConfig->setFormat('PNG');
             $thumbnailConfig->setRasterizeSVG(true);
         }
 
         if ($request->get('treepreview')) {
-            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $cropPercent = $request->get('cropPercent');
@@ -1332,7 +1294,7 @@ class AssetController extends ElementControllerBase implements EventedController
             ]);
 
             $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
-            $thumbnailConfig->setName($thumbnailConfig->getName() . '_auto_' . $hash);
+            $thumbnailConfig->setName($thumbnailConfig->getName().'_auto_'.$hash);
         }
 
         $thumbnail = $image->getThumbnail($thumbnailConfig);
@@ -1357,8 +1319,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-video-thumbnail", name="pimcore_admin_asset_getvideothumbnail", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return BinaryFileResponse
      */
     public function getVideoThumbnailAction(Request $request)
@@ -1382,7 +1342,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $time = null;
@@ -1411,7 +1371,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnailFile = $thumb->getFileSystemPath();
 
         $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set('Content-type', 'image/' . File::getFileExtension($thumbnailFile));
+        $response->headers->set('Content-type', 'image/'.File::getFileExtension($thumbnailFile));
 
         $this->addThumbnailCacheHeaders($response);
 
@@ -1420,8 +1380,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-document-thumbnail", name="pimcore_admin_asset_getdocumentthumbnail", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse
      */
@@ -1440,17 +1398,17 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect(array_merge($request->request->all(), $request->query->all()));
 
         $format = strtolower($thumbnail->getFormat());
-        if ($format == 'source') {
+        if ('source' == $format) {
             $thumbnail->setFormat('jpeg'); // default format for documents is JPEG not PNG (=too big)
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $page = 1;
         if (is_numeric($request->get('page'))) {
-            $page = (int)$request->get('page');
+            $page = (int) $request->get('page');
         }
 
         $thumb = $document->getImageThumbnail($thumbnail, $page);
@@ -1462,14 +1420,11 @@ class AssetController extends ElementControllerBase implements EventedController
         return $response;
     }
 
-    /**
-     * @param Response $response
-     */
     protected function addThumbnailCacheHeaders(Response $response)
     {
         $lifetime = 300;
         $date = new \DateTime('now');
-        $date->add(new \DateInterval('PT' . $lifetime . 'S'));
+        $date->add(new \DateInterval('PT'.$lifetime.'S'));
 
         $response->setMaxAge($lifetime);
         $response->setPublic();
@@ -1480,8 +1435,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-preview-document", name="pimcore_admin_asset_getpreviewdocument", methods={"GET"})
      * @TemplatePhp()
-     *
-     * @param Request $request
      *
      * @return BinaryFileResponse
      */
@@ -1501,23 +1454,21 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 return $response;
             } else {
-                throw $this->createNotFoundException('Unable to get preview for asset ' . $asset->getId());
+                throw $this->createNotFoundException('Unable to get preview for asset '.$asset->getId());
             }
         } else {
-            throw $this->createAccessDeniedException('Access to asset ' . $asset->getId() . ' denied');
+            throw $this->createAccessDeniedException('Access to asset '.$asset->getId().' denied');
         }
     }
 
     /**
-     * @param Asset\Document $asset
-     *
      * @return string|null
      */
     protected function getDocumentPreviewPdf(Asset\Document $asset)
     {
         $pdfFsPath = null;
 
-        if ($asset->getMimetype() == 'application/pdf') {
+        if ('application/pdf' == $asset->getMimetype()) {
             $pdfFsPath = $asset->getFileSystemPath();
         }
 
@@ -1536,8 +1487,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-preview-video", name="pimcore_admin_asset_getpreviewvideo", methods={"GET"})
      * @TemplatePhp()
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -1561,7 +1510,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $previewData['asset'] = $asset;
             $previewData['thumbnail'] = $thumbnail;
 
-            if ($thumbnail['status'] == 'finished') {
+            if ('finished' == $thumbnail['status']) {
                 return $this->render(
                     'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
                     $previewData
@@ -1583,8 +1532,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/serve-video-preview", name="pimcore_admin_asset_servevideopreview", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return BinaryFileResponse
      */
     public function serveVideoPreviewAction(Request $request)
@@ -1601,7 +1548,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
-        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
+        $fsFile = $asset->getVideoThumbnailSavePath().'/'.preg_replace('@^'.preg_quote($asset->getPath(), '@').'@', '', urldecode($thumbnail['formats']['mp4']));
 
         if (file_exists($fsFile)) {
             $response = new BinaryFileResponse($fsFile);
@@ -1616,7 +1563,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/image-editor", name="pimcore_admin_asset_imageeditor", methods={"GET"})
      *
-     * @param Request $request
      * @TemplatePhp()
      *
      * @return array
@@ -1634,8 +1580,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/image-editor-save", name="pimcore_admin_asset_imageeditorsave", methods={"PUT"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -1664,8 +1608,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-folder-content-preview", name="pimcore_admin_asset_getfoldercontentpreview", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getFolderContentPreviewAction(Request $request, EventDispatcherInterface $eventDispatcher)
@@ -1693,15 +1635,15 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE '.('/' == $folder->getRealFullPath() ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()).'/%'))." AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
             $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
         }
 
@@ -1730,7 +1672,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if (!empty($thumbnailMethod)) {
                 $filenameDisplay = $asset->getFilename();
                 if (strlen($filenameDisplay) > 32) {
-                    $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+                    $filenameDisplay = substr($filenameDisplay, 0, 25).'...'.\Pimcore\File::getFileExtension($filenameDisplay);
                 }
 
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
@@ -1764,8 +1706,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/copy-info", name="pimcore_admin_asset_copyinfo", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function copyInfoAction(Request $request)
@@ -1777,7 +1717,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $session->set($transactionId, []);
         }, 'pimcore_copy');
 
-        if ($request->get('type') == 'recursive') {
+        if ('recursive' == $request->get('type')) {
             $asset = Asset::getById($request->get('sourceId'));
 
             if (!$asset) {
@@ -1800,7 +1740,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset->hasChildren()) {
                 // get amount of children
                 $list = new Asset\Listing();
-                $list->setCondition('path LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
+                $list->setCondition('path LIKE ?', [$list->escapeLike($asset->getRealFullPath()).'/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -1821,7 +1761,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
             }
-        } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
+        } elseif ('child' == $request->get('type') || 'replace' == $request->get('type')) {
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => $this->generateUrl('pimcore_admin_asset_copy'),
@@ -1842,8 +1782,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/copy", name="pimcore_admin_asset_copy", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -1867,7 +1805,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $targetParent = Asset::getById($request->get('targetParentId'));
             }
 
-            $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
+            $targetPath = preg_replace('@^'.$sourceParent->getRealFullPath().'@', $targetParent.'/', $source->getRealPath());
             $target = Asset::getByPath($targetPath);
         } else {
             $target = Asset::getById($targetId);
@@ -1879,15 +1817,15 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($target->isAllowed('create')) {
             $source = Asset::getById($sourceId);
-            if ($source != null) {
-                if ($request->get('type') == 'child') {
+            if (null != $source) {
+                if ('child' == $request->get('type')) {
                     $newAsset = $this->_assetService->copyAsChild($target, $source);
 
                     // this is because the key can get the prefix "_copy" if the target does already exists
                     if ($request->get('saveParentId')) {
                         $sessionBag['parentId'] = $newAsset->getId();
                     }
-                } elseif ($request->get('type') == 'replace') {
+                } elseif ('replace' == $request->get('type')) {
                     $this->_assetService->copyContents($target, $source);
                 }
 
@@ -1899,7 +1837,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 Logger::debug('prevended copy/paste because asset with same path+key already exists in this location');
             }
         } else {
-            Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
+            Logger::error('could not execute copy/paste because of missing permissions on target [ '.$targetId.' ]');
 
             throw $this->createAccessDeniedHttpException();
         }
@@ -1911,8 +1849,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip-jobs", name="pimcore_admin_asset_downloadaszipjobs", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -1929,7 +1865,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($asset->isAllowed('view')) {
             $parentPath = $asset->getRealFullPath();
-            if ($asset->getId() == 1) {
+            if (1 == $asset->getId()) {
                 $parentPath = '';
             }
 
@@ -1944,16 +1880,16 @@ class AssetController extends ElementControllerBase implements EventedController
             }
             if (!empty($quotedSelectedIds)) {
                 //add a condition if id numbers are specified
-                $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
+                $conditionFilters[] = 'id IN ('.implode(',', $quotedSelectedIds).')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE '.$db->quote($db->escapeLike($parentPath).'/%').' AND type != '.$db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
 
@@ -1964,7 +1900,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $assetList->setOrderKey('LENGTH(path)', false);
             $assetList->setOrder('ASC');
 
-            for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
+            for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); ++$i) {
                 $jobs[] = [[
                     'url' => $this->generateUrl('pimcore_admin_asset_downloadaszipaddfiles'),
                     'method' => 'GET',
@@ -1989,13 +1925,11 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download-as-zip-add-files", name="pimcore_admin_asset_downloadaszipaddfiles", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function downloadAsZipAddFilesAction(Request $request)
     {
-        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/download-zip-'.$request->get('jobId').'.zip';
         $asset = Asset::getById($request->get('id'));
         $success = false;
 
@@ -2011,9 +1945,9 @@ class AssetController extends ElementControllerBase implements EventedController
                 $zipState = $zip->open($zipFile);
             }
 
-            if ($zipState === true) {
+            if (true === $zipState) {
                 $parentPath = $asset->getRealFullPath();
-                if ($asset->getId() == 1) {
+                if (1 == $asset->getId()) {
                     $parentPath = '';
                 }
 
@@ -2025,16 +1959,16 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (!empty($selectedIds)) {
                     $selectedIds = explode(',', $selectedIds);
                     //add a condition if id numbers are specified
-                    $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
+                    $conditionFilters[] = 'id IN ('.implode(',', $selectedIds).')';
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
+                $conditionFilters[] = "type != 'folder' AND path LIKE ".$db->quote($db->escapeLike($parentPath).'/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
                     $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in ('.implode(',', $userIds).') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
                 }
 
@@ -2043,17 +1977,17 @@ class AssetController extends ElementControllerBase implements EventedController
                 $assetList = new Asset\Listing();
                 $assetList->setCondition($condition);
                 $assetList->setOrderKey('LENGTH(path) ASC, id ASC', false);
-                $assetList->setOffset((int)$request->get('offset'));
-                $assetList->setLimit((int)$request->get('limit'));
+                $assetList->setOffset((int) $request->get('offset'));
+                $assetList->setLimit((int) $request->get('limit'));
 
                 foreach ($assetList as $a) {
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory
                             if (stream_is_local($a->getFileSystemPath())) {
-                                $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
+                                $zip->addFile($a->getFileSystemPath(), preg_replace('@^'.preg_quote($asset->getRealPath(), '@').'@i', '', $a->getRealFullPath()));
                             } else {
-                                $zip->addFromString(preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
+                                $zip->addFromString(preg_replace('@^'.preg_quote($asset->getRealPath(), '@').'@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
                             }
                         }
                     }
@@ -2072,11 +2006,9 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download-as-zip", name="pimcore_admin_asset_downloadaszip", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return BinaryFileResponse
-     * Download all assets contained in the folder with parameter id as ZIP file.
-     * The suggested filename is either [folder name].zip or assets.zip for the root folder.
+     *                            Download all assets contained in the folder with parameter id as ZIP file.
+     *                            The suggested filename is either [folder name].zip or assets.zip for the root folder.
      */
     public function downloadAsZipAction(Request $request)
     {
@@ -2084,7 +2016,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
         }
-        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/download-zip-'.$request->get('jobId').'.zip';
         $suggestedFilename = $asset->getFilename();
         if (empty($suggestedFilename)) {
             $suggestedFilename = 'assets';
@@ -2092,7 +2024,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $response = new BinaryFileResponse($zipFile);
         $response->headers->set('Content-Type', 'application/zip');
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $suggestedFilename . '.zip');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $suggestedFilename.'.zip');
         $response->deleteFileAfterSend(true);
 
         return $response;
@@ -2100,8 +2032,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-zip", name="pimcore_admin_asset_importzip", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -2127,14 +2057,14 @@ class AssetController extends ElementControllerBase implements EventedController
             throw $this->createAccessDeniedException('not allowed to create');
         }
 
-        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $jobId . '.zip';
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$jobId.'.zip';
 
         copy($_FILES['Filedata']['tmp_name'], $zipFile);
 
-        $zip = new \ZipArchive;
-        if ($zip->open($zipFile) === true) {
+        $zip = new \ZipArchive();
+        if (true === $zip->open($zipFile)) {
             $jobAmount = ceil($zip->numFiles / $filesPerJob);
-            for ($i = 0; $i < $jobAmount; $i++) {
+            for ($i = 0; $i < $jobAmount; ++$i) {
                 $jobs[] = [[
                     'url' => $this->generateUrl('pimcore_admin_asset_importzipfiles'),
                     'method' => 'POST',
@@ -2165,40 +2095,38 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-zip-files", name="pimcore_admin_asset_importzipfiles", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function importZipFilesAction(Request $request)
     {
         $jobId = $request->get('jobId');
-        $limit = (int)$request->get('limit');
-        $offset = (int)$request->get('offset');
+        $limit = (int) $request->get('limit');
+        $offset = (int) $request->get('offset');
         $importAsset = Asset::getById($request->get('parentId'));
-        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $jobId . '.zip';
-        $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/zip-import';
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$jobId.'.zip';
+        $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/zip-import';
 
         if (!is_dir($tmpDir)) {
             File::mkdir($tmpDir, 0777, true);
         }
 
-        $zip = new \ZipArchive;
-        if ($zip->open($zipFile) === true) {
-            for ($i = $offset; $i < ($offset + $limit); $i++) {
+        $zip = new \ZipArchive();
+        if (true === $zip->open($zipFile)) {
+            for ($i = $offset; $i < ($offset + $limit); ++$i) {
                 $path = $zip->getNameIndex($i);
 
-                if ($path !== false) {
-                    if ($zip->extractTo($tmpDir . '/', $path)) {
-                        $tmpFile = $tmpDir . '/' . preg_replace('@^/@', '', $path);
+                if (false !== $path) {
+                    if ($zip->extractTo($tmpDir.'/', $path)) {
+                        $tmpFile = $tmpDir.'/'.preg_replace('@^/@', '', $path);
 
                         $filename = Element\Service::getValidKey(basename($path), 'asset');
 
                         $relativePath = '';
-                        if (dirname($path) != '.') {
+                        if ('.' != dirname($path)) {
                             $relativePath = dirname($path);
                         }
 
-                        $parentPath = $importAsset->getRealFullPath() . '/' . preg_replace('@^/@', '', $relativePath);
+                        $parentPath = $importAsset->getRealFullPath().'/'.preg_replace('@^/@', '', $relativePath);
                         $parent = Asset\Service::createFolderByPath($parentPath);
 
                         // check for duplicate filename
@@ -2234,8 +2162,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-server", name="pimcore_admin_asset_importserver", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function importServerAction(Request $request)
@@ -2244,21 +2170,21 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $importDirectory = str_replace('/fileexplorer', PIMCORE_PROJECT_ROOT, $request->get('serverPath'));
-        if (preg_match('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', $importDirectory) && is_dir($importDirectory)) {
+        if (preg_match('@^'.preg_quote(PIMCORE_PROJECT_ROOT, '@').'@', $importDirectory) && is_dir($importDirectory)) {
             $this->checkForPharStreamWrapper($importDirectory);
-            $files = rscandir($importDirectory . '/');
+            $files = rscandir($importDirectory.'/');
             $count = count($files);
             $jobFiles = [];
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $count; ++$i) {
                 if (is_dir($files[$i])) {
                     continue;
                 }
 
-                $jobFiles[] = preg_replace('@^' . preg_quote($importDirectory, '@') . '@', '', $files[$i]);
+                $jobFiles[] = preg_replace('@^'.preg_quote($importDirectory, '@').'@', '', $files[$i]);
 
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
-                    $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
+                    $relativeImportDirectory = preg_replace('@^'.preg_quote(PIMCORE_PROJECT_ROOT, '@').'@', '', $importDirectory);
                     $jobs[] = [[
                         'url' => $this->generateUrl('pimcore_admin_asset_importserverfiles'),
                         'method' => 'POST',
@@ -2282,8 +2208,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-server-files", name="pimcore_admin_asset_importserverfiles", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function importServerFilesAction(Request $request)
@@ -2292,15 +2216,15 @@ class AssetController extends ElementControllerBase implements EventedController
         if (!$assetFolder) {
             throw $this->createNotFoundException('Parent asset not found');
         }
-        $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
+        $serverPath = PIMCORE_PROJECT_ROOT.$request->get('serverPath');
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
-            $absolutePath = $serverPath . $file;
+            $absolutePath = $serverPath.$file;
             $this->checkForPharStreamWrapper($absolutePath);
             if (is_file($absolutePath)) {
                 $relFolderPath = str_replace('\\', '/', dirname($file));
-                $folder = Asset\Service::createFolderByPath($assetFolder->getRealFullPath() . $relFolderPath);
+                $folder = Asset\Service::createFolderByPath($assetFolder->getRealFullPath().$relFolderPath);
                 $filename = basename($file);
 
                 // check for duplicate filename
@@ -2327,15 +2251,13 @@ class AssetController extends ElementControllerBase implements EventedController
 
     protected function checkForPharStreamWrapper($path)
     {
-        if (stripos($path, 'phar://') !== false) {
+        if (false !== stripos($path, 'phar://')) {
             throw $this->createAccessDeniedException('Using PHAR files is not allowed!');
         }
     }
 
     /**
      * @Route("/import-url", name="pimcore_admin_asset_importurl", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      *
@@ -2382,8 +2304,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/clear-thumbnail", name="pimcore_admin_asset_clearthumbnail", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function clearThumbnailAction(Request $request)
@@ -2409,11 +2329,6 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/grid-proxy", name="pimcore_admin_asset_gridproxy", methods={"GET", "POST", "PUT"})
      *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param GridHelperService $gridHelperService
-     * @param CsrfProtectionHandler $csrfProtection
-     *
      * @return JsonResponse
      */
     public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService, CsrfProtectionHandler $csrfProtection)
@@ -2423,7 +2338,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $language = $request->get('language') != 'default' ? $request->get('language') : null;
+        $language = 'default' != $request->get('language') ? $request->get('language') : null;
 
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
@@ -2433,7 +2348,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if (isset($allParams['data']) && $allParams['data']) {
             $csrfProtection->checkCsrfToken($request);
-            if ($allParams['xaction'] == 'update') {
+            if ('update' == $allParams['xaction']) {
                 try {
                     $data = $this->decodeJson($allParams['data']);
 
@@ -2472,7 +2387,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         $fieldDef = explode('~', $key);
                         $key = $fieldDef[0];
                         if (isset($fieldDef[1])) {
-                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                            $language = ('none' == $fieldDef[1] ? '' : $fieldDef[1]);
                         }
 
                         foreach ($metadata as $idx => &$em) {
@@ -2481,7 +2396,7 @@ class AssetController extends ElementControllerBase implements EventedController
                                     $dataImpl = $loader->build($em['type']);
                                     $value = $dataImpl->getDataFromListfolderGrid($value, $em);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error('could not resolve metadata implementation for ' . $em['type']);
+                                    Logger::error('could not resolve metadata implementation for '.$em['type']);
                                 }
 
                                 $em['data'] = $value;
@@ -2505,7 +2420,7 @@ class AssetController extends ElementControllerBase implements EventedController
                                     $dataImpl = $loader->build($newEm['type']);
                                     $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
+                                    Logger::error('could not resolve metadata implementation for '.$newEm['type']);
                                 }
 
                                 $metadata[] = $newEm;
@@ -2526,7 +2441,7 @@ class AssetController extends ElementControllerBase implements EventedController
                                         $dataImpl = $loader->build($newEm['type']);
                                         $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                     } catch (UnsupportedException $le) {
-                                        Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
+                                        Logger::error('could not resolve metadata implementation for '.$newEm['type']);
                                     }
 
                                     $metadata[] = $newEm;
@@ -2564,7 +2479,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');
@@ -2589,8 +2503,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-text", name="pimcore_admin_asset_gettext", methods={"GET"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -2618,13 +2530,11 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/detect-image-features", name="pimcore_admin_asset_detectimagefeatures", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function detectImageFeaturesAction(Request $request)
     {
-        $asset = Asset\Image::getById((int)$request->get('id'));
+        $asset = Asset\Image::getById((int) $request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
@@ -2643,13 +2553,11 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/delete-image-features", name="pimcore_admin_asset_deleteimagefeatures", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function deleteImageFeaturesAction(Request $request)
     {
-        $asset = Asset::getById((int)$request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
@@ -2665,9 +2573,6 @@ class AssetController extends ElementControllerBase implements EventedController
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @param FilterControllerEvent $event
-     */
     public function onKernelController(FilterControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
@@ -2682,9 +2587,6 @@ class AssetController extends ElementControllerBase implements EventedController
         $this->_assetService = new Asset\Service($this->getAdminUser());
     }
 
-    /**
-     * @param FilterResponseEvent $event
-     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
         // nothing to do

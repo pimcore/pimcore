@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,8 +63,6 @@ class HardlinkController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_document_hardlink_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
@@ -85,9 +84,14 @@ class HardlinkController extends DocumentControllerBase
         $link = clone $link;
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-        $link->getScheduledTasks();
 
         $data = $link->getObjectVars();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $link->getScheduledTasks()
+        );
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);
@@ -108,8 +112,6 @@ class HardlinkController extends DocumentControllerBase
     /**
      * @Route("/save", name="pimcore_admin_document_hardlink_save", methods={"POST", "PUT"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      *
      * @throws \Exception
@@ -127,15 +129,15 @@ class HardlinkController extends DocumentControllerBase
         $link->setModificationDate(time());
         $link->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
+        if ('unpublish' == $request->get('task')) {
             $link->setPublished(false);
         }
-        if ($request->get('task') == 'publish') {
+        if ('publish' == $request->get('task')) {
             $link->setPublished(true);
         }
 
         // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
+        if (('publish' == $request->get('task') && $link->isAllowed('publish')) || ('unpublish' == $request->get('task') && $link->isAllowed('unpublish'))) {
             $link->save();
 
             $treeData = $this->getTreeNodeConfig($link);
@@ -154,7 +156,6 @@ class HardlinkController extends DocumentControllerBase
     }
 
     /**
-     * @param Request $request
      * @param Document\Hardlink $link
      */
     protected function setValuesToDocument(Request $request, Document $link)

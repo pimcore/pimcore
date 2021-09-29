@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,8 +63,6 @@ class SnippetController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_document_snippet_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
@@ -88,7 +87,6 @@ class SnippetController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
-        $snippet->getScheduledTasks();
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
@@ -101,6 +99,12 @@ class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $snippet->getScheduledTasks()
+        );
         // this used for the "this is not a published version" hint
         $data['documentFromVersion'] = !$isLatestVersion;
         if ($snippet->getContentMasterDocument()) {
@@ -118,8 +122,6 @@ class SnippetController extends DocumentControllerBase
 
     /**
      * @Route("/save", name="pimcore_admin_document_snippet_save", methods={"POST","PUT"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      *
@@ -144,14 +146,14 @@ class SnippetController extends DocumentControllerBase
 
         $snippet->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
+        if ('unpublish' == $request->get('task')) {
             $snippet->setPublished(false);
         }
-        if ($request->get('task') == 'publish') {
+        if ('publish' == $request->get('task')) {
             $snippet->setPublished(true);
         }
 
-        if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
+        if (('publish' == $request->get('task') && $snippet->isAllowed('publish')) || ('unpublish' == $request->get('task') && $snippet->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $snippet);
 
             $snippet->save();
@@ -179,10 +181,6 @@ class SnippetController extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $snippet
-     */
     protected function setValuesToDocument(Request $request, Document $snippet)
     {
         $this->addSettingsToDocument($request, $snippet);

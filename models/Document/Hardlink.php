@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -24,10 +24,9 @@ use Pimcore\Model\Redirect;
  */
 class Hardlink extends Document
 {
-    use Document\Traits\ScheduledTasksTrait;
-
+    use Model\Element\Traits\ScheduledTasksTrait;
     /**
-     * static type of this object
+     * static type of this object.
      *
      * @var string
      */
@@ -70,7 +69,7 @@ class Hardlink extends Document
         $dependencies = parent::resolveDependencies();
 
         if ($this->getSourceDocument() instanceof Document) {
-            $key = 'document_' . $this->getSourceDocument()->getId();
+            $key = 'document_'.$this->getSourceDocument()->getId();
 
             $dependencies[$key] = [
                 'id' => $this->getSourceDocument()->getId(),
@@ -82,7 +81,7 @@ class Hardlink extends Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
+     * Resolves dependencies and create tags for caching out of them.
      *
      * @param array $tags
      *
@@ -164,11 +163,11 @@ class Hardlink extends Document
     }
 
     /**
-     * @return array|null|Model\Property[]
+     * @return array|Model\Property[]|null
      */
     public function getProperties()
     {
-        if ($this->properties === null) {
+        if (null === $this->properties) {
             $properties = parent::getProperties();
 
             if ($this->getPropertiesFromSource() && $this->getSourceDocument()) {
@@ -213,7 +212,7 @@ class Hardlink extends Document
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
+                    $c->setPath(preg_replace('@^'.preg_quote($this->getSourceDocument()->getRealFullPath(), '@').'@', $this->getRealFullPath(), $c->getRealPath()));
                 }
             }
 
@@ -225,7 +224,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasChildren($unpublished = false)
     {
@@ -233,7 +232,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {

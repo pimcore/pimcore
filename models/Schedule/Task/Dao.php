@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Create a new record for the object in database
+     * Create a new record for the object in database.
      */
     public function create()
     {
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
+     * Save changes to database, it's an good idea to use save() instead.
      */
     public function update()
     {
@@ -67,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (is_array($value) || is_object($value)) {
                     $value = \Pimcore\Tool\Serialize::serialize($value);
                 } elseif (is_bool($value)) {
-                    $value = (int)$value;
+                    $value = (int) $value;
                 }
                 $data[$key] = $value;
             }
@@ -77,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Deletes object from database
+     * Deletes object from database.
      */
     public function delete()
     {

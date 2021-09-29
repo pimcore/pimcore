@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -25,11 +25,11 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version                  getLatestVersion()
  */
 abstract class PageSnippet extends Model\Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * @deprecated
@@ -56,7 +56,7 @@ abstract class PageSnippet extends Model\Document
     protected $template;
 
     /**
-     * Contains all content-elements of the document
+     * Contains all content-elements of the document.
      *
      * @var array
      *
@@ -66,22 +66,21 @@ abstract class PageSnippet extends Model\Document
     private $elements = null;
 
     /**
-     * Contains all content-editables of the document
+     * Contains all content-editables of the document.
      *
      * @var array|null
-     *
      */
     protected $editables = null;
 
     /**
-     * Contains all versions of the document
+     * Contains all versions of the document.
      *
      * @var array
      */
     protected $versions = null;
 
     /**
-     * @var null|int
+     * @var int|null
      */
     protected $contentMasterDocumentId;
 
@@ -93,7 +92,7 @@ abstract class PageSnippet extends Model\Document
     protected $supportsContentMaster = true;
 
     /**
-     * @var null|bool
+     * @var bool|null
      */
     protected $missingRequiredEditable = null;
 
@@ -130,7 +129,6 @@ abstract class PageSnippet extends Model\Document
      */
     protected function update($params = [])
     {
-
         // update elements
         $this->getEditables();
         $this->getDao()->deleteAllEditables();
@@ -155,11 +153,11 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param bool $setModificationDate
-     * @param bool $saveOnlyVersion
+     * @param bool   $setModificationDate
+     * @param bool   $saveOnlyVersion
      * @param string $versionNote
      *
-     * @return null|Model\Version
+     * @return Model\Version|null
      *
      * @throws \Exception
      */
@@ -213,7 +211,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -229,7 +227,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
+     * Resolves dependencies and create tags for caching out of them.
      *
      * @param array $tags
      *
@@ -262,7 +260,7 @@ abstract class PageSnippet extends Model\Document
         }
 
         if ($this->getContentMasterDocument() instanceof Document) {
-            $key = 'document_' . $this->getContentMasterDocument()->getId();
+            $key = 'document_'.$this->getContentMasterDocument()->getId();
             $dependencies[$key] = [
                 'id' => $this->getContentMasterDocument()->getId(),
                 'type' => 'document',
@@ -365,11 +363,11 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Set raw data of an element (eg. for editmode)
+     * Set raw data of an element (eg. for editmode).
      *
      * @param string $name
      * @param string $type
-     * @param mixed $data
+     * @param mixed  $data
      *
      * @return $this
      *
@@ -381,10 +379,8 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Set raw data of an editable (eg. for editmode)
+     * Set raw data of an editable (eg. for editmode).
      *
-     * @param string $name
-     * @param string $type
      * @param mixed $data
      *
      * @return $this
@@ -404,16 +400,16 @@ abstract class PageSnippet extends Model\Document
                 $this->editables[$name]->setDocument($this);
             }
         } catch (\Exception $e) {
-            Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
+            Logger::warning("can't set element ".$name.' with the type '.$type.' to the document: '.$this->getRealFullPath());
         }
 
         return $this;
     }
 
     /**
-     * Set an element with the given key/name
+     * Set an element with the given key/name.
      *
-     * @param string $name
+     * @param string   $name
      * @param Editable $data
      *
      * @return $this
@@ -426,10 +422,10 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Set an element with the given key/name
+     * Set an element with the given key/name.
      *
      * @param string|Editable $name
-     * @param Editable|null $data
+     * @param Editable|null   $data
      *
      * @return $this
      */
@@ -439,7 +435,7 @@ abstract class PageSnippet extends Model\Document
 
         $arguments = func_get_args();
 
-        if (count($arguments) === 2) {
+        if (2 === count($arguments)) {
             if (is_string($arguments[0]) && $arguments[1] instanceof Editable) {
                 $this->editables[$arguments[0]] = $arguments[1];
 
@@ -447,7 +443,7 @@ abstract class PageSnippet extends Model\Document
             } else {
                 throw new \InvalidArgumentException('One or more passed arguments do not match the expected type, expected: string $name, Editable $data');
             }
-        } elseif (count($arguments) === 1) {
+        } elseif (1 === count($arguments)) {
             if ($arguments[0] instanceof Editable) {
                 $this->editables[$arguments[0]->getName()] = $arguments[0];
             } else {
@@ -473,8 +469,6 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
     public function removeEditable(string $name)
@@ -488,7 +482,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Get an element with the given key/name
+     * Get an element with the given key/name.
      *
      * @param string $name
      *
@@ -502,9 +496,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Get an editable with the given key/name
-     *
-     * @param string $name
+     * Get an editable with the given key/name.
      *
      * @return Editable|null
      */
@@ -615,13 +607,11 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $name
-     *
      * @return bool
      */
     public function hasEditable(string $name)
     {
-        return $this->getEditable($name) !== null;
+        return null !== $this->getEditable($name);
     }
 
     /**
@@ -639,7 +629,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function getEditables(): array
     {
-        if ($this->editables === null) {
+        if (null === $this->editables) {
             $this->setEditables($this->getDao()->getEditables());
         }
 
@@ -659,10 +649,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param array|null $editables
-     *
      * @return $this
-     *
      */
     public function setEditables(?array $editables)
     {
@@ -676,7 +663,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function getVersions()
     {
-        if ($this->versions === null) {
+        if (null === $this->versions) {
             $this->setVersions($this->getDao()->getVersions());
         }
 
@@ -710,7 +697,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function __wakeup()
     {
-        if ($this->editables === null && $this->elements !== null) {
+        if (null === $this->editables && null !== $this->elements) {
             $this->editables = $this->elements;
             unset($this->elements);
         }
@@ -753,7 +740,7 @@ abstract class PageSnippet extends Model\Document
             $scheme = 'http://';
             $requestHelper = \Pimcore::getContainer()->get(\Pimcore\Http\RequestHelper::class);
             if ($requestHelper->hasMasterRequest()) {
-                $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
+                $scheme = $requestHelper->getMasterRequest()->getScheme().'://';
             }
         }
 
@@ -766,18 +753,18 @@ abstract class PageSnippet extends Model\Document
             }
         }
 
-        $url = $scheme . $hostname . $this->getFullPath();
+        $url = $scheme.$hostname.$this->getFullPath();
 
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
         if ($site instanceof Model\Site && $site->getMainDomain()) {
-            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+            $url = $scheme.$site->getMainDomain().preg_replace('@^'.$site->getRootPath().'/?@', '/', $this->getRealFullPath());
         }
 
         return $url;
     }
 
     /**
-     * checks if the document is missing values for required editables
+     * checks if the document is missing values for required editables.
      *
      * @return bool|null
      */
@@ -793,7 +780,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function setMissingRequiredEditable($missingRequiredEditable)
     {
-        if ($missingRequiredEditable !== null) {
+        if (null !== $missingRequiredEditable) {
             $missingRequiredEditable = (bool) $missingRequiredEditable;
         }
 
@@ -804,8 +791,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function supportsContentMaster(): bool
     {
@@ -813,7 +798,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Validates if there is a missing value for required editable
+     * Validates if there is a missing value for required editable.
      */
     protected function checkMissingRequiredEditable()
     {
@@ -824,7 +809,7 @@ abstract class PageSnippet extends Model\Document
         //Allowed tags for required check
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
-        if ($this->getMissingRequiredEditable() === null) {
+        if (null === $this->getMissingRequiredEditable()) {
             /** @var EditableUsageResolver $editableUsageResolver */
             $editableUsageResolver = \Pimcore::getContainer()->get(EditableUsageResolver::class);
 
@@ -837,7 +822,7 @@ abstract class PageSnippet extends Model\Document
                         $editable = $documentCopy->getEditable($editableName);
                         if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {
                             $editableConfig = $editable->getConfig();
-                            if ($editable->isEmpty() && isset($editableConfig['required']) && $editableConfig['required'] == true) {
+                            if ($editable->isEmpty() && isset($editableConfig['required']) && true == $editableConfig['required']) {
                                 $this->setMissingRequiredEditable(true);
 
                                 break;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,8 +65,6 @@ class LinkController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_document_link_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
@@ -89,13 +88,18 @@ class LinkController extends DocumentControllerBase
         $link->setObject(null);
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-        $link->getScheduledTasks();
 
         $serializer = $this->get('pimcore_admin.serializer');
 
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $link->getScheduledTasks()
+        );
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);
@@ -111,8 +115,6 @@ class LinkController extends DocumentControllerBase
 
     /**
      * @Route("/save", name="pimcore_admin_document_link_save", methods={"POST", "PUT"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      *
@@ -131,18 +133,18 @@ class LinkController extends DocumentControllerBase
         $link->setModificationDate(time());
         $link->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
+        if ('unpublish' == $request->get('task')) {
             $link->setPublished(false);
         }
-        if ($request->get('task') == 'publish') {
+        if ('publish' == $request->get('task')) {
             $link->setPublished(true);
         }
 
         $task = $request->get('task');
         // only save when publish or unpublish
-        if (($task == 'publish' && $link->isAllowed('publish'))
-            || ($task == 'unpublish' && $link->isAllowed('unpublish'))
-            || $task == 'scheduler' && $link->isAllowed('settings')
+        if (('publish' == $task && $link->isAllowed('publish'))
+            || ('unpublish' == $task && $link->isAllowed('unpublish'))
+            || 'scheduler' == $task && $link->isAllowed('settings')
         ) {
             $link->save();
 
@@ -162,7 +164,6 @@ class LinkController extends DocumentControllerBase
     }
 
     /**
-     * @param Request $request
      * @param Document\Link $link
      */
     protected function setValuesToDocument(Request $request, Document $link)
@@ -175,7 +176,7 @@ class LinkController extends DocumentControllerBase
 
             if (!empty($path)) {
                 $target = null;
-                if ($data['linktype'] == 'internal' && $data['internalType']) {
+                if ('internal' == $data['linktype'] && $data['internalType']) {
                     $target = Element\Service::getElementByPath($data['internalType'], $path);
                     if ($target) {
                         $data['internal'] = $target->getId();

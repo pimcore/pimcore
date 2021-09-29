@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,8 +66,6 @@ class PageController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
@@ -91,7 +90,6 @@ class PageController extends DocumentControllerBase
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->getScheduledTasks();
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
@@ -109,6 +107,12 @@ class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $page->getScheduledTasks()
+        );
         $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $page);
@@ -122,8 +126,6 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      *
@@ -149,8 +151,8 @@ class PageController extends DocumentControllerBase
 
         $page->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('missingRequiredEditable') !== null) {
-            $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
+        if (null !== $request->get('missingRequiredEditable')) {
+            $page->setMissingRequiredEditable(('true' == $request->get('missingRequiredEditable')) ? true : false);
         }
 
         $settings = [];
@@ -164,21 +166,21 @@ class PageController extends DocumentControllerBase
         // check if settings exist, before saving meta data
         if ($request->get('settings') && is_array($settings)) {
             $metaData = [];
-            for ($i = 1; $i < 30; $i++) {
-                if (array_key_exists('metadata_' . $i, $settings)) {
-                    $metaData[] = $settings['metadata_' . $i];
+            for ($i = 1; $i < 30; ++$i) {
+                if (array_key_exists('metadata_'.$i, $settings)) {
+                    $metaData[] = $settings['metadata_'.$i];
                 }
             }
             $page->setMetaData($metaData);
         }
 
         // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+        if (('publish' == $request->get('task') && $page->isAllowed('publish')) || ('unpublish' == $request->get('task') && $page->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $page);
 
-            if ($request->get('task') == 'unpublish') {
+            if ('unpublish' == $request->get('task')) {
                 $page->setPublished(false);
-            } elseif ($request->get('task') == 'publish') {
+            } elseif ('publish' == $request->get('task')) {
                 $page->setPublished(true);
             }
 
@@ -212,8 +214,6 @@ class PageController extends DocumentControllerBase
     /**
      * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function getListAction(Request $request)
@@ -230,8 +230,6 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
-     *
-     * @param Request $request
      *
      * @return JsonResponse
      */
@@ -252,8 +250,6 @@ class PageController extends DocumentControllerBase
     /**
      * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return BinaryFileResponse
      */
     public function displayPreviewImageAction(Request $request)
@@ -269,8 +265,6 @@ class PageController extends DocumentControllerBase
     /**
      * @Route("/check-pretty-url", name="pimcore_admin_document_page_checkprettyurl", methods={"POST"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function checkPrettyUrlAction(Request $request)
@@ -280,7 +274,7 @@ class PageController extends DocumentControllerBase
 
         $success = true;
 
-        if ($path === '') {
+        if ('' === $path) {
             return $this->adminJson([
                 'success' => $success,
             ]);
@@ -290,7 +284,7 @@ class PageController extends DocumentControllerBase
         $path = rtrim($path, '/');
 
         // must start with /
-        if ($path !== '' && strpos($path, '/') !== 0) {
+        if ('' !== $path && 0 !== strpos($path, '/')) {
             $success = false;
             $message[] = 'URL must start with /.';
         }
@@ -325,8 +319,6 @@ class PageController extends DocumentControllerBase
     /**
      * @Route("/clear-editable-data", name="pimcore_admin_document_page_cleareditabledata", methods={"PUT"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function clearEditableDataAction(Request $request)
@@ -343,12 +335,12 @@ class PageController extends DocumentControllerBase
         foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                if (preg_match('/^'.preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/').'/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             } else {
                 // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $editable->getName())) {
+                if (!preg_match('/^'.preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/').'/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             }
@@ -361,10 +353,6 @@ class PageController extends DocumentControllerBase
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page)
     {
         $this->addSettingsToDocument($request, $page);
