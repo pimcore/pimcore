@@ -38,6 +38,7 @@ framework:
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
+            'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
 # Twig Configuration
 twig:

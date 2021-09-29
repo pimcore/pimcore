@@ -29,3 +29,9 @@ services:
     Pimcore\Messenger\Handler\SearchBackendHandler:
         tags:
             - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
