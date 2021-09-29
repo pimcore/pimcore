@@ -123,10 +123,10 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getDisplayPanel: function () {
 
         if (!this.displayPanel) {
-            let detectImageFeaturesHidden = true;
+            let detectImageFeaturesHidden = false;
             if(this.isAllowed('publish')) {
                 if(this.data['customSettings'] && this.data['customSettings']['disableImageFeatureAutoDetection'] === true) {
-                    detectImageFeaturesHidden = false;
+                    detectImageFeaturesHidden = true;
                 }
             }
 
