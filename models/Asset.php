@@ -28,10 +28,12 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -1015,10 +1017,10 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            $versions = $this->getVersions();
-            foreach ($versions as $version) {
-                $version->delete();
-            }
+            // Dispatch Symfony Message Bus to delete versions
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+            );
 
             // remove permissions
             $this->getDao()->deleteAllPermissions();
