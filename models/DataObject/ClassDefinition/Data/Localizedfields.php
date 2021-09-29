@@ -986,6 +986,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     $subItems = $e->getSubItems();
                                     array_unshift($subItems, $e);
                                     $newException->setSubItems($subItems);
+                                    $newException->addContext($this->getName().'-'.$language);
 
                                     throw $newException;
                                 }
