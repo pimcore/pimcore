@@ -514,72 +514,58 @@ class Asset extends Element\AbstractElement
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
             // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-            $maxRetries = 5;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
-                $this->beginTransaction();
 
-                try {
-                    if (!$isUpdate) {
-                        $this->getDao()->create();
-                    }
+            $this->beginTransaction();
 
-                    // get the old path from the database before the update is done
-                    $oldPath = null;
-                    if ($isUpdate) {
-                        $oldPath = $this->getDao()->getCurrentFullPath();
-                    }
-
-                    $this->update($params);
-
-                    $storage = Storage::get('asset');
-                    // if the old path is different from the new path, update all children
-                    $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
-
-                        try {
-                            $storage->move($oldPath, $this->getRealFullPath());
-                        } catch (UnableToMoveFile $e) {
-                            //update children, if unable to move parent
-                            $this->updateChildPaths($storage, $oldPath);
-                        }
-
-                        $this->getDao()->updateWorkspaces();
-
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                        $this->relocateThumbnails($oldPath);
-                    }
-
-                    // lastly create a new version if necessary
-                    // this has to be after the registry update and the DB update, otherwise this would cause problem in the
-                    // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
-                    if ($this->getType() != 'folder') {
-                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
-                    }
-
-                    $this->commit();
-
-                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (\Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
-                    }
-
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                        usleep($waitTime); // wait specified time until we restart the transaction
-                    } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        throw $e;
-                    }
+            try {
+                if (!$isUpdate) {
+                    $this->getDao()->create();
                 }
+
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getDao()->getCurrentFullPath();
+                }
+
+                $this->update($params);
+
+                $storage = Storage::get('asset');
+                // if the old path is different from the new path, update all children
+                $updatedChildren = [];
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
+
+                    try {
+                        $storage->move($oldPath, $this->getRealFullPath());
+                    } catch (UnableToMoveFile $e) {
+                        //update children, if unable to move parent
+                        $this->updateChildPaths($storage, $oldPath);
+                    }
+
+                    $this->getDao()->updateWorkspaces();
+
+                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                    $this->relocateThumbnails($oldPath);
+                }
+
+                // lastly create a new version if necessary
+                // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+                // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+                if ($this->getType() != 'folder') {
+                    $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                }
+
+                $this->commit();
+            } catch (\Exception $e) {
+                try {
+                    $this->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::error($er);
+                }
+
+                throw $e;
             }
 
             $additionalTags = [];

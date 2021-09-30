@@ -668,83 +668,58 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             $this->correctPath();
 
-            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-            $maxRetries = 5;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
+            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+            $hideUnpublishedBackup = self::getHideUnpublished();
+            self::setHideUnpublished(false);
 
-                // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-                $hideUnpublishedBackup = self::getHideUnpublished();
-                self::setHideUnpublished(false);
+            $this->beginTransaction();
 
-                $this->beginTransaction();
-
-                try {
-                    if (!in_array($this->getType(), self::$types)) {
-                        throw new \Exception('invalid object type given: [' . $this->getType() . ']');
-                    }
-
-                    if (!$isUpdate) {
-                        $this->getDao()->create();
-                    }
-
-                    // get the old path from the database before the update is done
-                    $oldPath = null;
-                    if ($isUpdate) {
-                        $oldPath = $this->getDao()->getCurrentFullPath();
-                    }
-
-                    // if the old path is different from the new path, update all children
-                    // we need to do the update of the children's path before $this->update() because the
-                    // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
-                    $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                    }
-
-                    $this->update($isUpdate, $params);
-
-                    self::setHideUnpublished($hideUnpublishedBackup);
-
-                    $this->commit();
-
-                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (\Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
-                    }
-
-                    // set "HideUnpublished" back to the value it was originally
-                    self::setHideUnpublished($hideUnpublishedBackup);
-
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    }
-
-                    if ($e instanceof RetryableException) {
-                        // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                        if ($retries < ($maxRetries - 1)) {
-                            $run = $retries + 1;
-                            $waitTime = random_int(1, 5) * 100000; // microseconds
-                            Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                            usleep($waitTime); // wait specified time until we restart the transaction
-                        } else {
-                            // if the transaction still fail after $maxRetries retries, we throw out the exception
-                            Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
-
-                            throw $e;
-                        }
-                    } else {
-                        throw $e;
-                    }
+            try {
+                if (!in_array($this->getType(), self::$types)) {
+                    throw new \Exception('invalid object type given: [' . $this->getType() . ']');
                 }
+
+                if (!$isUpdate) {
+                    $this->getDao()->create();
+                }
+
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getDao()->getCurrentFullPath();
+                }
+
+                // if the old path is different from the new path, update all children
+                // we need to do the update of the children's path before $this->update() because the
+                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
+                $updatedChildren = [];
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                }
+
+                $this->update($isUpdate, $params);
+
+                self::setHideUnpublished($hideUnpublishedBackup);
+
+                $this->commit();
+            } catch (\Exception $e) {
+                try {
+                    $this->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::info($er);
+                }
+
+                // set "HideUnpublished" back to the value it was originally
+                self::setHideUnpublished($hideUnpublishedBackup);
+
+                if ($e instanceof UniqueConstraintViolationException) {
+                    throw new Element\ValidationException('unique constraint violation', 0, $e);
+                }
+
+                throw $e;
             }
 
             $additionalTags = [];

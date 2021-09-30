@@ -433,23 +433,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $newPath = $parent->getRealFullPath() . '/' . trim($dir, '/ ');
 
-            $maxRetries = 5;
-            $newParent = null;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
-                try {
-                    $newParent = Asset\Service::createFolderByPath($newPath);
-
-                    break;
-                } catch (\Exception $e) {
-                    if ($retries < ($maxRetries - 1)) {
-                        $waitTime = rand(100000, 900000); // microseconds
-                        usleep($waitTime); // wait specified time until we restart the transaction
-                    } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        throw $e;
-                    }
-                }
-            }
+            $newParent = Asset\Service::createFolderByPath($newPath);
             if ($newParent) {
                 $parentId = $newParent->getId();
             }

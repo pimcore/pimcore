@@ -21,6 +21,7 @@ use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Pimcore\Model\Element\ValidationException;
 
 /**
@@ -110,7 +111,9 @@ trait PimcoreExtensionsTrait
     {
         list($query, $params) = $this->normalizeQuery($query, $params);
 
-        return parent::executeStatement($query, $params, $types);
+        return $this->retry(function() use ($query, $params, $types) {
+            return $this->executeStatement($query, $params, $types);
+        });
     }
 
     /**
@@ -165,7 +168,9 @@ trait PimcoreExtensionsTrait
         $data = $this->quoteDataIdentifiers($data);
         $identifier = $this->quoteDataIdentifiers($identifier);
 
-        return parent::update($tableExpression, $data, $identifier, $types);
+        return $this->retry(function() use ($tableExpression, $data, $identifier, $types) {
+            return parent::update($tableExpression, $data, $identifier, $types);
+        });
     }
 
     /**
@@ -183,7 +188,9 @@ trait PimcoreExtensionsTrait
     {
         $data = $this->quoteDataIdentifiers($data);
 
-        return parent::insert($tableExpression, $data, $types);
+        return $this->retry(function() use ($tableExpression, $data, $types) {
+            return parent::insert($tableExpression, $data, $types);
+        });
     }
 
     /**
@@ -608,5 +615,23 @@ trait PimcoreExtensionsTrait
     public function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
+    }
+
+    private function retry(callable $function) {
+        $maxRetries = 5;
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
+            try {
+                return $function();
+            } catch (RetryableException $e) {
+                // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                if ($retries < $maxRetries - 1) {
+                    $waitTime = random_int(1, 5) * 100000; // microseconds
+
+                    usleep($waitTime); // wait specified time until we restart the transaction
+                } else {
+                    throw $e;
+                }
+            }
+        }
     }
 }
