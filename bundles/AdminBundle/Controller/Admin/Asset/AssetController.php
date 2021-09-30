@@ -434,9 +434,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $newPath = $parent->getRealFullPath() . '/' . trim($dir, '/ ');
 
             $newParent = Asset\Service::createFolderByPath($newPath);
-            if ($newParent) {
-                $parentId = $newParent->getId();
-            }
+            $parentId = $newParent->getId();
         } elseif (!$request->get('parentId') && $parentPath) {
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {

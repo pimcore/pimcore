@@ -441,7 +441,7 @@ class Document extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren) && is_array($updatedChildren)) {
+            if (isset($updatedChildren)) {
                 foreach ($updatedChildren as $documentId) {
                     $tag = 'document_' . $documentId;
                     $additionalTags[] = $tag;
