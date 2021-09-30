@@ -569,7 +569,7 @@ class Asset extends Element\AbstractElement
             }
 
             $additionalTags = [];
-            if (isset($updatedChildren)) {
+            if (is_array($updatedChildren)) {
                 foreach ($updatedChildren as $assetId) {
                     $tag = 'asset_' . $assetId;
                     $additionalTags[] = $tag;
