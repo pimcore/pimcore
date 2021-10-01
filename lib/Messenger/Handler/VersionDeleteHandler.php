@@ -38,7 +38,6 @@ class VersionDeleteHandler
             } catch (\Exception $e) {
                 Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s' . $version->getId(), $e->getMessage()));
             }
-
         }
     }
 }
