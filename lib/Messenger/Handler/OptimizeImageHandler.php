@@ -25,7 +25,6 @@ use Psr\Log\LoggerInterface;
  */
 class OptimizeImageHandler
 {
-
     public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
     {
     }
