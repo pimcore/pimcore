@@ -564,7 +564,7 @@ class Mail extends Email
 
         \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
-        if ($event->hasArgument('mailer')) {
+        if ($event->hasArgument('mailer') && !$sendingFailedException) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
 
