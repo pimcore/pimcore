@@ -30,6 +30,14 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+
+    Pimcore\Messenger\Handler\OptimizeImageHandler:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
         arguments:
             - '@logger'
@@ -42,4 +50,3 @@ services:
     Pimcore\Messenger\Handler\SanityCheckHandler:
         tags:
             - { name: messenger.message_handler }
-

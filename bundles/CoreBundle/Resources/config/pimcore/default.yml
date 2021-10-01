@@ -41,6 +41,7 @@ framework:
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
             'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
+            'Pimcore\Messenger\OptimizeImageMessage': pimcore_core
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
 # Twig Configuration
 twig:
