@@ -83,19 +83,21 @@ class GridConfig extends AbstractModel
     /**
      * @param int $id
      *
-     * @return GridConfig
-     *
-     * @throws NotFoundException
+     * @return GridConfig|null
      */
     public static function getById($id)
     {
         if (!$id) {
-            throw new NotFoundException('config not found');
+            return null;
         }
-        $config = new self();
-        $config->getDao()->getById($id);
+        try {
+            $config = new self();
+            $config->getDao()->getById($id);
 
-        return $config;
+            return $config;
+        } catch (NotFoundException) {
+            return null;
+        }
     }
 
     /**

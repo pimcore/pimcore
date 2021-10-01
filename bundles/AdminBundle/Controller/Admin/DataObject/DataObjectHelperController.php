@@ -195,12 +195,7 @@ class DataObjectHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
-        $gridConfig = null;
-
-        try {
-            $gridConfig = GridConfig::getById($gridConfigId);
-        } catch (\Exception $e) {
-        }
+        $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
             if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
@@ -311,20 +306,7 @@ class DataObjectHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $configListingConditionParts = [];
-            $configListingConditionParts[] = 'ownerId = ' . $userId;
-            $configListingConditionParts[] = 'classId = ' . $db->quote($class->getId());
-
-            if ($searchType) {
-                $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-            }
-
-            $savedGridConfig = null;
-
-            try {
-                $savedGridConfig = GridConfig::getById($requestedGridConfigId);
-            } catch (\Exception $e) {
-            }
+            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = false;
@@ -787,7 +769,6 @@ class DataObjectHelperController extends AdminController
 
         if ($object->isAllowed('list')) {
             $classId = $request->get('classId');
-            $gridConfigId = $request->get('gridConfigId');
             $searchType = $request->get('searchType');
             $user = $this->getAdminUser();
             $db = Db::get();
@@ -927,13 +908,8 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = null;
-                if ($gridConfigId) {
-                    try {
-                        $gridConfig = GridConfig::getById($gridConfigId);
-                    } catch (\Exception $e) {
-                    }
-                }
+                $gridConfig = $gridConfig = GridConfig::getById($gridConfigId);
+
                 if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
                 }
