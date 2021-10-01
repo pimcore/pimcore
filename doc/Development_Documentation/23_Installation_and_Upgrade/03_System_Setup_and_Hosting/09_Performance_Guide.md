@@ -1,34 +1,44 @@
 # Performance Best-Practice Guide
 
-When developing a high traffic website, it is a common practice to focus on performance measures and incorporate changes to make the website even more performant. A highly optimized website drives more traffic and increases the customer base.
-To optimize the website performance, we recommend below tools and configuration. The load test performance benchmarks are noted in each section, based on [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) commandline tool, for insights on comparing the average loading time of a page, before and after applying these changes.
+When developing a high traffic web application, it is a common practice to focus on performance measures and 
+incorporate changes to make the application even more performant. A highly optimized website drives more traffic 
+at zero additional cost and increases the user experience a lot.
+To optimize the website performance, we recommend below tools and configuration. 
+The load test performance benchmarks are noted in each section, based on [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) 
+commandline tool, for insights on comparing the average loading time of a page, before and after applying these changes.
 
-Before we start with the load testing, it is important to turn off dev & debug mode by setting environment variables `APP_ENV=prod` & `PIMCORE_DEV_MODE=false`, to replicate the production environment scenario.
+Before we start with the testing, it is important to turn off development & debug mode by setting the following 
+environment variables to replicate the production environment scenario: 
+```
+APP_ENV=prod
+APP_DEBUG=0
+PIMCORE_DEV_MODE=0
+```
 
 ### PHP 8 Opcache & JIT compiler
-Pimcore X or higher version, requires PHP version >= 8.0, that means we can use and easily take the benefits of newly introduced features in PHP. 
 
-As you know, PHP is an interpreted language, which means the interpreter parses, compiles, and executes the code (opcode) everytime, when executing PHP scripts. This may result in wastage of CPU resources and execution time. This is where the OPcache extension comes in to play:
+As you know, PHP is an interpreted language, which means the interpreter parses, compiles and executes 
+the code (opcode) everytime, when executing PHP scripts. This may result in wastage of CPU resources and 
+execution time. This is where the OPcache extension comes in to play:
 
-“OPcache improves PHP performance by storing precompiled script bytecode in shared memory, thereby removing the need for PHP to load and parse scripts on each request.”
+> “OPcache improves PHP performance by storing precompiled script bytecode in shared memory, 
+thereby removing the need for PHP to load and parse scripts on each request.”
 
-PHP 8 has introduced the support for Just-In-Time Compilation, which has a great potential to speed up the performance. The JIT compiler requires Opcache to be enabled to work.
+PHP 8 has introduced the support for Just-In-Time Compilation (JIT), which has a great potential to 
+additionally speed things up significantly. The JIT compiler requires Opcache to be enabled to work.
 
-By default, JIT compiler is turned off in PHP 8. To enable it, add these configuration to ini configuration:
+By default, JIT compiler is turned off in PHP 8. To enable it, add the following configuration to your `php.ini`:
 
 ```ini
-opcache.enable=1
-opcache.enable_cli=1
-opcache.jit_buffer_size=256M
+opcache.enable=1 # enables the Opcache for PHP server
+opcache.enable_cli=1 # enables the Opcache for CLI mode
+opcache.jit_buffer_size=256M # JIT buffer memory size. 0 value disables the JIT compiler.  
 ```
-`opcache.enable`: enables the Opcache for PHP server
-`opcache.enable_cli`: enables the Opcache for CLI mode
-`opcache.jit_buffer_size`: JIT buffer memory size. 0 value disables the JIT compiler.
 
 #### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en`
 
-- Before Changes
+- Before Changes (OPcache on but JIT off)
 ```bash
 Time taken for tests:   1.061 seconds
 Time per request:       212.203 [ms] (mean)
@@ -57,7 +67,8 @@ Total:         66  175  36.7    181     241
 ```
 
 ### Symfony Performance Best Practices
-As Pimcore is based on Symfony framework for backend requests processing, it is highly recommended to comply with [Symfony Performance Best Practices](https://symfony.com/doc/current/performance.html).
+As Pimcore is based on Symfony framework for backend requests processing, it is highly recommended 
+to comply with [Symfony Performance Best Practices](https://symfony.com/doc/current/performance.html).
 
 ### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en`
@@ -91,17 +102,20 @@ Total:         56  182  36.9    189     255
 ```
 
 ### Opcache Preloading
-Opcache preloading was introduced in PHP 7.4, a feature that could improve the performance of your application significantly, by preloading commonly used framework files and keeping the generated byte-code in memory.
+Opcache preloading was introduced in PHP 7.4, a feature that could improve the performance of your application 
+significantly, by preloading commonly used framework files and keeping the generated byte-code in memory.
 
-In order to enable Opcache preloading, configure these settings in your ini configuration:
+In order to enable OPcache preloading, configure these settings in your `php.ini`:
 ```ini
-opcache.preload_user=www-data
-opcache.preload=/var/www/html/var/cache/prod/App_KernelProdContainer.preload.php
+opcache.preload_user=www-data # user that runs PHP(-FPM)
+opcache.preload=/var/www/html/var/cache/prod/App_KernelProdContainer.preload.php # path to preload file in project's /var/cache directory
 ```
 
 Note: `memory_limit` should be set to at least `200M` when using preloading with Pimcore.
 
-It is also possible to mark which classes should be preloaded or not by using Symfony service tags [container.preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-preload) & [container.no_preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-nopreload).
+It is also possible to mark which classes should be preloaded or not by using Symfony service 
+tags [container.preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-preload) 
+& [container.no_preload](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-container-nopreload).
 
 #### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en/shop/Products/Cars/Economy-Cars/Fiat-500~p104`
@@ -135,25 +149,38 @@ Total:         33   81  17.6     79     111
 ```
 
 ### MySQL/MariaDB Optimizations
-Pimcore uses Data Access Object or DAO pattern to isolate the business logic from low level data access operations. These data access operations play a vital role in performance of Pimcore application features requiring read & write to/from the database.
-Therefore, it is important to tune your database configuration to be performant and to exactly fit the needs of your application.
+Pimcore uses Data Access Object or DAO pattern to isolate the business logic from low level data access operations. 
+These data access operations play a vital role in performance of Pimcore application features 
+requiring read & write to/from the database. Therefore, it is important to tune your database configuration 
+to be performant and to exactly fit the needs of your application.
 
 #### MySQL Composite Index
-If you are using custom database tables for data persistence, then it is beneficial to optimize these tables to have composite indices, so that query optimizer uses the composite index for queries that matches all columns in the index rather than searching the complete table.
+If you are using Data Objects or custom database tables for data persistence, then it is beneficial to optimize these 
+tables to have composite indices, so that query optimizer uses the composite index for queries that 
+matches all columns in the index rather than searching the complete table. 
+You can configure composite indices for your data objects in the class definition under `General Settings`. 
+
  
 #### MySQL Buffer Pool
-The buffer pool is an area in main memory where InnoDB caches table and index data as it is accessed. The main purpose of buffer pool is to the performance by improving the response time of data retrieval. The server system variable `innodb_buffer_pool_size` can be set from 70-80% of the total available memory on a dedicated database server with only or primarily InnoDB tables.
+The buffer pool is an area in main memory where InnoDB caches table and index data as it is accessed. 
+The main purpose of buffer pool is to improve the response time of data retrieval. 
+The server system variable `innodb_buffer_pool_size` can be set from 70-80% of the total available 
+memory on a dedicated database server with only or primarily InnoDB tables.
 
-Please follow this [discussion](https://dba.stackexchange.com/questions/27328/how-large-should-be-mysql-innodb-buffer-pool-size) to decide buffer pool size and update `my.cnf`:
+Please follow this [discussion](https://dba.stackexchange.com/questions/27328/how-large-should-be-mysql-innodb-buffer-pool-size) 
+to decide buffer pool size and update `my.cnf`:
 ```ini
 [mysqld]
-    innodb_buffer_pool_size=5G
+    innodb_buffer_pool_size=5G # needs to be adjusted according to your data
 ```
 
 #### MySQL Query Cache
-MySQL server features a Query Cache. When enabled, the query cache stores SELECT statements together with the retrieved record set in memory, then if another identical query is received, the server can then retrieve the results from the query cache rather than parsing and executing the same query again.
+MySQL server features a Query Cache. When enabled, the query cache stores SELECT statements together 
+with the retrieved record set in memory, then if another identical query is received, the server can 
+ retrieve the results from the query cache rather than parsing and executing the same query again.
 
-- you can check if query cache is enabled with command `SHOW VARIABLES LIKE 'have_query_cache';`. In order to enable the query caching, update `my.cnf`:
+- you can check if query cache is enabled with command `SHOW VARIABLES LIKE 'have_query_cache';`. 
+- In order to enable the query caching, update `my.cnf`:
 ```ini
 [mysqld] 
 query_cache_type=1 
@@ -195,11 +222,20 @@ Total:        123  401  82.8    413     542
 ```
 
 ### Pimcore Caching (Redis)
-Pimcore uses extensively caches for different types of data. The primary cache is a pure object cache where every element (document, asset, object) in Pimcore is cached as it is (serialized objects).
+Pimcore uses extensively caches for different types of data. 
+The primary cache is a pure object cache where every element (document, asset, object) in Pimcore is cached 
+as it is (serialized objects).
 
-This Primary Cache is utilizing the `Pimcore\Cache` interface to store the objects. `Pimcore\Cache` utilizes a `Pimcore\Cache\Core\CoreCacheHandler` to apply Pimcore's caching logic on top of a PSR-6 cache implementation which needs to implement cache tagging. Pimcore uses the `pimcore.cache.pool` Symfony cache pool, you can configure it according to your needs, but it's crucial that the pool supports tags.
+This Primary Cache is utilizing the `Pimcore\Cache` interface to store the objects. 
+`Pimcore\Cache` utilizes a `Pimcore\Cache\Core\CoreCacheHandler` to apply Pimcore's 
+caching logic on top of a PSR-6 cache implementation which needs to implement cache tagging. 
+Pimcore uses the `pimcore.cache.pool` Symfony cache pool, you can configure it according to your needs, 
+but it's crucial that the pool supports tags.
 
-By default, Pimcore uses the Doctrine connection and write to your DB's `cache_items` tables. You can also utilize [available cache adapters](https://symfony.com/doc/current/components/cache.html#available-cache-adapters) from Symfony, however, Pimcore recommends to use `Redis` adapter for a performance boost with clustering and fail-over support.
+By default, Pimcore uses the Doctrine connection and write to your DB's `cache_items` tables. 
+You can also utilize [available cache adapters](https://symfony.com/doc/current/components/cache.html#available-cache-adapters) 
+from Symfony, however, Pimcore recommends to use `Redis` adapter for a performance boost with optional clustering 
+and fail-over support.
 
 Configure `Redis` adapter for `Pimcore\Cache` using these settings:
 ```yaml
@@ -247,8 +283,11 @@ Waiting:      312 1010 192.8    998    2080
 Total:        315 1021 196.0   1011    2107
 ```
 
-### Pimcore Output Cache
-Pimcore output cache enables you to cache the content returned by a controller action. With this cache, the same content does not need to be generated each and every time the same controller action is invoked. A request processed through MVC framework is cached and stored in output cache registry, so on following request calls the response is sent directly from the output cache registry.
+### Pimcore Full Page Cache
+Pimcore full page cache enables you to cache the content returned by a controller action. 
+With this cache, the same content does not need to be generated each and every time the 
+same controller action is invoked. A request processed through the MVC framework is cached and 
+stored in the cache pool, so on following request calls the response is served directly from the cache.
 
 You can configure output page cache in `config.yaml`, as:
 ```yaml
@@ -291,14 +330,20 @@ Waiting:       45  114  26.0    116     166
 Total:         46  115  25.9    116     167
 ```
 
-TODO: add session topic
-- Only use sessions when really necessary. The Pimcore full-page cache detects the usage of sessions in the code and disables itself if necessary.
+> **Important notice about sessions**  
+Only use sessions when really necessary. The Pimcore full-page cache detects the usage of sessions in the code 
+and disables itself if necessary.
 
 ### Static-Page-Generator
-Pimcore offers a static page generator service, which generates static HTML files out of Twig templates processed in MVC framework. These static files can be delivered directly instead of going through complete MVC cycle on a frontend request. This feature is not recommended for a page with dynamic content i.e. news listing, product pages, and so on, where content changes frequently.
+Pimcore offers a static page generator service, which generates static HTML files out of pages (documents). 
+These static files can be delivered directly by Apache/Nginx instead of going through 
+complete PHP driven MVC cycle on a frontend request. This feature is not recommended for a page with dynamic content 
+i.e. news listing, product pages, and so on, where content changes frequently.
 
 #### Enable Static Page generator for a Document:
-To enable automatic static page generation for a document, go to Document -> Settings -> Static Page Generator. Mark enable checkbox and define optional lifetime for static pages (which regenerates static page after lifetime) and save document.
+To enable automatic static page generation for a document, go to Document -> Settings -> Static Page Generator. 
+Mark enable checkbox and define optional lifetime for static pages (which regenerates static page after lifetime) 
+and save document.
 
 #### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en/Magazine`
@@ -332,8 +377,9 @@ Total:          3    6   1.3      6      10
 ```
 
 ### In-Template Caching
-Pimcore provides a Twig extension `pimcore_cache` for in-template caching, which is used to cache some parts directly in the template,
-independent of the global caching functionality. This can be useful for templates which needs a lot
+Pimcore provides a Twig extension `pimcore_cache` for in-template caching, which is used to cache some parts 
+directly in the template, independent of the global caching functionality. 
+This can be useful for templates which needs a lot
 of calculation or require a huge amount of objects e.g., Navigation.
 
 You can cache part of a template like:
@@ -399,12 +445,17 @@ Total:         42  113  28.4    114     175
 ```
 
 ### Varnish Cache
-The Varnish Cache is a so-called reverse proxy, that is placed in front of a server, which is responsible for delivering website content. On initial request, the varnish cache saves a copy of the server reponse in memory. In the event of subsequent requests, the response is sent directly from the memory, bypassing the server. This leads to faster response time, as no processing is required on the server side.
+The Varnish Cache is a so-called caching reverse proxy, that is placed in front of a server, 
+which is responsible for delivering website content. 
+On initial request, the varnish cache saves a copy of the server reponse in memory. 
+In the event of subsequent requests, the response is sent directly from the memory, 
+bypassing the server. This leads to faster response time, as no processing is required on the server side.
 
 > Note: Pimcore sends the right headers for Varnish if full-page cache is enabled
 
 #### Edge Side Includes (ESI)
-Edge Side Includes is a markup to manage page fragments, which can be cached and merged into one page. These fragments can have individual cache policies and can be shared on multiple pages.
+Edge Side Includes is a markup to manage page fragments, which can be cached and merged into one page. 
+These fragments can have individual cache policies and can be shared on multiple pages.
 
 Varnish supports 2 main ESI tags, which are:
 ```
