@@ -90,6 +90,7 @@ class GridConfig extends AbstractModel
         if (!$id) {
             return null;
         }
+
         try {
             $config = new self();
             $config->getDao()->getById($id);
