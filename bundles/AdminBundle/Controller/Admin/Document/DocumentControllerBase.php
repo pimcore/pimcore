@@ -149,7 +149,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             $document->getEditables();
         } else {
             // ensure no editables (e.g. from session, version, ...) are still referenced
-            $document->setEditables([]);
+            $document->setEditables(null);
         }
 
         if ($request->get('data')) {

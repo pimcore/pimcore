@@ -48,10 +48,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      */
     public function getById($id = null)
     {
-        if ($id != null) {
-            $this->model->setId($id);
+        if (empty($id)) {
+            return null;
         }
 
+        $this->model->setId($id);
         $data = $this->getDataByName($this->model->getId());
 
         if ($data && $id != null) {
