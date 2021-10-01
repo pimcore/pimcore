@@ -20,9 +20,11 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -222,10 +224,10 @@ abstract class PageSnippet extends Model\Document
      */
     protected function doDelete()
     {
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
-        }
+        // Dispatch Symfony Message Bus to delete versions
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+        );
 
         // remove all tasks
         $this->getDao()->deleteAllTasks();
