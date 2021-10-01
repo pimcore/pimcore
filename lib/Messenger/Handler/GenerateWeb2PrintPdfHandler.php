@@ -40,7 +40,7 @@ class GenerateWeb2PrintPdfHandler
             $config = Config::getSystemConfiguration();
             $memoryLimitConfig = $config['documents']['web_to_print']['pdf_creation_php_memory_limit'] ?? 0;
             if (!empty($memoryLimitConfig) && filesize2bytes($memoryLimit . 'B') < filesize2bytes($memoryLimitConfig . 'B')) {
-                    $this->logger->info("Info: PHP:memory_limit set to " . $memoryLimitConfig . " from config documents.web_to_print.pdf_creation_php_memory_limit");
+                $this->logger->info('Info: PHP:memory_limit set to ' . $memoryLimitConfig . ' from config documents.web_to_print.pdf_creation_php_memory_limit');
 
                 ini_set('memory_limit', $memoryLimitConfig);
             }
