@@ -738,6 +738,7 @@ pimcore.object.classes.klass = Class.create({
         this.rootPanel = new Ext.form.FormPanel({
             title: '<b>' + t("general_settings") + '</b>',
             bodyStyle: 'padding: 10px;',
+            autoScroll: true,
             defaults: {
                 labelWidth: 200
             },
