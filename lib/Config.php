@@ -43,6 +43,7 @@ final class Config implements \ArrayAccess
 
     /**
      * @param  mixed $offset
+     *
      * @return bool
      */
     #[\ReturnTypeWillChange]
@@ -65,6 +66,7 @@ final class Config implements \ArrayAccess
 
     /**
      * @param  mixed $offset
+     *
      * @throws \Exception
      */
     #[\ReturnTypeWillChange]
@@ -75,6 +77,7 @@ final class Config implements \ArrayAccess
 
     /**
      * @param string $offset
+     *
      * @return array|null
      */
     #[\ReturnTypeWillChange]
