@@ -137,15 +137,15 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
-			  `oo_id` int(11) NOT NULL default '0',
+			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`),
 			  CONSTRAINT `fk_".$this->model->getId()."__oo_id` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
               `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
-              `src_id` int(11) NOT NULL DEFAULT '0',
-              `dest_id` int(11) NOT NULL DEFAULT '0',
+              `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+              `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
               `type` varchar(50) NOT NULL DEFAULT '',
               `fieldname` varchar(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
