@@ -222,6 +222,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->data);
@@ -230,6 +231,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->skipNextIteration = false;
@@ -240,6 +242,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->data);
@@ -248,6 +251,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->skipNextIteration) {
@@ -262,6 +266,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->skipNextIteration = false;
@@ -271,6 +276,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->key() !== null;
@@ -279,6 +285,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->__isset($offset);
@@ -287,6 +294,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);
@@ -295,6 +303,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
@@ -303,6 +312,7 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->__unset($offset);
