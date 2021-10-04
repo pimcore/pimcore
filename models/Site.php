@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Site\Dao getDao()
@@ -102,7 +103,7 @@ final class Site extends AbstractModel
             try {
                 $site = new self();
                 $site->getDao()->getById((int)$id);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 $site = 'failed';
             }
 
@@ -130,7 +131,7 @@ final class Site extends AbstractModel
             $site->getDao()->getByRootId((int)$id);
 
             return $site;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -151,7 +152,7 @@ final class Site extends AbstractModel
             try {
                 $site = new self();
                 $site->getDao()->getByDomain($domain);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 $site = 'failed';
             }
 

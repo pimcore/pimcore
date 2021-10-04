@@ -33,6 +33,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
 
     /**
@@ -62,7 +63,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

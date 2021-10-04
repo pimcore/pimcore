@@ -15,8 +15,9 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
+use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use Pimcore\Tool\Console;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
+            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'] ?? [],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
             'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
             'legacyConfigFile' => 'image-thumbnails.php',
@@ -154,13 +155,9 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            $arguments = [
-                'pimcore:thumbnails:clear',
-                '--type=image',
-                '--name='.$this->model->getName(),
-            ];
-
-            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), $arguments);
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new CleanupThumbnailsMessage('image', $this->model->getName())
+            );
         }
     }
 }

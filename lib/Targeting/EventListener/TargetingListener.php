@@ -43,9 +43,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class TargetingListener implements EventSubscriberInterface
 {
     use StopwatchTrait;
+
     use PimcoreContextAwareTrait;
+
     use EnabledTrait;
+
     use ResponseInjectionTrait;
+
     use StaticPageContextAwareTrait;
 
     /**
@@ -112,7 +116,7 @@ class TargetingListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest() && !$this->matchesStaticPageContext($request)) {
+        if (!$event->isMainRequest() && !$this->matchesStaticPageContext($request)) {
             return;
         }
 
@@ -174,7 +178,7 @@ class TargetingListener implements EventSubscriberInterface
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
         $response = $event->getResponse();
 
-        if ($event->isMasterRequest() || $this->matchesStaticPageContext($event->getRequest())) {
+        if ($event->isMainRequest() || $this->matchesStaticPageContext($event->getRequest())) {
             $this->startStopwatch('Targeting:responseActions', 'targeting');
 
             // handle recorded actions on response

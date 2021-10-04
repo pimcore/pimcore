@@ -38,6 +38,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 
 #### Recommended or Optional Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
+  - LCMS delegate for Image Magick to prevent negative colors for CMYK images
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 - [mysqli](http://php.net/mysqli) (PDO although is still required for parameter mappings)

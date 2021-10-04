@@ -38,6 +38,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 {
     use ControllerTypeTrait;
+
     use PimcoreContextAwareTrait;
 
     /**
@@ -87,7 +88,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

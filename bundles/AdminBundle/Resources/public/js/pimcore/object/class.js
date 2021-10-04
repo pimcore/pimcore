@@ -16,7 +16,7 @@ pimcore.object.klass = Class.create({
 
     forbiddenNames: [
         "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
-        "service", "fieldcollection", "localizedfield", "objectbrick"
+        "service", "fieldcollection", "localizedfield", "objectbrick", "default"
     ],
 
     initialize: function () {

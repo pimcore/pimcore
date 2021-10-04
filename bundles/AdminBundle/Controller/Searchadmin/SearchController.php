@@ -156,10 +156,15 @@ class SearchController extends AdminController
                 : null;
 
             $join = '';
+            $localizedJoin = '';
             foreach ($bricks as $ob) {
                 $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
-
                 $join .= ' `' . $ob . '`';
+
+                if ($localizedConditionFilters) {
+                    $localizedJoin = $join . ' ON `' . $ob . '`.o_id = `object_localized_data_' . $class->getId() . '`.ooo_id';
+                }
+
                 $join .= ' ON `' . $ob . '`.o_id = `object_' . $class->getId() . '`.o_id';
             }
 
@@ -172,12 +177,12 @@ class SearchController extends AdminController
             if (null !== $localizedConditionFilters) {
                 //add condition query for localised fields
                 $conditionParts[] = '( id IN (SELECT `object_localized_data_' . $class->getId()
-                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $join . ' WHERE '
+                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $localizedJoin . ' WHERE '
                     . $localizedConditionFilters . ' GROUP BY ooo_id ' . ') )';
             }
         }
 
-        if (is_array($types) and !empty($types[0])) {
+        if (is_array($types) && !empty($types[0])) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -188,7 +193,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) and !empty($subtypes[0])) {
+        if (is_array($subtypes) && !empty($subtypes[0])) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -196,7 +201,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
+        if (is_array($classnames) && !empty($classnames[0])) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -524,7 +529,7 @@ class SearchController extends AdminController
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i === 0) {
+            if (strlen($shortPath) <= 50 || $i == 0) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');

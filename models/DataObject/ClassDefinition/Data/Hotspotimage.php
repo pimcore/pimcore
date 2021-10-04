@@ -26,8 +26,11 @@ use Pimcore\Tool\Serialize;
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use ImageTrait;
+
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\QueryColumnType;
 
     /**
@@ -499,7 +502,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
             $id = $data->getImage()->getId();
-            if (array_key_exists('asset', $idMapping) and array_key_exists($id, $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($id, $idMapping['asset'])) {
                 $data->setImage(Asset::getById($idMapping['asset'][$id]));
 
                 // reset hotspot, marker & crop
@@ -536,21 +539,21 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                         //rewrite objects
                         if ($dataEntry['type'] == 'object' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
-                            if (array_key_exists('object', $idMapping) and array_key_exists($id, $idMapping['object'])) {
+                            if (array_key_exists('object', $idMapping) && array_key_exists($id, $idMapping['object'])) {
                                 $dataEntry['value'] = DataObject::getById($idMapping['object'][$id]);
                             }
                         }
                         //rewrite assets
                         if ($dataEntry['type'] == 'asset' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
-                            if (array_key_exists('asset', $idMapping) and array_key_exists($id, $idMapping['asset'])) {
+                            if (array_key_exists('asset', $idMapping) && array_key_exists($id, $idMapping['asset'])) {
                                 $dataEntry['value'] = Asset::getById($idMapping['asset'][$id]);
                             }
                         }
                         //rewrite documents
                         if ($dataEntry['type'] == 'document' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
-                            if (array_key_exists('document', $idMapping) and array_key_exists($id, $idMapping['document'])) {
+                            if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {
                                 $dataEntry['value'] = Document::getById($idMapping['document'][$id]);
                             }
                         }
@@ -651,7 +654,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
             $image = $value->getImage();
             if ($image) {
-                $type = Element\Service::getType($image);
+                $type = Element\Service::getElementType($image);
                 $id = $image->getId();
                 $result['image'] = [
                     'type' => $type,

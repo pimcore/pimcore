@@ -98,7 +98,6 @@ class MultiCartManager implements CartManagerInterface
 
     protected function initSavedCarts()
     {
-        // @var CartInterface[] $carts
         $carts = $this->getAllCartsForCurrentUser();
 
         if (empty($carts)) {

@@ -36,6 +36,7 @@
   "decimal_mysql_type_naming_warning": "Please note that in MySQL terms, the <code>decimalSize<\/code> is called <code>precision<\/code> and the <code>decimalPrecision<\/code> is called <code>scale<\/code>.",
   "only_unsigned": "only unsigned",
   "integer": "Integer",
+  "static": "Static",
   "object_regex_info": "RegExp without delimiters, has to work in both JS and PHP",
   "regex_validation": "Regular Expression Validation",
   "test_string": "Test string",

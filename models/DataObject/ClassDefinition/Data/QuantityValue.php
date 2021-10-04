@@ -27,6 +27,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
@@ -383,7 +384,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
 
-            return $data->getValue() . $unit;
+            return htmlspecialchars($data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
         }
 
         return '';
@@ -660,5 +661,17 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty($data)
+    {
+        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+            return empty($data->getValue()) && empty($data->getUnitId());
+        }
+
+        return parent::isEmpty($data);
     }
 }

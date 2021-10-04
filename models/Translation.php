@@ -452,7 +452,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) and count($data) > 1) {
+            if (is_array($data) && count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {
@@ -472,19 +472,19 @@ final class Translation extends AbstractModel
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
                             if (in_array($key, $languages)) {
-                                $currentTranslation = $t->getTranslation($key);
+                                $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
                                 if ($replaceExistingTranslations) {
                                     $t->addTranslation($key, $value);
                                     if ($currentTranslation != $value) {
                                         $dirty = true;
                                     }
                                 } else {
-                                    if (!$t->getTranslation($key)) {
+                                    if (!$currentTranslation) {
                                         $t->addTranslation($key, $value);
                                         if ($currentTranslation != $value) {
                                             $dirty = true;
                                         }
-                                    } elseif ($t->getTranslation($key) != $value && $value) {
+                                    } elseif ($currentTranslation != $value && $value) {
                                         $delta[] =
                                             [
                                                 'lg' => $key,

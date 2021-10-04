@@ -26,11 +26,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\CustomReport\Config;
-use Pimcore\Tool\Console;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -350,7 +350,7 @@ class NewsletterController extends DocumentControllerBase
      *
      * @throws Exception
      */
-    public function sendAction(Request $request): JsonResponse
+    public function sendAction(Request $request, MessageBusInterface $messageBus): JsonResponse
     {
         /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
@@ -370,10 +370,8 @@ class NewsletterController extends DocumentControllerBase
             'progress' => 0,
         ], 'newsletter');
 
-        Console::runPhpScriptInBackground(
-            realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'),
-            ['internal:newsletter-document-send', $document->getTmpStoreId(), \Pimcore\Tool::getHostUrl()],
-            PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log'
+        $messageBus->dispatch(
+            new Pimcore\Messenger\SendNewsletterMessage($document->getTmpStoreId(), \Pimcore\Tool::getHostUrl())
         );
 
         return $this->adminJson(['success' => true]);

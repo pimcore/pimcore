@@ -26,9 +26,13 @@ use Pimcore\Tool\Text;
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -305,7 +309,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);

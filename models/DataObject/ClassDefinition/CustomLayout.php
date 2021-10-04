@@ -98,7 +98,7 @@ class CustomLayout extends Model\AbstractModel
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }

@@ -481,7 +481,9 @@ class TranslationController extends AdminController
                 //Reload translation to get complete data,
                 //if translation fetched based on the text not key
                 if ($searchString && !strpos($searchString, $t->getKey())) {
-                    $t = Translation::getByKey($t->getKey());
+                    if (!$t = Translation::getByKey($t->getKey(), $domain)) {
+                        continue;
+                    }
                 }
 
                 $translations[] = array_merge(
@@ -1078,10 +1080,10 @@ class TranslationController extends AdminController
                     libxml_clear_errors();
                     $html = $doc->saveHTML();
 
-                    $bodyStart = strpos($html, '<body>') + 6;
+                    $bodyStart = strpos($html, '<body>');
                     $bodyEnd = strpos($html, '</body>');
                     if ($bodyStart && $bodyEnd) {
-                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                        $html = substr($html, $bodyStart + 6, $bodyEnd - $bodyStart);
                     }
 
                     $output .= $html;

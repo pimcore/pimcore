@@ -214,7 +214,7 @@ final class Config implements \ArrayAccess
             } elseif (Tool::isFrontendRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 // we cannot use the document resolver service here, because we need the document on the master request
-                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMasterRequest()->get(DynamicRouter::CONTENT_KEY);
+                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {
@@ -457,13 +457,7 @@ final class Config implements \ArrayAccess
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_web2print')) {
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_web2print');
         } else {
-            try {
-                $file = self::locateConfigFile('web2print.php');
-                $config = static::getConfigInstance($file);
-            } catch (\Exception $e) {
-                $config = new \Pimcore\Config\Config([]);
-            }
-
+            $config = \Pimcore\Web2Print\Config::get();
             self::setWeb2PrintConfig($config);
         }
 

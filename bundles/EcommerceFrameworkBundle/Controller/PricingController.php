@@ -20,7 +20,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -59,8 +58,6 @@ class PricingController extends AdminController implements KernelControllerEvent
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            // @var  RuleInterface $rule
-
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();
                 $title = 'Verhalten: ' . $rule->getBehavior();

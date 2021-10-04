@@ -1716,8 +1716,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

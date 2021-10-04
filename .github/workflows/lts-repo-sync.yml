@@ -8,6 +8,7 @@ on:
 jobs:
     lts-repo-sync:
         runs-on: ubuntu-latest
+        if: ${{ github.repository == 'pimcore/pimcore' }}
         steps:
             - name: git-sync
               uses: wei/git-sync@v3

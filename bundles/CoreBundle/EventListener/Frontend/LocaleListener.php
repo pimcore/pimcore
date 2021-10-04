@@ -78,7 +78,7 @@ class LocaleListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event)
     {
-        if ($this->lastLocale && $event->isMasterRequest()) {
+        if ($this->lastLocale && $event->isMainRequest()) {
             $response = $event->getResponse();
             $response->headers->set('Content-Language', strtolower(str_replace('_', '-', $this->lastLocale)), true);
         }

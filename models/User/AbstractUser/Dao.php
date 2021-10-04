@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -43,14 +43,14 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("user doesn't exist");
+            throw new Model\Exception\NotFoundException("user doesn't exist");
         }
     }
 
     /**
      * @param string $name
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByName($name)
     {

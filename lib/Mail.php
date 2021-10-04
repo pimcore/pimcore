@@ -51,6 +51,13 @@ class Mail extends Email
     private $document;
 
     /**
+     * Contains the email document Id
+     *
+     * @var int|null
+     */
+    private ?int $documentId = null;
+
+    /**
      * Contains the dynamic Params for the Twig engine
      *
      * @var array
@@ -139,8 +146,8 @@ class Mail extends Email
         if (is_array($headers)) {
             $options = $headers;
 
-            $headers = $options['headers'] instanceof Headers ? $options['headers'] : null;
-            $body = $options['body'] instanceof AbstractPart ? $options['body'] : null;
+            $headers = ($options['headers'] ?? null) instanceof Headers ? $options['headers'] : null;
+            $body = ($options['body'] ?? null) instanceof AbstractPart ? $options['body'] : null;
             parent::__construct($headers, $body);
 
             if ($options['subject'] ?? false) {
@@ -489,7 +496,11 @@ class Mail extends Email
 
         // Remove the document property because it is no longer needed and makes it difficult
         // to serialize the Mail object when using the Symfony Messenger component
-        $this->setDocument(null);
+        $document = $this->getDocument();
+        if ($document instanceof Model\Document) {
+            $this->setDocument(null);
+            $this->setDocumentId($document->getId());
+        }
 
         return $this->sendWithoutRendering($mailer);
     }
@@ -553,7 +564,7 @@ class Mail extends Email
 
         \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
-        if ($event->hasArgument('mailer')) {
+        if ($event->hasArgument('mailer') && !$sendingFailedException) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
 
@@ -772,6 +783,7 @@ class Mail extends Email
 
         if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter || $document === null) {
             $this->document = $document;
+            $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
         } else {
             throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
@@ -788,6 +800,22 @@ class Mail extends Email
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDocumentId(): ?int
+    {
+        return $this->documentId;
+    }
+
+    /**
+     * @param int|null $documentId
+     */
+    public function setDocumentId(?int $documentId): void
+    {
+        $this->documentId = $documentId;
     }
 
     /**

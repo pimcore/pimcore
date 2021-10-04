@@ -259,7 +259,8 @@ pimcore.settings.web2print = Class.create({
                     {
                         text: t("save"),
                         handler: this.save.bind(this),
-                        iconCls: "pimcore_icon_apply"
+                        iconCls: "pimcore_icon_apply",
+                        disabled: !pimcore.settings['web2print-writeable']
                     }
                 ],
                 items: [

@@ -57,8 +57,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
     public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
     {
         // merge all parameters from request to parameters
-        if (!$reset && $this->requestHelper->hasMasterRequest()) {
-            $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
+        if (!$reset && $this->requestHelper->hasMainRequest()) {
+            $urlOptions = array_replace($this->requestHelper->getMainRequest()->query->all(), $urlOptions);
         }
 
         return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH, $encode);
@@ -133,8 +133,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
         }
 
-        if (!$route && $this->requestHelper->hasMasterRequest()) {
-            $route = $this->requestHelper->getMasterRequest()->attributes->get('_route');
+        if (!$route && $this->requestHelper->hasMainRequest()) {
+            $route = $this->requestHelper->getMainRequest()->attributes->get('_route');
         }
 
         return $route;

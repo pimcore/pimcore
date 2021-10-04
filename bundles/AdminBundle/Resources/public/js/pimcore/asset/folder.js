@@ -81,11 +81,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         var tpl = new Ext.XTemplate(
             '<tpl for=".">',
-            '<div class="thumb-wrap">',
-            '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td class="thumb-item" align="center" '
-                + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
-                'background-size: contain;" id="{type}_{id}" data-idpath="{idPath}">'
-                + '</td></tr></table></div>',
+            '<div class="thumb-wrap" id="{type}_{id}" data-idpath="{idPath}">',
+            '<img class="thumb" src="{url}" loading="lazy">',
             '<span class="filename" title="{filename}">{filenameDisplay}</span></div>',
             '</tpl>',
             '<div class="x-clear"></div>'
@@ -102,7 +99,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 store: this.store,
                 autoScroll: true,
                 tpl: tpl,
-                itemSelector: 'td.thumb-item',
+                itemSelector: '.thumb-wrap',
                 emptyText: ' ',
                 listeners: {
                     "itemclick": function (view, record, item, index, e, eOpts ) {

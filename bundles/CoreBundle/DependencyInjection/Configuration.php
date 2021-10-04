@@ -174,6 +174,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addPredefinedPropertiesNode($rootNode);
 
         return $treeBuilder;
     }
@@ -626,6 +627,35 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('predefined')
+                            ->children()
+                                ->arrayNode('definitions')
+                                ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('name')->end()
+                                            ->scalarNode('description')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('language')->end()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('data')->end()
+                                            ->scalarNode('targetSubtype')->end()
+                                            ->scalarNode('config')->end()
+                                            ->booleanNode('inheritable')
+                                                ->beforeNormalization()
+                                                ->ifString()
+                                                ->then(function ($v) {
+                                                    return (bool)$v;
+                                                })
+                                                ->end()
+                                            ->end()
+                                            ->integerNode('creationDate')->end()
+                                            ->integerNode('modificationDate')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('class_definitions')
                             ->children()
                                 ->arrayNode('data')
@@ -728,6 +758,28 @@ final class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                 ->arrayNode('doc_types')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('name')->end()
+                                    ->scalarNode('group')->end()
+                                    ->scalarNode('module')->end()
+                                    ->scalarNode('controller')->end()
+                                    ->scalarNode('template')->end()
+                                    ->scalarNode('type')->end()
+                                    ->integerNode('priority')->end()
+                                    ->integerNode('creationDate')->end()
+                                    ->integerNode('modificationDate')->end()
+                                    ->scalarNode('staticGeneratorEnabled')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -837,6 +889,22 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('default_controller_print_container')
                                 ->defaultValue('App\\Controller\\Web2printController::containerAction')
                             ->end()
+                            ->booleanNode('enableInDefaultView')->end()
+                            ->scalarNode('generalTool')->end()
+                            ->scalarNode('generalDocumentSaveMode')->end()
+                            ->scalarNode('pdfreactorVersion')->end()
+                            ->scalarNode('pdfreactorProtocol')->end()
+                            ->scalarNode('pdfreactorServer')->end()
+                            ->scalarNode('pdfreactorServerPort')->end()
+                            ->scalarNode('pdfreactorBaseUrl')->end()
+                            ->scalarNode('pdfreactorApiKey')->end()
+                            ->scalarNode('pdfreactorLicence')->end()
+                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
+                            ->booleanNode('pdfreactorEnableDebugMode')->end()
+                            ->scalarNode('wkhtmltopdfBin')->end()
+                            ->variableNode('wkhtml2pdfOptions')->end()
+                            ->scalarNode('wkhtml2pdfHostname')->end()
+                            ->scalarNode('headlessChromeSettings')->end()
                         ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
@@ -889,6 +957,20 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('allow_processing_unpublished_fallback_document')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                            ->defaultFalse()
+                            ->setDeprecated(
+                                'pimcore/pimcore',
+                                '10.1',
+                                'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
+                            )
+                        ->end()
                         ->arrayNode('direct_route_document_types')
                             ->scalarPrototype()->end()
                         ->end()
@@ -1934,5 +2016,52 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->addDefaultsIfNotSet()
             ->end();
+    }
+
+    /**
+     * Add predefined properties specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPredefinedPropertiesNode(ArrayNodeDefinition $rootNode)
+    {
+        $predefinedPropertiesNode = $rootNode
+            ->children()
+            ->arrayNode('properties')
+            ->ignoreExtraKeys()
+            ->addDefaultsIfNotSet();
+
+        $predefinedPropertiesNode
+        ->children()
+            ->arrayNode('predefined')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('description')->end()
+                                ->scalarNode('key')->end()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('data')->end()
+                                ->scalarNode('config')->end()
+                                ->scalarNode('ctype')->end()
+                                ->booleanNode('inheritable')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                        ->end()
+                                ->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 }

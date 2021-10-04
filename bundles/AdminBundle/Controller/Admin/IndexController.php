@@ -27,6 +27,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
 use Pimcore\Tool;
@@ -252,9 +253,14 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
 
+            // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable' => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
             'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
+            'document-types-writeable' => (new DocType())->isWriteable(),
+            'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable(),
+            'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
+            'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
         ];
 
         $this

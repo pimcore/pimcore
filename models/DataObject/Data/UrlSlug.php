@@ -31,7 +31,10 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class UrlSlug implements OwnerAwareFieldInterface
 {
     use ObjectVarTrait;
+
     use OwnerAwareFieldTrait;
+
+    public const TABLE_NAME = 'object_url_slugs';
 
     /**
      * @var int
@@ -91,7 +94,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * UrlSlug constructor.
      *
-     * @param string $slug
+     * @param string|null $slug
      * @param int|null $siteId
      */
     public function __construct(?string $slug, ?int $siteId = 0)
@@ -340,7 +343,8 @@ class UrlSlug implements OwnerAwareFieldInterface
 
         try {
             $query = sprintf(
-                'SELECT * FROM object_url_slugs WHERE slug = %s AND (siteId = %d OR siteId = 0) ORDER BY siteId DESC LIMIT 1',
+                'SELECT * FROM %s WHERE slug = %s AND (siteId = %d OR siteId = 0) ORDER BY siteId DESC LIMIT 1',
+                self::TABLE_NAME,
                 $db->quote($path),
                 $siteId
             );
@@ -368,7 +372,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function getAction()
     {
-        /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug $fd */
+        /** @var ClassDefinition\Data\UrlSlug $fd */
         $fd = null;
 
         $classDefinition = ClassDefinition::getById($this->getClassId());
@@ -477,7 +481,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     public function delete()
     {
         $db = Db::get();
-        $db->delete('object_url_slugs', ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
+        $db->delete(self::TABLE_NAME, ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
+        $cacheKey = $this->getSlug() . '~~' . $this->getSiteId();
+        if (isset(self::$cache[$cacheKey])) {
+            unset(self::$cache[$cacheKey]);
+        }
     }
 
     /**
@@ -488,7 +496,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     public static function handleSiteDeleted(int $siteId)
     {
         $db = Db::get();
-        $db->delete('object_url_slugs', ['siteId' => $siteId]);
+        $db->delete(self::TABLE_NAME, ['siteId' => $siteId]);
     }
 
     /**
@@ -499,6 +507,6 @@ class UrlSlug implements OwnerAwareFieldInterface
     public static function handleClassDeleted(string $classId)
     {
         $db = Db::get();
-        $db->delete('object_url_slugs', ['classId' => $classId]);
+        $db->delete(self::TABLE_NAME, ['classId' => $classId]);
     }
 }

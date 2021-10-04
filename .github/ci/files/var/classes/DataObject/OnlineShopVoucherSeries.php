@@ -17,7 +17,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherSeries getByName($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherSeries|null getByName($value, $limit = 0, $offset = 0)
 */
 
 class OnlineShopVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries
@@ -46,7 +46,7 @@ public function getName(): ?string
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("name");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}
@@ -79,7 +79,7 @@ public function getTokenSettings()
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("tokenSettings");
-		if ($preValue !== null) { 
+		if ($preValue !== null) {
 			return $preValue;
 		}
 	}

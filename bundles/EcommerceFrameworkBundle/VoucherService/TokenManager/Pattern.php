@@ -31,12 +31,13 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
- * Class Pattern
+ * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    // @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code
-
+    /**
+     * Max probability to hit a duplicate entry on insertion e.g. to guess a code
+     */
     const MAX_PROBABILITY = 0.005;
 
     protected $template;

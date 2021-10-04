@@ -42,7 +42,7 @@ class GoogleSearchConsoleVerificationListener implements EventSubscriberInterfac
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
