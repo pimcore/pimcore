@@ -119,7 +119,7 @@ final class Predefined extends Model\AbstractModel
                 $property = new self();
                 $property->getDao()->getByKey($key);
                 \Pimcore\Cache\Runtime::set($cacheKey, $property);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
