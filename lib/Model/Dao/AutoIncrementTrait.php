@@ -20,19 +20,30 @@ namespace Pimcore\Model\Dao;
  */
 trait AutoIncrementTrait
 {
+    private static ?int $runtimeCache = null;
+
     public function getNextId($listingClass): int
     {
-        $listing = new $listingClass();
-        $listing = $listing->load();
-
-        $ids = array_map(function ($item) {
-            return (int) $item->getId();
-        }, $listing);
-
-        if (count($ids)) {
-            return max($ids) + 1;
+        $nextId = 1;
+        if(self::$runtimeCache) {
+             $nextId = self::$runtimeCache + 1;
         }
 
-        return 1;
+        if($nextId === 1) {
+            $listing = new $listingClass();
+            $listing = $listing->load();
+
+            $ids = array_map(function ($item) {
+                return (int)$item->getId();
+            }, $listing);
+
+            if (count($ids)) {
+                $nextId = max($ids) + 1;
+            }
+        }
+
+        self::$runtimeCache = $nextId;
+
+        return $nextId;
     }
 }
