@@ -71,6 +71,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function getByNameAndLanguage($name = null, $language = null)
     {
         $list = new Listing();
+        /** @var Model\Metadata\Predefined[] $definitions */
         $definitions = array_values(array_filter($list->getDefinitions(), function ($item) use ($name, $language) {
             $return = true;
             if ($name && $item->getName() != $name) {
@@ -84,7 +85,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }));
 
         if (count($definitions) && $definitions[0]->getId()) {
-            $this->assignVariablesToModel($definitions[0]);
+            $this->assignVariablesToModel($definitions[0]->getObjectVars());
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" and language %s does not exist.', $name, $language));
         }

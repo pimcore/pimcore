@@ -68,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @param string|null $key
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByKey($key = null)
     {
@@ -78,15 +78,19 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $key = $this->model->getKey();
 
         $list = new Listing();
+        /** @var Model\Property\Predefined[] $properties */
         $properties = array_values(array_filter($list->getProperties(), function ($item) use ($key) {
             return $item->getKey() == $key;
         }
         ));
 
         if (count($properties) && $properties[0]->getId()) {
-            $this->assignVariablesToModel($properties[0]);
+            $this->assignVariablesToModel($properties[0]->getObjectVars());
         } else {
-            throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Predefined property with key "%s" does not exist.',
+                $this->model->getKey()
+            ));
         }
     }
 
