@@ -81,22 +81,21 @@ final class RedirectingPlugin
             }
 
             $this->appendDebugInformation($message);
-            // Add each hard coded recipient
-            $to = $message->getTo();
 
-            foreach ((array) $this->recipient as $recipient) {
-                if (!array_key_exists($recipient, $to)) {
-                    $message->to($recipient);
-                }
-            }
-        }
-
-        $headers = $message->getHeaders();
-        if (\Pimcore::inDebugMode() && !$message->getIgnoreDebugMode()) {
+            // Set headers first to get actual data
+            $headers = $message->getHeaders();
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-To', $message->getTo()));
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-Cc', $message->getCc()));
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-Bcc', $message->getBcc()));
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-ReplyTo', $message->getReplyTo()));
+
+            // Clear all recipients before setting debug recipients
+            $message->clearRecipients();
+
+            // Add debug recipients as recipients
+            foreach ($this->recipient as $recipient) {
+                $message->addTo($recipient);
+            }
         }
     }
 
