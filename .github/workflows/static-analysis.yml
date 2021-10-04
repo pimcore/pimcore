@@ -58,7 +58,7 @@ jobs:
 
             - name: "Require league/csv:9.x-dev if PHP 8.1 (temporary until fix was released)"
               if: ${{ matrix.php-version == '8.1' }}
-              run: "composer require league/csv:9.x-dev"
+              run: "composer require --no-update league/csv:9.x-dev"
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
