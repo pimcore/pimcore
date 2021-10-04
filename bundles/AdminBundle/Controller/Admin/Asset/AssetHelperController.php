@@ -184,18 +184,10 @@ class AssetHelperController extends AdminController
 
         if (strlen($requestedGridConfigId) == 0) {
             // check if there is a favourite view
-            $favourite = null;
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
 
-            try {
-                try {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
-                } catch (\Exception $e) {
-                }
-
-                if ($favourite) {
-                    $requestedGridConfigId = $favourite->getGridConfigId();
-                }
-            } catch (\Exception $e) {
+            if ($favourite) {
+                $requestedGridConfigId = $favourite->getGridConfigId();
             }
         }
 

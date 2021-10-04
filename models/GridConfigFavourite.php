@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method \Pimcore\Model\GridConfigFavourite\Dao getDao()
  *
@@ -58,14 +60,18 @@ class GridConfigFavourite extends AbstractModel
      * @param int|null $objectId
      * @param string|null $searchType
      *
-     * @return GridConfigFavourite
+     * @return GridConfigFavourite|null
      */
     public static function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = '')
     {
-        $favourite = new self();
-        $favourite->getDao()->getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId, $searchType);
+        try {
+            $favourite = new self();
+            $favourite->getDao()->getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId, $searchType);
 
-        return $favourite;
+            return $favourite;
+        } catch (NotFoundException $e) {
+            return null;
+        }
     }
 
     /**

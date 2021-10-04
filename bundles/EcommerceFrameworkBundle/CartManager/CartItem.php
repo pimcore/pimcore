@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
@@ -79,7 +80,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
                 $cartItem->getDao()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
                 $cartItem->getSubItems();
                 Runtime::set($cacheKey, $cartItem);
-            } catch (\Exception $ex) {
+            } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 
                 return null;
