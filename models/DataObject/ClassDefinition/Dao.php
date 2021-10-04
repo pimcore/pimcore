@@ -127,10 +127,11 @@ class Dao extends Model\Dao\AbstractDao
         $protectedDatastoreColumns = ['oo_id'];
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
-			  `oo_id` int(11) NOT NULL default '0',
+			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
-			  PRIMARY KEY  (`oo_id`)
+			  PRIMARY KEY  (`oo_id`),
+			  CONSTRAINT `fk_query_".$this->model->getId()."__oo_id` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
 			) DEFAULT CHARSET=utf8mb4;");
 
         // update default value of classname columns
@@ -139,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
 			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `fk_".$this->model->getId()."__oo_id` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
+			  CONSTRAINT `fk_store_".$this->model->getId()."__oo_id` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
