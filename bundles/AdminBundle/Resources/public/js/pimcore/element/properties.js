@@ -117,7 +117,7 @@ pimcore.element.properties = Class.create({
                             inheritable: property.inheritable,
                             all: property,
                             config: property.config,
-                            description: property["description"]
+                            description: property.description
                         });
                     }
                 }
