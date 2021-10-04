@@ -858,6 +858,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
         container.remove();
 
+        let dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+        if (dialogBoxDiv) {
+            let dialogBoxId = dialogBoxDiv.dataset.dialogId;
+            this.removeEditableDialogbox(dialogBoxId);
+        }
+
         this.refresh();
 
         if(this.config.reload) {
