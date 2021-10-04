@@ -312,7 +312,7 @@ class DataObjectHelperController extends AdminController
 //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
 
                     if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                        throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                        throw new \Exception('You are neither the owner of this config nor it is shared with you');
                     }
                 }
 

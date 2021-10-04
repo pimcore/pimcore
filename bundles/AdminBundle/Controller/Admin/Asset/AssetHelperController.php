@@ -209,7 +209,7 @@ class AssetHelperController extends AdminController
                 }
 
                 if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                    throw new \Exception('You are neither the owner of this config nor it is shared with you');
                 }
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
