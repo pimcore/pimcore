@@ -138,7 +138,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
-			  PRIMARY KEY  (`oo_id`)
+			  PRIMARY KEY  (`oo_id`),
+			  CONSTRAINT `fk_".$this->model->getId()."__oo_id` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
@@ -152,7 +153,8 @@ class Dao extends Model\Dao\AbstractDao
               `ownername` varchar(70) NOT NULL DEFAULT '',
               `position` varchar(70) NOT NULL DEFAULT '0',
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
-              INDEX `reverse_lookup` (`dest_id`, `type`)
+              INDEX `reverse_lookup` (`dest_id`, `type`),
+			  CONSTRAINT `fk_relations_" . $this->model->getId()."__src_id` FOREIGN KEY (`src_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE ON UPDATE CASCADE
         ) DEFAULT CHARSET=utf8mb4;");
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
