@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @internal
@@ -24,8 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    use Model\Dao\AutoIncrementTrait;
-
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
@@ -75,8 +74,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $id = $this->getNextId(Listing::class);
-            $this->model->setId($id);
+            $this->model->setId(Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
