@@ -43,6 +43,27 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     public $renderingData;
 
     /**
+     * @var null|string
+     */
+    public $template = null;
+
+    /**
+     * @return string|null
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @param string|null $template
+     */
+    public function setTemplate(?string $template): void
+    {
+        $this->template = $template;
+    }
+
+    /**
      * @var bool
      */
     public $border = false;
@@ -124,11 +145,25 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->getRenderingClass()
         );
 
+        $context['fieldname'] = $this->getName();
+        $context['layout'] = $this;
+
         if ($renderer instanceof DynamicTextLabelInterface) {
-            $context['fieldname'] = $this->getName();
-            $context['layout'] = $this;
             $result = $renderer->renderLayoutText($this->renderingData, $object, $context);
             $this->html = $result;
+        }
+
+        if ($this->template) {
+            $twig = \Pimcore::getContainer()->get('twig');
+            if ($twig->getLoader()->exists($this->template)) {
+                $this->html = $twig->render($this->template,
+                    array_merge($context,
+                    [
+                        'object' => $object,
+                        'data' => $this->renderingData
+                    ])
+                );
+            }
         }
 
         return $this;

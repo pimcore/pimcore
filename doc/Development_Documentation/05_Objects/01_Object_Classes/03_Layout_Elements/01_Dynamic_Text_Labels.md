@@ -2,11 +2,13 @@
 
 Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md) data type,
 it is possible to generate the Layout Text dynamically based on the current object and the label's context.
-This is an alternative to the static text defined in the class definition.
+There are alternative approaches to the static text defined in the class definition.
 
-Let's consider the following example.
+There are two ways to define dynamic text labels:
 
-It states that we want to use a custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. We also want to pass some additional data (*some additional data :)* in this example) to the rendering method.
+1) Renderer Class
+
+A custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. It is possible to pass additional data (*some additional data :)* in this example) to the rendering method.
 
 ![Class Definition](../../../img/dynamic_textlabel_1.png)
 
@@ -46,4 +48,29 @@ For example: If the text label lives inside a field collection, *$params* will c
 
 The result will be as follows:
 
-![Editmode](../../../img/dynamic_textlabel_2.png)
+![Rendering Class editmode](../../../img/dynamic_textlabel_2.png)
+
+2) Twig Template
+
+A template can be provided, which is rendered everytime on object open event. The template is rendered with additional data passed from class definition along with other contextual information as follows: 
+   - `fieldname`: Name of the text layout field
+   - `layout`: Layout definition of the text layout field
+   - `object`: current object instance
+   - `data`: additional data defined in the class definition
+
+Here is an example of Twig template:
+
+Create a template file in `templates` folder or in Bundle resources: e.g., `templates/content/text-layout.html.twig`
+```twig
+<div class="container">
+    {% set userModification = pimcore_user(object.getUserModification()) %}
+    <h2 style="color: #6428b4"> {{ 'Object details:' }}</h2>
+    <h3><span style="color: #0B7FC7">{{ 'Last modified: ' }}</span> {{ object.getModificationDate()|date }}</h3>
+    <h3><span style="color: #0B7FC7">{{ 'User: ' }}</span> {{ userModification.getName() }}</h3>
+    <h4 style="color: #0B7FC7">{{ data }}</h4>
+</div>
+```
+
+![Template Class Definition](../../../img/dynamic_textlabel_3.png)
+
+![Template editmode](../../../img/dynamic_textlabel_4.png)
