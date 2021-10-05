@@ -43,11 +43,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     public $renderingData;
 
     /**
-     * @var null|string
-     */
-    public $template = null;
-
-    /**
      * @return string|null
      */
     public function getTemplate(): ?string
@@ -153,18 +148,14 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->html = $result;
         }
 
-        if ($this->template) {
-            $twig = \Pimcore::getContainer()->get('twig');
-            if ($twig->getLoader()->exists($this->template)) {
-                $this->html = $twig->render($this->template,
-                    array_merge($context,
-                    [
-                        'object' => $object,
-                        'data' => $this->renderingData
-                    ])
-                );
-            }
-        }
+        $twig = \Pimcore::getContainer()->get('twig');
+        $template = $twig->createTemplate($this->html);
+        $this->html = $template->render(array_merge($context,
+            [
+                'object' => $object,
+                'data' => $this->renderingData
+            ]
+        ));
 
         return $this;
     }

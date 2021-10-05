@@ -2,13 +2,11 @@
 
 Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md) data type,
 it is possible to generate the Layout Text dynamically based on the current object and the label's context.
-There are alternative approaches to the static text defined in the class definition.
+This is an alternative to the static text defined in the class definition.
 
-There are two ways to define dynamic text labels:
+Let's consider the following example.
 
-1) Renderer Class
-
-A custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. It is possible to pass additional data (*some additional data :)* in this example) to the rendering method.
+It states that we want to use a custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. We also want to pass some additional data (*some additional data :)* in this example) to the rendering method.
 
 ![Class Definition](../../../img/dynamic_textlabel_1.png)
 
@@ -48,29 +46,14 @@ For example: If the text label lives inside a field collection, *$params* will c
 
 The result will be as follows:
 
-![Rendering Class editmode](../../../img/dynamic_textlabel_2.png)
+![Editmode](../../../img/dynamic_textlabel_2.png)
 
-2) Twig Template
+## Twig & Preview
+It is possible to use Twig syntax inside htmleditor and Renderer class. You can also check the generated output in preview tab.
 
-A template can be provided, which is rendered everytime on object open event. The template is rendered with additional data passed from class definition along with other contextual information as follows: 
-   - `fieldname`: Name of the text layout field
-   - `layout`: Layout definition of the text layout field
-   - `object`: current object instance
-   - `data`: additional data defined in the class definition
+If you are using object context in your content, then just drag & drop object on "Drag Object for Preview" field before checking the output in preview tab.
 
-Here is an example of Twig template:
-
-Create a template file in `templates` folder or in Bundle resources: e.g., `templates/content/text-layout.html.twig`
-```twig
-<div class="container">
-    {% set userModification = pimcore_user(object.getUserModification()) %}
-    <h2 style="color: #6428b4"> {{ 'Object details:' }}</h2>
-    <h3><span style="color: #0B7FC7">{{ 'Last modified: ' }}</span> {{ object.getModificationDate()|date }}</h3>
-    <h3><span style="color: #0B7FC7">{{ 'User: ' }}</span> {{ userModification.getName() }}</h3>
-    <h4 style="color: #0B7FC7">{{ data }}</h4>
-</div>
-```
-
+Here is an example of Twig content:
 ![Template Class Definition](../../../img/dynamic_textlabel_3.png)
 
 ![Template editmode](../../../img/dynamic_textlabel_4.png)

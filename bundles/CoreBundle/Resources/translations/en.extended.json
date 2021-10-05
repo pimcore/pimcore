@@ -481,7 +481,7 @@
   "language_permissions": "Language Permissions (no view permission means all)",
   "rendering_class": "Custom Renderer class",
   "rendering_data": "Data passed to renderer",
-  "rendering_template": "Template (Twig)",
+  "drag_object_preview": "Drag Object for Preview",
   "web2print_protocol": "Protocol",
   "rows_fixed": "Rows fixed",
   "cols_fixed": "Cols fixed",
