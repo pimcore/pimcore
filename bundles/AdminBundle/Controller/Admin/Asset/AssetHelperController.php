@@ -54,7 +54,7 @@ class AssetHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -89,7 +89,7 @@ class AssetHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
