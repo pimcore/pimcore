@@ -226,6 +226,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->items);
@@ -234,6 +235,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $var = current($this->items);
@@ -244,6 +246,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $var = key($this->items);
@@ -254,6 +257,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         next($this->items);
@@ -262,6 +266,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $var = $this->current() !== false;

@@ -533,6 +533,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->getData();
@@ -543,6 +544,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $this->getData();
@@ -553,6 +555,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->getData();
@@ -563,6 +566,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $this->getData();
@@ -570,6 +574,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->current() !== false;
     }
 
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->getData();
@@ -579,6 +584,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->getDao()->getTotalCount();

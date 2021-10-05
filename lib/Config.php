@@ -42,37 +42,34 @@ final class Config implements \ArrayAccess
     protected static $systemConfig = null;
 
     /**
-     * @see    ArrayAccess::offsetExists()
-     *
      * @param  mixed $offset
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return self::getSystemConfiguration($offset) !== null;
     }
 
     /**
-     * @see    ArrayAccess::offsetSet()
-     *
      * @param  mixed $offset
      * @param  mixed $value
      *
      * @throws \Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \Exception("modifying the config isn't allowed");
     }
 
     /**
-     * @see    ArrayAccess::offsetUnset()
-     *
      * @param  mixed $offset
      *
      * @throws \Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \Exception("modifying the config isn't allowed");
@@ -83,6 +80,7 @@ final class Config implements \ArrayAccess
      *
      * @return array|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return self::getSystemConfiguration($offset);

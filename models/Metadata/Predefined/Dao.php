@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Metadata\Predefined;
 
 use Pimcore\Model;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @internal
@@ -24,8 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    use Model\Dao\AutoIncrementTrait;
-
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
@@ -72,6 +71,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function getByNameAndLanguage($name = null, $language = null)
     {
         $list = new Listing();
+        /** @var Model\Metadata\Predefined[] $definitions */
         $definitions = array_values(array_filter($list->getDefinitions(), function ($item) use ($name, $language) {
             $return = true;
             if ($name && $item->getName() != $name) {
@@ -85,7 +85,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }));
 
         if (count($definitions) && $definitions[0]->getId()) {
-            $this->assignVariablesToModel($definitions[0]);
+            $this->assignVariablesToModel($definitions[0]->getObjectVars());
         } else {
             throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" and language %s does not exist.', $name, $language));
         }
@@ -97,8 +97,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $id = $this->getNextId(Listing::class);
-            $this->model->setId($id);
+            $this->model->setId(Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
