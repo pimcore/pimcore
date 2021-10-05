@@ -126,6 +126,7 @@ pimcore.object.classes.klass = Class.create({
             border: false,
             layout: "border",
             closable: true,
+            autoScroll: true,
             title: name,
             //id: "pimcore_class_editor_panel_" + this.getId(),
             id: this.editorPrefix + this.getId(),
@@ -1170,7 +1171,7 @@ pimcore.object.classes.klass = Class.create({
             iconCls: pimcore.object.classes.layout[type].prototype.getIconClass(),
             leaf: false,
             expandable: false,
-            expanded: true
+            expanded: true,
         };
         newNode = this.appendChild(newNode);
 
