@@ -851,18 +851,19 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
     removeBlock: function (element) {
         let container = Ext.get(element);
+
+        let dialogBoxDiv = container.query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+        if (dialogBoxDiv) {
+            let dialogBoxId = dialogBoxDiv.dataset.dialogId;
+            this.removeEditableDialogbox(dialogBoxId);
+        }
+
         let editablesContainer = container.query('[data-block-names]');
         editablesContainer.forEach(editableDiv => {
             editableManager.remove(editableDiv.dataset.name);
         });
 
         container.remove();
-
-        let dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
-        if (dialogBoxDiv) {
-            let dialogBoxId = dialogBoxDiv.dataset.dialogId;
-            this.removeEditableDialogbox(dialogBoxId);
-        }
 
         this.refresh();
 
