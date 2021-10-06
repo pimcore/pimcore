@@ -27,12 +27,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
-     * @interal
+     * @internal
      */
     const CALCULATOR_TYPE_EXPRESSION = 'expression';
 
     /**
-     * @interal
+     * @internal
      */
     const CALCULATOR_TYPE_CLASS = 'class';
 
