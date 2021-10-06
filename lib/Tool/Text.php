@@ -159,7 +159,7 @@ class Text
                     if ($path) {
                         $pattern = '/' . $linkAttr . '="[^"]*"/';
                         $replacement = $linkAttr . '="' . $path . '"';
-                        if(!empty($additionalAttributes)) {
+                        if (!empty($additionalAttributes)) {
                             $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
                         }
                         $newTag = preg_replace($pattern, $replacement, $oldTag);
