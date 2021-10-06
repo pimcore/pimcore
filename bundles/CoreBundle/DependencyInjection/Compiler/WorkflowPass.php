@@ -48,7 +48,7 @@ final class WorkflowPass implements CompilerPassInterface
         $workflowManagerDefinition = $container->getDefinition(Manager::class);
 
         if (!$container->hasDefinition('workflow.registry')) {
-            $loader->load('services_symfony_workflow.yml');
+            $loader->load('services_symfony_workflow.yaml');
         }
 
         $workflowsConfig = $container->getParameter('pimcore.workflow');
