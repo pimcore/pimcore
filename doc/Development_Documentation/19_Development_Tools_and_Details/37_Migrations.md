@@ -34,7 +34,7 @@ more comfortable.
 ```
 
 
-# Config Examples for your Project (`config/config.yml`)
+# Config Examples for your Project (`config/config.yaml`)
 ```yml
 doctrine_migrations:
     migrations_paths:

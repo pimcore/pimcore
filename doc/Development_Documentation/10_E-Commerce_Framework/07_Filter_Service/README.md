@@ -26,7 +26,7 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 `getFilterValues()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
-The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
+The framework already defines a number of core filter types in [filter_service_filter_types.yaml](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yaml).
 
 > FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
 > Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 

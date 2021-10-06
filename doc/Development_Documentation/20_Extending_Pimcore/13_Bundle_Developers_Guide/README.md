@@ -76,7 +76,7 @@ like `Resources/translations/en.yml`, which resolves to the default `messages` t
 
 You can make full use of the [Symfony Security Component](https://symfony.com/doc/5.2/security.html) by auto loading
 the security configuration as documented above. Best practice is to define the security configuration in a dedicated
-`security.yml` which can be imported from your bundle's `config.yml`.
+`security.yaml` which can be imported from your bundle's `config.yaml`.
 
 For further details on security please refer to [Security](../../19_Development_Tools_and_Details/10_Security_Authentication/README.md).
 

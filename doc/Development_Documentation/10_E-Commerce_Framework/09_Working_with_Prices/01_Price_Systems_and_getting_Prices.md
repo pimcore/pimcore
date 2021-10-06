@@ -41,7 +41,7 @@ class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Checko
 Each price system must be defined as service (either a service defined by core configuration or your custom services):
 
 ```
-# services.yml
+# services.yaml
 services:
     _defaults:
         autowire: true
@@ -69,7 +69,7 @@ The `price_systems` configuration maps names to service IDs:
 pimcore_ecommerce_framework:
     # defines 3 price systems
     price_systems:
-        # the attribute price system is already defined in core price_systems.yml service definition
+        # the attribute price system is already defined in core price_systems.yaml service definition
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
        

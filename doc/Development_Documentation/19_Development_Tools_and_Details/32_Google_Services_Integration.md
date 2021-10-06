@@ -78,7 +78,7 @@ Menus and buttons may vary depending on the current GUI version
   * services/google/browser_api_key = **b_api_key**
 
 **CSE**
-* edit `www/config/services.yml`
+* edit `www/config/services.yaml`
   * search.google.cse_cx = **cse_id**
 
 **Analytics**
