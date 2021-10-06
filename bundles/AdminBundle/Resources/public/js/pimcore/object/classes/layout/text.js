@@ -35,6 +35,12 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
     getLayout: function ($super) {
         $super();
 
+        this.previewPanel = new Ext.Panel({
+            layout: 'fit',
+            height: 500,
+            html: '<iframe src="about:blank" style="width: 100%; height: 100%;" frameborder="0" id="text-layout-preview_' + this.id + '"></iframe>',
+        });
+
         this.speicificSettingsForm = new Ext.form.FormPanel({
             title: t("specific_settings"),
             bodyStyle: "padding: 10px;",
@@ -78,6 +84,41 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                                     name: "renderingData"
                                 },
                                 {
+                                    xtype: 'container',
+                                    style: 'padding-top:10px;',
+                                    html: 'You can use the following markup (in source edit mode) to make custom alerts: <br> <pre>&lt;div class=&quot;alert alert-success&quot;&gt;Your Message&lt;/div&gt;</pre>The following contextual classes are available: <pre>alert-primary, alert-secondary, alert-success, alert-danger, alert-warning, alert-info</pre>'
+                                },
+                                {
+                                    xtype: "htmleditor",
+                                    cls: 'objectlayout_element_text',
+                                    height: 300,
+                                    value: this.datax.html,
+                                    name: "html",
+                                    enableSourceEdit: true,
+                                    enableFont: false,
+                                    listeners: {
+                                        initialize: function (el) {
+                                            var head = el.getDoc().head;
+                                            var link = document.createElement("link");
+
+                                            link.type = "text/css";
+                                            link.rel = "stylesheet";
+                                            link.href = '/bundles/pimcoreadmin/css/admin.css';
+
+                                            head.appendChild(link);
+                                            el.getEditorBody().classList.add('objectlayout_element_text');
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            id: 'settingspreview',
+                            title: 'Preview',
+                            xtype: 'panel',
+                            region: 'center',
+                            items: [
+                                {
                                     xtype: "displayfield",
                                     fieldLabel: t("drag_object_preview"),
                                     width: 600,
@@ -117,57 +158,14 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                                                     }
                                                 }.bind(el)
                                             });
-                                        }.bind(this)
+                                        }.bind(this),
+                                        change: this.loadPreview.bind(this)
                                     }
                                 },
-                                {
-                                    xtype: 'container',
-                                    style: 'padding-top:10px;',
-                                    html: 'You can use the following markup (in source edit mode) to make custom alerts: <br> <pre>&lt;div class=&quot;alert alert-success&quot;&gt;Your Message&lt;/div&gt;</pre>The following contextual classes are available: <pre>alert-primary, alert-secondary, alert-success, alert-danger, alert-warning, alert-info</pre>'
-                                },
-                                {
-                                    xtype: "htmleditor",
-                                    cls: 'objectlayout_element_text',
-                                    height: 300,
-                                    value: this.datax.html,
-                                    name: "html",
-                                    enableSourceEdit: true,
-                                    enableFont: false,
-                                    listeners: {
-                                        initialize: function (el) {
-                                            var head = el.getDoc().head;
-                                            var link = document.createElement("link");
-
-                                            link.type = "text/css";
-                                            link.rel = "stylesheet";
-                                            link.href = '/bundles/pimcoreadmin/css/admin.css';
-
-                                            head.appendChild(link);
-                                            el.getEditorBody().classList.add('objectlayout_element_text');
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            id: 'settingspreview',
-                            xtype: 'panel',
-                            title: 'Preview',
-                            layout: 'fit',
-                            height: 500,
-                            html: '<iframe src="about:blank" style="width: 100%; height: 100%;" frameborder="0" id="text-layout-preview_' + this.id + '"></iframe>',
+                                this.previewPanel
+                            ],
                             listeners: {
-                                activate: function () {
-                                    let params = this.speicificSettingsForm.getForm().getFieldValues();
-                                    var url = Routing.generate('pimcore_admin_dataobject_class_textlayoutpreview', params);
-
-                                    try {
-                                        Ext.get('text-layout-preview_' + this.id).dom.src = url;
-                                    }
-                                    catch (e) {
-                                        console.log(e);
-                                    }
-                                }.bind(this)
+                                activate: this.loadPreview.bind(this)
                             }
                         }
                     ]
@@ -178,5 +176,16 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
         this.layout.add(this.speicificSettingsForm);
 
         return this.layout;
+    },
+
+    loadPreview: function () {
+        let params = this.speicificSettingsForm.getForm().getFieldValues();
+        var url = Routing.generate('pimcore_admin_dataobject_class_textlayoutpreview', params);
+
+        try {
+            Ext.get('text-layout-preview_' + this.id).dom.src = url;
+        } catch (e) {
+            console.log(e);
+        }
     }
 });
