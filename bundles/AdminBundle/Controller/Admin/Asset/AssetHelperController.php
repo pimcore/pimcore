@@ -54,7 +54,7 @@ class AssetHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -74,7 +74,14 @@ class AssetHelperController extends AdminController
         $configListing->setCondition($configCondition);
         $configListing = $configListing->load();
 
-        return $configListing;
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
+            }
+        }
+
+        return $configData;
     }
 
     /**
@@ -82,7 +89,7 @@ class AssetHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
@@ -110,7 +117,14 @@ class AssetHelperController extends AdminController
             $configListing = $configListing->load();
         }
 
-        return $configListing;
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
+            }
+        }
+
+        return $configData;
     }
 
     /**
