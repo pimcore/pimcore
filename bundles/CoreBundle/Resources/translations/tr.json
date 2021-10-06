@@ -607,6 +607,7 @@
     "return_last_result": "Son sonucu getir",
     "skip_null": "Boşları Atla",
     "expand_children": "Genişlet",
+    "collapse_children": "Daralt",
     "multiply": "Çoğalt",
     "divide": "Böl",
     "apply_to_all_objects": "Hepsine Uygula",

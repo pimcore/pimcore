@@ -607,6 +607,7 @@
     "return_last_result": "Вернуть последний результат",
     "skip_null": "Пропустить ноль",
     "expand_children": "Раскрыть дочерние элементы",
+    "collapse_children": "Свернуть дочерние элементы",
     "multiply": "Умножить",
     "divide": "Разделить",
     "apply_to_all_objects": "Применить ко всем",

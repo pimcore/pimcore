@@ -607,6 +607,7 @@
     "return_last_result": "返回最后的结果",
     "skip_null": "跳过空值",
     "expand_children": "展开子节点",
+    "collapse_children": "折叠子节点",
     "multiply": "乘以",
     "divide": "除以",
     "apply_to_all_objects": "应用到所有",

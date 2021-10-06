@@ -607,6 +607,7 @@
     "return_last_result": "Retornar último resultado",
     "skip_null": "Pular nulo",
     "expand_children": "Expandir filhos",
+    "collapse_children": "Colapso filhos",
     "multiply": "Multiplicar",
     "divide": "Dividir",
     "apply_to_all_objects": "apply_to_all_objects",
