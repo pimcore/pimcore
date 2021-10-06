@@ -1,5 +1,5 @@
 imports:
-    - { resource: filter_service_filter_types.yml }
+    - { resource: filter_service_filter_types.yaml }
 
 services:
     _defaults:
