@@ -42,21 +42,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      */
     public $renderingData;
 
-    /**
-     * @return string|null
-     */
-    public function getTemplate(): ?string
-    {
-        return $this->template;
-    }
-
-    /**
-     * @param string|null $template
-     */
-    public function setTemplate(?string $template): void
-    {
-        $this->template = $template;
-    }
 
     /**
      * @var bool
