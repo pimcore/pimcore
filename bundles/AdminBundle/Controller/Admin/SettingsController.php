@@ -870,7 +870,7 @@ class SettingsController extends AdminController
             $list->load();
 
             $routes = [];
-            /** @var Staticroute $route */
+            /** @var Staticroute $routeFromList */
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
                 $route['isWriteable'] = $routeFromList->isWriteable();

@@ -229,7 +229,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
