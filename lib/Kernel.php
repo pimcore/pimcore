@@ -161,7 +161,7 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata'] as $configDir) {
+        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata', 'staticroutes'] as $configDir) {
             $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
             if (is_dir($configDir)) {
                 // @phpstan-ignore-next-line

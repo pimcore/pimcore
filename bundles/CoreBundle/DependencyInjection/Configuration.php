@@ -175,6 +175,7 @@ final class Configuration implements ConfigurationInterface
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
+        $this->addStaticRoutesNode($rootNode);
 
         return $treeBuilder;
     }
@@ -2064,4 +2065,46 @@ final class Configuration implements ConfigurationInterface
             ->end()
         ->end();
     }
+
+    /**
+     * Add static routes specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    {
+
+        $rootNode
+        ->children()
+            ->arrayNode('staticroutes')
+                ->ignoreExtraKeys()
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('pattern')->end()
+                                ->scalarNode('reverse')->end()
+                                ->scalarNode('controller')->end()
+                                ->scalarNode('variables')->end()
+                                ->scalarNode('defaults')->end()
+                                ->arrayNode('siteId')
+                                    ->integerPrototype()->end()
+                                ->end()
+                                ->arrayNode('methods')
+                                    ->scalarPrototype()->end()
+                                ->end()
+                                ->integerNode('priority')->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
 }
