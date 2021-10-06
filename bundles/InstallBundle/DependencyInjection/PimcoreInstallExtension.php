@@ -35,7 +35,7 @@ final class PimcoreInstallExtension extends ConfigurableExtension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $this->configureInstaller($container, $config);
     }
