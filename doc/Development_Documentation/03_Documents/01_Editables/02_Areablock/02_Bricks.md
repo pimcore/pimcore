@@ -44,7 +44,7 @@ tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto
 defined in the special namespace. Let's define our brick as above, but assume it needs access to a logger instance:
 
 ```yaml
-# a service.yml file defining services
+# a service.yaml file defining services
 services:
     App\Document\Areabrick\Iframe:
         arguments: ['@logger']

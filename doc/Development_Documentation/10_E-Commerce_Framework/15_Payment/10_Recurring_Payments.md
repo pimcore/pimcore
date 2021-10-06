@@ -103,7 +103,7 @@ public function paymentAction(Request $request)
 </form>
 ```
 
-#### ecommerce.yml
+#### ecommerce.yaml
 
 ```yaml
 payment_manager:
