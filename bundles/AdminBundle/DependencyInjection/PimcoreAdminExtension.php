@@ -44,13 +44,13 @@ final class PimcoreAdminExtension extends Extension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.yml');
-        $loader->load('security_services.yml');
-        $loader->load('security_abstract_services.yml');
-        $loader->load('event_listeners.yml');
-        $loader->load('serializer.yml');
-        $loader->load('export.yml');
-        $loader->load('aliases.yml');
+        $loader->load('services.yaml');
+        $loader->load('security_services.yaml');
+        $loader->load('security_abstract_services.yaml');
+        $loader->load('event_listeners.yaml');
+        $loader->load('serializer.yaml');
+        $loader->load('export.yaml');
+        $loader->load('aliases.yaml');
 
         //Set Config for GDPR data providers to container parameters
         $container->setParameter('pimcore.gdpr-data-extrator.dataobjects', $config['gdpr_data_extractor']['dataObjects']);
