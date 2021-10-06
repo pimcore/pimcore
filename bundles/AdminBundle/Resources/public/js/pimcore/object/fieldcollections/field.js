@@ -71,6 +71,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         this.rootPanel = new Ext.form.FormPanel({
             title: '<b>' + t("general_settings") + '</b>',
             bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+            autoScroll: true,
             defaults: {
                 labelWidth: 200
             },

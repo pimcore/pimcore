@@ -215,7 +215,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 value: t('async_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom"
             });
-
         }
 
         return this.layout;
