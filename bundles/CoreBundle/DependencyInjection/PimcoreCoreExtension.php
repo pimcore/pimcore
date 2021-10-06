@@ -111,29 +111,29 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.yml');
-        $loader->load('services_routing.yml');
-        $loader->load('services_workflow.yml');
-        $loader->load('extensions.yml');
-        $loader->load('logging.yml');
-        $loader->load('request_response.yml');
-        $loader->load('l10n.yml');
-        $loader->load('argument_resolvers.yml');
-        $loader->load('implementation_factories.yml');
-        $loader->load('documents.yml');
-        $loader->load('event_listeners.yml');
-        $loader->load('templating.yml');
-        $loader->load('profiler.yml');
-        $loader->load('migrations.yml');
-        $loader->load('analytics.yml');
-        $loader->load('sitemaps.yml');
-        $loader->load('aliases.yml');
-        $loader->load('image_optimizers.yml');
-        $loader->load('maintenance.yml');
-        $loader->load('commands.yml');
-        $loader->load('cache.yml');
-        $loader->load('marshaller.yml');
-        $loader->load('message_handler.yml');
+        $loader->load('services.yaml');
+        $loader->load('services_routing.yaml');
+        $loader->load('services_workflow.yaml');
+        $loader->load('extensions.yaml');
+        $loader->load('logging.yaml');
+        $loader->load('request_response.yaml');
+        $loader->load('l10n.yaml');
+        $loader->load('argument_resolvers.yaml');
+        $loader->load('implementation_factories.yaml');
+        $loader->load('documents.yaml');
+        $loader->load('event_listeners.yaml');
+        $loader->load('templating.yaml');
+        $loader->load('profiler.yaml');
+        $loader->load('migrations.yaml');
+        $loader->load('analytics.yaml');
+        $loader->load('sitemaps.yaml');
+        $loader->load('aliases.yaml');
+        $loader->load('image_optimizers.yaml');
+        $loader->load('maintenance.yaml');
+        $loader->load('commands.yaml');
+        $loader->load('cache.yaml');
+        $loader->load('marshaller.yaml');
+        $loader->load('message_handler.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -150,7 +150,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $loader->load('templating_twig.yml');
+        $loader->load('templating_twig.yaml');
 
         $this->addContextRoutes($container, $config['context']);
     }
@@ -263,19 +263,19 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('pimcore.geoip.db_file', '');
         }
 
-        $loader->load('targeting.yml');
+        $loader->load('targeting.yaml');
 
         // set TargetingStorageInterface type hint to the configured service ID
         $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
 
         if ($config['enabled']) {
             // enable targeting by registering listeners
-            $loader->load('targeting/services.yml');
-            $loader->load('targeting/listeners.yml');
+            $loader->load('targeting/services.yaml');
+            $loader->load('targeting/listeners.yaml');
 
             // add session support by registering the session configurator and session storage
             if ($config['session']['enabled']) {
-                $loader->load('targeting/session.yml');
+                $loader->load('targeting/session.yaml');
             }
         }
 
