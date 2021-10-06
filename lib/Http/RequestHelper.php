@@ -17,6 +17,7 @@ namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
@@ -33,6 +34,8 @@ class RequestHelper
      */
     protected $requestContext;
 
+    private ?SessionInterface $session = null;
+
     /**
      * @param RequestStack $requestStack
      * @param RequestContext $requestContext
@@ -41,6 +44,16 @@ class RequestHelper
     {
         $this->requestStack = $requestStack;
         $this->requestContext = $requestContext;
+    }
+
+    /**
+     * @internal
+     * @required
+     * @param SessionInterface|null $session
+     */
+    public function setSession(?SessionInterface $session): void
+    {
+        $this->session = $session;
     }
 
     /**
@@ -233,6 +246,10 @@ class RequestHelper
             $this->requestContext->getMethod(),
             $this->requestContext->getParameters()
         );
+
+        if($this->session) {
+            $request->setSession($this->session);
+        }
 
         return $request;
     }
