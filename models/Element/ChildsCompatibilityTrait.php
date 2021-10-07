@@ -27,9 +27,13 @@ trait ChildsCompatibilityTrait
      */
     public function getChilds()
     {
-        $return = call_user_func_array([$this, 'getChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use getChildren() instead.', __METHOD__)
+        );
 
-        return $return;
+        return call_user_func_array([$this, 'getChildren'], func_get_args());
     }
 
     /**
@@ -39,9 +43,13 @@ trait ChildsCompatibilityTrait
      */
     public function setChilds()
     {
-        $return = call_user_func_array([$this, 'setChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use setChildren() instead.', __METHOD__)
+        );
 
-        return $return;
+        return call_user_func_array([$this, 'setChildren'], func_get_args());
     }
 
     /**
@@ -51,8 +59,12 @@ trait ChildsCompatibilityTrait
      */
     public function hasChilds()
     {
-        $return = call_user_func_array([$this, 'hasChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use hasChildren() instead.', __METHOD__)
+        );
 
-        return $return;
+        return call_user_func_array([$this, 'hasChildren'], func_get_args());
     }
 }
