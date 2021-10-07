@@ -15,10 +15,14 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\FrontendEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -218,6 +222,16 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data;
         }
 
+        $event = new DataObjectEvent($object, [
+            'password' => $data,
+            'alreadyHashed' => false
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PASSWORD_ALREADY_HASHED_CHECK);
+
+        if($event->getArgument('alreadyHashed')) {
+            return $event->getArgument('password');
+        }
+
         $hashed = $this->calculateHash($data);
 
         /** set the hashed password back to the object, to be sure that is not plain-text after the first save
@@ -284,7 +298,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function verifyPassword($password, DataObject\Concrete $object, $updateHash = true)
     {
         $getter = 'get' . ucfirst($this->getName());
-        $setter = 'set' . ucfirst($this->getName());
 
         $objectHash = $object->$getter();
         if (null === $objectHash || empty($objectHash)) {
@@ -299,6 +312,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
                 if (true === password_needs_rehash($objectHash, PASSWORD_DEFAULT)) {
                     $newHash = $this->calculateHash($password);
 
+                    $setter = 'set'.ucfirst($this->getName());
                     $object->$setter($newHash);
                     $object->save();
                 }

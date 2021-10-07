@@ -128,4 +128,14 @@ final class DataObjectEvents
      * @var string
      */
     const POST_CSV_ITEM_EXPORT = 'pimcore.dataobject.postCsvItemExport';
+
+    /**
+     * Arguments:
+     *  - password | string | contains the current value of the password field
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const PASSWORD_ALREADY_HASHED_CHECK = 'pimcore.dataobject.passwordAlreadyHashed';
 }
