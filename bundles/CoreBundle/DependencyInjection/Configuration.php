@@ -2073,7 +2073,6 @@ final class Configuration implements ConfigurationInterface
      */
     private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
     {
-
         $rootNode
         ->children()
             ->arrayNode('staticroutes')
@@ -2106,5 +2105,4 @@ final class Configuration implements ConfigurationInterface
             ->end()
         ->end();
     }
-
 }

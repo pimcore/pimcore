@@ -28,7 +28,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
             'containerConfig' => $config['staticroutes']['definitions'] ?? [],
@@ -56,6 +56,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $list = new Model\Staticroute\Listing();
         $list = $list->load();
+
         return $list;
     }
 
@@ -123,7 +124,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             return ($a->getSiteId() < $b->getSiteId()) ? 1 : -1;
         });
 
-
         if (count($data) && $data[0]->getId()) {
             $this->assignVariablesToModel($data[0]->getObjectVars());
         } else {
@@ -168,7 +168,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['name', 'pattern', 'reverse', 'module', 'controller',
-            'action', 'variables', 'defaults', 'siteId', 'priority', 'methods', 'creationDate', 'modificationDate',];
+            'action', 'variables', 'defaults', 'siteId', 'priority', 'methods', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

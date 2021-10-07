@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Staticroute\Dao
 {
-
     /**
      * @return array
      */
