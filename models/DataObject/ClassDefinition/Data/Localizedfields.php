@@ -988,7 +988,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                 if ($e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
-
                                 $exceptionClass = get_class($e);
 
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
