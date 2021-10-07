@@ -956,7 +956,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                 $fd->checkValidity(null, false, $params);
                             }
                         } catch (\Exception $e) {
-                            if ($fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()]) && $data->getObject()->getClass()->getAllowInherit()) {
+                            if ($data->getObject()->getClass()->getAllowInherit()) {
                                 //try again with parent data when inheritance is activated
                                 try {
                                     $getInheritedValues = DataObject::doGetInheritedValues();
