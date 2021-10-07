@@ -45,13 +45,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $abbreviation
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByAbbreviation($abbreviation)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation=' . $this->db->quote($abbreviation));
         if (empty($classRaw)) {
-            throw new \Exception('Unit ' . $abbreviation . ' not found.');
+            throw new Model\Exception\NotFoundException('Unit ' . $abbreviation . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }
@@ -59,13 +59,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $reference
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByReference($reference)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference=' . $this->db->quote($reference));
         if (empty($classRaw)) {
-            throw new \Exception('Unit ' . $reference . ' not found.');
+            throw new Model\Exception\NotFoundException('Unit ' . $reference . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }
@@ -73,13 +73,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
-            throw new \Exception('Unit ' . $id . ' not found.');
+            throw new Model\Exception\NotFoundException('Unit ' . $id . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }

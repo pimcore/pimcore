@@ -286,21 +286,13 @@ class DataObjectHelperController extends AdminController
 
         if (strlen($requestedGridConfigId) == 0 && $class) {
             // check if there is a favourite view
-            $favourite = null;
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ?: 0, $searchType);
+            if (!$favourite && $objectId) {
+                $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
+            }
 
-            try {
-                try {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
-                } catch (\Exception $e) {
-                }
-                if (!$favourite && $objectId) {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
-                }
-
-                if ($favourite) {
-                    $requestedGridConfigId = $favourite->getGridConfigId();
-                }
-            } catch (\Exception $e) {
+            if ($favourite) {
+                $requestedGridConfigId = $favourite->getGridConfigId();
             }
         }
 
@@ -311,19 +303,16 @@ class DataObjectHelperController extends AdminController
             if ($savedGridConfig) {
                 $shared = false;
                 if (!$this->getAdminUser()->isAdmin()) {
-                    try {
-                        $userIds = [$this->getAdminUser()->getId()];
-                        if ($this->getAdminUser()->getRoles()) {
-                            $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                        }
-                        $userIds = implode(',', $userIds);
-                        $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
-//                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
-                    } catch (\Exception $e) {
+                    $userIds = [$this->getAdminUser()->getId()];
+                    if ($this->getAdminUser()->getRoles()) {
+                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     }
+                    $userIds = implode(',', $userIds);
+                    $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
+//                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
 
                     if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                        throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                        throw new \Exception('You are neither the owner of this config nor it is shared with you');
                     }
                 }
 

@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -36,9 +37,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param string $code
-     * @param CartInterface $cart
+     * @param CartInterface|null $cart
      *
-     * @return bool|string
+     * @throws NotFoundException
      */
     public function get($code, CartInterface $cart = null)
     {
@@ -49,25 +50,18 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             $params[] = $cart->getId();
         }
 
-        try {
-            $result = $this->db->fetchRow($query, $params);
-            if (empty($result)) {
-                //                throw new Exception("Reservation for token " . $code . " not found.");
-                return false;
-            }
-            $this->assignVariablesToModel($result);
-            $this->model->setValue('id', $result['id']);
-            $this->model->setCartId($result['cart_id']);
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
+        $result = $this->db->fetchRow($query, $params);
+        if (empty($result)) {
+            throw new NotFoundException("Reservation for token " . $code . " not found.");
         }
+        $this->assignVariablesToModel($result);
+        $this->model->setValue('id', $result['id']);
+        $this->model->setCartId($result['cart_id']);
     }
 
     public function create($code, $cart)
     {
-        if (\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation::reservationExists($code, $cart)) {
+        if (Reservation::reservationExists($code, $cart)) {
             return true;
         }
 

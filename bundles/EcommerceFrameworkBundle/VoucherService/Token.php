@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
@@ -62,7 +63,7 @@ class Token extends AbstractModel
     /**
      * @param string $code
      *
-     * @return bool|Token
+     * @return Token|null
      */
     public static function getByCode($code)
     {
@@ -71,8 +72,8 @@ class Token extends AbstractModel
             $config->getDao()->getByCode($code);
 
             return $config;
-        } catch (\Exception $ex) {
-            return false;
+        } catch (NotFoundException $ex) {
+            return null;
         }
     }
 

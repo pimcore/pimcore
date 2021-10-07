@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -53,13 +54,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      * @param string $itemKey
      * @param string $parentKey
      *
-     * @return void
+     * @throws NotFoundException
      */
     public function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
         if (empty($classRaw)) {
-            throw new \Exception('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
+            throw new NotFoundException('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
         }
 
         $this->model->setIsLoading(true);
