@@ -607,7 +607,6 @@
     "return_last_result": "ส่งคืนผลลัพธ์ล่าสุด",
     "skip_null": "ข้าม Null",
     "expand_children": "ขยายลูก",
-    "collapse_children": "ยุบเด็ก",
     "multiply": "คูณ",
     "divide": "แบ่ง",
     "apply_to_all_objects": "นำไปใช้กับทุกคน",
