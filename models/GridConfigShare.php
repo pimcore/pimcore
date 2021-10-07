@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method \Pimcore\Model\GridConfigShare\Dao getDao()
  *
@@ -36,14 +38,18 @@ class GridConfigShare extends AbstractModel
      * @param int $gridConfigId
      * @param int $sharedWithUserId
      *
-     * @return GridConfigShare
+     * @return GridConfigShare|null
      */
     public static function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
     {
-        $share = new self();
-        $share->getDao()->getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId);
+        try {
+            $share = new self();
+            $share->getDao()->getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId);
 
-        return $share;
+            return $share;
+        } catch (NotFoundException $e) {
+            return null;
+        }
     }
 
     /**

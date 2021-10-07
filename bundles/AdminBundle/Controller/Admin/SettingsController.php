@@ -811,18 +811,28 @@ class SettingsController extends AdminController
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $route = Staticroute::getById($id);
+                if (!$route->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $route->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 // save routes
                 $route = Staticroute::getById($data['id']);
+                if (!$route->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
+
                 $route->setValues($data);
 
                 $route->save();
 
                 return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new Staticroute())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 unset($data['id']);
 
                 // save route
@@ -831,7 +841,10 @@ class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
+                $responseData = $route->getObjectVars();
+                $responseData['writeable'] = $route->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -857,11 +870,12 @@ class SettingsController extends AdminController
             $list->load();
 
             $routes = [];
-            /** @var Staticroute $route */
-            foreach ($list->getRoutes() as $route) {
-                if (is_array($route->getSiteId())) {
-                    $route = $route->getObjectVars();
-                    $route['siteId'] = implode(',', $route['siteId']);
+            /** @var Staticroute $routeFromList */
+            foreach ($list->getRoutes() as $routeFromList) {
+                $route = $routeFromList->getObjectVars();
+                $route['isWriteable'] = $routeFromList->isWriteable();
+                if (is_array($routeFromList->getSiteId())) {
+                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 }
                 $routes[] = $route;
             }

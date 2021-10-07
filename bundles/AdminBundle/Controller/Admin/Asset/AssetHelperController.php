@@ -184,18 +184,10 @@ class AssetHelperController extends AdminController
 
         if (strlen($requestedGridConfigId) == 0) {
             // check if there is a favourite view
-            $favourite = null;
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
 
-            try {
-                try {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
-                } catch (\Exception $e) {
-                }
-
-                if ($favourite) {
-                    $requestedGridConfigId = $favourite->getGridConfigId();
-                }
-            } catch (\Exception $e) {
+            if ($favourite) {
+                $requestedGridConfigId = $favourite->getGridConfigId();
             }
         }
 
@@ -217,7 +209,7 @@ class AssetHelperController extends AdminController
                 }
 
                 if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                    throw new \Exception('You are neither the owner of this config nor it is shared with you');
                 }
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
