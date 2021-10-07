@@ -52,7 +52,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
         $result = $this->db->fetchRow($query, $params);
         if (empty($result)) {
-            throw new NotFoundException("Reservation for token " . $code . " not found.");
+            throw new NotFoundException('Reservation for token ' . $code . ' not found.');
         }
         $this->assignVariablesToModel($result);
         $this->model->setValue('id', $result['id']);
