@@ -1116,18 +1116,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             }
 
                             $fd->checkValidity($data, false, $params);
-                        } catch (Model\Element\ValidationException $ve) {
-                            $ve->addContext($this->getName() . '-' . $idx);
-                            $validationExceptions[] = $ve;
+                        } catch (Model\Element\ValidationException $e) {
+                            $exceptionClass = get_class($e);
+
+                            $newException = new $exceptionClass($e->getMessage().' fieldname='.$fd->getName(), $e->getCode(), $e->getPrevious());
+                            $subItems = $e->getSubItems();
+                            array_unshift($subItems, $e);
+                            $newException->setSubItems($subItems);
+                            $newException->addContext($this->getName().'-'.$idx);
+
+                            throw $newException;
                         }
                     }
-                }
-
-                if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
-                    $aggregatedExceptions->setSubItems($validationExceptions);
-
-                    throw $aggregatedExceptions;
                 }
             }
         }
