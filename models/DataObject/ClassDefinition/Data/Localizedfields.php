@@ -950,7 +950,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {
                         try {
-                            if (!isset($dataForValidityCheck[$language]) || !isset($dataForValidityCheck[$language][$fd->getName()])) {
+                            if (!isset($dataForValidityCheck[$language][$fd->getName()])) {
                                 $dataForValidityCheck[$language][$fd->getName()] = null;
                             }
                             $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
