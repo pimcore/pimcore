@@ -132,6 +132,7 @@ final class DataObjectEvents
     /**
      * Arguments:
      *  - password | string | contains the current value of the password field
+     *  - alreadyHashed | bool | return variable which determines if the password is already hashed or not. If not it will get hashed when the object gets saved
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
