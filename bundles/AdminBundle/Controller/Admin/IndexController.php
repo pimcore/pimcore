@@ -29,6 +29,7 @@ use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Staticroute;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
@@ -261,6 +262,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
+            'staticroutes-writeable' => (new Staticroute())->isWriteable(),
         ];
 
         $this

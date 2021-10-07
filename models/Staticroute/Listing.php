@@ -19,7 +19,6 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Staticroute\Listing\Dao getDao()
- * @method \Pimcore\Model\Staticroute[] load()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\JsonListing
@@ -35,7 +34,7 @@ class Listing extends Model\Listing\JsonListing
     public function getRoutes()
     {
         if ($this->routes === null) {
-            $this->getDao()->load();
+            $this->getDao()->loadList();
         }
 
         return $this->routes;
@@ -51,5 +50,13 @@ class Listing extends Model\Listing\JsonListing
         $this->routes = $routes;
 
         return $this;
+    }
+
+    /**
+     * @return Model\Staticroute[]
+     */
+    public function load()
+    {
+        return $this->getRoutes();
     }
 }
