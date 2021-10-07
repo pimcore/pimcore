@@ -326,6 +326,7 @@ Ext.onReady(function () {
         });
 
         pimcore.globalmanager.add("document_types_store", store);
+        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"]);
     }
 
     //translation admin keys
