@@ -155,9 +155,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 }
                                 $exceptionClass = get_class($e);
                                 $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
-                                $subItems = $e->getSubItems();
-                                array_unshift($subItems, $e);
-                                $newException->setSubItems($subItems);
+                                $newException->setSubItems($e->getSubItems());
 
                                 throw $newException;
                             }
