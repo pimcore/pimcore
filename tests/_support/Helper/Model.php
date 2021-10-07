@@ -366,7 +366,7 @@ class Model extends AbstractDefinitionHelper
 
             $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
-                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['Unittest'])
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['unittest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
                 ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
