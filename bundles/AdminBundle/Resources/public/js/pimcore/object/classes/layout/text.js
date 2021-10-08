@@ -86,7 +86,7 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                                 {
                                     xtype: 'container',
                                     style: 'padding-top:10px;',
-                                    html: 'You can use the following markup (in source edit mode) to make custom alerts: <br> <pre>&lt;div class=&quot;alert alert-success&quot;&gt;Your Message&lt;/div&gt;</pre>The following contextual classes are available: <pre>alert-primary, alert-secondary, alert-success, alert-danger, alert-warning, alert-info</pre>'
+                                    html: 'You can use the following markup (in source edit mode) to make custom alerts: <br> <pre>&lt;div class=&quot;alert alert-success&quot;&gt;Your Message&lt;/div&gt;</pre>The following contextual classes are available: <pre>alert-primary, alert-secondary, alert-success, alert-danger, alert-warning, alert-info</pre> <pre>You can also use Twig syntax:</pre> <pre>Additional Data {{data}}</pre>'
                                 },
                                 {
                                     xtype: "htmleditor",

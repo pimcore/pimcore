@@ -1897,8 +1897,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function textLayoutPreviewAction(Request $request)
     {
-        $objPath = $request->get('previewObject', '');
-        $obj = DataObject::getByPath($objPath) ?? new DataObject\Concrete();
+        $previewObject = null;
+        if ($objPath = $request->get('previewObject')) {
+            $obj = DataObject::getByPath($objPath);
+            if ($obj instanceof DataObject\Concrete) {
+                $previewObject = $obj;
+            }
+        }
+
         $textLayout = new DataObject\ClassDefinition\Layout\Text();
 
         $context = [
@@ -1913,7 +1919,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $textLayout->setHtml($staticHtml);
         }
 
-        $html = $textLayout->enrichLayoutDefinition($obj, $context)->getHtml();
+        $html = $textLayout->enrichLayoutDefinition($previewObject, $context)->getHtml();
 
         $content =
             "<html>\n" .

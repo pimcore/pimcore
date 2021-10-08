@@ -138,7 +138,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         $this->html = $template->render(array_merge($context,
             [
                 'object' => $object,
-                'data' => $this->renderingData
             ]
         ));
 
