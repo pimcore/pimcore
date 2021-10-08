@@ -144,14 +144,14 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
         if (this.initalHeightSet) {
             parent.setStyle({
-                'height': this.config.height + 'px',
-                'overflowY': 'auto',
+                height: this.config.height + 'px',
+                overflowY: 'auto',
             });
         }
         else {
             parent.setStyle({
-                'height': this.data.path ? 'auto' : this.config.height + 'px',
-                'overflowY': 'hidden',
+                height: this.data.path ? 'auto' : this.defaultHeight + 'px',
+                overflowY: 'hidden',
             });
         }
 
@@ -175,12 +175,12 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                     this.data = {};
                     var body = this.getBody();
                     body.getFirstChild().dom.innerHTML = '';
-                    body.insertHtml('beforeEnd','<div class="pimcore_editable_droptarget"></div>');
                     body.addCls('pimcore_editable_snippet_empty');
 
                     if (this.config.reload) {
                         this.reloadDocument();
                     }
+
                     this.updateDimensions();
                 }.bind(this)
             }));
