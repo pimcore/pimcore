@@ -643,7 +643,7 @@ final class User extends User\UserRole
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
             if (!$this->mergedPerspectives) {
                 // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = Config::getPerspectivesConfig()->toArray();
+                $allPerspectives = \Pimcore\Perspective\Config::getPerspectivesConfig()->toArray();
                 $this->mergedPerspectives = [];
 
                 $this->mergedPerspectives = array_keys($allPerspectives);

@@ -84,8 +84,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
         Config $config
     ) {
         $user = $this->getAdminUser();
+        $perspectiveConfig = new \Pimcore\Perspective\Config();
         $templateParams = [
             'config' => $config,
+            'perspectiveConfig' => $perspectiveConfig
         ];
 
         $this
@@ -168,7 +170,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addRuntimePerspective(array &$templateParams, User $user)
     {
-        $runtimePerspective = Config::getRuntimePerspective($user);
+        $runtimePerspective = \Pimcore\Perspective\Config::getRuntimePerspective($user);
         $templateParams['runtimePerspective'] = $runtimePerspective;
 
         return $this;
@@ -248,7 +250,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
-            'availablePerspectives' => Config::getAvailablePerspectives($user),
+            'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
             'disabledPortlets' => $dashboardHelper->getDisabledPortlets(),
 
             // google analytics

@@ -176,6 +176,7 @@ final class Configuration implements ConfigurationInterface
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addStaticRoutesNode($rootNode);
+        $this->addPerspectivesNode($rootNode);
 
         return $treeBuilder;
     }
@@ -2098,6 +2099,62 @@ final class Configuration implements ConfigurationInterface
                                 ->integerNode('priority')->end()
                                 ->integerNode('creationDate')->end()
                                 ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add perspectives specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPerspectivesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('perspectives')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('iconCls')->end()
+                                    ->arrayNode('dashboards')->end()
+                                    ->arrayNode('toolbar')
+                                        ->children()
+                                            ->booleanNode('ecommerce')->end()
+                                        ->end()
+                                        ->protoType('array')
+                                            ->children()
+                                                ->booleanNode('hidden')->end()
+                                                ->arrayNode('items')
+                                                    ->children()
+                                                        ->booleanNode('documentTypes')->end()
+                                                        ->booleanNode('predefinedProperties')->end()
+                                                        ->booleanNode('predefinedMetadata')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                    ->arrayNode('elementTree')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('type')->end()
+                                                ->scalarNode('position')->end()
+                                                ->booleanNode('expanded')->end()
+                                                ->booleanNode('hidden')->end()
+                                                ->integerNode('sort')->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()
