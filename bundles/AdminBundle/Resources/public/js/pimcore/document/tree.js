@@ -769,12 +769,14 @@ pimcore.document.tree = Class.create({
                     });
                 }
 
-                advancedMenuItems.push(new Ext.menu.Item({
-                    text: t('convert_to'),
-                    iconCls: "pimcore_icon_convert",
-                    hideOnClick: false,
-                    menu: conversionTargets
-                }));
+                if(conversionTargets.length > 0) {
+                    advancedMenuItems.push(new Ext.menu.Item({
+                        text: t('convert_to'),
+                        iconCls: "pimcore_icon_convert",
+                        hideOnClick: false,
+                        menu: conversionTargets
+                    }));
+                }
             }
 
             if (childSupportedDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
