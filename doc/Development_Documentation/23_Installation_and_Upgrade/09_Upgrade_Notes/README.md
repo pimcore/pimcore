@@ -153,6 +153,7 @@ framework:
 - Replaced `html2text/html2text` with `soundasleep/html2text`. Removed methods from `Pimcore\Mail`: `determineHtml2TextIsInstalled()`, `setHtml2TextOptions($options = [])`, `getHtml2TextBinaryEnabled()`, `enableHtml2textBinary()`, `getHtml2textInstalled()`.
 - Replaced `doctrine/common` with `doctrine/persistence`.
 - [Asset] Image thumbnails: Using getHtml() will return `<picture>` tag instead of `<img>` tag.
+- [Asset] Config option `pimcore.assets.image.thumbnails.webp_auto_support` was removed, since the browser detection is not needed anymore using the `<picture>` tags for thumbnails. 
 - [Ecommerce] Marked `AbstractOrder` & `AbstractOrderItem` classes as abstract.
     Changes on `AbstractOrder` class:
     - Added: `getCartHash()`, `getComment()`, `setComment()`
