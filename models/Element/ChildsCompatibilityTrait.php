@@ -33,7 +33,7 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use getChildren() instead.', __METHOD__)
         );
 
-        return call_user_func_array([$this, 'getChildren'], func_get_args());
+        return $this->getChildren(...func_get_args());
     }
 
     /**
@@ -49,7 +49,7 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use setChildren() instead.', __METHOD__)
         );
 
-        return call_user_func_array([$this, 'setChildren'], func_get_args());
+        return $this->setChildren(...func_get_args());
     }
 
     /**
@@ -65,6 +65,6 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use hasChildren() instead.', __METHOD__)
         );
 
-        return call_user_func_array([$this, 'hasChildren'], func_get_args());
+        return $this->hasChildren(...func_get_args());
     }
 }
