@@ -306,7 +306,7 @@ final class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
-                    if ($isAutoFormat) {
+                    if ($isAutoFormat && self::supportsFormat('webp')) {
                         $thumbConfigWebP = clone $thumbConfig;
                         $thumbConfigWebP->setFormat('webp');
 
