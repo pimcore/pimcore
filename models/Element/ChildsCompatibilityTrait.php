@@ -23,6 +23,8 @@ trait ChildsCompatibilityTrait
     /**
      * @deprecated
      *
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function getChilds()
@@ -33,11 +35,17 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use getChildren() instead.', __METHOD__)
         );
 
-        return $this->getChildren(...func_get_args());
+        if (method_exists($this, 'getChildren')) {
+            return $this->getChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method getChildren was not found');
     }
 
     /**
      * @deprecated
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -49,11 +57,17 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use setChildren() instead.', __METHOD__)
         );
 
-        return $this->setChildren(...func_get_args());
+        if (method_exists($this, 'setChildren')) {
+            return $this->setChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method setChildren was not found');
     }
 
     /**
      * @deprecated
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -65,6 +79,10 @@ trait ChildsCompatibilityTrait
             sprintf('%s is deprecated, please use hasChildren() instead.', __METHOD__)
         );
 
-        return $this->hasChildren(...func_get_args());
+        if (method_exists($this, 'hasChildren')) {
+            return $this->hasChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method hasChildren was not found');
     }
 }
