@@ -32,7 +32,7 @@ trait ChildsCompatibilityTrait
         trigger_deprecation(
             'pimcore/pimcore',
             '4.4',
-            sprintf('%s is deprecated, please use getChildren() instead.', __METHOD__)
+            sprintf('%s is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
         if (method_exists($this, 'getChildren')) {
@@ -54,7 +54,7 @@ trait ChildsCompatibilityTrait
         trigger_deprecation(
             'pimcore/pimcore',
             '4.4',
-            sprintf('%s is deprecated, please use setChildren() instead.', __METHOD__)
+            sprintf('%s is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
         if (method_exists($this, 'setChildren')) {
@@ -76,7 +76,7 @@ trait ChildsCompatibilityTrait
         trigger_deprecation(
             'pimcore/pimcore',
             '4.4',
-            sprintf('%s is deprecated, please use hasChildren() instead.', __METHOD__)
+            sprintf('%s is deprecated, please use hasChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
         if (method_exists($this, 'hasChildren')) {
