@@ -219,7 +219,6 @@ final class Thumbnail
     {
         $srcSetValues = [];
         $sourceTagAttributes = [];
-        $thumb = null;
 
         foreach ([1, 2] as $highRes) {
             $thumbConfigRes = clone $thumbConfig;
@@ -306,13 +305,21 @@ final class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
-                    if ($isAutoFormat && self::supportsFormat('webp')) {
-                        $thumbConfigWebP = clone $thumbConfig;
-                        $thumbConfigWebP->setFormat('webp');
+                    if($isAutoFormat) {
+                        $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+                        foreach($autoFormats as $autoFormat => $autoFormatQuality) {
+                            if (self::supportsFormat($autoFormat)) {
+                                $thumbConfigAutoFormat = clone $thumbConfig;
+                                $thumbConfigAutoFormat->setFormat($autoFormat);
+                                if(!empty($autoFormatQuality)) {
+                                    $thumbConfigAutoFormat->setQuality($autoFormatQuality);
+                                }
 
-                        $sourceWebP = $this->getSourceTagHtml($thumbConfigWebP, $mediaQuery, $image, $options);
-                        if (!empty($sourceWebP)) {
-                            $html .= "\t" . $sourceWebP . "\n";
+                                $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
+                                if (!empty($sourceWebP)) {
+                                    $html .= "\t" . $sourceWebP . "\n";
+                                }
+                            }
                         }
                     }
 
