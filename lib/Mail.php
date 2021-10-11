@@ -569,7 +569,7 @@ class Mail extends Email
             $failedRecipients = [];
 
             try {
-                $mailer->send($this);
+                $mailer->send($this, $failedRecipients);
             } catch (\Exception $e) {
                 if (isset($failedRecipients[0])) {
                     $sendingFailedException = new \Exception($failedRecipients[0] . ' - ' . $e->getMessage(), 0, $e);
