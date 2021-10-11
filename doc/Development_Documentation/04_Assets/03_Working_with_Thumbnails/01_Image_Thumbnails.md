@@ -374,18 +374,6 @@ of the image is on the focal point.
   
 ![Image thumbnails cover transformation considering focal point](../../img/image_thumbnails_cover_focal_point.png)
 
-## WebP Support 
-Pimcore  delivers automatically thumbnails in WebP format when using the `Auto` configuration for the 
-target format and when the client does support WebP (checking by evaluating the `Accept` request header).  
-    
-If you prefer not using WebP, you can disable the support by adding the following config option: 
-```yml
-    assets:
-        image:
-            thumbnails:
-                webp_auto_support: false
-```
-
 ## Clipping Support 
 Images with an embedded clipping path (8BIM / Adobe profile meta data) are automatically clipped when generating thumbnails of them. 
     
