@@ -32,12 +32,12 @@ class Video implements OwnerAwareFieldInterface
     protected $type;
 
     /**
-     * @var Asset|string
+     * @var Asset|string|int
      */
     protected $data;
 
     /**
-     * @var Asset
+     * @var Asset|string|int
      */
     protected $poster;
 
@@ -52,7 +52,7 @@ class Video implements OwnerAwareFieldInterface
     protected $description;
 
     /**
-     * @param Asset|string $data
+     * @param Asset|string|int $data
      */
     public function setData($data)
     {
@@ -61,7 +61,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset|string
+     * @return Asset|string|int
      */
     public function getData()
     {
@@ -103,7 +103,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Asset|string $poster
+     * @param Asset|string|int $poster
      */
     public function setPoster($poster)
     {
@@ -112,7 +112,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset|string
+     * @return Asset|string|int
      */
     public function getPoster()
     {

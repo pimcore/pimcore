@@ -58,7 +58,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param \Pimcore\Model\Dao\AbstractDao $dao
+     * @param \Pimcore\Model\Dao\AbstractDao|null $dao
      *
      * @return self
      */

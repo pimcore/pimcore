@@ -27,10 +27,10 @@ trait SelectionProviderTrait
      * @param DataObject\Concrete|null $object
      * @param string $fieldname
      * @param string $purpose
-     * @param string $mode
+     * @param int $mode
      * @param array $context
      */
-    protected function doEnrichDefinitionDefinition(/*?Concrete */ $object, string $fieldname, string $purpose, string $mode, /**  array */ $context = [])
+    protected function doEnrichDefinitionDefinition(/*?Concrete */ $object, string $fieldname, string $purpose, int $mode, /**  array */ $context = [])
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

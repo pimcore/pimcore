@@ -339,7 +339,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

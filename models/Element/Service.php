@@ -669,9 +669,6 @@ class Service extends Model\AbstractModel
         //check in case of recursion
         $found = false;
         foreach ($target->getChildren() as $child) {
-            /**
-             * @var ElementInterface $child
-             */
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
