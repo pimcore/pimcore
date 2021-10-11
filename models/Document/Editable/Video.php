@@ -490,7 +490,7 @@ class Video extends Model\Document\Editable
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
 
-                    if ($parts['host'] == 'youtu.be') {
+                    if (isset($parts['host']) && $parts['host'] === 'youtu.be') {
                         $youtubeId = trim($parts['path'], ' /');
                     }
                 }
