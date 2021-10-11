@@ -60,8 +60,6 @@ pimcore.settings.fileexplorer.file = Class.create({
                         editor.setOptions({
                             showLineNumbers: true,
                             showPrintMargin: false,
-                            maxLines: 55,
-                            minLines: 55,
                             wrap: true,
                             fontFamily: 'Courier New, Courier, monospace;'
                         });
@@ -95,6 +93,10 @@ pimcore.settings.fileexplorer.file = Class.create({
 
                 this.editor.on("beforedestroy", function () {
                     delete this.explorer.openfiles[this.path];
+                }.bind(this));
+
+                this.editor.on('resize', function (el, width, height) {
+                    editorContainer.resize();
                 }.bind(this));
 
             }
