@@ -28,7 +28,6 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
-
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**

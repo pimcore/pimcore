@@ -40,7 +40,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class StaticPageGeneratorListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
-
     use StaticPageContextAwareTrait;
 
     public function __construct(

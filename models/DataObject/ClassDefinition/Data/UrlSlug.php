@@ -26,7 +26,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Extension\ColumnType;
-
     use Model\DataObject\Traits\ContextPersistenceTrait;
 
     /**

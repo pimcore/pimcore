@@ -38,11 +38,8 @@ final class Localizedfield extends Model\AbstractModel implements
     OwnerAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\DirtyIndicatorTrait;
-
     use Model\Element\ElementDumpStateTrait;
 
     /**

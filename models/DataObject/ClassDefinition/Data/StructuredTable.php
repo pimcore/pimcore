@@ -23,11 +23,8 @@ use Pimcore\Normalizer\NormalizerInterface;
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use Data\Extension\PositionSortTrait;
 
     /**

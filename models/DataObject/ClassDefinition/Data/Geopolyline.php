@@ -29,7 +29,6 @@ class Geopolyline extends AbstractGeo implements
     NormalizerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**

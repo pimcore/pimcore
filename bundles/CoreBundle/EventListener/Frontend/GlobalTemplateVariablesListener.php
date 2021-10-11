@@ -34,7 +34,6 @@ use Twig\Environment;
 class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
     use PimcoreContextAwareTrait;
 
     /**
@@ -67,7 +66,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         // onKernelController() if the twig environment was already initialized before
         // defining global variables is only possible before the twig environment was initialized
         // however you can change the value of the variable at any time later on
-        if($event->isMainRequest()) {
+        if ($event->isMainRequest()) {
             $this->twig->addGlobal('document', null);
             $this->twig->addGlobal('editmode', false);
         }

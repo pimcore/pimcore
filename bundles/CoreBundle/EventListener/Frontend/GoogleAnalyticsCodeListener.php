@@ -33,13 +33,9 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 class GoogleAnalyticsCodeListener
 {
     use EnabledTrait;
-
     use ResponseInjectionTrait;
-
     use PimcoreContextAwareTrait;
-
     use PreviewRequestTrait;
-
     use StaticPageContextAwareTrait;
 
     public function __construct(private Tracker $tracker)

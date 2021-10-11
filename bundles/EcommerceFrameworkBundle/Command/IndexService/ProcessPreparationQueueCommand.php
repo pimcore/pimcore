@@ -31,7 +31,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
-
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;

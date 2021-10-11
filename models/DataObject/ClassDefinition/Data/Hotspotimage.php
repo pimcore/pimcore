@@ -26,11 +26,8 @@ use Pimcore\Tool\Serialize;
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
-
     use ImageTrait;
-
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\QueryColumnType;
 
     /**

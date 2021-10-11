@@ -24,7 +24,6 @@ use Pimcore\Tool\Serialize;
 class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**

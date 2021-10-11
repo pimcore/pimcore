@@ -38,7 +38,6 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;
-
     use DocumentTreeConfigTrait;
 
     protected function preSendDataActions(&$data, Model\Document $document, ?Version $draftVersion = null)

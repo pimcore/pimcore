@@ -43,13 +43,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class TargetingListener implements EventSubscriberInterface
 {
     use StopwatchTrait;
-
     use PimcoreContextAwareTrait;
-
     use EnabledTrait;
-
     use ResponseInjectionTrait;
-
     use StaticPageContextAwareTrait;
 
     /**
