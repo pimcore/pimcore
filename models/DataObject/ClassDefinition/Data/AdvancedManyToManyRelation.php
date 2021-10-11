@@ -512,7 +512,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
                 }
             }
         }
