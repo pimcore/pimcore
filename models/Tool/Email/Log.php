@@ -78,21 +78,21 @@ class Log extends Model\AbstractModel
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
      *
-     * @var string
+     * @var string|null
      */
     protected $to;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
      *
-     * @var string
+     * @var string|null
      */
     protected $cc;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
      *
-     * @var string
+     * @var string|null
      */
     protected $bcc;
 
@@ -428,7 +428,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param string $to
+     * @param string|null $to
      *
      * @return $this
      */
@@ -442,7 +442,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "to" recipients
      *
-     * @return string
+     * @return string|null
      */
     public function getTo()
     {
@@ -450,7 +450,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param string $cc
+     * @param string|null $cc
      *
      * @return $this
      */
@@ -464,7 +464,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the carbon copy recipients
      *
-     * @return string
+     * @return string|null
      */
     public function getCc()
     {
@@ -472,7 +472,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param string $bcc
+     * @param string|null $bcc
      *
      * @return $this
      */
@@ -486,7 +486,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the blind carbon copy recipients
      *
-     * @return string
+     * @return string|null
      */
     public function getBcc()
     {
