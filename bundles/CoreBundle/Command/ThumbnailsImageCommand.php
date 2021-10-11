@@ -140,7 +140,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         $image = Image::getById($assetId);
         if (!$image) {
-            $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?</error>');
+            $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?');
 
             return;
         }
