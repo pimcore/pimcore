@@ -102,7 +102,7 @@ If you want to wrap buttons in a div or change the Position.
         {% for b in block.iterator %}
             {% do block.blockConstruct() %}
                 <td customAttribute="{{ pimcore_input("myInput").data }}">
-                    {% do block.blockStart() %}
+                    {% do block.blockStart(false) %}
                         <div style="background-color: #fc0; margin-bottom: 10px; padding: 5px; border: 1px solid black;">
                             {% do block.blockControls() %}
                         </div>
