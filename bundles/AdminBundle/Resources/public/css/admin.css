@@ -520,10 +520,13 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .asset_folder_preview .thumb{
-    width: 250px;
+    max-width: 250px;
     max-height: 220px;
 }
 
