@@ -31,7 +31,6 @@ class RgbaColor extends Data implements
     AfterDecryptionUnmarshallerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**

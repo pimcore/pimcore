@@ -26,15 +26,10 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
-
     use Extension\QueryColumnType;
-
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**

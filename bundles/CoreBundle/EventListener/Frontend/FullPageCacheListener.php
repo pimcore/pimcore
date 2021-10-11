@@ -38,7 +38,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
-
     use StaticPageContextAwareTrait;
 
     /**

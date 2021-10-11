@@ -23,11 +23,8 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**

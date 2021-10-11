@@ -31,7 +31,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class UrlSlug implements OwnerAwareFieldInterface
 {
     use ObjectVarTrait;
-
     use OwnerAwareFieldTrait;
 
     public const TABLE_NAME = 'object_url_slugs';

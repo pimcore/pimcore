@@ -45,7 +45,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
     use PimcoreContextAwareTrait;
 
     public const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';

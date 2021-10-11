@@ -35,7 +35,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\ScheduledTasksTrait;
 
     /**

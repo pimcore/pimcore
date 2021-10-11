@@ -142,4 +142,18 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
         }
     },
 
+    removeEditableDialogbox: function (id) {
+        //remove dialog-box editables
+        Object.values(editableManager.getEditables()).forEach(editable => {
+            if(editable.getInDialogBox() === id) {
+                editableManager.remove(editable.getName());
+            }
+        });
+
+        if (this.dialogBoxes[id]) {
+            this.dialogBoxes[id].destroy();
+            delete this.dialogBoxes[id];
+        }
+    }
+
 });

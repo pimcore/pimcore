@@ -27,7 +27,6 @@ use Pimcore\Model\DataObject;
 class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
-
     use DataObject\Traits\CompositeIndexTrait;
 
     /**

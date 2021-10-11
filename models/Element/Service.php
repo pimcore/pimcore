@@ -79,7 +79,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @interal
+     * @internal
      *
      * @param ElementInterface $element
      *

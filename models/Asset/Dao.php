@@ -30,7 +30,6 @@ use Pimcore\Tool\Serialize;
 class Dao extends Model\Element\Dao
 {
     use Model\Element\Traits\ScheduledTasksDaoTrait;
-
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
