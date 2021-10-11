@@ -22,6 +22,7 @@ use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -54,6 +55,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class SettingsController extends AdminController
 {
+    use StopMessengerWorkersTrait;
+
     private const CUSTOM_LOGO_PATH = 'custom-logo.image';
 
     /**
@@ -536,6 +539,8 @@ class SettingsController extends AdminController
             'only_pimcore_cache' => false,
             'env' => [\Pimcore::getKernel()->getEnvironment()],
         ]);
+
+        $this->stopMessengerWorkers();
 
         return $this->adminJson(['success' => true]);
     }
