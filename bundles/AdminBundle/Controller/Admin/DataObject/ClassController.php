@@ -1897,13 +1897,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function textLayoutPreviewAction(Request $request)
     {
-        $previewObject = null;
-        if ($objPath = $request->get('previewObject')) {
-            $obj = DataObject::getByPath($objPath);
-            if ($obj instanceof DataObject\Concrete) {
-                $previewObject = $obj;
-            }
-        }
+        $objPath = $request->get('previewObject', '');
+        $className = '\\Pimcore\\Model\\DataObject\\' . $request->get('className');
+        $obj = DataObject::getByPath($objPath) ?? new $className();
 
         $textLayout = new DataObject\ClassDefinition\Layout\Text();
 
@@ -1919,7 +1915,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $textLayout->setHtml($staticHtml);
         }
 
-        $html = $textLayout->enrichLayoutDefinition($previewObject, $context)->getHtml();
+        $html = $textLayout->enrichLayoutDefinition($obj, $context)->getHtml();
 
         $content =
             "<html>\n" .

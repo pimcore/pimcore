@@ -53,6 +53,11 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                     checked: this.datax.border,
                 },
                 {
+                    xtype: "hiddenfield",
+                    name: "className",
+                    value: this.treeNode.getOwnerTree().getRootNode().data.className,
+                },
+                {
                     xtype: "tabpanel",
                     activeTab: 0,
                     monitorResize: true,
