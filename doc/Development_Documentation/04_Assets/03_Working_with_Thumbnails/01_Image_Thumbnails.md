@@ -447,3 +447,12 @@ pimcore:
                     avif: 15
                     webp: null
 ```
+
+#### Config for disabling all auto-formats
+```yaml
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                auto_formats: null
+```
