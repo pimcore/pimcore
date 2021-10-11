@@ -23,7 +23,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**

@@ -35,13 +35,9 @@ class Multiselect extends Data implements
     DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
-
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**

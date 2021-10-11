@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class Video implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
     use ObjectVarTrait;
 
     /**

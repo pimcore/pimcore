@@ -54,9 +54,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
-
     use ElementEditLockHelperTrait;
-
     use ApplySchedulerDataTrait;
 
     /**

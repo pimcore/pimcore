@@ -338,7 +338,7 @@ trait ImageThumbnailTrait
 
     public static function supportsFormat(string $format): bool
     {
-        if(!isset(self::$supportedFormats[$format])) {
+        if (!isset(self::$supportedFormats[$format])) {
             self::$supportedFormats[$format] = \Pimcore\Image::getInstance()->supportsFormat($format);
         }
 

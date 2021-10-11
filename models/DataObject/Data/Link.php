@@ -28,7 +28,6 @@ use Pimcore\Model\Element\Service;
 class Link implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
     use ObjectVarTrait;
 
     /**
