@@ -411,7 +411,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
         }
     }
 
