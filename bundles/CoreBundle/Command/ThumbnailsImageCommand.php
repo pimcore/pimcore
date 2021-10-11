@@ -88,6 +88,10 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         $list = new Asset\Listing();
 
+        // Recently added or changed items are more likely to need thumbnails, start with those in case process is cut short
+        $list->setOrderKey('modificationDate');
+        $list->setOrder('DESC');
+
         $parentConditions = [];
 
         // get only images
