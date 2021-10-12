@@ -512,6 +512,24 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->arrayNode('auto_formats')
+                                        ->prototype('array')
+                                            ->canBeDisabled()
+                                            ->children()
+                                                ->scalarNode('quality')->end()
+                                            ->end()
+                                        ->end()
+                                        ->defaultValue([
+                                            'avif' => [
+                                                'enabled' => true,
+                                                'quality' => 15,
+                                            ],
+                                            'webp' => [
+                                                'enabled' => true,
+                                                'quality' => null,
+                                            ]
+                                        ])
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()

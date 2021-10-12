@@ -686,6 +686,12 @@ final class Requirements
             'state' => $imageAdapter->supportsFormat('webp', true) ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
+        $checks[] = new Check([
+            'name' => 'AVIF (via ' . $imageAdapterType . ')',
+            // we use the force flag here, because during the installer the cache is not available
+            'state' => $imageAdapter->supportsFormat('avif', true) ? Check::STATE_OK : Check::STATE_WARNING,
+        ]);
+
         return $checks;
     }
 
