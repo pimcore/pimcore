@@ -358,6 +358,11 @@ pimcore.document.edit = Class.create({
             var iFrames = this.frame.document.getElementsByTagName("iframe");
             for (i = 0; i < iFrames.length; i++) {
                 iFrameEl = Ext.get(iFrames[i]);
+
+                if (iFrameEl.dom.getAttribute('data-type') === 'pimcore_video_editable') {
+                   continue;
+                }
+
                 width = iFrameEl.getWidth();
                 height = iFrameEl.getHeight();
 
