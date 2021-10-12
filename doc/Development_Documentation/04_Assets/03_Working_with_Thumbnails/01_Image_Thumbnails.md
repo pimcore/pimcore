@@ -441,11 +441,14 @@ pimcore:
         image:
             thumbnails:
                 auto_formats:
-                    # remove entry to disable format
                     # the quality is used by Imagick, set to null if quality value from config should be used 
                     # the following config is used as the default by Pimcore
-                    avif: 15
-                    webp: null
+                    # the order of the formats is used for the priority of the <source> in the <picture> tag
+                    avif:
+                        quality: 15
+                    webp:
+                        quality: null
+                        enabled: true
 ```
 
 #### Config for disabling all auto-formats

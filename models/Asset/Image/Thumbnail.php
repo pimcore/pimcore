@@ -307,12 +307,12 @@ final class Thumbnail
                 if (!empty($sourceHtml)) {
                     if($isAutoFormat) {
                         $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
-                        foreach($autoFormats as $autoFormat => $autoFormatQuality) {
-                            if (self::supportsFormat($autoFormat)) {
+                        foreach($autoFormats as $autoFormat => $autoFormatConfig) {
+                            if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
                                 $thumbConfigAutoFormat = clone $thumbConfig;
                                 $thumbConfigAutoFormat->setFormat($autoFormat);
-                                if(!empty($autoFormatQuality)) {
-                                    $thumbConfigAutoFormat->setQuality($autoFormatQuality);
+                                if(!empty($autoFormatConfig['quality'])) {
+                                    $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
                                 }
 
                                 $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
