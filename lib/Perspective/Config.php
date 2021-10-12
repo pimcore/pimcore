@@ -94,12 +94,13 @@ final class Config
      * @param array $deletedRecords
      * @throws \Exception
      */
-    public static function save(array $data, array $deletedRecords)
+    public static function save(array $data, ?array $deletedRecords)
     {
         $repository = self::getRepository();
 
         foreach($data as $key => $value) {
             if($repository->isWriteable($key) === true && $value["writeable"] === true) {
+                unset($value["writeable"]);
                 $repository->saveConfig($key, $value, function ($key, $data) {
                     return [
                         'pimcore' => [
@@ -112,10 +113,12 @@ final class Config
             }
         }
 
-        foreach($deletedRecords as $key) {
-            list($configKey, $dataSource) = $repository->loadConfigByKey(($key));
-            if(!empty($configKey))
-                $repository->deleteData($key, $dataSource);
+        if($deletedRecords) {
+            foreach ($deletedRecords as $key) {
+                list($configKey, $dataSource) = $repository->loadConfigByKey(($key));
+                if (!empty($configKey))
+                    $repository->deleteData($key, $dataSource);
+            }
         }
     }
 
