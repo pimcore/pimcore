@@ -612,7 +612,7 @@ class TranslationController extends AdminController
                     $fieldname = $tableName . '.' . $fieldname;
                 }
 
-                if(!empty($filter['value'])) {
+                if (!empty($filter['value'])) {
                     if ($filter['type'] == 'string') {
                         $operator = 'LIKE';
                         $field = $fieldname;
