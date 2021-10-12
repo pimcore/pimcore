@@ -179,10 +179,16 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         var objectTypeStore = pimcore.globalmanager.get("object_types_store");
         objectTypeStore.load();
 
+        // Refresh otherwise sort will be wrong
+        this.availableClasses = {};
+        this.baseStore = {};
+
         objectTypeStore.each(function (rec) {
-            var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
-            this.availableClasses[rec.get("text")] = data;
-            this.baseStore[rec.get("text")] = data;
+            if (rec.data.hasBrickField) {
+                var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
+                this.availableClasses[rec.get("text")] = data;
+                this.baseStore[rec.get("text")] = data;
+            }
         }.bind(this));
     },
 
