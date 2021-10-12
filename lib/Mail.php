@@ -566,16 +566,11 @@ class Mail extends Email
 
         if ($event->hasArgument('mailer') && !$sendingFailedException) {
             $mailer = $event->getArgument('mailer');
-            $failedRecipients = [];
 
             try {
-                $mailer->send($this, $failedRecipients);
+                $mailer->send($this);
             } catch (\Exception $e) {
-                if (isset($failedRecipients[0])) {
-                    $sendingFailedException = new \Exception($failedRecipients[0] . ' - ' . $e->getMessage(), 0, $e);
-                } else {
-                    $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
-                }
+                $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
             }
         }
 
