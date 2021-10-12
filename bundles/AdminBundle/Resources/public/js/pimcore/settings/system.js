@@ -230,7 +230,11 @@ pimcore.settings.system = Class.create({
                             valueField: 'language',
                             forceSelection: true,
                             triggerAction: 'all',
-                            name: 'general.language'
+                            name: 'general.language',
+                            cls: "pimcore_extra_label_bottom"
+                        }, {
+                            xtype: "container",
+                            html: '<strong>' + t('frontend_languages') + '</strong>'
                         }, {
                             xtype: "displayfield",
                             hideLabel: true,
