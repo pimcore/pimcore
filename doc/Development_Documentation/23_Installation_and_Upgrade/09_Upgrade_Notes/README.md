@@ -5,6 +5,7 @@
 - [Configs] The default storage for configurations is now `yaml` files in the `var/config` directory and are loaded as Symfony Config. The old `php` config-files continue to work, however, changes on existing configurations as well as new configurations are written to `yaml`.  
 **Important notice**: writing configs to `yaml` is only supported if the kernel is in debug mode, because changes of the config need a rebuild of the container configuration.  
 If you require to change the config on production environments we recommend to change the storage to `settings-store` as described [here](../../21_Deployment/03_Configuration_Environments.md). 
+- [Asset] Pimcore now automatically supports AVIF image format for thumbnails using `auto` format (only `Imagick`). To disable AVIF please [follow this instructions](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).  
 
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
