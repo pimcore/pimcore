@@ -305,13 +305,13 @@ final class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
-                    if($isAutoFormat) {
+                    if ($isAutoFormat) {
                         $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
-                        foreach($autoFormats as $autoFormat => $autoFormatConfig) {
+                        foreach ($autoFormats as $autoFormat => $autoFormatConfig) {
                             if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
                                 $thumbConfigAutoFormat = clone $thumbConfig;
                                 $thumbConfigAutoFormat->setFormat($autoFormat);
-                                if(!empty($autoFormatConfig['quality'])) {
+                                if (!empty($autoFormatConfig['quality'])) {
                                     $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
                                 }
 

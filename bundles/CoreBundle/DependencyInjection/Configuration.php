@@ -527,7 +527,7 @@ final class Configuration implements ConfigurationInterface
                                             'webp' => [
                                                 'enabled' => true,
                                                 'quality' => null,
-                                            ]
+                                            ],
                                         ])
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
