@@ -158,6 +158,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        return $data === null || $data instanceof Asset\Image;
+    }
+
     /**
      * @param int $data
      * @param null|Model\DataObject\Concrete $object
