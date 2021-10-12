@@ -16,13 +16,10 @@
 namespace Pimcore\Config;
 
 use Pimcore\Config;
-use Pimcore\Console\Application;
 use Pimcore\Db\PhpArrayFileTable;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
