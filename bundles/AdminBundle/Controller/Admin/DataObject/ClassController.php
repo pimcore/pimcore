@@ -119,6 +119,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             foreach ($class->getFieldDefinitions() as $fieldDefinition) {
                 if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
                     $hasBrickField = true;
+
                     break;
                 }
             }
