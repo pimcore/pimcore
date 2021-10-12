@@ -265,7 +265,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'staticroutes-writeable' => (new Staticroute())->isWriteable(),
-            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable()
+            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
+            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable()
         ];
 
         $this
@@ -380,7 +381,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $cvData = [];
 
         // still needed when publishing objects
-        $cvConfig = Tool::getCustomViewConfig();
+        $cvConfig = \Pimcore\CustomView\Config::get();
 
         if ($cvConfig) {
             foreach ($cvConfig as $node) {

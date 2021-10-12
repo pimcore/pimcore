@@ -177,6 +177,7 @@ final class Configuration implements ConfigurationInterface
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
+        $this->addCustomViewsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -2141,6 +2142,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->booleanNode('expanded')->end()
                                                 ->scalarNode('hidden')->end()
                                                 ->integerNode('sort')->end()
+                                                ->integerNode('id')->end()
                                                 ->arrayNode('treeContextMenu')
                                                     ->children()
                                                         ->arrayNode('document')
@@ -2160,5 +2162,41 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ->end();
+    }
+
+    /**
+     * Add custom views specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCustomViewsNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('custom_views')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                            ->children()
+                                ->scalarNode('id')->end()
+                                ->scalarNode('treetype')->end()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('condition')->end()
+                                ->scalarNode('icon')->end()
+                                ->scalarNode('rootfolder')->end()
+                                ->scalarNode('showroot')->end()
+                                ->variableNode('classes')->end()
+                                ->scalarNode('position')->end()
+                                ->scalarNode('sort')->end()
+                                ->booleanNode('expanded')->end()
+                                ->variableNode('treeContextMenu')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }

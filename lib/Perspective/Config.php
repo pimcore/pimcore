@@ -17,6 +17,7 @@ namespace Pimcore\Perspective;
 
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Logger;
+use Pimcore\CustomView;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\User\UserRole;
 use Pimcore\Tool;
@@ -99,7 +100,8 @@ final class Config
         $repository = self::getRepository();
 
         foreach($data as $key => $value) {
-            if($repository->isWriteable($key) === true && $value["writeable"] === true) {
+            list($configKey, $dataSource) = $repository->loadConfigByKey($key);
+            if($repository->isWriteable($key, $dataSource) === true) {
                 unset($value["writeable"]);
                 $repository->saveConfig($key, $value, function ($key, $data) {
                     return [
@@ -158,7 +160,7 @@ final class Config
             ],
         ];
 
-        $cvConfigs = Tool::getCustomViewConfig();
+        $cvConfigs = \Pimcore\CustomView\Config::get();
         if ($cvConfigs) {
             foreach ($cvConfigs as $cvConfig) {
                 $cvConfig['type'] = 'customview';
@@ -264,7 +266,7 @@ final class Config
 
         $cfConfigMapping = [];
 
-        $cvConfigs = Tool::getCustomViewConfig();
+        $cvConfigs = \Pimcore\CustomView\Config::get();
 
         if ($cvConfigs) {
             foreach ($cvConfigs as $node) {
