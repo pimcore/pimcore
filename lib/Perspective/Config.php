@@ -107,7 +107,9 @@ final class Config
                     return [
                         'pimcore' => [
                             'perspectives' => [
-                                'definitions' => $data,
+                                'definitions' => [
+                                    $key => $data,
+                                ],
                             ],
                         ],
                     ];

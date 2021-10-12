@@ -120,7 +120,9 @@ final class Config
                     return [
                         'pimcore' => [
                             'custom_views' => [
-                                'definitions' => $data,
+                                'definitions' => [
+                                    $key => $data,
+                                ],
                             ],
                         ],
                     ];
