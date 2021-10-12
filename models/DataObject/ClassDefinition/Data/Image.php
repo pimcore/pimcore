@@ -158,9 +158,20 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
+    /**
+     * @param mixed $data
+     * @param false $omitMandatoryCheck
+     * @param array $params
+     * @return bool
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        return $data === null || $data instanceof Asset\Image;
+        if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+        }
+        if($data !== null && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
+        }
     }
 
     /**
