@@ -888,6 +888,27 @@ pimcore.document.tree = Class.create({
                 }
             }
 
+            // expand and collapse complete tree
+            if (!record.data.leaf) {
+                if (record.data.expanded) {
+                    advancedMenuItems.push({
+                        text: t('collapse_children'),
+                        iconCls: "pimcore_icon_collapse_children",
+                        handler: function () {
+                            record.collapse(true);
+                        }.bind(this, record)
+                    });
+                } else {
+                    advancedMenuItems.push({
+                        text: t('expand_children'),
+                        iconCls: "pimcore_icon_expand_children",
+                        handler: function () {
+                            record.expand(true);
+                        }.bind(this, record)
+                    });
+                }
+            }
+
             menu.add("-");
 
             if (advancedMenuItems.length) {
