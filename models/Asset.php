@@ -699,6 +699,14 @@ class Asset extends Element\AbstractElement
                     $storage->delete($dbPath);
                 }
 
+                if ($storage->fileExists($path)) {
+                    // We don't open a stream on existing files, because they could be possibly used by versions
+                    // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
+                    // versioning information persists. Using the stream on the existing file would overwrite the
+                    // contents of the inode and therefore leads to wrong version data
+                    $storage->delete($path);
+                }
+
                 $storage->writeStream($path, $src);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
