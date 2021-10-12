@@ -72,8 +72,6 @@ final class PhpArrayFileTable
 
     /**
      * @param string $filePath
-     *
-     * @throws \Exception
      */
     public function setFilePath($filePath)
     {
