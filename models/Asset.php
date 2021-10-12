@@ -694,6 +694,12 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
+                // Write original data to temp path for writing stream
+                // as original file will be deleted before overwrite
+                $pathInfo = pathinfo($this->getFilename());
+                $tempFilePath = $this->getRealPath() . $pathInfo['filename'] . '_temp.' . $pathInfo['extension'];
+                $storage->writeStream($tempFilePath, $src);
+
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
@@ -707,7 +713,9 @@ class Asset extends Element\AbstractElement
                     $storage->delete($path);
                 }
 
-                $storage->writeStream($path, $src);
+                $storage->writeStream($path, $storage->readStream($tempFilePath));
+
+                $storage->delete($tempFilePath);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
