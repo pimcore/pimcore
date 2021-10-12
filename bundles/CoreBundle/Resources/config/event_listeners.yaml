@@ -129,7 +129,7 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
         public: true
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 6 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 610 }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
             - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
 
