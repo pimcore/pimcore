@@ -265,6 +265,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'staticroutes-writeable' => (new Staticroute())->isWriteable(),
+            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable()
         ];
 
         $this

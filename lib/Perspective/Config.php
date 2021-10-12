@@ -80,6 +80,7 @@ final class Config
         {
             $configKey = $repository->loadConfigByKey(($key));
             if(isset($configKey) && is_array(($configKey))) {
+                $configKey[0]["writeable"] = $repository->isWriteable($key, $configKey[1]);
                 $config = array_merge($config, [$key => $configKey[0]]);
             }
         }
@@ -90,26 +91,32 @@ final class Config
 
     /**
      * @param array $data
-     *
+     * @param array $deletedRecords
      * @throws \Exception
      */
-    public static function save(array $data)
+    public static function save(array $data, array $deletedRecords)
     {
         $repository = self::getRepository();
 
-        if (!$repository->isWriteable()) {
-            throw new ConfigWriteException();
+        foreach($data as $key => $value) {
+            if($repository->isWriteable($key) === true && $value["writeable"] === true) {
+                $repository->saveConfig($key, $value, function ($key, $data) {
+                    return [
+                        'pimcore' => [
+                            'perspectives' => [
+                                'definitions' => $data,
+                            ],
+                        ],
+                    ];
+                });
+            }
         }
 
-        $repository->saveConfig(self::CONFIG_ID, $data, function ($key, $data) {
-            return [
-                'pimcore' => [
-                    'perspectives' => [
-                        'definitions' => $data,
-                    ],
-                ],
-            ];
-        });
+        foreach($deletedRecords as $key) {
+            list($configKey, $dataSource) = $repository->loadConfigByKey(($key));
+            if(!empty($configKey))
+                $repository->deleteData($key, $dataSource);
+        }
     }
 
     /**

@@ -643,7 +643,7 @@ final class User extends User\UserRole
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
             if (!$this->mergedPerspectives) {
                 // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = \Pimcore\Perspective\Config::getPerspectivesConfig()->toArray();
+                $allPerspectives = \Pimcore\Perspective\Config::get()->toArray();
                 $this->mergedPerspectives = [];
 
                 $this->mergedPerspectives = array_keys($allPerspectives);
@@ -667,7 +667,7 @@ final class User extends User\UserRole
             return $perspectives[0];
         } else {
             // all perspectives are allowed
-            $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+            $perspectives = \Pimcore\Perspective\Config::getAvailablePerspectives($this);
 
             return $perspectives[0]['name'];
         }
