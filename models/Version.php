@@ -242,9 +242,8 @@ final class Version extends AbstractModel
             $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
             $storage->write($this->getBinaryStoragePath(), '1'); // temp file to determine if stream is local or not
             if ($useHardlinks && stream_is_local($this->getBinaryFileStream()) && stream_is_local($data->getStream())) {
-                $linkPath = stream_get_meta_data($this->getBinaryFileStream())['uri'];
-                $storage->delete($this->getBinaryStoragePath());
-                $linked = @link(stream_get_meta_data($data->getStream())['uri'], $linkPath);
+                $linkPath = stream_get_meta_data($data->getStream())['uri'];
+                $linked = @link(stream_get_meta_data($this->getBinaryFileStream())['uri'], $linkPath);
             }
 
             if (!$linked) {
