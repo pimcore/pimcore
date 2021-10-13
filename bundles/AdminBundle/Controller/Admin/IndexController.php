@@ -87,7 +87,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $perspectiveConfig = new \Pimcore\Perspective\Config();
         $templateParams = [
             'config' => $config,
-            'perspectiveConfig' => $perspectiveConfig
+            'perspectiveConfig' => $perspectiveConfig,
         ];
 
         $this
@@ -266,7 +266,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'staticroutes-writeable' => (new Staticroute())->isWriteable(),
             'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
-            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable()
+            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
         ];
 
         $this

@@ -40,7 +40,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;

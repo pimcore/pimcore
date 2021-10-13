@@ -17,8 +17,6 @@ namespace Pimcore\Perspective;
 
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Logger;
-use Pimcore\CustomView;
-use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\User\UserRole;
 use Pimcore\Tool;
 
@@ -77,11 +75,10 @@ final class Config
         $config = [];
         $repository = self::getRepository();
         $keys = $repository->fetchAllKeys();
-        foreach($keys as $key)
-        {
+        foreach ($keys as $key) {
             $configKey = $repository->loadConfigByKey(($key));
-            if(isset($configKey) && is_array(($configKey))) {
-                $configKey[0]["writeable"] = $repository->isWriteable($key, $configKey[1]);
+            if (isset($configKey) && is_array(($configKey))) {
+                $configKey[0]['writeable'] = $repository->isWriteable($key, $configKey[1]);
                 $config = array_merge($config, [$key => $configKey[0]]);
             }
         }
@@ -93,16 +90,17 @@ final class Config
     /**
      * @param array $data
      * @param array $deletedRecords
+     *
      * @throws \Exception
      */
     public static function save(array $data, ?array $deletedRecords)
     {
         $repository = self::getRepository();
 
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             list($configKey, $dataSource) = $repository->loadConfigByKey($key);
-            if($repository->isWriteable($key, $dataSource) === true) {
-                unset($value["writeable"]);
+            if ($repository->isWriteable($key, $dataSource) === true) {
+                unset($value['writeable']);
                 $repository->saveConfig($key, $value, function ($key, $data) {
                     return [
                         'pimcore' => [
@@ -117,11 +115,12 @@ final class Config
             }
         }
 
-        if($deletedRecords) {
+        if ($deletedRecords) {
             foreach ($deletedRecords as $key) {
                 list($configKey, $dataSource) = $repository->loadConfigByKey(($key));
-                if (!empty($configKey))
+                if (!empty($configKey)) {
                     $repository->deleteData($key, $dataSource);
+                }
             }
         }
     }
@@ -412,5 +411,4 @@ final class Config
 
         return $result;
     }
-
 }

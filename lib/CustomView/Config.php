@@ -16,7 +16,6 @@
 namespace Pimcore\CustomView;
 
 use Pimcore\Config\LocationAwareConfigRepository;
-use Pimcore\Model\Exception\ConfigWriteException;
 
 /**
  * @internal
@@ -49,7 +48,7 @@ final class Config
                     if (is_array($content)) {
                         $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
 
-                        return $content["views"];
+                        return $content['views'];
                     }
                 }
 
@@ -72,6 +71,7 @@ final class Config
 
     /**
      * @return array|bool
+     *
      * @internal
      *
      */
@@ -80,14 +80,13 @@ final class Config
         $config = [];
         $repository = self::getRepository();
         $keys = $repository->fetchAllKeys();
-        foreach($keys as $key)
-        {
+        foreach ($keys as $key) {
             list($data, $dataSource) = $repository->loadConfigByKey(($key));
-            if($dataSource == LocationAwareConfigRepository::LOCATION_LEGACY) {
+            if ($dataSource == LocationAwareConfigRepository::LOCATION_LEGACY) {
                 foreach ($data as $configKey) {
-                    $configId = $configKey["id"];
-                    if(!isset($config[$configId])) {
-                        $configKey["writeable"] = $repository->isWriteable($key, $dataSource);
+                    $configId = $configKey['id'];
+                    if (!isset($config[$configId])) {
+                        $configKey['writeable'] = $repository->isWriteable($key, $dataSource);
 
                         if (!is_array($configKey['classes'] ?? [])) {
                             $flipArray = [];
@@ -107,7 +106,7 @@ final class Config
                     }
                 }
             } else {
-                $data["writeable"] = $repository->isWriteable($key, $dataSource);
+                $data['writeable'] = $repository->isWriteable($key, $dataSource);
                 $data['id'] = $data['id'] ?? $key;
 
                 if (!is_array($data['classes'] ?? [])) {
@@ -120,7 +119,7 @@ final class Config
                     $data['classes'] = $flipArray;
                 }
 
-                $config[$data["id"]] = $data;
+                $config[$data['id']] = $data;
             }
         }
         //$config = new \Pimcore\Config\Config($config, true);
@@ -131,16 +130,17 @@ final class Config
     /**
      * @param array $data
      * @param array|null $deletedRecords
+     *
      * @throws \Exception
      */
     public static function save(array $data, ?array $deletedRecords)
     {
         $repository = self::getRepository();
 
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             list($configKey, $dataSource) = $repository->loadConfigByKey($key);
-            if($repository->isWriteable($key, $dataSource) === true) {
-                unset($value["writeable"]);
+            if ($repository->isWriteable($key, $dataSource) === true) {
+                unset($value['writeable']);
                 $repository->saveConfig($key, $value, function ($key, $data) {
                     return [
                         'pimcore' => [
@@ -155,11 +155,12 @@ final class Config
             }
         }
 
-        if($deletedRecords) {
+        if ($deletedRecords) {
             foreach ($deletedRecords as $key) {
                 list($configKey, $dataSource) = $repository->loadConfigByKey(($key));
-                if (!empty($configKey))
+                if (!empty($configKey)) {
                     $repository->deleteData($key, $dataSource);
+                }
             }
         }
     }

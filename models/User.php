@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;

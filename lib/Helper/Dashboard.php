@@ -15,7 +15,6 @@
 
 namespace Pimcore\Helper;
 
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
