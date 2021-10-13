@@ -263,10 +263,8 @@ final class Config
             return [];
         }
 
-        $tmpResult = $config['elementTree'];
-        if (is_null($tmpResult)) {
-            $tmpResult = [];
-        }
+        $tmpResult = $config['elementTree'] ?? [];
+        
         $result = [];
 
         $cfConfigMapping = [];
