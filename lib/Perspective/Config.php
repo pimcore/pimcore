@@ -254,12 +254,9 @@ final class Config
     {
         $masterConfig = self::get()->toArray();
         
-        $config = $masterConfig[$name] ?? null;
-        if (!$config) {
-            $config = [];
-        }
+        $config = $masterConfig[$name] ?? static::getStandardPerspective()['default'];
 
-        $tmpResult = $config['elementTree'] ?? [];
+        $tmpResult = $config['elementTree'];
         
         $result = [];
 
