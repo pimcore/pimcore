@@ -160,7 +160,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param mixed $data
-     * @param false $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
      * @param array $params
      *
      * @throws Element\ValidationException
