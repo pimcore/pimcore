@@ -168,7 +168,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
-        if($data !== null && !$data instanceof Asset\Image) {
+        if ($data !== null && !$data instanceof Asset\Image) {
             throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
         }
     }
