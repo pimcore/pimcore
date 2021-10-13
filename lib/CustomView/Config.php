@@ -85,16 +85,41 @@ final class Config
             list($data, $dataSource) = $repository->loadConfigByKey(($key));
             if($dataSource == LocationAwareConfigRepository::LOCATION_LEGACY) {
                 foreach ($data as $configKey) {
-                    if(!isset($config[$configKey["id"]])) {
+                    $configId = $configKey["id"];
+                    if(!isset($config[$configId])) {
                         $configKey["writeable"] = $repository->isWriteable($key, $dataSource);
-                        $config[$configKey["id"]] = $configKey;
+
+                        if (!is_array($configKey['classes'] ?? [])) {
+                            $flipArray = [];
+                            $tempClasses = explode(',', $configKey['classes']);
+
+                            foreach ($tempClasses as $tempClass) {
+                                $flipArray[$tempClass] = null;
+                            }
+                            $configKey['classes'] = $flipArray;
+                        }
+
+                        if (!empty($configKey['hidden'])) {
+                            continue;
+                        }
+
+                        $config[$configId] = $configKey;
                     }
                 }
-            }
-            else {
+            } else {
                 $data["writeable"] = $repository->isWriteable($key, $dataSource);
-                if(!isset($data["id"]))
-                    $data["id"] = $key;
+                $data['id'] = $data['id'] ?? $key;
+
+                if (!is_array($data['classes'] ?? [])) {
+                    $flipArray = [];
+                    $tempClasses = explode(',', $data['classes']);
+
+                    foreach ($tempClasses as $tempClass) {
+                        $flipArray[$tempClass] = null;
+                    }
+                    $data['classes'] = $flipArray;
+                }
+
                 $config[$data["id"]] = $data;
             }
         }
