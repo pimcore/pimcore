@@ -159,15 +159,6 @@
 
 {# define stylesheets #}
 
-{% set debugSuffix = '' %}
-
-{# SCRIPT LIBRARIES #}
-{% set debugSuffix = '' %}
-
-{% if settings.disableMinifyJs %}
-    {% set debugSuffix = "-debug" %}
-{% endif %}
-
 {% set styles = [
         path('pimcore_admin_misc_admincss'),
         "/bundles/pimcoreadmin/css/icons.css",
@@ -192,6 +183,13 @@
 </style>
 
 {# define scripts #}
+
+{% set debugSuffix = '' %}
+{% if settings.disableMinifyJs %}
+    {% set debugSuffix = "-debug" %}
+{% endif %}
+
+{# SCRIPT LIBRARIES #}
 
 {% set scriptLibs = [
     "lib/class.js",
