@@ -1,5 +1,0 @@
-imports:
-    - { resource: default.yml }
-    - { resource: two_factor_authentication.yml }
-    - { resource: doctrine_migrations.yaml }
-    - { resource: flysystem.yml }

@@ -616,6 +616,7 @@
     "return_last_result": "Return last result",
     "skip_null": "Skip Null",
     "expand_children": "Expand children",
+    "collapse_children": "Collapse children",
     "multiply": "Multiply",
     "divide": "Divide",
     "apply_to_all_objects": "Apply to all",
@@ -951,5 +952,6 @@
     "save_draft": "Save draft",
     "selected_grid_columns": "Selected grid columns",
     "ungrouped": "ungrouped",
-    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?"
+    "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?",
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs."
 }

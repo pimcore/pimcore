@@ -47,7 +47,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @var Model\DataObject\Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @internal

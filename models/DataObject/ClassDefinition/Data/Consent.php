@@ -196,6 +196,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 $note = $service->insertRevokeNote($object, $this->getName());
             }
             $noteId = $note->getId();
+        } elseif ($oldData instanceof DataObject\Data\Consent) {
+            $noteId = $oldData->getNoteId();
         }
 
         return new DataObject\Data\Consent($data, $noteId);

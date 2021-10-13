@@ -25,7 +25,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**

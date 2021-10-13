@@ -520,10 +520,13 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .asset_folder_preview .thumb{
-    width: 250px;
+    max-width: 250px;
     max-height: 220px;
 }
 
@@ -1472,6 +1475,10 @@ span.warning {
 
 .pimcore_main_toolbar .x-btn .x-btn-inner {
     color: #fff;
+}
+
+.pimcore_grid_row_disabled {
+    background-color: #d0d0d0;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled {

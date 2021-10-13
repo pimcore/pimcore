@@ -33,6 +33,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -465,7 +466,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
             $objectData['versions'] = array_splice($objectVersions, -1, 1);
-            $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
+            $objectData['scheduledTasks'] = array_map(
+                static function (Task $task) {
+                    return $task->getObjectVars();
+                },
+                $objectFromDatabase->getScheduledTasks()
+            );
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
             $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
@@ -2322,8 +2328,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

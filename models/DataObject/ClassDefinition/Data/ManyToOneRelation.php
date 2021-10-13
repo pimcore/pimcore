@@ -221,7 +221,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $type = Element\Service::getType($data);
+            $type = Element\Service::getElementType($data);
             $id = $data->getId();
 
             return [[
@@ -411,7 +411,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
         }
     }
 
@@ -422,7 +422,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return Element\Service::getType($data).':'.$data->getRealFullPath();
+            return Element\Service::getElementType($data).':'.$data->getRealFullPath();
         }
 
         return '';
@@ -560,7 +560,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function normalize($value, $params = [])
     {
         if ($value) {
-            $type = Element\Service::getType($value);
+            $type = Element\Service::getElementType($value);
             $id = $value->getId();
 
             return [

@@ -15,6 +15,8 @@
 
 namespace Pimcore;
 
+use League\Flysystem\FilesystemOperator;
+
 class File
 {
     /**
@@ -237,5 +239,26 @@ class File
             uniqid() . '-' .  bin2hex(random_bytes(15)),
             $fileExtension ?: 'tmp'
         );
+    }
+
+    /**
+     * @param FilesystemOperator $storage
+     * @param string $storagePath
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath)
+    {
+        if ($storagePath === '.') {
+            return;
+        }
+
+        $contents = $storage->listContents($storagePath);
+        $count = iterator_count($contents);
+        if ($count === 0) {
+            $storage->deleteDirectory($storagePath);
+            $storagePath = dirname($storagePath, 1);
+            self::recursiveDeleteEmptyDirs($storage, $storagePath);
+        }
     }
 }

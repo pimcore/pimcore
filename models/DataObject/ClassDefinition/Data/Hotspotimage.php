@@ -336,7 +336,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -651,7 +651,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
             $image = $value->getImage();
             if ($image) {
-                $type = Element\Service::getType($image);
+                $type = Element\Service::getElementType($image);
                 $id = $image->getId();
                 $result['image'] = [
                     'type' => $type,

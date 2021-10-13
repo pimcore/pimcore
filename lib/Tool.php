@@ -278,7 +278,7 @@ final class Tool
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
             if (\Pimcore::hasContainer()) {
-                $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+                $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
             } else {
                 if (null !== self::$currentRequest) {
                     return self::$currentRequest;
@@ -297,7 +297,7 @@ final class Tool
     public static function isFrontend(Request $request = null): bool
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
         }
 
         if (null === $request) {

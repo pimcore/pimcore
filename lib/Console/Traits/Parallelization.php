@@ -32,6 +32,7 @@ trait Parallelization
     use WebmozartParallelization
     {
         WebmozartParallelization::configureParallelization as parentConfigureParallelization;
+
     }
 
     protected static function configureParallelization(Command $command): void

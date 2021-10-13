@@ -150,7 +150,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             labelWidth: labelWidth,
             layout: 'hbox',
             items: items,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0
@@ -207,7 +207,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 iconCls: "pimcore_icon_open",
                 handler: this.openElement.bind(this)
             }],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

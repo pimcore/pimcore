@@ -76,7 +76,7 @@ Added links will be handled by the web link component and injected into the resp
 (this setting is enabled by default from Pimcore's core config):
 
 ```yaml
-# config.yml
+# config.yaml
 
 framework:
     web_links:

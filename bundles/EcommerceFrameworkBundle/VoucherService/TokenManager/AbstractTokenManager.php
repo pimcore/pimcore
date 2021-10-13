@@ -25,12 +25,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
-    // @var AbstractVoucherTokenType
+    /**
+     * @var AbstractVoucherTokenType
+     */
     public $configuration;
 
+    /**
+     * @var int
+     */
     public $seriesId;
 
-    // @var AbstractVoucherSeries
+    /**
+     * @var AbstractVoucherSeries
+     */
     public $series;
 
     /**
@@ -39,8 +46,10 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     public function __construct(AbstractVoucherTokenType $configuration)
     {
         $this->configuration = $configuration;
-        $this->seriesId = $configuration->getObject()->getId();
-        $this->series = $configuration->getObject();
+        /** @var AbstractVoucherSeries $series */
+        $series = $configuration->getObject();
+        $this->seriesId = $series->getId();
+        $this->series = $series;
     }
 
     /**
@@ -59,7 +68,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      * @param string $code
      * @param CartInterface $cart
      *
-     * @return mixed
+     * @return bool
      *
      * @throws VoucherServiceException When validation fails for any reason
      */
@@ -68,6 +77,8 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         $this->checkVoucherSeriesIsPublished($code);
         $this->checkAllowOncePerCart($code, $cart);
         $this->checkOnlyToken($cart);
+
+        return true;
     }
 
     /**

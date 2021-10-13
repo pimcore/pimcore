@@ -36,7 +36,7 @@ class PimcoreHeaderListener implements EventSubscriberInterface
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             $response = $event->getResponse();
             $response->headers->set('X-Powered-By', 'pimcore', true);
         }

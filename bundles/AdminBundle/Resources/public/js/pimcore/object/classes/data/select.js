@@ -128,7 +128,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     renderer: function (value) {
                         return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
                     },
-                    width: 200
+                    flex: 1
                 },
                 {
                     text: t("value"),
@@ -137,7 +137,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     editor: new Ext.form.TextField({
                         allowBlank: false
                     }),
-                    width: 200
+                    flex: 1
                 },
                 {
                     xtype: 'actioncolumn',

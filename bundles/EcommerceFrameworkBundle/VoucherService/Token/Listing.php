@@ -385,6 +385,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      * <p>
      * The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->getTotalCount();

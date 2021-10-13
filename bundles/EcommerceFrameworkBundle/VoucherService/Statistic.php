@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method Statistic\Dao getDao()
  */
@@ -47,7 +49,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
             $config->getDao()->getById($id);
 
             return $config;
-        } catch (\Exception $ex) {
+        } catch (NotFoundException $ex) {
             //            Logger::debug($ex->getMessageN());
             return false;
         }

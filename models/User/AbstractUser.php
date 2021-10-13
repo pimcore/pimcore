@@ -70,7 +70,7 @@ class AbstractUser extends Model\AbstractModel
             }
 
             return $user;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -94,8 +94,6 @@ class AbstractUser extends Model\AbstractModel
      * @param string $name
      *
      * @return static|null
-     *
-     * @throws \Exception
      */
     public static function getByName($name)
     {

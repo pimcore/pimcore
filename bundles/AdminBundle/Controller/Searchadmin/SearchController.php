@@ -156,10 +156,15 @@ class SearchController extends AdminController
                 : null;
 
             $join = '';
+            $localizedJoin = '';
             foreach ($bricks as $ob) {
                 $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
-
                 $join .= ' `' . $ob . '`';
+
+                if ($localizedConditionFilters) {
+                    $localizedJoin = $join . ' ON `' . $ob . '`.o_id = `object_localized_data_' . $class->getId() . '`.ooo_id';
+                }
+
                 $join .= ' ON `' . $ob . '`.o_id = `object_' . $class->getId() . '`.o_id';
             }
 
@@ -172,7 +177,7 @@ class SearchController extends AdminController
             if (null !== $localizedConditionFilters) {
                 //add condition query for localised fields
                 $conditionParts[] = '( id IN (SELECT `object_localized_data_' . $class->getId()
-                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $join . ' WHERE '
+                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $localizedJoin . ' WHERE '
                     . $localizedConditionFilters . ' GROUP BY ooo_id ' . ') )';
             }
         }

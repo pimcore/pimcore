@@ -626,22 +626,13 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        $dir = dirname($file);
-        if (!is_dir($dir)) {
-            File::mkdir($dir);
-        }
+        File::mkdir(dirname($file));
 
         if (\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
             $im->load($tmpFile);
-            $im->scaleByWidth(400);
-            $im->save($file, 'jpeg', 85);
-
-            // HDPi version
-            $im = \Pimcore\Image::getInstance();
-            $im->load($tmpFile);
             $im->scaleByWidth(800);
-            $im->save($doc->getPreviewImageFilesystemPath(true), 'jpeg', 85);
+            $im->save($file, 'jpeg', 85);
 
             unlink($tmpFile);
 

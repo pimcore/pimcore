@@ -126,7 +126,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             try {
                 $key = Key::loadFromAsciiSafeString($key);
             } catch (\Exception $e) {
-                throw new \Exception('could not load key');
+                throw new \Exception('Could not find config "pimcore.encryption.secret". Please run "vendor/bin/generate-defuse-key" from command line and add the result to config/config.yaml');
             }
             // store it in raw binary mode to preserve space
             if ($this->delegate instanceof BeforeEncryptionMarshallerInterface || method_exists($this->delegate, 'marshalBeforeEncryption')) {

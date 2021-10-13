@@ -62,7 +62,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

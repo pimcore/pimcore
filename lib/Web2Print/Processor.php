@@ -19,14 +19,15 @@ use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Tool;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 abstract class Processor
 {
@@ -78,20 +79,12 @@ abstract class Processor
         $this->saveJobConfigObjectFile($jobConfig);
         $this->updateStatus($documentId, 0, 'prepare_pdf_generation');
 
-        $args = ['-p ' . $jobConfig->documentId];
-
-        $env = \Pimcore\Config::getEnvironment();
-        if ($env !== false) {
-            $args[] = '--env=' . $env;
-        }
-
-        $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' pimcore:web2print:pdf-creation ' . implode(' ', $args);
-
-        Logger::info($cmd);
         $disableBackgroundExecution = $config['disableBackgroundExecution'] ?? false;
 
         if (!$disableBackgroundExecution) {
-            Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log');
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new GenerateWeb2PrintPdfMessage($jobConfig->documentId)
+            );
 
             return true;
         }

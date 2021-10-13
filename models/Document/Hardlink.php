@@ -24,7 +24,7 @@ use Pimcore\Model\Redirect;
  */
 class Hardlink extends Document
 {
-    use Document\Traits\ScheduledTasksTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * {@inheritdoc}

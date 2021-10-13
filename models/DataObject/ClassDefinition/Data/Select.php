@@ -38,8 +38,8 @@ class Select extends Data implements
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
-
     use DataObject\Traits\DefaultValueTrait;
+    use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
      * Static type of this element
@@ -452,16 +452,8 @@ class Select extends Data implements
      */
     public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
     {
-        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
-            $this->getOptionsProviderClass(),
-            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
-        );
-
-        if ($optionsProvider) {
-            $context['fieldname'] = $this->getName();
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            $this->setOptions($options);
-        }
+        $this->doEnrichDefinitionDefinition(null, $this->getName(),
+            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
 
         return $this;
     }
@@ -471,33 +463,8 @@ class Select extends Data implements
      */
     public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
     {
-        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
-            $this->getOptionsProviderClass(),
-            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
-        );
-        if ($optionsProvider) {
-            $context['object'] = $object;
-            if ($object) {
-                $context['class'] = $object->getClass();
-            }
-
-            $context['fieldname'] = $this->getName();
-            if (!isset($context['purpose'])) {
-                $context['purpose'] = 'layout';
-            }
-
-            $inheritanceEnabled = DataObject::getGetInheritedValues();
-            DataObject::setGetInheritedValues(true);
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            DataObject::setGetInheritedValues($inheritanceEnabled);
-            $this->setOptions($options);
-
-            $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
-            $this->setDefaultValue($defaultValue);
-
-            $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
-            $this->dynamicOptions = !$hasStaticOptions;
-        }
+        $this->doEnrichDefinitionDefinition($object, $this->getName(),
+            'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
 
         return $this;
     }
@@ -607,6 +574,7 @@ class Select extends Data implements
     /**
      * @return $this
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {

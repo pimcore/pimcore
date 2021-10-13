@@ -472,19 +472,19 @@ final class Translation extends AbstractModel
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
                             if (in_array($key, $languages)) {
-                                $currentTranslation = $t->getTranslation($key);
+                                $currentTranslation = $t->hasTranslation($key) ? $t->getTranslation($key) : null;
                                 if ($replaceExistingTranslations) {
                                     $t->addTranslation($key, $value);
                                     if ($currentTranslation != $value) {
                                         $dirty = true;
                                     }
                                 } else {
-                                    if (!$t->getTranslation($key)) {
+                                    if (!$currentTranslation) {
                                         $t->addTranslation($key, $value);
                                         if ($currentTranslation != $value) {
                                             $dirty = true;
                                         }
-                                    } elseif ($t->getTranslation($key) != $value && $value) {
+                                    } elseif ($currentTranslation != $value && $value) {
                                         $delta[] =
                                             [
                                                 'lg' => $key,

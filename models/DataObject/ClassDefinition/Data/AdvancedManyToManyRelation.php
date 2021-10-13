@@ -512,7 +512,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
                 }
             }
         }
@@ -529,7 +529,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo) . ':' . $eo->getRealFullPath();
+                    $paths[] = Element\Service::getElementType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
 
@@ -854,7 +854,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'element' => [
@@ -1064,7 +1064,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+        return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
 
     /**
@@ -1072,6 +1072,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+        return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
 }

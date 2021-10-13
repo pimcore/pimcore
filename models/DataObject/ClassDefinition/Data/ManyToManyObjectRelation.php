@@ -385,7 +385,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                         $id = '??';
                     }
 
-                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId(), null, null);
+                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId());
                 }
             }
 
@@ -657,7 +657,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if (is_array($value)) {
             $result = [];
             foreach ($value as $element) {
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'type' => $type,

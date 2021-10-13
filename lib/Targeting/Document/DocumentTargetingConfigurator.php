@@ -112,11 +112,11 @@ class DocumentTargetingConfigurator
      */
     private function isConfiguredByAdminParam(TargetingDocumentInterface $document): bool
     {
-        if (!$this->requestHelper->hasMasterRequest()) {
+        if (!$this->requestHelper->hasMainRequest()) {
             return false;
         }
 
-        $request = $this->requestHelper->getMasterRequest();
+        $request = $this->requestHelper->getMainRequest();
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
             return false;
         }

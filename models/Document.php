@@ -853,7 +853,7 @@ class Document extends Element\AbstractElement
         }
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
-        $masterRequest = $requestStack->getMasterRequest();
+        $masterRequest = $requestStack->getMainRequest();
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
@@ -1280,7 +1280,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent document instance.
      *
-     * @param Document $parent
+     * @param Document|null $parent
      *
      * @return Document
      */

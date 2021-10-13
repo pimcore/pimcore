@@ -28,7 +28,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
@@ -328,7 +327,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param float $data
+     * @param array $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *

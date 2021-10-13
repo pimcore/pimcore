@@ -31,6 +31,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\AbstractObject\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
@@ -433,10 +434,5 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         parent::delete();
-    }
-
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'object']);
     }
 }

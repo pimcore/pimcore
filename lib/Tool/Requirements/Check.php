@@ -131,6 +131,7 @@ final class Check implements \ArrayAccess
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->$offset);
@@ -141,6 +142,7 @@ final class Check implements \ArrayAccess
      *
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->{'get'.$offset}();
@@ -150,6 +152,7 @@ final class Check implements \ArrayAccess
      * @param string $offset
      * @param string $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->{'set'.$offset}($value);
@@ -158,6 +161,7 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->$offset);

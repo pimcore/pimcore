@@ -23,6 +23,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
@@ -55,7 +56,20 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         return [
             KernelEvents::CONTROLLER => ['onKernelController', 15], // has to be after DocumentFallbackListener
             KernelEvents::RESPONSE => 'onKernelResponse',
+            KernelEvents::REQUEST => ['onKernelRequest', 700],
         ];
+    }
+
+    public function onKernelRequest(RequestEvent $event)
+    {
+        // set the variables as soon as possible, so that we're not getting troubles in
+        // onKernelController() if the twig environment was already initialized before
+        // defining global variables is only possible before the twig environment was initialized
+        // however you can change the value of the variable at any time later on
+        if ($event->isMainRequest()) {
+            $this->twig->addGlobal('document', null);
+            $this->twig->addGlobal('editmode', false);
+        }
     }
 
     public function onKernelController(ControllerEvent $event)

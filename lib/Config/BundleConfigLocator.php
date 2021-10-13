@@ -26,18 +26,20 @@ use Symfony\Component\HttpKernel\KernelInterface;
  * Locates configs from bundles if Resources/config/pimcore exists.
  *
  * Will first try to locate <name>_<environment>.<suffix> and fall back to <name>.<suffix> if the
- * environment specific lookup didn't find anything. All known suffixes are searched, so e.g. if a config.yml
+ * environment specific lookup didn't find anything. All known suffixes are searched, so e.g. if a config.yaml
  * and a config.php exist, both will be used.
  *
  * Example: lookup for config will try to locate the following files from every bundle (will return all files it finds):
  *
  *  - Resources/config/pimcore/config_dev.php
+ *  - Resources/config/pimcore/config_dev.yaml
  *  - Resources/config/pimcore/config_dev.yml
  *  - Resources/config/pimcore/config_dev.xml
  *
  * If the previous lookup didn't return any results, it will fall back to:
  *
  *  - Resources/config/pimcore/config.php
+ *  - Resources/config/pimcore/config.yaml
  *  - Resources/config/pimcore/config.yml
  *  - Resources/config/pimcore/config.xml
  */
@@ -72,7 +74,7 @@ class BundleConfigLocator
                 continue;
             }
 
-            // try to find environment specific file first, fall back to generic one if none found (e.g. config_dev.yml > config.yml)
+            // try to find environment specific file first, fall back to generic one if none found (e.g. config_dev.yaml > config.yaml)
             $finder = $this->buildContainerConfigFinder($name, $directory, true);
             if ($finder->count() === 0) {
                 $finder = $this->buildContainerConfigFinder($name, $directory, false);
