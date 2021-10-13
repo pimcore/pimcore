@@ -35,18 +35,14 @@ class Xliff12Escaper
         // remove nasty device control characters
         $content = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $content);
 
-        $replacement = ['%_%_%lt;%_%_%', '%_%_%gt;%_%_%'];
-        $content = str_replace(['&lt;', '&gt;'], $replacement, $content);
-        $content = html_entity_decode($content, null, 'UTF-8');
-
         if (!preg_match_all('/<([^>]+)>([^<]+)?/', $content, $matches)) {
             // return original content if it doesn't contain HTML tags
-            return $this->toCData($content);
+            return $this->encodeData($content);
         }
 
         // Handle text before the first HTML tag
         $firstTagPosition = strpos($content, '<');
-        $preText = ($firstTagPosition > 0) ? $this->toCData(substr($content, 0, $firstTagPosition)) : '';
+        $preText = ($firstTagPosition > 0) ? $this->encodeData(substr($content, 0, $firstTagPosition)) : '';
 
         foreach ($matches[0] as $match) {
             $parts = explode('>', $match);
@@ -56,21 +52,20 @@ class Xliff12Escaper
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);
                         if (in_array($tagName, self::SELFCLOSING_TAGS)) {
-                            $part = '<ph id="' . $count . '">' . $this->toCData($part) . '</ph>';
+                            $part = '<ph id="' . $count . '">' . $this->encodeData($part) . '</ph>';
 
                             $count++;
                         } elseif (strpos($tag[1], '/') === false) {
                             $openTags[$count] = ['tag' => $tagName, 'id' => $count];
-                            $part = '<bpt id="' . $count . '">' . $this->toCData($part) . '</bpt>';
+                            $part = '<bpt id="' . $count . '">' . $this->encodeData($part) . '</bpt>';
 
                             $count++;
                         } else {
                             $closingTag = array_pop($openTags);
-                            $part = '<ept id="' . $closingTag['id'] . '">' . $this->toCData($part) . '</ept>';
+                            $part = '<ept id="' . $closingTag['id'] . '">' . $this->encodeData($part) . '</ept>';
                         }
                     } else {
-                        $part = str_replace($replacement, ['<', '>'], $part);
-                        $part = $this->toCData($part);
+                        $part = $this->encodeData($part);
                     }
 
                     if (!empty($part)) {
@@ -126,8 +121,8 @@ class Xliff12Escaper
         return $content;
     }
 
-    private function toCData(string $data): string
+    private function encodeData(string $data): string
     {
-        return sprintf('<![CDATA[%s]]>', $data);
+        return htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED, 'UTF-8', true);
     }
 }
