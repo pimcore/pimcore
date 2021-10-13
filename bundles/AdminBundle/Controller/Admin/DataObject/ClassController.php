@@ -1904,7 +1904,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $textLayout = new DataObject\ClassDefinition\Layout\Text();
 
         $context = [
-          'data' => $request->get('renderingData')
+          'data' => $request->get('renderingData'),
         ];
 
         if ($renderingClass = $request->get('renderingClass')) {

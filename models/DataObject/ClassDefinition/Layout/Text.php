@@ -42,7 +42,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      */
     public $renderingData;
 
-
     /**
      * @var bool
      */
