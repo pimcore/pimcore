@@ -705,11 +705,10 @@
 <!-- internal scripts -->
 {% if settings.disableMinifyJs %}
     {% for scriptUrl in scripts %}
-    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
+        <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
 {% else %}
-    {% set minimizedScriptParams = pimcore_minimize_scripts(scripts) %}
-    <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
+    {{ pimcore_minimize_scripts(scripts)|raw }}
 {% endif %}
 
 {# load plugin scripts #}
@@ -723,9 +722,14 @@
     {% set pluginDcValue = 1 %}
 {% endif %}
 
-{% for pluginJsPath in pluginJsPaths %}
-    <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
-{% endfor %}
+<!-- bundle scripts -->
+{% if settings.disableMinifyJs %}
+    {% for pluginJsPath in pluginJsPaths %}
+        <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
+    {% endfor %}
+{% else %}
+    {{ pimcore_minimize_scripts(pluginJsPaths)|raw }}
+{% endif %}
 
 {% for pluginCssPath in pluginCssPaths %}
     <link rel="stylesheet" type="text/css" href="{{ pluginCssPath }}?_dc={{ pluginDcValue }}"/>
