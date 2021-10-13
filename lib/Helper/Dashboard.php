@@ -85,7 +85,7 @@ final class Dashboard
             }
 
             if (empty($this->dashboards)) {
-                $perspectiveCfg = Config::getRuntimePerspective();
+                $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective();
                 $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
                 $this->dashboards = $dasboardCfg['predefined'] ?? [];
             }
@@ -163,7 +163,7 @@ final class Dashboard
      */
     public function getDisabledPortlets()
     {
-        $perspectiveCfg = Config::getRuntimePerspective($this->user);
+        $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective($this->user);
         $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
 
         return $dasboardCfg['disabledPortlets'] ?? [];

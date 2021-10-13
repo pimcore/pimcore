@@ -2320,3 +2320,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 .x-body .sf-minitoolbar a {
     width: 48px;
 }
+
+.pimcore_tree_node_disabled {
+    color: #8e8e8e;
+}

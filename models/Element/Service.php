@@ -1010,7 +1010,7 @@ class Service extends Model\AbstractModel
      */
     public static function getCustomViewById($id)
     {
-        $customViews = Tool::getCustomViewConfig();
+        $customViews = \Pimcore\CustomView\Config::get();
         if ($customViews) {
             foreach ($customViews as $customView) {
                 if ($customView['id'] == $id) {

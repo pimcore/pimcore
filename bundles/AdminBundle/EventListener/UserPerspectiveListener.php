@@ -86,7 +86,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
         if ($requestedPerspective) {
             if ($requestedPerspective !== $user->getActivePerspective()) {
-                $existingPerspectives = array_keys(Config::getPerspectivesConfig()->toArray());
+                $existingPerspectives = array_keys(\Pimcore\Perspective\Config::get()->toArray());
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $this->logger->warning('Requested perspective {perspective} for {user} is not does not exist.', [
                         'user' => $user->getName(),

@@ -33,6 +33,8 @@ This feature is currently supported by the following configurations:
 - Predefined properties
 - Predefined asset metadata
 - Static Routes
+- Perspectives
+- Custom views
 
 
 You can change the write target individually for each type by using environment variables.
@@ -51,4 +53,6 @@ PIMCORE_WRITE_TARGET_WEB_TO_PRINT=settings-store
 PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES=settings-store
 PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA=settings-store
 PIMCORE_WRITE_TARGET_STATICROUTES=settings-store
+PIMCORE_WRITE_TARGET_PERSPECTIVES=settings-store
+PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
 ```
