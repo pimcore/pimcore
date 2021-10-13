@@ -254,11 +254,7 @@ final class Config
     {
         $masterConfig = self::get()->toArray();
         
-        if (!array_key_exists($name, $masterConfig)) {
-            return [];
-        }
-
-        $config = $masterConfig[$name];
+        $config = $masterConfig[$name] ?? null;
         if (!$config) {
             $config = [];
         }
