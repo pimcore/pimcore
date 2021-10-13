@@ -6,6 +6,7 @@
 **Important notice**: writing configs to `yaml` is only supported if the kernel is in debug mode, because changes of the config need a rebuild of the container configuration.  
 If you require to change the config on production environments we recommend to change the storage to `settings-store` as described [here](../../21_Deployment/03_Configuration_Environments.md). 
 - [Asset] Pimcore now automatically supports AVIF image format for thumbnails using `auto` format (only `Imagick`). To disable AVIF please [follow this instructions](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).  
+- [DataObject API] There is change in behavior when validating the inherited dataobjects & variants. As before, the inherited object gets saved with invalid attribute value, if the parent object has a valid value for the same attribute. Now, the API will throw validation exception, if the inherited object has an invalid value. please see https://github.com/pimcore/pimcore/pull/10529 
 
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
