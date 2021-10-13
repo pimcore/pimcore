@@ -258,10 +258,6 @@ final class Config
         if (!$config) {
             $config = [];
         }
-        
-        if (!array_key_exists('elementTree', $config)) {
-            return [];
-        }
 
         $tmpResult = $config['elementTree'] ?? [];
         
