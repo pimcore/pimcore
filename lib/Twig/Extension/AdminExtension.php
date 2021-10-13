@@ -45,7 +45,7 @@ class AdminExtension extends AbstractExtension
         $scriptContents = '';
         foreach ($paths as $path) {
             $found = false;
-            foreach([PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/' . $path,
+            foreach ([PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/' . $path,
                         PIMCORE_WEB_ROOT . $path,
                     ] as $fullPath) {
                 if (file_exists($fullPath)) {
@@ -54,7 +54,7 @@ class AdminExtension extends AbstractExtension
                 }
             }
 
-            if(!$found) {
+            if (!$found) {
                 $returnHtml .= $this->getScriptTag($path);
             }
         }
