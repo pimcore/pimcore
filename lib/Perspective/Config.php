@@ -253,10 +253,18 @@ final class Config
     protected static function getRuntimeElementTreeConfig($name)
     {
         $masterConfig = self::get()->toArray();
+        
+        if (!array_key_exists($name, $masterConfig)) {
+            return [];
+        }
 
         $config = $masterConfig[$name];
         if (!$config) {
             $config = [];
+        }
+        
+        if (!array_key_exists('elementTree', $config)) {
+            return [];
         }
 
         $tmpResult = $config['elementTree'];
