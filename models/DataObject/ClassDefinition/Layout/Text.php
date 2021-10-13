@@ -42,6 +42,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      */
     public $renderingData;
 
+
     /**
      * @var bool
      */
@@ -124,12 +125,21 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->getRenderingClass()
         );
 
+        $context['fieldname'] = $this->getName();
+        $context['layout'] = $this;
+
         if ($renderer instanceof DynamicTextLabelInterface) {
-            $context['fieldname'] = $this->getName();
-            $context['layout'] = $this;
             $result = $renderer->renderLayoutText($this->renderingData, $object, $context);
             $this->html = $result;
         }
+
+        $twig = \Pimcore::getContainer()->get('twig');
+        $template = $twig->createTemplate($this->html);
+        $this->html = $template->render(array_merge($context,
+            [
+                'object' => $object,
+            ]
+        ));
 
         return $this;
     }

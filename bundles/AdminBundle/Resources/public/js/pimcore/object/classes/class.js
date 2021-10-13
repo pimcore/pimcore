@@ -53,7 +53,8 @@ pimcore.object.classes.klass = Class.create({
                 text: t("general_settings"),
                 leaf: true,
                 iconCls: "pimcore_icon_class",
-                isTarget: true
+                isTarget: true,
+                className: this.data.name
             },
             listeners: this.getTreeNodeListeners(),
             viewConfig: {
