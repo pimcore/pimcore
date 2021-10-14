@@ -82,6 +82,11 @@ final class Config
                 $config = array_merge($config, [$key => $configKey[0]]);
             }
         }
+
+        if (!count($config)) {
+            $config = static::getStandardPerspective();
+        }
+
         $config = new \Pimcore\Config\Config($config);
 
         return $config;
