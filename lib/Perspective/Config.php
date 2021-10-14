@@ -259,15 +259,10 @@ final class Config
     {
         $masterConfig = self::get()->toArray();
 
-        $config = $masterConfig[$name];
-        if (!$config) {
-            $config = [];
-        }
+        $config = $masterConfig[$name] ?? [];
 
-        $tmpResult = $config['elementTree'];
-        if (is_null($tmpResult)) {
-            $tmpResult = [];
-        }
+        $tmpResult = $config['elementTree'] ?? [];
+
         $result = [];
 
         $cfConfigMapping = [];
