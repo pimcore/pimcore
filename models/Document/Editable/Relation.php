@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relation extends Model\Document\Editable implements IdRewriterInterface
+class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * ID of the source object
@@ -84,11 +84,9 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $this->setElement();
 

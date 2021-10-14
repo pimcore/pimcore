@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface
+class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * @internal
@@ -93,11 +93,9 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $this->setElements();
         $return = [];

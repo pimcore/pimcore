@@ -146,11 +146,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $image = $this->getImage();
 

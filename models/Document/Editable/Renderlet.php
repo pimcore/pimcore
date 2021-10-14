@@ -27,7 +27,7 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Renderlet extends Model\Document\Editable implements IdRewriterInterface
+class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * Contains the ID of the linked object
@@ -86,11 +86,9 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [

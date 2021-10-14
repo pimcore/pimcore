@@ -22,7 +22,7 @@ use Pimcore\Tool\Text;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface
+class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * Contains the text
@@ -58,11 +58,9 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $document = $this->getDocument();
 

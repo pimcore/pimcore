@@ -189,7 +189,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected function getEditmodeData()
     {
         // get configuration data for admin
-        if (method_exists($this, 'getDataEditmode')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($this instanceof Document\Editable\EditmodeDataInterface || method_exists($this, 'getDataEditmode')) {
+            if (!$this instanceof Document\Editable\EditmodeDataInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        'Implement the %s interface instead.', Document\Editable\EditmodeDataInterface::class));
+            }
             $data = $this->getDataEditmode();
         } else {
             $data = $this->getData();

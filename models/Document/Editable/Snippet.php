@@ -26,7 +26,7 @@ use Pimcore\Tool\DeviceDetector;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Snippet extends Model\Document\Editable
+class Snippet extends Model\Document\Editable implements EditmodeDataInterface
 {
     /**
      * Contains the ID of the linked snippet
@@ -79,11 +79,9 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         if ($this->snippet instanceof Document\Snippet) {
             return [

@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Link extends Model\Document\Editable implements IdRewriterInterface
+class Link extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * Contains the data for the link
@@ -54,11 +54,9 @@ class Link extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @see EditableInterface::getDataEditmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
