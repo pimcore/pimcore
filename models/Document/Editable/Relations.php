@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator
+class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface
 {
     /**
      * @internal
@@ -219,19 +219,9 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds(array $idMapping) /** : void */
     {
         // reset existing elements store
         $this->elements = [];

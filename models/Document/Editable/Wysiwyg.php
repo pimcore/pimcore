@@ -22,7 +22,7 @@ use Pimcore\Tool\Text;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Wysiwyg extends Model\Document\Editable
+class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface
 {
     /**
      * Contains the text
@@ -130,22 +130,9 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
-     *
-     * @return void
-     *
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds(array $idMapping) /** : void */
     {
         $html = new DomCrawler($this->text);
 

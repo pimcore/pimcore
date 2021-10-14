@@ -24,7 +24,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable
+class Video extends Model\Document\Editable implements IdRewriterInterface
 {
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
@@ -1009,19 +1009,9 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds(array $idMapping) /** : void */
     {
         if ($this->type == 'asset' && array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);
