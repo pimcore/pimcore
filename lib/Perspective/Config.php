@@ -85,6 +85,7 @@ final class Config
 
         if (!count($config)) {
             $config = static::getStandardPerspective();
+            $config['default']['writeable'] = $repository->isWriteable();
         }
 
         $config = new \Pimcore\Config\Config($config);
@@ -169,8 +170,16 @@ final class Config
         $cvConfigs = \Pimcore\CustomView\Config::get();
         if ($cvConfigs) {
             foreach ($cvConfigs as $cvConfig) {
-                $cvConfig['type'] = 'customview';
-                $elementTree[] = $cvConfig;
+                if (isset($cvConfig['id'])) {
+                    $elementTree[] = [
+                        'type' => 'customview',
+                        'id' => $cvConfig['id'],
+                        'position' => $cvConfig['position'] ?? 'left',
+                        'expanded' => $cvConfig['expanded'] ?? false,
+                        'hidden' => $cvConfig['hidden'] ?? false,
+                        'sort' => $cvConfig['sort'] ?? 999,
+                    ];
+                }
             }
         }
 
