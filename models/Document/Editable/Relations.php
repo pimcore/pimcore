@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface
+class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadInterface
 {
     /**
      * @internal
@@ -253,7 +253,10 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $finalVars;
     }
 
-    public function load()
+    /**
+     * {@inheritdoc}
+     */
+    public function load() /** : void */
     {
         $this->setElements();
     }

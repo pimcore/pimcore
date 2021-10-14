@@ -23,6 +23,7 @@ use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
+use Pimcore\Model\Document\Editable\LazyLoadInterface;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
@@ -330,7 +331,13 @@ class Service extends Model\Element\Service
 
         if ($doc instanceof Document\PageSnippet) {
             foreach ($doc->getEditables() as $name => $data) {
-                if (method_exists($data, 'load')) {
+                //TODO Pimcore 11: remove method_exists BC layer
+                if ($data instanceof LazyLoadInterface || method_exists($data, 'load')) {
+                    if (!$data instanceof LazyLoadInterface) {
+                        trigger_deprecation('pimcore/pimcore', '10.1',
+                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                                'Implement the %s interface instead.', LazyLoadInterface::class));
+                    }
                     $data->load();
                 }
             }

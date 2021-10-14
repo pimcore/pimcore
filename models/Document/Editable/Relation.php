@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
+class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadInterface
 {
     /**
      * ID of the source object
@@ -277,9 +277,9 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->element) {
             $this->setElement();

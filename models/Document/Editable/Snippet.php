@@ -26,7 +26,7 @@ use Pimcore\Tool\DeviceDetector;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Snippet extends Model\Document\Editable implements EditmodeDataInterface
+class Snippet extends Model\Document\Editable implements EditmodeDataInterface, LazyLoadInterface
 {
     /**
      * Contains the ID of the linked snippet
@@ -237,9 +237,9 @@ class Snippet extends Model\Document\Editable implements EditmodeDataInterface
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->snippet && $this->id) {
             $this->snippet = Document\Snippet::getById($this->id);

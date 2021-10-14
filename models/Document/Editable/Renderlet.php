@@ -27,7 +27,7 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
+class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadInterface
 {
     /**
      * Contains the ID of the linked object
@@ -306,9 +306,9 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->o) {
             $this->setElement();
