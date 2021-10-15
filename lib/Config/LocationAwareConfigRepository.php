@@ -260,9 +260,34 @@ class LocationAwareConfigRepository
             }
         }
 
+        $this->searchAndReplaceMissingParameters($data);
+
         File::put($yamlFilename, Yaml::dump($data, 50));
 
         $this->invalidateConfigCache();
+    }
+
+    private function searchAndReplaceMissingParameters(array &$data): void
+    {
+        $container = \Pimcore::getContainer();
+
+        foreach ($data as $key => &$value) {
+            if (is_array($value)) {
+                $this->searchAndReplaceMissingParameters($value);
+            }
+
+            if (!is_scalar($value)) {
+                continue;
+            }
+
+            if (preg_match('/%([^%\s]+)%/', $value, $match)) {
+                $key = $match[1];
+
+                if (!$container->hasParameter($key)) {
+                    $value = preg_replace('/%([^%\s]+)%/', '%%$1%%', $value);
+                }
+            }
+        }
     }
 
     /**
