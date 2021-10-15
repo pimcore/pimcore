@@ -274,6 +274,7 @@ class LocationAwareConfigRepository
         foreach ($data as $key => &$value) {
             if (is_array($value)) {
                 $this->searchAndReplaceMissingParameters($value);
+
                 continue;
             }
 
