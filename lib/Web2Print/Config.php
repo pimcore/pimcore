@@ -91,7 +91,7 @@ final class Config
         $repository = self::getRepository();
 
         list($config, $dataSource) = $repository->loadConfigByKey(self::CONFIG_ID);
-        $config = new \Pimcore\Config\Config($config);
+        $config = new \Pimcore\Config\Config($config ?? []);
 
         return $config;
     }
