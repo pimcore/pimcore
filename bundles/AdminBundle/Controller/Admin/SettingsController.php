@@ -847,7 +847,7 @@ class SettingsController extends AdminController
                 $route->save();
 
                 $responseData = $route->getObjectVars();
-                $responseData['writeable'] = $route->isWriteable();
+                $responseData['isWriteable'] = $route->isWriteable();
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
