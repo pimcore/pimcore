@@ -443,8 +443,7 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    )
-    {
+    ) {
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
@@ -708,8 +707,7 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         EventDispatcherInterface $eventDispatcher,
         Filesystem $filesystem,
-    ): void
-    {
+    ): void {
         // empty document cache
         $cache->clearAll();
 
@@ -728,8 +726,7 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CacheClearer $symfonyCacheClearer,
-    ): void
-    {
+    ): void {
         // pass one or move env parameters to clear multiple envs
         // if no env is passed it will use the current one
         $environments = $request->get('env', $kernel->getEnvironment());
@@ -776,7 +773,6 @@ class SettingsController extends AdminController
             }
         }
     }
-
 
     /**
      * @Route("/clear-output-cache", name="pimcore_admin_settings_clearoutputcache", methods={"DELETE"})
