@@ -174,7 +174,7 @@ pimcore.settings.staticroutes = Class.create({
                 items: [{
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
-                        if (rec.data.isWriteable) {
+                        if (rec.data.writeable) {
                             klass += "pimcore_icon_minus";
                         }
                         return klass;
@@ -182,7 +182,7 @@ pimcore.settings.staticroutes = Class.create({
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        if (!data.data.isWriteable) {
+                        if (!data.data.writeable) {
                             return;
                         }
                         grid.getStore().removeAt(rowIndex);
@@ -195,7 +195,7 @@ pimcore.settings.staticroutes = Class.create({
             clicksToEdit: 1,
             listeners: {
                 validateedit: function (editor, context, eOpts) {
-                    if (!context.record.data.isWriteable) {
+                    if (!context.record.data.writeable) {
                         editor.cancelEdit();
                         pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
                         return false;
@@ -244,7 +244,7 @@ pimcore.settings.staticroutes = Class.create({
             viewConfig:{
                 forceFit:true,
                 getRowClass: function (record, rowIndex) {
-                    return record.data.isWriteable ? '' : 'pimcore_grid_row_disabled';
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
                 }
             }
         });

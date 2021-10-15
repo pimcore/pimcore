@@ -847,7 +847,7 @@ class SettingsController extends AdminController
                 $route->save();
 
                 $responseData = $route->getObjectVars();
-                $responseData['isWriteable'] = $route->isWriteable();
+                $responseData['writeable'] = $route->isWriteable();
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
@@ -878,7 +878,7 @@ class SettingsController extends AdminController
             /** @var Staticroute $routeFromList */
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
-                $route['isWriteable'] = $routeFromList->isWriteable();
+                $route['writeable'] = $routeFromList->isWriteable();
                 if (is_array($routeFromList->getSiteId())) {
                     $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 }
