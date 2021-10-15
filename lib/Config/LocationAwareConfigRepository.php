@@ -284,6 +284,10 @@ class LocationAwareConfigRepository
             if (preg_match('/%([^%\s]+)%/', $value, $match)) {
                 $key = $match[1];
 
+                if (str_starts_with($key, 'env(') && str_ends_with($key, ')')  && 'env()' !== $key) {
+                    continue;
+                }
+
                 if (!$container->hasParameter($key)) {
                     $value = preg_replace('/%([^%\s]+)%/', '%%$1%%', $value);
                 }
