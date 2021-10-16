@@ -25,6 +25,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
@@ -529,6 +530,10 @@ class AssetHelperController extends AdminController
 
                 $this->updateGridConfigShares($gridConfig, $metadata);
 
+                if ($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin()) {
+                    $this->updateGridConfigFavourites($gridConfig, $metadata);
+                }
+
                 if (!$gridConfig) {
                     $gridConfig = new GridConfig();
                     $gridConfig->setName(date('c'));
@@ -615,6 +620,62 @@ class AssetHelperController extends AdminController
             $share->setGridConfigId($gridConfig->getId());
             $share->setSharedWithUserId($id);
             $share->save();
+        }
+    }
+
+    /**
+     * @param GridConfig|null $gridConfig
+     * @param array $metadata
+     *
+     * @throws \Exception
+     */
+    protected function updateGridConfigFavourites($gridConfig, $metadata)
+    {
+        $user = $this->getAdminUser();
+
+        if (!$gridConfig || !$user->isAllowed('share_configurations')) {
+            // nothing to do
+            return;
+        }
+
+        if ($gridConfig->getOwnerId() != $user->getId() && !$user->isAdmin()) {
+            throw new \Exception("don't mess with someone elses grid config");
+        }
+
+        $combinedShares = [];
+        $sharedUserIds = $metadata['sharedUserIds'];
+        $sharedRoleIds = $metadata['sharedRoleIds'];
+
+        if ($sharedUserIds) {
+            $combinedShares = explode(',', $sharedUserIds);
+        }
+
+        if ($sharedRoleIds) {
+            $sharedRoleIds = explode(',', $sharedRoleIds);
+            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+        }
+
+        foreach ($combinedShares as $id) {
+            // Check if the user has already a favourite
+            $favorite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
+                (int) $id,
+                $gridConfig->getClassId(),
+                0,
+                $gridConfig->getSearchType()
+            );
+
+            if ($favorite instanceof GridConfigFavourite) {
+                continue;
+            }
+
+            $favorite = new GridConfigFavourite();
+            $favorite->setGridConfigId($gridConfig->getId());
+            $favorite->setClassId($gridConfig->getClassId());
+            $favorite->setObjectId(0);
+            $favorite->setOwnerId($id);
+            $favorite->setType($gridConfig->getType());
+            $favorite->setSearchType($gridConfig->getSearchType());
+            $favorite->save();
         }
     }
 

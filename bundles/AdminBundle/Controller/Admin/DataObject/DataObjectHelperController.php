@@ -878,7 +878,7 @@ class DataObjectHelperController extends AdminController
     public function gridSaveColumnConfigAction(Request $request)
     {
         $objectId = $request->get('id');
-        $object  = DataObject::getById($objectId);
+        $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
             try {
@@ -1042,12 +1042,12 @@ class DataObjectHelperController extends AdminController
                 $gridConfig->getSearchType()
             );
 
-            // If the user has already a favorite for that object we do nothing
+            // If the user has already a favourite for that object we do nothing
             if ($favorite instanceof GridConfigFavourite) {
                 continue;
             }
 
-            // Check if the user has already a global favorite then we do nto save the favorite as global
+            // Check if the user has already a global favourite then we do not save the favourite as global
             $favorite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
                 (int) $id,
                 $gridConfig->getClassId(),
