@@ -231,6 +231,7 @@ class AssetHelperController extends AdminController
                 $gridConfigName = $savedGridConfig->getName();
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
+                $setAsFavourite = $savedGridConfig->isSetAsFavourite();
             }
         }
 
@@ -270,6 +271,7 @@ class AssetHelperController extends AdminController
         $settings['gridConfigName'] = $gridConfigName ?? null;
         $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['setAsFavourite'] = $setAsFavourite ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         $context = $gridConfig['context'] ?? null;
@@ -541,6 +543,7 @@ class AssetHelperController extends AdminController
                     $gridConfig->setName($metadata['gridConfigName']);
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -557,6 +560,7 @@ class AssetHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
+                $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
                 $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId();
 
                 return $this->adminJson([
