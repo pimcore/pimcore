@@ -544,7 +544,7 @@ class Dao extends Model\Dao\AbstractDao
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
         }
 
-        if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'] ?? null;
             $containerName = $context['fieldname'];
@@ -559,14 +559,12 @@ class Dao extends Model\Dao\AbstractDao
                 ).$dirtyLanguageCondition;
 
             $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
-            if ($container instanceof DataObject\Fieldcollection\Definition) {
-                return true;
-            }
-        } else {
-            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
-                )->getId().$dirtyLanguageCondition;
-            $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
+
+            return true;
         }
+
+        $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
+        $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
 
         return false;
     }
@@ -799,10 +797,11 @@ QUERY;
               `index` INT(11) NOT NULL DEFAULT '0',
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
-              PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
+              PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`)
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
-              INDEX `language` (`language`)
+              INDEX `language` (`language`),
+              CONSTRAINT `fk_".$table."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;"
             );
         } else {
@@ -810,8 +809,9 @@ QUERY;
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
-              PRIMARY KEY (`ooo_id`,`language`),
-              INDEX `language` (`language`)
+              PRIMARY KEY (`ooo_id`,`language`)
+              INDEX `language` (`language`),
+              CONSTRAINT `fk_".$table."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;"
             );
         }
@@ -875,8 +875,9 @@ QUERY;
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
                       `ooo_id` int(11) NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
-                      PRIMARY KEY (`ooo_id`,`language`),
-                      INDEX `language` (`language`)
+                      PRIMARY KEY (`ooo_id`,`language`)
+                      INDEX `language` (`language`),
+                      CONSTRAINT `fk_".$queryTable."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
 
