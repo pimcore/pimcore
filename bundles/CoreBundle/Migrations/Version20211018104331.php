@@ -95,7 +95,7 @@ final class Version20211018104331 extends AbstractMigration
             $foreignKeys['object_brick_localized_'.$brickDefinition->getKey().'_'.$class->getId()] = 'ooo_id';
         }
 
-        $fieldCollectionList = new DataObject\FieldCollection\Definition\Listing();
+        $fieldCollectionList = new DataObject\Fieldcollection\Definition\Listing();
         foreach ($fieldCollectionList->load() as $fieldCollectionDefinition) {
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_'.$class->getId()] = 'o_id';
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
