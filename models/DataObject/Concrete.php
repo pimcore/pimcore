@@ -172,35 +172,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $errors = [];
             /** @var \Exception $e */
             foreach ($validationExceptions as $e) {
-                $msg = $e->getMessage();
-
-                if ($e instanceof Model\Element\ValidationException) {
-                    $subItems = $e->getSubItems();
-                    if (is_array($subItems) && count($subItems)) {
-                        $msg .= ' (';
-                        $subItemParts = [];
-                        /** @var \Exception $subItem */
-                        foreach ($subItems as $subItem) {
-                            $subItemMessage = $subItem->getMessage();
-                            if ($subItem instanceof Model\Element\ValidationException) {
-                                $contextStack = $subItem->getContextStack();
-                                if ($contextStack) {
-                                    $subItemMessage .= '[ ' . $contextStack[0] . ' ]';
-                                }
-                            }
-                            $subItemParts[] = $subItemMessage;
-                        }
-                        $msg .= implode(', ', $subItemParts);
-                        $msg .= ')';
-                    }
-                }
-                $errors[] = $msg;
+                $errors[] = $e->getAggregatedMessage();
             }
             $message .= implode(' / ', $errors);
-            $aggregatedExceptions = new Model\Element\ValidationException($message);
-            $aggregatedExceptions->setSubItems($validationExceptions);
-
-            throw $aggregatedExceptions;
+            throw new Model\Element\ValidationException($message);
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
