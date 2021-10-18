@@ -1125,7 +1125,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 if ($validationExceptions) {
                     $errors = [];
-                    /** @var \Exception $e */
+                    /** @var Element\ValidationException $e */
                     foreach ($validationExceptions as $e) {
                         $errors[] = $e->getAggregatedMessage();
                     }

@@ -170,7 +170,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($validationExceptions) {
             $message = 'Validation failed: ';
             $errors = [];
-            /** @var \Exception $e */
+
+            /** @var Model\Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }

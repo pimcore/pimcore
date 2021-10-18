@@ -1005,7 +1005,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if (count($validationExceptions) > 0) {
             $errors = [];
-            /** @var \Exception $e */
+            /** @var Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }

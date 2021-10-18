@@ -34,7 +34,7 @@ class ValidationException extends \Exception
     }
 
     /**
-     * @param \Exception $subItems
+     * @param \Exception[] $subItems
      */
     public function setSubItems(array $subItems = [])
     {
