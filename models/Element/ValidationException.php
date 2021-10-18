@@ -75,6 +75,10 @@ class ValidationException extends \Exception
 
     public function getAggregatedMessage() {
         $msg = $this->getMessage();
+        $contextStack = $this->getContextStack();
+        if ($contextStack) {
+            $msg .= '[ '.$contextStack[0].' ]';
+        }
 
         $subItems = $this->getSubItems();
         if (count($subItems) > 0) {
