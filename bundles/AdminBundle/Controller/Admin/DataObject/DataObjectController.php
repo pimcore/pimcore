@@ -54,9 +54,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
-
     use ElementEditLockHelperTrait;
-
     use ApplySchedulerDataTrait;
 
     /**
@@ -2330,8 +2328,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

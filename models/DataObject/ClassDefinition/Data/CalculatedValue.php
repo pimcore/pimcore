@@ -23,16 +23,15 @@ use Pimcore\Normalizer\NormalizerInterface;
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
-     * @interal
+     * @internal
      */
     const CALCULATOR_TYPE_EXPRESSION = 'expression';
 
     /**
-     * @interal
+     * @internal
      */
     const CALCULATOR_TYPE_CLASS = 'class';
 

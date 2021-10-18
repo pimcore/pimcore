@@ -25,7 +25,6 @@ use Pimcore\Tool\Serialize;
 class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**
@@ -152,7 +151,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param int $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -216,7 +215,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -237,7 +236,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -276,7 +275,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -292,7 +291,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -532,7 +531,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $poster = $value->getPoster();
             if ($poster) {
                 $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
+                    'type' => Model\Element\Service::getElementType($poster),
                     'id' => $poster->getId(),
                 ];
             }
@@ -541,7 +540,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
+                    'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),
                 ];
             } else {

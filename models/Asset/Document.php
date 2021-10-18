@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Tool\TmpStore;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -35,18 +34,12 @@ class Document extends Model\Asset
      */
     protected function update($params = [])
     {
+        if ($this->getDataChanged()) {
+            $this->removeCustomSetting('document_page_count');
+        }
+
         parent::update($params);
         $this->clearThumbnails();
-
-        if ($this->getDataChanged() && \Pimcore\Document::isAvailable()) {
-            if (php_sapi_name() === 'cli') {
-                // on CLI we directly process the page count / document conversion
-                $this->processPageCount();
-            } else {
-                // add to processing queue to generate a PDF if necessary (office documents)
-                TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
-            }
-        }
     }
 
     /**
@@ -72,6 +65,7 @@ class Document extends Model\Asset
             $this->setCustomSetting('document_page_count', $pageCount);
         } catch (\Exception $e) {
             Logger::error($e);
+            $this->setCustomSetting('document_page_count', 'failed');
         }
     }
 
@@ -102,7 +96,7 @@ class Document extends Model\Asset
 
         if (!$this->getCustomSetting('document_page_count')) {
             Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-            TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
+            $this->addToUpdateTaskQueue();
 
             return new Document\ImageThumbnail(null);
         }

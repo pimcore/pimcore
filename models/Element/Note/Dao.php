@@ -30,14 +30,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM notes WHERE id = ?', $id);
 
         if (!$data) {
-            throw new \Exception('Note item with id ' . $id . ' not found');
+            throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);

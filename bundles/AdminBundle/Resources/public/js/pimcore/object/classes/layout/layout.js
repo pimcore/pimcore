@@ -153,6 +153,7 @@ pimcore.object.classes.layout.layout = Class.create({
         this.layout = new Ext.Panel({
             title: '<b>' + this.getTypeName() + '</b>',
             bodyStyle: 'padding: 10px;',
+            autoScroll: true,
             items: [
                 {
                     xtype: "form",

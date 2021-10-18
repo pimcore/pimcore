@@ -40,7 +40,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -79,7 +78,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @interal
+     * @internal
      *
      * @param ElementInterface $element
      *
@@ -591,6 +590,12 @@ class Service extends Model\AbstractModel
      */
     public static function getType($element)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Service::getType() method is deprecated, use Service::getElementType() instead.'
+        );
+
         return self::getElementType($element);
     }
 
@@ -663,9 +668,6 @@ class Service extends Model\AbstractModel
         //check in case of recursion
         $found = false;
         foreach ($target->getChildren() as $child) {
-            /**
-             * @var ElementInterface $child
-             */
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
@@ -689,7 +691,7 @@ class Service extends Model\AbstractModel
         $data = [
             'id' => $element->getId(),
             'fullpath' => $element->getRealFullPath(),
-            'type' => self::getType($element),
+            'type' => self::getElementType($element),
             'subtype' => $element->getType(),
             'filename' => $element->getKey(),
             'creationDate' => $element->getCreationDate(),
@@ -1007,7 +1009,7 @@ class Service extends Model\AbstractModel
      */
     public static function getCustomViewById($id)
     {
-        $customViews = Tool::getCustomViewConfig();
+        $customViews = \Pimcore\CustomView\Config::get();
         if ($customViews) {
             foreach ($customViews as $customView) {
                 if ($customView['id'] == $id) {
@@ -1491,14 +1493,14 @@ class Service extends Model\AbstractModel
 
         if ($element instanceof ElementInterface) {
             if (($context['conversion'] ?? false) === 'marshal') {
-                $sourceType = Service::getType($element);
+                $sourceType = Service::getElementType($element);
                 $sourceId = $element->getId();
 
                 $copier->addTypeFilter(
                     new \DeepCopy\TypeFilter\ReplaceFilter(
                         function ($currentValue) {
                             if ($currentValue instanceof ElementInterface) {
-                                $elementType = Service::getType($currentValue);
+                                $elementType = Service::getElementType($currentValue);
                                 $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
 
                                 return $descriptor;

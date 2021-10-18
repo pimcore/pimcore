@@ -278,7 +278,7 @@ final class Tool
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
             if (\Pimcore::hasContainer()) {
-                $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+                $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
             } else {
                 if (null !== self::$currentRequest) {
                     return self::$currentRequest;
@@ -297,7 +297,7 @@ final class Tool
     public static function isFrontend(Request $request = null): bool
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
         }
 
         if (null === $request) {
@@ -511,47 +511,6 @@ final class Tool
         return \Pimcore::getContainer()
             ->get(RequestHelper::class)
             ->getAnonymizedClientIp($request);
-    }
-
-    /**
-     * @internal
-     *
-     * @return array|bool
-     */
-    public static function getCustomViewConfig()
-    {
-        $configFile = \Pimcore\Config::locateConfigFile('customviews.php');
-
-        if (!is_file($configFile)) {
-            $cvData = false;
-        } else {
-            $confArray = include($configFile);
-            $cvData = [];
-
-            foreach ($confArray['views'] as $tmp) {
-                if (isset($tmp['name'])) {
-                    $tmp['showroot'] = !empty($tmp['showroot']);
-
-                    if (!is_array($tmp['classes'] ?? [])) {
-                        $flipArray = [];
-                        $tempClasses = explode(',', $tmp['classes']);
-
-                        foreach ($tempClasses as $tempClass) {
-                            $flipArray[$tempClass] = null;
-                        }
-                        $tmp['classes'] = $flipArray;
-                    }
-
-                    if (!empty($tmp['hidden'])) {
-                        continue;
-                    }
-
-                    $cvData[] = $tmp;
-                }
-            }
-        }
-
-        return $cvData;
     }
 
     /**

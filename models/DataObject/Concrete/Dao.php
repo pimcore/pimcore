@@ -32,7 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 class Dao extends Model\DataObject\AbstractObject\Dao
 {
     use Model\Element\Traits\ScheduledTasksDaoTrait;
-
     use Model\Element\Traits\VersionDaoTrait;
 
     /**

@@ -24,7 +24,6 @@ use Pimcore\Tool\Serialize;
 class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**
@@ -307,7 +306,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getPhpdocInputType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**
@@ -315,7 +314,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getPhpdocReturnType(): ?string
     {
-        return 'array|null';
+        return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
     /**

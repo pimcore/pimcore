@@ -28,7 +28,6 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
-
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
@@ -416,7 +415,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $id = '??';
                     }
 
-                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId(), null, null);
+                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId());
                 }
             }
         }
@@ -923,7 +922,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'element' => [
@@ -1041,7 +1040,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
+        return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
 
     /**
@@ -1049,6 +1048,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
+        return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
 }

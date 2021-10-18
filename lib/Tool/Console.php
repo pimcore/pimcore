@@ -90,11 +90,15 @@ final class Console
             }
         }
 
-        $systemConfig = Config::getSystemConfiguration('general');
-
         $paths = [];
-        if (!empty($systemConfig['path_variable'])) {
-            $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
+
+        try {
+            $systemConfig = Config::getSystemConfiguration('general');
+            if (!empty($systemConfig['path_variable'])) {
+                $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e);
         }
 
         array_push($paths, '');

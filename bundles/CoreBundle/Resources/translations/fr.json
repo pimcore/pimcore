@@ -951,5 +951,7 @@
     "user_no_email_address": "L'utilisateur n'a pas d'adresse e-mail",
     "user_no_password": "L'utilisateur n'a pas de mot de passe",
     "user_unknown": "Utilisateur inconnu",
-    "lost_password_email_error": "Impossible d'envoyer l'e-mail de récupération du mot de passe"
+    "lost_password_email_error": "Impossible d'envoyer l'e-mail de récupération du mot de passe",
+    "config_not_writeable": "Impossible d'écrire, il peut y avoir plusieurs raisons. Pour plus de détails, veuillez consulter la documentation.",
+    "collapse_children": "Collapse children"
 }

@@ -19,12 +19,14 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -33,7 +35,6 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
@@ -132,7 +133,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     try {
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
-                        if ($this->getClass()->getAllowInherit()) {
+                        if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
                                 $getInheritedValues = DataObject::doGetInheritedValues();
@@ -239,10 +240,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     protected function doDelete()
     {
-        // delete all versions
-        foreach ($this->getVersions() as $v) {
-            $v->delete();
-        }
+        // Dispatch Symfony Message Bus to delete versions
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+        );
 
         $this->getDao()->deleteAllTasks();
 
@@ -858,7 +859,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         $descriptor['objectId'] = $this->getId();
 
-        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+        return $this->doRetrieveData($descriptor, DataObject\Data\UrlSlug::TABLE_NAME);
     }
 
     /**

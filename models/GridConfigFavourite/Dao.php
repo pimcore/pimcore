@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param int|null $objectId
      * @param string|null $searchType
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
     {
@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchRow($query, $params);
 
         if (!$data) {
-            throw new \Exception('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
+            throw new Model\Exception\NotFoundException('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
         }
 
         $this->assignVariablesToModel($data);

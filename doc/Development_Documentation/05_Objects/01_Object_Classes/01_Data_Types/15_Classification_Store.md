@@ -200,7 +200,7 @@ $collectionConfig->save();
 
 // Add a group to a collection
 $rel = new CollectionGroupRelation();
-$rel->setGroupId($groupConfig->getId();
-$rel->setColId($collectionConfig->getId();
+$rel->setGroupId($groupConfig->getId());
+$rel->setColId($collectionConfig->getId());
 $rel->save();
 ```

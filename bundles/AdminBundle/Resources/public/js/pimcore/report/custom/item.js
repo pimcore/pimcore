@@ -27,11 +27,19 @@ pimcore.report.custom.item = Class.create({
     addLayout: function () {
 
         var panelButtons = [];
-        panelButtons.push({
+
+        let buttonConfig = {
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
-        });
+            handler: this.save.bind(this),
+            disabled: !this.data.writeable
+        };
+
+        if (!this.data.writeable) {
+            buttonConfig.tooltip = t("config_not_writeable");
+        }
+
+        panelButtons.push(buttonConfig);
 
         this.columnStore = Ext.create('Ext.data.Store', {
             autoDestroy: false,

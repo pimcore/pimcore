@@ -40,7 +40,7 @@ class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Checko
 Each Availability System must be defined as service (either a service defined by core configuration or your custom services):
 
 ```
-# services.yml
+# services.yaml
     _defaults:
         public: false
         autowire: true
@@ -59,7 +59,7 @@ The `availability_systems` configuration maps names to service IDs:
 pimcore_ecommerce_framework:
     # defines 3 availability systems
     availability_systems:
-        # the attribute price system is already defined in core price_systems.yml service definition
+        # the attribute price system is already defined in core price_systems.yaml service definition
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
        

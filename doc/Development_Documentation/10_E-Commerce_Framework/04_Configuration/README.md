@@ -1,7 +1,7 @@
 # Configuration
 
 The E-Commerce Framework is implemented as semantic bundle configuration which means that you can configure the framework
-in any of the loaded config files (e.g. `/config/config.yaml` or `*Bundle/Resources/config/pimcore/config.yml`) by
+in any of the loaded config files (e.g. `/config/config.yaml` or `*Bundle/Resources/config/pimcore/config.yaml`) by
 adding configuration to the `pimcore_ecommerce_framework` node.
 
 The configuration is built upon the [Symfony Config Component](https://symfony.com/doc/5.2/components/config.html) and
@@ -74,7 +74,7 @@ pimcore_ecommerce_framework:
                         <<: *defaults_foo_options # import anchor
 ```
 
-Of course you can still use the PHP config file format by importing a PHP config file from your `config.yml` to be
+Of course you can still use the PHP config file format by importing a PHP config file from your `config.yaml` to be
 completely free how to merge common configuration entries.
 
 ## Service IDs and tenant specifics
@@ -134,7 +134,7 @@ service ID as *template* to configure 2 independent child services by utilizing 
 
 This means, that when you request the `Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager` service from the
 container, it would be neither the default nor the b2b tenant. In fact, getting that service directly wouldn't work anyways
-as it is missing dependencies. If you take a look at the [service definition](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/order_manager.yml)
+as it is missing dependencies. If you take a look at the [service definition](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/order_manager.yaml)
 you can see that the definition is missing the `OrderAgentFactoryInterface` argument which will be resolved and set for each
 tenant specific order manager.
 

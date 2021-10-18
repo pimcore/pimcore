@@ -91,7 +91,7 @@ class LinkController extends DocumentControllerBase
 
         $link = clone $link;
 
-        $link->setObject(null);
+        $link->setElement(null);
         $link->setLocked($link->isLocked());
         $link->setParent(null);
 

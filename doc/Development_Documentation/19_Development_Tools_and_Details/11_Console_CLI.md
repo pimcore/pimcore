@@ -15,7 +15,7 @@ and a helper for the [Symfony VarDumper Component](https://symfony.com/doc/5.2/c
 set up automatically (see below).
 
 ### Registering Commands
-Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
+Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yaml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
 
 ### Helpers provided by `Pimcore\Console\AbstractCommand`
 The `AbstractCommand` base class provides helpers which make your life easier.

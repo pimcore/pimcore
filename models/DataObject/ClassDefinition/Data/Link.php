@@ -26,11 +26,8 @@ use Pimcore\Tool\Serialize;
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use DataObject\Traits\ObjectVarTrait;
 
     /**
@@ -166,7 +163,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string $data
+     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -180,7 +177,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -199,11 +196,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {

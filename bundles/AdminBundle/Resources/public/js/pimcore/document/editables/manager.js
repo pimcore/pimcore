@@ -42,6 +42,10 @@ pimcore.document.editables.manager = Class.create({
 
         if (!definition.inDialogBox) {
             if (typeof editable['render'] === 'function') {
+                let editableElement = Ext.get(editable.id);
+                if (editableElement === null) {
+                    return;
+                }
                 editable.render();
             }
             editable.setInherited(inherited);

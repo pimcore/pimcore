@@ -27,9 +27,7 @@ use Pimcore\Tool;
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
-
     use Layout\Traits\LabelTrait;
-
     use DataObject\Traits\ClassSavedTrait;
 
     /**
@@ -950,13 +948,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {
                         try {
-                            if (isset($dataForValidityCheck[$language]) && isset($dataForValidityCheck[$language][$fd->getName()])) {
-                                $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
-                            } else {
-                                $fd->checkValidity(null, false, $params);
+                            if (!isset($dataForValidityCheck[$language][$fd->getName()])) {
+                                $dataForValidityCheck[$language][$fd->getName()] = null;
                             }
+                            $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
                         } catch (\Exception $e) {
-                            if ($data->getObject()->getClass()->getAllowInherit()) {
+                            if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
                                 try {
                                     $getInheritedValues = DataObject::doGetInheritedValues();

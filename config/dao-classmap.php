@@ -124,7 +124,6 @@ return [
     'Pimcore\\Model\\DataObject\\Fieldcollection\\Definition' => 'Pimcore\\Model\\DataObject\\Fieldcollection\\Definition\\Dao',
     'Pimcore\\Model\\Element\\Note' => 'Pimcore\\Model\\Element\\Note\\Dao',
     'Pimcore\\Model\\Element\\Editlock' => 'Pimcore\\Model\\Element\\Editlock\\Dao',
-    'Pimcore\\Model\\Element\\Sanitycheck' => 'Pimcore\\Model\\Element\\Sanitycheck\\Dao',
     'Pimcore\\Model\\Element\\Tag' => 'Pimcore\\Model\\Element\\Tag\\Dao',
     'Pimcore\\Model\\Element\\Recyclebin' => 'Pimcore\\Model\\Element\\Recyclebin\\Dao',
     'Pimcore\\Model\\Element\\Note\\Listing' => 'Pimcore\\Model\\Element\\Note\\Listing\\Dao',

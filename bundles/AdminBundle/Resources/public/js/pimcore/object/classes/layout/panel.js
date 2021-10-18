@@ -54,6 +54,7 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
         this.layout.add({
             xtype: "form",
             bodyStyle: "padding: 10px;",
+            autoScroll: true,
             style: "margin: 10px 0 10px 0",
             items: [
                 {

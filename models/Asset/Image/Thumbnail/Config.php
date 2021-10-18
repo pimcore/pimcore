@@ -20,9 +20,10 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
- * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
- * @method void save(bool $forceClearTempFiles = false)
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method void delete(bool $forceClearTempFiles = false)
+ * @method void save(bool $forceClearTempFiles = false)
  */
 final class Config extends Model\AbstractModel
 {
@@ -214,7 +215,9 @@ final class Config extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->getDao()->getByName($name);
+                /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */
+                $dao = $thumbnail->getDao();
+                $dao->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -256,19 +259,15 @@ final class Config extends Model\AbstractModel
             return true;
         }
 
-        $thumbnail = new self();
-
-        return $thumbnail->getDao()->exists($name);
+        return (bool) self::getByName($name);
     }
 
     /**
      * @internal
      *
-     * @param bool $hdpi
-     *
      * @return Config
      */
-    public static function getPreviewConfig($hdpi = false)
+    public static function getPreviewConfig()
     {
         $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
         $thumbnail = null;
@@ -291,9 +290,7 @@ final class Config extends Model\AbstractModel
             $thumbnail->setFormat('PJPEG');
         }
 
-        if ($hdpi) {
-            $thumbnail->setHighResolution(2);
-        }
+        $thumbnail->setHighResolution(2);
 
         return $thumbnail;
     }
@@ -911,5 +908,13 @@ final class Config extends Model\AbstractModel
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }

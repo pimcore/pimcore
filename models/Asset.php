@@ -27,15 +27,19 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -47,7 +51,6 @@ use Symfony\Component\Mime\MimeTypes;
 class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
-
     use TemporaryFileHelperTrait;
 
     /**
@@ -591,6 +594,13 @@ class Asset extends Element\AbstractElement
                 }
             }
             $this->clearDependentCache($additionalTags);
+
+            if ($this->getDataChanged()) {
+                if (in_array($this->getType(), ['image', 'video', 'document'])) {
+                    $this->addToUpdateTaskQueue();
+                }
+            }
+
             $this->setDataChanged(false);
 
             $postEvent = new AssetEvent($this, $params);
@@ -695,12 +705,26 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
+                // Write original data to temp path for writing stream
+                // as original file will be deleted before overwrite
+                $pathInfo = pathinfo($this->getFilename());
+                $tempFilePath = $this->getRealPath() . uniqid('temp_') . '.' . $pathInfo['extension'];
+                $storage->writeStream($tempFilePath, $src);
+
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
 
-                $storage->writeStream($path, $src);
+                if ($storage->fileExists($path)) {
+                    // We don't open a stream on existing files, because they could be possibly used by versions
+                    // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
+                    // versioning information persists. Using the stream on the existing file would overwrite the
+                    // contents of the inode and therefore leads to wrong version data
+                    $storage->delete($path);
+                }
+
+                $storage->move($tempFilePath, $path);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
@@ -1006,10 +1030,10 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            $versions = $this->getVersions();
-            foreach ($versions as $version) {
-                $version->delete();
-            }
+            // Dispatch Symfony Message Bus to delete versions
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+            );
 
             // remove permissions
             $this->getDao()->deleteAllPermissions();
@@ -1673,6 +1697,35 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param string $name
+     * @param string|null $language
+     *
+     * @return self
+     */
+    public function removeMetadata(string $name, ?string $language = null)
+    {
+        if ($name) {
+            $tmp = [];
+            $name = str_replace('~', '---', $name);
+            if (!is_array($this->metadata)) {
+                $this->metadata = [];
+            }
+
+            foreach ($this->metadata as $item) {
+                if ($item['name'] === $name && ($language == $item['language'] || $language === '*')) {
+                    continue;
+                }
+                $tmp[] = $item;
+            }
+
+            $this->metadata = $tmp;
+            $this->setHasMetaData(!empty($this->metadata));
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string|null $name
      * @param string|null $language
      * @param bool $strictMatch
@@ -2004,5 +2057,15 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             // noting to do
         }
+    }
+
+    /**
+     * @internal
+     */
+    protected function addToUpdateTaskQueue(): void
+    {
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new AssetUpdateTasksMessage($this->getId())
+        );
     }
 }

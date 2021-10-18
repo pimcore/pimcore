@@ -114,7 +114,7 @@ pimcore.object.tags.reverseObjectRelation = Class.create(pimcore.object.tags.man
             autoHeight = true;
         }
 
-        var cls = 'object_field object_field_type_' + this.type;
+        var cls = this.getWrapperClassNames();
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var record = classStore.getAt(classStore.findExact('text', this.fieldConfig.ownerClassName));

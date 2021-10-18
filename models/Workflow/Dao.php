@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Workflow;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * @param int|null $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id = null)
     {
@@ -46,7 +47,7 @@ class Dao extends Model\Dao\PhpArrayTable
         if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Workflow with id: ' . $this->model->getId() . ' does not exist');
+            throw new NotFoundException('Workflow with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 

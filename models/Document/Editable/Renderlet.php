@@ -249,7 +249,7 @@ class Renderlet extends Model\Document\Editable
             $object = $this->o;
         }
         if ($object instanceof Element\ElementInterface) {
-            return Element\Service::getType($object);
+            return Element\Service::getElementType($object);
         }
 
         return null;

@@ -236,7 +236,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             tbar: toolbar
         };
 

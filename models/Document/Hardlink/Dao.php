@@ -29,27 +29,23 @@ class Dao extends Model\Document\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
-        try {
-            if ($id != null) {
-                $this->model->setId($id);
-            }
+        if ($id != null) {
+            $this->model->setId($id);
+        }
 
-            $data = $this->db->fetchRow("SELECT documents.*, documents_hardlink.*, tree_locks.locked FROM documents
-                LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT documents.*, documents_hardlink.*, tree_locks.locked FROM documents
+            LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $this->model->getId());
 
-            if (!empty($data['id'])) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception('Hardlink with the ID ' . $this->model->getId() . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if (!empty($data['id'])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException('Hardlink with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 

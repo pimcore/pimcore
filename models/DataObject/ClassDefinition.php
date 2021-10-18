@@ -31,7 +31,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInter
 final class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
-
     use DataObject\Traits\LocateFileTrait;
 
     /**

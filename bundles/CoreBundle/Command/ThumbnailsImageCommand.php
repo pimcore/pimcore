@@ -88,6 +88,10 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         $list = new Asset\Listing();
 
+        // Recently added or changed items are more likely to need thumbnails, start with those in case process is cut short
+        $list->setOrderKey('modificationDate');
+        $list->setOrder('DESC');
+
         $parentConditions = [];
 
         // get only images
@@ -140,7 +144,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         $image = Image::getById($assetId);
         if (!$image) {
-            $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?</error>');
+            $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?');
 
             return;
         }
@@ -212,17 +216,9 @@ class ThumbnailsImageCommand extends AbstractCommand
                     $thumbnailsToGenerate = [];
                 }
 
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
-
-                if (!$input->getOption('skip-high-res')) {
-                    $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
-                }
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
             } elseif (!$input->getOption('thumbnails')) {
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
-
-                if (!$input->getOption('skip-high-res')) {
-                    $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
-                }
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
             }
         }
 

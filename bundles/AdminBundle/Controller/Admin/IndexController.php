@@ -25,10 +25,11 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Staticroute;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
@@ -83,8 +84,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
         Config $config
     ) {
         $user = $this->getAdminUser();
+        $perspectiveConfig = new \Pimcore\Perspective\Config();
         $templateParams = [
             'config' => $config,
+            'perspectiveConfig' => $perspectiveConfig,
         ];
 
         $this
@@ -167,7 +170,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addRuntimePerspective(array &$templateParams, User $user)
     {
-        $runtimePerspective = Config::getRuntimePerspective($user);
+        $runtimePerspective = \Pimcore\Perspective\Config::getRuntimePerspective($user);
         $templateParams['runtimePerspective'] = $runtimePerspective;
 
         return $this;
@@ -247,11 +250,23 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
-            'availablePerspectives' => Config::getAvailablePerspectives($user),
+            'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
             'disabledPortlets' => $dashboardHelper->getDisabledPortlets(),
 
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
+
+            // this stuff is used to decide whether the "add" button should be grayed out or not
+            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
+            'video-thumbnails-writeable' => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
+            'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
+            'document-types-writeable' => (new DocType())->isWriteable(),
+            'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable(),
+            'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
+            'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
+            'staticroutes-writeable' => (new Staticroute())->isWriteable(),
+            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
+            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
         ];
 
         $this
@@ -366,7 +381,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $cvData = [];
 
         // still needed when publishing objects
-        $cvConfig = Tool::getCustomViewConfig();
+        $cvConfig = \Pimcore\CustomView\Config::get();
 
         if ($cvConfig) {
             foreach ($cvConfig as $node) {

@@ -951,5 +951,7 @@
     "user_no_email_address": "User has no email address",
     "user_no_password": "User has no password",
     "user_unknown": "User unknown",
-    "lost_password_email_error": "Could not send password recovery email"
+    "lost_password_email_error": "Could not send password recovery email",
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
+    "collapse_children": "Collapse children"
 }

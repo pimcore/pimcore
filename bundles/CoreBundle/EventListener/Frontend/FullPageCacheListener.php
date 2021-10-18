@@ -38,7 +38,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
-
     use StaticPageContextAwareTrait;
 
     /**
@@ -154,7 +153,7 @@ class FullPageCacheListener
 
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -256,13 +255,6 @@ class FullPageCacheListener
             }
         }
 
-        // check if targeting matched anything and disable cache
-        if ($this->disabledByTargeting()) {
-            $this->disable('Targeting matched rules/target groups');
-
-            return;
-        }
-
         $deviceDetector = Tool\DeviceDetector::getInstance();
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
@@ -324,7 +316,7 @@ class FullPageCacheListener
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -345,6 +337,13 @@ class FullPageCacheListener
 
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');
+        }
+
+        // check if targeting matched anything and disable cache
+        if ($this->disabledByTargeting()) {
+            $this->disable('Targeting matched rules/target groups');
+
+            return;
         }
 
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {

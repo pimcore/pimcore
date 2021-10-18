@@ -26,15 +26,10 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
-
     use Extension\QueryColumnType;
-
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**
@@ -529,7 +524,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
                 }
             }
 
@@ -549,7 +544,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             $paths = [];
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo) . ':' . $eo->getRealFullPath();
+                    $paths[] = Element\Service::getElementType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
 
@@ -760,7 +755,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if (is_array($value)) {
             $result = [];
             foreach ($value as $element) {
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'type' => $type,

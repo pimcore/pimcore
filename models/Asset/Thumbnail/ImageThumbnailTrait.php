@@ -89,6 +89,8 @@ trait ImageThumbnailTrait
      */
     protected $deferred = true;
 
+    private static array $supportedFormats = [];
+
     /**
      * @return null|resource
      */
@@ -317,5 +319,29 @@ trait ImageThumbnailTrait
     public function getLocalFile()
     {
         return self::getLocalFileFromStream($this->getStream());
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists(): bool
+    {
+        $pathReference = $this->getPathReference(true);
+        if ($pathReference['type'] === 'asset') {
+            return true;
+        } elseif (isset($pathReference['storagePath'])) {
+            return Storage::get('thumbnail')->fileExists($pathReference['storagePath']);
+        }
+
+        return false;
+    }
+
+    public static function supportsFormat(string $format): bool
+    {
+        if (!isset(self::$supportedFormats[$format])) {
+            self::$supportedFormats[$format] = \Pimcore\Image::getInstance()->supportsFormat($format);
+        }
+
+        return self::$supportedFormats[$format];
     }
 }

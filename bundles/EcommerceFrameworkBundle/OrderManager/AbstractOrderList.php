@@ -195,6 +195,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed Can return any type.
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->load();
@@ -211,6 +212,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->load();
@@ -225,6 +227,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed scalar on success, or null on failure.
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $this->load();
@@ -241,6 +244,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return bool The return value will be casted to boolean and then evaluated.
      *       Returns true on success or false on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $this->load();
@@ -256,6 +260,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->load();
@@ -274,6 +279,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function seek($position)
     {
         $this->load();
@@ -291,6 +297,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *       <p>
      *       The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $this->load();
@@ -313,6 +320,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $this->load();
@@ -332,6 +340,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->load();
@@ -354,6 +363,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         // not allowed, read only
@@ -371,6 +381,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         // not allowed, read only

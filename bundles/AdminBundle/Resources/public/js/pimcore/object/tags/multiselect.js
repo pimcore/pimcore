@@ -131,7 +131,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             editable: false,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             valueField: 'id',
             labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100,
             listeners: {

@@ -51,6 +51,7 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         foreach ($this->ids as $id) {

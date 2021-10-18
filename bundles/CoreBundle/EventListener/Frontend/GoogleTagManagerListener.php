@@ -46,11 +46,8 @@ class GoogleTagManagerListener
     const BLOCK_BODY_AFTER_NOSCRIPT_TAG = 'afterNoscriptTag';
 
     use EnabledTrait;
-
     use ResponseInjectionTrait;
-
     use PimcoreContextAwareTrait;
-
     use PreviewRequestTrait;
 
     /**
@@ -83,7 +80,7 @@ class GoogleTagManagerListener
         }
 
         $request = $event->getRequest();
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

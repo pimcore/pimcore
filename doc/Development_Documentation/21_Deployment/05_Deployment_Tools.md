@@ -21,7 +21,7 @@ be added to version control systems and be deployed to different deployment stag
 
 The PHP configuration files and PHP classes will be written to the `var/classes` directory by default. However, you can create a copy
 at `/config/pimcore/classes` which is then read-only. 
-For your development environment you can set the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=true` to 
+You can set the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=true` to 
 enable write access and update your class definitions in `/config/pimcore/classes`.
 
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database. 
@@ -35,6 +35,11 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 ./bin/console pimcore:deployment:classes-rebuild
 ```
 
+To create new classes from your configuration files in the database you can use the create-classes option. With the env variable `PIMCORE_CLASS_DIRECTORY` you can specify the directory to search for your class definitions if you do not want pimcore to search in `var/classes` or `/config/pimcore/classes`.
+
+```bash
+./bin/console pimcore:deployment:classes-rebuild  --create-classes
+```
 
 As an alternative also class export to json-files and the class import commands can be used. 
 

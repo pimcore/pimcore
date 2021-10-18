@@ -33,7 +33,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
     use PimcoreContextAwareTrait;
 
     /**
@@ -70,7 +69,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         }
 
         // master request already has a state on the stack
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             return;
         }
 

@@ -29,9 +29,7 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\ElementDumpStateTrait;
-
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
@@ -54,7 +52,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @var int|null

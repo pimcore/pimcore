@@ -57,6 +57,7 @@ class Text
 
                 $linkAttr = null;
                 $path = null;
+                $additionalAttributes = [];
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
@@ -138,8 +139,13 @@ class Text
                         if (!preg_match('/pimcore_disable_thumbnail="([^"]+)*"/', $oldTag)) {
                             if (!empty($config)) {
                                 $path = $element->getThumbnail($config);
+                                $pathHdpi = $element->getThumbnail(array_merge($config, ['highResolution' => 2]));
+                                $additionalAttributes = [
+                                    'srcset' => $path . ' 1x, ' . $pathHdpi . ' 2x',
+                                ];
                             } elseif ($element->getWidth() > 2000 || $element->getHeight() > 2000) {
                                 // if the image is too large, size it down to 2000px this is the max. for wysiwyg
+                                // for those big images we don't generate a hdpi version
                                 $path = $element->getThumbnail([
                                     'width' => 2000,
                                 ]);
@@ -153,6 +159,9 @@ class Text
                     if ($path) {
                         $pattern = '/' . $linkAttr . '="[^"]*"/';
                         $replacement = $linkAttr . '="' . $path . '"';
+                        if (!empty($additionalAttributes)) {
+                            $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
+                        }
                         $newTag = preg_replace($pattern, $replacement, $oldTag);
 
                         $text = str_replace($oldTag, $newTag, $text);

@@ -624,7 +624,7 @@ class ElementController extends AdminController
                     $list->setLoadAutoSave(true);
                     $list->setCondition('cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ', [
                         $element->getId(),
-                        Element\Service::getType($element),
+                        Element\Service::getElementType($element),
                         $this->getAdminUser()->getId(),
                     ])
                         ->setOrderKey('date')

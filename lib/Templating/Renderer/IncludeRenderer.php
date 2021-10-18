@@ -94,29 +94,27 @@ class IncludeRenderer
         $cacheKey = null;
         $cacheConfig = false;
 
-        if ($cacheEnabled && !$editmode) {
-            if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
-                // cleanup params to avoid serializing Element\ElementInterface objects
-                $cacheParams = $params;
-                $cacheParams['~~include-document'] = $originalInclude;
+        if ($cacheEnabled && !$editmode && $cacheConfig = Frontend::isOutputCacheEnabled()) {
+            // cleanup params to avoid serializing Element\ElementInterface objects
+            $cacheParams = $params;
+            $cacheParams['~~include-document'] = $originalInclude;
 
-                array_walk($cacheParams, function (&$value, $key) {
-                    if ($value instanceof Element\ElementInterface) {
-                        $value = $value->getId();
-                    } elseif (is_object($value) && method_exists($value, '__toString')) {
-                        $value = (string)$value;
-                    }
-                });
-
-                // TODO is this enough for cache or should we disable caching completely?
-                if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
-                    $cacheParams['target_group'] = $include->getUseTargetGroup();
+            array_walk($cacheParams, function (&$value, $key) {
+                if ($value instanceof Element\ElementInterface) {
+                    $value = $value->getId();
+                } elseif (is_object($value) && method_exists($value, '__toString')) {
+                    $value = (string)$value;
                 }
+            });
 
-                $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
-                if ($content = Cache::load($cacheKey)) {
-                    return $content;
-                }
+            // TODO is this enough for cache or should we disable caching completely?
+            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+                $cacheParams['target_group'] = $include->getUseTargetGroup();
+            }
+
+            $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
+            if ($content = Cache::load($cacheKey)) {
+                return $content;
             }
         }
 
@@ -133,7 +131,9 @@ class IncludeRenderer
 
         // write contents to the cache, if output-cache is enabled & not in editmode
         if ($cacheConfig && !$editmode && !DeviceDetector::getInstance()->wasUsed()) {
-            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+            $cacheTags = ['output_inline'];
+            $cacheTags[] = $cacheConfig['lifetime'] ? 'output_lifetime' : 'output';
+            Cache::save($content, $cacheKey, $cacheTags, $cacheConfig['lifetime']);
         }
 
         return $content;

@@ -64,13 +64,6 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
             }
         }
 
-        var objectId;
-        if (this["object"] && this.object["id"]) {
-            objectId = this.object.id;
-        } else if (this["element"] && this.element["id"]) {
-            objectId = this.element.id;
-        }
-
         var columnConfig = {
             language: gridConfig.language,
             pageSize: gridConfig.pageSize,

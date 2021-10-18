@@ -21,10 +21,12 @@ use Pimcore\Model\DataObject\Concrete;
 interface LayoutDefinitionEnrichmentInterface
 {
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * Override point for enriching the object's layout definition before the layout is returned to the admin interface.
+     * An example would the select datatype with a dynamic options provider.
+     *
      *
      * @param Concrete|null $object
-     * @param array $context additional contextual data
+     * @param array $context additional contextual data like fieldname etc.
      *
      * @return $this
      *

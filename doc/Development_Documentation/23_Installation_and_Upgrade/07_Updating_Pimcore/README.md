@@ -14,7 +14,7 @@ The code for the admin user interface (mostly `AdminBundle` but also parts of `E
 - Carefully read our [Upgrade Notes](../09_Upgrade_Notes/README.md) before any update. 
 - Check your version constraint for `pimcore/pimcore` in your `composer.json` and adapt it if necessary to match with the desired target version.
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
-- Clear the data cache `bin/console pimcore:clear:cache`
+- Clear the data cache `bin/console pimcore:cache:clear`
 
 Composer update runs Pimcore migrations automatically. 
 If you do not want to run Pimcore migrations automatically please remove `"Pimcore\\Composer::executeMigrationsUp"` from the `post-update-cmd` scripts in your `composer.json`.
