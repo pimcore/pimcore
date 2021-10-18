@@ -90,13 +90,13 @@ final class Version20211018104331 extends AbstractMigration
         ];
 
         $brickList = new DataObject\Objectbrick\Definition\Listing();
-        foreach ($brickList as $brickDefinition) {
+        foreach ($brickList->load() as $brickDefinition) {
             $foreignKeys['object_brick_query_'.$brickDefinition->getKey().'_'.$class->getId()] = 'o_id';
             $foreignKeys['object_brick_localized_'.$brickDefinition->getKey().'_'.$class->getId()] = 'ooo_id';
         }
 
         $fieldCollectionList = new DataObject\FieldCollection\Definition\Listing();
-        foreach ($fieldCollectionList as $fieldCollectionDefinition) {
+        foreach ($fieldCollectionList->load() as $fieldCollectionDefinition) {
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_'.$class->getId()] = 'o_id';
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
         }
