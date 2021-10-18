@@ -38,6 +38,7 @@ class LogCleanupTask implements TaskInterface
                 $lastTime = $lastTimeItem->getData();
             } else {
                 TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
+
                 continue;
             }
 
