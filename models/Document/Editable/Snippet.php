@@ -26,7 +26,7 @@ use Pimcore\Tool\DeviceDetector;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Snippet extends Model\Document\Editable implements EditmodeDataInterface, LazyLoadInterface
+class Snippet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadInterface
 {
     /**
      * Contains the ID of the linked snippet

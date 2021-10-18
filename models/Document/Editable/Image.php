@@ -23,7 +23,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Image extends Model\Document\Editable implements IdRewriterInterface
+class Image extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * ID of the referenced image

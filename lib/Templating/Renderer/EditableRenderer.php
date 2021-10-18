@@ -94,8 +94,8 @@ class EditableRenderer implements LoggerAwareInterface
             //TODO Pimcore 11: remove method_exists BC layer
             if ($editable instanceof LazyLoadInterface || method_exists($editable, 'load')) {
                 if (!$editable instanceof LazyLoadInterface) {
-                    trigger_deprecation('pimcore/pimcore', '10.1',
-                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    trigger_deprecation('pimcore/pimcore', '10.3',
+                        sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
                             'Implement the %s interface instead.', LazyLoadInterface::class));
                 }
                 $editable->load();
