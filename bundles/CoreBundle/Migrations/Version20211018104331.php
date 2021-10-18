@@ -45,6 +45,9 @@ final class Version20211018104331 extends AbstractMigration
 
                 $fkName = 'fk_'.$table.'__'.$objectIdColumn;
                 if (!$tableSchema->hasForeignKey($fkName)) {
+                    if($tableSchema->getColumn($objectIdColumn)->getCustomSchemaOption('unsigned') === false) {
+                        $tableSchema->changeColumn($objectIdColumn, ['unsigned' => true]);
+                    }
                     $tableSchema->addForeignKeyConstraint('objects', [$objectIdColumn], ['o_id'], ['ON DELETE CASCADE'], $fkName);
                 }
             }

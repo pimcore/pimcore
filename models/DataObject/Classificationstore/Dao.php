@@ -233,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
-            `o_id` BIGINT(20) NOT NULL,
+            `o_id` INT(11) UNSIGNED NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             PRIMARY KEY (`o_id`, `fieldname`, `groupId`),
@@ -241,7 +241,7 @@ class Dao extends Model\Dao\AbstractDao
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
-            `o_id` BIGINT(20) NOT NULL,
+            `o_id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,

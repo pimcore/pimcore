@@ -793,7 +793,7 @@ QUERY;
         if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
@@ -807,7 +807,7 @@ QUERY;
         } else {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`)
               INDEX `language` (`language`),
@@ -873,7 +873,7 @@ QUERY;
 
                 $this->db->query(
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
-                      `ooo_id` int(11) NOT NULL default '0',
+                      `ooo_id` int(11) UNSIGNED NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`)
                       INDEX `language` (`language`),

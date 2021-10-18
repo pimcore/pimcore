@@ -69,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         $table = $this->getTableName($class);
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
-		  `o_id` int(11) NOT NULL default '0',
+		  `o_id` int(11) UNSIGNED NOT NULL default '0',
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
