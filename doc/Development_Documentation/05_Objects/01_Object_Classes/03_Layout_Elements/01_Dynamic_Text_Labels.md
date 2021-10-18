@@ -56,13 +56,14 @@ The result will be as follows:
 ![Editmode](../../../img/dynamic_textlabel_2.png)
 
 ## Twig & Preview
-It is possible to use Twig syntax inside htmleditor and Renderer class. You can also check the generated output in preview tab.
+It is possible to use Twig syntax inside htmleditor (Source Edit) and Renderer class. You can also check the generated output in preview tab.
 
 Following variables are available in twig context: 
 - `object` - current data object
 - `data` - data provided to renderer defined in the class defintion
 
-Here is an example of Twig content:
+Here is an example of Twig content in htmleditor source edit mode:
+
 ![Template Class Definition](../../../img/dynamic_textlabel_3.png)
 
 ![Template editmode](../../../img/dynamic_textlabel_4.png)

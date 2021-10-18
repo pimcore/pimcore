@@ -181,6 +181,10 @@ pimcore.settings.staticroutes = Class.create({
                     },
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        if (!data.data.writeable) {
+                            return;
+                        }
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
                 }]
