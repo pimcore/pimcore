@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',
-          PRIMARY KEY (`o_id`,`index`,`fieldname`(190))
+          PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `fk_".$table."__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
