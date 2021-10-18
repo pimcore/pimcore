@@ -801,7 +801,7 @@ QUERY;
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
-              CONSTRAINT `fk_".$table."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id')."` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;"
             );
         } else {
@@ -811,7 +811,7 @@ QUERY;
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`)
               INDEX `language` (`language`),
-              CONSTRAINT `fk_".$table."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id')."` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;"
             );
         }
@@ -877,7 +877,7 @@ QUERY;
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`)
                       INDEX `language` (`language`),
-                      CONSTRAINT `fk_".$queryTable."__ooo_id` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id')."` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
 

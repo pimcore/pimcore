@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
           PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `fk_".$table."__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+          CONSTRAINT `".self::getForeignKeyName($table, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition

@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
 
 final class Version20211018104331 extends AbstractMigration
@@ -43,11 +44,12 @@ final class Version20211018104331 extends AbstractMigration
                     continue;
                 }
 
-                $fkName = 'fk_'.$table.'__'.$objectIdColumn;
+                $fkName = AbstractDao::getForeignKeyName($table, $objectIdColumn);
                 if (!$tableSchema->hasForeignKey($fkName)) {
                     if($tableSchema->getColumn($objectIdColumn)->getCustomSchemaOption('unsigned') === false) {
                         $tableSchema->changeColumn($objectIdColumn, ['unsigned' => true]);
                     }
+
                     $tableSchema->addForeignKeyConstraint('objects', [$objectIdColumn], ['o_id'], ['ON DELETE CASCADE'], $fkName);
                 }
             }

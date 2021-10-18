@@ -66,7 +66,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
           PRIMARY KEY (`o_id`,`fieldname`)
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `fk_'.$tableStore.'__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+          CONSTRAINT `".self::getForeignKeyName($tableStore, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
@@ -75,7 +75,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `fk_'.$tableQuery.'__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition

@@ -135,7 +135,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
               INDEX `index` (`index`),
-              CONSTRAINT `fk_".$table."__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $this->handleEncryption($class, [$table]);

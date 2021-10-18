@@ -237,7 +237,7 @@ class Dao extends Model\Dao\AbstractDao
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             PRIMARY KEY (`o_id`, `fieldname`, `groupId`),
-            CONSTRAINT `fk_'.$groupsTable.'__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
@@ -253,7 +253,7 @@ class Dao extends Model\Dao\AbstractDao
             PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`)
             INDEX `keyId` (`keyId`),
             INDEX `language` (`language`),
-            CONSTRAINT `fk_'.$dataTable.'__o_id` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->tableDefinitions = null;
