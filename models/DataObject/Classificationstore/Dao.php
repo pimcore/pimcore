@@ -250,7 +250,7 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`)
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
             INDEX `language` (`language`),
             CONSTRAINT `'.self::getForeignKeyName($dataTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
