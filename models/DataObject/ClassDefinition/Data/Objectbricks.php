@@ -633,10 +633,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
 
             if ($validationExceptions) {
-                $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
-                $aggregatedExceptions->setSubItems($validationExceptions);
-
-                throw $aggregatedExceptions;
+                $errors = [];
+                /** @var Model\Element\ValidationException $e */
+                foreach ($validationExceptions as $e) {
+                    $errors[] = $e->getAggregatedMessage();
+                }
+                $message = implode(' / ', $errors);
+                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
             }
         }
     }
