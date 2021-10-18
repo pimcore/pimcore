@@ -1004,7 +1004,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         if (count($validationExceptions) > 0) {
-            $aggregatedExceptions = new Model\Element\ValidationException();
+            $aggregatedExceptions = new Model\Element\ValidationException($validationExceptions[0]->getMessage());
             $aggregatedExceptions->setSubItems($validationExceptions);
 
             throw $aggregatedExceptions;
