@@ -17,6 +17,7 @@ namespace Pimcore\Model\Version;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -28,14 +29,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM versions WHERE id = ?', $id);
 
-        if (!$data['id']) {
-            throw new \Exception('version with id ' . $id . ' not found');
+        if (!$data) {
+            throw new NotFoundException('version with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);

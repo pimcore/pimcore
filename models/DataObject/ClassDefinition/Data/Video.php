@@ -25,6 +25,7 @@ use Pimcore\Tool\Serialize;
 class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
 
     /**
@@ -450,13 +451,13 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data && $data->getData() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
                 $data->setData(Asset::getById($idMapping['asset'][$data->getData()->getId()]));
             }
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
                 $data->setPoster(Asset::getById($idMapping['asset'][$data->getPoster()->getId()]));
             }
         }
@@ -531,7 +532,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $poster = $value->getPoster();
             if ($poster) {
                 $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
+                    'type' => Model\Element\Service::getElementType($poster),
                     'id' => $poster->getId(),
                 ];
             }
@@ -540,7 +541,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
+                    'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),
                 ];
             } else {

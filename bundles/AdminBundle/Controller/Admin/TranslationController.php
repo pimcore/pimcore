@@ -219,12 +219,14 @@ class TranslationController extends AdminController
         }
 
         foreach ($translationObjects as $t) {
+            $row = $t->getTranslations();
+            $row = Element\Service::escapeCsvRecord($row);
             $translations[] = array_merge(
                 ['key' => $t->getKey(),
                     'creationDate' => $t->getCreationDate(),
                     'modificationDate' => $t->getModificationDate(),
                 ],
-                $t->getTranslations()
+                $row
             );
         }
 
@@ -261,7 +263,7 @@ class TranslationController extends AdminController
         foreach ($translations as $t) {
             $tempRow = [];
             foreach ($columns as $key) {
-                $value = $t[$key];
+                $value = $t[$key] ?? null;
                 //clean value of evil stuff such as " and linebreaks
                 if (is_string($value)) {
                     $value = Tool\Text::removeLineBreaks($value);
@@ -474,7 +476,16 @@ class TranslationController extends AdminController
             $list->load();
 
             $translations = [];
+            $searchString = $request->get('searchString');
             foreach ($list->getTranslations() as $t) {
+                //Reload translation to get complete data,
+                //if translation fetched based on the text not key
+                if ($searchString && !strpos($searchString, $t->getKey())) {
+                    if (!$t = Translation::getByKey($t->getKey(), $domain)) {
+                        continue;
+                    }
+                }
+
                 $translations[] = array_merge(
                     $this->prefixTranslations($t->getTranslations()),
                     [
@@ -1069,10 +1080,10 @@ class TranslationController extends AdminController
                     libxml_clear_errors();
                     $html = $doc->saveHTML();
 
-                    $bodyStart = strpos($html, '<body>') + 6;
+                    $bodyStart = strpos($html, '<body>');
                     $bodyEnd = strpos($html, '</body>');
                     if ($bodyStart && $bodyEnd) {
-                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                        $html = substr($html, $bodyStart + 6, $bodyEnd - $bodyStart);
                     }
 
                     $output .= $html;

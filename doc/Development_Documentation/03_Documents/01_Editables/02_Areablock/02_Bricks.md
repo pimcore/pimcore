@@ -158,7 +158,7 @@ variable on the view which gives you access to the brick instance. A `info` vari
 brick metadata.
 
 ```twig
-/* templates/Areas/iframe/view.html.twig */
+/* templates/areas/iframe/view.html.twig */
 
 {% set urlField = pimcore_input('iframe_url') %}
 {% set widthField = pimcore_numeric('iframe_width') %}

@@ -38,6 +38,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
+
     use StaticPageContextAwareTrait;
 
     /**
@@ -153,7 +154,7 @@ class FullPageCacheListener
 
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -323,7 +324,7 @@ class FullPageCacheListener
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

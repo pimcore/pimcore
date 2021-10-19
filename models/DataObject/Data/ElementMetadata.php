@@ -86,7 +86,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function __call($name, $arguments)
     {
-        if (substr($name, 0, 3) == 'get') {
+        if (str_starts_with($name, 'get')) {
             $key = substr($name, 3, strlen($name) - 3);
             $idx = array_searchi($key, $this->columns);
 
@@ -99,8 +99,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (str_starts_with($name, 'set')) {
+            $key = substr($name, 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
@@ -141,7 +141,10 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $this->markMeDirty(false);
+
+        return $return;
     }
 
     /**
@@ -179,7 +182,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             return $this;
         }
 
-        $elementType = Model\Element\Service::getType($element);
+        $elementType = Model\Element\Service::getElementType($element);
         $elementId = $element->getId();
         $this->setElementTypeAndId($elementType, $elementId);
 

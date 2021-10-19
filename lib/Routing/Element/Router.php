@@ -170,8 +170,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
         }
 
-        if (!$route && $this->requestHelper->hasMasterRequest()) {
-            $route = $this->requestHelper->getMasterRequest()->attributes->get('_route');
+        if (!$route && $this->requestHelper->hasMainRequest()) {
+            $route = $this->requestHelper->getMainRequest()->attributes->get('_route');
         }
 
         return $route;

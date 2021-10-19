@@ -637,13 +637,13 @@ class Video extends Model\Document\Editable
             $additional_params = '';
 
             $clipConfig = [];
-            if (is_array($config['config']['clip'])) {
+            if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
                 $clipConfig = $config['config']['clip'];
             }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['vimeo'])) {
+            if (isset($config['vimeo']) && is_array($config['vimeo'])) {
                 $configurations = array_merge($clipConfig, $config['vimeo']);
             }
 
@@ -707,11 +707,11 @@ class Video extends Model\Document\Editable
 
             $additional_params = '';
 
-            $clipConfig = is_array($config['config']['clip']) ? $config['config']['clip'] : [];
+            $clipConfig = isset($config['config']['clip']) && is_array($config['config']['clip']) ? $config['config']['clip'] : [];
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['dailymotion'])) {
+            if (isset($config['dailymotion']) && is_array($config['dailymotion'])) {
                 $configurations = array_merge($clipConfig, $config['dailymotion']);
             }
 
@@ -1023,7 +1023,7 @@ class Video extends Model\Document\Editable
      */
     public function rewriteIds($idMapping)
     {
-        if ($this->type == 'asset' && array_key_exists('asset', $idMapping) and array_key_exists($this->getId(), $idMapping['asset'])) {
+        if ($this->type == 'asset' && array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);
         }
     }

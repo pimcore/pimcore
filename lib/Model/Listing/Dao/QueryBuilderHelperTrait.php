@@ -143,7 +143,7 @@ trait QueryBuilderHelperTrait
             }
 
             if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
-                $queryBuilder->select($originalSelect);
+                $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
                 $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
             } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';

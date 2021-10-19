@@ -28,6 +28,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
@@ -111,7 +112,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             }
 
             return $return;
-        } elseif (is_array($data) and count($data) === 0) {
+        } elseif (is_array($data) && count($data) === 0) {
             //give empty array if data was not null
             return [];
         } else {
@@ -395,7 +396,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
@@ -922,7 +923,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
-                $type = Element\Service::getType($element);
+                $type = Element\Service::getElementType($element);
                 $id = $element->getId();
                 $result[] = [
                     'element' => [

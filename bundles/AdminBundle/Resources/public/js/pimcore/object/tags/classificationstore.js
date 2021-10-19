@@ -580,11 +580,15 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var newGroupIds = [];
 
-        for (var groupId in data) {
+        var dataArray = Object.values(data);
+        dataArray.sort((a, b) => (a.sorter > b.sorter) ? 1 : -1);
+
+        dataArray.forEach(function(groupData) {
+            var groupId = groupData.id;
             if (!this.activeGroups[groupId]) {
                 newGroupIds.push(groupId);
             }
-        }
+        }, this);
 
         if (
             this.fieldConfig.maxItems > 0 &&

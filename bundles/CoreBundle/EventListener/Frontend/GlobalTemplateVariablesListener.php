@@ -33,6 +33,7 @@ use Twig\Environment;
 class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
 
     /**

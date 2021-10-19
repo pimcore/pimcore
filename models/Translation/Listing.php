@@ -24,7 +24,6 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method array loadRaw()
  * @method Model\Translation current()
  * @method int getTotalCount()
- * @method void onCreateQuery(callable $callback)
  * @method void onCreateQueryBuilder(?callable $callback)
  * @method void cleanup()
  *

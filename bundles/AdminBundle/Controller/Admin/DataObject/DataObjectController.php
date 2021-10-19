@@ -53,7 +53,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
+
     use ElementEditLockHelperTrait;
+
     use ApplySchedulerDataTrait;
 
     /**
@@ -492,27 +494,26 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
-            $currentLayoutId = $request->get('layoutId', null);
+            $currentLayoutId = $request->get('layoutId', 0);
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
             //Fallback if $currentLayoutId is not set or empty string
             //Uses first valid layout instead of admin layout when empty
             $ok = false;
-            foreach ($validLayouts as $key => $layout) {
+            foreach ($validLayouts as $layout) {
                 if ($currentLayoutId == $layout->getId()) {
                     $ok = true;
                 }
             }
+
             if (!$ok) {
-                if (count($validLayouts) > 0) {
-                    $currentLayoutId = reset($validLayouts)->getId();
-                }
+                $currentLayoutId = null;
             }
 
             //master layout has id 0 so we check for is_null()
-            if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
-                if (count($validLayouts) == 1) {
+            if ($currentLayoutId === null && !empty($validLayouts)) {
+                if (count($validLayouts) === 1) {
                     $firstLayout = reset($validLayouts);
                     $currentLayoutId = $firstLayout->getId();
                 } else {
@@ -523,8 +524,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     }
                 }
             }
+
+            if ($currentLayoutId === null && count($validLayouts) > 0) {
+                $currentLayoutId = reset($validLayouts)->getId();
+            }
+
             if (!empty($validLayouts)) {
-                $objectData['validLayouts'] = [ ];
+                $objectData['validLayouts'] = [];
 
                 foreach ($validLayouts as $validLayout) {
                     $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
@@ -532,26 +538,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 $user = Tool\Admin::getCurrentUser();
 
-                if (!is_null($currentLayoutId)) {
-                    if ($currentLayoutId == '0' && !$user->isAdmin()) {
-                        $first = reset($validLayouts);
-                        $currentLayoutId = $first->getId();
-                    }
-                }
-
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
                     $layout = DataObject\Service::getSuperLayoutDefinition($object);
                     $objectData['layout'] = $layout;
                 } elseif (!empty($currentLayoutId)) {
-                    // check if user has sufficient rights
-                    if (is_array($validLayouts) && $validLayouts[$currentLayoutId]) {
-                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
-
-                        $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                        $objectData['layout'] = $customLayoutDefinition;
-                    } else {
-                        $currentLayoutId = 0;
-                    }
+                    $objectData['layout'] = $validLayouts[$currentLayoutId]->getLayoutDefinitions();
                 }
 
                 $objectData['currentLayoutId'] = $currentLayoutId;
@@ -1314,7 +1305,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
                         $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 or count($toDelete) > 0) {
+                        if (count($toAdd) > 0 || count($toDelete) > 0) {
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
@@ -1374,7 +1365,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $newObject = DataObject::getById($object->getId(), true);
 
             if ($request->get('task') == 'publish') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             return $this->adminJson([
@@ -1411,7 +1402,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($request->get('task') == 'version') {
-                $object->deleteAutoSaveVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -2315,7 +2306,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {
-        $latestVersion = $object->getLatestVersion($this->getUser()->getId());
+        $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
@@ -2333,8 +2324,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

@@ -130,14 +130,14 @@ class Authentication
 
         $user = User::getByName($username);
         if (self::isValidUser($user)) {
-            if ($adminRequired and !$user->isAdmin()) {
+            if ($adminRequired && !$user->isAdmin()) {
                 return null;
             }
 
             $timeZone = date_default_timezone_get();
             date_default_timezone_set('UTC');
 
-            if ($timestamp > time() or $timestamp < (time() - (60 * 60 * 24))) {
+            if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
                 return null;
             }
             date_default_timezone_set($timeZone);

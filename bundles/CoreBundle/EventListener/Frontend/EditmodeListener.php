@@ -40,6 +40,7 @@ use Symfony\Component\Routing\RouterInterface;
 class EditmodeListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
+
     use PimcoreContextAwareTrait;
 
     /**
@@ -82,7 +83,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return; // only resolve editmode in frontend
         }
 
@@ -100,7 +101,7 @@ class EditmodeListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return; // only master requests inject editmode assets
         }
 

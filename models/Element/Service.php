@@ -22,6 +22,7 @@ use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use League\Csv\EscapeFormula;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -49,6 +50,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Service extends Model\AbstractModel
 {
+    /**
+     * @var EscapeFormula|null
+     */
+    private static ?EscapeFormula $formatter = null;
+
     /**
      * @internal
      *
@@ -585,6 +591,12 @@ class Service extends Model\AbstractModel
      */
     public static function getType($element)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Service::getType() method is deprecated, use Service::getElementType() instead.'
+        );
+
         return self::getElementType($element);
     }
 
@@ -683,7 +695,7 @@ class Service extends Model\AbstractModel
         $data = [
             'id' => $element->getId(),
             'fullpath' => $element->getRealFullPath(),
-            'type' => self::getType($element),
+            'type' => self::getElementType($element),
             'subtype' => $element->getType(),
             'filename' => $element->getKey(),
             'creationDate' => $element->getCreationDate(),
@@ -1487,14 +1499,14 @@ class Service extends Model\AbstractModel
 
         if ($element instanceof ElementInterface) {
             if (($context['conversion'] ?? false) === 'marshal') {
-                $sourceType = Service::getType($element);
+                $sourceType = Service::getElementType($element);
                 $sourceId = $element->getId();
 
                 $copier->addTypeFilter(
                     new \DeepCopy\TypeFilter\ReplaceFilter(
                         function ($currentValue) {
                             if ($currentValue instanceof ElementInterface) {
-                                $elementType = Service::getType($currentValue);
+                                $elementType = Service::getElementType($currentValue);
                                 $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
 
                                 return $descriptor;
@@ -1538,5 +1550,22 @@ class Service extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_DEEP_COPY);
 
         return $event->getArgument('copier');
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $rowData
+     *
+     * @return array
+     */
+    public static function escapeCsvRecord(array $rowData): array
+    {
+        if (self::$formatter === null) {
+            self::$formatter = new EscapeFormula("'", ['=', '-', '+', '@']);
+        }
+        $rowData = self::$formatter->escapeRecord($rowData);
+
+        return $rowData;
     }
 }

@@ -452,7 +452,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) and count($data) > 1) {
+            if (is_array($data) && count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {

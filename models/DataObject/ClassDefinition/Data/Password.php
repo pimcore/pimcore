@@ -23,8 +23,11 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+
     use Extension\ColumnType;
+
     use Extension\QueryColumnType;
+
     use DataObject\Traits\SimpleNormalizerTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
@@ -491,7 +494,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength()) {
+        if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }
 

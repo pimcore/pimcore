@@ -249,7 +249,7 @@ class Renderlet extends Model\Document\Editable
             $object = $this->o;
         }
         if ($object instanceof Element\ElementInterface) {
-            return Element\Service::getType($object);
+            return Element\Service::getElementType($object);
         }
 
         return null;
@@ -393,7 +393,7 @@ class Renderlet extends Model\Document\Editable
     public function rewriteIds($idMapping)
     {
         $type = (string) $this->type;
-        if ($type && array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+        if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->setId($idMapping[$this->type][$this->getId()]);
             $this->setO(null);
         }

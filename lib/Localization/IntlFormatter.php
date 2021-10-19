@@ -236,7 +236,7 @@ class IntlFormatter
 
             if ($pattern !== 'default') {
                 $formatter->setPattern($pattern);
-            } elseif ($this->currencyFormats[$this->getLocale()]) {
+            } elseif ($this->currencyFormats[$this->getLocale()] ?? null) {
                 $formatter->setPattern($this->currencyFormats[$this->getLocale()]);
             }
 

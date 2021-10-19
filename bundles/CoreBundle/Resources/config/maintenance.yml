@@ -7,6 +7,8 @@ services:
         arguments:
             - 'maintenance.pid'
             - '@logger'
+            - '@Symfony\Component\Lock\LockFactory'
+            - '@Symfony\Component\Messenger\MessageBusInterface'
 
     Pimcore\Maintenance\Tasks\ScheduledTasksTask:
         arguments:
@@ -98,11 +100,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: imageoptimize }
 
-    Pimcore\Maintenance\Tasks\AssetDocumentConversionTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: asset_document_convert }
 
     Pimcore\Maintenance\Tasks\HousekeepingTask:
         arguments:

@@ -113,7 +113,8 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
             }
             return Ext.Date.format(value, "Y-m-d");
         }
-        return value;
+
+        return Ext.util.Format.htmlEncode(value);
     },
 
     marshal: function(value) {

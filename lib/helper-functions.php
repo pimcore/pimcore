@@ -43,31 +43,26 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
+    $mode = 'wb' . $level;
     $error = false;
-
-    $fp_in = fopen($source, 'rb');
-
-    $fp_out = fopen($dest, 'wb');
-    $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
-
-    if ($fp_out && $fp_in) {
-        while (!feof($fp_in)) {
-            fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
+    if ($fp_out = gzopen($dest, $mode)) {
+        if ($fp_in = fopen($source, 'rb')) {
+            while (!feof($fp_in)) {
+                gzwrite($fp_out, fread($fp_in, 1024 * 512));
+            }
+            fclose($fp_in);
+        } else {
+            $error = true;
         }
-
-        fclose($fp_in);
-
-        fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
-        fclose($fp_out);
+        gzclose($fp_out);
     } else {
         $error = true;
     }
-
     if ($error) {
         return false;
+    } else {
+        return $dest;
     }
-
-    return $dest;
 }
 
 /**

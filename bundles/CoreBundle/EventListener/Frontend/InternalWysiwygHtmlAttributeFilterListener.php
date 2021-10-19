@@ -30,7 +30,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
+
     use PimcoreContextAwareTrait;
+
     use StaticPageContextAwareTrait;
 
     public static function getSubscribedEvents()
@@ -47,7 +49,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest() && !$this->matchesStaticPageContext($request)) {
+        if (!$event->isMainRequest() && !$this->matchesStaticPageContext($request)) {
             return;
         }
 

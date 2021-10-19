@@ -9,6 +9,7 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
+* 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
 * 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
@@ -76,7 +77,7 @@ The DXP/CMS part of Pimcore for managing unstructured content such as the pages 
 
 #### Demo (Community Edition)
 _Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
-_Admin-URL_ (dev): [https://x.pimcore.fun/admin/](https://x.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://10.x-dev.pimcore.fun/admin/](https://10.x-dev.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 
