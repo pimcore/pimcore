@@ -163,7 +163,7 @@ class Installer extends AbstractInstaller
         $this->bundle = $bundle;
         $this->db = $connection;
         if ($this->db instanceof Connection) {
-            $this->schema = $this->db->createSchemaManager()->createSchema();
+            $this->schema = $this->db->getSchemaManager()->createSchema();
         }
 
         parent::__construct();

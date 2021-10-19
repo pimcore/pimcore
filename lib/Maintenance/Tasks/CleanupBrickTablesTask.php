@@ -91,7 +91,7 @@ class CleanupBrickTablesTask implements TaskInterface
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

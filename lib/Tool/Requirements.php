@@ -257,7 +257,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->deleteWhere('__pimcore_req_check');
+            $db->executeStatement('DELETE FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
