@@ -18,8 +18,7 @@ namespace Pimcore\Db;
 use Doctrine\DBAL\Cache\CacheException;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Model\Element\ValidationException;
 
@@ -52,45 +51,46 @@ trait PimcoreExtensionsTrait
         return $returnValue;
     }
 
+//    /**
+//     * @see \Doctrine\DBAL\Connection::executeQuery
+//     *
+//     * @return ResultStatement
+//     *
+//     * @throws DBALException
+//     */
+//    public function query(...$params)
+//    {
+//        // compatibility layer for additional parameters in the 2nd argument
+//        // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
+//        if (func_num_args() === 2) {
+//            if (is_array($params[1])) {
+//                return parent::executeQuery($params[0], $params[1]);
+//            }
+//        }
+//
+//        if (count($params) > 0) {
+//            $params[0] = $this->normalizeQuery($params[0], [], true);
+//        }
+//
+//        return parent::executeQuery(...$params);
+//    }
+
     /**
      * @see \Doctrine\DBAL\Connection::executeQuery
      *
-     * @return ResultStatement
+     * @param string                                                               $sql    SQL query
+     * @param list<mixed>|array<string, mixed>                                     $params Query parameters
+     * @param array<int, int|string|Type|null>|array<string, int|string|Type|null> $types  Parameter types
      *
-     * @throws DBALException
+     * @throws \Exception
      */
-    public function query(...$params)
-    {
-        // compatibility layer for additional parameters in the 2nd argument
-        // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
-        if (func_num_args() === 2) {
-            if (is_array($params[1])) {
-                return parent::executeQuery($params[0], $params[1]);
-            }
-        }
-
-        if (count($params) > 0) {
-            $params[0] = $this->normalizeQuery($params[0], [], true);
-        }
-
-        return parent::executeQuery(...$params);
-    }
-
-    /**
-     * @see \Doctrine\DBAL\Connection::executeQuery
-     *
-     * @param string $query The SQL query to execute.
-     * @param array $params The parameters to bind to the query, if any.
-     * @param array $types The types the previous parameters are in.
-     * @param QueryCacheProfile|null $qcp The query cache profile, optional.
-     *
-     * @return ResultStatement The executed statement.
-     *
-     * @throws DBALException
-     */
-    public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
-    {
-        list($query, $params) = $this->normalizeQuery($query, $params);
+    public function executeQuery(
+        string $sql,
+        array $params = [],
+        $types = [],
+        ?QueryCacheProfile $qcp = null
+    ): Result {
+        list($query, $params) = $this->normalizeQuery($sql, $params);
 
         return parent::executeQuery($query, $params, $types, $qcp);
     }
@@ -106,9 +106,9 @@ trait PimcoreExtensionsTrait
      *
      * @throws DBALException
      */
-    public function executeUpdate($query, array $params = [], array $types = [])
+    public function executeUpdate(string $sql, array $params = [], array $types = []): int
     {
-        list($query, $params) = $this->normalizeQuery($query, $params);
+        list($query, $params) = $this->normalizeQuery($sql, $params);
 
         return parent::executeStatement($query, $params, $types);
     }
@@ -125,11 +125,31 @@ trait PimcoreExtensionsTrait
      *
      * @throws CacheException
      */
-    public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp)
+    public function executeCacheQuery($sql, $params, $types, QueryCacheProfile $qcp): Result
     {
-        list($query, $params) = $this->normalizeQuery($query, $params);
+        list($query, $params) = $this->normalizeQuery($sql, $params);
 
         return parent::executeCacheQuery($query, $params, $types, $qcp);
+    }
+
+    public function fetchAssoc($statement, array $params = [], array $types = [])
+    {
+        return parent::fetchAssociative($statement, $params, $types);
+    }
+
+    public function fetchArray($statement, array $params = [], array $types = [])
+    {
+        return parent::fetchNumeric($statement, $params, $types);
+    }
+
+    public function fetchColumn($statement, array $params = [], $column = 0, array $types = [])
+    {
+        return parent::fetchOne($statement, $params, $types);
+    }
+
+    public function fetchAll($sql, array $params = [], $types = [])
+    {
+        return parent::executeQuery($sql, $params, $types)->fetchAll();
     }
 
     /**
@@ -151,7 +171,7 @@ trait PimcoreExtensionsTrait
     /**
      * @see \Doctrine\DBAL\Connection::update
      *
-     * @param string $tableExpression  The expression of the table to update quoted or unquoted.
+     * @param string $table  The expression of the table to update quoted or unquoted.
      * @param array  $data       An associative array containing column-value pairs.
      * @param array  $identifier The update criteria. An associative array containing column-value pairs.
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
@@ -160,18 +180,18 @@ trait PimcoreExtensionsTrait
      *
      * @throws DBALException
      */
-    public function update($tableExpression, array $data, array $identifier, array $types = [])
+    public function update($table, array $data, array $identifier, array $types = [])
     {
         $data = $this->quoteDataIdentifiers($data);
         $identifier = $this->quoteDataIdentifiers($identifier);
 
-        return parent::update($tableExpression, $data, $identifier, $types);
+        return parent::update($table, $data, $identifier, $types);
     }
 
     /**
      * @see \Doctrine\DBAL\Connection::insert
      *
-     * @param string $tableExpression The expression of the table to insert data into, quoted or unquoted.
+     * @param string $table The expression of the table to insert data into, quoted or unquoted.
      * @param array  $data      An associative array containing column-value pairs.
      * @param array  $types     Types of the inserted data.
      *
@@ -179,18 +199,18 @@ trait PimcoreExtensionsTrait
      *
      * @throws DBALException
      */
-    public function insert($tableExpression, array $data, array $types = [])
+    public function insert($table, array $data, array $types = [])
     {
         $data = $this->quoteDataIdentifiers($data);
 
-        return parent::insert($tableExpression, $data, $types);
+        return parent::insert($table, $data, $types);
     }
 
     /**
      * Deletes table rows based on a custom WHERE clause.
      *
-     * @param  mixed        $table The table to update.
-     * @param  mixed        $where DELETE WHERE clause(s).
+     * @param  string        $table The table to update.
+     * @param  string        $where DELETE WHERE clause(s).
      *
      * @return int          The number of affected rows.
      *
@@ -243,7 +263,7 @@ trait PimcoreExtensionsTrait
      * @param array|scalar $params
      * @param array $types
      *
-     * @return mixed
+     * @return array<string, mixed>|false False is returned if no rows are found.
      *
      * @throws DBALException
      */
@@ -347,7 +367,7 @@ trait PimcoreExtensionsTrait
         $vals = [];
         foreach ($data as $col => $val) {
             $cols[] = $this->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
+            $bind['col' . $i] = $val;
             $vals[] = ':col' . $i;
             $i++;
         }
@@ -408,7 +428,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    public function quoteColumnAs($ident, $alias = null)
+    public function quoteColumnAs($ident, $alias)
     {
         return $this->_quoteIdentifierAs($ident, $alias);
     }
@@ -436,7 +456,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    protected function _quoteIdentifierAs($ident, $alias = null, $auto = false, $as = ' AS ')
+    protected function _quoteIdentifierAs(string $ident, ?string $alias = null, bool $auto = false, string $as = ' AS '): string
     {
         if (is_string($ident)) {
             $ident = explode('.', $ident);
@@ -469,7 +489,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    protected function _quoteIdentifier($value, $auto = false)
+    protected function _quoteIdentifier(string $value, bool $auto = false): string
     {
         if ($auto === false) {
             $q = '`';
@@ -522,7 +542,7 @@ trait PimcoreExtensionsTrait
     public function queryIgnoreError($sql, $exclusions = [])
     {
         try {
-            return $this->query($sql);
+            return $this->executeQuery($sql);
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {
@@ -540,7 +560,7 @@ trait PimcoreExtensionsTrait
      *
      * @return array
      */
-    protected function prepareParams($params)
+    protected function prepareParams($params): array
     {
         if (is_scalar($params)) {
             $params = [$params];

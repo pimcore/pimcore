@@ -17,14 +17,13 @@ namespace Pimcore\Db;
 
 use Doctrine\DBAL\Cache\CacheException;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
-use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Result;
 use Pimcore\Model\Element\ValidationException;
 
-interface ConnectionInterface extends Connection
+interface ConnectionInterface
 {
     /**
      * @param string $query
@@ -32,11 +31,16 @@ interface ConnectionInterface extends Connection
      * @param array $types
      * @param QueryCacheProfile|null $qcp
      *
-     * @return ResultStatement
+     * @return Result
      *
      * @throws DBALException
      */
-    public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
+    public function executeQuery(
+        string $sql,
+        array $params = [],
+        $types = [],
+        ?QueryCacheProfile $qcp = null
+    ): Result;
 
     /**
      * @param string $query
@@ -47,7 +51,7 @@ interface ConnectionInterface extends Connection
      *
      * @throws DBALException
      */
-    public function executeUpdate($query, array $params = [], array $types = []);
+    public function executeUpdate(string $sql, array $params = [], array $types = []): int;
 
     /**
      * @param string $query
@@ -55,26 +59,26 @@ interface ConnectionInterface extends Connection
      * @param array $types
      * @param QueryCacheProfile $qcp
      *
-     * @return ResultStatement
+     * @return Result
      *
      * @throws CacheException
      */
-    public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp);
+    public function executeCacheQuery($sql, $params, $types, QueryCacheProfile $qcp): Result;
 
     /**
-     * @param string $tableExpression
+     * @param string $table
      * @param array $data
-     * @param array $identifier
+     * @param array $criteria
      * @param array $types
      *
      * @return int
      *
      * @throws DBALException
      */
-    public function update($tableExpression, array $data, array $identifier, array $types = []);
+    public function update($table, array $data, array $criteria, array $types = []);
 
     /**
-     * @param string $tableExpression
+     * @param string $table
      * @param array $data
      * @param array $types
      *
@@ -82,7 +86,7 @@ interface ConnectionInterface extends Connection
      *
      * @throws DBALException
      */
-    public function insert($tableExpression, array $data, array $types = []);
+    public function insert($table, array $data, array $types = []);
 
     /**
      * @param string $table

@@ -15,6 +15,8 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Result;
+
 class Connection extends \Doctrine\DBAL\Connection implements ConnectionInterface
 {
     use PimcoreExtensionsTrait;
