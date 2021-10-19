@@ -250,7 +250,7 @@ class Dao
             $query = 'SELECT ' . $fieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a WHERE a.o_id = ?;';
 
             $this->logger->info('Query: ' . $query);
-            $objectValues = $this->db->fetchAssociative($query, $objectId);
+            $objectValues = $this->db->fetchAssociative($query, [$objectId]);
             $this->logger->info('Query done.');
 
             $query = 'SELECT ' . $maxFieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a';

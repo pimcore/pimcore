@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', $id);
+        $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', [$id]);
 
         if (is_array($item) && array_key_exists('id', $item)) {
             if ($item['serialized']) {
