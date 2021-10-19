@@ -69,7 +69,7 @@ class Helper
             $sql .= ' WHERE ' . $where;
         }
 
-        $idsForDeletion = $db->fetchOne($sql);
+        $idsForDeletion = $db->fetchFirstColumn($sql);
 
         if (!empty($idsForDeletion)) {
             $chunks = array_chunk($idsForDeletion, 1000);
