@@ -424,7 +424,7 @@ class Dao extends Model\Element\Dao
             if (!$this->model->getId() || $this->model->getId() == 1) {
                 $path = '';
             }
-            $classIds = $this->db->fetchFirstColumn("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", Helper::escapeLike($path) . '/%');
+            $classIds = $this->db->fetchFirstColumn("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", [Helper::escapeLike($path) . '/%']);
 
             $classes = [];
             foreach ($classIds as $classId) {

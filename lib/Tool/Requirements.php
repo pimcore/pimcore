@@ -198,7 +198,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->executeStatement('UPDATE TABLE __pimcore_req_check SET field=:field, alter_field=:alter_field', [
+            $db->executeStatement('UPDATE __pimcore_req_check SET field=:field, alter_field=:alter_field', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
