@@ -124,7 +124,7 @@ pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editab
             handler: function(element, timestamp) {
                 Ext.MessageBox.confirm("", t("scheduled_block_really_delete_past"), function (buttonValue) {
                     if (buttonValue == "yes") {
-                        this.cleanupTimestamps(false);
+                        this.cleanupTimestamps(true);
                     }
                 }.bind(this));
             }.bind(this)
