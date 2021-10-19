@@ -446,7 +446,11 @@ EOT;
     private function isIgnoreEditmodeIndices(): bool
     {
         $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $request = $requestStack->getCurrentRequest();
+        if ($request === null) {
+            return false;
+        }
 
-        return $requestStack->getCurrentRequest()->get(self::IGNORE_EDITMODE_INDICES, false);
+        return $request->get(self::IGNORE_EDITMODE_INDICES, false);
     }
 }
