@@ -21,6 +21,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Block;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -54,7 +55,11 @@ class EditableUsageResolver
 
         // we render in editmode, so that we can ensure all elements that can be edited are present in the export
         // this is especially necessary when lazy loading certain elements on a page (eg. using ajax-include and similar solutions)
-        $this->renderer->render($document, [EditmodeResolver::ATTRIBUTE_EDITMODE => true, ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true]);
+        $this->renderer->render($document, [
+            EditmodeResolver::ATTRIBUTE_EDITMODE => true,
+            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true,
+            Block::IGNORE_EDITMODE_INDICES => true,
+            ]);
         $names = $this->subscriber->getRecordedEditableNames();
         $this->unregisterEventSubscriber();
 
