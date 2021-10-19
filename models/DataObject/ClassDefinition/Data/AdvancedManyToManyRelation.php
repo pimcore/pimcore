@@ -137,7 +137,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($targets as $targetType => $targetIds) {
                 $identifier = $targetType === 'object' ? 'o_id' : 'id';
 
-                $result = $db->fetchOne(
+                $result = $db->fetchFirstColumn(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
                     . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
@@ -281,7 +281,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $className = '';
                 }
 
-                $result = $db->fetchAllAssociative(
+                $result = $db->fetchAll(
                     'SELECT '
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className
@@ -601,28 +601,28 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
-                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', $ownerName)
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
 
             if ($context) {
                 if (!empty($context['fieldname'])) {
-                    $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownername = ?', $context['fieldname']);
+                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
-                        $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
+                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
                 }
             }
         }
 
-        $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
+        $db->deleteWhere($table, $sql);
 
         if (!empty($multihrefMetadata)) {
             if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
@@ -686,20 +686,20 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $containerName = $context['fieldname'] ?? null;
 
             if ($context['containerType'] === 'objectbrick') {
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE '
-                    .Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             } else {
                 $index = $context['index'];
 
-                $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE '
-                    . Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             }
         } else {

@@ -15,7 +15,6 @@
 
 namespace Pimcore\Log\Handler;
 
-use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
 use Pimcore\Db;
 
@@ -26,16 +25,16 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     * @var Connection
+     * @var Db\ConnectionInterface
      */
     private $db;
 
     /**
-     * @param Connection $db
+     * @param Db\ConnectionInterface $db
      * @param string $level
      * @param bool $bubble
      */
-    public function __construct(Connection $db, $level = 'debug', $bubble = true)
+    public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);
@@ -68,7 +67,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
         $db = Db::get();
 
-        $components = $db->fetchOne('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
+        $components = $db->fetchFirstColumn('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
         return $components;
     }
@@ -92,7 +91,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         $db = Db::get();
 
-        $priorityNumbers = $db->fetchOne('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
+        $priorityNumbers = $db->fetchFirstColumn('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

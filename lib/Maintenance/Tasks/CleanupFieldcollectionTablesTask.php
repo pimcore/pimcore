@@ -54,7 +54,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];
             $pattern = $task['pattern'];
-            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
+            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -88,7 +88,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchOne($fieldsQuery);
+                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
@@ -101,7 +101,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->delete($tableName, ['fieldname' => $fieldName]);
+                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
                     }
                 }
             }

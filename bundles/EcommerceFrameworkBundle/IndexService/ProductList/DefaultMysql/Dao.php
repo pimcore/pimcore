@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
-use Doctrine\DBAL\Connection;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
@@ -26,9 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 class Dao
 {
     /**
-     * @var Connection
+     * @var \Pimcore\Db\ConnectionInterface
      */
-    private Connection $db;
+    private $db;
 
     /**
      * @var DefaultMysql
@@ -90,7 +89,7 @@ class Dao
                 . $condition . $orderBy . ' ' . $limit;
         }
         $this->logger->info('Query: ' . $query);
-        $result = $this->db->fetchAllAssociative($query);
+        $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
         $this->logger->info('Query done.');
 
@@ -117,7 +116,7 @@ class Dao
             }
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchAllAssociative($query);
+            $result = $this->db->fetchAll($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -128,7 +127,7 @@ class Dao
                 . $condition . ' GROUP BY ' . $this->db->quoteIdentifier($fieldname);
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchOne($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -160,7 +159,7 @@ class Dao
             $query .= ' AND src IN (' . $subquery . ') GROUP BY dest';
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchAllAssociative($query);
+            $result = $this->db->fetchAll($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -176,7 +175,7 @@ class Dao
             $query .= ' AND src IN (' . $subquery . ') GROUP BY dest';
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchOne($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -250,13 +249,13 @@ class Dao
             $query = 'SELECT ' . $fieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a WHERE a.o_id = ?;';
 
             $this->logger->info('Query: ' . $query);
-            $objectValues = $this->db->fetchAssociative($query, $objectId);
+            $objectValues = $this->db->fetchRow($query, $objectId);
             $this->logger->info('Query done.');
 
             $query = 'SELECT ' . $maxFieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a';
 
             $this->logger->info('Query: ' . $query);
-            $maxObjectValues = $this->db->fetchAssociative($query);
+            $maxObjectValues = $this->db->fetchRow($query);
             $this->logger->info('Query done.');
 
             if (!empty($objectValues)) {

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
-use Doctrine\DBAL\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 /**
@@ -34,7 +34,7 @@ class InheritanceHelper
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $db;
 
@@ -228,7 +228,7 @@ class InheritanceHelper
                 $fields = ', `' . $fields . '`';
             }
 
-            $result = $this->db->fetchAssociative('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+            $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
                 'values' => $result ?? null,
@@ -295,10 +295,10 @@ class InheritanceHelper
                     AND l.{$this->queryIdField} is null;
                 ";
 
-                $missingIds = $this->db->fetchOne($query);
+                $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
-                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+                $originalEntry = $this->db->fetchRow('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
                 foreach ($missingIds as $id) {
                     $originalEntry[$this->idField] = $id;
                     $this->db->insert($this->querytable, $originalEntry);
@@ -369,12 +369,12 @@ class InheritanceHelper
         // remove the query row entirely ...
         if ($affectedIds) {
             $objectsWithBrickIds = [];
-            $objectsWithBricks = $this->db->fetchAllAssociative('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
+            $objectsWithBricks = $this->db->fetchAll('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
             foreach ($objectsWithBricks as $item) {
                 $objectsWithBrickIds[] = $item[$this->idField];
             }
 
-            $currentQueryItems = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
+            $currentQueryItems = $this->db->fetchAll('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
 
             foreach ($currentQueryItems as $queryItem) {
                 $toBeRemoved = true;
@@ -396,7 +396,7 @@ class InheritanceHelper
         }
 
         if ($toBeRemovedItemIds) {
-            $this->db->delete($this->querytable, $this->idField . ' IN (' . implode(',', $toBeRemovedItemIds) . ')');
+            $this->db->deleteWhere($this->querytable, $this->idField . ' IN (' . implode(',', $toBeRemovedItemIds) . ')');
         }
     }
 
@@ -483,7 +483,7 @@ class InheritanceHelper
             }
 
             if (!$parentIdGroups) {
-                $result = $this->db->fetchAllAssociative($query);
+                $result = $this->db->fetchAll($query);
 
                 if (isset($params['language'])) {
                     $result = $this->filterResultByLanguage($result, $params['language'], 'language');
@@ -572,12 +572,12 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAllAssociative('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAll('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . ' GROUP BY position, fieldname'
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
-            $objectRelationsResult = $this->db->fetchAllAssociative('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
         }
 
         $objectRelations = [];
@@ -692,16 +692,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
-            $this->db->executeQuery(
-                sprintf(
-                    'UPDATE %s WHERE %s=%s WHERE %s IN (%s)',
-                    $this->querytable,
-                    $this->db->quoteIdentifier($fieldname),
-                    $this->db->quote($value),
-                    $this->db->quoteIdentifier($this->idField),
-                    implode(',', $ids)
-                )
-            );
+            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . ' IN (' . implode(',', $ids) . ')');
         }
     }
 
@@ -714,16 +705,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = null;
-            $this->db->executeQuery(
-                sprintf(
-                    'UPDATE %s WHERE %s=%s WHERE %s IN (%s)',
-                    $this->querytable,
-                    $this->db->quoteIdentifier($fieldname),
-                    $this->db->quote($value),
-                    $this->db->quoteIdentifier($this->idField),
-                    implode(',', $ids)
-                )
-            );
+            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . ' IN (' . implode(',', $ids) . ')');
         }
     }
 }

@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $itemsData = $this->db->fetchOne('SELECT id FROM recyclebin' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $itemsData = $this->db->fetchFirstColumn('SELECT id FROM recyclebin' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $items = [];
         foreach ($itemsData as $itemData) {

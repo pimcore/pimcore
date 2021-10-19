@@ -1843,7 +1843,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $db = Db::get();
         $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
 
-        $existingIds = $db->fetchOne('select LOWER(id) from classes');
+        $existingIds = $db->fetchFirstColumn('select LOWER(id) from classes');
 
         $result = [
             'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,

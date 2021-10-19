@@ -139,7 +139,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $targets[] = $targetId;
             }
 
-            $existingTargets = $db->fetchOne(
+            $existingTargets = $db->fetchFirstColumn(
                 'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
             );
 
@@ -528,34 +528,28 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $conditions = [
-                'o_id' => $objectId,
-                'ownertype' => 'localizedfield',
-                'ownername' => $ownerName,
-                'fieldname' => $this->getName(),
-                'position' => $position
-            ];
+            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', $ownerName)
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
-            $conditions = [
-                'o_id' => $objectId,
-                'fieldname' => $this->getName(),
-                'position' => $position
-            ];
+            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
 
             if ($context) {
                 if (!empty($context['fieldname'])) {
-                    $conditions['ownername'] = $context['fieldname'];
+                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
-                        $conditions['ownertype'] = $context['containerType'];
+                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $context['containerType']);
                     }
                 }
             }
         }
 
-        $db->delete($table, $conditions);
+        $db->deleteWhere($table, $sql);
 
         if (!empty($objectsMetadata)) {
             if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
@@ -621,11 +615,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             }
             $containerName = $context['fieldname'] ?? null;
             $index = $context['index'];
-            $db->executeStatement(
-                'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE '
-                . Db\Helper::quoteInto($db,'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
-                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $db->deleteWhere(
+                'object_metadata_' . $object->getClassId(),
+                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
             );
         } else {
             $deleteConditions = [

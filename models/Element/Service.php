@@ -349,7 +349,7 @@ class Service extends Model\AbstractModel
                         throw new \Exception('unknown type');
                 }
                 $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
-                $publishedIds = $db->fetchOne($query);
+                $publishedIds = $db->fetchFirstColumn($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
 

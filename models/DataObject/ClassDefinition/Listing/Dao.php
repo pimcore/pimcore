@@ -34,7 +34,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $classes = [];
 
-        $classesRaw = $this->db->fetchOne('SELECT id FROM classes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $classesRaw = $this->db->fetchFirstColumn('SELECT id FROM classes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($classesRaw as $classRaw) {
             if ($class = DataObject\ClassDefinition::getById($classRaw)) {

@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $notesData = $this->db->fetchOne(
+        $notesData = $this->db->fetchFirstColumn(
             'SELECT id FROM notes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
             $this->model->getConditionVariables(),
             $this->model->getConditionVariableTypes()
@@ -54,7 +54,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $notesIds = $this->db->fetchOne(
+        $notesIds = $this->db->fetchFirstColumn(
             'SELECT id FROM notes' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(),
             $this->model->getConditionVariables(),
             $this->model->getConditionVariableTypes()

@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $addressData = $this->db->fetchOne('SELECT address FROM email_blacklist' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $addressData = $this->db->fetchFirstColumn('SELECT address FROM email_blacklist' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $addresses = [];
         foreach ($addressData as $data) {

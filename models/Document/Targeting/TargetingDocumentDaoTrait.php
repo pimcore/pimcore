@@ -41,7 +41,7 @@ trait TargetingDocumentDaoTrait
     public function getTargetGroupSpecificEditableNames(): array
     {
         /** @var PageSnippet\Dao $this */
-        $names = $this->db->fetchOne(
+        $names = $this->db->fetchFirstColumn(
             'SELECT name FROM documents_editables WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
