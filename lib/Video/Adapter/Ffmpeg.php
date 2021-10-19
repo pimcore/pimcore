@@ -41,7 +41,6 @@ class Ffmpeg extends Adapter
      */
     protected $arguments = [];
 
-
     /**
      * @return bool
      */
