@@ -110,7 +110,7 @@ class Processor
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
                     $format = $customSetting[$config->getName()]['formats'][$f] ?? null;
-                    if (!$storage->fileExists($asset->getRealPath() . '/' . $format)) {
+                    if (!$storage->fileExists($asset->getRealPath() . $format)) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
