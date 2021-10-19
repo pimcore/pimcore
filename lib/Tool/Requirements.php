@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connection;
 use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
@@ -67,11 +67,11 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return Check[]
      */
-    public static function checkMysql(ConnectionInterface $db)
+    public static function checkMysql(Connection $db)
     {
         $checks = [];
 
@@ -198,7 +198,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->updateWhere('__pimcore_req_check', [
+            $db->update('__pimcore_req_check', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
@@ -727,11 +727,11 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return array
      */
-    public static function checkAll(ConnectionInterface $db): array
+    public static function checkAll(Connection $db): array
     {
         return [
             'checksPHP' => static::checkPhp(),

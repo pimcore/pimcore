@@ -15,6 +15,7 @@
 
 namespace Pimcore\Log\Handler;
 
+use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
 use Pimcore\Db;
 
@@ -25,16 +26,16 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      * @param string $level
      * @param bool $bubble
      */
-    public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
+    public function __construct(Connection $db, $level = 'debug', $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);

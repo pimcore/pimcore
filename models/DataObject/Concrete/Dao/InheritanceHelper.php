@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
-use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject;
 
 /**
@@ -34,7 +34,7 @@ class InheritanceHelper
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -692,7 +692,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
-            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . ' IN (' . implode(',', $ids) . ')');
+            $this->db->executeStatement('UPDATE TABLE ' . $this->querytable .' SET ' . $this->db->quoteIdentifier($fieldname) . '=? WHERE ' . $this->db->quoteIdentifier($this->idField) . ' IN (' . implode(',', $ids) . ')', [$value]);
         }
     }
 
@@ -705,7 +705,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = null;
-            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . ' IN (' . implode(',', $ids) . ')');
+            $this->db->executeStatement('UPDATE TABLE ' . $this->querytable .' SET ' . $this->db->quoteIdentifier($fieldname) . '=? WHERE ' . $this->db->quoteIdentifier($this->idField) . ' IN (' . implode(',', $ids) . ')', [$value]);
         }
     }
 }

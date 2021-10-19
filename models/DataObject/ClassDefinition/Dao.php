@@ -303,9 +303,6 @@ class Dao extends Model\Dao\AbstractDao
     public function updateClassNameInObjects($newName)
     {
         $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
-
-        $this->db->updateWhere('object_query_' . $this->model->getId(), [
-            'oo_className' => $newName,
-        ]);
+        $this->db->executeQuery('UPDATE TABLE object_query_' . $this->model->getId() .' SET oo_className=?', [$newName]);
     }
 }
