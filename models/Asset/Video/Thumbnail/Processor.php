@@ -110,7 +110,7 @@ class Processor
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
                     $format = $customSetting[$config->getName()]['formats'][$f] ?? null;
-                    if (!$storage->fileExists($asset->getRealPath() . $format)) {
+                    if (!$storage->fileExists($asset->getRealPath() . '/' . $format)) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -267,7 +267,7 @@ class Processor
                 }
 
                 if ($success) {
-                    $formats[$converter->getFormat()] = str_replace($asset->getRealPath(), '', $converter->getStorageFile());
+                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
                 } else {
                     $conversionStatus = 'error';
                 }
