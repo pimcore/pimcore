@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connection;
 use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
@@ -67,16 +67,16 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return Check[]
      */
-    public static function checkMysql(ConnectionInterface $db)
+    public static function checkMysql(Connection $db)
     {
         $checks = [];
 
         // storage engines
-        $engines = $db->fetchCol('SHOW ENGINES;');
+        $engines = $db->fetchOne('SHOW ENGINES;');
 
         // innodb
         $checks[] = new Check([
@@ -91,26 +91,26 @@ final class Requirements
         ]);
 
         // check database charset =>  utf-8 encoding
-        $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
+        $result = $db->fetchAssociative('SHOW VARIABLES LIKE "character\_set\_database"');
         $checks[] = new Check([
             'name' => 'Database Charset utf8mb4',
             'state' => ($result && (strtolower($result['Value']) == 'utf8mb4')) ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // empty values are provided by MariaDB => 10.3
-        $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
+        $largePrefix = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
         $checks[] = new Check([
             'name' => 'innodb_large_prefix = ON ',
             'state' => ($largePrefix && !in_arrayi(strtolower((string) $largePrefix['Value']), ['on', '1', ''])) ? Check::STATE_ERROR : Check::STATE_OK,
         ]);
 
-        $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
+        $fileFormat = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
         $checks[] = new Check([
             'name' => 'innodb_file_format = Barracuda',
             'state' => ($fileFormat && (!empty($fileFormat['Value']) && strtolower($fileFormat['Value']) != 'barracuda')) ? Check::STATE_ERROR : Check::STATE_OK,
         ]);
 
-        $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
+        $fileFilePerTable = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
         $checks[] = new Check([
             'name' => 'innodb_file_per_table = ON',
             'state' => ($fileFilePerTable && !in_arrayi(strtolower((string) $fileFilePerTable['Value']), ['on', '1'])) ? Check::STATE_ERROR : Check::STATE_OK,
@@ -120,7 +120,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE TABLE __pimcore_req_check (
+            $db->executeQuery('CREATE TABLE __pimcore_req_check (
                   id int(11) NOT NULL AUTO_INCREMENT,
                   field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
@@ -138,7 +138,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
+            $db->executeQuery('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -152,8 +152,8 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
-            $db->query('DROP INDEX field_alter_field ON __pimcore_req_check;');
+            $db->executeQuery('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
+            $db->executeQuery('DROP INDEX field_alter_field ON __pimcore_req_check;');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -167,7 +167,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
+            $db->executeQuery('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -198,7 +198,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->updateWhere('__pimcore_req_check', [
+            $db->executeQuery('UPDATE _pimcore_reg_check SET `field`=:field, `alter_field`=:alter_field', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
@@ -215,7 +215,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -229,7 +229,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
+            $db->executeQuery('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -243,7 +243,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check_view');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -257,7 +257,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->deleteWhere('__pimcore_req_check');
+            $db->executeQuery('DELETE FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -271,7 +271,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('SHOW CREATE VIEW __pimcore_req_check_view');
+            $db->executeQuery('SHOW CREATE VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -285,7 +285,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('SHOW CREATE TABLE __pimcore_req_check');
+            $db->executeQuery('SHOW CREATE TABLE __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -299,7 +299,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('DROP VIEW __pimcore_req_check_view');
+            $db->executeQuery('DROP VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -313,7 +313,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('DROP TABLE __pimcore_req_check');
+            $db->executeQuery('DROP TABLE __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -327,7 +327,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query(
+            $db->executeQuery(
                 'WITH RECURSIVE counter AS (
                     SELECT 1 as n UNION ALL SELECT n + 1 FROM counter WHERE n < 10
                 )
@@ -727,11 +727,11 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return array
      */
-    public static function checkAll(ConnectionInterface $db): array
+    public static function checkAll(Connection $db): array
     {
         return [
             'checksPHP' => static::checkPhp(),

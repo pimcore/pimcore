@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
@@ -26,7 +27,7 @@ use Pimcore\Maintenance\TaskInterface;
 class LogMailMaintenanceTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
@@ -36,9 +37,9 @@ class LogMailMaintenanceTask implements TaskInterface
     private $config;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config)
+    public function __construct(Connection $db, Config $config)
     {
         $this->db = $db;
         $this->config = $config;
@@ -62,7 +63,7 @@ class LogMailMaintenanceTask implements TaskInterface
 
             $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME." WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 
-            $rows = $db->fetchAll($query);
+            $rows = $db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
 
@@ -96,6 +97,6 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1');
+        $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1');
     }
 }

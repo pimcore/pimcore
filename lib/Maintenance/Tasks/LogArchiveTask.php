@@ -17,6 +17,7 @@ namespace Pimcore\Maintenance\Tasks;
 
 use DateInterval;
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
@@ -32,7 +33,7 @@ use Symfony\Component\Lock\LockInterface;
 class LogArchiveTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
@@ -52,11 +53,11 @@ class LogArchiveTask implements TaskInterface
     private $lock;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      * @param Config $config
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
+    public function __construct(Connection $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
     {
         $this->db = $db;
         $this->config = $config;
@@ -84,7 +85,7 @@ class LogArchiveTask implements TaskInterface
         $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
-            $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
+            $db->executeQuery('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
@@ -99,8 +100,8 @@ class LogArchiveTask implements TaskInterface
                        maintenanceChecked TINYINT(1)
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
-            $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
+            $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
+            $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         if (date('H') <= 4 && $this->lock->acquire()) {
@@ -129,7 +130,7 @@ class LogArchiveTask implements TaskInterface
         $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
         do {
             $applicationLogArchiveTable = 'application_logs_archive_' . $deleteArchiveLogDate->format('m_Y');
-            $archiveTableExists = $db->fetchOne('SELECT 1
+            $archiveTableExists = $db->fetchAssociative('SELECT 1
                 FROM information_schema.tables
                 WHERE table_schema = ?
                 AND table_name = ?',
@@ -139,7 +140,7 @@ class LogArchiveTask implements TaskInterface
                 ]);
 
             if ($archiveTableExists) {
-                $db->exec('DROP TABLE IF EXISTS ' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '.' . $applicationLogArchiveTable);
+                $db->executeStatement('DROP TABLE IF EXISTS ' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '.' . $applicationLogArchiveTable);
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));

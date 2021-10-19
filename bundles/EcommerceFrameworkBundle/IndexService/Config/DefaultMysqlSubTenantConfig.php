@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 
 /**
  * Sample implementation for sub-tenants based on mysql.
@@ -32,7 +32,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     protected $environment;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -46,7 +46,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $filterTypes,
         array $options,
         EnvironmentInterface $environment,
-        ConnectionInterface $db
+        Connection $db
     ) {
         $this->environment = $environment;
         $this->db = $db;
@@ -178,7 +178,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
-        $this->db->deleteWhere($this->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId ? $subObjectId : $objectId));
+        $this->db->delete($this->getTenantRelationTablename(), ['o_id' => $subObjectId ?: $objectId]);
 
         if ($subTenantData) {
             //implementation specific tenant get logic

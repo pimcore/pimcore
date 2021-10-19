@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
 class Db
 {
     /**
-     * @return \Pimcore\Db\ConnectionInterface
+     * @return \Doctrine\DBAL\Connection
      */
     public static function getConnection()
     {
@@ -29,7 +29,7 @@ class Db
     }
 
     /**
-     * @return Db\ConnectionInterface
+     * @return \Doctrine\DBAL\Connection
      */
     public static function reset()
     {
@@ -39,12 +39,12 @@ class Db
     }
 
     /**
-     * @return \Pimcore\Db\ConnectionInterface|Connection
+     * @return Connection
      */
     public static function get()
     {
         /**
-         * @var \Pimcore\Db\ConnectionInterface $db
+         * @var Connection $db
          */
         $db = \Pimcore::getContainer()->get('database_connection');
 

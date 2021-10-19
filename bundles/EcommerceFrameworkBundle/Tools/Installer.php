@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -147,7 +146,7 @@ class Installer extends AbstractInstaller
     protected $bundle;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -158,13 +157,13 @@ class Installer extends AbstractInstaller
 
     public function __construct(
         BundleInterface $bundle,
-        ConnectionInterface $connection
+        Connection $connection
     ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
         if ($this->db instanceof Connection) {
-            $this->schema = $this->db->getSchemaManager()->createSchema();
+            $this->schema = $this->db->createSchemaManager()->createSchema();
         }
 
         parent::__construct();

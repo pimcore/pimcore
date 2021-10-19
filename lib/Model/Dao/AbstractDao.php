@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Dao;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Db;
 
@@ -25,7 +26,7 @@ abstract class AbstractDao implements DaoInterface
     const CACHEKEY = 'system_resource_columns_';
 
     /**
-     * @var \Pimcore\Db\ConnectionInterface
+     * @var Connection
      */
     public $db;
 

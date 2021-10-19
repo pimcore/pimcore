@@ -15,10 +15,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 class MySql
@@ -34,11 +34,11 @@ class MySql
     protected $tenantConfig;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db)
     {
         $this->tenantConfig = $tenantConfig;
         $this->db = $db;
@@ -50,7 +50,7 @@ class MySql
 
         if (!Cache\Runtime::isRegistered($cacheKey)) {
             $columns = [];
-            $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $table);
+            $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
             foreach ($data as $d) {
                 $columns[] = $d['Field'];
             }
@@ -70,7 +70,34 @@ class MySql
             }
         }
 
-        $this->db->insertOrUpdate($this->tenantConfig->getTablename(), $data);
+        $i = 0;
+        $bind = [];
+        $cols = [];
+        $vals = [];
+        foreach ($data as $col => $val) {
+            $cols[] = $this->db->quoteIdentifier($col);
+            $bind[':col' . $i] = $val;
+            $vals[] = ':col' . $i;
+            $i++;
+        }
+
+        // build the statement
+        $set = [];
+        foreach ($cols as $i => $col) {
+            $set[] = sprintf('%s = %s', $col, $vals[$i]);
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
+            $this->db->quoteIdentifier($this->tenantConfig->getTablename()),
+            implode(', ', $cols),
+            implode(', ', $vals),
+            implode(', ', $set)
+        );
+
+        $bind = array_merge($bind, $bind);
+
+        $this->db->executeStatement($sql, $bind);
     }
 
     public function getSystemAttributes()
@@ -98,7 +125,7 @@ class MySql
           PRIMARY KEY  (`o_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-        $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
+        $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
         $columns = [];
         foreach ($data as $d) {
             $columns[$d['Field']] = $d;
@@ -178,7 +205,7 @@ class MySql
     protected function dbexec($sql)
     {
         $this->logSql($sql);
-        $this->db->query($sql);
+        $this->db->executeQuery($sql);
     }
 
     protected function logSql($sql)
