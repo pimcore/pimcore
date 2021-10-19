@@ -105,7 +105,7 @@ class Reservation extends AbstractModel
         }
 
         try {
-            $db->query($query, $params);
+            $db->executeQuery($query, $params);
 
             return true;
         } catch (\Exception $e) {

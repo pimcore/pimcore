@@ -348,7 +348,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $siteId
             );
 
-            $rawItem = $db->fetchRow($query);
+            $rawItem = $db->fetchAssociative($query);
 
             if ($rawItem) {
                 $slug = self::createFromDataRow($rawItem);

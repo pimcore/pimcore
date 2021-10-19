@@ -67,7 +67,7 @@ class Dao extends AbstractDao
             $this->getOffsetLimit()
         );
 
-        $ids = $this->db->fetchCol($sql, $this->getModel()->getConditionVariables());
+        $ids = $this->db->fetchOne($sql, $this->getModel()->getConditionVariables());
 
         foreach ($ids as $id) {
             $notification = Notification::getById((int) $id);

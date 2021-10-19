@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM website_settings WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM website_settings WHERE id = ?', [$this->model->getId()]);
         $this->assignVariablesToModel($data);
 
         if (!empty($data['id'])) {
@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) AND  (language IS NULL OR language = '' OR language = ?) ORDER BY siteId,language DESC", [$this->model->getName(), $siteId, $language]);
+        $data = $this->db->fetchAssociative("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) AND  (language IS NULL OR language = '' OR language = ?) ORDER BY siteId,language DESC", [$this->model->getName(), $siteId, $language]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

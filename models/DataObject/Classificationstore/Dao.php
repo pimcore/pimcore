@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -114,7 +115,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
 
-                    $this->db->insertOrUpdate($dataTable, $data);
+                    Helper::insertOrUpdate($this->db, $dataTable, $data);
                 }
             }
         }
@@ -131,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
                         'groupId' => $activeGroupId,
                         'fieldname' => $fieldname,
                     ];
-                    $this->db->insertOrUpdate($groupsTable, $data);
+                    Helper::insertOrUpdate($this->db, $groupsTable, $data);
                 }
             }
         }
@@ -163,7 +164,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
-        $data = $this->db->fetchAll($query);
+        $data = $this->db->fetchAllAssociative($query);
         $list = [];
 
         foreach ($data as $item) {
@@ -172,7 +173,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $query = 'SELECT * FROM ' . $dataTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
-        $data = $this->db->fetchAll($query);
+        $data = $this->db->fetchAllAssociative($query);
 
         $groupCollectionMapping = [];
 
@@ -232,14 +233,14 @@ class Dao extends Model\Dao\AbstractDao
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
             `o_id` BIGINT(20) NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             PRIMARY KEY (`o_id`, `fieldname`, `groupId`)
         ) DEFAULT CHARSET=utf8mb4;');
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
             `o_id` BIGINT(20) NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
@@ -56,7 +57,8 @@ trait Dao
                                 $columnName .= ',`fieldname`';
                             }
                         }
-                        $this->db->queryIgnoreError(
+                        Helper::queryIgnoreError(
+                            $this->db,
                             'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
                             [UniqueConstraintViolationException::class]
                         );
@@ -72,7 +74,8 @@ trait Dao
                             $columnName .= ',`fieldname`';
                         }
                     }
-                    $this->db->queryIgnoreError(
+                    Helper::queryIgnoreError(
+                        $this->db,
                         'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
                         [UniqueConstraintViolationException::class]
                     );
@@ -82,12 +85,12 @@ trait Dao
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
                         $columnName = $field->getName().'__'.$fkey;
-                        $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
                     }
                 } else {
                     // single -column field
                     $columnName = $field->getName();
-                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
                 }
             }
         }
@@ -112,11 +115,11 @@ trait Dao
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
             if (!DataObject\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+                $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             }
         }
     }
@@ -132,7 +135,7 @@ trait Dao
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
+                    $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
                 }
             }
             $this->resetValidTableColumnsCache($table);
@@ -160,7 +163,7 @@ trait Dao
     protected function encryptTables(array $tables)
     {
         foreach ($tables as $table) {
-            $this->db->query('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=YES;');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=YES;');
         }
     }
 
@@ -172,7 +175,7 @@ trait Dao
     {
         foreach ($tables as $table) {
             if ($classDefinition->isEncryptedTable($table)) {
-                $this->db->query('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=NO;');
+                $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=NO;');
             }
         }
     }
@@ -187,7 +190,7 @@ trait Dao
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
                 }
             }
             $this->resetValidTableColumnsCache($table);

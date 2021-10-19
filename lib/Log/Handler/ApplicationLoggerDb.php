@@ -68,7 +68,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
         $db = Db::get();
 
-        $components = $db->fetchCol('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
+        $components = $db->fetchOne('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
         return $components;
     }
@@ -92,7 +92,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         $db = Db::get();
 
-        $priorityNumbers = $db->fetchCol('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
+        $priorityNumbers = $db->fetchOne('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

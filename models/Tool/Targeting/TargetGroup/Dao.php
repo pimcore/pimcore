@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM targeting_target_groups WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM targeting_target_groups WHERE id = ?', [$this->model->getId()]);
 
         if (!empty($data['id'])) {
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
@@ -59,7 +59,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchAll('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
+        $data = $this->db->fetchAllAssociative('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
 
         if (count($data) === 1) {
             $this->getById($data[0]['id']);

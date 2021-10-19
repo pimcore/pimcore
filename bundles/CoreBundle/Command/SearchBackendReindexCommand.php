@@ -44,7 +44,7 @@ class SearchBackendReindexCommand extends AbstractCommand
     {
         // clear all data
         $db = \Pimcore\Db::get();
-        $db->query('TRUNCATE `search_backend_data`;');
+        $db->executeQuery('TRUNCATE `search_backend_data`;');
 
         $elementsPerLoop = 100;
         $types = ['asset', 'document', 'object'];
@@ -97,7 +97,7 @@ class SearchBackendReindexCommand extends AbstractCommand
             }
         }
 
-        $db->query('OPTIMIZE TABLE search_backend_data;');
+        $db->executeQuery('OPTIMIZE TABLE search_backend_data;');
 
         return 0;
     }

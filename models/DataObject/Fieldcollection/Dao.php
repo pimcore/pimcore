@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -59,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAll('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -236,25 +237,25 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
+            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
-                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+                $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
 
                 return ['saveLocalizedRelations' => true];
             }
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')';
+        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
 
         // empty relation table
-        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
-        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

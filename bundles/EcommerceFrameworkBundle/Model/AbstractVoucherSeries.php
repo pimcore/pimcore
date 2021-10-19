@@ -55,7 +55,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
             GROUP BY length';
 
         try {
-            $lengths = $db->fetchAll($query, [$this->getId()]);
+            $lengths = $db->fetchAllAssociative($query, [$this->getId()]);
 
             $result = [];
             foreach ($lengths as $lengthEntry) {

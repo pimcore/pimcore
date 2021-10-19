@@ -43,7 +43,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function getByCode($code)
     {
-        $result = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
+        $result = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
         if (empty($result)) {
             throw new NotFoundException('Token ' . $code . ' not found.');
         }
@@ -81,7 +81,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function apply()
     {
         try {
-            $this->db->query('UPDATE ' . self::TABLE_NAME . ' SET usages=usages+1 WHERE token = ?', [$this->model->getToken()]);
+            $this->db->executeQuery('UPDATE ' . self::TABLE_NAME . ' SET usages=usages+1 WHERE token = ?', [$this->model->getToken()]);
 
             return true;
         } catch (\Exception $e) {
@@ -95,7 +95,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function unuse()
     {
         try {
-            $this->db->query('UPDATE ' . self::TABLE_NAME . ' SET usages=usages-1 WHERE token = ?', [$this->model->getToken()]);
+            $this->db->executeQuery('UPDATE ' . self::TABLE_NAME . ' SET usages=usages-1 WHERE token = ?', [$this->model->getToken()]);
 
             return true;
         } catch (\Exception $e) {

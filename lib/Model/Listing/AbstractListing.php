@@ -449,9 +449,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function escapeLike(string $value): string
     {
-        $db = Db::get();
-
-        return $db->escapeLike($value);
+        return Db\Helper::escapeLike($value);
     }
 
     /**

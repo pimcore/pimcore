@@ -92,7 +92,7 @@ abstract class AbstractMockupCacheWorker extends ProductCentricBatchProcessingWo
 
         if ($success && $result) {
             $this->executeTransactionalQuery(function () use ($objectId) {
-                $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
+                $this->db->executeQuery('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
             });
         } else {
             Logger::err("Element with ID $objectId could not be added to mockup-cache");

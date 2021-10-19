@@ -241,10 +241,10 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             if (is_array($codeSets)) {
                 foreach ($codeSets as $query) {
-                    $db->query($this->buildInsertQuery($query));
+                    $db->executeQuery($this->buildInsertQuery($query));
                 }
             } else {
-                $db->query($this->buildInsertQuery($codeSets));
+                $db->executeQuery($this->buildInsertQuery($codeSets));
             }
 
             return $codeSets;

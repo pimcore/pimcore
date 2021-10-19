@@ -123,7 +123,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         $total = (int) $total['count'];
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAllAssociative();
 
         $logEntries = [];
         foreach ($result as $row) {

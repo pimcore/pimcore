@@ -629,7 +629,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
+        $storeEntry = \Pimcore\Db::get()->fetchAssociative('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
             $isLocked = $this->checkIndexLock(false);
             if ($isLocked) {

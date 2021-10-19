@@ -593,7 +593,7 @@ class Installer
                 $sql = trim($m);
                 if (strlen($sql) > 0) {
                     $sql .= ';';
-                    $db->query($sql);
+                    $db->executeQuery($sql);
                 }
             }
 

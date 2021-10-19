@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -40,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setGroupId($groupId);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
             . ',' . Model\DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' WHERE keyId = ? AND groupId = ?', [$this->model->getKeyId(), $this->model->getGroupId()]);
 
         $this->assignVariablesToModel($data);
@@ -80,6 +81,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
     }
 }

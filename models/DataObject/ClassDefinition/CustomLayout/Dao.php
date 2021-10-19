@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             $id = $this->model->getId();
         }
 
-        $layoutRaw = $this->db->fetchRow('SELECT * FROM custom_layouts WHERE id = ?', [$id]);
+        $layoutRaw = $this->db->fetchAssociative('SELECT * FROM custom_layouts WHERE id = ?', [$id]);
 
         if (!empty($layoutRaw['id'])) {
             $this->assignVariablesToModel($layoutRaw);

@@ -33,7 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $sql = 'SELECT id FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
+        $configsData = $this->db->fetchOne($sql, $this->model->getConditionVariables());
 
         $configData = [];
         foreach ($configsData as $config) {
@@ -50,7 +50,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll('SELECT * FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }

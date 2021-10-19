@@ -35,8 +35,8 @@ final class Version20210323082921 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $db = \Pimcore\Db::get();
-        $db->query('DROP TABLE IF EXISTS `website_settings`;');
-        $db->query("CREATE TABLE `website_settings` (
+        $db->executeQuery('DROP TABLE IF EXISTS `website_settings`;');
+        $db->executeQuery("CREATE TABLE `website_settings` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(190) NOT NULL DEFAULT '',
     `type` ENUM('text','document','asset','object','bool') DEFAULT NULL,

@@ -50,7 +50,7 @@ class DbCleanupBrokenViewsTask implements TaskInterface
      */
     public function execute()
     {
-        $tables = $this->db->fetchAll('SHOW FULL TABLES');
+        $tables = $this->db->fetchAllAssociative('SHOW FULL TABLES');
         foreach ($tables as $table) {
             reset($table);
             $name = current($table);

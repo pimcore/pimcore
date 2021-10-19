@@ -49,7 +49,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $tableName = $definition->getTableName($object->getClass(), false);
 
             try {
-                $results = $this->db->fetchAll('SELECT * FROM '.$tableName.' WHERE o_id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE o_id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }

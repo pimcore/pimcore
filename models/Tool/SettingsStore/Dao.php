@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\SettingsStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore;
 
@@ -38,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
     public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
-            $this->db->insertOrUpdate(self::TABLE_NAME, [
+            Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,
@@ -73,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(string $id, ?string $scope = null): bool
     {
-        $item = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+        $item = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
             'id' => $id,
             'scope' => (string) $scope,
         ]);
@@ -97,6 +98,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getIdsByScope(string $scope): array
     {
-        return $this->db->fetchCol('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
+        return $this->db->fetchOne('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
     }
 }

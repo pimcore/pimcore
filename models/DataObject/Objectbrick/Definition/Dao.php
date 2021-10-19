@@ -46,10 +46,10 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
     public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class, false);
-        $this->db->query('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
 
         $table = $this->getTableName($class, true);
-        $this->db->query('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
     /**
@@ -60,7 +60,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
@@ -68,7 +68,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8mb4;");
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),

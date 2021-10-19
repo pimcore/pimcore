@@ -32,7 +32,7 @@ class ClassDefinitionManager
     public function cleanUpDeletedClassDefinitions(): array
     {
         $db = \Pimcore\Db::get();
-        $classes = $db->fetchAll('SELECT * FROM classes');
+        $classes = $db->fetchAllAssociative('SELECT * FROM classes');
         $deleted = [];
 
         foreach ($classes as $class) {

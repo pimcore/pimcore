@@ -33,7 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $layouts = [];
 
-        $layoutsRaw = $this->db->fetchCol('SELECT id FROM custom_layouts' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $layoutsRaw = $this->db->fetchOne('SELECT id FROM custom_layouts' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($layoutsRaw as $classRaw) {
             $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($classRaw);

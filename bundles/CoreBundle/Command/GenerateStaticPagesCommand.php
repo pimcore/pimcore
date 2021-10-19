@@ -68,7 +68,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
                 'path' => $parent->getFullPath() . '/%',
             ]);
         } else {
-            $ids = $db->fetchCol('SELECT id FROM `documents_page` WHERE `staticGeneratorEnabled` = 1');
+            $ids = $db->fetchOne('SELECT id FROM `documents_page` WHERE `staticGeneratorEnabled` = 1');
         }
 
         $total = count($ids);

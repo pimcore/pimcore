@@ -19,6 +19,7 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 
 class MySql
@@ -70,34 +71,7 @@ class MySql
             }
         }
 
-        $i = 0;
-        $bind = [];
-        $cols = [];
-        $vals = [];
-        foreach ($data as $col => $val) {
-            $cols[] = $this->db->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
-            $vals[] = ':col' . $i;
-            $i++;
-        }
-
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
-        }
-
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
-            $this->db->quoteIdentifier($this->tenantConfig->getTablename()),
-            implode(', ', $cols),
-            implode(', ', $vals),
-            implode(', ', $set)
-        );
-
-        $bind = array_merge($bind, $bind);
-
-        $this->db->executeStatement($sql, $bind);
+        Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
     public function getSystemAttributes()

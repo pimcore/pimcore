@@ -843,7 +843,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
 
         $query = 'SELECT * FROM ' . $table . ' WHERE ' . implode(' AND ', $conditionParts);
-        $result = $db->fetchAll($query);
+        $result = $db->fetchAllAssociative($query);
 
         return $result;
     }
@@ -915,7 +915,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         if ($this->__rawRelationData === null) {
             $db = Db::get();
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+            $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
             $this->__rawRelationData = $relations ?? [];
         }
 

@@ -54,20 +54,20 @@ class MysqlToolsCommand extends AbstractCommand
         $db = \Pimcore\Db::get();
 
         if ($input->getOption('mode') == 'optimize') {
-            $tables = $db->fetchAll('SHOW TABLES');
+            $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);
 
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
-                    $db->query('OPTIMIZE TABLE ' . $t);
+                    $db->executeQuery('OPTIMIZE TABLE ' . $t);
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }
             }
         } elseif ($input->getOption('mode') == 'warmup') {
-            $tables = $db->fetchAll('SHOW TABLES');
+            $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);

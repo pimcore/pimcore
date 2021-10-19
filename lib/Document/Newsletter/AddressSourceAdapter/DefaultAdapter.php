@@ -143,7 +143,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
 
         if (count($ids) > 0) {
             $db = \Pimcore\Db::get();
-            $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(',', $ids) . ')');
+            $emails = $db->fetchOne("SELECT email FROM $tableName WHERE o_id IN (" . implode(',', $ids) . ')');
         }
 
         $containers = [];

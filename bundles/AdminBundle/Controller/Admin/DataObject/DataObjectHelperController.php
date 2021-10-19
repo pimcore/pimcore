@@ -128,7 +128,7 @@ class DataObjectHelperController extends AdminController
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
-        $ids = $db->fetchCol($query);
+        $ids = $db->fetchOne($query);
 
         if ($ids) {
             $ids = implode(',', $ids);
@@ -761,7 +761,7 @@ class DataObjectHelperController extends AdminController
             $searchType = $request->get('searchType');
             $user = $this->getAdminUser();
             $db = Db::get();
-            $db->query('delete from gridconfig_favourites where '
+            $db->executeQuery('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
                 . ' and classId = ' . $db->quote($classId) .
                 ' and searchType = ' . $db->quote($searchType)
@@ -847,7 +847,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
+        $allShares = $db->fetchAllAssociative('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {

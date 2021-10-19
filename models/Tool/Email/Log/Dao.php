@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM email_log WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM email_log WHERE id = ?', [$this->model->getId()]);
         $this->assignVariablesToModel($data);
     }
 

@@ -33,7 +33,7 @@ final class Version20210324152822 extends AbstractMigration
     {
         $db = Db::get();
 
-        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
+        $translationsTables = $db->fetchAllAssociative("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 
@@ -50,7 +50,7 @@ final class Version20210324152822 extends AbstractMigration
     {
         $db = Db::get();
 
-        $translationsTables = $db->fetchAll("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
+        $translationsTables = $db->fetchAllAssociative("SHOW FULL TABLES WHERE `Tables_in_{$db->getDatabase()}` LIKE 'translations\_%' AND Table_type = 'BASE TABLE'");
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 

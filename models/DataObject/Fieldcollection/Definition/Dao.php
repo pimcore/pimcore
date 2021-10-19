@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
-        $this->db->query('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
     /**
@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $table = $this->getTableName($class);
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',

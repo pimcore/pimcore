@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Note;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -34,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM notes WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', [$id]);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');
@@ -43,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $keyValues = $this->db->fetchAll('SELECT * FROM notes_data WHERE id = ?', [$id]);
+        $keyValues = $this->db->fetchAllAssociative('SELECT * FROM notes_data WHERE id = ?', [$id]);
         $preparedData = [];
 
         foreach ($keyValues as $keyValue) {
@@ -100,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('notes', $data);
+        Helper::insertOrUpdate($this->db, 'notes', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

@@ -48,9 +48,9 @@ class ImportConfigListener implements EventSubscriberInterface
 
         // collect gridConfigs for that class id
         $db = Db::get();
-        $importConfigIds = $db->fetchCol('select id from importconfigs where classId = ?', $classId);
+        $importConfigIds = $db->fetchOne('select id from importconfigs where classId = ?', $classId);
         if ($importConfigIds) {
-            $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
+            $db->executeQuery('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }
 
         $this->cleanupImportConfigs('classId = ' . $db->quote($classId));
@@ -66,9 +66,9 @@ class ImportConfigListener implements EventSubscriberInterface
 
         $db = Db::get();
 
-        $importConfigIds = $db->fetchCol('select id from importconfigs where ownerId = ' . $userId);
+        $importConfigIds = $db->fetchOne('select id from importconfigs where ownerId = ' . $userId);
         if ($importConfigIds) {
-            $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
+            $db->executeQuery('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }
 
         $this->cleanupImportConfigs('ownerId = ' . $userId);
@@ -77,6 +77,6 @@ class ImportConfigListener implements EventSubscriberInterface
     protected function cleanupImportConfigs($condition)
     {
         $db = Db::get();
-        $db->query('DELETE FROM importconfigs where ' . $condition);
+        $db->executeQuery('DELETE FROM importconfigs where ' . $condition);
     }
 }

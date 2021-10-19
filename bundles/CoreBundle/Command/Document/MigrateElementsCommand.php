@@ -45,7 +45,7 @@ class MigrateElementsCommand extends AbstractCommand
         }
 
         $db = Db::get();
-        $versionsRaw = $db->fetchAll("SELECT v.id AS vId, d.id as dId, d.key as `dKey` FROM versions v, documents d WHERE ctype = 'document' AND v.cid = d.`id` AND (d.`type`  = 'snippet' OR d.`type` = 'page')");
+        $versionsRaw = $db->fetchAllAssociative("SELECT v.id AS vId, d.id as dId, d.key as `dKey` FROM versions v, documents d WHERE ctype = 'document' AND v.cid = d.`id` AND (d.`type`  = 'snippet' OR d.`type` = 'page')");
 
         foreach ($versionsRaw as $versionRaw) {
             $this->processVersionRow($versionRaw);

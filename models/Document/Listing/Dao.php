@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = [];
         $select = $this->getQueryBuilder(['documents.id', 'documents.type']);
 
-        $documentsData = $this->db->fetchAll((string) $select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentsData = $this->db->fetchAllAssociative((string) $select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
@@ -77,7 +77,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $queryBuilder = $this->getQueryBuilder(['documents.id']);
-        $documentIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentIds = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
     }
@@ -88,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdPathList()
     {
         $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as path']);
-        $documentIds = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentIds = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
     }

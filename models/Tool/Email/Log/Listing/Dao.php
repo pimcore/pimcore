@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $emailLogs = $this->db->fetchCol('SELECT id FROM email_log' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $emailLogs = $this->db->fetchOne('SELECT id FROM email_log' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $emailLogsArray = [];
         foreach ($emailLogs as $log) {
@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $emailLogData = $this->db->fetchAll('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $emailLogData = $this->db->fetchAllAssociative('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $emailLogData;
     }

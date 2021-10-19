@@ -124,8 +124,8 @@ class GridConfig extends AbstractModel
 
         // also delete the favourite
         $db = Db::get();
-        $db->query('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
-        $db->query('DELETE from gridconfig_shares where gridConfigId = ' . $db->quote($this->getId()));
+        $db->executeQuery('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
+        $db->executeQuery('DELETE from gridconfig_shares where gridConfigId = ' . $db->quote($this->getId()));
     }
 
     /**

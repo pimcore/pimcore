@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -86,10 +87,10 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($dirtyRelations) {
                     $where .= ' AND fieldname IN (' . implode(',', $dirtyRelations) . ')';
-                    $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+                    $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
                 }
             } else {
-                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+                $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
             }
         } catch (\Exception $e) {
             Logger::warning('Error during removing old relations: ' . $e);
@@ -157,7 +158,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate($storetable, $data);
+        Helper::insertOrUpdate($this->db, $storetable, $data);
 
         // get data for query table
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
@@ -168,7 +169,7 @@ class Dao extends Model\Dao\AbstractDao
         $data['fieldname'] = $this->model->getFieldname();
 
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', $object->getId());
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', [$object->getId()]);
 
         $inheritanceEnabled = $object->getClass()->getAllowInherit();
         $parentData = null;
@@ -180,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
                 // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', $parentForInheritance->getId());
+                $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', [$parentForInheritance->getId()]);
             }
         }
 
@@ -271,7 +272,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate($querytable, $data);
+        Helper::insertOrUpdate($this->db, $querytable, $data);
 
         if ($inheritanceEnabled) {
             $this->inheritanceHelper->doUpdate($object->getId(), true,
@@ -297,7 +298,7 @@ class Dao extends Model\Dao\AbstractDao
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchRow('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', $object->getId());
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', [$object->getId()]);
         $this->db->delete($queryTable, ['o_id' => $object->getId()]);
 
         //update data for relations table
@@ -386,7 +387,7 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index, o.o_published as published
+        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index, o.o_published as published
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'

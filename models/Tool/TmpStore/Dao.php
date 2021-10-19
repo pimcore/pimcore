@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -41,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            $this->db->insertOrUpdate('tmp_store', [
+            Helper::insertOrUpdate($this->db, 'tmp_store', [
                 'id' => $id,
                 'data' => $data,
                 'tag' => $tag,
@@ -71,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $item = $this->db->fetchRow('SELECT * FROM tmp_store WHERE id = ?', $id);
+        $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', [$id]);
 
         if (is_array($item) && array_key_exists('id', $item)) {
             if ($item['serialized']) {
@@ -93,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getIdsByTag($tag)
     {
-        $items = $this->db->fetchCol('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
+        $items = $this->db->fetchOne('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
 
         return $items;
     }

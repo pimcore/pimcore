@@ -589,7 +589,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        $idsForDeletion = $this->fetchCol($sql);
+        $idsForDeletion = $this->fetchOne($sql);
 
         if (!empty($idsForDeletion)) {
             $chunks = array_chunk($idsForDeletion, 1000);

@@ -48,7 +48,7 @@ class CleanupBrickTablesTask implements TaskInterface
         $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
             $prefix = 'object_brick_' . $tableType . '_';
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -78,7 +78,7 @@ class CleanupBrickTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchOne($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
@@ -91,7 +91,7 @@ class CleanupBrickTablesTask implements TaskInterface
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

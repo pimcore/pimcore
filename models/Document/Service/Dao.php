@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Service;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -38,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
             'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-        [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
+        [Helper::escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
         );
     }
 
@@ -66,12 +67,12 @@ class Dao extends Model\Dao\AbstractDao
     public function getTranslations(Document $document, $task = 'open')
     {
         $sourceId = $this->getTranslationSourceId($document);
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
+        $data = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
 
         if ($task == 'open') {
             $linkedData = [];
             foreach ($data as $key => $value) {
-                $linkedData = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
+                $linkedData = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
             }
 
             if (count($linkedData) > 0) {
@@ -111,7 +112,7 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        $this->db->insertOrUpdate('documents_translations', [
+        Helper::insertOrUpdate($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,

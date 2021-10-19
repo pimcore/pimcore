@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM glossary WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM glossary WHERE id = ?', [$this->model->getId()]);
 
         if (!$data) {
             throw new NotFoundException(sprintf('Unable to load glossary item with ID `%s`', $this->model->getId()));

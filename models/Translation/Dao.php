@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -50,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($caseInsensitive) {
             $condition = 'LOWER(`key`) = LOWER(?)';
         }
-        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+        $data = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
 
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -84,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                     ];
-                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                    Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
             }
         }
@@ -105,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages()
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -137,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $table = $this->getDatabaseTableName();
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
                           `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',

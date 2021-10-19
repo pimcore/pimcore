@@ -47,7 +47,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
         $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];
         foreach ($tableTypes as $tableType) {
             $prefix = $tableType . '_';
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -61,14 +61,14 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchOne($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

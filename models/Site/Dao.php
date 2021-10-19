@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByRootId($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE rootId = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
@@ -60,12 +60,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByDomain($domain)
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
         if (empty($data['id'])) {
 
             // check for wildcards
             // @TODO: refactor this to be more clear
-            $sitesRaw = $this->db->fetchAll('SELECT id,domains FROM sites');
+            $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
             $wildcardDomains = [];
             foreach ($sitesRaw as $site) {
                 if (!empty($site['domains']) && strpos($site['domains'], '*')) {
@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                 $wildcardDomain = preg_quote($wildcardDomain, '#');
                 $wildcardDomain = str_replace('\\*', '.*', $wildcardDomain);
                 if (preg_match('#^' . $wildcardDomain . '$#', $domain)) {
-                    $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', [$siteId]);
+                    $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$siteId]);
                 }
             }
 
