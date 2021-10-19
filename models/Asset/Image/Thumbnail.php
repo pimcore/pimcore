@@ -219,7 +219,6 @@ final class Thumbnail
     {
         $srcSetValues = [];
         $sourceTagAttributes = [];
-        $thumb = null;
 
         foreach ([1, 2] as $highRes) {
             $thumbConfigRes = clone $thumbConfig;
@@ -227,8 +226,13 @@ final class Thumbnail
             $thumbConfigRes->setHighResolution($highRes);
             $thumb = $image->getThumbnail($thumbConfigRes, true);
 
+            $thumbPath = $thumb->getPath(true);
+            if (!empty($options['absoluteUrl'])) {
+                $thumbPath = Tool::getHostUrl($options['absoluteUrlProtocol'] ?? null).$thumbPath;
+            }
+
             $descriptor = $highRes . 'x';
-            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
+            $srcSetValues[] = $this->addCacheBuster($thumbPath . ' ' . $descriptor, $options, $image);
 
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 break;
@@ -352,6 +356,10 @@ final class Thumbnail
         } else {
             $path = $this->getPath(true);
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
+        }
+
+        if(!empty($options['absoluteUrl'])) {
+            $attributes['src'] = Tool::getHostUrl($options['absoluteUrlProtocol'] ?? null).$attributes['src'];
         }
 
         if (!isset($options['disableWidthHeightAttributes'])) {

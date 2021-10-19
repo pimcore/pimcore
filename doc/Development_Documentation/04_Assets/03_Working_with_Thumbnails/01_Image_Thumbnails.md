@@ -94,7 +94,8 @@ You can configure the generated markup with the following options:
 | `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.   |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.   |
-
+| `absoluteUrl`                  | bool     | Set to `true` to use absolute URLs.   |
+| `absoluteUrlProtocol`          | string   | Protocol to be used for absolute URLs, e.g. "https"   |
 
 
 ## Usage Examples
