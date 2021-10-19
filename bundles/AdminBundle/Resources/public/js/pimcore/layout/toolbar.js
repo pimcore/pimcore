@@ -34,7 +34,7 @@ pimcore.layout.toolbar = Class.create({
                         var itemCfg = {
                             text: t(perspective.name),
                             disabled: perspective.active,
-                            itemId: 'pimcore_menu_file_perspective_' + perspective.name.replace(/\s/g, '-'),
+                            itemId: 'pimcore_menu_file_perspective_' + perspective.name..replace(/[^a-z0-9\-_]/i, '-'),
                             handler: this.openPerspective.bind(this, perspective.name)
                         };
 
