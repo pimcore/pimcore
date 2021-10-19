@@ -91,26 +91,26 @@ final class Requirements
         ]);
 
         // check database charset =>  utf-8 encoding
-        $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
+        $result = $db->fetchAssociative('SHOW VARIABLES LIKE "character\_set\_database"');
         $checks[] = new Check([
             'name' => 'Database Charset utf8mb4',
             'state' => ($result && (strtolower($result['Value']) == 'utf8mb4')) ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // empty values are provided by MariaDB => 10.3
-        $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
+        $largePrefix = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
         $checks[] = new Check([
             'name' => 'innodb_large_prefix = ON ',
             'state' => ($largePrefix && !in_arrayi(strtolower((string) $largePrefix['Value']), ['on', '1', ''])) ? Check::STATE_ERROR : Check::STATE_OK,
         ]);
 
-        $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
+        $fileFormat = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
         $checks[] = new Check([
             'name' => 'innodb_file_format = Barracuda',
             'state' => ($fileFormat && (!empty($fileFormat['Value']) && strtolower($fileFormat['Value']) != 'barracuda')) ? Check::STATE_ERROR : Check::STATE_OK,
         ]);
 
-        $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
+        $fileFilePerTable = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
         $checks[] = new Check([
             'name' => 'innodb_file_per_table = ON',
             'state' => ($fileFilePerTable && !in_arrayi(strtolower((string) $fileFilePerTable['Value']), ['on', '1'])) ? Check::STATE_ERROR : Check::STATE_OK,
@@ -198,7 +198,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->update('__pimcore_req_check', [
+            $db->executeStatement('UPDATE TABLE __pimcore_req_check SET field=:field, alter_field=:alter_field', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
@@ -215,7 +215,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -243,7 +243,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check_view');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }

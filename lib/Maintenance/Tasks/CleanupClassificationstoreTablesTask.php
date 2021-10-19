@@ -47,7 +47,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
         $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];
         foreach ($tableTypes as $tableType) {
             $prefix = $tableType . '_';
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);

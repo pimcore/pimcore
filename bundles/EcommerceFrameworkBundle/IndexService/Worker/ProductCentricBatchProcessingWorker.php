@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInt
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Db\Helper;
 use Pimcore\Event\Ecommerce\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
@@ -99,7 +100,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     protected function insertDataToIndex($data, $subObjectId)
     {
-        $currentEntry = $this->db->fetchRow('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
+        $currentEntry = $this->db->fetchAssociative('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
         if (!$currentEntry) {
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
@@ -127,7 +128,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     protected function deleteFromStoreTable($objectId)
     {
-        $this->db->deleteWhere($this->getStoreTableName(), 'o_id = ' . $this->db->quote((string)$objectId) . ' AND tenant = ' . $this->db->quote($this->name));
+        $this->db->delete($this->getStoreTableName(), ['o_id' => (string)$objectId, 'tenant' => $this->name]);
     }
 
     /**
@@ -142,7 +143,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [$this->db->escapeLike($object->getFullPath()) . '/%']);
+            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [Helper::escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';

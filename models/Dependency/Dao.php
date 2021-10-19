@@ -100,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     public function clear()
     {
         try {
-            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Db\Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
+            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
         } catch (\Exception $e) {
             Logger::error($e);
         }
