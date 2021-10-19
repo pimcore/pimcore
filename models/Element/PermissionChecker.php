@@ -122,7 +122,7 @@ class PermissionChecker
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
-                            Helper::escapeLike($path) .'%'
+                            [Helper::escapeLike($path) .'%']
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
