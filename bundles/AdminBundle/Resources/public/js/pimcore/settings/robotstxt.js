@@ -141,10 +141,16 @@ pimcore.settings.robotstxt = Class.create({
                         editor.resize();
                     }
 
-                    this.textEditors.push({
-                        'key': siteRecord.get('id'),
-                        'editor': editor
-                    })
+                    let textEditor = this.textEditors.find(e => e.key === siteRecord.get('id'));
+                    if (textEditor) {
+                        textEditor.editor = editor;
+                    } else {
+                        this.textEditors.push({
+                            'key': siteRecord.get('id'),
+                            'editor': editor
+                        });
+                    }
+
                 }.bind(this)
             }
         });
@@ -157,8 +163,11 @@ pimcore.settings.robotstxt = Class.create({
             items: [editorContainer]
         });
 
-        this.editor.on('resize', function (el, width, height) {
-            editorContainer.resize();
+        editPanel.on('resize', function (el, width, height) {
+            let textEditor = this.textEditors.find(e => e.key === siteRecord.get('id'));
+            if (textEditor) {
+                textEditor.editor.resize();
+            }
         }.bind(this));
 
         return editPanel;
