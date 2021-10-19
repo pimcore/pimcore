@@ -68,13 +68,13 @@ pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editab
         this.dateField = new Ext.form.DateField({
             cls: "pimcore_block_field_date",
             value: initialDate,
-            region: 'west',
-            listeners: {
-                'change': function() {
-                    this.loadTimestampsForDate();
-                }.bind(this)
-            }
+            region: 'west'
         });
+          
+        this.dateField.on('select', function() {
+            this.loadTimestampsForDate();
+        }.bind(this));
+      
         controlItems.push(this.dateField);
 
         this.slider = Ext.create('Ext.pimcore.slider.Milestone', {
