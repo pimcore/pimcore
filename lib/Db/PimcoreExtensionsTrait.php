@@ -263,7 +263,7 @@ trait PimcoreExtensionsTrait
      * @param array|scalar $params
      * @param array $types
      *
-     * @return array<string, mixed>|false False is returned if no rows are found.
+     * @return mixed
      *
      * @throws DBALException
      */
@@ -428,7 +428,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    public function quoteColumnAs($ident, $alias)
+    public function quoteColumnAs($ident, $alias = null)
     {
         return $this->_quoteIdentifierAs($ident, $alias);
     }
@@ -456,7 +456,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    protected function _quoteIdentifierAs(string $ident, ?string $alias = null, bool $auto = false, string $as = ' AS '): string
+    protected function _quoteIdentifierAs($ident, $alias = null, $auto = false, $as = ' AS ')
     {
         if (is_string($ident)) {
             $ident = explode('.', $ident);
@@ -489,7 +489,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string The quoted identifier and alias.
      */
-    protected function _quoteIdentifier(string $value, bool $auto = false): string
+    protected function _quoteIdentifier($value, $auto = false)
     {
         if ($auto === false) {
             $q = '`';
