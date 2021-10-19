@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM tags WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM tags WHERE id = ?', $id);
         if (!$data) {
             throw new Model\Exception\NotFoundException('Tag item with id ' . $id . ' not found');
         }
@@ -71,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->insertOrUpdate('tags', $data);
+            Helper::insertOrUpdate($this->db, 'tags', $data);
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
@@ -80,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id
             if ($originalIdPath && $originalIdPath != $this->model->getIdPath()) {
-                $this->db->query('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), $this->db->escapeLike($originalIdPath) . $this->model->getId() . '/%']);
+                $this->db->executeQuery('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), Helper::escapeLike($originalIdPath) . $this->model->getId() . '/%']);
             }
 
             $this->db->commit();
@@ -104,10 +105,10 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . Helper::quoteInto($this->db, 'tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->delete('tags', ['id' => $this->model->getId()]);
-            $this->db->deleteWhere('tags', $this->db->quoteInto('idPath LIKE ?', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
         } catch (\Exception $e) {
@@ -161,7 +162,7 @@ class Dao extends Model\Dao\AbstractDao
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        $this->db->insertOrUpdate('tags_assignment', $data);
+        Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
     }
 
     /**
@@ -216,7 +217,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($cIds as $cId) {
                 $quotedCIds[] = $this->db->quote($cId);
             }
-            $this->db->deleteWhere('tags_assignment', 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
         }
 
         foreach ($tagIds as $tagId) {
@@ -260,8 +261,8 @@ class Dao extends Model\Dao\AbstractDao
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
             $select->andWhere(
                 '(' .
-                $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
+                Helper::quoteInto($this->db, 'tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
+                Helper::quoteInto($this->db, 'tags.idPath LIKE ?', Helper::escapeLike($tag->getFullIdPath()) . '%')
                 . ')'
             );
         } else {

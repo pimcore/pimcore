@@ -168,7 +168,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             }
 
             if (!empty($preparedKeys)) {
-                $this->db->deleteWhere($this->getDatabaseTableName(), '`key` IN (' . implode(',', $preparedKeys) . ')');
+                $this->db->executeStatement('DELETE FROM ' . $this->getDatabaseTableName() . ' WHERE `key` IN (' . implode(',', $preparedKeys) . ')');
             }
         }
     }

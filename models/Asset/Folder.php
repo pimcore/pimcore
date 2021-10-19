@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Db\Helper;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -119,7 +120,7 @@ class Folder extends Model\Asset
         $db = \Pimcore\Db::get();
         $condition = "path LIKE :path AND type IN ('image', 'video', 'document')";
         $conditionParams = [
-            'path' => $db->escapeLike($this->getRealFullPath()) . '/%',
+            'path' => Helper::escapeLike($this->getRealFullPath()) . '/%',
         ];
 
         if ($storage->fileExists($cacheFilePath)) {

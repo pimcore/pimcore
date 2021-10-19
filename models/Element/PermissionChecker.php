@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -90,7 +91,7 @@ class PermissionChecker
                 $userPermission[$columnName] = false;
 
                 try {
-                    $permissionsParent = $db->fetchRow(
+                    $permissionsParent = $db->fetchAssociative(
                         'SELECT * FROM users_workspaces_'.$type.' , users u WHERE userId = u.id AND cid IN ('.implode(
                             ',',
                             $parentIds
@@ -116,12 +117,12 @@ class PermissionChecker
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchRow(
+                        $permissionsChilds = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
-                            $db->escapeLike($path) .'%'
+                            Helper::escapeLike($path) .'%'
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
