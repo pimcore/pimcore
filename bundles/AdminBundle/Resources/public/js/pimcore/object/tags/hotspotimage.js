@@ -54,10 +54,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return {
             text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            getRelationFilterCondition: function(editor) {
-                var filterResult = editor.data ? editor.data.id : null;
-                return filterResult;
-            },
+            getRelationFilter: this.getRelationFilter,
             renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -94,6 +91,18 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
             }.bind(this, field.key)
         };
+    },
+
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data ? editor.data.id : null;
+        return new Ext.util.Filter({
+            operator: "=",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
     },
 
     getLayoutEdit: function () {

@@ -433,15 +433,9 @@ pimcore.element.helpers.gridColumnConfig = {
                     text: t("apply_filter"),
                     iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
                     handler: function () {
-                        if (formPanel.isValid() && typeof fieldInfo.getRelationFilterCondition === "function") {
+                        if (formPanel.isValid() && typeof fieldInfo.getRelationFilter === "function") {
                             this.grid.filters.getStore().addFilter(
-                                new Ext.util.Filter({
-                                    operator: "like",
-                                    type: "string",
-                                    id: "x-gridfilter-" + fieldInfo.dataIndex,
-                                    property: fieldInfo.dataIndex,
-                                    value: fieldInfo.getRelationFilterCondition(editor)
-                                })
+                                fieldInfo.getRelationFilter(fieldInfo.dataIndex, editor)
                             );
                             this.filterByRelationWindow.close();
                         }

@@ -24,13 +24,13 @@ trait RelationFilterConditionParser
     public function getRelationFilterCondition($value, $operator, $name)
     {
         if ($operator == '=') {
-            return '`' . $name . '` LIKE ' . "'%," . $value . ",%'";
+            return '`' . $name . '` = ' . "'" . $value . "'";
         }
         $result = $name . " IS NULL";
         $values = explode(',', (string)$value ?? '');
         if (is_array($values) && !empty($values)) {
             $fieldConditions = array_map(function ($value) use ($name) {
-                return '`' . $name . "` LIKE '%" . $value . "%' ";
+                return '`' . $name . "` LIKE '%," . $value . ",%' ";
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 $result = '(' . implode(' AND ', $fieldConditions) . ')';

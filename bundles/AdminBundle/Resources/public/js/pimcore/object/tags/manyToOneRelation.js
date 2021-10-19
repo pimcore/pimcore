@@ -55,14 +55,22 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         return {
             text: t(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
-            getRelationFilterCondition: function(editor) {
-                var filterResult = editor.data ? editor.data.id : null;
-                return filterResult;
-            },
+            getRelationFilter: this.getRelationFilter,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data ? editor.data.type + "|" + editor.data.id : null;
+        return new Ext.util.Filter({
+            operator: "=",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
+    },
 
     getLayoutEdit: function () {
 

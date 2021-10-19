@@ -673,6 +673,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getFilterConditionExt($value, $operator, $params = [])
     {
         $name = $params['name'] . '__id';
+        if (preg_match('/^(asset|object|document)\|(\d+)/', $value, $matches)) {
+            $typeField = $params['name'] . '__type';
+            $typeCondition = '`' . $typeField . '` = ' . "'" . $matches[1] . "'";
+            $value = $matches[2];
+
+            return '(' . $typeCondition . ' AND ' . $this->getRelationFilterCondition($value, $operator, $name) . ')';
+        }
+
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

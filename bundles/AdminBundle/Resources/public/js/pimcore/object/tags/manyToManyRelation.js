@@ -76,7 +76,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         return {
             text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            getRelationFilterCondition: this.getRelationFilterCondition,
+            getRelationFilter: this.getRelationFilter,
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -101,13 +101,19 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         };
     },
 
-    getRelationFilterCondition: function (editor) {
-        var filterResult = editor.store.getData().items.map(
-                function (item) {
-                     return item.data.type + "|" + item.data.id;
-                });
-
-         return filterResult.join(',');
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValues = editor.store.getData().items.map(
+            function (item) {
+                return item.data.type + "|" + item.data.id;
+            });
+        return new Ext.util.Filter({
+            operator: "like",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValues.join(',');
+        });
     },
 
     getLayoutEdit: function () {
