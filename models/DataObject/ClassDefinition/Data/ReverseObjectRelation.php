@@ -184,7 +184,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return null|array
+     * @return array
      */
     public function load($object, $params = [])
     {
