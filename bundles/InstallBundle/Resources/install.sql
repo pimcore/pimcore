@@ -940,7 +940,7 @@ DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `object_url_slugs`;
 CREATE TABLE `object_url_slugs` (
-      `objectId` INT(11) NOT NULL DEFAULT '0',
+      `objectId` INT(11) UNSIGNED NOT NULL DEFAULT '0',
       `classId` VARCHAR(50) NOT NULL DEFAULT '0',
       `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
       `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
