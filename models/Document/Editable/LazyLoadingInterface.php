@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-interface LazyLoadInterface
+interface LazyLoadingInterface
 {
     /**
      * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields

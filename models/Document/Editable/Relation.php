@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadInterface
+class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * ID of the source object
