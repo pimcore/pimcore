@@ -71,7 +71,7 @@ final class Version20211018104331 extends AbstractMigration
                     continue;
                 }
 
-                $fkName = 'fk_'.$table.'__'.$objectIdColumn;
+                $fkName = AbstractDao::getForeignKeyName($table, $objectIdColumn);
                 if ($tableSchema->hasForeignKey($fkName)) {
                     $tableSchema->removeForeignKey($fkName);
                 }
