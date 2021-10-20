@@ -97,7 +97,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var filterValue = editor.data && editor.data.id !== undefined ? editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
-            type: "string",
+            type: "int",
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,

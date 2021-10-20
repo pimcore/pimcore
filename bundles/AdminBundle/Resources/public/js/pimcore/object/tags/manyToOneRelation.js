@@ -64,7 +64,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         var filterValue = editor.data && editor.data.id !== undefined ? editor.data.type + "|" + editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
-            type: "string",
+            type: "int",
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,

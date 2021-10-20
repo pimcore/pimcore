@@ -72,7 +72,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         var filterValue = editor.data && editor.data.id !== undefined ? editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
-            type: "string",
+            type: "int",
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
