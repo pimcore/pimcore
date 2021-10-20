@@ -510,9 +510,12 @@ class Imagick extends Adapter
                 ];
             }
 
-            $this->load($this->imagePath, array_merge([
-                'resolution' => $res,
-            ], $this->initalOptions));
+            $this->resource->setResolution($res['x'], $res['y']);
+            $this->resource->readImage($this->imagePath);
+
+            if (!$this->isPreserveColor()) {
+                $this->setColorspaceToRGB();
+            }
         }
 
         $width = (int)$width;
