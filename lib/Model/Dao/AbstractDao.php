@@ -99,7 +99,7 @@ abstract class AbstractDao implements DaoInterface
     public static function getForeignKeyName($table, $column) {
         $fkName = 'fk_'.$table.'__'.$column;
         if (strlen($fkName) > 64) {
-            $fkName = 'fk_'.md5($fkName);
+            $fkName = substr($fkName, 0, 55) . '_' . hash('crc32', $fkName);
         }
 
         return $fkName;
