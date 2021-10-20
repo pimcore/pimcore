@@ -149,7 +149,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         if ($ownerClass instanceof DataObject\ClassDefinition && $object instanceof DataObject\Concrete && $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
-                return $fd->allowObjectRelation($object);
+                return true;
             }
         }
 
@@ -169,7 +169,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         if (is_array($data)) {
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or !($o instanceof DataObject\Concrete)) {
+                if (!$allowClass || !($o instanceof DataObject\Concrete)) {
                     throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']', null, null);
                 }
             }
