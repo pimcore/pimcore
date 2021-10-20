@@ -46,7 +46,8 @@ final class Version20211018104331 extends AbstractMigration
 
                 $fkName = AbstractDao::getForeignKeyName($table, $objectIdColumn);
                 if (!$tableSchema->hasForeignKey($fkName)) {
-                    if($tableSchema->getColumn($objectIdColumn)->getCustomSchemaOption('unsigned') === false) {
+                    $column = $tableSchema->getColumn($objectIdColumn);
+                    if(!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
                         $tableSchema->changeColumn($objectIdColumn, ['unsigned' => true]);
                     }
 
