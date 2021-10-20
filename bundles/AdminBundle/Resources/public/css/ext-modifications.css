@@ -816,7 +816,3 @@ body > .x-mask {
 .x-keyboard-mode .x-view-item-focused {
     outline: 1px dashed #3c3f41 !important;
 }
-
-.x-tool-expand-right, .x-tool-expand-left, .x-tool-collapse-right, .x-tool-collapse-left {
-    background-color: #3c3f41 !important;
-}
