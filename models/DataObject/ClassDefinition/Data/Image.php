@@ -380,9 +380,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * Filter by relation feature
-     * @param array|string $value
-     * @param string       $operator
-     * @param array        $params
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
      * @return string
      */
     public function getFilterConditionExt($value, $operator, $params = [])
