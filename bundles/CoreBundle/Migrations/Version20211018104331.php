@@ -19,9 +19,11 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 
 final class Version20211018104331 extends AbstractMigration
 {
@@ -44,17 +46,11 @@ final class Version20211018104331 extends AbstractMigration
                     continue;
                 }
 
-                $fkName = AbstractDao::getForeignKeyName($table, $objectIdColumn);
-                if (!$tableSchema->hasForeignKey($fkName)) {
-                    $column = $tableSchema->getColumn($objectIdColumn);
-                    if(!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
-                        $tableSchema->changeColumn($objectIdColumn, ['unsigned' => true]);
-                    }
-
-                    $tableSchema->addForeignKeyConstraint('objects', [$objectIdColumn], ['o_id'], ['onDelete' => 'CASCADE'], $fkName);
-                }
+                $this->createForeignKey($tableSchema, $objectIdColumn);
             }
         }
+
+        $this->createForeignKey($schema->getTable('object_url_slugs'), 'objectId');
     }
 
     public function down(Schema $schema): void
@@ -95,10 +91,15 @@ final class Version20211018104331 extends AbstractMigration
             'object_localized_data_'.$class->getId() => 'ooo_id'
         ];
 
+        foreach(Tool::getValidLanguages() as $language) {
+            $foreignKeys['object_localized_query_'.$class->getId().'_'.$language] = 'ooo_id';
+        }
+
         $brickList = new DataObject\Objectbrick\Definition\Listing();
         foreach ($brickList->load() as $brickDefinition) {
             $foreignKeys['object_brick_query_'.$brickDefinition->getKey().'_'.$class->getId()] = 'o_id';
             $foreignKeys['object_brick_localized_'.$brickDefinition->getKey().'_'.$class->getId()] = 'ooo_id';
+            $foreignKeys['object_brick_store_'.$brickDefinition->getKey().'_'.$class->getId()] = 'o_id';
         }
 
         $fieldCollectionList = new DataObject\Fieldcollection\Definition\Listing();
@@ -107,5 +108,17 @@ final class Version20211018104331 extends AbstractMigration
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
         }
         return $foreignKeys;
+    }
+
+    private function createForeignKey(Table $tableSchema, string $localForeignKeyColumn) {
+        $fkName = AbstractDao::getForeignKeyName($tableSchema->getName(), $localForeignKeyColumn);
+        if (!$tableSchema->hasForeignKey($fkName)) {
+            $column = $tableSchema->getColumn($localForeignKeyColumn);
+            if (!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
+                $tableSchema->changeColumn($localForeignKeyColumn, ['unsigned' => true]);
+            }
+
+            $tableSchema->addForeignKeyConstraint('objects', [$localForeignKeyColumn], ['o_id'], ['onDelete' => 'CASCADE'], $fkName);
+        }
     }
 }

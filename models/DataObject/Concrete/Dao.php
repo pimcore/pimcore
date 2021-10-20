@@ -419,6 +419,15 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function delete()
     {
+        // delete fields which have their own delete algorithm
+        if ($this->model->getClass()) {
+            foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    $fd->delete($this->model);
+                }
+            }
+        }
+
         parent::delete();
     }
 }
