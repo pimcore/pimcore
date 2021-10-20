@@ -58,7 +58,7 @@ class EditableUsageResolver
         $this->renderer->render($document, [
             EditmodeResolver::ATTRIBUTE_EDITMODE => true,
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true,
-            Block::IGNORE_EDITMODE_INDICES => true,
+            Block::ATTRIBUTE_IGNORE_EDITMODE_INDICES => true,
             ]);
         $names = $this->subscriber->getRecordedEditableNames();
         $this->unregisterEventSubscriber();

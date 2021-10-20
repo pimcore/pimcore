@@ -24,7 +24,10 @@ use Pimcore\Tool\HtmlUtils;
  */
 class Block extends Model\Document\Editable implements BlockInterface
 {
-    const IGNORE_EDITMODE_INDICES = '_block_ignore_extra_editmode_indices';
+    /**
+     * @internal
+     */
+    const ATTRIBUTE_IGNORE_EDITMODE_INDICES = '_block_ignore_extra_editmode_indices';
 
     /**
      * Contains an array of indices, which represent the order of the elements in the block
@@ -451,6 +454,6 @@ EOT;
             return false;
         }
 
-        return $request->get(self::IGNORE_EDITMODE_INDICES, false);
+        return $request->get(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES, false);
     }
 }
