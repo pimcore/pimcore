@@ -191,7 +191,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $db = Db::get();
 
         if($this->getOwnerClassId() === null) {
-            return null;
+            return [];
         }
 
         $relations = $db->fetchAll('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
