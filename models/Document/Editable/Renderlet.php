@@ -27,7 +27,7 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Renderlet extends Model\Document\Editable
+class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * Contains the ID of the linked object
@@ -86,11 +86,9 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [
@@ -308,9 +306,9 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->o) {
             $this->setElement();
@@ -378,19 +376,9 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         $type = (string) $this->type;
         if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
