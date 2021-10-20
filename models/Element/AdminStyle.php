@@ -81,7 +81,7 @@ class AdminStyle
 
                 $fileExt = File::getFileExtension($element->getFilename());
                 if ($fileExt) {
-                    $this->elementIconClass = ' pimcore_icon_' . File::getFileExtension($element->getFilename());
+                    $this->elementIconClass .= ' pimcore_icon_' . File::getFileExtension($element->getFilename());
                 }
             }
         } elseif ($element instanceof Document) {
