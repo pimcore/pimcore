@@ -242,15 +242,15 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 
-    protected function enrichDataRow($object, $params, &$classId, &$relation = [])
+    protected function enrichDataRow($object, array $params, ?string &$classId, &$row = [], string $srcCol = 'src_id')
     {
-        if (!$relation) {
-            $relation = [];
+        if (!$row) {
+            $row = [];
         }
 
         if ($object instanceof DataObject\Concrete) {
-            $relation['dest_id'] = $object->getId();
-            $relation['ownertype'] = 'object';
+            $row['dest_id'] = $object->getId();
+            $row['ownertype'] = 'object';
 
             $classId = $this->getOwnerClassId();
         }
