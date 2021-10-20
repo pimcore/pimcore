@@ -96,7 +96,7 @@ pimcore.settings.fileexplorer.file = Class.create({
                 }.bind(this));
 
                 this.editor.on('resize', function (el, width, height) {
-                    editorContainer.resize();
+                    this.textEditor.resize();
                 }.bind(this));
 
             }

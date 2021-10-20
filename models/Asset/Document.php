@@ -65,6 +65,7 @@ class Document extends Model\Asset
             $this->setCustomSetting('document_page_count', $pageCount);
         } catch (\Exception $e) {
             Logger::error($e);
+            $this->setCustomSetting('document_page_count', 'failed');
         }
     }
 

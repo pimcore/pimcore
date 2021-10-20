@@ -1395,10 +1395,6 @@ pimcore.document.tree = Class.create({
         var textKeyTitle;
         var textKeyMessage;
 
-        if(!is_numeric(docTypeId)) {
-            docTypeId = null; // avoid sending objects or functions to the controller
-        }
-
         if(type == "page") {
 
             textKeyTitle = t("add_page");
