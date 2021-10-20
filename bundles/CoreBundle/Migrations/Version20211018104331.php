@@ -39,10 +39,10 @@ final class Version20211018104331 extends AbstractMigration
         foreach ($list as $class) {
             $foreignKeys = $this->getForeignKeys($class);
 
-            foreach($foreignKeys as $table => $objectIdColumn) {
+            foreach ($foreignKeys as $table => $objectIdColumn) {
                 try {
                     $tableSchema = $schema->getTable($table);
-                } catch(SchemaException $e) {
+                } catch (SchemaException $e) {
                     continue;
                 }
 
@@ -77,6 +77,7 @@ final class Version20211018104331 extends AbstractMigration
 
     /**
      * @param DataObject\ClassDefinition $class
+     *
      * @return string[]
      */
     private function getForeignKeys(DataObject\ClassDefinition $class): array
@@ -88,10 +89,10 @@ final class Version20211018104331 extends AbstractMigration
             'object_classificationstore_groups_'.$class->getId() => 'o_id',
             'object_classificationstore_data_'.$class->getId() => 'o_id',
             'object_metadata_'.$class->getId() => 'o_id',
-            'object_localized_data_'.$class->getId() => 'ooo_id'
+            'object_localized_data_'.$class->getId() => 'ooo_id',
         ];
 
-        foreach(Tool::getValidLanguages() as $language) {
+        foreach (Tool::getValidLanguages() as $language) {
             $foreignKeys['object_localized_query_'.$class->getId().'_'.$language] = 'ooo_id';
         }
 
@@ -107,10 +108,12 @@ final class Version20211018104331 extends AbstractMigration
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_'.$class->getId()] = 'o_id';
             $foreignKeys['object_collection_'.$fieldCollectionDefinition->getKey().'_localized_'.$class->getId()] = 'ooo_id';
         }
+
         return $foreignKeys;
     }
 
-    private function createForeignKey(Table $tableSchema, string $localForeignKeyColumn) {
+    private function createForeignKey(Table $tableSchema, string $localForeignKeyColumn)
+    {
         $fkName = AbstractDao::getForeignKeyName($tableSchema->getName(), $localForeignKeyColumn);
         if (!$tableSchema->hasForeignKey($fkName)) {
             $column = $tableSchema->getColumn($localForeignKeyColumn);
