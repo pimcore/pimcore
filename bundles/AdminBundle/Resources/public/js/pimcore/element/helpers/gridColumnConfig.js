@@ -347,7 +347,7 @@ pimcore.element.helpers.gridColumnConfig = {
             var menu = grid.headerCt.getMenu();
             var columnDataIndex = menu.activeHeader.dataIndex;
 
-            if (menu.activeHeader.config && typeof menu.activeHeader.config.getRelationFilterCondition === "function") {
+            if (menu.activeHeader.config && typeof menu.activeHeader.config.getRelationFilter === "function") {
                 filterByRelationMenu.show();
             } else {
                 filterByRelationMenu.hide();
