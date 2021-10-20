@@ -103,7 +103,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnerClassId()
     {
@@ -184,11 +184,15 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return null
+     * @return null|array
      */
     public function load($object, $params = [])
     {
         $db = Db::get();
+
+        if($this->getOwnerClassId() === null) {
+            return null;
+        }
 
         $relations = $db->fetchAll('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
 
