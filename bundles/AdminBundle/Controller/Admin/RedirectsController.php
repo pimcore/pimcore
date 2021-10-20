@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -69,6 +70,10 @@ class RedirectsController extends AdminController
 
                 // save redirect
                 $redirect = Redirect::getById($data['id']);
+
+                if (!$redirect) {
+                    return $this->adminJson(['success' => false]);
+                }
 
                 if ($data['target']) {
                     if ($doc = Document::getByPath($data['target'])) {
@@ -130,7 +135,7 @@ class RedirectsController extends AdminController
             $list->setLimit($request->get('limit'));
             $list->setOffset($request->get('start'));
 
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
@@ -236,11 +241,9 @@ class RedirectsController extends AdminController
     /**
      * @Route("/cleanup", name="pimcore_admin_redirects_cleanup", methods={"DELETE"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function cleanupAction(Request $request)
+    public function cleanupAction()
     {
         $this->checkPermission('redirects');
 
