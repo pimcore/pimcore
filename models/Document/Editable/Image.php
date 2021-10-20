@@ -741,7 +741,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(array $idMapping) /** : void */
+    public function rewriteIds($idMapping) /** : void */
     {
         if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);

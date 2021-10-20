@@ -249,7 +249,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(array $idMapping) /** : void */
+    public function rewriteIds($idMapping) /** : void */
     {
         $id = $this->getId();
         if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {

@@ -219,7 +219,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(array $idMapping) /** : void */
+    public function rewriteIds($idMapping) /** : void */
     {
         // reset existing elements store
         $this->elements = [];

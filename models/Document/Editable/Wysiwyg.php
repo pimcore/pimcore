@@ -130,7 +130,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(array $idMapping) /** : void */
+    public function rewriteIds($idMapping) /** : void */
     {
         $html = new DomCrawler($this->text);
 

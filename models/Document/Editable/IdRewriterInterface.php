@@ -34,5 +34,5 @@ interface IdRewriterInterface
      *
      * @return void
      */
-    public function rewriteIds(array $idMapping) /** : void */;
+    public function rewriteIds(/*array*/ $idMapping) /** : void */;
 }

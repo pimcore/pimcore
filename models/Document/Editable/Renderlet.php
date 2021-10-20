@@ -378,7 +378,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(array $idMapping) /** : void */
+    public function rewriteIds($idMapping) /** : void */
     {
         $type = (string) $this->type;
         if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
