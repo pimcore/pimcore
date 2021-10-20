@@ -23,10 +23,13 @@ trait RelationFilterConditionParser
      */
     public function getRelationFilterCondition($value, $operator, $name)
     {
+        $result = '`' . $name . "` IS NULL";
+        if ($value === null) {
+            return $result;
+        }
         if ($operator == '=') {
             return '`' . $name . '` = ' . "'" . $value . "'";
         }
-        $result = $name . " IS NULL";
         $values = explode(',', (string)$value ?? '');
         if (is_array($values) && !empty($values)) {
             $fieldConditions = array_map(function ($value) use ($name) {

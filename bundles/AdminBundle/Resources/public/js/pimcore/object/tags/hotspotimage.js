@@ -94,7 +94,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     getRelationFilter: function (dataIndex, editor) {
-        var filterValue = editor.data ? editor.data.id : null;
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
             type: "string",

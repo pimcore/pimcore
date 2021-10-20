@@ -69,7 +69,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     getRelationFilter: function (dataIndex, editor) {
-        var filterValue = editor.data ? editor.data.id : null;
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
             type: "string",

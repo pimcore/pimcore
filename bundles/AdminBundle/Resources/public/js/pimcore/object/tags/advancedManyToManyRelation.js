@@ -946,17 +946,22 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     },
 
     getRelationFilter: function (dataIndex, editor) {
-        var filterValues = editor.store.getData().items.map(
-            function (item) {
+        var filterValues = editor.store.getData().items;
+        if (!filterValues || !Array.isArray(filterValues) || !filterValues.length) {
+            filterValues = null;
+        } else {
+            filterValues = filterValues.map(function (item) {
                 return item.data.type + "|" + item.data.id;
-            });
+            }).join(',');
+        }
+
         return new Ext.util.Filter({
             operator: "like",
             type: "string",
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
-            value: filterValues.join(',')
+            value: filterValues
         });
     },
 

@@ -61,7 +61,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     getRelationFilter: function (dataIndex, editor) {
-        var filterValue = editor.data ? editor.data.type + "|" + editor.data.id : null;
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.type + "|" + editor.data.id : null;
         return new Ext.util.Filter({
             operator: "=",
             type: "string",
