@@ -84,19 +84,21 @@ class Dao extends Model\Dao\AbstractDao
         $tableQuery = $this->getTableName($class, true);
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
-		  `o_id` int(11) NOT NULL default '0',
+		  `o_id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
-          INDEX `fieldname` (`fieldname`)
+          INDEX `fieldname` (`fieldname`),
+          CONSTRAINT `".self::getForeignKeyName($tableStore, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
-		  `o_id` int(11) NOT NULL default '0',
+		  `o_id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
-          INDEX `fieldname` (`fieldname`)
+          INDEX `fieldname` (`fieldname`),
+          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'o_id')."` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 		) DEFAULT CHARSET=utf8mb4;");
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
