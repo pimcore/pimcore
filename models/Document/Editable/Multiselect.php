@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Multiselect extends Model\Document\Editable
+class Multiselect extends Model\Document\Editable implements EditmodeDataInterface
 {
     /**
      * Contains the current selected values
@@ -64,9 +64,9 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         return $this->values;
     }
