@@ -53,17 +53,18 @@ class RedirectsController extends AdminController
         $this->checkPermission('redirects');
 
         if ($request->get('data')) {
-            if ($request->get('xaction') == 'destroy') {
+            if ($request->get('xaction') === 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
 
                 $id = $data['id'] ?? null;
                 if ($id) {
                     $redirect = Redirect::getById($id);
-                    $redirect->delete();
+                    $redirect?->delete();
                 }
 
                 return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
+            }
+            if ($request->get('xaction') === 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
                 // save redirect
@@ -91,7 +92,8 @@ class RedirectsController extends AdminController
                 }
 
                 return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            }
+            if ($request->get('xaction') === 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
