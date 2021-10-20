@@ -31,6 +31,9 @@ $_ENV['PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_CUSTOM_REPORTS'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_DOCUMENT_TYPES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_WEB_TO_PRINT'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA'] = 'settings-store';
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();

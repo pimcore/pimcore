@@ -25,7 +25,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 

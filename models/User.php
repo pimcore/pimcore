@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
@@ -643,7 +642,7 @@ final class User extends User\UserRole
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
             if (!$this->mergedPerspectives) {
                 // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = Config::getPerspectivesConfig()->toArray();
+                $allPerspectives = \Pimcore\Perspective\Config::get()->toArray();
                 $this->mergedPerspectives = [];
 
                 $this->mergedPerspectives = array_keys($allPerspectives);
@@ -667,7 +666,7 @@ final class User extends User\UserRole
             return $perspectives[0];
         } else {
             // all perspectives are allowed
-            $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+            $perspectives = \Pimcore\Perspective\Config::getAvailablePerspectives($this);
 
             return $perspectives[0]['name'];
         }
@@ -704,16 +703,14 @@ final class User extends User\UserRole
     public function getAllowedLanguagesForEditingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if (empty($mergedWebsiteTranslationLanguagesEdit)) {
+        if (empty($mergedWebsiteTranslationLanguagesEdit) || $this->isAdmin()) {
             $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
             if (empty($mergedWebsiteTranslationLanguagesView)) {
                 return Tool::getValidLanguages();
-            } else {
-                return $mergedWebsiteTranslationLanguagesEdit;
             }
-        } else {
-            return $mergedWebsiteTranslationLanguagesEdit;
         }
+
+        return $mergedWebsiteTranslationLanguagesEdit;
     }
 
     /**
@@ -746,11 +743,11 @@ final class User extends User\UserRole
     public function getAllowedLanguagesForViewingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-        if (empty($mergedWebsiteTranslationLanguagesView)) {
+        if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
             return Tool::getValidLanguages();
-        } else {
-            return $mergedWebsiteTranslationLanguagesView;
         }
+
+        return $mergedWebsiteTranslationLanguagesView;
     }
 
     /**

@@ -162,7 +162,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -170,7 +170,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
                 if (!$allowClass || !($o instanceof DataObject\Concrete)) {
-                    throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']', null, null);
+                    throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']');
                 }
             }
         }

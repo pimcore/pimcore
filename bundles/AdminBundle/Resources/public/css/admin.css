@@ -509,30 +509,35 @@
     font-size: 11px;
 }
 
-.asset_folder_preview .thumb{
-    width: 250px;
-    height: 250px;
-}
-
-.asset_folder_preview .thumb td {
-    width: 250px;
-    height: 250px;
-}
-
 .asset_folder_preview .thumb-wrap{
     float: left;
+    width: 250px;
+    height: 250px;
     margin: 4px;
     margin-right: 0;
     padding: 5px;
     background: #ececec;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.asset_folder_preview .thumb-wrap span{
+.asset_folder_preview .thumb{
+    max-width: 250px;
+    max-height: 220px;
+}
+
+.asset_folder_preview .filename {
     display: block;
     overflow: hidden;
     text-align: center;
     width: 250px;
+    position: absolute;
+    bottom: 3px;
+    left: 0;
 }
 
 .asset_folder_preview .x-view-over{
@@ -2314,4 +2319,12 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 
 .x-body .sf-minitoolbar a {
     width: 48px;
+}
+
+.pimcore_tree_node_disabled {
+    color: #8e8e8e;
+}
+
+.x-panel-header .x-tool-tool-el {
+    color: #484B4E;
 }

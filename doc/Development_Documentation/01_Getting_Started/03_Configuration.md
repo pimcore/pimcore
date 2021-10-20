@@ -3,7 +3,7 @@
 Pimcore's configuration can be found in several places:
 
 * Configurations in `var/config/*.(php|yml)` are written from the admin interface. For example the `system.yml` file contains the settings from [System Settings](../18_Tools_and_Features/25_System_Settings.md)
-* The Symfony configuration tree (mainly distributed throughout `*.yml` files) contains all Symfony as well as most of the Pimcore related configurations.
+* The Symfony configuration tree (mainly distributed throughout `*.yaml` files) contains all Symfony as well as most of the Pimcore related configurations.
 * A set of `PIMCORE_*` constants which are used to resolve various filesystem paths
 
 

@@ -466,9 +466,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                         "id": ids,
                         "success": function () {
                             this.getStore().reload();
-                            var tree = pimcore.globalmanager.get("layout_object_tree");
-                            var treePanel = tree.tree;
-                            tree.refresh(treePanel.getRootNode());
+                            var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                            tree.getStore().load({
+                                node: tree.getRootNode()
+                            });
                         }.bind(this)
                     };
                     pimcore.elementservice.deleteElement(options);

@@ -157,6 +157,23 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+        }
+        if ($data !== null && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
+        }
+    }
+
+    /**
      * @param int $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
@@ -282,7 +299,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof Asset\Image) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getId(), $idMapping['asset'])) {
                 return Asset::getById($idMapping['asset'][$data->getId()]);
             }
         }

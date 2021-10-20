@@ -34,7 +34,7 @@ trait VersionDaoTrait
     {
         $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
             'cid' => $this->model->getId(),
-            'ctype' => Element\Service::getType($this->model),
+            'ctype' => Element\Service::getElementType($this->model),
             'userId' => $userId,
             'mdate' => $this->model->getModificationDate(),
             'versionCount' => $this->model->getVersionCount(),
@@ -57,7 +57,7 @@ trait VersionDaoTrait
         $list = new Version\Listing();
         $list->setCondition('cid = :cid AND ctype = :ctype', [
             'cid' => $this->model->getId(),
-            'ctype' => Element\Service::getType($this->model),
+            'ctype' => Element\Service::getElementType($this->model),
         ])->setOrderKey('id')->setOrder('ASC');
 
         $versions = $list->load();

@@ -163,10 +163,9 @@ CSS;
     public static function logEmail(MailClient $mail, $recipients, $error = null)
     {
         $emailLog = new Model\Tool\Email\Log();
-        $document = $mail->getDocument();
 
-        if ($document instanceof Model\Document) {
-            $emailLog->setDocumentId($document->getId());
+        if ($documentId = $mail->getDocumentId()) {
+            $emailLog->setDocumentId($documentId);
         }
 
         if (isset($_SERVER['REQUEST_URI'])) {

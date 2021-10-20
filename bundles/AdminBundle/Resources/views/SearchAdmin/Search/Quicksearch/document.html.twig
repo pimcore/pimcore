@@ -1,9 +1,9 @@
 {# @var $element \Pimcore\Model\Document\Page #}
 {% set previewImage = null %}
 {% if element is instanceof('\\Pimcore\\Model\\Document\\Page') and config['documents']['generate_preview'] == true %}
-    {% set thumbnailFileHdpi = element.getPreviewImageFilesystemPath(true) %}
-    {% if pimcore_file_exists(thumbnailFileHdpi) %}
-        {% set previewImage = path('pimcore_admin_page_display_preview_image', {'id': element.id, 'hdpi': true }) %}
+    {% set thumbnailFile = element.getPreviewImageFilesystemPath() %}
+    {% if pimcore_file_exists(thumbnailFile) %}
+        {% set previewImage = path('pimcore_admin_page_display_preview_image', {'id': element.id }) %}
     {% endif %}
 {% endif %}
 

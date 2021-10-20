@@ -673,11 +673,7 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        if (method_exists($this->resource, 'roundCorners')) {
-            $this->resource->roundCorners($width, $height);
-        } else {
-            $this->internalRoundCorners($width, $height);
-        }
+        $this->internalRoundCorners($width, $height);
 
         $this->postModify();
 

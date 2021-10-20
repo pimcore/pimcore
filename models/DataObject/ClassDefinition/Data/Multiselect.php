@@ -37,7 +37,6 @@ class Multiselect extends Data implements
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
@@ -359,11 +358,11 @@ class Multiselect extends Data implements
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!is_array($data) and !empty($data)) {
+        if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException('Invalid multiselect data');
         }
     }
@@ -585,6 +584,7 @@ class Multiselect extends Data implements
     /**
      * @return $this
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
@@ -661,7 +661,7 @@ class Multiselect extends Data implements
 
             try {
                 $options = $optionsProvider->getOptions($context, $this);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // error from getOptions => no values => no comma => no problems
                 $options = null;
             }

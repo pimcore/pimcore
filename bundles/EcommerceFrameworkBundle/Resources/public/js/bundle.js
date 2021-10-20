@@ -74,7 +74,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
 
         var user = pimcore.globalmanager.get("user");
 
-        var config = pimcore.bundle.EcommerceFramework.bundle.config;
+        var config = pimcore.bundle.EcommerceFramework.config;
 
         // pricing rules
         if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricing_rules.enabled)) {

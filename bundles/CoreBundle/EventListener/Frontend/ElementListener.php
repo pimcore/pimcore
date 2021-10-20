@@ -71,7 +71,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             $request = $event->getRequest();
             if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
                 return;
@@ -84,7 +84,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $document = $this->documentResolver->getDocument($request);
             $adminRequest =
                 $this->requestHelper->isFrontendRequestByAdmin($request) ||
-                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
+                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMainRequest());
 
             $user = null;
             if ($adminRequest) {

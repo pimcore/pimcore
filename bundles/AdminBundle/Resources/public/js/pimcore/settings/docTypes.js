@@ -165,7 +165,11 @@ pimcore.settings.document.doctypes = Class.create({
                     return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
                 },
                 listeners: {
-                    beforecheckchange: function (el, rowIndex, checked, eOpts) {
+                    beforecheckchange: function (el, rowIndex, checked, record, eOpts) {
+                        if(!record.data.writeable) {
+                            pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                            return false;
+                        }
                         if (this.store.getAt(rowIndex).get("type") !== "page") {
                             record.set('staticGeneratorEnabled', false);
                             return false;

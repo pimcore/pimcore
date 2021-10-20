@@ -140,6 +140,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->getDao()->getTotalCount();

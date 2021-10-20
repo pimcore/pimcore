@@ -1,8 +1,15 @@
 # Dynamic Text Labels
 
 Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md) data type,
-it is possible to generate the Layout Text dynamically based on the current object and the label's context.
+it is possible to generate the Layout Text dynamically based on the current object and the label's context. There are two options for defining dynamic content: 
+- Providing a custom renderer class
+- Using twig in template
 This is an alternative to the static text defined in the class definition.
+
+For all ways, the preview tab shows a preview of the generated content. If you are using object context in your content, then just drag & drop object on "Drag Object for Preview" field before checking the output in preview tab.
+
+
+## Custom Renderer Class
 
 Let's consider the following example.
 
@@ -47,3 +54,15 @@ For example: If the text label lives inside a field collection, *$params* will c
 The result will be as follows:
 
 ![Editmode](../../../img/dynamic_textlabel_2.png)
+
+## Twig & Preview
+It is possible to use Twig syntax inside htmleditor and Renderer class. You can also check the generated output in preview tab.
+
+Following variables are available in twig context: 
+- `object` - current data object
+- `data` - data provided to renderer defined in the class defintion
+
+Here is an example of Twig content:
+![Template Class Definition](../../../img/dynamic_textlabel_3.png)
+
+![Template editmode](../../../img/dynamic_textlabel_4.png)

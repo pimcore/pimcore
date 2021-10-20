@@ -39,7 +39,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value) {
-                    return '<img style="max-width:88px;max-height:88px" src="' + value  + '" />';
+                    return '<img style="max-width:88px;max-height:88px" src="' + value  + '" loading="lazy" />';
                 }
             }.bind(this, field.key)};
     },

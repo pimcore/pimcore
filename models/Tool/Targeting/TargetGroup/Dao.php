@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id = null)
     {
@@ -44,14 +44,14 @@ class Dao extends Model\Dao\AbstractDao
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Target Group with id ' . $this->model->getId() . " doesn't exist");
+            throw new Model\Exception\NotFoundException('Target Group with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
     /**
      * @param string|null $name
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByName(string $name = null)
     {

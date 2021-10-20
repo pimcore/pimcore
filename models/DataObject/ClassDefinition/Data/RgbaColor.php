@@ -209,7 +209,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param float $data
+     * @param string|null $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *

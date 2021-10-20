@@ -70,7 +70,7 @@ final class CollectionConfig extends Model\AbstractModel
             $config->getDao()->getById((int)$id);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

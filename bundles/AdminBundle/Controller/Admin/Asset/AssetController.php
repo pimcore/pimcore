@@ -33,6 +33,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -113,7 +114,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $asset = clone $asset;
-        $asset->getScheduledTasks();
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
@@ -156,7 +156,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $previewUrl = $this->generateUrl('pimcore_admin_asset_getimagethumbnail', [
                 'id' => $asset->getId(),
                 'treepreview' => true,
-                'hdpi' => true,
                 '_dc' => time(),
             ]);
 
@@ -205,6 +204,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :
             $request->getSchemeAndHttpHost() . $frontendPath;
+
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $asset->getScheduledTasks()
+        );
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -705,13 +711,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
-        if ($asset->getType() == 'image') {
+        if ($asset instanceof Asset\Image) {
             try {
-                $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
-                $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
+                if ($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                }
 
                 // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
-                if ($asset->getCustomSetting('imageWidth') && $asset->getCustomSetting('imageHeight')) {
+                if ($asset->getCustomSetting('imageDimensionsCalculated')) {
                     $tmpAsset['imageWidth'] = $asset->getCustomSetting('imageWidth');
                     $tmpAsset['imageHeight'] = $asset->getCustomSetting('imageHeight');
                 }
@@ -722,7 +729,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             try {
                 if (\Pimcore\Video::isAvailable()) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
-                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -732,7 +738,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
-                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -752,25 +757,16 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @param Asset $asset
-     * @param bool $hdpi
-     * @param bool $grid
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset, $hdpi = false, $grid = false)
+    protected function getThumbnailUrl(Asset $asset)
     {
         $params = [
             'id' => $asset->getId(),
             'treepreview' => true,
+            '_dc' => $asset->getModificationDate(),
         ];
-
-        if ($hdpi) {
-            $params['hdpi'] = true;
-        }
-
-        if ($grid) {
-            $params['grid'] = true;
-        }
 
         if ($asset instanceof Asset\Image) {
             return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
@@ -840,7 +836,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             if ($allowUpdate) {
-                if ($request->get('filename') != $asset->getFilename() and !$asset->isAllowed('rename')) {
+                if ($request->get('filename') != $asset->getFilename() && !$asset->isAllowed('rename')) {
                     unset($updateData['filename']);
                     Logger::debug('prevented renaming asset because of missing permissions ');
                 }
@@ -900,7 +896,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             // browser plugin
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
 
-            $server->exec();
+            $server->start();
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -1306,7 +1302,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         if ($request->get('treepreview')) {
-            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
         $cropPercent = $request->get('cropPercent');
@@ -1361,7 +1357,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     throw $this->createAccessDeniedException('not allowed to view thumbnail');
                 }
 
-                $stream = $folder->getPreviewImage((bool)$request->get('hdpi'));
+                $stream = $folder->getPreviewImage();
                 if (!$stream) {
                     $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/blank.png');
                 } else {
@@ -1409,7 +1405,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
         $time = null;
@@ -1475,7 +1471,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
         $page = 1;
@@ -1787,7 +1783,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
                         'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => $this->getThumbnailUrl($asset, true, true),
+                        'url' => $this->getThumbnailUrl($asset),
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
                     ];
                 }
@@ -2713,8 +2709,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

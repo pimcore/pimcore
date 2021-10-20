@@ -72,28 +72,11 @@ final class PhpArrayFileTable
 
     /**
      * @param string $filePath
-     *
-     * @throws \Exception
      */
     public function setFilePath($filePath)
     {
-        $writeable = false;
-
-        if (file_exists($filePath) && is_writable($filePath)) {
-            $writeable = true;
-        } elseif (!file_exists($filePath)) {
-            if (is_writable(dirname($filePath))) {
-                $writeable = true;
-            }
-        }
-
-        if ($writeable) {
-            $this->filePath = $filePath;
-
-            $this->load();
-        } else {
-            throw new \Exception($filePath . ' is not writeable');
-        }
+        $this->filePath = $filePath;
+        $this->load();
     }
 
     /**

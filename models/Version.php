@@ -28,6 +28,7 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
@@ -137,7 +138,7 @@ final class Version extends AbstractModel
             $version->getDao()->getById($id);
 
             return $version;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -193,7 +194,7 @@ final class Version extends AbstractModel
 
         $data = $this->getData();
         // if necessary convert the data to save it to filesystem
-        if (is_object($data) or is_array($data)) {
+        if (is_object($data) || is_array($data)) {
 
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
             $fromRuntime = null;
@@ -230,7 +231,7 @@ final class Version extends AbstractModel
         $id = $this->getDao()->save();
         $this->setId($id);
 
-        $storage->write($this->getStoragePath(), $dataString);
+        $storage->write($this->getStorageFilename(), $dataString);
 
         // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
         if ($isAssetFile && !$storage->fileExists($this->getBinaryStoragePath())) {
@@ -332,8 +333,11 @@ final class Version extends AbstractModel
 
         $storage = Storage::get('version');
 
-        if ($storage->fileExists($this->getStoragePath())) {
-            $storage->delete($this->getStoragePath());
+        $storageFile = $this->getStorageFilename();
+        $storagePath = dirname($storageFile);
+        if ($storage->fileExists($storageFile)) {
+            $storage->delete($this->getStorageFilename());
+            File::recursiveDeleteEmptyDirs($storage, $storagePath);
         }
 
         if ($storage->fileExists($this->getBinaryStoragePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
@@ -354,7 +358,7 @@ final class Version extends AbstractModel
     public function loadData($renewReferences = true)
     {
         $storage = Storage::get('version');
-        $data = $storage->read($this->getStoragePath());
+        $data = $storage->read($this->getStorageFilename());
 
         if (!$data) {
             Logger::err('Version: cannot read version data from file system.');
@@ -401,7 +405,7 @@ final class Version extends AbstractModel
      *
      * @return string
      */
-    private function getStoragePath(?int $id = null): string
+    private function getStorageFilename(?int $id = null): string
     {
         if (!$id) {
             $id = $this->getId();
@@ -419,7 +423,7 @@ final class Version extends AbstractModel
      */
     public function getFileStream()
     {
-        return Storage::get('version')->readStream($this->getStoragePath());
+        return Storage::get('version')->readStream($this->getStorageFilename());
     }
 
     /**
@@ -427,7 +431,7 @@ final class Version extends AbstractModel
      */
     private function getBinaryStoragePath(): string
     {
-        return $this->getStoragePath($this->getBinaryFileId()) . '.bin';
+        return $this->getStorageFilename($this->getBinaryFileId()) . '.bin';
     }
 
     /**

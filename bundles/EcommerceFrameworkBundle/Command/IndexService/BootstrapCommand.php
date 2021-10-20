@@ -34,6 +34,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;
+
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 

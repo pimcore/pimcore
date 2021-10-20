@@ -50,9 +50,9 @@ class ConfigController extends AdminController
 
         $config['menu']['order_list'] = $orderList;
 
-        $javascript = 'pimcore.registerNS("pimcore.bundle.EcommerceFramework.bundle.config");' . PHP_EOL;
+        $javascript = 'pimcore.registerNS("pimcore.bundle.EcommerceFramework.config");' . PHP_EOL;
 
-        $javascript .= 'pimcore.bundle.EcommerceFramework.bundle.config = ';
+        $javascript .= 'pimcore.bundle.EcommerceFramework.config = ';
         $javascript .= json_encode($config) . ';';
 
         $response = new Response($javascript);

@@ -54,6 +54,7 @@ abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
+
         registerBundles as microKernelRegisterBundles;
     }
 
@@ -88,7 +89,11 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir()
     {
-        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->getEnvironment();
+        if (isset($_SERVER['APP_CACHE_DIR'])) {
+            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
+        }
+
+        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->environment;
     }
 
     /**
@@ -156,7 +161,7 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types'] as $configDir) {
+        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata', 'staticroutes', 'perspectives', 'custom-views'] as $configDir) {
             $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
             if (is_dir($configDir)) {
                 // @phpstan-ignore-next-line

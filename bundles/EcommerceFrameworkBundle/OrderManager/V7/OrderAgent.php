@@ -273,10 +273,9 @@ class OrderAgent implements OrderAgentInterface
 
             // get first available provider
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
+                /** @var AbstractData|null $providerData */
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    // @var AbstractData $providerData
-
                     // get provider data
                     if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
                         $name = $providerData->getConfigurationKey();
@@ -320,8 +319,8 @@ class OrderAgent implements OrderAgentInterface
         // save provider data
         $order = $this->getOrder();
 
+        /** @var PaymentProvider $provider */
         $provider = $order->getPaymentProvider();
-        // @var PaymentProvider $provider
 
         // load existing
         $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
@@ -680,7 +679,6 @@ class OrderAgent implements OrderAgentInterface
 
             // load order events
             $noteList = new NoteListing();
-            // @var NoteListing $noteList
 
             $cid = [ $order->getId() ];
             foreach ($order->getItems() as $item) {

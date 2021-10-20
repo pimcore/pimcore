@@ -71,7 +71,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                         params['height'] = 20;
                         params['frame'] = true;
 
-                        return '<img src="' + Routing.generate('pimcore_admin_asset_getimagethumbnail', params)  + '" />';
+                        return '<img src="' + Routing.generate('pimcore_admin_asset_getimagethumbnail', params)  + '" loading="lazy" />';
                     } else {
                         params['width'] = 88;
                         params['height'] = 88;
@@ -84,7 +84,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                             url = Ext.String.urlAppend(url, cropParams);
                         }
 
-                        url = '<img src="' + url + '" style="width:88px; height:88px;" />';
+                        url = '<img src="' + url + '" style="width:88px; height:88px;" loading="lazy" />';
                         return url;
                     }
                 }

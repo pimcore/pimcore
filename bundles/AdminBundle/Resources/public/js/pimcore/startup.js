@@ -163,7 +163,7 @@ Ext.onReady(function () {
         'X-pimcore-extjs-version-minor': Ext.getVersion().getMinor()
     });
     Ext.Ajax.on('requestexception', function (conn, response, options) {
-        console.log("xhr request failed");
+        console.error("xhr request to " + options.url + " failed");
 
         var jsonData = response.responseJson;
         if (!jsonData) {
@@ -326,6 +326,7 @@ Ext.onReady(function () {
         });
 
         pimcore.globalmanager.add("document_types_store", store);
+        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"]);
     }
 
     //translation admin keys

@@ -418,7 +418,7 @@ class GD extends Adapter
                 'png' => 'PNG Support',
             ];
 
-            if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
+            if (isset($mappings[$format]) && isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
                 self::$supportedFormatsCache[$format] = true;
             } else {
                 self::$supportedFormatsCache[$format] = false;

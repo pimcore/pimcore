@@ -31,7 +31,7 @@ and the Subject contains the prefix "Debug email:".
 
 This is done by extending Symfony Mailer, with injected service `RedirectingPlugin`, which calls beforeSendPerformed before mail is sent and sendPerformed immediately after email is sent.
 
-Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yml e.g.,
+Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yaml e.g.,
 ```yaml
 framework:
     mailer:

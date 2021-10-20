@@ -26,7 +26,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -485,7 +484,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -506,11 +505,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!empty($data) and !is_array($data)) {
+        if (!empty($data) && !is_array($data)) {
             throw new Model\Element\ValidationException('Invalid table data');
         }
     }

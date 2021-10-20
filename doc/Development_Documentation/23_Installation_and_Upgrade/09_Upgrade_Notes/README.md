@@ -1,5 +1,13 @@
 # Upgrade Notes
 
+## 10.2.0
+- [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production). 
+- [Configs] The default storage for configurations is now `yaml` files in the `var/config` directory and are loaded as Symfony Config. The old `php` config-files continue to work, however, changes on existing configurations as well as new configurations are written to `yaml`.  
+**Important notice**: writing configs to `yaml` is only supported if the kernel is in debug mode, because changes of the config need a rebuild of the container configuration.  
+If you require to change the config on production environments we recommend to change the storage to `settings-store` as described [here](../../21_Deployment/03_Configuration_Environments.md). 
+- [Asset] Pimcore now automatically supports AVIF image format for thumbnails using `auto` format (only `Imagick`). To disable AVIF please [follow this instructions](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).  
+- [DataObject API] There is change in behavior when validating the inherited dataobjects & variants. As before, the inherited object gets saved with invalid attribute value, if the parent object has a valid value for the same attribute. Now, the API will throw validation exception, if the inherited object has an invalid value. please see https://github.com/pimcore/pimcore/pull/10529 
+
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will
   be removed in Pimcore 11.
@@ -153,6 +161,7 @@ framework:
 - Replaced `html2text/html2text` with `soundasleep/html2text`. Removed methods from `Pimcore\Mail`: `determineHtml2TextIsInstalled()`, `setHtml2TextOptions($options = [])`, `getHtml2TextBinaryEnabled()`, `enableHtml2textBinary()`, `getHtml2textInstalled()`.
 - Replaced `doctrine/common` with `doctrine/persistence`.
 - [Asset] Image thumbnails: Using getHtml() will return `<picture>` tag instead of `<img>` tag.
+- [Asset] Config option `pimcore.assets.image.thumbnails.webp_auto_support` was removed, since the browser detection is not needed anymore using the `<picture>` tags for thumbnails. 
 - [Ecommerce] Marked `AbstractOrder` & `AbstractOrderItem` classes as abstract.
     Changes on `AbstractOrder` class:
     - Added: `getCartHash()`, `getComment()`, `setComment()`

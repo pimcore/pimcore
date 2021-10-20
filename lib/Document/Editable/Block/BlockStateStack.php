@@ -86,6 +86,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->states;

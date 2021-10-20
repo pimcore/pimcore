@@ -174,6 +174,10 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addPredefinedPropertiesNode($rootNode);
+        $this->addStaticRoutesNode($rootNode);
+        $this->addPerspectivesNode($rootNode);
+        $this->addCustomViewsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -510,6 +514,24 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->arrayNode('auto_formats')
+                                        ->prototype('array')
+                                            ->canBeDisabled()
+                                            ->children()
+                                                ->scalarNode('quality')->end()
+                                            ->end()
+                                        ->end()
+                                        ->defaultValue([
+                                            'avif' => [
+                                                'enabled' => true,
+                                                'quality' => 15,
+                                            ],
+                                            'webp' => [
+                                                'enabled' => true,
+                                                'quality' => null,
+                                            ],
+                                        ])
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -626,6 +648,35 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('predefined')
+                            ->children()
+                                ->arrayNode('definitions')
+                                ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('name')->end()
+                                            ->scalarNode('description')->end()
+                                            ->scalarNode('group')->end()
+                                            ->scalarNode('language')->end()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('data')->end()
+                                            ->scalarNode('targetSubtype')->end()
+                                            ->scalarNode('config')->end()
+                                            ->booleanNode('inheritable')
+                                                ->beforeNormalization()
+                                                ->ifString()
+                                                ->then(function ($v) {
+                                                    return (bool)$v;
+                                                })
+                                                ->end()
+                                            ->end()
+                                            ->integerNode('creationDate')->end()
+                                            ->integerNode('modificationDate')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('class_definitions')
                             ->children()
                                 ->arrayNode('data')
@@ -859,6 +910,22 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('default_controller_print_container')
                                 ->defaultValue('App\\Controller\\Web2printController::containerAction')
                             ->end()
+                            ->booleanNode('enableInDefaultView')->end()
+                            ->scalarNode('generalTool')->end()
+                            ->scalarNode('generalDocumentSaveMode')->end()
+                            ->scalarNode('pdfreactorVersion')->end()
+                            ->scalarNode('pdfreactorProtocol')->end()
+                            ->scalarNode('pdfreactorServer')->end()
+                            ->scalarNode('pdfreactorServerPort')->end()
+                            ->scalarNode('pdfreactorBaseUrl')->end()
+                            ->scalarNode('pdfreactorApiKey')->end()
+                            ->scalarNode('pdfreactorLicence')->end()
+                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
+                            ->booleanNode('pdfreactorEnableDebugMode')->end()
+                            ->scalarNode('wkhtmltopdfBin')->end()
+                            ->variableNode('wkhtml2pdfOptions')->end()
+                            ->scalarNode('wkhtml2pdfHostname')->end()
+                            ->scalarNode('headlessChromeSettings')->end()
                         ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
@@ -1969,6 +2036,197 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->addDefaultsIfNotSet()
+            ->end();
+    }
+
+    /**
+     * Add predefined properties specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPredefinedPropertiesNode(ArrayNodeDefinition $rootNode)
+    {
+        $predefinedPropertiesNode = $rootNode
+            ->children()
+            ->arrayNode('properties')
+            ->ignoreExtraKeys()
+            ->addDefaultsIfNotSet();
+
+        $predefinedPropertiesNode
+        ->children()
+            ->arrayNode('predefined')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('description')->end()
+                                ->scalarNode('key')->end()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('data')->end()
+                                ->scalarNode('config')->end()
+                                ->scalarNode('ctype')->end()
+                                ->booleanNode('inheritable')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                        ->end()
+                                ->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add static routes specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+        ->children()
+            ->arrayNode('staticroutes')
+                ->ignoreExtraKeys()
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('pattern')->end()
+                                ->scalarNode('reverse')->end()
+                                ->scalarNode('controller')->end()
+                                ->scalarNode('variables')->end()
+                                ->scalarNode('defaults')->end()
+                                ->arrayNode('siteId')
+                                    ->integerPrototype()->end()
+                                ->end()
+                                ->arrayNode('methods')
+                                    ->scalarPrototype()->end()
+                                ->end()
+                                ->integerNode('priority')->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add perspectives specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPerspectivesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('perspectives')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('iconCls')->end()
+                                    ->scalarNode('icon')->end()
+                                    ->variableNode('toolbar')->end()
+                                    ->arrayNode('dashboards')
+                                        ->children()
+                                            ->variableNode('predefined')->end()
+                                        ->end()
+                                    ->end()
+                                    ->arrayNode('elementTree')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('type')->end()
+                                                ->scalarNode('position')->end()
+                                                ->scalarNode('name')->end()
+                                                ->booleanNode('expanded')->end()
+                                                ->scalarNode('hidden')->end()
+                                                ->integerNode('sort')->end()
+                                                ->integerNode('id')->end()
+                                                ->arrayNode('treeContextMenu')
+                                                    ->children()
+                                                        ->arrayNode('document')
+                                                            ->children()
+                                                                ->variableNode('items')->end()
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add custom views specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCustomViewsNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('custom_views')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                            ->children()
+                                ->scalarNode('id')->end()
+                                ->scalarNode('treetype')->end()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('condition')->end()
+                                ->scalarNode('icon')->end()
+                                ->scalarNode('rootfolder')->end()
+                                ->scalarNode('showroot')->end()
+                                ->variableNode('classes')->end()
+                                ->scalarNode('position')->end()
+                                ->scalarNode('sort')->end()
+                                ->booleanNode('expanded')->end()
+                                ->scalarNode('having')->end()
+                                ->scalarNode('where')->end()
+                                ->variableNode('treeContextMenu')->end()
+                                ->arrayNode('joins')
+                                    ->protoType('array')
+                                        ->children()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('condition')->end()
+                                            ->variableNode('name')->end()
+                                            ->variableNode('columns')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
     }
 }

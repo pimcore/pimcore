@@ -103,7 +103,7 @@ class Processor
 
         // get initial document from request (requested document, if it was a "document" request)
         $currentDocument = $this->documentResolver->getDocument();
-        $currentUri = $this->requestHelper->getMasterRequest()->getRequestUri();
+        $currentUri = $this->requestHelper->getMainRequest()->getRequestUri();
 
         foreach ($data as $entry) {
             if ($currentDocument && $currentDocument instanceof Document) {
@@ -174,7 +174,7 @@ class Processor
      */
     private function getData(): array
     {
-        $locale = $this->requestHelper->getMasterRequest()->getLocale();
+        $locale = $this->requestHelper->getMainRequest()->getLocale();
         if (!$locale) {
             return [];
         }
