@@ -892,7 +892,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @param DataObject\Concrete $source
+     * @param Element\AbstractElement $source
      * @param array $context
      * @param array $result
      * @param array $targets
@@ -901,7 +901,7 @@ class ElementController extends AdminController
      *
      * @throws \Exception
      */
-    protected function convertResultWithPathFormatter(DataObject\Concrete $source, $context, $result, $targets): array
+    protected function convertResultWithPathFormatter(Element\AbstractElement $source, $context, $result, $targets): array
     {
         $fd = $this->getNicePathFormatterFieldDefinition($source, $context);
 
