@@ -75,7 +75,10 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         list($data, $this->dataSource) = $this->locationAwareConfigRepository->loadConfigByKey($id);
 
         self::$cache[$this->settingsStoreScope][$id] = $data;
-        self::$cache[$this->settingsStoreScope][$id][self::cacheKeyDataSource] = $this->dataSource;
+        self::$cache[$this->settingsStoreScope][$id] = [
+            'datasource' => $this->dataSource,
+            'data' => $data,
+        ];
 
         return $data;
     }
