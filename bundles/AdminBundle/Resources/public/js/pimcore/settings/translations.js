@@ -190,14 +190,13 @@ pimcore.settings.translations = Class.create({
             listeners: {
                 beforeedit: function(editor, e) {
                     let cm = this.grid.getColumnManager().getColumns();
-                    for (var i=0; i < cm.length; i++) {
-                        if (cm[i].dataIndex === 'data') {
-                            let editor = this.getCellEditor(e.record.get('type'));
+                    for (let i=0; i < cm.length; i++) {
+                        let columnId = cm[i].id;
+                        if (columnId.startsWith('translation_column_')) {
+                            let editor = this.getCellEditor(e.column.dataIndex.substring(1), e.record);
                             if (editor) {
-                                e.grid.columns[i].setEditor(editor);
+                                e.grid.getColumnManager().columns[i].setEditor(editor);
                             }
-
-                            break;
                         }
                     }
                 }.bind(this)
