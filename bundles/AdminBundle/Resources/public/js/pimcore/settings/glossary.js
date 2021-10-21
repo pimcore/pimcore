@@ -86,19 +86,30 @@ pimcore.settings.glossary = Class.create({
         var casesensitiveCheck = new Ext.grid.column.Check({
             text: t("casesensitive"),
             dataIndex: "casesensitive",
-            width: 50
+            width: 50,
+            editor: {
+                xtype: 'checkbox',
+            }
         });
 
         var exactmatchCheck = new Ext.grid.column.Check({
             text: t("exactmatch"),
             dataIndex: "exactmatch",
-            width: 50
+            width: 50,
+            editor: {
+                xtype: 'checkbox',
+            }
         });
 
         var typesColumns = [
             {text: t("text"), flex: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
-            {text: t("link"), flex: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
-                                tdCls: "pimcore_droptarget_input"},
+            {text: t("link"), flex: 200, sortable: true, dataIndex: 'link',
+                editor: {
+                    xtype: 'textfield',
+                    id: 'linkEditor',
+                },
+                tdCls: "pimcore_droptarget_input"
+            },
             {text: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
             {text: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
@@ -158,9 +169,44 @@ pimcore.settings.glossary = Class.create({
             }
         ];
 
-        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+        let dd = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
             clicksToMoveEditor: 1,
+            listeners: {
+                beforeedit: function(el, e, eOpts, i) {
+                    var editorRow = el.editor.body;
+                    editorRow.rowIdx = e.rowIdx;
+                    this.rowEditDropZone = new Ext.dd.DropZone(editorRow, {
+                        ddGroup: "element",
+
+                        getTargetFromEvent: function(e) {
+                            return this.getEl();
+                        },
+
+                        onNodeOver : function(target, dd, e, data) {
+                            if (data.records.length === 1) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            }
+                        },
+
+                        onNodeDrop : function(myRowIndex, target, dd, e1, data) {
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
+
+                                    Ext.getCmp('linkEditor').setValue(data.path);
+
+                                    return true;
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                        }.bind(this, i)
+                    });
+                }.bind(this),
+                delay: 1
+            }
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
