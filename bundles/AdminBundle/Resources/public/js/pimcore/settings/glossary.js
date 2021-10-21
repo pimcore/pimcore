@@ -158,8 +158,9 @@ pimcore.settings.glossary = Class.create({
             }
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
@@ -189,7 +190,7 @@ pimcore.settings.glossary = Class.create({
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
 
             trackMouseOver: true,
