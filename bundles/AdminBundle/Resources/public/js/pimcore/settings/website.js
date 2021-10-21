@@ -261,7 +261,7 @@ pimcore.settings.website = Class.create({
             listeners: {
                 beforeedit: function(editor, e) {
                     let cm = this.grid.getColumnManager().getColumns();
-                    for (var i=0; i < cm.length; i++) {
+                    for (let i=0; i < cm.length; i++) {
                         if (cm[i].dataIndex === 'data') {
                             let editor = this.getCellEditor(e.record.get('type'));
                             if (editor) {
