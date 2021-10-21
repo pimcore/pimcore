@@ -125,26 +125,37 @@ pimcore.settings.properties.predefined = Class.create({
                }
             },
             {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
-                triggerAction: 'all',
-                editable: false,
-                store: ["text","document","asset","object","bool","select"]
+            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type',
+                editor: new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    store: ["text","document","asset","object","bool","select"]
 
             })},
             {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
-            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
-                                                                editor: new Ext.form.TextField({})},
-            {
-                text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
-                getEditor: function (fieldInfo) {
-                    return new pimcore.object.helpers.metadataMultiselectEditor({
-                        fieldInfo: fieldInfo
-                    });
-                }.bind(this, {value: "document;asset;object" })
-            }
-
-
-            ,
+            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
+            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                editor: new Ext.ux.form.MultiSelect({
+                    store: new Ext.data.ArrayStore({
+                        fields: ['key', {
+                            name: 'value',
+                            convert: function (v, r) {
+                                if (Array.isArray(v)) {
+                                    return v.join(";");
+                                }
+                                return v;
+                            }
+                        }],
+                        data: [
+                            ['document', 'document'],
+                            ['object', ['object']],
+                            ['asset', ['asset']]
+                        ],
+                    }),
+                    displayField: 'key',
+                    valueField: 'value',
+                }),
+            },
             inheritableCheck,
             {
                 xtype: 'actioncolumn',
