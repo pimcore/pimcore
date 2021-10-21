@@ -21,6 +21,8 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 {
     use DaoTrait;
 
+    private const cacheKeyDataSource = 'datasource';
+
     private static array $cache = [];
 
     protected ?string $settingsStoreScope = null;
@@ -63,13 +65,17 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     {
         $this->id = $id;
 
-        if (isset(self::$cache[$this->settingsStoreScope][$id])) {
+        if (isset(self::$cache[$this->settingsStoreScope][$id]) &&
+            isset(self::$cache[$this->settingsStoreScope][$id][self::cacheKeyDataSource])) {
+
+            $this->dataSource = self::$cache[$this->settingsStoreScope][$id][self::cacheKeyDataSource];
             return self::$cache[$this->settingsStoreScope][$id];
         }
 
         list($data, $this->dataSource) = $this->locationAwareConfigRepository->loadConfigByKey($id);
 
         self::$cache[$this->settingsStoreScope][$id] = $data;
+        self::$cache[$this->settingsStoreScope][$id][self::cacheKeyDataSource] = $this->dataSource;
 
         return $data;
     }
