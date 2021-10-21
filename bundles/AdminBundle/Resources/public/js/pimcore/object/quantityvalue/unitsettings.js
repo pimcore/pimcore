@@ -257,10 +257,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                                 this.rowEditing.completeEdit();
                                 let recs = this.grid.store.insert(0, [u]);
 
-                                this.rowEditing.startEditByPosition({
-                                    row: 0,
-                                    column: 0
-                                });
+                                this.rowEditing.startEdit(0,0);
 
                             }.bind(this)
                         });
