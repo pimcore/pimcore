@@ -210,7 +210,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                     {
                         text: t('delete'),
                         handler: this.onDelete.bind(this),
-                        iconCls: "pimcore_icon_delete"
+                        iconCls: "pimcore_icon_minus"
                     },
                     '-',
                     {
@@ -255,7 +255,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                                     id: value
                                 };
                                 this.rowEditing.completeEdit();
-                                let recs = this.grid.store.insert(0, [u]);
+                                this.grid.store.insert(0, [u]);
 
                                 this.rowEditing.startEdit(0,0);
 
