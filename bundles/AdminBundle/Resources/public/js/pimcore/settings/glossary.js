@@ -107,6 +107,7 @@ pimcore.settings.glossary = Class.create({
                 editor: {
                     xtype: 'textfield',
                     id: 'linkEditor',
+                    fieldCls: "input_drop_target",
                 },
                 tdCls: "pimcore_droptarget_input"
             },
@@ -169,14 +170,14 @@ pimcore.settings.glossary = Class.create({
             }
         ];
 
-        let dd = Ext.create('Ext.grid.plugin.RowEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
             clicksToMoveEditor: 1,
             listeners: {
                 beforeedit: function(el, e, eOpts, i) {
                     var editorRow = el.editor.body;
                     editorRow.rowIdx = e.rowIdx;
-                    this.rowEditDropZone = new Ext.dd.DropZone(editorRow, {
+                    let dd = new Ext.dd.DropZone(editorRow, {
                         ddGroup: "element",
 
                         getTargetFromEvent: function(e) {
@@ -268,7 +269,7 @@ pimcore.settings.glossary = Class.create({
 
         for (var i = 0; i < rows.length; i++) {
 
-            var dd = new Ext.dd.DropZone(rows[i], {
+            let dd = new Ext.dd.DropZone(rows[i], {
                 ddGroup: "element",
 
                 getTargetFromEvent: function(e) {
