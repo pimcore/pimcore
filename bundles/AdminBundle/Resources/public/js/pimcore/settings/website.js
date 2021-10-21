@@ -125,7 +125,7 @@ pimcore.settings.website = Class.create({
                 dataIndex: 'name',
                 width: 200,
                 editable: true,
-                getEditor: this.getCellEditor.bind(this),
+                editor: new Ext.form.TextField({}),
                 sortable: true
             },
             {
@@ -137,7 +137,7 @@ pimcore.settings.website = Class.create({
                         name: "language",
                         store: languagestore,
                         editable: false,
-                        listConfig: {minWidth: 200},
+                        listConfig: {minWidth: 150},
                         triggerAction: 'all',
                         mode: "local"
                     });
@@ -148,7 +148,6 @@ pimcore.settings.website = Class.create({
                 text: t("value"),
                 dataIndex: 'data',
                 flex: 10,
-                getEditor: this.getCellEditor.bind(this),
                 editable: true,
                 renderer: this.getCellRenderer.bind(this),
                 listeners: {
@@ -256,25 +255,23 @@ pimcore.settings.website = Class.create({
             emptyText: t('type')
         });
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                beforeedit: function(editor, context, eOpts) {
-                    //need to clear cached editors of cell-editing editor in order to
-                    //enable different editors per row
-                    editor.editors.each(function (e) {
-                        try {
-                            // complete edit, so the value is stored when hopping around with TAB
-                            e.completeEdit();
-                            Ext.destroy(e);
-                        } catch (exception) {
-                            // garbage collector was faster
-                            // already destroyed
-                        }
-                    });
+                beforeedit: function(editor, e) {
+                    let cm = this.grid.getColumnManager().getColumns();
+                    for (var i=0; i < cm.length; i++) {
+                        if (cm[i].dataIndex === 'data') {
+                            let editor = this.getCellEditor(e.record.get('type'));
+                            if (editor) {
+                                e.grid.columns[i].setEditor(editor);
+                            }
 
-                    editor.editors.clear();
-                }
+                            break;
+                        }
+                    }
+                }.bind(this)
             }
         });
 
@@ -292,7 +289,7 @@ pimcore.settings.website = Class.create({
             sm:  Ext.create('Ext.selection.RowModel', {}),
             bbar:this.pagingtoolbar,
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -342,17 +339,18 @@ pimcore.settings.website = Class.create({
         return '<div class="pimcore_icon_' + value + '" data-id="' + record.get("id") + '">&nbsp;</div>';
     },
 
-    getCellEditor: function (record) {
-        var data = record.data;
+    getCellEditor: function (type) {
+        if (!type) {
+            return null;
+        }
 
-        var type = data.type;
         var property;
 
-        if (type == "text") {
+        if (type === "text") {
             property = Ext.create('Ext.form.TextField');
         } else if (type == "textarea") {
             property = Ext.create('Ext.form.TextArea');
-        } else if (type == "document" || type == "asset" || type == "object") {
+        } else if (type == "document" || type == "asset" || type == "object" || type == "bool") {
             //no editor needed here
         } else if (type == "date") {
             property = Ext.create('Ext.form.field.Date', {
@@ -465,8 +463,8 @@ pimcore.settings.website = Class.create({
 
         if (type == "bool") {
 
-            this.cellEditing.editors.each(Ext.destroy, Ext);
-            this.cellEditing.editors.clear();
+            //this.rowEditing.editors.each(Ext.destroy, Ext);
+            //this.rowEditing.editors.clear();
 
             record.set("data", !data.data);
         }
@@ -485,8 +483,8 @@ pimcore.settings.website = Class.create({
 
         var store = this.grid.getStore();
 
-        this.cellEditing.editors.each(Ext.destroy, Ext);
-        this.cellEditing.editors.clear();
+        //this.cellEditing.editors.each(Ext.destroy, Ext);
+        //this.cellEditing.editors.clear();
 
         // check for duplicate name
         var dublicateIndex = store.findBy(function (key, record, id) {
