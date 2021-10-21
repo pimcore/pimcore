@@ -183,15 +183,16 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
         });
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: ['pimcore.gridfilters', this.cellEditing],
+            plugins: ['pimcore.gridfilters', this.rowEditing],
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
@@ -253,10 +254,10 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                                 var u = {
                                     id: value
                                 };
-                                this.cellEditing.completeEdit();
+                                this.rowEditing.completeEdit();
                                 let recs = this.grid.store.insert(0, [u]);
 
-                                this.cellEditing.startEditByPosition({
+                                this.rowEditing.startEditByPosition({
                                     row: 0,
                                     column: 0
                                 });
