@@ -86,7 +86,7 @@ pimcore.settings.glossary = Class.create({
         var casesensitiveCheck = new Ext.grid.column.Check({
             text: t("casesensitive"),
             dataIndex: "casesensitive",
-            width: 50,
+            flex: 55,
             editor: {
                 xtype: 'checkbox',
             }
@@ -95,7 +95,7 @@ pimcore.settings.glossary = Class.create({
         var exactmatchCheck = new Ext.grid.column.Check({
             text: t("exactmatch"),
             dataIndex: "exactmatch",
-            width: 50,
+            flex: 50,
             editor: {
                 xtype: 'checkbox',
             }
