@@ -1228,7 +1228,7 @@ class Service extends Model\Element\Service
                         $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
                         $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(false);
                     $mergedFieldDefinition[$key]->setNotEditable(false);
