@@ -208,10 +208,11 @@ final class Config extends Model\AbstractModel
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
-            $thumbnail->setName($name);
             if (!$thumbnail) {
                 throw new \Exception('Thumbnail in registry is null');
             }
+
+            $thumbnail->setName($name);
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
