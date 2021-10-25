@@ -371,8 +371,8 @@ final class Thumbnail
             }
         }
 
-        $altText = $options['alt'] ?? '';
-        $titleText = $options['title'] ?? '';
+        $altText = !empty($options['alt']) ? $options['alt'] : (!empty($attributes['alt']) ? $attributes['alt'] : '');
+        $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
             if ($image->getMetadata('title')) {
