@@ -1259,7 +1259,7 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
                 }
