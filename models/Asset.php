@@ -408,9 +408,9 @@ class Asset extends Element\AbstractElement
     private static function checkMaxPixels(string $localPath): void
     {
         $maxPixels = (int) \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
-        if($size = getimagesize($localPath)) {
+        if ($size = getimagesize($localPath)) {
             $imagePixels = (int) ($size[0] * $size[1]);
-            if($imagePixels > $maxPixels) {
+            if ($imagePixels > $maxPixels) {
                 throw new ValidationException(
                     'Image exceeds max pixel size of ' . $maxPixels . ', you can change the value in config pimcore.assets.image.max_pixels');
             }
