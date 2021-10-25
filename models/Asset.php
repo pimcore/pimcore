@@ -35,6 +35,7 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -345,18 +346,21 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
+                    self::checkMaxPixels($tmpFile);
                     $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
+                        self::checkMaxPixels($streamMeta['uri']);
                         $mimeType = MimeTypes::getDefault()->guessMimeType($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
+                        self::checkMaxPixels($tmpFile);
                         $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
 
                         if (!$isRewindable) {
@@ -371,6 +375,7 @@ class Asset extends Element\AbstractElement
                 if (is_dir($data['sourcePath'])) {
                     $mimeType = 'directory';
                 } else {
+                    self::checkMaxPixels($data['sourcePath']);
                     $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
@@ -398,6 +403,18 @@ class Asset extends Element\AbstractElement
         }
 
         return $asset;
+    }
+
+    private static function checkMaxPixels(string $localPath): void
+    {
+        $maxPixels = (int) \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        if($size = getimagesize($localPath)) {
+            $imagePixels = (int) ($size[0] * $size[1]);
+            if($imagePixels > $maxPixels) {
+                throw new ValidationException(
+                    'Image exceeds max pixel size of ' . $maxPixels . ', you can change the value in config pimcore.assets.image.max_pixels');
+            }
+        }
     }
 
     /**
