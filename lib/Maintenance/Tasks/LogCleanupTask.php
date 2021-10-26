@@ -37,7 +37,9 @@ class LogCleanupTask implements TaskInterface
             if ($lastTimeItem) {
                 $lastTime = $lastTimeItem->getData();
             } else {
-                $lastTime = time() - 86400;
+                TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
+
+                continue;
             }
 
             if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
@@ -45,12 +47,8 @@ class LogCleanupTask implements TaskInterface
                 $archiveFilename = preg_replace('/\.log$/', '', $log).'-archive-'.date('Y-m-d', $lastTime).'.log';
                 rename($log, $archiveFilename);
 
-                if ($lastTimeItem) {
-                    $lastTimeItem->setData(time());
-                    $lastTimeItem->update(86400 * 7);
-                } else {
-                    TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
-                }
+                $lastTimeItem->setData(time());
+                $lastTimeItem->update(86400 * 7);
             }
         }
 

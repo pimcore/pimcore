@@ -26,27 +26,43 @@ License: MIT
 https://github.com/viliusle/miniPaint/blob/master/MIT-LICENSE.txt 
 
 ### VR View
-License: Apache License 2.0
+License: Apache License 2.0  
 https://github.com/googlevr/vrview/blob/master/LICENSE 
 
 ### moment.js
 License: MIT  
 https://github.com/moment/moment/blob/develop/LICENSE
 
-### simplehtmldom
+### Bootstrap
 License: MIT  
 http://opensource.org/licenses/mit-license.php
 
+### flatpickr
+License: MIT  
+http://opensource.org/licenses/mit-license.php
+
+### Fontawesome 
+Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License  
+https://fontawesome.com/license/free
+
+### Chart.js
+License: MIT  
+http://opensource.org/licenses/mit-license.php
+
+### Ace (Ajax.org Cloud9 Editor)
+License: BSD  
+https://github.com/ajaxorg/ace/blob/master/LICENSE
+
 ### famfamfam.com Silk Icons by Mark James
-License: Creative Commons Attribution 2.5 License 
+License: Creative Commons Attribution 2.5 License  
 http://www.famfamfam.com/lab/icons/silk/
 
 ### Flat Color Icons by Icons8
-License: MIT & Good Boy License
+License: MIT & Good Boy License  
 https://github.com/icons8/flat-color-icons/blob/master/LICENSE.md
 
 ### Twitter Emoji (Twemoji)
-License: MIT & CC-BY 4.0
+License: MIT & CC-BY 4.0  
 https://twemoji.twitter.com/
 
 
