@@ -37,7 +37,7 @@ class Folder extends Model\User\AbstractUser
      *
      * @var bool
      */
-    protected $hasChilds;
+    protected $hasChildren;
 
     /**
      * Returns true if the document has at least one child
@@ -46,11 +46,11 @@ class Folder extends Model\User\AbstractUser
      */
     public function hasChildren()
     {
-        if ($this->hasChilds !== null) {
-            return $this->hasChilds;
+        if ($this->hasChildren === null) {
+            $this->hasChildren = $this->getDao()->hasChildren();
         }
 
-        return $this->getDao()->hasChildren();
+        return $this->hasChildren;
     }
 
     /**
@@ -77,9 +77,9 @@ class Folder extends Model\User\AbstractUser
     {
         $this->children = $children;
         if (is_array($children) && count($children) > 0) {
-            $this->hasChilds = true;
+            $this->hasChildren = true;
         } else {
-            $this->hasChilds = false;
+            $this->hasChildren = false;
         }
 
         return $this;

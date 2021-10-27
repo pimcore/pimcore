@@ -312,7 +312,7 @@ final class Config
             }
 
             if ($resultItem['type'] == 'customview') {
-                $customViewId = $resultItem['id'];
+                $customViewId = $resultItem['id'] ?? false;
                 if (!$customViewId) {
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
 
