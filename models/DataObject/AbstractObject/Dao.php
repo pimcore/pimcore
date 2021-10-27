@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -612,18 +611,5 @@ class Dao extends Model\Element\Dao
         return $data
             && $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
             && $data['o_versionCount'] == $this->model->getVersionCount();
-    }
-
-    /**
-     * @param  string  $key
-     * @return array
-     */
-    #[ArrayShape(['key' => "string", 'className' => "mixed"])]
-    public function getKeyAndClass(string $key)
-    {
-        return [
-            'key' => $key,
-            'className' => $this->model->getClassName(),
-        ];
     }
 }
