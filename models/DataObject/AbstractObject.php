@@ -19,11 +19,13 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
 /**
@@ -1535,5 +1537,83 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
+    }
+
+    /**
+     * @param $method
+     * @param $arguments
+     * @return mixed|Listing|null
+     * @throws \Exception
+     */
+    public static function __callStatic($method, $arguments)
+    {
+        $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
+
+        $realPropertyName = 'o_'.$propertyName;
+
+        $db = \Pimcore\Db::get();
+        $objectsColumns = $db->getSchemaManager()->listTableColumns('objects');
+
+        if (array_key_exists(strtolower($realPropertyName), $objectsColumns)) {
+            $arguments = array_pad($arguments, 4, 0);
+            [$value, $limit, $offset, $objectTypes] = $arguments;
+
+            $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
+
+            $listConfig = [
+                'condition' => $defaultCondition,
+            ];
+
+            if (!is_array($limit)) {
+                if ($limit) {
+                    $listConfig['limit'] = $limit;
+                }
+                if ($offset) {
+                    $listConfig['offset'] = $offset;
+                }
+            } else {
+                $listConfig = array_merge($listConfig, $limit);
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition.$limitCondition;
+            }
+
+            $list = static::makeList($listConfig, $objectTypes);
+
+            if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
+                $elements = $list->getObjects();
+
+                return isset($elements[0]) ? $elements[0] : null;
+            }
+            return $list;
+        }
+
+        // there is no property for the called method, so throw an exception
+        Logger::error('Class: DataObject\\AbstractObject => call to undefined static method ' . $method);
+
+        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\AbstractObject');
+    }
+
+    /**
+     * @param  array  $listConfig
+     * @param  mixed $objectTypes
+     * @return Listing
+     * @throws \Exception
+     */
+    private static function makeList(array $listConfig, mixed $objectTypes): Listing
+    {
+        $list = static::getList($listConfig);
+
+        // Check if variants, in addition to objects, to be fetched
+        if (!empty($objectTypes)) {
+            if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+                Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
+
+                throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
+            }
+
+            $list->setObjectTypes($objectTypes);
+        }
+
+        return $list;
     }
 }
