@@ -486,7 +486,7 @@ class Imagick extends Adapter
         if ($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
             $res = $this->resource->getImageResolution();
-            if($res['x'] && $res['y']) {
+            if ($res['x'] && $res['y']) {
                 $x_ratio = $res['x'] / $this->getWidth();
                 $y_ratio = $res['y'] / $this->getHeight();
                 $this->resource->removeImage();
@@ -519,7 +519,7 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        if($this->getWidth() !== $width || $this->getHeight() !== $height) {
+        if ($this->getWidth() !== $width || $this->getHeight() !== $height) {
             if ($this->checkPreserveAnimation()) {
                 foreach ($this->resource as $i => $frame) {
                     $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
