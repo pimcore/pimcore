@@ -137,20 +137,24 @@ final class AnyGetter extends AbstractOperator
                     if (is_array($value)) {
                         $subValues = [];
                         foreach ($value as $o) {
-                            if ($this->attribute && method_exists($o, $getter)) {
-                                $subValues[] = $o->$getter($this->getParam1());
-                            } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
-                                $subValues[] = $o->$fallbackGetter($this->getParam1());
+                            if($o) {
+                                if ($this->attribute && method_exists($o, $getter)) {
+                                    $subValues[] = $o->$getter($this->getParam1());
+                                } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                                    $subValues[] = $o->$fallbackGetter($this->getParam1());
+                                }
                             }
                         }
                         $resultElementValue = $subValues;
                     }
                 } else {
                     $o = $value;
-                    if ($this->attribute && method_exists($o, $getter)) {
-                        $resultElementValue = $o->$getter($this->getParam1());
-                    } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
-                        $resultElementValue = $o->$fallbackGetter($this->getParam1());
+                    if($o) {
+                        if ($this->attribute && method_exists($o, $getter)) {
+                            $resultElementValue = $o->$getter($this->getParam1());
+                        } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                            $resultElementValue = $o->$fallbackGetter($this->getParam1());
+                        }
                     }
                 }
                 $resultElements[] = $resultElementValue;
