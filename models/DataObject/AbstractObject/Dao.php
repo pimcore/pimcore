@@ -49,21 +49,19 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Get the data for the objects from database for the given keys
+     * Get the data for the object from database for the given path
      *
-     * @param  string  $key
+     * @param string $path
      *
-     * @return array
      * @throws Model\Exception\NotFoundException
      */
-    public function getByKey(string $key)
+    public function getByPath($path)
     {
-        $params = $this->getKeyAndClass($key);
+        $params = $this->extractKeyAndPath($path);
+        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
 
-        $data = $this->db->fetchAll("SELECT o_id FROM objects WHERE o_key = :key and o_className = :className", $params);
-
-        if (!empty($data)) {
-            return $data;
+        if (!empty($data['o_id'])) {
+            $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("object doesn't exist");
         }
