@@ -390,6 +390,29 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param string $path
+     * @param bool $force
+     *
+     * @return array|null
+     */
+    public static function getByKey(string $key, bool $force = false)
+    {
+        try {
+            $object = new static();
+            $objectIds = $object->getDao()->getByKey($key);
+
+            $objects = [];
+            foreach ($objectIds as $objectId) {
+                $objects []= static::getById($objectId['o_id'], $force);
+            }
+
+            return $objects;
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
+    }
+
+    /**
      * @param array $config
      *
      * @return DataObject\Listing

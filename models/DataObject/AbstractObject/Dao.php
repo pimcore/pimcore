@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -48,19 +49,21 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Get the data for the object from database for the given path
+     * Get the data for the objects from database for the given keys
      *
-     * @param string $path
+     * @param  string  $key
      *
+     * @return array
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath($path)
+    public function getByKey(string $key)
     {
-        $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
+        $params = $this->getKeyAndClass($key);
 
-        if (!empty($data['o_id'])) {
-            $this->assignVariablesToModel($data);
+        $data = $this->db->fetchAll("SELECT o_id FROM objects WHERE o_key = :key and o_className = :className", $params);
+
+        if (!empty($data)) {
+            return $data;
         } else {
             throw new Model\Exception\NotFoundException("object doesn't exist");
         }
@@ -611,5 +614,18 @@ class Dao extends Model\Element\Dao
         return $data
             && $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
             && $data['o_versionCount'] == $this->model->getVersionCount();
+    }
+
+    /**
+     * @param  string  $key
+     * @return array
+     */
+    #[ArrayShape(['key' => "string", 'className' => "mixed"])]
+    public function getKeyAndClass(string $key)
+    {
+        return [
+            'key' => $key,
+            'className' => $this->model->getClassName(),
+        ];
     }
 }
