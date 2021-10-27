@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -80,6 +81,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var bool
      */
     protected static $disableDirtyDetection = false;
+
+    /**
+     * @internal
+     *
+     * @var string[]
+     */
+    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname'];
 
     /**
      * @internal
@@ -1517,8 +1525,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
+     * @param $method
+     * @param $arguments
      * @return mixed|Listing|null
      * @throws \Exception
      */
@@ -1529,9 +1537,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $realPropertyName = 'o_'.$propertyName;
 
         $db = \Pimcore\Db::get();
-        $objectsColumns = $db->getSchemaManager()->listTableColumns('objects');
 
-        if (array_key_exists(strtolower($realPropertyName), $objectsColumns)) {
+        if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
             $arguments = array_pad($arguments, 4, 0);
             [$value, $limit, $offset, $objectTypes] = $arguments;
 
@@ -1576,7 +1583,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @return Listing
      * @throws \Exception
      */
-    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    private static function makeList(array $listConfig, mixed $objectTypes): Listing
     {
         $list = static::getList($listConfig);
 
