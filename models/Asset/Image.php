@@ -403,7 +403,11 @@ EOT;
     {
         $dimensions = $this->getDimensions();
 
-        return $dimensions['width'];
+        if (isset($dimensions)) {
+            return $dimensions['width'];
+        }
+
+        return "";
     }
 
     /**
@@ -413,7 +417,11 @@ EOT;
     {
         $dimensions = $this->getDimensions();
 
-        return $dimensions['height'];
+        if (isset($dimensions)) {
+            return $dimensions['height'];
+        }
+
+        return "";
     }
 
     /**
