@@ -407,7 +407,7 @@ EOT;
             return $dimensions['width'];
         }
 
-        return "";
+        return 0;
     }
 
     /**
@@ -421,7 +421,7 @@ EOT;
             return $dimensions['height'];
         }
 
-        return "";
+        return 0;
     }
 
     /**
