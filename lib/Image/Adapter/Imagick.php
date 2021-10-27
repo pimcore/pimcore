@@ -48,11 +48,15 @@ class Imagick extends Adapter
      */
     protected static $supportedFormatsCache = [];
 
+    private ?array $initalOptions = null;
+
     /**
      * {@inheritdoc}
      */
     public function load($imagePath, $options = [])
     {
+        $this->initalOptions ??= $options;
+
         if (isset($options['preserveColor'])) {
             // set this option to TRUE to skip all color transformations during the loading process
             // this can massively improve performance if the color information doesn't matter, ...
@@ -78,9 +82,6 @@ class Imagick extends Adapter
             $this->imagePath = $imagePath;
 
             if (isset($options['resolution'])) {
-                // set the resolution to 2000x2000 for known vector formats
-                // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
-                // maybe there's a better solution but for now this fixes the problem
                 $i->setResolution($options['resolution']['x'], $options['resolution']['y']);
             }
 
@@ -485,20 +486,29 @@ class Imagick extends Adapter
         if ($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
             $res = $this->resource->getImageResolution();
-            $x_ratio = $res['x'] / $this->getWidth();
-            $y_ratio = $res['y'] / $this->getHeight();
-            $this->resource->removeImage();
+            if($res['x'] && $res['y']) {
+                $x_ratio = $res['x'] / $this->getWidth();
+                $y_ratio = $res['y'] / $this->getHeight();
+                $this->resource->removeImage();
 
-            $newRes = ['x' => $width * $x_ratio, 'y' => $height * $y_ratio];
+                $newRes = ['x' => $width * $x_ratio, 'y' => $height * $y_ratio];
 
-            // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
-            // this is because sometimes the quality is much better when using the "native" resolution from the metadata
-            if ($newRes['x'] > $res['x'] && $newRes['y'] > $res['y']) {
-                $this->resource->setResolution($newRes['x'], $newRes['y']);
+                // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
+                // this is because sometimes the quality is much better when using the "native" resolution from the metadata
+                if ($newRes['x'] > $res['x'] && $newRes['y'] > $res['y']) {
+                    $res = $newRes;
+                }
             } else {
-                $this->resource->setResolution($res['x'], $res['y']);
+                // this is mostly for SVGs, it seems that getImageResolution() doesn't return a value anymore for SVGs
+                // so we calculate the density ourselves, Inkscape/ImageMagick seem to use 96ppi, so that's how we get
+                // the right values for -density (setResolution)
+                $res = [
+                    'x' => ($width / $this->getWidth()) * 96,
+                    'y' => ($height / $this->getHeight()) * 96,
+                ];
             }
 
+            $this->resource->setResolution($res['x'], $res['y']);
             $this->resource->readImage($this->imagePath);
 
             if (!$this->isPreserveColor()) {
@@ -509,15 +519,17 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        if ($this->checkPreserveAnimation()) {
-            foreach ($this->resource as $i => $frame) {
-                $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+        if($this->getWidth() !== $width || $this->getHeight() !== $height) {
+            if ($this->checkPreserveAnimation()) {
+                foreach ($this->resource as $i => $frame) {
+                    $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+                }
+            } else {
+                $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
             }
-        } else {
-            $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+            $this->setWidth($width);
+            $this->setHeight($height);
         }
-        $this->setWidth($width);
-        $this->setHeight($height);
 
         $this->postModify();
 
