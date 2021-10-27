@@ -137,7 +137,7 @@ final class AnyGetter extends AbstractOperator
                     if (is_array($value)) {
                         $subValues = [];
                         foreach ($value as $o) {
-                            if($o) {
+                            if ($o) {
                                 if ($this->attribute && method_exists($o, $getter)) {
                                     $subValues[] = $o->$getter($this->getParam1());
                                 } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
@@ -149,7 +149,7 @@ final class AnyGetter extends AbstractOperator
                     }
                 } else {
                     $o = $value;
-                    if($o) {
+                    if ($o) {
                         if ($this->attribute && method_exists($o, $getter)) {
                             $resultElementValue = $o->$getter($this->getParam1());
                         } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
