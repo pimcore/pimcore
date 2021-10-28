@@ -593,7 +593,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($object);
+        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
         $getter = 'get' . ucfirst($key);
 
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
@@ -686,18 +686,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $this->objectData[$key]['metaData'] = $value['metaData'] ?? [];
                     $this->objectData[$key]['inherited'] = true;
                 }
-            } else {
-                $isInheritedValue = $isInheritedValue || ($level != 0);
-                $this->metaData[$key]['objectid'] = $object->getId();
+            }
 
-                $this->objectData[$key] = $value;
-                $this->metaData[$key]['inherited'] = $isInheritedValue;
+            $isInheritedValue = $isInheritedValue || ($level != 0);
+            $this->metaData[$key]['objectid'] = $object->getId();
 
-                if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$fielddefinition->supportsInheritance()) {
-                    $this->objectData[$key] = null;
-                    $this->metaData[$key]['inherited'] = false;
-                    $this->metaData[$key]['hasParentValue'] = true;
-                }
+            $this->objectData[$key] = $value;
+            $this->metaData[$key]['inherited'] = $isInheritedValue;
+
+            if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$fielddefinition->supportsInheritance()) {
+                $this->objectData[$key] = null;
+                $this->metaData[$key]['inherited'] = false;
+                $this->metaData[$key]['hasParentValue'] = true;
             }
         }
     }

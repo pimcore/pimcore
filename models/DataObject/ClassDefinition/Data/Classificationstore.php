@@ -285,7 +285,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         // TODO
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $key);
             if ($parent) {
                 // same type, iterate over all language and all fields and check if there is something missing
                 if ($this->localized) {
@@ -1025,7 +1025,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
             if ($parent) {
                 $mergedMapping = $this->recursiveGetActiveGroupCollectionMapping($parent, $mergedMapping);
             }
@@ -1061,7 +1061,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
             if ($parent) {
                 $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
