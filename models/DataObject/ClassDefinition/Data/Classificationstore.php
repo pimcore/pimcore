@@ -322,6 +322,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             if ($foundEmptyValue) {
                 // still some values are missing, ask the parent
                 $getter = 'get' . ucfirst($this->getName());
+                $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
                 $parentData = $parent->$getter();
                 $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
             }

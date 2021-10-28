@@ -287,8 +287,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         $parentData = $brickData->getLocalizedFields();
                     }
                 } else {
+                    $parent = DataObject\Service::hasInheritableParentObject($object, 'localizedfields');
                     if (method_exists($parent, 'getLocalizedFields')) {
-                        $parent = DataObject\Service::hasInheritableParentObject($object, 'localizedfields');
                         $parentData = $parent->getLocalizedFields();
                     }
                 }
