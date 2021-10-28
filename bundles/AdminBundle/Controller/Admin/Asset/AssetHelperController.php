@@ -631,51 +631,79 @@ class AssetHelperController extends AdminController
      */
     protected function updateGridConfigFavourites($gridConfig, $metadata)
     {
-        $user = $this->getAdminUser();
+        $currentUser = $this->getAdminUser();
 
-        if (!$gridConfig || !$user->isAllowed('share_configurations')) {
+        if (!$gridConfig || $currentUser === null || !$currentUser->isAllowed('share_configurations')) {
             // nothing to do
             return;
         }
 
-        if ($gridConfig->getOwnerId() != $user->getId() && !$user->isAdmin()) {
+        if (!$currentUser->isAdmin() && (int) $gridConfig->getOwnerId() !== $currentUser->getId()) {
             throw new \Exception("don't mess with someone elses grid config");
         }
 
         $combinedShares = [];
-        $sharedUserIds = $metadata['sharedUserIds'];
-        $sharedRoleIds = $metadata['sharedRoleIds'];
 
-        if ($sharedUserIds) {
-            $combinedShares = explode(',', $sharedUserIds);
+        if ($metadata['shareGlobally'] === false) {
+            $sharedUserIds = $metadata['sharedUserIds'];
+            $sharedRoleIds = $metadata['sharedRoleIds'];
+
+            if ($sharedUserIds) {
+                $combinedShares = explode(',', $sharedUserIds);
+            }
+
+            if ($sharedRoleIds) {
+                $sharedRoleIds = explode(',', $sharedRoleIds);
+                $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+            }
         }
 
-        if ($sharedRoleIds) {
-            $sharedRoleIds = explode(',', $sharedRoleIds);
-            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+        if ($metadata['shareGlobally'] === true) {
+            $users = new User\Listing();
+            $users->setCondition('id = ?', $currentUser->getId());
+
+            foreach ($users as $user) {
+                $combinedShares[] = $user->getId();
+            }
+
+            $roles = new User\Role\Listing();
+
+            foreach ($roles as $role) {
+                $combinedShares[] = $role->getId();
+            }
         }
 
         foreach ($combinedShares as $id) {
             // Check if the user has already a favourite
-            $favorite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
                 (int) $id,
                 $gridConfig->getClassId(),
                 0,
                 $gridConfig->getSearchType()
             );
 
-            if ($favorite instanceof GridConfigFavourite) {
-                continue;
+            if ($favourite instanceof GridConfigFavourite) {
+                // Check if the user is the owner. If that is the case we do not update the favourite
+                if ((int) $favourite->getOwnerId() === $currentUser->getId()) {
+                    continue;
+                }
+
+                $favouriteGridConfig = GridConfig::getById($favourite->getGridConfigId());
+
+                // Check if the grid config was shared globally if that is *not* the case we also not update
+                if ($favouriteGridConfig instanceof GridConfig && (bool) $favouriteGridConfig->isShareGlobally() === false) {
+                    continue;
+                }
             }
 
-            $favorite = new GridConfigFavourite();
-            $favorite->setGridConfigId($gridConfig->getId());
-            $favorite->setClassId($gridConfig->getClassId());
-            $favorite->setObjectId(0);
-            $favorite->setOwnerId($id);
-            $favorite->setType($gridConfig->getType());
-            $favorite->setSearchType($gridConfig->getSearchType());
-            $favorite->save();
+            $favourite = new GridConfigFavourite();
+            $favourite->setGridConfigId($gridConfig->getId());
+            $favourite->setClassId($gridConfig->getClassId());
+            $favourite->setObjectId(0);
+            $favourite->setOwnerId($id);
+            $favourite->setType($gridConfig->getType());
+            $favourite->setSearchType($gridConfig->getSearchType());
+            $favourite->save();
         }
     }
 

@@ -13,6 +13,10 @@ For experienced users there is an option to assemble custom columns using specia
 
 You can define a favourite config for each object folder and share it with your friends.
 As an admin user you can also share the config globally (i.e. without having to pick certain users).
+Also, you can set the shared config as favourite for all users whit whom you share.
+
+**Important Note:** If a config, which is shared globally, is set as favourite
+a config wich is shared specifically with a user will override that previous favourite. In all other cases the favourites will not be overridden.
 
 ![Configurator Button Expanded](../img/gridconfig/configurator_button_expanded.png)
 
