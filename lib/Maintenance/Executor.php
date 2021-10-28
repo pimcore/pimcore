@@ -209,10 +209,10 @@ final class Executor implements ExecutorInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param MaintenanceTaskHandlerInterface $handler
      */
-    public function registerHandler($name, MaintenanceTaskHandlerInterface $handler)
+    public function registerHandler(string $name, MaintenanceTaskHandlerInterface $handler)
     {
         if (array_key_exists($name, $this->tasks)) {
             throw new \InvalidArgumentException(sprintf('Handler with name %s has already been registered', $name));
