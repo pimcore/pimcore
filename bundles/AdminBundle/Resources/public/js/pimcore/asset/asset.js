@@ -41,10 +41,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 throw "asset is locked";
             }
 
-            if(this.type !== this.data.type) {
-                pimcore.helpers.closeAsset(this.id);
-                pimcore.helpers.openAsset(this.id, this.data.type);
-                return;
+            if (this.type !== this.data.type) {
+                this.type = this.data.type;
             }
 
             this.addTab();
