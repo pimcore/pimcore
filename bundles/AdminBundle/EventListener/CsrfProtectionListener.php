@@ -19,7 +19,6 @@ use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
@@ -71,7 +70,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
 
         $this->csrfProtectionHandler->generateCsrfToken();
 
-        if ($request->getMethod() == Request::METHOD_GET) {
+        if ($request->isMethodCacheable()) {
             return;
         }
 

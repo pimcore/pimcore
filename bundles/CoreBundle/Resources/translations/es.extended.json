@@ -665,5 +665,6 @@
     "enable_text_selection": "Enable Text Selection",
     "static": "Static",
     "frontend_languages": "Frontend Languages",
-    "drag_object_preview": "Drag Object for Preview"
+    "drag_object_preview": "Drag Object for Preview",
+    "show_hide_areablock": "Show or Hide on frontend"
 }
