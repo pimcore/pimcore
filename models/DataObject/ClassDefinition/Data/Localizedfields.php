@@ -278,6 +278,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $parentData = null;
                 // still some values are passing, ask the parent
                 if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'objectbrick') {
+                    $parent = DataObject\Service::hasInheritableParentObject($object, $params['fieldname']);
                     $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
                     $brickContainer = $parent->$brickContainerGetter();
                     $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
@@ -287,10 +288,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     }
                 } else {
                     if (method_exists($parent, 'getLocalizedFields')) {
+                        $parent = DataObject\Service::hasInheritableParentObject($object, 'localizedfields');
                         $parentData = $parent->getLocalizedFields();
                     }
                 }
                 if ($parentData) {
+                    $parent = DataObject\Service::hasInheritableParentObject($object);
                     $parentResult = $this->doGetDataForEditMode(
                         $parentData,
                         $parent,
