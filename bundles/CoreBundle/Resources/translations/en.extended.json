@@ -665,5 +665,6 @@
   "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
   "json_converter": "Formatting the Options",
   "json_converter_link": "JSON Formatter",
-  "max_characters": "Maximum Characters"
+  "max_characters": "Maximum Characters",
+  "sites": "Sites"
 }
