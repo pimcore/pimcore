@@ -75,6 +75,10 @@ $mail->setParams($params);
 $mail->send();
 ```
 
+you can access the parameters in your mail content now in standard twig syntax instead of the old %Text(paramname);
+```php
+Hello {{ firstName }} {{ lastName }}
+```
 
 #### Sending a Plain Text Email:
 ```php
