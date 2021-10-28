@@ -680,6 +680,9 @@ final class Tool
             unset($dirs[$key]);
         }
         $dirs = array_map('basename', $dirs);
+        $dirs = array_filter($dirs, function ($value) {
+            return !(bool) \preg_match('/~$/', $value);
+        });
 
         return array_values($dirs);
     }
