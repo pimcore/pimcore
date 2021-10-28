@@ -34,9 +34,6 @@ class OptimizeImageHandler implements MaintenanceTaskHandlerInterface
 
     public function __invoke(OptimizeImageMessage $message)
     {
-        Logger::info('OptimizeImageMessage test123');
-
-
         if ($this->isExcluded()) {
             return;
         }
