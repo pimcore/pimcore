@@ -686,18 +686,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $this->objectData[$key]['metaData'] = $value['metaData'] ?? [];
                     $this->objectData[$key]['inherited'] = true;
                 }
-            }
+            } else {
+                $isInheritedValue = $isInheritedValue || ($level != 0);
+                $this->metaData[$key]['objectid'] = $object->getId();
 
-            $isInheritedValue = $isInheritedValue || ($level != 0);
-            $this->metaData[$key]['objectid'] = $object->getId();
+                $this->objectData[$key] = $value;
+                $this->metaData[$key]['inherited'] = $isInheritedValue;
 
-            $this->objectData[$key] = $value;
-            $this->metaData[$key]['inherited'] = $isInheritedValue;
-
-            if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$fielddefinition->supportsInheritance()) {
-                $this->objectData[$key] = null;
-                $this->metaData[$key]['inherited'] = false;
-                $this->metaData[$key]['hasParentValue'] = true;
+                if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$fielddefinition->supportsInheritance()) {
+                    $this->objectData[$key] = null;
+                    $this->metaData[$key]['inherited'] = false;
+                    $this->metaData[$key]['hasParentValue'] = true;
+                }
             }
         }
     }
