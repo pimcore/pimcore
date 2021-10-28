@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance;
 
+use Pimcore\Messenger\Handler\MaintenanceTaskHandlerInterface;
 use Pimcore\Messenger\MaintenanceTaskMessage;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
@@ -30,6 +31,11 @@ final class Executor implements ExecutorInterface
      * @var array
      */
     private $tasks = [];
+
+    /**
+     * @var array
+     */
+    private $handlers = [];
 
     /**
      * @var string
@@ -118,6 +124,28 @@ final class Executor implements ExecutorInterface
                 new MaintenanceTaskMessage($name, $force)
             );
         }
+
+        foreach ($this->handlers as $handlerName => $handler) {
+            if (count($validJobs) > 0 && !in_array($handlerName, $validJobs, true)) {
+                $this->logger->info('Skipped job with ID {id} because it is not in the valid jobs', [
+                    'id' => $handlerName,
+                ]);
+
+                if ($handler instanceof MaintenanceTaskHandlerInterface) {
+                    $handler->setExcluded(true);
+                }
+            }
+
+            if (count($excludedJobs) > 0 && in_array($handlerName, $excludedJobs, true)) {
+                $this->logger->info('Skipped job with ID {id} because it has been excluded', [
+                    'id' => $handlerName,
+                ]);
+
+                if ($handler instanceof MaintenanceTaskHandlerInterface) {
+                    $handler->setExcluded(true);
+                }
+            }
+        }
     }
 
     /**
@@ -125,7 +153,17 @@ final class Executor implements ExecutorInterface
      */
     public function getTaskNames()
     {
-        return array_keys($this->tasks);
+        return array_merge(array_keys($this->tasks), array_keys($this->handlers));
+    }
+
+    /**
+     * @internal
+     *
+     * @return array
+     */
+    public function getHandlerNames(): array
+    {
+        return array_keys($this->handlers);
     }
 
     /**
@@ -168,5 +206,18 @@ final class Executor implements ExecutorInterface
         }
 
         $this->tasks[$name] = $task;
+    }
+
+    /**
+     * @param $name
+     * @param MaintenanceTaskHandlerInterface $handler
+     */
+    public function registerHandler($name, MaintenanceTaskHandlerInterface $handler)
+    {
+        if (array_key_exists($name, $this->tasks)) {
+            throw new \InvalidArgumentException(sprintf('Handler with name %s has already been registered', $name));
+        }
+
+        $this->handlers[$name] = $handler;
     }
 }

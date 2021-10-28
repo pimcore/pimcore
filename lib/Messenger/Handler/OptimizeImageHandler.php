@@ -16,6 +16,7 @@
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Image\ImageOptimizerInterface;
+use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
@@ -23,14 +24,23 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-class OptimizeImageHandler
+class OptimizeImageHandler implements MaintenanceTaskHandlerInterface
 {
+    use MaintenanceTaskHandlerTrait;
+
     public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
     {
     }
 
     public function __invoke(OptimizeImageMessage $message)
     {
+        Logger::info('OptimizeImageMessage test123');
+
+
+        if ($this->isExcluded()) {
+            return;
+        }
+
         $storage = Storage::get('thumbnail');
 
         $path = $message->getPath();
@@ -44,4 +54,5 @@ class OptimizeImageHandler
             $this->logger->debug('Skip optimizing of '.$path." because it doesn't exist anymore");
         }
     }
+
 }

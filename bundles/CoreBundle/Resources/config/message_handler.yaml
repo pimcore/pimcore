@@ -37,6 +37,7 @@ services:
             - '@logger'
         tags:
             - { name: messenger.message_handler }
+            - { name: pimcore.maintenance.handler, type: imageoptimize }
 
     Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
         arguments:
