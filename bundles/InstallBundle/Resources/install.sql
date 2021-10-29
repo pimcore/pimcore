@@ -947,7 +947,7 @@ CREATE TABLE `object_url_slugs` (
       `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
       `ownername` VARCHAR(70) NOT NULL DEFAULT '',
       `position` VARCHAR(70) NOT NULL DEFAULT '0',
-      `slug` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL, /* slug in utf8 (4-byte) using the full key length of 4096 bytes */
+      `slug` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL, /* slug in utf8mb4 (4-byte) using the full key length of 4096 bytes */
       `siteId` INT(11) NOT NULL DEFAULT '0',
       PRIMARY KEY (`slug`, `siteId`),
       INDEX `index` (`index`),
