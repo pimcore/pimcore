@@ -683,16 +683,18 @@ class AssetHelperController extends AdminController
             );
 
             if ($favourite instanceof GridConfigFavourite) {
-                // Check if the user is the owner. If that is the case we do not update the favourite
-                if ((int) $favourite->getOwnerId() === $currentUser->getId()) {
-                    continue;
-                }
-
                 $favouriteGridConfig = GridConfig::getById($favourite->getGridConfigId());
 
-                // Check if the grid config was shared globally if that is *not* the case we also not update
-                if ($favouriteGridConfig instanceof GridConfig && (bool) $favouriteGridConfig->isShareGlobally() === false) {
-                    continue;
+                if ($favouriteGridConfig instanceof GridConfig) {
+                    // Check if the grid config was shared globally if that is *not* the case we also not update
+                    if ((bool) $favouriteGridConfig->isShareGlobally() === false) {
+                        continue;
+                    }
+
+                    // Check if the user is the owner. If that is the case we do not update the favourite
+                    if ((int) $favouriteGridConfig->getOwnerId() === (int) $id) {
+                        continue;
+                    }
                 }
             }
 
