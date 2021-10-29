@@ -166,6 +166,22 @@ final class Version extends AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public static function isDisabled(): bool
+    {
+        return (self::$disabled === true);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isEnabled(): bool
+    {
+        return (self::$disabled === false);
+    }
+
+    /**
      * @throws \Exception
      */
     public function save()
