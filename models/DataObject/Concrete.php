@@ -109,11 +109,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     protected function update($isUpdate = null, $params = [])
     {
-        $fieldDefintions = $this->getClass()->getFieldDefinitions();
+        $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
 
-        foreach ($fieldDefintions as $fd) {
+        foreach ($fieldDefinitions as $fd) {
             try {
                 $getter = 'get' . ucfirst($fd->getName());
 

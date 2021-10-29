@@ -44,7 +44,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function updateModificationInfos()
     {
-        $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        if (Model\Version::$disabled === false) {
+            $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        }
 
         if ($this->getVersionCount() > 4200000000) {
             $this->setVersionCount(1);
