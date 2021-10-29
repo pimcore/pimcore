@@ -35,15 +35,10 @@ class Select extends Data implements
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
-
     use DataObject\Traits\DefaultValueTrait;
-
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
@@ -579,6 +574,7 @@ class Select extends Data implements
     /**
      * @return $this
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {

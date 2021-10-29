@@ -18,11 +18,14 @@ namespace Pimcore\Config;
 use Pimcore\Config;
 use Pimcore\Db\PhpArrayFileTable;
 use Pimcore\File;
+use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\Yaml\Yaml;
 
 class LocationAwareConfigRepository
 {
+    use StopMessengerWorkersTrait;
+
     /**
      * @deprecated Will be removed in Pimcore 11
      */
@@ -232,6 +235,8 @@ class LocationAwareConfigRepository
             $settingsStoreData = json_encode($data);
             SettingsStore::set($key, $settingsStoreData, 'string', $this->settingsStoreScope);
         }
+
+        $this->stopMessengerWorkers();
     }
 
     /**
@@ -255,12 +260,39 @@ class LocationAwareConfigRepository
             }
         }
 
+        $this->searchAndReplaceMissingParameters($data);
+
         File::put($yamlFilename, Yaml::dump($data, 50));
 
-        // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yml');
-        if ($systemConfigFile) {
-            touch($systemConfigFile);
+        $this->invalidateConfigCache();
+    }
+
+    private function searchAndReplaceMissingParameters(array &$data): void
+    {
+        $container = \Pimcore::getContainer();
+
+        foreach ($data as $key => &$value) {
+            if (is_array($value)) {
+                $this->searchAndReplaceMissingParameters($value);
+
+                continue;
+            }
+
+            if (!is_scalar($value)) {
+                continue;
+            }
+
+            if (preg_match('/%([^%\s]+)%/', $value, $match)) {
+                $key = $match[1];
+
+                if (str_starts_with($key, 'env(') && str_ends_with($key, ')')  && 'env()' !== $key) {
+                    continue;
+                }
+
+                if (!$container->hasParameter($key)) {
+                    $value = preg_replace('/%([^%\s]+)%/', '%%$1%%', $value);
+                }
+            }
         }
     }
 
@@ -302,11 +334,14 @@ class LocationAwareConfigRepository
 
         if ($dataSource === self::LOCATION_SYMFONY_CONFIG) {
             unlink($this->getVarConfigFile($key));
+            $this->invalidateConfigCache();
         } elseif ($dataSource === self::LOCATION_SETTINGS_STORE) {
             SettingsStore::delete($key, $this->settingsStoreScope);
         } elseif ($dataSource === self::LOCATION_LEGACY) {
             $this->getLegacyStore()->delete($key);
         }
+
+        $this->stopMessengerWorkers();
     }
 
     /**
@@ -319,5 +354,14 @@ class LocationAwareConfigRepository
             array_keys($this->containerConfig),
             $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()) : [],
         ));
+    }
+
+    private function invalidateConfigCache(): void
+    {
+        // invalidate container config cache if debug flag on kernel is set
+        $systemConfigFile = Config::locateConfigFile('system.yml');
+        if ($systemConfigFile) {
+            touch($systemConfigFile);
+        }
     }
 }

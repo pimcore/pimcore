@@ -549,7 +549,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array|object $value
+     * @param mixed $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *

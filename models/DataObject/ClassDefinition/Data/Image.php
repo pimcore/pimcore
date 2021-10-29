@@ -24,9 +24,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
-
     use ImageTrait;
-
     use Extension\QueryColumnType;
     use Data\Extension\RelationFilterConditionParser;
 
@@ -157,6 +155,23 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+        }
+        if ($data !== null && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
+        }
     }
 
     /**

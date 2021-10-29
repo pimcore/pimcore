@@ -616,6 +616,7 @@
     "return_last_result": "Return last result",
     "skip_null": "Skip Null",
     "expand_children": "Expand children",
+    "collapse_children": "Collapse children",
     "multiply": "Multiply",
     "divide": "Divide",
     "apply_to_all_objects": "Apply to all",
@@ -956,5 +957,6 @@
     "filter_by_relation_field": "Filter by relation field",
     "clear_relation_filter": "Clear active relation filter",
     "apply_filter": "Apply filter",
-    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs."
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
+    "sites": "Sites"
 }

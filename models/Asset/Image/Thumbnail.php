@@ -219,7 +219,6 @@ final class Thumbnail
     {
         $srcSetValues = [];
         $sourceTagAttributes = [];
-        $thumb = null;
 
         foreach ([1, 2] as $highRes) {
             $thumbConfigRes = clone $thumbConfig;
@@ -307,12 +306,20 @@ final class Thumbnail
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
-                        $thumbConfigWebP = clone $thumbConfig;
-                        $thumbConfigWebP->setFormat('webp');
+                        $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+                        foreach ($autoFormats as $autoFormat => $autoFormatConfig) {
+                            if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
+                                $thumbConfigAutoFormat = clone $thumbConfig;
+                                $thumbConfigAutoFormat->setFormat($autoFormat);
+                                if (!empty($autoFormatConfig['quality'])) {
+                                    $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
+                                }
 
-                        $sourceWebP = $this->getSourceTagHtml($thumbConfigWebP, $mediaQuery, $image, $options);
-                        if (!empty($sourceWebP)) {
-                            $html .= "\t" . $sourceWebP . "\n";
+                                $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
+                                if (!empty($sourceWebP)) {
+                                    $html .= "\t" . $sourceWebP . "\n";
+                                }
+                            }
                         }
                     }
 
@@ -364,8 +371,8 @@ final class Thumbnail
             }
         }
 
-        $altText = $attributes['alt'] ?? '';
-        $titleText = $attributes['title'] ?? '';
+        $altText = !empty($options['alt']) ? $options['alt'] : (!empty($attributes['alt']) ? $attributes['alt'] : '');
+        $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
             if ($image->getMetadata('title')) {

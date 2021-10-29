@@ -31,7 +31,6 @@ class RgbaColor extends Data implements
     AfterDecryptionUnmarshallerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**
@@ -210,7 +209,7 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @param float $data
+     * @param string|null $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *

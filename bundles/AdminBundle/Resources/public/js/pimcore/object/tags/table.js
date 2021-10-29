@@ -21,7 +21,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         this.fieldConfig = fieldConfig;
 
-        if (data.length < 1) {
+        if (!data || data.length < 1) {
             data = this.getInitialData();
         }
 

@@ -27,22 +27,20 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $address
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException(
      */
     public function getByAddress($address)
     {
         $data = $this->db->fetchRow('SELECT * FROM email_blacklist WHERE address = ?', $address);
 
         if (empty($data['address'])) {
-            throw new \Exception('blacklist item with address ' . $address . ' not found');
+            throw new Model\Exception\NotFoundException('blacklist item with address ' . $address . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
      * Save object to database
-     *
-     * @todo: $data could be undefined
      */
     public function save()
     {

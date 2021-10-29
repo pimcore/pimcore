@@ -1228,7 +1228,7 @@ class Service extends Model\Element\Service
                         $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
                         $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(false);
                     $mergedFieldDefinition[$key]->setNotEditable(false);
@@ -1259,7 +1259,7 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
                 }

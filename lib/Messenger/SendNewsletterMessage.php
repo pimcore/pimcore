@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class SendNewsletterMessage
 {
     public function __construct(protected string $tmpStoreId, protected string $hostUrl)

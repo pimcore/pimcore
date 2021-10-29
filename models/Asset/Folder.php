@@ -64,7 +64,7 @@ class Folder extends Model\Asset
     }
 
     /**
-     * @return Asset[]|self[]
+     * @return Asset[]
      */
     public function getChildren()
     {

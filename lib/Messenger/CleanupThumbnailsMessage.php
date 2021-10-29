@@ -15,6 +15,9 @@
 
 namespace Pimcore\Messenger;
 
+/**
+ * @internal
+ */
 class CleanupThumbnailsMessage
 {
     public function __construct(protected string $type, protected string $name)

@@ -274,11 +274,11 @@ $asset = Asset\Image::getById(123);
 $asset->getThumbnail("myConfig", false); // set the 2nd parameter to false
 ```
 
-The processing is also forced when calling the method `getFileSystemPath()` or `getPath(false)` on 
+The processing is also forced when calling the method `getPathReference()` or `getPath(false)` on 
 the returning thumbnail object: 
 
 ```php
-$asset->getThumbnail("myConfig")->getFileSystemPath(); 
+$asset->getThumbnail("myConfig")->getPathReference(); 
 // or 
 $asset->getThumbnail("myConfig")->getPath(false); 
 ```
@@ -374,18 +374,6 @@ of the image is on the focal point.
   
 ![Image thumbnails cover transformation considering focal point](../../img/image_thumbnails_cover_focal_point.png)
 
-## WebP Support 
-Pimcore  delivers automatically thumbnails in WebP format when using the `Auto` configuration for the 
-target format and when the client does support WebP (checking by evaluating the `Accept` request header).  
-    
-If you prefer not using WebP, you can disable the support by adding the following config option: 
-```yml
-    assets:
-        image:
-            thumbnails:
-                webp_auto_support: false
-```
-
 ## Clipping Support 
 Images with an embedded clipping path (8BIM / Adobe profile meta data) are automatically clipped when generating thumbnails of them. 
     
@@ -428,10 +416,46 @@ $thumbnailConfig->addItemAt(0, function (Imagick $imagick) {
 $asset = Asset::getById(39);
 $asset->clearThumbnails(true);
 $thumb = $asset->getThumbnail($thumbnailConfig);
-$file = $thumb->getFileSystemPath();
+$file = $thumb->getPath();
 ```
 
 ## Downloading Asset Thumbnails
 
 Besides embedding thumbnails into CMS pages and distributing them via other channels, backend users can download a thumbnail of an asset. 
 In order to make a thumbnail downloadable, mark "List as option in download section on image detail view" option in Image Thumbnail Advanced settings. All thumbnails with this option enabled are listed in the "Download Thumbnail" dropdown on the detail view of an Asset. To download the thumbnail of the asset choose the thumbnail from the list and hit the "Download" button.
+
+
+## Customize Auto (Web-Optimized) Format
+For most web-based applications it's recommended to use the auto configuration, which does multiple things: 
+- automatically select the target image format (`jpeg`, `png`) based on image characteristics (such as alpha channel)
+- multiple additional optimized image formats (`webp`, `avif`) using progressive enhancement (in `<picture` tag)
+- runs image optimizers (such as `jpegoptim` and `pngout`) on generated images using an async queue 
+
+Even if this setting does quite a lot of stuff automatically, it's still required to set a quality in the thumbnail
+configuration. This quality will be used by `jpeg` and `png` and if not configured otherwise also for `webp`. 
+If `avif` is supported by Imagick this won't use the quality from the thumbnail configuration, but uses a fixed value.   
+It is possible to customize the used alternative image formats and their qualities by using the following configuration: 
+```yaml
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                auto_formats:
+                    # the quality is used by Imagick, set to null if quality value from config should be used 
+                    # the following config is used as the default by Pimcore
+                    # the order of the formats is used for the priority of the <source> in the <picture> tag
+                    avif:
+                        quality: 15
+                    webp:
+                        quality: null
+                        enabled: true
+```
+
+#### Config for disabling all auto-formats
+```yaml
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                auto_formats: null
+```

@@ -27,13 +27,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
-
     use Extension\QueryColumnType;
-
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
-
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
@@ -416,7 +412,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
         }
     }
 

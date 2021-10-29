@@ -77,7 +77,7 @@ This abstract class checks if the given bundle is installed and skips the migrat
 ./bin/console doctrine:migrations:migrate 
 ```  
 
-#### Config Examples (`config.yml`)
+#### Config Examples (`config.yaml`)
 ```yml
 doctrine_migrations:
     migrations_paths:

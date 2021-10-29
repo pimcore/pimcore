@@ -34,6 +34,9 @@ $_ENV['PIMCORE_WRITE_TARGET_DOCUMENT_TYPES'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_WEB_TO_PRINT'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_STATICROUTES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PERSPECTIVES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'] = 'settings-store';
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();

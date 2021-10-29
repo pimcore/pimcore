@@ -28,7 +28,6 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
-
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
@@ -416,7 +415,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $id = '??';
                     }
 
-                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId(), null, null);
+                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId());
                 }
             }
         }

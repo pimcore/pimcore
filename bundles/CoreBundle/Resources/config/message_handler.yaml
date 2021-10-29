@@ -25,3 +25,28 @@ services:
             - '@Pimcore\Maintenance\Executor'
         tags:
             - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\SearchBackendHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+
+    Pimcore\Messenger\Handler\OptimizeImageHandler:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
+        arguments:
+            - '@logger'
+
+    Pimcore\Messenger\Handler\VersionDeleteHandler:
+
+        tags:
+            - { name: messenger.message_handler }
+
+    Pimcore\Messenger\Handler\SanityCheckHandler:
+        tags:
+            - { name: messenger.message_handler }

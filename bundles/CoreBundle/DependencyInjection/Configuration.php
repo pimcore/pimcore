@@ -175,6 +175,9 @@ final class Configuration implements ConfigurationInterface
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
+        $this->addStaticRoutesNode($rootNode);
+        $this->addPerspectivesNode($rootNode);
+        $this->addCustomViewsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -447,6 +450,9 @@ final class Configuration implements ConfigurationInterface
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
                         ->children()
+                            ->integerNode('max_pixels')
+                                ->defaultValue(40000000)
+                            ->end()
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
@@ -510,6 +516,24 @@ final class Configuration implements ConfigurationInterface
                                             })
                                         ->end()
                                         ->defaultTrue()
+                                    ->end()
+                                    ->arrayNode('auto_formats')
+                                        ->prototype('array')
+                                            ->canBeDisabled()
+                                            ->children()
+                                                ->scalarNode('quality')->end()
+                                            ->end()
+                                        ->end()
+                                        ->defaultValue([
+                                            'avif' => [
+                                                'enabled' => true,
+                                                'quality' => 15,
+                                            ],
+                                            'webp' => [
+                                                'enabled' => true,
+                                                'quality' => null,
+                                            ],
+                                        ])
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
@@ -2063,5 +2087,141 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ->end();
+    }
+
+    /**
+     * Add static routes specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+        ->children()
+            ->arrayNode('staticroutes')
+                ->ignoreExtraKeys()
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('definitions')
+                    ->normalizeKeys(false)
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('pattern')->end()
+                                ->scalarNode('reverse')->end()
+                                ->scalarNode('controller')->end()
+                                ->scalarNode('variables')->end()
+                                ->scalarNode('defaults')->end()
+                                ->arrayNode('siteId')
+                                    ->integerPrototype()->end()
+                                ->end()
+                                ->arrayNode('methods')
+                                    ->scalarPrototype()->end()
+                                ->end()
+                                ->integerNode('priority')->end()
+                                ->integerNode('creationDate')->end()
+                                ->integerNode('modificationDate')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add perspectives specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPerspectivesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('perspectives')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('iconCls')->end()
+                                    ->scalarNode('icon')->end()
+                                    ->variableNode('toolbar')->end()
+                                    ->arrayNode('dashboards')
+                                        ->children()
+                                            ->variableNode('predefined')->end()
+                                        ->end()
+                                    ->end()
+                                    ->arrayNode('elementTree')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('type')->end()
+                                                ->scalarNode('position')->end()
+                                                ->scalarNode('name')->end()
+                                                ->booleanNode('expanded')->end()
+                                                ->scalarNode('hidden')->end()
+                                                ->integerNode('sort')->end()
+                                                ->scalarNode('id')->end()
+                                                ->variableNode('treeContextMenu')->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add custom views specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCustomViewsNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('custom_views')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                            ->children()
+                                ->scalarNode('id')->end()
+                                ->scalarNode('treetype')->end()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('condition')->end()
+                                ->scalarNode('icon')->end()
+                                ->scalarNode('rootfolder')->end()
+                                ->scalarNode('showroot')->end()
+                                ->variableNode('classes')->end()
+                                ->scalarNode('position')->end()
+                                ->scalarNode('sort')->end()
+                                ->booleanNode('expanded')->end()
+                                ->scalarNode('having')->end()
+                                ->scalarNode('where')->end()
+                                ->variableNode('treeContextMenu')->end()
+                                ->arrayNode('joins')
+                                    ->protoType('array')
+                                        ->children()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('condition')->end()
+                                            ->variableNode('name')->end()
+                                            ->variableNode('columns')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }

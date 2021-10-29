@@ -89,6 +89,8 @@ trait ImageThumbnailTrait
      */
     protected $deferred = true;
 
+    private static array $supportedFormats = [];
+
     /**
      * @return null|resource
      */
@@ -332,5 +334,14 @@ trait ImageThumbnailTrait
         }
 
         return false;
+    }
+
+    public static function supportsFormat(string $format): bool
+    {
+        if (!isset(self::$supportedFormats[$format])) {
+            self::$supportedFormats[$format] = \Pimcore\Image::getInstance()->supportsFormat($format);
+        }
+
+        return self::$supportedFormats[$format];
     }
 }

@@ -115,6 +115,15 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $text .= ' (' . $class->getId() . ')';
             }
 
+            $hasBrickField = false;
+            foreach ($class->getFieldDefinitions() as $fieldDefinition) {
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    $hasBrickField = true;
+
+                    break;
+                }
+            }
+
             return [
                 'id' => $class->getId(),
                 'text' => $text,
@@ -123,6 +132,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 'cls' => 'pimcore_class_icon',
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'enableGridLocking' => $class->isEnableGridLocking(),
+                'hasBrickField' => $hasBrickField,
             ];
         };
 
@@ -1886,5 +1896,52 @@ class ClassController extends AdminController implements KernelControllerEventIn
             ];
 
         return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/text-layout-preview", name="pimcore_admin_dataobject_class_textlayoutpreview")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function textLayoutPreviewAction(Request $request)
+    {
+        $objPath = $request->get('previewObject', '');
+        $className = '\\Pimcore\\Model\\DataObject\\' . $request->get('className');
+        $obj = DataObject::getByPath($objPath) ?? new $className();
+
+        $textLayout = new DataObject\ClassDefinition\Layout\Text();
+
+        $context = [
+          'data' => $request->get('renderingData'),
+        ];
+
+        if ($renderingClass = $request->get('renderingClass')) {
+            $textLayout->setRenderingClass($renderingClass);
+        }
+
+        if ($staticHtml = $request->get('html')) {
+            $textLayout->setHtml($staticHtml);
+        }
+
+        $html = $textLayout->enrichLayoutDefinition($obj, $context)->getHtml();
+
+        $content =
+            "<html>\n" .
+            "<head>\n" .
+            '<style type="text/css">' . "\n" .
+            file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/css/admin.css') .
+            "</style>\n" .
+            "</head>\n\n" .
+            "<body class='objectlayout_element_text'>\n" .
+            $html .
+            "\n\n</body>\n" .
+            "</html>\n";
+
+        $response = new Response($content);
+        $response->headers->set('Content-Type', 'text/html');
+
+        return $response;
     }
 }

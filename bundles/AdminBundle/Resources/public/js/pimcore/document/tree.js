@@ -718,42 +718,65 @@ pimcore.document.tree = Class.create({
             var user = pimcore.globalmanager.get("user");
 
             if (record.data.id != 1 && record.data.permissions.publish && !record.data.locked && perspectiveCfg.inTreeContextMenu("document.convert")) {
-                advancedMenuItems.push(new Ext.menu.Item({
-                    text: t('convert_to'),
-                    iconCls: "pimcore_icon_convert",
-                    hideOnClick: false,
-                    menu: [{
+
+                let conversionTargets = [];
+                if(addDocuments) {
+                    conversionTargets.push({
                         text: t("page"),
                         iconCls: "pimcore_icon_page",
                         handler: this.convert.bind(this, tree, record, "page"),
                         hidden: record.data.type == "page"
-                    }, {
+                    });
+                }
+                if(addSnippet) {
+                    conversionTargets.push({
                         text: t("snippet"),
                         iconCls: "pimcore_icon_snippet",
                         handler: this.convert.bind(this, tree, record, "snippet"),
                         hidden: record.data.type == "snippet" || !addSnippet
-                    }, {
+                    });
+                }
+                if(addEmail) {
+                    conversionTargets.push({
                         text: t("email"),
                         iconCls: "pimcore_icon_email",
                         handler: this.convert.bind(this, tree, record, "email"),
                         hidden: record.data.type == "email" || !addEmail
-                    }, {
+                    });
+                }
+                if(addNewsletter) {
+                    conversionTargets.push({
                         text: t("newsletter"),
                         iconCls: "pimcore_icon_newsletter",
                         handler: this.convert.bind(this, tree, record, "newsletter"),
                         hidden: record.data.type == "newsletter" || !addNewsletter
-                    }, {
+                    });
+                }
+                if(addLink) {
+                    conversionTargets.push({
                         text: t("link"),
                         iconCls: "pimcore_icon_link",
                         handler: this.convert.bind(this, tree, record, "link"),
                         hidden: record.data.type == "link" || !addLink
-                    }, {
+                    });
+                }
+                if(addHardlink) {
+                    conversionTargets.push({
                         text: t("hardlink"),
                         iconCls: "pimcore_icon_hardlink",
                         handler: this.convert.bind(this, tree, record, "hardlink"),
                         hidden: record.data.type == "hardlink" || !addHardlink
-                    }]
-                }));
+                    });
+                }
+
+                if(conversionTargets.length > 0) {
+                    advancedMenuItems.push(new Ext.menu.Item({
+                        text: t('convert_to'),
+                        iconCls: "pimcore_icon_convert",
+                        hideOnClick: false,
+                        menu: conversionTargets
+                    }));
+                }
             }
 
             if (childSupportedDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
@@ -764,7 +787,7 @@ pimcore.document.tree = Class.create({
                 });
             }
 
-            if (record.data.id != 1 && user.admin && record.data.type == "page") {
+            if (record.data.id != 1 && record.data.type == "page" && (user.admin || user.isAllowed("sites"))) {
                 if (!record.data.site) {
                     if (perspectiveCfg.inTreeContextMenu("document.useAsSite")) {
                         advancedMenuItems.push({
@@ -861,6 +884,27 @@ pimcore.document.tree = Class.create({
                         iconCls: "pimcore_icon_lock",
                         hideOnClick: false,
                         menu: lockMenu
+                    });
+                }
+            }
+
+            // expand and collapse complete tree
+            if (!record.data.leaf) {
+                if (record.data.expanded) {
+                    advancedMenuItems.push({
+                        text: t('collapse_children'),
+                        iconCls: "pimcore_icon_collapse_children",
+                        handler: function () {
+                            record.collapse(true);
+                        }.bind(this, record)
+                    });
+                } else {
+                    advancedMenuItems.push({
+                        text: t('expand_children'),
+                        iconCls: "pimcore_icon_expand_children",
+                        handler: function () {
+                            record.expand(true);
+                        }.bind(this, record)
                     });
                 }
             }
@@ -1350,10 +1394,6 @@ pimcore.document.tree = Class.create({
     addDocument : function (tree, record, type, docTypeId) {
         var textKeyTitle;
         var textKeyMessage;
-
-        if(!is_numeric(docTypeId)) {
-            docTypeId = null; // avoid sending objects or functions to the controller
-        }
 
         if(type == "page") {
 

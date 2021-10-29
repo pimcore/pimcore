@@ -514,47 +514,6 @@ final class Tool
     }
 
     /**
-     * @internal
-     *
-     * @return array|bool
-     */
-    public static function getCustomViewConfig()
-    {
-        $configFile = \Pimcore\Config::locateConfigFile('customviews.php');
-
-        if (!is_file($configFile)) {
-            $cvData = false;
-        } else {
-            $confArray = include($configFile);
-            $cvData = [];
-
-            foreach ($confArray['views'] as $tmp) {
-                if (isset($tmp['name'])) {
-                    $tmp['showroot'] = !empty($tmp['showroot']);
-
-                    if (!is_array($tmp['classes'] ?? [])) {
-                        $flipArray = [];
-                        $tempClasses = explode(',', $tmp['classes']);
-
-                        foreach ($tempClasses as $tempClass) {
-                            $flipArray[$tempClass] = null;
-                        }
-                        $tmp['classes'] = $flipArray;
-                    }
-
-                    if (!empty($tmp['hidden'])) {
-                        continue;
-                    }
-
-                    $cvData[] = $tmp;
-                }
-            }
-        }
-
-        return $cvData;
-    }
-
-    /**
      * @param array|string|null $recipients
      * @param string|null $subject
      *

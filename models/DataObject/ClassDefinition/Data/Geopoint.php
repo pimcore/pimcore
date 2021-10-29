@@ -28,7 +28,6 @@ class Geopoint extends AbstractGeo implements
     NormalizerInterface
 {
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
 
     /**

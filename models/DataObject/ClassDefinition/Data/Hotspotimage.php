@@ -26,11 +26,8 @@ use Pimcore\Tool\Serialize;
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
     use Extension\ColumnType;
-
     use ImageTrait;
-
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
@@ -340,7 +337,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

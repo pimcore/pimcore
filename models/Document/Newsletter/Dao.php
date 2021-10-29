@@ -29,7 +29,7 @@ class Dao extends Model\Document\PageSnippet\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -45,7 +45,7 @@ class Dao extends Model\Document\PageSnippet\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Newsletter Document with the ID ' . $this->model->getId() . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Newsletter Document with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 

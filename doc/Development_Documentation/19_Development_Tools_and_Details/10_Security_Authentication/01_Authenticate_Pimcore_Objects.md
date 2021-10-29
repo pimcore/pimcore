@@ -155,7 +155,7 @@ old way (deprecated):
 ```yaml
 pimcore:
     security:
-        # the encoder factory as defined in services.yml
+        # the encoder factory as defined in services.yaml
         encoder_factories:
             App\Model\DataObject\User: website_demo.security.password_encoder_factory
 ```
@@ -164,7 +164,7 @@ new way:
 ```yaml
 pimcore:
     security:
-        # the password hasher factory as defined in services.yml
+        # the password hasher factory as defined in services.yaml
         password_hasher_factories:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 ```
@@ -181,13 +181,13 @@ configure a simple firewall which authenticates via HTTP basic auth. Our final c
 ```yaml
 pimcore:
     security:
-        # the encoder factory as defined in services.yml
+        # the encoder factory as defined in services.yaml
         encoder_factories:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 
 security:
     providers:
-        # the user provider as defined in services.yml
+        # the user provider as defined in services.yaml
         demo_cms_provider:
             id: website_demo.security.user_provider
 

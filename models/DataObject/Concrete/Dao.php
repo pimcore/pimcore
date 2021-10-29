@@ -32,7 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 class Dao extends Model\DataObject\AbstractObject\Dao
 {
     use Model\Element\Traits\ScheduledTasksDaoTrait;
-
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
@@ -419,10 +418,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function delete()
     {
-        $this->db->delete('object_query_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
-        $this->db->delete('object_store_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
-        $this->db->delete('object_relations_' . $this->model->getClassId(), ['src_id' => $this->model->getId()]);
-
         // delete fields which have their own delete algorithm
         if ($this->model->getClass()) {
             foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {

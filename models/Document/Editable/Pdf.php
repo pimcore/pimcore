@@ -22,7 +22,7 @@ use Pimcore\Model\Asset;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Pdf extends Model\Document\Editable
+class Pdf extends Model\Document\Editable implements EditmodeDataInterface
 {
     /**
      * @internal
@@ -60,9 +60,9 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $pages = 0;
 

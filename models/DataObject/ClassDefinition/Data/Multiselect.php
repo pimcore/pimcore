@@ -35,13 +35,9 @@ class Multiselect extends Data implements
     DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
-
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
@@ -588,6 +584,7 @@ class Multiselect extends Data implements
     /**
      * @return $this
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {

@@ -74,7 +74,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
 
         if (is_array($subTypes)) {
             return array_filter($list->load(), function ($item) use ($subTypes) {
-                if (empty($item->getTargetSubtype)) {
+                if (empty($item->getTargetSubtype())) {
                     return true;
                 }
 
@@ -86,7 +86,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
             });
         }
 
-        return null;
+        return $list->load();
     }
 
     /**

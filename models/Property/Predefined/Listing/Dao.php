@@ -28,7 +28,7 @@ class Dao extends Model\Property\Predefined\Dao
     /**
      * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
      *
-     * @return array
+     * @return Model\Property\Predefined[]
      */
     public function loadList()
     {

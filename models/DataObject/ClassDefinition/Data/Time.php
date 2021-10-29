@@ -145,7 +145,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns a 5 digit time string of a given time
      *
-     * @param int $timestamp
+     * @param string $timestamp
      *
      * @return null|string
      */

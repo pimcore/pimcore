@@ -223,10 +223,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             language: this.gridLanguage,
         });
 
+        var eventData =  {requestParams: {classId: this.classId, folderId: this.object.id}};
+        pimcore.plugin.broker.fireEvent("preCreateObjectGrid", eventData);
+
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
-            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.classId, folderId: this.object.id}),
+            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', eventData.requestParams),
             baseParams,
             false
         );
@@ -466,9 +469,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                         "id": ids,
                         "success": function () {
                             this.getStore().reload();
-                            var tree = pimcore.globalmanager.get("layout_object_tree");
-                            var treePanel = tree.tree;
-                            tree.refresh(treePanel.getRootNode());
+                            var tree = pimcore.globalmanager.get("layout_object_tree").tree;
+                            tree.getStore().load({
+                                node: tree.getRootNode()
+                            });
                         }.bind(this)
                     };
                     pimcore.elementservice.deleteElement(options);

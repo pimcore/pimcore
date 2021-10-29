@@ -84,7 +84,7 @@ class Unit extends Model\AbstractModel
             $unit->getDao()->getByAbbreviation($abbreviation);
 
             return $unit;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -101,7 +101,7 @@ class Unit extends Model\AbstractModel
             $unit->getDao()->getByReference($reference);
 
             return $unit;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

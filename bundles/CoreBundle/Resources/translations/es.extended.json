@@ -661,5 +661,10 @@
     "calculatedValue_calculatortype": "Calculator type",
     "calculatedValue_calculatortype_class": "Class",
     "calculatedValue_calculatortype_expression": "Expression",
-    "calculatedValue_calculatorexpression": "Calculator expression"
+    "calculatedValue_calculatorexpression": "Calculator expression",
+    "enable_text_selection": "Enable Text Selection",
+    "static": "Static",
+    "frontend_languages": "Frontend Languages",
+    "drag_object_preview": "Drag Object for Preview",
+    "show_hide_areablock": "Show or Hide on frontend"
 }

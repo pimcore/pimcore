@@ -31,9 +31,7 @@ use Pimcore\Tool;
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
-
     use DataObject\Traits\LocateFileTrait;
-
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**

@@ -16,7 +16,7 @@ for details).
 
 ```yaml
 PrestaSitemapBundle:
-    resource: "@PrestaSitemapBundle/Resources/config/routing.yml"
+    resource: "@PrestaSitemapBundle/Resources/config/routing.yaml"
     prefix:   /
 ```
 
@@ -144,7 +144,7 @@ This generator iterates the whole document tree and adds entries for every docum
 hardlinks. It uses the the host names configured as main/site domain and falls back to the request context host by using
 the [url generator service](#page_Generating-absolute-URLs). You can either disable the default generator completely as shown in the example above or define your own service using the
 `DocumentTreeGenerator` class with your own filters/processors. The default service definition can be found in
-[sitemaps.yml in the CoreBundle](https://github.com/pimcore/pimcore/blob/10.x/bundles/CoreBundle/Resources/config/sitemaps.yml).
+[sitemaps.yaml in the CoreBundle](https://github.com/pimcore/pimcore/blob/10.x/bundles/CoreBundle/Resources/config/sitemaps.yaml).
 
 
 #### Creating a custom generator
@@ -231,7 +231,7 @@ After creating the generator, register it as service and add it to the config. U
 implemented behaviour.
 
 ```yaml
-# services.yml
+# services.yaml
 
 services:
     _defaults:
@@ -252,7 +252,7 @@ services:
 Make the generator available to the core listener by registering it on the configuration:
 
 ```yaml
-# config.yml
+# config.yaml
 
 pimcore:
     sitemaps:

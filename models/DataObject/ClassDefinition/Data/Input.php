@@ -28,15 +28,10 @@ class Input extends Data implements
     NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
-
     use Model\DataObject\Traits\SimpleComparisonTrait;
-
     use Extension\ColumnType;
-
     use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
-
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**

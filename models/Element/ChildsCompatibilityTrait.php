@@ -23,36 +23,66 @@ trait ChildsCompatibilityTrait
     /**
      * @deprecated
      *
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function getChilds()
     {
-        $return = call_user_func_array([$this, 'getChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
 
-        return $return;
+        if (method_exists($this, 'getChildren')) {
+            return $this->getChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method getChildren was not found');
     }
 
     /**
      * @deprecated
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
     public function setChilds()
     {
-        $return = call_user_func_array([$this, 'setChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
 
-        return $return;
+        if (method_exists($this, 'setChildren')) {
+            return $this->setChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method setChildren was not found');
     }
 
     /**
      * @deprecated
      *
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function hasChilds()
     {
-        $return = call_user_func_array([$this, 'hasChildren'], func_get_args());
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '4.4',
+            sprintf('%s is deprecated, please use hasChildren() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
 
-        return $return;
+        if (method_exists($this, 'hasChildren')) {
+            return $this->hasChildren(...func_get_args());
+        }
+
+        throw new \Exception('Method hasChildren was not found');
     }
 }

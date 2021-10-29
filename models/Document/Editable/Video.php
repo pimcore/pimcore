@@ -24,7 +24,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable
+class Video extends Model\Document\Editable implements IdRewriterInterface
 {
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
@@ -490,7 +490,7 @@ class Video extends Model\Document\Editable
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
 
-                    if ($parts['host'] == 'youtu.be') {
+                    if (isset($parts['host']) && $parts['host'] === 'youtu.be') {
                         $youtubeId = trim($parts['path'], ' /');
                     }
                 }
@@ -589,7 +589,7 @@ class Video extends Model\Document\Editable
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen data-type="pimcore_video_editable"></iframe>
         </div>';
 
         return $code;
@@ -1009,19 +1009,9 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         if ($this->type == 'asset' && array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);

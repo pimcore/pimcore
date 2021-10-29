@@ -73,6 +73,7 @@
   "targeting_toolbar_browser_note": "<b>NOTE:<\/b> Enabling the targeting toolbar affects only the browser you are currently using. If you want to use the toolbar on another browser you need to enable it again. See <a target='_blank' href='{targetingLink}'>the documentation<\/a> for details.",
   "microsoft_word_export_notice": "<ul><li>It is not possible to re-import this export<\/li><li>The export file-format is HTML, which can be perfectly opened with Word<\/li><li>This export doesn't include the full layout information (just basic text-formatting)<\/li><li>The language selection is used to set the language for object's localized fields (only localized fields are exported!)<\/li><\/ul>",
   "fallback_languages": "Fallback Languages (CSV eg. de_CH,de)",
+  "frontend_languages": "Frontend Languages",
   "add_language": "Add Language",
   "default_language": "Default language",
   "wildcards_are_supported": "Wildcards are supported",
@@ -481,6 +482,7 @@
   "language_permissions": "Language Permissions (no view permission means all)",
   "rendering_class": "Custom Renderer class",
   "rendering_data": "Data passed to renderer",
+  "drag_object_preview": "Drag Object for Preview",
   "web2print_protocol": "Protocol",
   "rows_fixed": "Rows fixed",
   "cols_fixed": "Cols fixed",
@@ -663,5 +665,6 @@
   "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
   "json_converter": "Formatting the Options",
   "json_converter_link": "JSON Formatter",
-  "max_characters": "Maximum Characters"
+  "max_characters": "Maximum Characters",
+  "sites": "Sites"
 }

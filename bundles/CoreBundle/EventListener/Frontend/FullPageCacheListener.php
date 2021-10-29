@@ -38,7 +38,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
-
     use StaticPageContextAwareTrait;
 
     /**
@@ -169,6 +168,13 @@ class FullPageCacheListener
         $requestUri = $request->getRequestUri();
         $excludePatterns = [];
 
+        // disable the output-cache if the client sends an authorization header
+        if ($request->headers->has('authorization')) {
+            $this->disable('authorization header in use');
+
+            return;
+        }
+
         // only enable GET method
         if (!$request->isMethodCacheable()) {
             $this->disable();
@@ -256,13 +262,6 @@ class FullPageCacheListener
             }
         }
 
-        // check if targeting matched anything and disable cache
-        if ($this->disabledByTargeting()) {
-            $this->disable('Targeting matched rules/target groups');
-
-            return;
-        }
-
         $deviceDetector = Tool\DeviceDetector::getInstance();
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
@@ -345,6 +344,13 @@ class FullPageCacheListener
 
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');
+        }
+
+        // check if targeting matched anything and disable cache
+        if ($this->disabledByTargeting()) {
+            $this->disable('Targeting matched rules/target groups');
+
+            return;
         }
 
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {

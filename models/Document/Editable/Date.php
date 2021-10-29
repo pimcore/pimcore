@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Date extends Model\Document\Editable
+class Date extends Model\Document\Editable implements EditmodeDataInterface
 {
     /**
      * Contains the date
@@ -56,11 +56,9 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return int|null
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         if ($this->date) {
             return $this->date->getTimestamp();

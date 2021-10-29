@@ -56,7 +56,7 @@ $mail->send();
 
 //adding an asset as attachment
 if($asset instanceof Asset) {
-   $mail->createAttachment($asset->getData(), $asset->getMimeType(), $asset->getFilename());
+   $mail->attach($asset->getData(), $asset->getFilename(), $asset->getMimeType());
 }
 
 //Embedding Images
@@ -65,7 +65,7 @@ $mail->to('example@pimcore.org');
 
 $mail->embed($asset->getData(), 'logo', $asset->getMimeType());
 //or
-$mail->embedFromPath($asset->getFileSystemPath(), 'logo', $asset->getMimeType());
+$mail->embedFromPath($asset->getRealFullPath(), 'logo', $asset->getMimeType());
 
 $mail->html("Embedded Image: <img src='cid:logo'>"); //image name(passed second argument in embed) as ref
 $mail->send();

@@ -17,22 +17,53 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Staticroute $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        parent::configure();
-        $this->setFile('staticroutes');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['staticroutes']['definitions'] ?? [],
+            'settingsStoreScope' => 'pimcore_staticroutes',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
+            'legacyConfigFile' => 'staticroutes.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
+        ]);
     }
 
     /**
-     * @param int|null $id
+     * Deletes object from database
+     */
+    public function delete()
+    {
+        $this->deleteData($this->model->getId());
+    }
+
+    /**
+     * @deprecated duplicate work, use the listing instead
+     *
+     * @return Model\Staticroute[]
+     */
+    public function getAll()
+    {
+        $list = new Model\Staticroute\Listing();
+        $list = $list->load();
+
+        return $list;
+    }
+
+    /**
+     * Get the data for the object from database for the given id
+     *
+     * @param string|null $id
      *
      * @throws NotFoundException
      */
@@ -42,12 +73,19 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setId($id);
         }
 
-        $data = $this->db->getById($this->model->getId());
+        $data = $this->getDataByName($this->model->getId());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new NotFoundException('Route with id: ' . $this->model->getId() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Static Route with ID "%s" does not exist.',
+                $this->model->getId()
+            ));
         }
     }
 
@@ -65,24 +103,29 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $name = $this->model->getName();
 
-        $data = $this->db->fetchAll(function ($row) use ($name, $siteId) {
-            if ($row['name'] == $name) {
-                if (empty($row['siteId']) || in_array($siteId, $row['siteId'])) {
+        $totalList = new Listing();
+        $totalList = $totalList->load();
+
+        $data = array_filter($totalList, function (Model\Staticroute $row) use ($name, $siteId) {
+            if ($row->getName() == $name) {
+                if (empty($row->getSiteId()) || in_array($siteId, $row->getSiteId())) {
                     return true;
                 }
             }
 
             return false;
-        }, function ($a, $b) {
-            if ($a['siteId'] == $b['siteId']) {
+        });
+
+        usort($data, function (Model\Staticroute $a, Model\Staticroute $b) {
+            if ($a->getSiteId() == $b->getSiteId()) {
                 return 0;
             }
 
-            return ($a['siteId'] < $b['siteId']) ? 1 : -1;
+            return ($a->getSiteId() < $b->getSiteId()) ? 1 : -1;
         });
 
-        if (count($data) && $data[0]['id']) {
-            $this->assignVariablesToModel($data[0]);
+        if (count($data) && $data[0]->getId()) {
+            $this->assignVariablesToModel($data[0]->getObjectVars());
         } else {
             throw new NotFoundException(sprintf(
                 'Static route config with name "%s" does not exist.',
@@ -92,27 +135,19 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
-     * @return Model\Staticroute[]
+     * {@inheritdoc}
      */
-    public function getAll()
+    protected function prepareDataStructureForYaml(string $id, $data)
     {
-        $data = $this->db->fetchAll(null, function ($a, $b) {
-            if ($a['siteId'] == $b['siteId']) {
-                return 0;
-            }
-
-            return ($a['siteId'] < $b['siteId']) ? 1 : -1;
-        });
-
-        $routes = [];
-        foreach ($data as $row) {
-            $route = new Model\Staticroute();
-            $route->setValues($row);
-
-            $routes[] = $route;
-        }
-
-        return $routes;
+        return [
+            'pimcore' => [
+                'staticroutes' => [
+                    'definitions' => [
+                        $id => $data,
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -120,6 +155,10 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function save()
     {
+        if (!$this->model->getId()) {
+            $this->model->setId(Uid::v4());
+        }
+
         $ts = time();
         if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate($ts);
@@ -128,7 +167,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'pattern', 'reverse', 'module', 'controller',
+        $allowedProperties = ['name', 'pattern', 'reverse', 'module', 'controller',
             'action', 'variables', 'defaults', 'siteId', 'priority', 'methods', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
@@ -136,18 +175,7 @@ class Dao extends Model\Dao\PhpArrayTable
                 $data[$key] = $value;
             }
         }
-        $this->db->insertOrUpdate($data, $this->model->getId());
 
-        if (!$this->model->getId()) {
-            $this->model->setId($this->db->getLastInsertId());
-        }
-    }
-
-    /**
-     * Deletes object from database
-     */
-    public function delete()
-    {
-        $this->db->delete($this->model->getId());
+        $this->saveData($this->model->getId(), $data);
     }
 }

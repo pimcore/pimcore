@@ -1280,7 +1280,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent document instance.
      *
-     * @param Document $parent
+     * @param Document|null $parent
      *
      * @return Document
      */

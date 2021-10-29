@@ -1,0 +1,3 @@
+imports:
+    - { resource: config.yaml }
+    - { resource: dev.yaml }

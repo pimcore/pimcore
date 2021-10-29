@@ -13,26 +13,30 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Dao;
+namespace Pimcore\Messenger;
 
 /**
  * @internal
  */
-trait AutoIncrementTrait
+class SanityCheckMessage
 {
-    public function getNextId($listingClass): int
+    public function __construct(protected string $type, protected int $id)
     {
-        $listing = new $listingClass();
-        $listing = $listing->load();
+    }
 
-        $ids = array_map(function ($item) {
-            return (int) $item->getId();
-        }, $listing);
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
 
-        if (count($ids)) {
-            return max($ids) + 1;
-        }
-
-        return 1;
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 }
