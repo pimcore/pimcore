@@ -76,7 +76,7 @@ $mail->send();
 ```
 
 you can access the parameters in your mail content now in standard twig syntax instead of the old %Text(paramname);
-```php
+```twig
 Hello {{ firstName }} {{ lastName }}
 ```
 
