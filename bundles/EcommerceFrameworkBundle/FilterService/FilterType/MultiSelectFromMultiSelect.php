@@ -120,12 +120,10 @@ class MultiSelectFromMultiSelect extends SelectFromMultiSelect
             }
             $quotedValues = '('.$quotedValues.')';
 
-            if (!empty($quotedValues)) {
-                if ($isPrecondition) {
-                    $productList->addCondition($quotedValues, 'PRECONDITION_' . $field);
-                } else {
-                    $productList->addCondition($quotedValues, $field);
-                }
+            if ($isPrecondition) {
+                $productList->addCondition($quotedValues, 'PRECONDITION_' . $field);
+            } else {
+                $productList->addCondition($quotedValues, $field);
             }
         }
 

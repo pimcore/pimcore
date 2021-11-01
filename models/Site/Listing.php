@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Site\Listing\Dao getDao()
  * @method Model\Site[] load()
- * @method Model\Site current()
+ * @method Model\Site|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

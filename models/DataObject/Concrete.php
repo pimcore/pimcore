@@ -696,7 +696,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $list->setObjectTypes($objectTypes);
             }
 
-            if ($field instanceof AbstractRelations && $field->isFilterable()) {
+            if ($field instanceof AbstractRelations) {
                 $list = $field->addListingFilter($list, $value);
             }
 

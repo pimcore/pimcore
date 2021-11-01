@@ -68,7 +68,7 @@ class DefaultMysql implements ProductListInterface
     protected $category;
 
     /**
-     * @var DefaultMysql\Dao
+     * @var DefaultMysql\Dao|null
      */
     protected $resource;
 

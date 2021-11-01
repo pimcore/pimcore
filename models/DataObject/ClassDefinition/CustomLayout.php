@@ -77,7 +77,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $default;
+    protected $default = 0;
 
     /**
      * @param string $id

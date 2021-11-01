@@ -108,8 +108,6 @@ class EditableHandler implements LoggerAwareInterface
 
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
-    private EditmodeEditableDefinitionCollector $definitionCollector;
-
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
@@ -120,7 +118,8 @@ class EditableHandler implements LoggerAwareInterface
      * @param ResponseStack $responseStack
      * @param EditmodeResolver $editmodeResolver
      * @param HttpKernelRuntime $httpKernelRuntime
-     * @param EditmodeEditableDefinitionCollector $definitionCollector
+     * @param FragmentRendererInterface $fragmentRenderer
+     * @param RequestStack $requestStack
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -132,7 +131,6 @@ class EditableHandler implements LoggerAwareInterface
         ResponseStack $responseStack,
         EditmodeResolver $editmodeResolver,
         HttpKernelRuntime $httpKernelRuntime,
-        EditmodeEditableDefinitionCollector $definitionCollector,
         FragmentRendererInterface $fragmentRenderer,
         RequestStack $requestStack
     ) {
@@ -145,7 +143,6 @@ class EditableHandler implements LoggerAwareInterface
         $this->responseStack = $responseStack;
         $this->editmodeResolver = $editmodeResolver;
         $this->httpKernelRuntime = $httpKernelRuntime;
-        $this->definitionCollector = $definitionCollector;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->requestStack = $requestStack;
     }

@@ -1213,22 +1213,7 @@ class Service extends Model\AbstractModel
     public static function cloneMe(ElementInterface $element)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
-            /**
-             * The element to be cloned
-             *
-             * @var  ElementInterface
-             */
-            private $element;
-
-            /**
-             * @param ElementInterface $element
-             */
-            public function __construct($element)
-            {
-                $this->element = $element;
-            }
-
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
             /**
              * {@inheritdoc}
              */

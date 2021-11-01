@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Glossary\Listing\Dao getDao()
  * @method Model\Glossary[] load()
- * @method Model\Glossary current()
+ * @method Model\Glossary|false current()
  * @method int getTotalCount()
  * @method array getDataArray()
  */

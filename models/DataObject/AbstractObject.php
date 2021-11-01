@@ -205,14 +205,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortBy;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortOrder;
 

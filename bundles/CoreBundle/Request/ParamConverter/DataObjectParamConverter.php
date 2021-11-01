@@ -50,7 +50,7 @@ class DataObjectParamConverter implements ParamConverterInterface
         }
 
         $class = $configuration->getClass();
-        $options = $configuration->getOptions() ?? [];
+        $options = $configuration->getOptions();
 
         /** @var Concrete|null $object */
         $object = $class::getById($value);

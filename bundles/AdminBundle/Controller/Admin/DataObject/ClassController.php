@@ -657,7 +657,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $customLayoutData = [
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
-                    'default' => $customLayout->getDefault() ?? 0,
+                    'default' => $customLayout->getDefault() ?: 0,
                 ];
 
                 $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);

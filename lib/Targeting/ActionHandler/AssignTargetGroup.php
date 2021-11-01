@@ -19,7 +19,6 @@ namespace Pimcore\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Targeting\ConditionMatcherInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
@@ -28,20 +27,13 @@ class AssignTargetGroup implements ActionHandlerInterface
     const STORAGE_KEY = 'tg';
 
     /**
-     * @var ConditionMatcherInterface
-     */
-    private $conditionMatcher;
-
-    /**
      * @var TargetingStorageInterface
      */
     private $storage;
 
     public function __construct(
-        ConditionMatcherInterface $conditionMatcher,
         TargetingStorageInterface $storage
     ) {
-        $this->conditionMatcher = $conditionMatcher;
         $this->storage = $storage;
     }
 

@@ -612,7 +612,7 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= 'use Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
         $cd .= "/**\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."|false current()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
@@ -1549,9 +1549,9 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCompositeIndices($compositeIndices)
+    public function setCompositeIndices(array $compositeIndices)
     {
-        $this->compositeIndices = $compositeIndices ?? [];
+        $this->compositeIndices = $compositeIndices;
 
         return $this;
     }

@@ -438,9 +438,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
                 );
             }
 
-            if (!empty($iframePath)) {
-                return $iframePath;
-            }
+            return $iframePath;
         }
 
         return null;
@@ -489,18 +487,18 @@ class ExtensionManagerController extends AdminController implements KernelContro
         if (null !== $installer) {
             /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
             $output = $installer->getOutput();
-            if (!empty($output)) {
-                $converter = new AnsiToHtmlConverter(null);
+            $converter = new AnsiToHtmlConverter(null);
 
-                $converted = Encoding::fixUTF8($output->fetch());
-                $converted = $converter->convert($converted);
+            $converted = Encoding::fixUTF8($output->fetch());
+            $converted = $converter->convert($converted);
 
-                if (!$decorated) {
-                    $converted = strip_tags($converted);
-                }
-
-                return $converted;
+            if (!$decorated) {
+                $converted = strip_tags($converted);
             }
+
+            return $converted;
         }
+
+        return null;
     }
 }

@@ -22,7 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
  * @method array loadRaw()
- * @method Model\Translation current()
+ * @method Model\Translation|false current()
  * @method int getTotalCount()
  * @method void onCreateQueryBuilder(?callable $callback)
  * @method void cleanup()

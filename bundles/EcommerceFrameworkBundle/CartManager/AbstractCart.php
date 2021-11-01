@@ -30,11 +30,6 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     /**
-     * @var bool
-     */
-    private $ignoreReadonly = false;
-
-    /**
      * @var int
      */
     protected $userId;

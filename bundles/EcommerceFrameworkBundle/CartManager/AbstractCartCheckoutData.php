@@ -22,7 +22,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
     protected $data;
 
     /**
-     * @var CartInterface
+     * @var CartInterface|null
      */
     protected $cart;
 

@@ -52,7 +52,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $storeCustomAttributes = true;
 
     /**
-     * @var \Elasticsearch\Client
+     * @var \Elasticsearch\Client|null
      */
     protected $elasticSearchClient = null;
 
