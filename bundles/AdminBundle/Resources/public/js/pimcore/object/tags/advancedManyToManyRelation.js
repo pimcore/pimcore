@@ -940,8 +940,29 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         return {
             text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path")
+            getRelationFilter: this.getRelationFilter,
+            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path"),
         };
+    },
+
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValues = editor.store.getData().items;
+        if (!filterValues || !Array.isArray(filterValues) || !filterValues.length) {
+            filterValues = null;
+        } else {
+            filterValues = filterValues.map(function (item) {
+                return item.data.type + "|" + item.data.id;
+            }).join(',');
+        }
+
+        return new Ext.util.Filter({
+            operator: "like",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValues
+        });
     },
 
     getCellEditValue: function () {
