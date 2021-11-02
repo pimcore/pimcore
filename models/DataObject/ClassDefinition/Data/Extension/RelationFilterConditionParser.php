@@ -18,20 +18,23 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 /**
  * Trait RelationFilterConditionParser
+ *
  * @package Pimcore\Model\DataObject\ClassDefinition\Data\Extension
  */
 trait RelationFilterConditionParser
 {
     /**
      * Parses filter value of a relation field and creates the filter condition
+     *
      * @param string|null $value
      * @param string      $operator
      * @param string      $name
+     *
      * @return string
      */
     public function getRelationFilterCondition($value, $operator, $name)
     {
-        $result = '`' . $name . "` IS NULL";
+        $result = '`' . $name . '` IS NULL';
         if ($value === null) {
             return $result;
         }
