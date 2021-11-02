@@ -917,9 +917,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $event = new GenericEvent($this, [
             'list' => $definitions,
             'objectId' => $request->get('object_id'),
+            'layoutDefinitions' => $layoutDefinitions
         ]);
         $eventDispatcher->dispatch($event, AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
+        $layoutDefinitions = $event->getArgument('layoutDefinitions');
 
         if ($forObjectEditor) {
             return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
