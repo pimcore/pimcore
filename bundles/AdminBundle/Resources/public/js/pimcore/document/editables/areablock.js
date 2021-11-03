@@ -1034,7 +1034,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 border:false,
                 shadow: false,
                 resizable: false,
-                scrollable: true,
+                scrollable: 'y',
                 draggable: false,
                 header: false,
                 style: "position:fixed;",
