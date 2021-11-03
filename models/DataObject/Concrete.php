@@ -699,7 +699,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         try {
-            return parent::$method($arguments);
+            return call_user_func_array([parent::class, $method], $arguments);
         } catch (\Exception $e) {
             // there is no property for the called method, so throw an exception
             Logger::error('Class: DataObject\\Concrete => call to undefined static method '.$method);
