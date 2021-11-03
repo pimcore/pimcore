@@ -1167,7 +1167,7 @@ pimcore.object.classes.klass = Class.create({
         }
 
         var newNode = {
-            text: nodeLabel,
+            text: htmlspecialchars(nodeLabel),
             type: "layout",
             iconCls: pimcore.object.classes.layout[type].prototype.getIconClass(),
             leaf: false,
@@ -1217,7 +1217,7 @@ pimcore.object.classes.klass = Class.create({
         }
 
         var newNode = {
-            text: nodeLabel,
+            text: htmlspecialchars(nodeLabel),
             type: "data",
             leaf: true,
             iconCls: pimcore.object.classes.data[type].prototype.getIconClass()
