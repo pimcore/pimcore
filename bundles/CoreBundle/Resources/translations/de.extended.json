@@ -448,6 +448,7 @@
     "imageGallery": "Bildergalerie",
     "column_type": "Spaltentyp",
     "admin_interface": "Admin Interface",
+    "admin_interface_background": "Admin Interface Background",
     "login_screen": "Anmeldebildschirm",
     "color_description": "HTML Hex Format nutzen, z.B. #FFFFFF",
     "colors": "Farben",

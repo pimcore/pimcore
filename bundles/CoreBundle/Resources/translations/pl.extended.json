@@ -448,6 +448,7 @@
     "imageGallery": "Galeria obrazów",
     "column_type": "Typ kolumny",
     "admin_interface": "Panel Admina",
+    "admin_interface_background": "Admin Interface Background",
     "login_screen": "Ekran logowania",
     "color_description": "Użyj formatu heksadecymalnego (np. $ffffff)",
     "colors": "Kolory",

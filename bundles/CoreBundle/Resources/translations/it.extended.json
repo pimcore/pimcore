@@ -448,6 +448,7 @@
     "imageGallery": "Galleria immagini",
     "column_type": "Tipo colonna",
     "admin_interface": "Interfaccia di amministrazione",
+    "admin_interface_background": "Sfondo Interfaccia di amministrazione",
     "login_screen": "Schermata di accesso",
     "color_description": "Usa formato esadecimale, es. #ffffff",
     "colors": "Colori",

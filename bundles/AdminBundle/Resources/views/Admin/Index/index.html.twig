@@ -77,6 +77,9 @@
 
         #pimcore_panel_tabs-body {
             background-image: url({{ path('pimcore_settings_display_custom_logo') }});
+            {% if config['branding']['color_admin_interface_background']|default(null) is not null %}
+                background-color: {{ config['branding']['color_admin_interface_background'] }};
+            {% endif %}
             background-repeat: no-repeat;
             background-position: center center;
             background-size: 500px auto;
