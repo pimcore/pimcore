@@ -1020,19 +1020,13 @@ class DataObjectHelperController extends AdminController
             throw new \Exception("don't mess with someone elses grid config");
         }
 
-        $combinedShares = [];
+        $sharedUsers = [];
 
         if ($metadata['shareGlobally'] === false) {
             $sharedUserIds = $metadata['sharedUserIds'];
-            $sharedRoleIds = $metadata['sharedRoleIds'];
 
             if ($sharedUserIds) {
-                $combinedShares = explode(',', $sharedUserIds);
-            }
-
-            if ($sharedRoleIds) {
-                $sharedRoleIds = explode(',', $sharedRoleIds);
-                $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+                $sharedUsers = explode(',', $sharedUserIds);
             }
         }
 
@@ -1041,17 +1035,11 @@ class DataObjectHelperController extends AdminController
             $users->setCondition('id = ?', $currentUser->getId());
 
             foreach ($users as $user) {
-                $combinedShares[] = $user->getId();
-            }
-
-            $roles = new User\Role\Listing();
-
-            foreach ($roles as $role) {
-                $combinedShares[] = $role->getId();
+                $sharedUsers[] = $user->getId();
             }
         }
 
-        foreach ($combinedShares as $id) {
+        foreach ($sharedUsers as $id) {
             $global    = true;
             $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
                 (int) $id,
