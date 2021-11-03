@@ -62,7 +62,7 @@ class Dao extends Model\Dao\PhpArrayTable
             if ($name && $row['name'] != $name) {
                 $return = false;
             }
-            if ($row['siteId'] && $siteId && $row['siteId'] != $siteId) {
+            if ($row['siteId'] && $row['siteId'] != $siteId) {
                 $return = false;
             }
 
