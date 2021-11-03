@@ -92,7 +92,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
         if (text.length > 100) {
             text = text.slice(0, 97)
-            text += '...'
+            text += '…'
         }
 
         this.displayField = new Ext.form.DisplayField({
@@ -171,7 +171,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
         if (text.length > 100) {
             text = text.slice(0, 97)
-            text += '...'
+            text += '…'
         }
 
         this.displayField.setValue(text);
