@@ -23,7 +23,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Image extends Model\Document\Editable
+class Image extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * ID of the referenced image
@@ -146,11 +146,9 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $image = $this->getImage();
 
@@ -741,19 +739,9 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);

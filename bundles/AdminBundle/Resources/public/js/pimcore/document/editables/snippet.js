@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.document.editables.snippet");
+pimcore.registerNS('pimcore.document.editables.snippet');
 pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
+
+    defaultHeight: 100,
 
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
@@ -23,18 +25,21 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             this.data = data;
         }
 
-        // height management                
-        this.defaultHeight = 100;
+        // height management
         if (this.config.defaultHeight) {
             this.defaultHeight = this.config.defaultHeight;
         }
-        if (!this.config.height && !this.data.path) {
-            this.config.height = this.defaultHeight;
+        if(this.config.height){
+            this.initalHeightSet = true;
+        }
+        else{
+            this.initalHeightSet = false;
+            this.config.height = this.data.path ? 'auto' : this.defaultHeight;
         }
 
-        this.config.name = id + "_editable";
+        this.config.name = id + '_editable';
         this.config.border = false;
-        this.config.bodyStyle = "min-height: 40px;";
+        this.config.bodyStyle = 'min-height: 40px;';
     },
 
     render: function () {
@@ -42,28 +47,25 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
         this.element = new Ext.Panel(this.config);
 
-        this.element.on("render", function (el) {
+        this.element.on('render', function (el) {
             try {
-                if (typeof dndManager != "undefined") {
+                if (typeof dndManager != 'undefined') {
                     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
                 }
 
                 var body = this.getBody();
                 var style = {
-                    overflow: "auto"
-
+                    overflow: 'auto',
                 };
                 body.setStyle(style);
                 body.getFirstChild().setStyle(style);
+                body.insertHtml('beforeEnd', '<div class="pimcore_editable_droptarget"></div>');
+                body.addCls('pimcore_editable_snippet_empty');
 
-                body.insertHtml("beforeEnd", '<div class="pimcore_editable_droptarget"></div>');
-                body.addCls("pimcore_editable_snippet_empty");
-
-                el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+                el.getEl().on('contextmenu', this.onContextMenu.bind(this));
             } catch (e) {
                 console.log(e);
             }
-
         }.bind(this));
 
         this.element.render(this.id);
@@ -107,34 +109,26 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
     },
 
     dndAllowed: function(data) {
-
-        if (data.type != "snippet") {
-            return false;
-        } else {
-            return true;
-        }
+        return data.type === 'snippet';
     },
 
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html
         // (only in configure)
-        var bodyId = Ext.get(this.element.getEl().dom).query("." + Ext.baseCSSPrefix + "panel-body")[0].getAttribute("id");
-        var body = Ext.get(bodyId);
-        return body;
+        var bodyId = Ext.get(this.element.getEl().dom).query('.' + Ext.baseCSSPrefix + 'panel-body')[0].getAttribute('id');
+        return Ext.get(bodyId);
     },
 
     updateContent: function (path) {
-
         var params = this.config;
         params.pimcore_admin = true;
 
         Ext.Ajax.request({
-            method: "get",
+            method: 'get',
             url: path,
             success: function (response) {
                 var body = this.getBody();
                 body.getFirstChild().dom.innerHTML = response.responseText;
-                body.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
                 this.updateDimensions();
             }.bind(this),
             params: params
@@ -144,101 +138,109 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
     updateDimensions: function () {
         var body = this.getBody();
         var parent = body.getParent();
-        this.element.getEl().setStyle("height", "auto");
-        body.setStyle("height", "auto");
-        parent.setStyle("height", "auto");
-        body.removeCls("pimcore_editable_snippet_empty");
+
+        this.element.getEl().setStyle('height', 'auto');
+        body.setStyle('height', 'auto');
+
+        if (this.initalHeightSet) {
+            parent.setStyle({
+                height: this.config.height + 'px',
+                overflowY: 'auto',
+            });
+        }
+        else {
+            parent.setStyle({
+                height: this.data.path ? 'auto' : this.defaultHeight + 'px',
+                overflowY: 'hidden',
+            });
+        }
+
+        if(this.data.path){
+            body.removeCls('pimcore_editable_snippet_empty');
+        }
+        else{
+            body.setStyle('height', '100%');
+        }
     },
 
     onContextMenu: function (e) {
-
         var menu = new Ext.menu.Menu();
 
-        if(this.data["id"]) {
+        if(this.data['id']) {
             menu.add(new Ext.menu.Item({
                 text: t('empty'),
-                iconCls: "pimcore_icon_delete",
+                iconCls: 'pimcore_icon_delete',
                 handler: function (item) {
                     item.parentMenu.destroy();
-
-                    var height = this.config.height;
-                    if (!height) {
-                        height = this.defaultHeight;
-                    }
-
-                    this.element.setHeight(height);
-
                     this.data = {};
                     var body = this.getBody();
                     body.getFirstChild().dom.innerHTML = '';
-                    body.insertHtml("beforeEnd",'<div class=" pimcore_editable_droptarget"></div>');
-                    body.addCls("pimcore_editable_snippet_empty");
-                    body.setStyle(height + "px");
+                    body.addCls('pimcore_editable_snippet_empty');
 
                     if (this.config.reload) {
                         this.reloadDocument();
                     }
 
+                    this.updateDimensions();
                 }.bind(this)
             }));
 
             menu.add(new Ext.menu.Item({
                 text: t('open'),
-                iconCls: "pimcore_icon_open",
+                iconCls: 'pimcore_icon_open',
                 handler: function (item) {
                     item.parentMenu.destroy();
-
-                    pimcore.helpers.openDocument(this.data.id, "snippet");
-
+                    pimcore.helpers.openDocument(this.data.id, 'snippet');
                 }.bind(this)
             }));
 
-            if (pimcore.elementservice.showLocateInTreeButton("document")) {
+            if (pimcore.elementservice.showLocateInTreeButton('document')) {
                 menu.add(new Ext.menu.Item({
                     text: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: 'pimcore_icon_show_in_tree',
                     handler: function (item) {
                         item.parentMenu.destroy();
-                        pimcore.treenodelocator.showInTree(this.data.id, "document");
+                        pimcore.treenodelocator.showInTree(this.data.id, 'document');
                     }.bind(this)
                 }));
             }
         }
-        
+
         menu.add(new Ext.menu.Item({
             text: t('search'),
-            iconCls: "pimcore_icon_search",
+            iconCls: 'pimcore_icon_search',
             handler: function (item) {
                 item.parentMenu.destroy();
-                
+
                 this.openSearchEditor();
             }.bind(this)
         }));
-
 
         menu.showAt(e.getXY());
 
         e.stopEvent();
     },
-    
-    openSearchEditor: function () {
 
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: ["document"],
-            subtype: {
-                document: ["snippet"]
-            }
-        },
+    openSearchEditor: function () {
+        pimcore.helpers.itemselector(
+            false,
+            this.addDataFromSelector.bind(this),
             {
-                context: this.getContext()
-            });
+                type: ['document'],
+                subtype: {
+                    document: ['snippet'],
+                },
+            },
+            {
+                context: this.getContext(),
+            }
+        );
     },
-    
+
     addDataFromSelector: function (item) {
-        
         if(item) {
             var uri = item.fullpath;
-    
+
             this.data.id = item.id;
             this.data.path = uri;
 
@@ -255,6 +257,6 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
     },
 
     getType: function () {
-        return "snippet";
+        return 'snippet';
     }
 });

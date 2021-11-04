@@ -160,12 +160,12 @@ abstract class ElementControllerBase extends AdminController
                     ],
                 ]];
 
-                $hasChilds = $element->hasChildren();
+                $hasChildren = $element->hasChildren();
                 if (!$hasDependency) {
-                    $hasDependency = $hasChilds;
+                    $hasDependency = $hasChildren;
                 }
 
-                if ($hasChilds) {
+                if ($hasChildren) {
                     // get amount of childs
                     $list = $element::getList(['unpublished' => true]);
                     $pathColumn = ($type === 'object') ? 'o_path' : 'path';

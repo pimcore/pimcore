@@ -256,7 +256,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById((int)$request->get('docTypeId'));
+                $docType = Document\DocType::getById($request->get('docTypeId'));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();

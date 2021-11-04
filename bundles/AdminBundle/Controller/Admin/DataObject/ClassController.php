@@ -115,6 +115,15 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $text .= ' (' . $class->getId() . ')';
             }
 
+            $hasBrickField = false;
+            foreach ($class->getFieldDefinitions() as $fieldDefinition) {
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    $hasBrickField = true;
+
+                    break;
+                }
+            }
+
             return [
                 'id' => $class->getId(),
                 'text' => $text,
@@ -123,6 +132,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 'cls' => 'pimcore_class_icon',
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'enableGridLocking' => $class->isEnableGridLocking(),
+                'hasBrickField' => $hasBrickField,
             ];
         };
 
@@ -907,9 +917,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $event = new GenericEvent($this, [
             'list' => $definitions,
             'objectId' => $request->get('object_id'),
+            'layoutDefinitions' => $layoutDefinitions,
         ]);
         $eventDispatcher->dispatch($event, AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
+        $layoutDefinitions = $event->getArgument('layoutDefinitions');
 
         if ($forObjectEditor) {
             return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);

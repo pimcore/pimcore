@@ -267,7 +267,7 @@ class Processor
                 }
 
                 if ($success) {
-                    $formats[$converter->getFormat()] = str_replace($asset->getRealPath(), '', $converter->getStorageFile());
+                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
                 } else {
                     $conversionStatus = 'error';
                 }
