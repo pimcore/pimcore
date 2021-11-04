@@ -66,14 +66,14 @@ class Document extends Element\AbstractElement
      *
      * @var int
      */
-    protected $id;
+    protected $id = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $parentId;
+    protected $parentId = 0;
 
     /**
      * @internal
@@ -87,21 +87,21 @@ class Document extends Element\AbstractElement
      *
      * @var string
      */
-    protected string $type;
+    protected string $type = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $key;
+    protected $key = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $path;
+    protected $path = '';
 
     /**
      * @internal
@@ -122,14 +122,14 @@ class Document extends Element\AbstractElement
      *
      * @var int
      */
-    protected $creationDate;
+    protected $creationDate = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $modificationDate;
+    protected $modificationDate = 0;
 
     /**
      * @internal
@@ -194,7 +194,7 @@ class Document extends Element\AbstractElement
      *
      * @var int
      */
-    protected $versionCount;
+    protected $versionCount = 0;
 
     /**
      * get possible types
@@ -1056,7 +1056,7 @@ class Document extends Element\AbstractElement
      */
     public function setKey($key)
     {
-        $this->key = $key;
+        $this->key = (string)$key;
 
         return $this;
     }

@@ -91,7 +91,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int
      */
-    protected $o_parentId;
+    protected $o_parentId = 0;
 
     /**
      * @internal
@@ -112,35 +112,35 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string
      */
-    protected $o_key;
+    protected $o_key = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $o_path;
+    protected $o_path = '';
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $o_index;
+    protected $o_index = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $o_creationDate;
+    protected $o_creationDate = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $o_modificationDate;
+    protected $o_modificationDate = 0;
 
     /**
      * @internal
@@ -1085,7 +1085,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setKey($o_key)
     {
-        $this->o_key = $o_key;
+        $this->o_key = (string)$o_key;
 
         return $this;
     }

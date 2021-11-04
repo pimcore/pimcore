@@ -68,14 +68,14 @@ class Asset extends Element\AbstractElement
      *
      * @var int
      */
-    protected $id;
+    protected $id = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $parentId;
+    protected $parentId = 0;
 
     /**
      * @internal
@@ -89,42 +89,42 @@ class Asset extends Element\AbstractElement
      *
      * @var string
      */
-    protected $type;
+    protected $type = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $filename;
+    protected $filename = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $path;
+    protected $path = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $mimetype;
+    protected $mimetype = '';
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $creationDate;
+    protected $creationDate = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $modificationDate;
+    protected $modificationDate = 0;
 
     /**
      * @internal
@@ -213,14 +213,14 @@ class Asset extends Element\AbstractElement
      *
      * @var bool
      */
-    protected $_dataChanged = false;
+    protected $dataChanged = false;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $versionCount;
+    protected $versionCount = 0;
 
     /**
      *
@@ -1142,7 +1142,7 @@ class Asset extends Element\AbstractElement
      */
     public function getId()
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     /**
@@ -1150,7 +1150,7 @@ class Asset extends Element\AbstractElement
      */
     public function getFilename()
     {
-        return (string)$this->filename;
+        return $this->filename;
     }
 
     /**
@@ -1166,7 +1166,7 @@ class Asset extends Element\AbstractElement
      */
     public function getModificationDate()
     {
-        return (int)$this->modificationDate;
+        return $this->modificationDate;
     }
 
     /**
@@ -1263,7 +1263,7 @@ class Asset extends Element\AbstractElement
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->path = (string)$path;
 
         return $this;
     }
@@ -1275,7 +1275,7 @@ class Asset extends Element\AbstractElement
      */
     public function setType($type)
     {
-        $this->type = $type;
+        $this->type = (string)$type;
 
         return $this;
     }
@@ -1374,7 +1374,7 @@ class Asset extends Element\AbstractElement
      */
     public function getDataChanged()
     {
-        return $this->_dataChanged;
+        return $this->dataChanged;
     }
 
     /**
@@ -1384,7 +1384,7 @@ class Asset extends Element\AbstractElement
      */
     public function setDataChanged($changed = true)
     {
-        $this->_dataChanged = $changed;
+        $this->dataChanged = $changed;
 
         return $this;
     }
@@ -1614,7 +1614,7 @@ class Asset extends Element\AbstractElement
      */
     public function setMimeType($mimetype)
     {
-        $this->mimetype = $mimetype;
+        $this->mimetype = (string)$mimetype;
 
         return $this;
     }
