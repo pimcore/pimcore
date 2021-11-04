@@ -130,8 +130,6 @@ pimcore.settings.robotstxt = Class.create({
                     editor.setOptions({
                         showLineNumbers: true,
                         showPrintMargin: false,
-                        maxLines: 55,
-                        minLines: 55,
                         wrap: true,
                         fontFamily: 'Courier New, Courier, monospace;'
                     });
@@ -143,10 +141,16 @@ pimcore.settings.robotstxt = Class.create({
                         editor.resize();
                     }
 
-                    this.textEditors.push({
-                        'key': siteRecord.get('id'),
-                        'editor': editor
-                    })
+                    let textEditor = this.textEditors.find(e => e.key === siteRecord.get('id'));
+                    if (textEditor) {
+                        textEditor.editor = editor;
+                    } else {
+                        this.textEditors.push({
+                            'key': siteRecord.get('id'),
+                            'editor': editor
+                        });
+                    }
+
                 }.bind(this)
             }
         });
@@ -159,10 +163,12 @@ pimcore.settings.robotstxt = Class.create({
             items: [editorContainer]
         });
 
-        editPanel.on("bodyresize", function (el, width, height) {
-            editArea.setWidth(width-20);
-            editArea.setHeight(height-20);
-        });
+        editPanel.on('resize', function (el, width, height) {
+            let textEditor = this.textEditors.find(e => e.key === siteRecord.get('id'));
+            if (textEditor) {
+                textEditor.editor.resize();
+            }
+        }.bind(this));
 
         return editPanel;
     },

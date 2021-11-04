@@ -27,6 +27,17 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     throw new \Exception('Unknown configuration! Pimcore project root not found, please set env variable PIMCORE_PROJECT_ROOT.');
 }
 
+$_ENV['PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_CUSTOM_REPORTS'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_DOCUMENT_TYPES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_WEB_TO_PRINT'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_STATICROUTES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_PERSPECTIVES'] = 'settings-store';
+$_ENV['PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'] = 'settings-store';
+
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();
 

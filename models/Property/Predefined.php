@@ -20,14 +20,16 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method Predefined\Dao getDao()
- * @method void save()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
+ * @method \Pimcore\Model\Property\Predefined\Dao getDao()
  * @method void delete()
+ * @method void save()
  */
 final class Predefined extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -82,7 +84,7 @@ final class Predefined extends Model\AbstractModel
     protected $modificationDate;
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return self|null
      */
@@ -93,7 +95,7 @@ final class Predefined extends Model\AbstractModel
             $property->getDao()->getById($id);
 
             return $property;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -117,7 +119,7 @@ final class Predefined extends Model\AbstractModel
                 $property = new self();
                 $property->getDao()->getByKey($key);
                 \Pimcore\Cache\Runtime::set($cacheKey, $property);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -217,7 +219,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -225,13 +227,13 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -354,5 +356,13 @@ final class Predefined extends Model\AbstractModel
     public function getModificationDate()
     {
         return $this->modificationDate;
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }

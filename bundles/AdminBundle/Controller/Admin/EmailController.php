@@ -138,7 +138,7 @@ class EmailController extends AdminController
             return $this->render('@PimcoreAdmin/Admin/Email/text.html.twig', ['log' => $emailLog->getTextLog()]);
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog(), 200, [
-                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'",
+                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data:",
             ]);
         } elseif ($request->get('type') == 'params') {
             try {

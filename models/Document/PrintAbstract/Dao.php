@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Document\PrintAbstract;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -61,7 +62,7 @@ class Dao extends Document\PageSnippet\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Print Document with the ID ' . $this->model->getId() . " doesn't exists");
+            throw new NotFoundException('Print Document with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 

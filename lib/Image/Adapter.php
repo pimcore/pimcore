@@ -163,7 +163,7 @@ abstract class Adapter
     public function scaleByWidth($width, $forceResize = false)
     {
         if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
-            $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
+            $height = floor(($width / $this->getWidth()) * $this->getHeight());
             $this->resize(max(1, $width), max(1, $height));
         }
 
@@ -179,7 +179,7 @@ abstract class Adapter
     public function scaleByHeight($height, $forceResize = false)
     {
         if ($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
-            $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
+            $width = floor(($height / $this->getHeight()) * $this->getWidth());
             $this->resize(max(1, $width), max(1, $height));
         }
 

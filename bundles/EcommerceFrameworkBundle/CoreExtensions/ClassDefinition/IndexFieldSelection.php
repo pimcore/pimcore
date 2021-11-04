@@ -227,7 +227,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param IndexFieldSelection|null $data
+     * @param ObjectData\IndexFieldSelection|null $data
      * @param Concrete|null $object
      * @param mixed $params
      *

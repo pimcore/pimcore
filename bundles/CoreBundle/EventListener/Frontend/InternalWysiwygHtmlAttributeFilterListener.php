@@ -47,7 +47,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest() && !$this->matchesStaticPageContext($request)) {
+        if (!$event->isMainRequest() && !$this->matchesStaticPageContext($request)) {
             return;
         }
 

@@ -47,7 +47,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         height: 88,
                         frame: true
                     });
-                    return '<img src="' + path + '" />';
+                    return '<img src="' + path + '" loading="lazy" />';
                 }
             }.bind(this, field.key)
         };
@@ -78,7 +78,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_delete",
                 handler: this.empty.bind(this)
             }],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             bodyCls: "pimcore_video_container"
         };
 

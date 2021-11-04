@@ -109,7 +109,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $element = $e->getElement();
 
         $list = new WorkflowState\Listing;
-        $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getType($element)]);
+        $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getElementType($element)]);
 
         foreach ($list->load() as $item) {
             $item->delete();
@@ -174,28 +174,25 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
                     if ($element instanceof ConcreteObject) {
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
-                        $hasSelectedCustomLayout = $this->requestStack->getMasterRequest(
-                            ) && $this->requestStack->getMasterRequest()->query->has(
+                        $hasSelectedCustomLayout = $this->requestStack->getMainRequest(
+                            ) && $this->requestStack->getMainRequest()->query->has(
                                 'layoutId'
-                            ) && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
+                            ) && $this->requestStack->getMainRequest()->query->get('layoutId') !== '';
 
                         if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
                             //load the new layout into the object container
                             $validLayouts = DataObject\Service::getValidLayouts($element);
 
-                            //check that the layout id is valid before trying to load
-                            if (!empty($validLayouts)) {
-                                // check user permissions again
-                                if ($validLayouts[$workflowLayoutId]) {
-                                    $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
-                                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                                    DataObject\Service::enrichLayoutDefinition(
-                                        $customLayoutDefinition,
-                                        $e->getArgument('object')
-                                    );
-                                    $data['layout'] = $customLayoutDefinition;
-                                    $data['currentLayoutId'] = $workflowLayoutId;
-                                }
+                            // check user permissions again
+                            if (isset($validLayouts[$workflowLayoutId])) {
+                                $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
+                                $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                                DataObject\Service::enrichLayoutDefinition(
+                                    $customLayoutDefinition,
+                                    $e->getArgument('object')
+                                );
+                                $data['layout'] = $customLayoutDefinition;
+                                $data['currentLayoutId'] = $workflowLayoutId;
                             }
                         }
                     }

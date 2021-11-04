@@ -1038,7 +1038,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->doLoadGroupByValues();
         }
 
-        $results = $this->preparedGroupByValuesResults[$fieldname];
+        $results = $this->preparedGroupByValuesResults[$fieldname] ?? null;
         if ($results) {
             if ($countValues) {
                 return $results;

@@ -167,7 +167,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
             selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             width: 250,
             labelWidth: 100
         };

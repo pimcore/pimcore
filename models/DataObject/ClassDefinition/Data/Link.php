@@ -163,7 +163,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string $data
+     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -177,7 +177,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -196,11 +196,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -254,7 +254,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $dependencies = [];
 
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -285,7 +285,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getCacheTags($data, array $tags = [])
     {
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -372,7 +372,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $id = $data->getInternal();
             $type = $data->getInternalType();
 
-            if (array_key_exists($type, $idMapping) and array_key_exists($id, $idMapping[$type])) {
+            if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                 $data->setInternal($idMapping[$type][$id]);
             }
         }
@@ -466,6 +466,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $link->setValues($value);
 
             return $link;
+        } elseif ($value instanceof DataObject\Data\Link) {
+            return $value;
         }
 
         return null;

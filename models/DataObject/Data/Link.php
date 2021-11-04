@@ -41,7 +41,7 @@ class Link implements OwnerAwareFieldInterface
     protected $internalType;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $internal;
 
@@ -51,7 +51,7 @@ class Link implements OwnerAwareFieldInterface
     protected $direct;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $linktype;
 
@@ -122,7 +122,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getInternalType()
     {
@@ -130,7 +130,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $internalType
+     * @param string|null $internalType
      *
      * @return $this
      */
@@ -143,7 +143,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getInternal()
     {
@@ -151,7 +151,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $internal
+     * @param int|null $internal
      *
      * @return $this
      */
@@ -185,7 +185,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLinktype()
     {
@@ -193,7 +193,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $linktype
+     * @param string|null $linktype
      *
      * @return $this
      */

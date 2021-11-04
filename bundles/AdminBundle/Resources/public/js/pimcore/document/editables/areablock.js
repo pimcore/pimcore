@@ -287,17 +287,32 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         //visibility buttons
         visibilityButtons = this.visibilityButtons[element.key];
         if (typeof visibilityButtons === 'undefined') {
+            var elementIcon = "pimcore_material_icon_preview";
+            if (element.dataset.hidden == "true") {
+                elementIcon = "pimcore_icon_white_hide";
+            }
             visibilityDiv = Ext.get(element).query('.pimcore_block_visibility[data-name="' + this.name + '"]')[0];
             this.visibilityButtons[element.key] = new Ext.Button({
                 cls: "pimcore_block_button_visibility",
-                iconCls: "pimcore_icon_white_hide",
+                iconCls: elementIcon,
                 enableToggle: true,
                 pressed: (element.dataset.hidden == "true"),
                 toggleHandler: function (element, el) {
                     Ext.get(element).toggleCls('pimcore_area_hidden');
+                    if (el.btnIconEl.dom.classList.contains('pimcore_icon_white_hide')) {
+                        Ext.get(el.btnIconEl.dom).removeCls('pimcore_icon_white_hide');
+                        Ext.get(el.btnIconEl.dom).addCls('pimcore_material_icon_preview');
+                    } else {
+                        Ext.get(el.btnIconEl.dom).removeCls('pimcore_material_icon_preview');
+                        Ext.get(el.btnIconEl.dom).addCls('pimcore_icon_white_hide');
+                    }
                 }.bind(this, element)
             });
             this.visibilityButtons[element.key].render(visibilityDiv);
+            new Ext.tip.ToolTip({
+                target: this.visibilityButtons[element.key],
+                html: t("show_hide_areablock")
+            });
             if(element.dataset.hidden == "true") {
                 Ext.get(element).addCls('pimcore_area_hidden');
             }
@@ -305,9 +320,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
 
         //dialogBox button
-        if(dialogBoxDiv) {
+        dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+        if (dialogBoxDiv) {
             dialogBoxButton = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"] .pimcore_block_button_dialog')[0];
-            if (typeof dialogBoxButton) {
+            if (typeof dialogBoxButton === 'undefined') {
                 dialogBoxDiv = Ext.get(element).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
                 dialogBoxButton = new Ext.Button({
                     cls: "pimcore_block_button_dialog",
@@ -850,6 +866,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
     removeBlock: function (element) {
         let container = Ext.get(element);
+
+        let dialogBoxDiv = container.query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+        if (dialogBoxDiv) {
+            let dialogBoxId = dialogBoxDiv.dataset.dialogId;
+            this.removeEditableDialogbox(dialogBoxId);
+        }
+
         let editablesContainer = container.query('[data-block-names]');
         editablesContainer.forEach(editableDiv => {
             editableManager.remove(editableDiv.dataset.name);

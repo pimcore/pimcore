@@ -82,7 +82,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
             bodyStyle: 'padding-top: 5px',
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
         };

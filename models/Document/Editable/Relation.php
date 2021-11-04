@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relation extends Model\Document\Editable
+class Relation extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * ID of the source object
@@ -84,11 +84,9 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $this->setElement();
 
@@ -279,9 +277,9 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->element) {
             $this->setElement();
@@ -329,19 +327,9 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         if (array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->id = $idMapping[$this->type][$this->getId()];

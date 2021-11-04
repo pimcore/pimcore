@@ -942,5 +942,16 @@
     "save_draft": "Зберегти чернетку",
     "selected_grid_columns": "Вибрані колонки сітки",
     "ungrouped": "негруповані",
-    "reindex_warning": "Зміна сортування за алфавітом на сортування за індексом переіндексує всі елементи. Бажаєте продовжити?"
+    "reindex_warning": "Зміна сортування за алфавітом на сортування за індексом переіндексує всі елементи. Бажаєте продовжити?",
+    "static_generator": "Static Page Generator",
+    "static_generator_enable": "Enable server side static rendering",
+    "static_generator_lifetime": "Lifetime (in minutes) for static page (optional)",
+    "last_generated": "Last generated",
+    "user_inactive": "User is not active",
+    "user_no_email_address": "User has no email address",
+    "user_no_password": "User has no password",
+    "user_unknown": "User unknown",
+    "lost_password_email_error": "Could not send password recovery email",
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
+    "collapse_children": "Collapse children"
 }

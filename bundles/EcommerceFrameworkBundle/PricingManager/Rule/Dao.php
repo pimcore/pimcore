@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -57,13 +58,13 @@ class Dao extends AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
-            throw new \Exception('pricing rule ' . $id . ' not found.');
+            throw new NotFoundException('pricing rule ' . $id . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }

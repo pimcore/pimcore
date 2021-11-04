@@ -368,11 +368,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data);
         }
 
-        if (!empty($data) and !is_numeric($data)) {
+        if (!empty($data) && !is_numeric($data)) {
             throw new Model\Element\ValidationException('invalid slider data');
         }
     }

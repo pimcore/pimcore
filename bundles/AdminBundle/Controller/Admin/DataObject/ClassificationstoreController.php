@@ -1002,6 +1002,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
                         'id' => $groupData->getId(),
                         'description' => $groupData->getDescription(),
                         'keys' => [],
+                        'sorter' => intval($mappedData[$groupData->getId()]['sorter']),
                         'collectionId' => $mappedData[$groupId]['colId'],
                     ];
                 }
@@ -1543,8 +1544,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

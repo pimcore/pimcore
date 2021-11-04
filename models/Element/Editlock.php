@@ -97,7 +97,7 @@ final class Editlock extends Model\AbstractModel
             $lock->getDao()->getByElement($cid, $ctype);
 
             return $lock;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

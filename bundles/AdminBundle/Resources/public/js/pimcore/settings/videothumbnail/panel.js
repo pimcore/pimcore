@@ -90,7 +90,8 @@ pimcore.settings.videothumbnail.panel = Class.create({
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addField.bind(this)
+                            handler: this.addField.bind(this),
+                            disabled: !pimcore.settings['video-thumbnails-writeable']
                         }
                     ]
                 }
@@ -174,7 +175,8 @@ pimcore.settings.videothumbnail.panel = Class.create({
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
-            handler: this.deleteField.bind(this, tree, record)
+            handler: this.deleteField.bind(this, tree, record),
+            disabled: !record.data.writeable
         }));
 
         menu.showAt(e.pageX, e.pageY);

@@ -27,7 +27,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
 
         var input = {
             fieldLabel: '<img src="/bundles/pimcoreadmin/img/flat-color-icons/calculator.svg" style="height: 1.8em; display: inline-block; vertical-align: middle;"/>' + this.fieldConfig.title,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             labelWidth: 100,
             readOnly: true,
             width: 100
@@ -37,13 +37,11 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.value = this.data.value;
         }
 
-        if (isNaN(this.fieldConfig.width)) {
-            input.width = 100;
-        } else if (this.fieldConfig.width) {
+        if (!isNaN(this.fieldConfig.width) && this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         }
 
-        if (!isNaN(this.fieldConfig.labelWidth)) {
+        if (!isNaN(this.fieldConfig.labelWidth) && this.fieldConfig.labelWidth) {
             input.labelWidth = this.fieldConfig.labelWidth;
         }
 

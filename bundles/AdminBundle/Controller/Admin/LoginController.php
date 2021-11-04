@@ -225,7 +225,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
-                $params['error'] = $error;
             }
         }
 
@@ -259,7 +258,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 return $this->redirect($url);
             } elseif ($queryString) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
-                    'deeplink' => true,
+                    'deeplink' => 'true',
                     'perspective' => $perspective,
                 ]);
                 $eventDispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
@@ -337,7 +336,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 13.1) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 67) {
+        if ($browser->getBrowser() == \Browser::BROWSER_EDGE && $browserVersion >= 90) {
             $supported = true;
         }
 

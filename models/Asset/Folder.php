@@ -54,7 +54,7 @@ class Folder extends Model\Asset
     public function setChildren($children)
     {
         $this->children = $children;
-        if (is_array($children) and count($children) > 0) {
+        if (is_array($children) && count($children) > 0) {
             $this->hasChildren = true;
         } else {
             $this->hasChildren = false;
@@ -64,7 +64,7 @@ class Folder extends Model\Asset
     }
 
     /**
-     * @return Asset[]|self[]
+     * @return Asset[]
      */
     public function getChildren()
     {
@@ -99,23 +99,21 @@ class Folder extends Model\Asset
     /**
      * @internal
      *
-     * @param bool $hdpi
-     *
      * @return resource|null
      *
      * @throws \Doctrine\DBAL\Exception
      * @throws \League\Flysystem\FilesystemException
      */
-    public function getPreviewImage(bool $hdpi = false)
+    public function getPreviewImage()
     {
         $storage = Storage::get('thumbnail');
         $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
             rtrim($this->getRealFullPath(), '/'),
             $this->getId(),
-            ($hdpi ? '-hdpi' : '')
+            '-hdpi'
         );
 
-        $tileThumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig($hdpi);
+        $tileThumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
 
         $limit = 42;
         $db = \Pimcore\Db::get();
@@ -163,6 +161,11 @@ class Folder extends Model\Asset
                 }
 
                 if ($tileThumb) {
+                    if (!$tileThumb->exists()) {
+                        // only generate if all necessary thumbs are available
+                        return null;
+                    }
+
                     $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 

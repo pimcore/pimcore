@@ -42,11 +42,6 @@ class Ffmpeg extends Adapter
     protected $arguments = [];
 
     /**
-     * @var array
-     */
-    private $tmpFiles = [];
-
-    /**
      * @return bool
      */
     public function isAvailable()
@@ -172,7 +167,7 @@ class Ffmpeg extends Adapter
             // add some global arguments
             array_push($command, '-threads', '0');
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            array_unshift($command, 'ffmpeg', '-i', realpath($this->file));
+            array_unshift($command, self::getFfmpegCli(), '-i', realpath($this->file));
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
@@ -297,18 +292,9 @@ class Ffmpeg extends Adapter
             Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
         }
-
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
     }
 
-    public function __destruct()
-    {
-        $this->destroy();
-    }
-
-    public function deleteConversionLogFile()
+    private function deleteConversionLogFile()
     {
         @unlink($this->getConversionLogFile());
     }

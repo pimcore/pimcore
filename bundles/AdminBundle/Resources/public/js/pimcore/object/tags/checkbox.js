@@ -123,7 +123,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 this.checkbox,
                 this.emptyButton
             ],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

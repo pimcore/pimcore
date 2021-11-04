@@ -21,8 +21,8 @@ use Pimcore\Model;
  * @internal
  *
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao delete()
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao save()
+ * @method void delete()
+ * @method void save()
  */
 class Blacklist extends Model\AbstractModel
 {
@@ -53,7 +53,7 @@ class Blacklist extends Model\AbstractModel
             $address->getDao()->getByAddress($addr);
 
             return $address;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

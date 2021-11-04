@@ -31,6 +31,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
+    use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
     /**
      * Static type of this element
@@ -221,7 +222,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $type = Element\Service::getType($data);
+            $type = Element\Service::getElementType($data);
             $id = $data->getId();
 
             return [[
@@ -393,7 +394,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -411,7 +412,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
         }
     }
 
@@ -422,7 +423,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return Element\Service::getType($data).':'.$data->getRealFullPath();
+            return Element\Service::getElementType($data).':'.$data->getRealFullPath();
         }
 
         return '';
@@ -560,7 +561,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function normalize($value, $params = [])
     {
         if ($value) {
-            $type = Element\Service::getType($value);
+            $type = Element\Service::getElementType($value);
             $id = $value->getId();
 
             return [
@@ -660,5 +661,28 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return null;
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $name = $params['name'] . '__id';
+        if (preg_match('/^(asset|object|document)\|(\d+)/', $value, $matches)) {
+            $typeField = $params['name'] . '__type';
+            $typeCondition = '`' . $typeField . '` = ' . "'" . $matches[1] . "'";
+            $value = $matches[2];
+
+            return '(' . $typeCondition . ' AND ' . $this->getRelationFilterCondition($value, $operator, $name) . ')';
+        }
+
+        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

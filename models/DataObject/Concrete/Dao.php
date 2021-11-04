@@ -31,6 +31,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\AbstractObject\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
 
     /**
@@ -131,7 +132,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
             ORDER BY `index` ASC", $params);
 
-        if (is_array($relations) and count($relations) > 0) {
+        if (is_array($relations) && count($relations) > 0) {
             return $relations;
         } else {
             return [];
@@ -417,10 +418,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function delete()
     {
-        $this->db->delete('object_query_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
-        $this->db->delete('object_store_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
-        $this->db->delete('object_relations_' . $this->model->getClassId(), ['src_id' => $this->model->getId()]);
-
         // delete fields which have their own delete algorithm
         if ($this->model->getClass()) {
             foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
@@ -431,10 +428,5 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         parent::delete();
-    }
-
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'object']);
     }
 }

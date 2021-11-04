@@ -61,6 +61,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         this.specificPanel.removeAll();
 
         this.layout = new Ext.Panel({
+            autoScroll: true,
             items: [
                 {
                     xtype: "form",

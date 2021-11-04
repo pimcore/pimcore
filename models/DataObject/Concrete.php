@@ -19,12 +19,14 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -33,6 +35,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
     /**
      * @internal
@@ -84,15 +87,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * Contains all scheduled tasks
-     *
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
-
-    /**
      * @internal
      *
      * @var bool|null
@@ -109,7 +103,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * returns the class ID of the current object class
      *
-     * @return int
+     * @return string
      */
     public static function classId()
     {
@@ -139,7 +133,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     try {
                         $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
-                        if ($this->getClass()->getAllowInherit()) {
+                        if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
                                 $getInheritedValues = DataObject::doGetInheritedValues();
@@ -190,7 +184,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         foreach ($subItems as $subItem) {
                             $subItemMessage = $subItem->getMessage();
                             if ($subItem instanceof Model\Element\ValidationException) {
-                                $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
+                                $contextStack = $subItem->getContextStack();
+                                if ($contextStack) {
+                                    $subItemMessage .= '[ ' . $contextStack[0] . ' ]';
+                                }
                             }
                             $subItemParts[] = $subItemMessage;
                         }
@@ -239,34 +236,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @internal
-     */
-    public function saveScheduledTasks(): void
-    {
-        // update scheduled tasks
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('object');
-                $task->save();
-            }
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function doDelete()
     {
-        // delete all versions
-        foreach ($this->getVersions() as $v) {
-            $v->delete();
-        }
+        // Dispatch Symfony Message Bus to delete versions
+        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+        );
 
         $this->getDao()->deleteAllTasks();
 
@@ -535,32 +512,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         return $this->omitMandatoryCheck;
-    }
-
-    /**
-     * @return Model\Schedule\Task[]
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Model\Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='object'", $this->getId());
-            $this->scheduledTasks = $taskList->load();
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return self
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
     }
 
     /**
@@ -908,7 +859,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         $descriptor['objectId'] = $this->getId();
 
-        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+        return $this->doRetrieveData($descriptor, DataObject\Data\UrlSlug::TABLE_NAME);
     }
 
     /**

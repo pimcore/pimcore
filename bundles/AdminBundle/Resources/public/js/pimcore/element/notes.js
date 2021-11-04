@@ -225,7 +225,7 @@ pimcore.element.notes = Class.create({
 
             this.layout = new Ext.Panel(layoutConf);
 
-            this.layout.on("activate", function () {
+            this.layout.on("render", function () {
                 this.store.load();
             }.bind(this));
         }

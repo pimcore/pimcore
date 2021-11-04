@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
@@ -43,11 +44,12 @@ class Rule extends AbstractModel implements RuleInterface
         } catch (\Exception $e) {
             try {
                 $ruleClass = get_called_class();
+                /** @var Rule $rule */
                 $rule = new $ruleClass;
                 $rule->getDao()->getById($id);
 
                 Runtime::set($cacheKey, $rule);
-            } catch (\Exception $ex) {
+            } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 
                 return null;
@@ -83,7 +85,7 @@ class Rule extends AbstractModel implements RuleInterface
     protected ?ConditionInterface $condition = null;
 
     /**
-     * @var array|ActionInterface
+     * @var ActionInterface[]
      */
     protected $action = [];
 
@@ -291,7 +293,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param array $action
+     * @param ActionInterface[] $action
      *
      * @return RuleInterface
      */
@@ -303,7 +305,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return array|ActionInterface
+     * @return ActionInterface[]
      */
     public function getActions()
     {

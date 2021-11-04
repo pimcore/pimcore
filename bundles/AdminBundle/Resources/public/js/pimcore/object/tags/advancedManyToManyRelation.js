@@ -95,7 +95,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             autoHeight = true;
         }
 
-        var cls = 'object_field';
         var i;
 
         var columns = [];
@@ -354,12 +353,14 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     draggroup: 'element'
                 },
                 markDirty: false,
-                enableTextSelection: true,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 listeners: {
                     afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
+                        this.dataChanged = true;
+
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -378,7 +379,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     }.bind(this)
                 }
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
@@ -390,10 +391,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ],
-            listeners: {
-                rowdblclick: this.gridRowDblClickHandler
-            }
+            ]
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu.bind(this));
@@ -942,8 +940,29 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         return {
             text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path")
+            getRelationFilter: this.getRelationFilter,
+            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path"),
         };
+    },
+
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValues = editor.store.getData().items;
+        if (!filterValues || !Array.isArray(filterValues) || !filterValues.length) {
+            filterValues = null;
+        } else {
+            filterValues = filterValues.map(function (item) {
+                return item.data.type + "|" + item.data.id;
+            }).join(',');
+        }
+
+        return new Ext.util.Filter({
+            operator: "like",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValues
+        });
     },
 
     getCellEditValue: function () {

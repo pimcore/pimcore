@@ -112,6 +112,7 @@ Ext.define('pimcore.FieldSetTools', {
 Ext.define('pimcore.filters', {
     extend: 'Ext.grid.filters.Filters',
     alias: 'plugin.pimcore.gridfilters',
+    menuFilterText: t('filter'),
 
     createColumnFilter: function(column) {
         this.callSuper(arguments);

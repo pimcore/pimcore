@@ -37,8 +37,8 @@ class Multiselect extends Data implements
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
+    use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
      * Static type of this element
@@ -345,7 +345,9 @@ class Multiselect extends Data implements
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            return implode(',', $data);
+            return implode(',', array_map(function ($v) {
+                return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+            }, $data));
         }
 
         return null;
@@ -356,11 +358,11 @@ class Multiselect extends Data implements
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!is_array($data) and !empty($data)) {
+        if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException('Invalid multiselect data');
         }
     }
@@ -527,55 +529,6 @@ class Multiselect extends Data implements
     }
 
     /**
-     * { @inheritdoc }
-     */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
-    {
-        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
-            $this->getOptionsProviderClass(),
-                DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
-        );
-        if ($optionsProvider) {
-            $context['fieldname'] = $this->getName();
-
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            $this->setOptions($options);
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
-    {
-        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
-            $this->getOptionsProviderClass(),
-            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
-        );
-
-        if ($optionsProvider) {
-            $context['object'] = $object;
-            if ($object) {
-                $context['class'] = $object->getClass();
-            }
-            $context['fieldname'] = $this->getName();
-
-            $inheritanceEnabled = DataObject::getGetInheritedValues();
-            DataObject::setGetInheritedValues(true);
-            $options = $optionsProvider->{'getOptions'}($context, $this);
-            DataObject::setGetInheritedValues($inheritanceEnabled);
-            $this->setOptions($options);
-
-            $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
-            $this->dynamicOptions = !$hasStaticOptions;
-        }
-
-        return $this;
-    }
-
-    /**
      * @param array|null $existingData
      * @param array $additionalData
      *
@@ -631,6 +584,7 @@ class Multiselect extends Data implements
     /**
      * @return $this
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
@@ -675,7 +629,7 @@ class Multiselect extends Data implements
      */
     public function getPhpdocInputType(): ?string
     {
-        return 'array|null';
+        return 'string[]|null';
     }
 
     /**
@@ -683,7 +637,7 @@ class Multiselect extends Data implements
      */
     public function getPhpdocReturnType(): ?string
     {
-        return 'array|null';
+        return 'string[]|null';
     }
 
     /**
@@ -705,7 +659,12 @@ class Multiselect extends Data implements
             $context = [];
             $context['fieldname'] = $this->getName();
 
-            $options = $optionsProvider->getOptions($context, $this);
+            try {
+                $options = $optionsProvider->getOptions($context, $this);
+            } catch (\Throwable $e) {
+                // error from getOptions => no values => no comma => no problems
+                $options = null;
+            }
         } else {
             $options = $this->getOptions();
         }
@@ -725,5 +684,27 @@ class Multiselect extends Data implements
     public function postSave($containerDefinition, $params = [])
     {
         // nothing to do
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
+    {
+        $this->doEnrichDefinitionDefinition(null, $this->getName(),
+            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    {
+        $this->doEnrichDefinitionDefinition($object, $this->getName(),
+            'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);
+
+        return $this;
     }
 }

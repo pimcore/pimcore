@@ -31,7 +31,7 @@ and the Subject contains the prefix "Debug email:".
 
 This is done by extending Symfony Mailer, with injected service `RedirectingPlugin`, which calls beforeSendPerformed before mail is sent and sendPerformed immediately after email is sent.
 
-Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yml e.g.,
+Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yaml e.g.,
 ```yaml
 framework:
     mailer:
@@ -65,7 +65,8 @@ action:
 //dynamic parameters
 $params = array('firstName' => 'Pim',
                 'lastName' => 'Core',
-                'product' => 73613);
+                'product' => \Pimcore\Model\DataObject::getById(73613)
+                );
  
 //sending the email
 $mail = new \Pimcore\Mail();
@@ -75,6 +76,11 @@ $mail->setParams($params);
 $mail->send();
 ```
 
+you can access the parameters in your mail content.
+```twig
+Hello {{ firstName }} {{ lastName }}
+Regarding the product {{ product.getName() }} ....
+```
 
 #### Sending a Plain Text Email:
 ```php

@@ -15,19 +15,28 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
+use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Asset\Video\Thumbnail\Config $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        parent::configure();
-        $this->setFile('video-thumbnails');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['assets']['video']['thumbnails']['definitions'] ?? [],
+            'settingsStoreScope' => 'pimcore_video_thumbnails',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
+            'legacyConfigFile' => 'video-thumbnails.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS',
+        ]);
     }
 
     /**
@@ -41,14 +50,18 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->model->setName($id);
         }
 
-        $data = $this->db->getById($this->model->getName());
+        $data = $this->getDataByName($this->model->getName());
 
-        if (isset($data['id'])) {
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
             throw new Model\Exception\NotFoundException(sprintf(
-                'Thumbnail with id "%s" does not exist.',
+                'Thumbnail with ID "%s" does not exist.',
                 $this->model->getName()
             ));
         }
@@ -76,7 +89,7 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
-        $this->db->insertOrUpdate($data, $this->model->getName());
+        $this->saveData($this->model->getName(), $data);
         $this->autoClearTempFiles();
     }
 
@@ -85,7 +98,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete()
     {
-        $this->db->delete($this->model->getName());
+        $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
     }
 
@@ -93,7 +106,29 @@ class Dao extends Model\Dao\PhpArrayTable
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            $this->model->clearTempFiles();
+            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                new CleanupThumbnailsMessage('video', $this->model->getName())
+            );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'assets' => [
+                    'video' => [
+                        'thumbnails' => [
+                            'definitions' => [
+                                $id => $data,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

@@ -549,7 +549,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array|object $value
+     * @param mixed $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -594,7 +594,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . "\n";
-        $code .= "\t\t" . 'if ($preValue !== null) { ' . "\n";
+        $code .= "\t\t" . 'if ($preValue !== null) {' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n\n";
@@ -641,7 +641,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n\n";
         }
@@ -783,7 +783,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }

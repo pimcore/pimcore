@@ -20,6 +20,8 @@ use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  * @method Staticroute\Dao getDao()
  * @method void save()
  * @method void delete()
@@ -27,7 +29,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 final class Staticroute extends AbstractModel
 {
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -129,7 +131,9 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param int $id
+     * Static helper to retrieve an instance of Staticroute by the given ID
+     *
+     * @param string $id
      *
      * @return self|null
      */
@@ -145,10 +149,10 @@ final class Staticroute extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $route = new self();
-                $route->setId((int)$id);
+                $route->setId($id);
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         }
@@ -225,7 +229,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -265,13 +269,13 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -653,5 +657,13 @@ final class Staticroute extends AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }

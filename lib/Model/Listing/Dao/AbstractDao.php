@@ -85,7 +85,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      */
     protected function getOffsetLimit()
     {
-        if ($limit = $this->model->getLimit() and $offset = $this->model->getOffset()) {
+        if (($limit = $this->model->getLimit()) && ($offset = $this->model->getOffset())) {
             return ' LIMIT ' . $offset . ',' . $limit;
         }
 

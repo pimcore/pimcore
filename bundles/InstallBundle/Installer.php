@@ -579,6 +579,9 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        $db = \Pimcore\Db::get();
+        $db->query('SET FOREIGN_KEY_CHECKS=0;');
+
         if ($this->createDatabaseStructure) {
             $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
 
@@ -588,7 +591,6 @@ class Installer
             // get every command as single part
             $mysqlInstallScripts = explode(';', $mysqlInstallScript);
 
-            $db = \Pimcore\Db::get();
             // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
             foreach ($mysqlInstallScripts as $m) {
                 $sql = trim($m);
@@ -600,6 +602,9 @@ class Installer
 
             $pdoCacheAdapter = new PdoAdapter($db);
             $pdoCacheAdapter->createTable();
+
+            $doctrineTransportConn = new \Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection([], $db);
+            $doctrineTransportConn->setup();
         }
 
         if ($this->importDatabaseData) {
@@ -623,6 +628,8 @@ class Installer
                 $errors[] = $e->getMessage();
             }
         }
+
+        $db->query('SET FOREIGN_KEY_CHECKS=1;');
 
         return $errors;
     }
@@ -800,6 +807,7 @@ class Installer
             ['key' => 'workflow_details'],
             ['key' => 'notifications'],
             ['key' => 'notifications_send'],
+            ['key' => 'sites'],
         ];
 
         foreach ($userPermissions as $up) {

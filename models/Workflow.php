@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method Workflow\Dao getDao()
  * @method void save()
@@ -122,7 +124,7 @@ class Workflow extends AbstractModel
                 $workflow = new self();
                 \Pimcore\Cache\Runtime::set($cacheKey, $workflow);
                 $workflow->getDao()->getById((int)$id);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         }

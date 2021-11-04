@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
@@ -49,7 +50,7 @@ class Reservation extends AbstractModel
             $config->getDao()->get($code, $cart);
 
             return $config;
-        } catch (\Exception $ex) {
+        } catch (NotFoundException $ex) {
             //            Logger::debug($ex->getMessage());
             return null;
         }

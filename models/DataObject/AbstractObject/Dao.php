@@ -32,7 +32,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -43,7 +43,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Object with the ID ' . $id . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
         }
     }
 
@@ -350,7 +350,7 @@ class Dao extends Model\Element\Dao
             $query .= sprintf(' AND o_type IN (\'%s\')', implode("','", $objectTypes));
         }
 
-        if ($user and !$user->isAdmin()) {
+        if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 

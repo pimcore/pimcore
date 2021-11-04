@@ -44,7 +44,7 @@ tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto
 defined in the special namespace. Let's define our brick as above, but assume it needs access to a logger instance:
 
 ```yaml
-# a service.yml file defining services
+# a service.yaml file defining services
 services:
     App\Document\Areabrick\Iframe:
         arguments: ['@logger']
@@ -158,7 +158,7 @@ variable on the view which gives you access to the brick instance. A `info` vari
 brick metadata.
 
 ```twig
-/* templates/Areas/iframe/view.html.twig */
+/* templates/areas/iframe/view.html.twig */
 
 {% set urlField = pimcore_input('iframe_url') %}
 {% set widthField = pimcore_numeric('iframe_width') %}

@@ -182,6 +182,11 @@ pimcore.object.tree = Class.create({
             },
             "itemmouseleave": function () {
                 pimcore.helpers.treeToolTipHide();
+            },
+            "beforeload": function (store, operation, options) {
+                // add the parent path as an additional diagnostic parameter
+                // can be used by bundles that work with dynamic children nodes
+                store.proxy.setExtraParam('parentPath', operation.node.data.path)
             }
         };
 
@@ -191,6 +196,13 @@ pimcore.object.tree = Class.create({
     onTreeNodeClick: function (tree, record, item, index, event, eOpts ) {
         if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
             try {
+
+                var eventData =  {record: record, preventDefault: false};
+                pimcore.plugin.broker.fireEvent("prepareOnObjectTreeNodeClick", eventData);
+                if (eventData.preventDefault) {
+                    return;
+                }
+
                 if (record.data.permissions.view) {
                     pimcore.helpers.openObject(record.data.id, record.data.type);
                 }
@@ -650,6 +662,27 @@ pimcore.object.tree = Class.create({
                         iconCls: "pimcore_icon_lock",
                         hideOnClick: false,
                         menu: lockMenu
+                    });
+                }
+            }
+
+            // expand and collapse complete tree
+            if (!record.data.leaf) {
+                if (record.data.expanded) {
+                    advancedMenuItems.push({
+                        text: t('collapse_children'),
+                        iconCls: "pimcore_icon_collapse_children",
+                        handler: function () {
+                            record.collapse(true);
+                        }.bind(this, record)
+                    });
+                } else {
+                    advancedMenuItems.push({
+                        text: t('expand_children'),
+                        iconCls: "pimcore_icon_expand_children",
+                        handler: function () {
+                            record.expand(true);
+                        }.bind(this, record)
                     });
                 }
             }

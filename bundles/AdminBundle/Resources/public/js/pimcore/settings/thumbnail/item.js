@@ -38,12 +38,18 @@ pimcore.settings.thumbnail.item = Class.create({
 
     addLayout: function () {
         var panelButtons = [];
-        panelButtons.push({
+        let buttonConfig = {
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
-        });
+            handler: this.save.bind(this),
+            disabled: !this.data.writeable
+        };
 
+        if (!this.data.writeable) {
+            buttonConfig.tooltip = t("config_not_writeable");
+        }
+
+        panelButtons.push(buttonConfig);
 
         this.mediaPanel = new Ext.TabPanel({
             autoHeight: true,
@@ -303,17 +309,10 @@ pimcore.settings.thumbnail.item = Class.create({
     },
 
     save: function () {
-        var reload = false;
-        var newGroup = this.groupField.getValue();
-        if (newGroup != this.data.group) {
-            this.data.group = newGroup;
-            reload = true;
-        }
-
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_thumbnailupdate'),
             method: "PUT", params: this.getData(),
-            success: this.saveOnComplete.bind(this, reload)
+            success: this.saveOnComplete.bind(this)
 
         });
     },

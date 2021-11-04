@@ -108,13 +108,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $users = $list->load();
 
         $options = [];
-        if (is_array($users) and count($users) > 0) {
+        if (is_array($users) && count($users) > 0) {
             foreach ($users as $user) {
                 if ($user instanceof Model\User) {
                     $value = $user->getName();
                     $first = $user->getFirstname();
                     $last = $user->getLastname();
-                    if (!empty($first) or !empty($last)) {
+                    if (!empty($first) || !empty($last)) {
                         $value .= ' (' . $first . ' ' . $last . ')';
                     }
                     $options[] = [
@@ -132,7 +132,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 

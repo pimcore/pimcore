@@ -151,7 +151,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param int $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -215,7 +215,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -236,7 +236,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -275,7 +275,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -291,7 +291,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -450,13 +450,13 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($container, $params);
 
         if ($data && $data->getData() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
                 $data->setData(Asset::getById($idMapping['asset'][$data->getData()->getId()]));
             }
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
+            if (array_key_exists('asset', $idMapping) && array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
                 $data->setPoster(Asset::getById($idMapping['asset'][$data->getPoster()->getId()]));
             }
         }
@@ -531,7 +531,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $poster = $value->getPoster();
             if ($poster) {
                 $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
+                    'type' => Model\Element\Service::getElementType($poster),
                     'id' => $poster->getId(),
                 ];
             }
@@ -540,7 +540,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
+                    'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),
                 ];
             } else {

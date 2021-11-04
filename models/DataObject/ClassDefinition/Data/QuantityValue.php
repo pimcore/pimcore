@@ -28,7 +28,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
@@ -328,7 +327,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param float $data
+     * @param array $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -383,7 +382,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
 
-            return $data->getValue() . $unit;
+            return htmlspecialchars($data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
         }
 
         return '';
@@ -660,5 +659,17 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty($data)
+    {
+        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+            return empty($data->getValue()) && empty($data->getUnitId());
+        }
+
+        return parent::isEmpty($data);
     }
 }

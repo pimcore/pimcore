@@ -95,7 +95,7 @@ class Service extends Model\Element\Service
                     }
                 }
             }
-            if (is_array($dataKeys) and count($dataKeys) > 0) {
+            if (is_array($dataKeys) && count($dataKeys) > 0) {
                 $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
@@ -979,7 +979,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return array
+     * @return DataObject\ClassDefinition\CustomLayout[]
      */
     public static function getValidLayouts(Concrete $object)
     {
@@ -1044,7 +1044,7 @@ class Service extends Model\Element\Service
      */
     public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
     {
-        if ($insideDataType && $layout instanceof ClassDefinition\Data and !is_a($layout, $targetClass)) {
+        if ($insideDataType && $layout instanceof ClassDefinition\Data && !is_a($layout, $targetClass)) {
             $targetList[$layout->getName()] = $layout;
         }
 
@@ -1205,7 +1205,7 @@ class Service extends Model\Element\Service
             if (is_array($allowedLayoutIds)) {
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
-                        if (!$layoutDefinitions[$allowedLayoutId]) {
+                        if (!isset($layoutDefinitions[$allowedLayoutId])) {
                             $customLayout = ClassDefinition\CustomLayout::getById($allowedLayoutId);
                             if (!$customLayout) {
                                 continue;
@@ -1228,7 +1228,7 @@ class Service extends Model\Element\Service
                         $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
                         $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(false);
                     $mergedFieldDefinition[$key]->setNotEditable(false);
@@ -1259,7 +1259,7 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
                 }
@@ -1807,6 +1807,7 @@ class Service extends Model\Element\Service
                 if (!isset($mappedFieldnames[$field])) {
                     $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
                 }
+
                 $objectData[$field] = $fieldData;
             }
         }
@@ -1866,7 +1867,9 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::escapeCsvRecord($rowData);
+                $data[] = $rowData;
             }
         }
 

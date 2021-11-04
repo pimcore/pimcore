@@ -38,12 +38,14 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
+     * @internal
+     *
      * @param bool $useExifTool
      * @param string|null $filePath
      *
      * @throws \Exception
      */
-    protected function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null)
+    public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null)
     {
         if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()) {
             $this->readEmbeddedMetaData($useExifTool, $filePath);
@@ -63,7 +65,7 @@ trait EmbeddedMetaDataTrait
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
 
         if (!$filePath) {
-            $filePath = $this->getTemporaryFile();
+            $filePath = $this->getLocalFile();
         }
 
         if ($exiftool && $useExifTool) {

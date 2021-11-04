@@ -55,10 +55,22 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         return {
             text: t(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
+            getRelationFilter: this.getRelationFilter,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.type + "|" + editor.data.id : null;
+        return new Ext.util.Filter({
+            operator: "=",
+            type: "int",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
+    },
 
     getLayoutEdit: function () {
 
@@ -150,7 +162,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             labelWidth: labelWidth,
             layout: 'hbox',
             items: items,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0
@@ -207,7 +219,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 iconCls: "pimcore_icon_open",
                 handler: this.openElement.bind(this)
             }],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

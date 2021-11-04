@@ -101,7 +101,7 @@ final class Note extends Model\AbstractModel
             $note->getDao()->getById($id);
 
             return $note;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -131,7 +131,7 @@ final class Note extends Model\AbstractModel
     public function setElement(ElementInterface $element)
     {
         $this->setCid($element->getId());
-        $this->setCtype(Service::getType($element));
+        $this->setCtype(Service::getElementType($element));
 
         return $this;
     }

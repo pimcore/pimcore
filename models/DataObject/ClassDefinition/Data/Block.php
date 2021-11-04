@@ -207,6 +207,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         if ($data) {
             $count = 0;
 
+            //Fix old serialized data protected properties with \0*\0 prefix
+            //https://github.com/pimcore/pimcore/issues/9973
+            if (str_contains($data, ':" * ')) {
+                $data = preg_replace_callback('!s:(\d+):" \* (.*?)";!', function ($match) {
+                    return ($match[1] == strlen($match[2])) ? $match[0] : 's:' . strlen($match[2]) .   ':"' . $match[2] . '";';
+                }, $data);
+            }
+
             $unserializedData = Serialize::unserialize($data);
             $result = [];
 
@@ -353,7 +361,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $items = $object->$blockGetter($language);
                         if (isset($items[$oIndex])) {
                             $item = $items[$oIndex][$elementName];
-                            $blockData = $item->getData();
+                            $blockData = $blockElement[$elementName] ?: $item->getData();
                             $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
@@ -364,7 +372,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         }
                     }
                 } else {
-                    $elementData = $blockElement[$elementName];
+                    $elementData = $blockElement[$elementName] ?? null;
                     $blockData = $fd->getDataFromEditmode(
                         $elementData,
                         $object,
