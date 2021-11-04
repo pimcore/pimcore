@@ -15,14 +15,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
+/**
+ * @internal
+ */
 class Version20211103055110 extends AbstractMigration
 {
     public function up(Schema $schema): void
