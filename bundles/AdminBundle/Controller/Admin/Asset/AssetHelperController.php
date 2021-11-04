@@ -25,6 +25,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
@@ -231,6 +232,7 @@ class AssetHelperController extends AdminController
                 $gridConfigName = $savedGridConfig->getName();
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
+                $setAsFavourite = $savedGridConfig->isSetAsFavourite();
             }
         }
 
@@ -270,6 +272,7 @@ class AssetHelperController extends AdminController
         $settings['gridConfigName'] = $gridConfigName ?? null;
         $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['setAsFavourite'] = $setAsFavourite ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         $context = $gridConfig['context'] ?? null;
@@ -527,6 +530,10 @@ class AssetHelperController extends AdminController
 
                 $this->updateGridConfigShares($gridConfig, $metadata);
 
+                if ($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin()) {
+                    $this->updateGridConfigFavourites($gridConfig, $metadata);
+                }
+
                 if (!$gridConfig) {
                     $gridConfig = new GridConfig();
                     $gridConfig->setName(date('c'));
@@ -541,6 +548,7 @@ class AssetHelperController extends AdminController
                     $gridConfig->setName($metadata['gridConfigName']);
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -557,6 +565,7 @@ class AssetHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
+                $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
                 $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId();
 
                 return $this->adminJson([
@@ -611,6 +620,80 @@ class AssetHelperController extends AdminController
             $share->setGridConfigId($gridConfig->getId());
             $share->setSharedWithUserId($id);
             $share->save();
+        }
+    }
+
+    /**
+     * @param GridConfig|null $gridConfig
+     * @param array $metadata
+     *
+     * @throws \Exception
+     */
+    protected function updateGridConfigFavourites($gridConfig, $metadata)
+    {
+        $currentUser = $this->getAdminUser();
+
+        if (!$gridConfig || $currentUser === null || !$currentUser->isAllowed('share_configurations')) {
+            // nothing to do
+            return;
+        }
+
+        if (!$currentUser->isAdmin() && (int) $gridConfig->getOwnerId() !== $currentUser->getId()) {
+            throw new \Exception("don't mess with someone elses grid config");
+        }
+
+        $sharedUsers = [];
+
+        if ($metadata['shareGlobally'] === false) {
+            $sharedUserIds = $metadata['sharedUserIds'];
+
+            if ($sharedUserIds) {
+                $sharedUsers = explode(',', $sharedUserIds);
+            }
+        }
+
+        if ($metadata['shareGlobally'] === true) {
+            $users = new User\Listing();
+            $users->setCondition('id = ?', $currentUser->getId());
+
+            foreach ($users as $user) {
+                $sharedUsers[] = $user->getId();
+            }
+        }
+
+        foreach ($sharedUsers as $id) {
+            // Check if the user has already a favourite
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
+                (int) $id,
+                $gridConfig->getClassId(),
+                0,
+                $gridConfig->getSearchType()
+            );
+
+            if ($favourite instanceof GridConfigFavourite) {
+                $favouriteGridConfig = GridConfig::getById($favourite->getGridConfigId());
+
+                if ($favouriteGridConfig instanceof GridConfig) {
+                    // Check if the grid config was shared globally if that is *not* the case we also not update
+                    if ((bool) $favouriteGridConfig->isShareGlobally() === false) {
+                        continue;
+                    }
+
+                    // Check if the user is the owner. If that is the case we do not update the favourite
+                    if ((int) $favouriteGridConfig->getOwnerId() === (int) $id) {
+                        continue;
+                    }
+                }
+            }
+
+            $favourite = new GridConfigFavourite();
+            $favourite->setGridConfigId($gridConfig->getId());
+            $favourite->setClassId($gridConfig->getClassId());
+            $favourite->setObjectId(0);
+            $favourite->setOwnerId($id);
+            $favourite->setType($gridConfig->getType());
+            $favourite->setSearchType($gridConfig->getSearchType());
+            $favourite->save();
         }
     }
 
