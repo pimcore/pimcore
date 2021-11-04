@@ -87,7 +87,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string[]
      */
-    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname'];
+    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname', 'o_path'];
 
     /**
      * @internal
@@ -1568,6 +1568,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 return isset($elements[0]) ? $elements[0] : null;
             }
+
             return $list;
         }
 
