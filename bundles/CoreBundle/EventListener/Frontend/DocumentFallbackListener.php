@@ -120,6 +120,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 if ($document->getProperty('language')) {
                     $request->setLocale($document->getProperty('language'));
                 }
+                $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
             }
         } else {
             // if we're in a sub request and no explicit document is set - try to load document from
@@ -155,7 +156,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        if ($this->fallbackDocument && $event->isMainRequest()) {
+        if ($this->fallbackDocument && !$this->documentResolver->getDocument()) {
             $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
         }
     }
