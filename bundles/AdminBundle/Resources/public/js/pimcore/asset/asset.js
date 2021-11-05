@@ -23,7 +23,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             params: {
                 id: this.id,
-                type: this.type
+                    type: this.type
             }
         });
     },
@@ -42,7 +42,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
 
             if (this.type !== this.data.type) {
-                this.type = this.data.type;
+                Ext.MessageBox.alert(t("warning"), t("asset_type_changed"));
             }
 
             this.addTab();
