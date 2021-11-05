@@ -119,7 +119,7 @@ final class Version20211018104331 extends AbstractMigration
         if (!$tableSchema->hasForeignKey($fkName)) {
             $column = $tableSchema->getColumn($localForeignKeyColumn);
 
-            if($column->getPrecision() !== 10 || !($column->getType() instanceof IntegerType)) {
+            if ($column->getPrecision() !== 10 || !($column->getType() instanceof IntegerType)) {
                 $tableSchema->changeColumn($localForeignKeyColumn, [
                     'type' => new IntegerType(),
                     'precision' => 10,
