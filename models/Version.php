@@ -170,7 +170,7 @@ final class Version extends AbstractModel
      */
     public static function isEnabled(): bool
     {
-        return (self::$disabled === false);
+        return !self::$disabled;
     }
 
     /**
