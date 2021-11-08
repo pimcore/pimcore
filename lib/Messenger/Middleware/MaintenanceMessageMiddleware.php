@@ -42,7 +42,7 @@ class MaintenanceMessageMiddleware implements MiddlewareInterface
         /** @var MaintenanceTagStamp $stamp */
         $stamp = $envelope->last(MaintenanceTagStamp::class);
         if (null !== $stamp) {
-            if (in_array($stamp->getTag(), array_values($this->skipMessages))) {
+            if (in_array($stamp->getTag(), $this->skipMessages, true)) {
                 return $envelope->with(new DispatchAfterCurrentBusStamp());
             }
         }
