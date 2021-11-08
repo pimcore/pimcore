@@ -16,7 +16,6 @@
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Image\ImageOptimizerInterface;
-use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
@@ -32,7 +31,6 @@ class OptimizeImageHandler
 
     public function __invoke(OptimizeImageMessage $message)
     {
-        p_r('ddddddddddddddddddddd');
         $storage = Storage::get('thumbnail');
 
         $path = $message->getPath();
