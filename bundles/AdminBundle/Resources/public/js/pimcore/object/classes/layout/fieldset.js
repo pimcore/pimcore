@@ -49,7 +49,7 @@ pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.lay
             style: "margin: 10px 0 10px 0",
             items: [
                 {
-                    xtype: "textfield",
+                    xtype: "numberfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
