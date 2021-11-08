@@ -364,7 +364,7 @@ final class Console
      *
      * @return array|string
      */
-    public static function addLowProcessPriority($cmd)
+    public static function addLowProcessPriority(&$cmd)
     {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {
