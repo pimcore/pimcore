@@ -24,7 +24,7 @@ class MaintenanceTagStamp implements StampInterface
     }
 
     /**
-     * Get the context related to a message.
+     * Get the maintenance tag related to a message.
      */
     public function getTag(): string
     {

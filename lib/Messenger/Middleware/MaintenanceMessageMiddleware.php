@@ -30,9 +30,9 @@ class MaintenanceMessageMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param $message
+     * @param string $message
      */
-    public function addSkipMessage($message): void
+    public function addSkipMessage(string $message): void
     {
         $this->skipMessages[] = $message;
     }
@@ -40,7 +40,8 @@ class MaintenanceMessageMiddleware implements MiddlewareInterface
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         /** @var MaintenanceTagStamp $stamp */
-        if (null !== $stamp = $envelope->last(MaintenanceTagStamp::class)) {
+        $stamp = $envelope->last(MaintenanceTagStamp::class);
+        if (null !== $stamp) {
             if (in_array($stamp->getTag(), array_values($this->skipMessages))) {
                 return $envelope->with(new DispatchAfterCurrentBusStamp());
             }
