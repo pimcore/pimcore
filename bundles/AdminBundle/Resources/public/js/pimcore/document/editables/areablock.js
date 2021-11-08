@@ -703,6 +703,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 if(groups[g].length > 0) {
                     groupMenu = {
                         text: t(groups[g]),
+                        iconCls: "pimcore_icon_area",
                         hideOnClick: false,
                         menu: []
                     };
