@@ -29,6 +29,10 @@ framework:
             main: native://default
             pimcore_newsletter: native://default
     messenger:
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - 'Pimcore\Messenger\Middleware\SkipMessageMiddleware'
         transports:
             pimcore_core: "doctrine://default"
             pimcore_maintenance: "doctrine://default"

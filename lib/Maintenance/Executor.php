@@ -15,8 +15,8 @@
 
 namespace Pimcore\Maintenance;
 
-use Pimcore\Messenger\Handler\MaintenanceTaskHandlerInterface;
 use Pimcore\Messenger\MaintenanceTaskMessage;
+use Pimcore\Messenger\Middleware\MaintenanceMessageMiddleware;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
@@ -33,9 +33,13 @@ final class Executor implements ExecutorInterface
     private $tasks = [];
 
     /**
+     * Tasks moved to Symfony Messenger bus
+     *
      * @var array
      */
-    private $handlers = [];
+    private $busMessages = [
+        'imageoptimize'
+    ];
 
     /**
      * @var string
@@ -56,7 +60,8 @@ final class Executor implements ExecutorInterface
         string $pidFileName,
         LoggerInterface $logger,
         LockFactory $lockFactory,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
+        private MaintenanceMessageMiddleware $skipMessageMiddleware
     ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
@@ -125,25 +130,20 @@ final class Executor implements ExecutorInterface
             );
         }
 
-        foreach ($this->handlers as $handlerName => $handler) {
-            if (count($validJobs) > 0 && !in_array($handlerName, $validJobs, true)) {
+        //handle tasks moved to Symfony Messenger
+        foreach ($this->busMessages as $message) {
+            if (count($validJobs) > 0 && !in_array($message, $validJobs, true)) {
                 $this->logger->info('Skipped job with ID {id} because it is not in the valid jobs', [
-                    'id' => $handlerName,
+                    'id' => $message,
                 ]);
-
-                if ($handler instanceof MaintenanceTaskHandlerInterface) {
-                    $handler->setExcluded(true);
-                }
+                $this->skipMessageMiddleware->addSkipMessage($message);
             }
 
-            if (count($excludedJobs) > 0 && in_array($handlerName, $excludedJobs, true)) {
+            if (count($excludedJobs) > 0 && in_array($message, $excludedJobs, true)) {
                 $this->logger->info('Skipped job with ID {id} because it has been excluded', [
-                    'id' => $handlerName,
+                    'id' => $message,
                 ]);
-
-                if ($handler instanceof MaintenanceTaskHandlerInterface) {
-                    $handler->setExcluded(true);
-                }
+                $this->skipMessageMiddleware->addSkipMessage($message);
             }
         }
     }
@@ -153,17 +153,8 @@ final class Executor implements ExecutorInterface
      */
     public function getTaskNames()
     {
-        return array_merge(array_keys($this->tasks), array_keys($this->handlers));
-    }
-
-    /**
-     * @internal
-     *
-     * @return array
-     */
-    public function getHandlerNames(): array
-    {
-        return array_keys($this->handlers);
+        //merge tasks moved to Symfony messenger, specified in $this->busMessages
+        return array_merge(array_keys($this->tasks), array_keys($this->busMessages));
     }
 
     /**
@@ -206,18 +197,5 @@ final class Executor implements ExecutorInterface
         }
 
         $this->tasks[$name] = $task;
-    }
-
-    /**
-     * @param string $name
-     * @param MaintenanceTaskHandlerInterface $handler
-     */
-    public function registerHandler(string $name, MaintenanceTaskHandlerInterface $handler)
-    {
-        if (array_key_exists($name, $this->tasks)) {
-            throw new \InvalidArgumentException(sprintf('Handler with name %s has already been registered', $name));
-        }
-
-        $this->handlers[$name] = $handler;
     }
 }

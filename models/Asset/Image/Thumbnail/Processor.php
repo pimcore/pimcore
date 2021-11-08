@@ -19,10 +19,12 @@ use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
+use Pimcore\Messenger\Stamp\MaintenanceTagStamp;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -404,7 +406,9 @@ class Processor
 
                 if ($optimizeContent) {
                     \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
-                      new OptimizeImageMessage($storagePath)
+                      new Envelope(new OptimizeImageMessage($storagePath), [
+                          new MaintenanceTagStamp('optimizeimage')
+                      ])
                     );
                 }
 

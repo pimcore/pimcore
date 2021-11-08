@@ -24,20 +24,15 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-class OptimizeImageHandler implements MaintenanceTaskHandlerInterface
+class OptimizeImageHandler
 {
-    use MaintenanceTaskHandlerTrait;
-
     public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
     {
     }
 
     public function __invoke(OptimizeImageMessage $message)
     {
-        if ($this->isExcluded()) {
-            return;
-        }
-
+        p_r('ddddddddddddddddddddd');
         $storage = Storage::get('thumbnail');
 
         $path = $message->getPath();
@@ -51,5 +46,4 @@ class OptimizeImageHandler implements MaintenanceTaskHandlerInterface
             $this->logger->debug('Skip optimizing of '.$path." because it doesn't exist anymore");
         }
     }
-
 }

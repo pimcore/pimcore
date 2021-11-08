@@ -13,29 +13,22 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Messenger\Handler;
+namespace Pimcore\Messenger\Stamp;
 
-use Pimcore\Logger;
-use Pimcore\Model\DataObject;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
-/**
- * @internal
- */
-trait MaintenanceTaskHandlerTrait
+class MaintenanceTagStamp implements StampInterface
 {
-    /**
-     * @var bool
-     */
-    protected bool $excluded;
-
-
-    public function isExcluded(): bool
+    public function __construct(private string $tag)
     {
-        return $this->excluded;
     }
 
-    public function setExcluded(bool $exclude): void
+    /**
+     * Get the context related to a message.
+     */
+    public function getTag(): string
     {
-        $this->excluded = $exclude;
+        return $this->tag;
     }
 }
+

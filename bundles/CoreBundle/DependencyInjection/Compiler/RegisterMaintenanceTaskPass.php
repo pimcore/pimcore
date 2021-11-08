@@ -36,22 +36,12 @@ final class RegisterMaintenanceTaskPass implements CompilerPassInterface
 
         $definition = $container->getDefinition(Executor::class);
 
-        //Add Tasks
         foreach ($container->findTaggedServiceIds('pimcore.maintenance.task') as $id => $tags) {
             if (!isset($tags[0]['type'])) {
-                throw new \InvalidArgumentException('Tagged Maintenance Task `'.$id.'` needs a `type` attribute.');
+                throw new \InvalidArgumentException('Tagged Maintenance Task `'.$id.'` needs to a `type` attribute.');
             }
 
             $definition->addMethodCall('registerTask', [$tags[0]['type'], new Reference($id)]);
-        }
-
-        //Add Handlers
-        foreach ($container->findTaggedServiceIds('pimcore.maintenance.handler') as $id => $tags) {
-            if (!isset($tags[0]['type'])) {
-                throw new \InvalidArgumentException('Tagged Maintenance Handler `' . $id . '` needs a `type` attribute.');
-            }
-
-            $definition->addMethodCall('registerHandler', [$tags[0]['type'], new Reference($id)]);
         }
     }
 }
