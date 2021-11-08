@@ -18,6 +18,7 @@ namespace Pimcore\Image;
 use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\File;
 use Pimcore\Image\Optimizer\OptimizerInterface;
+use Pimcore\Tool\Sorter;
 use Pimcore\Tool\Storage;
 
 class Optimizer implements ImageOptimizerInterface
@@ -54,13 +55,7 @@ class Optimizer implements ImageOptimizerInterface
         }
 
         // order by filesize
-        usort($optimizedImages, function ($a, $b) {
-            if ($a['filesize'] == $b['filesize']) {
-                return 0;
-            }
-
-            return ($a['filesize'] < $b['filesize']) ? -1 : 1;
-        });
+        usort($optimizedImages, [Sorter::class, 'filesize']);
 
         // first entry is the smallest -> use this one
         if (count($optimizedImages)) {

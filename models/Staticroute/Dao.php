@@ -17,6 +17,7 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Tool\Sorter;
 use Symfony\Component\Uid\Uuid as Uid;
 
 /**
@@ -116,13 +117,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             return false;
         });
 
-        usort($data, function (Model\Staticroute $a, Model\Staticroute $b) {
-            if ($a->getSiteId() == $b->getSiteId()) {
-                return 0;
-            }
-
-            return ($a->getSiteId() < $b->getSiteId()) ? 1 : -1;
-        });
+        usort($data, [Sorter::class, 'siteId']);
 
         if (count($data) && $data[0]->getId()) {
             $this->assignVariablesToModel($data[0]->getObjectVars());

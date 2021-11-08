@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Tool\Sorter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -73,13 +74,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
         $finalData = [];
 
         foreach ($languageRawData as $languageCode => $rawLanguage) {
-            usort($rawLanguage, function ($a, $b) {
-                if ($a['population'] == $b['population']) {
-                    return 0;
-                }
-
-                return ($a['population'] > $b['population']) ? -1 : 1;
-            });
+            usort($rawLanguage, [Sorter::class, 'population']);
 
             $finalData[$languageCode] = [];
             foreach ($rawLanguage as $territory) {

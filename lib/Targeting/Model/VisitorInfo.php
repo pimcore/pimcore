@@ -19,6 +19,7 @@ namespace Pimcore\Targeting\Model;
 
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Tool\Sorter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -193,16 +194,7 @@ class VisitorInfo implements \IteratorAggregate
         $assignments = array_values($this->targetGroupAssignments);
 
         // sort reverse (highest count first)
-        usort($assignments, function (TargetGroupAssignment $a, TargetGroupAssignment $b) {
-            $aCount = $a->getCount();
-            $bCount = $b->getCount();
-
-            if ($aCount === $bCount) {
-                return 0;
-            }
-
-            return $aCount < $bCount ? 1 : -1;
-        });
+        usort($assignments, [Sorter::class, 'count']);
 
         $this->sortedTargetGroupAssignments = $assignments;
 

@@ -28,6 +28,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Logger;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
+use Pimcore\Tool\Sorter;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -324,26 +325,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
             });
         }
 
-        // show enabled/active first, then order by priority for
-        // bundles with the same enabled state
-        usort($results, function ($a, $b) {
-            if ($a['active'] && !$b['active']) {
-                return -1;
-            }
-
-            if (!$a['active'] && $b['active']) {
-                return 1;
-            }
-
-            if ($a['active'] === $b['active']) {
-                if ($a['priority'] === $b['priority']) {
-                    return 0;
-                }
-
-                // reverse sorty by priority -> higher comes first
-                return $a['priority'] < $b['priority'] ? 1 : -1;
-            }
-        });
+        usort($results, [Sorter::class, 'extensions']);
 
         return $results;
     }

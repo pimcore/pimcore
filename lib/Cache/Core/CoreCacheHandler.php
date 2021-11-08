@@ -22,6 +22,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Tool\Sorter;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -422,9 +423,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     public function cleanupQueue(): void
     {
         // order by priority
-        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
-            return $b->getPriority() <=> $a->getPriority();
-        });
+        uasort($this->saveQueue, [Sorter::class, 'itemPriority']);
 
         // remove overrun
         array_splice($this->saveQueue, $this->maxWriteToCacheItems);

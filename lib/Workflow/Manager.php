@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tool\Sorter;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
@@ -162,9 +163,7 @@ class Manager
     {
         $this->workflows[$workflowName] = new WorkflowConfig($workflowName, $options);
 
-        uasort($this->workflows, function (WorkflowConfig $a, WorkflowConfig $b) {
-            return $b->getPriority() <=> $a->getPriority();
-        });
+        uasort($this->workflows, [Sorter::class, 'itemPriority']);
     }
 
     /**

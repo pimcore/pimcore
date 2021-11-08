@@ -19,6 +19,7 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool\Sorter;
 
 /**
  * @internal
@@ -242,9 +243,7 @@ class Dao extends Model\Element\Dao
         $propertiesRaw = $this->db->fetchAll('SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? ) AND ctype='object'", [$this->model->getId()]);
 
         // because this should be faster than mysql
-        usort($propertiesRaw, function ($left, $right) {
-            return strcmp($left['cpath'], $right['cpath']);
-        });
+        usort($propertiesRaw, [Sorter::class, 'cpath']);
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {

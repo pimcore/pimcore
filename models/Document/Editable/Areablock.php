@@ -620,22 +620,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
 
         // sort with translated names
-        if (count($result['name'])) {
-            usort($result['name'], function ($a, $b) {
-                if ($a['name'] == $b['name']) {
-                    return 0;
-                }
-
-                return ($a['name'] < $b['name']) ? -1 : 1;
-            });
-        }
+        usort($result['name'], [Tool\Sorter::class, 'name']);
 
         // sort by allowed brick config order
-        if (count($result['index'])) {
-            usort($result['index'], function ($a, $b) {
-                return $a['sortIndex'] - $b['sortIndex'];
-            });
-        }
+        usort($result['index'], [Tool\Sorter::class, 'sortIndex']);
 
         $result = array_merge($result['index'], $result['name']);
 

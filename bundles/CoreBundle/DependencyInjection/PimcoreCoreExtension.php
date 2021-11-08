@@ -29,6 +29,7 @@ use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Tool\Sorter;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -393,13 +394,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $generators = $config['generators'];
         }
 
-        uasort($generators, function (array $a, array $b) {
-            if ($a['priority'] === $b['priority']) {
-                return 0;
-            }
-
-            return $a['priority'] < $b['priority'] ? 1 : -1;
-        });
+        uasort($generators, [Sorter::class, 'priority']);
 
         $mapping = [];
         foreach ($generators as $generatorName => $generatorConfig) {

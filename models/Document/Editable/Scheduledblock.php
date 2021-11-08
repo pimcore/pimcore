@@ -19,6 +19,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Sorter;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -47,13 +48,7 @@ class Scheduledblock extends Block implements BlockInterface
     {
         $this->indices = $data;
 
-        usort($this->indices, function ($left, $right) {
-            if ($left['date'] == $right['date']) {
-                return 0;
-            }
-
-            return ($left['date'] < $right['date']) ? -1 : 1;
-        });
+        usort($this->indices, [Sorter::class, 'date']);
 
         return $this;
     }

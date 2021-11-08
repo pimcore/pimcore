@@ -18,6 +18,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Sorter;
 
 /**
  * @internal
@@ -265,9 +266,7 @@ class Dao extends Model\Element\Dao
         }
 
         // because this should be faster than mysql
-        usort($propertiesRaw, function ($left, $right) {
-            return strcmp($left['cpath'], $right['cpath']);
-        });
+        usort($propertiesRaw, [Sorter::class, 'cpath']);
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {

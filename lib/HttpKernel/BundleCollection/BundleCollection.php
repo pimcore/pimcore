@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
+use Pimcore\Tool\Sorter;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class BundleCollection
@@ -97,13 +98,7 @@ class BundleCollection
             });
         }
 
-        usort($items, function (ItemInterface $a, ItemInterface $b) {
-            if ($a->getPriority() === $b->getPriority()) {
-                return 0;
-            }
-
-            return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
-        });
+        usort($items, [Sorter::class, 'itemPriority']);
 
         return $items;
     }

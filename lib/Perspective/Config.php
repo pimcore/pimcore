@@ -334,12 +334,7 @@ final class Config
             }
         }
 
-        usort($result, static function ($treeA, $treeB) {
-            $a = $treeA['sort'] ?: 0;
-            $b = $treeB['sort'] ?: 0;
-
-            return $a <=> $b;
-        });
+        usort($result, [Tool\Sorter::class, 'sort']);
 
         return $result;
     }

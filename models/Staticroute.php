@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Tool\Sorter;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -460,11 +461,7 @@ final class Staticroute extends AbstractModel
         $forbiddenCharacters = ['#', ':', '?'];
 
         // check for named variables
-        uksort($urlParams, function ($a, $b) {
-            // order by key length, longer key have priority
-            // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
-            return strlen($b) - strlen($a);
-        });
+        uksort($urlParams, [Sorter::class, 'strlen']);
 
         $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
@@ -485,11 +482,7 @@ final class Staticroute extends AbstractModel
         $urlEncodeEscapeCharacters = '~|urlen' . md5(microtime()) . 'code|~';
 
         // replace named variables
-        uksort($parametersInReversePattern, function ($a, $b) {
-            // order by key length, longer key have priority
-            // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
-            return strlen($b) - strlen($a);
-        });
+        uksort($parametersInReversePattern, [Sorter::class, 'strlen']);
 
         foreach ($parametersInReversePattern as $key => $value) {
             $value = str_replace($forbiddenCharacters, '', $value);

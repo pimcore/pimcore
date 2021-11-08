@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\DependencyInjection\CollectionServiceLocator;
+use Pimcore\Tool\Sorter;
 
 /**
  * @internal
@@ -52,9 +53,7 @@ class Manager
 
         $this->sortedServices = $this->services->all();
 
-        usort($this->sortedServices, function (DataProviderInterface $left, DataProviderInterface $right) {
-            return $left->getSortPriority() > $right->getSortPriority();
-        });
+        usort($this->sortedServices, [Sorter::class, 'sortPriority']);
 
         return $this->sortedServices;
     }

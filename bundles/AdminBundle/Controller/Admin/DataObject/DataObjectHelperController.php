@@ -476,13 +476,7 @@ class DataObjectHelperController extends AdminController
                 }
             }
         }
-        usort($availableFields, function ($a, $b) {
-            if ($a['position'] == $b['position']) {
-                return 0;
-            }
-
-            return ($a['position'] < $b['position']) ? -1 : 1;
-        });
+        usort($availableFields, [Tool\Sorter::class, 'position']);
 
         $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config['general']['valid_languages']);
         if ($frontendLanguages) {

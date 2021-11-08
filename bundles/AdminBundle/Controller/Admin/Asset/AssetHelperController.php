@@ -255,13 +255,7 @@ class AssetHelperController extends AdminController
                 }
             }
         }
-        usort($availableFields, function ($a, $b) {
-            if ($a['position'] == $b['position']) {
-                return 0;
-            }
-
-            return ($a['position'] < $b['position']) ? -1 : 1;
-        });
+        usort($availableFields, [Tool\Sorter::class, 'position']);
 
         $availableConfigs = $classId ? $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType) : [];
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];

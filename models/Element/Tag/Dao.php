@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element\Tag;
 
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
+use Pimcore\Tool\Sorter;
 
 /**
  * @internal
@@ -133,9 +134,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $tags = array_filter($tags);
-        @usort($tags, function ($left, $right) {
-            return strcmp($left->getNamePath(), $right->getNamePath());
-        });
+        @usort($tags, [Sorter::class, 'namePath']);
 
         return $tags;
     }

@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Sorter;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -165,13 +166,7 @@ abstract class AbstractRelations extends Data implements
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, function ($a, $b) {
-            if ($a['index'] == $b['index']) {
-                return 0;
-            }
-
-            return ($a['index'] < $b['index']) ? -1 : 1;
-        });
+        usort($relations, [Sorter::class, 'index']);
 
         $data = $this->loadData($relations, $object, $params);
         if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {

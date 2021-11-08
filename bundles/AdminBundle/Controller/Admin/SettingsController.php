@@ -942,9 +942,7 @@ class SettingsController extends AdminController
             }
         }
 
-        usort($langs, function ($a, $b) {
-            return strcmp($a['display'], $b['display']);
-        });
+        usort($langs, [Tool\Sorter::class, 'display']);
 
         return $this->adminJson($langs);
     }
