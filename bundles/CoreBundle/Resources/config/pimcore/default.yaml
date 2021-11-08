@@ -32,7 +32,7 @@ framework:
         buses:
             messenger.bus.default:
                 middleware:
-                    - 'Pimcore\Messenger\Middleware\SkipMessageMiddleware'
+                    - 'Pimcore\Messenger\Middleware\MaintenanceMessageMiddleware'
         transports:
             pimcore_core: "doctrine://default"
             pimcore_maintenance: "doctrine://default"

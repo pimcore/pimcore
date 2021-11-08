@@ -61,7 +61,7 @@ final class Executor implements ExecutorInterface
         LoggerInterface $logger,
         LockFactory $lockFactory,
         private MessageBusInterface $messageBus,
-        private MaintenanceMessageMiddleware $skipMessageMiddleware
+        private MaintenanceMessageMiddleware $maintenanceMiddleware
     ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
@@ -136,14 +136,14 @@ final class Executor implements ExecutorInterface
                 $this->logger->info('Skipped job with ID {id} because it is not in the valid jobs', [
                     'id' => $message,
                 ]);
-                $this->skipMessageMiddleware->addSkipMessage($message);
+                $this->maintenanceMiddleware->addSkipMessage($message);
             }
 
             if (count($excludedJobs) > 0 && in_array($message, $excludedJobs, true)) {
                 $this->logger->info('Skipped job with ID {id} because it has been excluded', [
                     'id' => $message,
                 ]);
-                $this->skipMessageMiddleware->addSkipMessage($message);
+                $this->maintenanceMiddleware->addSkipMessage($message);
             }
         }
     }
