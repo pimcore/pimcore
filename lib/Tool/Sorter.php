@@ -128,7 +128,7 @@ class Sorter
 
     public static function itemPriority(CacheQueueItem|ItemInterface|WorkflowConfig $a, CacheQueueItem|ItemInterface|WorkflowConfig $b): int
     {
-        return $a->getPriority() <=> $b->getPriority();
+        return $b->getPriority() <=> $a->getPriority();
     }
 
     public static function namePath(Tag $a, Tag $b): int
