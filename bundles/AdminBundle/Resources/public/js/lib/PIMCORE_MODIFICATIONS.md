@@ -124,11 +124,7 @@ and adapt the styles as needed (see color map below). Also the resource paths ne
  Note that there is a special one for the the editmode.
  Be careful with the indices, the have to be consecutively numbered.
  Add everything that should synchronously loaded and not already in the list (have a look at your browser's console)
- 
 
-# Additional notes
-
-+ OpenSans Fonts from the installation package have been modified since they need the 'embed' flag for IE11
 
 # styling (see commit 8.9.2015 - rev. 4f2d49a8f567fb1b7978022f644a748a9e0b6afb)
 
