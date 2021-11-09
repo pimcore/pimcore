@@ -1,5 +1,5 @@
 # CKEDITOR (use builder: http://ckeditor.com/builder);
-current version: 4.14.0
+current version: 4.16.2
 upload build-config.js
 
 OR:
@@ -25,7 +25,7 @@ Remove plugins:
 - Save
 - SpellCheckAsYouType (SCAYT)
 
-Delete: samples/
+Remove: samples/
 
 # EXT JS
 
@@ -132,11 +132,6 @@ and adapt the styles as needed (see color map below). Also the resource paths ne
 #eaeff4 => #e4e4e4
 #7fb5e4 => #3c3f41
 
-# fixes the problem with font-rendering in chrome (gray instead of black)
-[see commit](https://github.com/pimcore/pimcore/commit/3c641580dbe2efa30e539006ee7166b519ffd832#diff-250264cb98391c6be4d4720f7d887c86)
-fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
-fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf
-
 # Moment JS
 current version: 2.24.0
 
@@ -149,6 +144,7 @@ current version: 4.2.4
 Build instructions:
 - Follow: https://github.com/viliusle/miniPaint/wiki/Build-instructions
 - open & customize src/js/config-menu.js (Add Save option & Replace File option)
+```html
 <li>
     <a class="trn" id="save_button" href="#">Save</a>
 </li>
@@ -168,11 +164,12 @@ Build instructions:
         </li>
     </ul>
 </li>
+```
 
 # Ace editor
-current version: 1.4.12
+current version: 1.4.13
 
 Build instructions:
- - Download latest build from https://github.com/ajaxorg/ace-builds and extract /src-min-noconflict
- - Cleanup all theme-*.js files except "theme-chrome.js" & "theme-twilight.js"
+ - Download latest build from https://github.com/ajaxorg/ace-builds and extract `/src-min-noconflict`
+ - Remove all theme-*.js files except `theme-chrome.js` & `theme-twilight.js`
  - Replace the current folder with extracted one here `/bundles/AdminBundle/Resources/public/js/lib/ace/src-min-noconflict`
