@@ -301,7 +301,7 @@ class Definition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (PIMCORE_CLASS_DEFINITION_WRITABLE === 'true') {
+        if (($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? 'false') === 'true') {
             return true;
         }
 
