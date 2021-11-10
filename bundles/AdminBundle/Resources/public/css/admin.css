@@ -1416,7 +1416,8 @@ span.warning {
 
 #pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child {
     border-color: #393C3F;
-    border-top-width: 3px;
+    border-top-width: 2px;
+    background: #393C3F;
 }
 
 #pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-close-btn {
