@@ -79,15 +79,10 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
                     value: this.datax.fieldLabel
                 },
                 {
-                    xtype: "textfield",
+                    xtype: "numberfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
-                },
-                {
-                    xtype: "displayfield",
-                    hideLabel: true,
-                    value: t('width_explanation')
                 },
                 {
                     xtype: "combo",

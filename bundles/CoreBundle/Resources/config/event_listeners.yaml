@@ -146,3 +146,5 @@ services:
         arguments:
             $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
+
+    Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~

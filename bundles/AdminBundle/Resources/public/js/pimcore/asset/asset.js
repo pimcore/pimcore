@@ -23,7 +23,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             params: {
                 id: this.id,
-                type: this.type
+                    type: this.type
             }
         });
     },
@@ -41,10 +41,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 throw "asset is locked";
             }
 
-            if(this.type !== this.data.type) {
-                pimcore.helpers.closeAsset(this.id);
-                pimcore.helpers.openAsset(this.id, this.data.type);
-                return;
+            if (this.type !== this.data.type) {
+                Ext.MessageBox.alert(t("warning"), t("asset_type_changed"));
             }
 
             this.addTab();

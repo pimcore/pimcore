@@ -411,7 +411,7 @@ class Asset extends Element\AbstractElement
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int) \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
-        if ($size = getimagesize($localPath)) {
+        if ($size = @getimagesize($localPath)) {
             $imagePixels = (int) ($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
@@ -737,7 +737,11 @@ class Asset extends Element\AbstractElement
                 // Write original data to temp path for writing stream
                 // as original file will be deleted before overwrite
                 $pathInfo = pathinfo($this->getFilename());
-                $tempFilePath = $this->getRealPath() . uniqid('temp_') . '.' . $pathInfo['extension'];
+                $tempFilePath = $this->getRealPath() . uniqid('temp_');
+                if ($pathInfo['extension'] ?? false) {
+                    $tempFilePath .= '.' . $pathInfo['extension'];
+                }
+
                 $storage->writeStream($tempFilePath, $src);
 
                 $dbPath = $this->getDao()->getCurrentFullPath();
