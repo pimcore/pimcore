@@ -739,7 +739,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if (PIMCORE_CLASS_DEFINITION_WRITABLE === 'true') {
             return true;
         }
 

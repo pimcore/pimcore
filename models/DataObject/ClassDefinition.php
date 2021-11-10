@@ -438,7 +438,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         $isUpdate = $this->exists();
         if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+            throw new \Exception('Definitions in config/pimcore folder cannot be overwritten');
         }
 
         if (!$isUpdate) {
@@ -801,7 +801,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if (PIMCORE_CLASS_DEFINITION_WRITABLE === 'true') {
             return true;
         }
 
