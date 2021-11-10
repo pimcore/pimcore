@@ -108,7 +108,7 @@ class Sorter
      */
     public static function strlen(?string $a, ?string $b): int
     {
-        return strlen($b) <=> strlen($a);
+        return strlen($b ?? '') <=> strlen($a ?? '');
     }
 
     public static function cpath(array $a, array $b): int
