@@ -128,12 +128,14 @@ and adapt the styles as needed (see color map below). Also the resource paths ne
 
 # styling (see commit 8.9.2015 - rev. 4f2d49a8f567fb1b7978022f644a748a9e0b6afb)
 
+```
 #5fa2dd => #3c3f41
 #eaeff4 => #e4e4e4
 #7fb5e4 => #3c3f41
+```
 
 # Moment JS
-current version: 2.24.0
+current version: 2.29.1
 
 # Leaflet JS
 current version: 1.6.0
