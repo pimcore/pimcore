@@ -233,7 +233,7 @@ class FullPageCacheListener
 
                     return;
                 }
-                
+
                 // output-cache is always disabled when logged in at the admin ui
                 if (null !== $pimcoreUser = Tool\Authentication::authenticateSession($request)) {
                     $this->disable('backend user is logged in');
