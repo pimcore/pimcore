@@ -183,7 +183,7 @@ abstract class Processor
      */
     protected function getPrintDocument($documentId)
     {
-        $document = Document\PrintAbstract::getById($documentId);
+        $document = Document\PrintAbstract::getById($documentId, true);
         if (empty($document)) {
             throw new \Exception('PrintDocument with ' . $documentId . ' not found.');
         }
