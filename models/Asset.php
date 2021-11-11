@@ -101,16 +101,16 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $path = '';
+    protected $path;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $mimetype = '';
+    protected $mimetype;
 
     /**
      * @internal
@@ -1600,7 +1600,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMimeType()
     {

@@ -42,7 +42,7 @@ interface ElementInterface extends ModelInterface
     public function setKey($key);
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPath();
 

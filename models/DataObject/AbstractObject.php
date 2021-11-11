@@ -117,9 +117,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_path = '';
+    protected $o_path;
 
     /**
      * @internal
@@ -988,7 +988,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string path
+     * @return string|null
      */
     public function getPath()
     {
