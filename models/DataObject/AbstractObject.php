@@ -110,9 +110,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_key = '';
+    protected $o_key;
 
     /**
      * @internal
@@ -980,7 +980,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {

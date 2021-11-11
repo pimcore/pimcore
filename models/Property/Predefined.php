@@ -44,7 +44,7 @@ final class Predefined extends Model\AbstractModel
     protected $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $key;
 
@@ -139,7 +139,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {

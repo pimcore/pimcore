@@ -92,9 +92,9 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $key = '';
+    protected $key;
 
     /**
      * @internal

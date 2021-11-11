@@ -94,9 +94,9 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $filename = '';
+    protected $filename;
 
     /**
      * @internal
@@ -1146,7 +1146,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilename()
     {

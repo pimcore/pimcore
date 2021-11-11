@@ -30,7 +30,7 @@ interface ElementInterface extends ModelInterface
     public function getId();
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey();
 
