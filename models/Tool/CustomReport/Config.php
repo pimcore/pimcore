@@ -70,62 +70,62 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @var bool
      */
-    protected $menuShortcut;
+    protected $menuShortcut = true;
 
     /**
      * @var string
      */
-    protected $reportClass;
+    protected $reportClass = '';
 
     /**
      * @var string
      */
-    protected $chartType;
+    protected $chartType = '';
 
     /**
      * @var string
      */
-    protected $pieColumn;
+    protected $pieColumn = '';
 
     /**
      * @var string
      */
-    protected $pieLabelColumn;
+    protected $pieLabelColumn = '';
 
     /**
      * @var string
      */
-    protected $xAxis;
+    protected $xAxis = '';
 
     /**
      * @var string|array
      */
-    protected $yAxis;
+    protected $yAxis = [];
 
     /**
      * @var int
      */
-    protected $modificationDate;
+    protected $modificationDate = 0;
 
     /**
      * @var int
      */
-    protected $creationDate;
+    protected $creationDate = 0;
 
     /**
      * @var bool
      */
-    protected $shareGlobally;
+    protected $shareGlobally = true;
 
     /**
      * @var string[]
      */
-    protected $sharedUserNames;
+    protected $sharedUserNames = [];
 
     /**
      * @var string[]
      */
-    protected $sharedRoleNames;
+    protected $sharedRoleNames = [];
 
     /**
      * @param string $name
