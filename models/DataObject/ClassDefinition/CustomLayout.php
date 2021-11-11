@@ -257,7 +257,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? 'false') === 'true') {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
