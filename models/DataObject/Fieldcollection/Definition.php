@@ -176,11 +176,8 @@ class Definition extends Model\AbstractModel
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
-        $existingDefinition = Definition::getByKey($this->getKey());
-        $isUpdate = $existingDefinition != null;
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('fieldcollection updates in config folder not allowed');
+        if ($generateDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
         }
 
         $infoDocBlock = $this->getInfoDocBlock();
