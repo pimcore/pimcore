@@ -637,7 +637,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getModificationDate()
     {
@@ -650,7 +650,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param \DateTime $modificationDate
+     * @param \DateTime|null $modificationDate
      */
     public function setModificationDate(\DateTime $modificationDate = null)
     {

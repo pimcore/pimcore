@@ -255,7 +255,7 @@ interface CartInterface
     public function setCreationDate(\DateTime $creationDate = null);
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getModificationDate();
 

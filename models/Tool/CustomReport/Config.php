@@ -103,14 +103,14 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     protected $yAxis = [];
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $modificationDate = 0;
+    protected $modificationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $creationDate = 0;
+    protected $creationDate;
 
     /**
      * @var bool
@@ -436,7 +436,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -452,7 +452,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

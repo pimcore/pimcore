@@ -82,16 +82,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $o_id = 0;
+    protected $o_id;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $o_parentId = 0;
+    protected $o_parentId;
 
     /**
      * @internal
@@ -131,16 +131,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $o_creationDate = 0;
+    protected $o_creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $o_modificationDate = 0;
+    protected $o_modificationDate;
 
     /**
      * @internal
@@ -951,7 +951,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -959,7 +959,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -1004,7 +1004,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -1012,7 +1012,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

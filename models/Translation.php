@@ -40,15 +40,15 @@ final class Translation extends AbstractModel
     /**
      * @var string[]
      */
-    protected $translations;
+    protected $translations = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -139,7 +139,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -159,7 +159,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

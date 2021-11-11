@@ -66,16 +66,16 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $id = 0;
+    protected $id;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $parentId = 0;
+    protected $parentId;
 
     /**
      * @internal
@@ -115,16 +115,16 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $creationDate = 0;
+    protected $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $modificationDate = 0;
+    protected $modificationDate;
 
     /**
      * @internal
