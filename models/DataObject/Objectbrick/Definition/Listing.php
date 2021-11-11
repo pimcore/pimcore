@@ -25,7 +25,7 @@ class Listing
     public function load()
     {
         $fields = [];
-        $objectBricksFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
+        $objectBricksFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
         $files = glob($objectBricksFolder . '/*.php');
 
         foreach ($files as $file) {
