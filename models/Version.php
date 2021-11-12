@@ -366,7 +366,10 @@ final class Version extends AbstractModel
     public function loadData($renewReferences = true)
     {
         $storage = Storage::get('version');
-        $data = $storage->read($this->getStorageFilename());
+        $path = $this->getStorageFilename();
+        $zipPath = $path . '.gz';
+        $zipped = !$storage->fileExists($path) && $storage->fileExists($zipPath);
+        $data = $zipped? gzdecode($storage->read($zipPath)) : $storage->read($path);
 
         if (!$data) {
             Logger::err('Version: cannot read version data from file system.');
