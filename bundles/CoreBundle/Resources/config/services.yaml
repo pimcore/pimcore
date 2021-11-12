@@ -37,7 +37,10 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
-        deprecated: 'The "%service_id%" service is deprecated, use "pimcore.security.user_password_hasher" instead.'
+        deprecated:
+            message: 'The "%service_id%" service is deprecated, use "pimcore.security.user_password_hasher" instead.'
+            package: pimcore/pimcore
+            version: 10.1
 
     # Only use with Symfony ver 5.3 or higher
     # Decorate the symfony encoder factory with our own. Encoders operating on pimcore admin users and pimcore objects using
@@ -233,7 +236,6 @@ services:
         class: Symfony\Component\Lock\LockFactory
         arguments:
             - '@Symfony\Component\Lock\PersistingStoreInterface'
-
 
     Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
 
