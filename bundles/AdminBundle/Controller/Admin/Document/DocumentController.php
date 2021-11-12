@@ -394,7 +394,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        if ($request->get('type') === 'children') {
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
@@ -914,7 +914,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $childIds = [];
             if ($document->hasChildren()) {
-                // get amount of childs
+                // get amount of children
                 $list = new Document\Listing();
                 $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);

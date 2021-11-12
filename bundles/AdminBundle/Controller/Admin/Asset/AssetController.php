@@ -632,7 +632,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        if ($request->get('type') === 'children') {
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();

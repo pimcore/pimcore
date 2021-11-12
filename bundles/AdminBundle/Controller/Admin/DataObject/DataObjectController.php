@@ -918,7 +918,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        if ($request->get('type') === 'children') {
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();

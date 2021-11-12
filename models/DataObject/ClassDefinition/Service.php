@@ -291,15 +291,15 @@ class Service
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
-                if (method_exists($item, 'addChild')) { // allows childs
-                    $item->setValues($array, ['childs']);
-                    $childs = $array['childs'] ?? [];
+                if (method_exists($item, 'addChild')) { // allows children
+                    $item->setValues($array, ['children']);
+                    $children = $array['children'] ?? [];
 
-                    if (!empty($childs['datatype'])) {
-                        $childO = self::generateLayoutTreeFromArray($childs, $throwException, $insideLocalizedField);
+                    if (!empty($children['datatype'])) {
+                        $childO = self::generateLayoutTreeFromArray($children, $throwException, $insideLocalizedField);
                         $item->addChild($childO);
-                    } elseif (is_array($childs) && count($childs) > 0) {
-                        foreach ($childs as $child) {
+                    } elseif (is_array($children) && count($children) > 0) {
+                        foreach ($children as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);

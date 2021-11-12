@@ -89,7 +89,7 @@ abstract class ElementControllerBase extends AdminController
         $deleteJobs = [];
         $itemResults = [];
 
-        $totalChilds = 0;
+        $totalChildren = 0;
 
         $ids = $request->get('id');
         $ids = explode(',', $ids);
@@ -111,7 +111,7 @@ abstract class ElementControllerBase extends AdminController
                 continue;
             }
 
-            // check for childs
+            // check for children
             if ($element instanceof ElementInterface) {
                 $event = null;
                 $eventName = null;
@@ -166,23 +166,23 @@ abstract class ElementControllerBase extends AdminController
                 }
 
                 if ($hasChildren) {
-                    // get amount of childs
+                    // get amount of children
                     $list = $element::getList(['unpublished' => true]);
                     $pathColumn = ($type === 'object') ? 'o_path' : 'path';
                     $list->setCondition($pathColumn . ' LIKE ?', [$element->getRealFullPath() . '/%']);
-                    $childs = $list->getTotalCount();
-                    $totalChilds += $childs;
+                    $children = $list->getTotalCount();
+                    $totalChildren += $children;
 
-                    if ($childs > 0) {
+                    if ($children > 0) {
                         $deleteObjectsPerRequest = 5;
-                        for ($i = 0, $iMax = ceil($childs / $deleteObjectsPerRequest); $i < $iMax; $i++) {
+                        for ($i = 0, $iMax = ceil($children / $deleteObjectsPerRequest); $i < $iMax; $i++) {
                             $deleteJobs[] = [[
                                 'url' => $request->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
-                                    'type' => 'childs',
+                                    'type' => 'children',
                                     'id' => $element->getId(),
                                 ],
                             ]];
@@ -213,7 +213,7 @@ abstract class ElementControllerBase extends AdminController
 
         return $this->adminJson([
             'hasDependencies' => $hasDependency,
-            'childs' => $totalChilds,
+            'children' => $totalChildren,
             'deletejobs' => $deleteJobs,
             'batchDelete' => count($ids) > 1,
             'elementKey' => $elementKey,

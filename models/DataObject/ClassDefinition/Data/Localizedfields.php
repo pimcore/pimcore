@@ -44,7 +44,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -437,7 +437,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -447,7 +447,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -458,7 +458,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function hasChildren()
     {
-        return is_array($this->childs) && count($this->childs) > 0;
+        return is_array($this->children) && count($this->children) > 0;
     }
 
     /**
@@ -466,7 +466,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
     }
 
