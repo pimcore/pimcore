@@ -130,7 +130,7 @@ pimcore.asset.helpers.metadataTree = Class.create({
         var keys = Object.keys(data);
         for (var i = 0; i < keys.length; i++) {
             if (data[keys[i]]) {
-                if (data[keys[i]].childs) {
+                if (data[keys[i]].children) {
 
                     var text = t(data[keys[i]].nodeLabel);
 
@@ -142,8 +142,8 @@ pimcore.asset.helpers.metadataTree = Class.create({
                     };
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
-                    for (var j = 0; j < data[keys[i]].childs.length; j++) {
-                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode));
+                    for (var j = 0; j < data[keys[i]].children.length; j++) {
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].children[j], baseNode));
                     }
                     if (data[keys[i]].nodeType != "system") {
                         baseNode.expand();
@@ -162,9 +162,9 @@ pimcore.asset.helpers.metadataTree = Class.create({
 
         newNode = fn();
 
-        if (con.childs) {
-            for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode);
+        if (con.children) {
+            for (var i = 0; i < con.children.length; i++) {
+                this.recursiveAddNode(con.children[i], newNode);
             }
         }
 
@@ -186,7 +186,7 @@ pimcore.asset.helpers.metadataTree = Class.create({
         var newNode = {
             type: "layout",
             expanded: true,
-            expandable: initData.childs.length,
+            expandable: initData.children.length,
             allowDrag: false,
             iconCls: "pimcore_icon_" + type,
             text: t(nodeLabel),
