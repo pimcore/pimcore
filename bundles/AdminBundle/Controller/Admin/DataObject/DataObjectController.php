@@ -918,7 +918,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') === 'children') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.3',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();
@@ -936,16 +946,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $object = DataObject::getById($request->get('id'));
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     throw $this->createAccessDeniedHttpException();
-                } elseif ($object->isLocked()) {
-                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
-                } else {
-                    $object->delete();
                 }
+                if ($object->isLocked()) {
+                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
+                }
+                $object->delete();
             }
 
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
