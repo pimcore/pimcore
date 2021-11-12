@@ -81,9 +81,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected array $context = [];
+    protected ?array $context = [];
 
     /**
      * @internal
@@ -717,15 +717,15 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     public function getContext(): array
     {
-        return $this->context;
+        return $this->context ?? [];
     }
 
     /**
-     * @param array $context
+     * @param array|null $context
      */
-    public function setContext(array $context): void
+    public function setContext(?array $context): void
     {
-        $this->context = $context;
+        $this->context = $context ?? [];
     }
 
     /**
