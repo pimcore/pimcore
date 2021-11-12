@@ -193,6 +193,7 @@ pimcore.log.admin = Class.create({
                     flex: 220,
                     sortable: true,
                     renderer: function (s) {
+                        meta.tdAttr='data-qtip="'+s+'"';
                         return Ext.util.Format.htmlEncode(s);
                     }
                 },{
