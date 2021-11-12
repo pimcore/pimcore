@@ -138,7 +138,7 @@ and adapt the styles as needed (see color map below). Also the resource paths ne
 current version: 2.29.1
 
 # Leaflet JS
-current version: 1.6.0
+current version: 1.7.1
 
 # miniPaint
 current version: 4.2.4
