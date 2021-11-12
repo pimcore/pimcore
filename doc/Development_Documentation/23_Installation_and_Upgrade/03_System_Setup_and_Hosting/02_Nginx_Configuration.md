@@ -419,6 +419,9 @@ server {
         # fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         # fastcgi_param DOCUMENT_ROOT $realpath_root;
 
+        # Mitigate https://httpoxy.org/ vulnerabilities
+        fastcgi_param HTTP_PROXY "";
+
         fastcgi_pass php-pimcore10;
         # Prevents URIs that include the front controller. This will 404:
         # http://domain.tld/index.php/some-path
