@@ -680,6 +680,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $tmpAsset = [
             'id' => $asset->getId(),
+            'key' => $element->getKey(),
             'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
