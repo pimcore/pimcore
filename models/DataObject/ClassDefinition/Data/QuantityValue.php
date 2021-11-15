@@ -157,7 +157,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         // Default values such as "0" and "0.0" should be accepted and returned as float,
         // while empty strings and nulls should not
-        if (!empty($this->defaultValue) || is_numeric($this->defaultValue)) {
+        if (is_numeric($this->defaultValue)) {
             return (float) $this->defaultValue;
         }
 
