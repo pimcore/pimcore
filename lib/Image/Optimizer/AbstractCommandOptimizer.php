@@ -33,7 +33,6 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
-            $process->setTimeout(null);
             $process->run();
 
             if (file_exists($output) && filesize($output) > 0) {
