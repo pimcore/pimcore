@@ -45,6 +45,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $children = [];
 
     /**
+     * @deprecated
+     *
+     * @var array
+     */
+    public $childs = [];
+
+    /**
      * @internal
      *
      * @var string
@@ -178,6 +185,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @var array
      */
     public $permissionEdit;
+
+    public function __construct()
+    {
+        $this->childs = &$this->children;
+    }
 
     /**
      * @see Data::getDataForEditmode

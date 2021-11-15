@@ -107,11 +107,23 @@ class Layout
     public $children = [];
 
     /**
+     * @deprecated
+     *
+     * @var array
+     */
+    public $childs = [];
+
+    /**
      * @internal
      *
      * @var bool
      */
     public $locked = false;
+
+    public function __construct()
+    {
+        $this->childs = &$this->children;
+    }
 
     /**
      * @return string

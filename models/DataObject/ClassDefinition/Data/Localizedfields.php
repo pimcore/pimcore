@@ -47,6 +47,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $children = [];
 
     /**
+     * @deprecated
+     *
+     * @var array
+     */
+    public $childs = [];
+
+    /**
      * @internal
      *
      * @var string
@@ -152,6 +159,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var array|null
      */
     public $permissionEdit;
+
+    public function __construct()
+    {
+        $this->childs = &$this->children;
+    }
 
     /**
      * @see Data::getDataForEditmode
