@@ -107,13 +107,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $children = [];
 
     /**
-     * @deprecated
-     *
-     * @var array
-     */
-    public $childs = [];
-
-    /**
      * @internal
      *
      * @var array|null
@@ -135,11 +128,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @var array|null
      */
     public $fieldDefinitionsCache;
-
-    public function __construct()
-    {
-        $this->childs = &$this->children;
-    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
