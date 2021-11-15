@@ -366,7 +366,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             id: this.data.id,
             path: this.data.path + this.data.key,
             public_url: this.data.url,
-            pretty_url: this.data.prettyUrl,
             parentid: this.data.parentId,
             type: this.data.type,
             modificationdate: this.data.modificationDate,
@@ -391,9 +390,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             }, {
                 name: "public_url",
                 value: metainfo.public_url
-            }, {
-                name: "pretty_url",
-                value: metainfo.pretty_url
             }, {
                 name: "parentid",
                 value: metainfo.parentid
