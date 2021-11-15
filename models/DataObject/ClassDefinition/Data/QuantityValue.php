@@ -169,7 +169,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function setDefaultValue($defaultValue)
     {
-        if (!empty($defaultValue) || is_numeric($defaultValue)) {
+        if (is_numeric($defaultValue)) {
             $this->defaultValue = (float) $defaultValue;
         } else {
             $this->defaultValue = null;
