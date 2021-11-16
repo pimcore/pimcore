@@ -46,6 +46,7 @@ trait DocumentTreeConfigTrait
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
+            'key' => $childDocument->getKey(),
             'idx' => (int)$childDocument->getIndex(),
             'text' => $childDocument->getKey(),
             'type' => $childDocument->getType(),
