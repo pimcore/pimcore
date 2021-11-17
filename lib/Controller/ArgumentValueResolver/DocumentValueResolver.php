@@ -66,7 +66,7 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
      * @param Request $request
      * @param ArgumentMetadata $argument
      *
-     * @return \Generator|Document
+     * @return iterable
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
