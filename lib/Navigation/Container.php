@@ -536,6 +536,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->_sort();
@@ -545,6 +546,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->_sort();
@@ -554,6 +556,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $this->_sort();
@@ -564,6 +567,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function hasChildren()
     {
         return $this->hasPages();
@@ -572,6 +576,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * @return Page|\RecursiveIterator|null
      */
+    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         $hash = key($this->_index);
@@ -586,6 +591,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->_index);

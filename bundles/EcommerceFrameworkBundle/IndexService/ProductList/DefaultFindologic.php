@@ -794,9 +794,7 @@ class DefaultFindologic implements ProductListInterface
             throw new \Exception((string)$response->getBody());
         }
 
-        $data = simplexml_load_string((string)$response->getBody());
-
-        return $data;
+        return simplexml_load_string((string)$response->getBody());
     }
 
     /**
@@ -818,6 +816,7 @@ class DefaultFindologic implements ProductListInterface
      * <p>
      * The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $this->getProducts();
@@ -836,9 +835,8 @@ class DefaultFindologic implements ProductListInterface
     public function current()
     {
         $this->getProducts();
-        $var = current($this->products);
 
-        return $var;
+        return current($this->products);
     }
 
     /**
@@ -869,9 +867,8 @@ class DefaultFindologic implements ProductListInterface
     public function key()
     {
         $this->getProducts();
-        $var = key($this->products);
 
-        return $var;
+        return key($this->products);
     }
 
     /**
@@ -882,6 +879,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->getProducts();
@@ -896,6 +894,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->getProducts();
@@ -911,10 +910,9 @@ class DefaultFindologic implements ProductListInterface
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 }

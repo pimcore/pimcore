@@ -41,14 +41,13 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      */
     public function current()
     {
-        $var = current($this->items);
-
-        return $var;
+        return current($this->items);
     }
 
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         next($this->items);
@@ -59,24 +58,22 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      */
     public function key()
     {
-        $var = key($this->items);
-
-        return $var;
+        return key($this->items);
     }
 
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->items);

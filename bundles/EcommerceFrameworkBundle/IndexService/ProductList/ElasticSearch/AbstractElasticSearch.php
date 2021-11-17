@@ -1361,6 +1361,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * <p>
      * The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $this->getProducts();
@@ -1379,9 +1380,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function current()
     {
         $this->getProducts();
-        $var = current($this->products);
 
-        return $var;
+        return current($this->products);
     }
 
     /**
@@ -1412,19 +1412,20 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function key()
     {
         $this->getProducts();
-        $var = key($this->products);
 
-        return $var;
+        return key($this->products);
     }
 
     /** @inheritDoc */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->getProducts();
-        $var = next($this->products);
+        next($this->products);
     }
 
     /** @inheritDoc */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->getProducts();
@@ -1440,11 +1441,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**

@@ -751,6 +751,7 @@ class DefaultMysql implements ProductListInterface
      * <p>
      * The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         if ($this->totalCount === null) {
@@ -771,9 +772,8 @@ class DefaultMysql implements ProductListInterface
     public function current()
     {
         $this->getProducts();
-        $var = current($this->products);
 
-        return $var;
+        return current($this->products);
     }
 
     /**
@@ -804,16 +804,16 @@ class DefaultMysql implements ProductListInterface
     public function key()
     {
         $this->getProducts();
-        $var = key($this->products);
 
-        return $var;
+        return key($this->products);
     }
 
     /** @inheritDoc */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->getProducts();
-        $var = next($this->products);
+        next($this->products);
     }
 
     /**
@@ -824,6 +824,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->getProducts();
@@ -839,11 +840,10 @@ class DefaultMysql implements ProductListInterface
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**
