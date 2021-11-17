@@ -65,6 +65,9 @@ final class Console
     public static function getExecutable($name, $throwException = false)
     {
         if (isset(self::$executableCache[$name])) {
+            if(!self::$executableCache[$name] && $throwException) {
+                throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
+            }
             return self::$executableCache[$name];
         }
 
