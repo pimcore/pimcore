@@ -181,12 +181,13 @@ final class Console
     {
         try {
             return self::getExecutable('php', true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $phpFinder = new PhpExecutableFinder();
             $phpPath = $phpFinder->find(true);
             if (!$phpPath) {
                 throw $e;
             }
+
             return $phpPath;
         }
     }
