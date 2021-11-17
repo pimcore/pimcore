@@ -113,7 +113,7 @@ class MarkerHotspotItem implements \ArrayAccess
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return property_exists($this, $offset);
     }
@@ -156,7 +156,7 @@ class MarkerHotspotItem implements \ArrayAccess
      * The value to set.
      * </p>
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($this->offsetExists($offset)) {
             if ($value instanceof Model\Element\ElementInterface) {
@@ -177,7 +177,7 @@ class MarkerHotspotItem implements \ArrayAccess
      * The offset to unset.
      * </p>
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         if ($this->offsetExists($offset)) {
             $this->$offset = null;

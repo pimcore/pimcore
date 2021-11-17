@@ -263,6 +263,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $container = $this->getContainer();
@@ -277,6 +278,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->getContainer()->offsetExists($offset);
@@ -302,6 +304,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->getContainer()->offsetSet($offset, $value);
@@ -314,6 +317,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->getContainer()->offsetUnset($offset);
@@ -322,8 +326,9 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * IteratorAggregate: get Iterator
      *
-     * @return \Iterator
+     * @return \Traversable
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->getContainer()->getIterator();
