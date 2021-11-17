@@ -16,7 +16,7 @@
 namespace Pimcore\Perspective;
 
 use Pimcore\Config\LocationAwareConfigRepository;
-use Pimcore\Event\PerspectiveEvents;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Model\User\Role;
@@ -259,7 +259,7 @@ final class Config
         $event = new GenericEvent(null, [
             'result' => $result,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, PerspectiveEvents::POST_GET_RUNTIME_PERSPECTIVE);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::POST_GET_RUNTIME_PERSPECTIVE);
 
         return $event->getArgument('result');
     }

@@ -524,4 +524,16 @@ final class AdminEvents
      * @var string
      */
     const ASSET_METADATA_PRE_SET = 'pimcore.admin.asset.metadata.preSave';
+
+    /**
+     * This event is fired after Pimcore generates the runtime Perspective
+     *
+     * Arguments:
+     *  - result | The result array
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    public const POST_GET_RUNTIME_PERSPECTIVE = 'pimcore.perspective.postGetRuntimePerspective';
 }
