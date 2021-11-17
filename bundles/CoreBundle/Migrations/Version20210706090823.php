@@ -34,24 +34,33 @@ final class Version20210706090823 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $list = new DataObject\ClassDefinition\Listing();
-        $list = $list->load();
-        foreach ($list as $class) {
+        foreach ($list->getClasses() as $class) {
             $this->write(sprintf('Saving class: %s', $class->getName()));
-            $class->save();
+            try {
+                $class->save();
+            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
+                $this->write($e->getMessage());
+            }
         }
 
         $list = new DataObject\Objectbrick\Definition\Listing();
-        $list = $list->load();
-        foreach ($list as $brickDefinition) {
+        foreach ($list->load() as $brickDefinition) {
             $this->write(sprintf('Saving object brick: %s', $brickDefinition->getKey()));
-            $brickDefinition->save();
+            try {
+                $brickDefinition->save();
+            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
+                $this->write($e->getMessage());
+            }
         }
 
         $list = new DataObject\Fieldcollection\Definition\Listing();
-        $list = $list->load();
-        foreach ($list as $fc) {
+        foreach ($list->load() as $fc) {
             $this->write(sprintf('Saving field collection: %s', $fc->getKey()));
-            $fc->save();
+            try {
+                $fc->save();
+            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
+                $this->write($e->getMessage());
+            }
         }
     }
 

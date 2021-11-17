@@ -173,11 +173,12 @@ class Definition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     * @throws DataObject\ClassDefinition\Exception\WriteException
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
-            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+            throw new DataObject\ClassDefinition\Exception\WriteException();
         }
 
         $infoDocBlock = $this->getInfoDocBlock();
