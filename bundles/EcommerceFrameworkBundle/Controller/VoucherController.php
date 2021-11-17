@@ -37,7 +37,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
-    public static function getSubscribedServices()
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services['translator'] = TranslatorInterface::class;
