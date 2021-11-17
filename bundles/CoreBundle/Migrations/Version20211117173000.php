@@ -21,14 +21,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject;
 
-/**
- * @internal
- */
-final class Version20210706090823 extends AbstractMigration
+final class Version20211117173000 extends AbstractMigration
 {
+    /**
+     * {@inheritDoc}
+     */
     public function getDescription(): string
     {
-        return 'Rebuild class definitions to fix Objectbricks with multiple Localized fields';
+        return 'Updates class definition files';
     }
 
     public function up(Schema $schema): void
@@ -58,6 +58,16 @@ final class Version20210706090823 extends AbstractMigration
             $this->write(sprintf('Saving field collection: %s', $fc->getKey()));
             try {
                 $fc->save();
+            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
+                $this->write($e->getMessage());
+            }
+        }
+
+        $list = new DataObject\ClassDefinition\CustomLayout\Listing();
+        foreach ($list->getLayoutDefinitions() as $layout) {
+            $this->write(sprintf('Saving custom layout: %s', $layout->getName()));
+            try {
+                $layout->save();
             } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
                 $this->write($e->getMessage());
             }
