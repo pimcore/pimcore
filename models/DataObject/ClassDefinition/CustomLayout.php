@@ -190,11 +190,11 @@ class CustomLayout extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-        $isUpdate = $this->exists();
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
         }
+
+        $isUpdate = $this->exists();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
@@ -257,7 +257,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 

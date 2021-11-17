@@ -24,7 +24,7 @@
     "issues": "https://github.com/pimcore/pimcore/issues",
     "wiki": "https://pimcore.com/docs/latest/",
     "source": "https://github.com/pimcore/pimcore",
-    "forum": "https://talk.pimcore.org/",
+    "forum": "https://github.com/pimcore/pimcore/discussions",
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {

@@ -67,11 +67,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if (isset($filter['creation_from'])) {
+            if (!empty($filter['creation_from'])) {
                 $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
             }
 
-            if (isset($filter['creation_to'])) {
+            if (!empty($filter['creation_to'])) {
                 $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
