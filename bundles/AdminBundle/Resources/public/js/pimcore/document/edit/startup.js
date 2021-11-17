@@ -156,11 +156,14 @@ Ext.onReady(function () {
 
         // add contextmenu note in help tool-tips
         var editablesForTooltip = Ext.query(".pimcore_editable");
-        var tmpEl;
         for (var e=0; e<editablesForTooltip.length; e++) {
-            tmpEl = Ext.get(editablesForTooltip[e]);
+            let tmpEl = Ext.get(editablesForTooltip[e]);
 
-            if (tmpEl && tmpEl.hasCls("pimcore_editable_inc")
+            if (!tmpEl) {
+                continue;
+            }
+
+            if (tmpEl.hasCls("pimcore_editable_inc")
                 || tmpEl.hasCls("pimcore_editable_href")
                 || tmpEl.hasCls("pimcore_editable_image")
                 || tmpEl.hasCls("pimcore_editable_renderlet")

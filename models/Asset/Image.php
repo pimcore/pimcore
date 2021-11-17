@@ -109,7 +109,9 @@ class Image extends Model\Asset
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $process = new Process(Console::addLowProcessPriority([$facedetectBin, $image]));
+            $command = [$facedetectBin, $image];
+            Console::addLowProcessPriority($command);
+            $process = new Process($command);
             $process->run();
             $result = $process->getOutput();
             if (strpos($result, "\n")) {
