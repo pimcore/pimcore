@@ -259,7 +259,7 @@ final class Config
         $event = new GenericEvent(null, [
             'result' => $result,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::POST_GET_RUNTIME_PERSPECTIVE);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::PERSPECTIVE_POST_GET_RUNTIME);
 
         return $event->getArgument('result');
     }
