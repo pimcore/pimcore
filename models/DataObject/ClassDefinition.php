@@ -818,7 +818,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function getDefinitionFile($name = null)
     {
-        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+        return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
 
     private function getPhpClassFile(): string
