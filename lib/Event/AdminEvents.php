@@ -535,5 +535,5 @@ final class AdminEvents
      *
      * @var string
      */
-    public const PERSPECTIVE_POST_GET_RUNTIME = 'pimcore.admin.perspective.postGetRuntimePerspective';
+    public const PERSPECTIVE_POST_GET_RUNTIME = 'pimcore.admin.perspective.postGetRuntime';
 }
