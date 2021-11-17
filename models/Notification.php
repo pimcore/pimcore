@@ -37,14 +37,14 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $modificationDate;
 

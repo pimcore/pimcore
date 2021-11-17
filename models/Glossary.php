@@ -27,35 +27,35 @@ class Glossary extends AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $text;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $link;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $abbr;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $language;
 
@@ -64,33 +64,33 @@ class Glossary extends AbstractModel
      *
      * @var bool
      */
-    protected $casesensitive;
+    protected $casesensitive = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $exactmatch;
+    protected $exactmatch = false;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $site;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -136,7 +136,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -156,7 +156,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getText()
     {
@@ -176,7 +176,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLink()
     {
@@ -196,7 +196,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAbbr()
     {
@@ -216,7 +216,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLanguage()
     {
@@ -279,7 +279,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSite()
     {
@@ -299,7 +299,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
