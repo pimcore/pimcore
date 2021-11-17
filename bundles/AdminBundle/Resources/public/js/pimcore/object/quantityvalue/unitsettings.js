@@ -61,12 +61,13 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
 
     getRowEditor: function () {
+        let fields = [{
+            name: 'id',
+            type: 'string'
+        }, 'abbreviation', 'longname', 'group', 'baseunit', 'factor', 'conversionOffset', 'reference', 'converter'];
 
         var baseUnitStore = Ext.create('Ext.data.JsonStore', {
-            fields: [{
-                name: 'id',
-                type: 'string'
-            }, 'abbreviation', 'longname', 'group', 'baseunit', 'factor', 'conversionOffset', 'reference', 'converter'],
+            fields: fields,
             proxy: {
                 type: 'ajax',
                 async: true,
@@ -165,6 +166,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                 },
                 pageSize: itemsPerPage
             },
+            fields: fields,
             remoteSort: true,
             remoteFilter: true,
             autoSync: true,
