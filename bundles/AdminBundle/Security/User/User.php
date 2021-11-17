@@ -58,7 +58,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getUserIdentifier()
+    public function getUserIdentifier()/*: string */
     {
         return $this->user->getName();
     }
@@ -74,7 +74,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getRoles()/*: array */
     {
         $roles = [];
 
@@ -122,7 +122,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user)/*: bool */
     {
         return $user instanceof self && $user->getId() === $this->getId();
     }
