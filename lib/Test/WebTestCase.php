@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Test;
 
-
 abstract class WebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
     protected static function createKernel(array $options = [])
