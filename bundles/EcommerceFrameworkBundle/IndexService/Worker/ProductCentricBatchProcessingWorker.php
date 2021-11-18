@@ -396,7 +396,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         Logger::info('Index-Actions - Resetting preparation queue');
         $className = (new \ReflectionClass($this))->getShortName();
         $query = 'UPDATE '. $this->getStoreTableName() ." SET
-                    preparation_status = '',
+                    preparation_status = " . self::INDEX_STATUS_PREPARATION_STATUS_DONE . ",
                     preparation_error = '',
                     trigger_info = ?,
                     in_preparation_queue = 1 WHERE tenant = ?";
