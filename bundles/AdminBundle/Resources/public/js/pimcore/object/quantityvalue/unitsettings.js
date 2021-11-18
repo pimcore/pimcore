@@ -61,12 +61,13 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
 
     getRowEditor: function () {
+        let fields = [{
+            name: 'id',
+            type: 'string'
+        }, 'abbreviation', 'longname', 'group', 'baseunit', 'factor', 'conversionOffset', 'reference', 'converter'];
 
         var baseUnitStore = Ext.create('Ext.data.JsonStore', {
-            fields: [{
-                name: 'id',
-                type: 'string'
-            }, 'abbreviation', 'longname', 'group', 'baseunit', 'factor', 'conversionOffset', 'reference', 'converter'],
+            fields: fields,
             proxy: {
                 type: 'ajax',
                 async: true,
@@ -165,6 +166,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                 },
                 pageSize: itemsPerPage
             },
+            fields: fields,
             remoteSort: true,
             remoteFilter: true,
             autoSync: true,
@@ -183,15 +185,16 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
         });
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: ['pimcore.gridfilters', this.cellEditing],
+            plugins: ['pimcore.gridfilters', this.rowEditing],
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
@@ -209,7 +212,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                     {
                         text: t('delete'),
                         handler: this.onDelete.bind(this),
-                        iconCls: "pimcore_icon_delete"
+                        iconCls: "pimcore_icon_minus"
                     },
                     '-',
                     {
@@ -253,13 +256,10 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                                 var u = {
                                     id: value
                                 };
-                                this.cellEditing.completeEdit();
-                                let recs = this.grid.store.insert(0, [u]);
+                                this.rowEditing.completeEdit();
+                                this.grid.store.insert(0, [u]);
 
-                                this.cellEditing.startEditByPosition({
-                                    row: 0,
-                                    column: 0
-                                });
+                                this.rowEditing.startEdit(0,0);
 
                             }.bind(this)
                         });

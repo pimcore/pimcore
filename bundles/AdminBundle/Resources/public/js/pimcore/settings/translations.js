@@ -111,7 +111,7 @@ pimcore.settings.translations = Class.create({
                 sortable: true,
                 dataIndex: "_" + languages[i],
                 filter: 'string',
-                getEditor: this.getCellEditor.bind(this, languages[i]),
+                editor: new Ext.form.TextField({}),
                 renderer: function (text) {
                     if (text) {
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
@@ -184,25 +184,22 @@ pimcore.settings.translations = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                beforeedit: function(editor, context, eOpts) {
-                    editor.editors.each(function (e) {
-                        try {
-                            // complete edit, so the value is stored when hopping around with TAB
-                            e.completeEdit();
-                            if (in_array(context.field, this.languages)) {
-                                Ext.destroy(e);
+                beforeedit: function(editor, e) {
+                    let cm = this.grid.getColumnManager().getColumns();
+                    for (let i=0; i < cm.length; i++) {
+                        let columnId = cm[i].id;
+                        if (columnId.startsWith('translation_column_')) {
+                            let editor = this.getCellEditor(e.column.dataIndex.substring(1), e.record);
+                            if (editor) {
+                                e.grid.getColumnManager().columns[i].setEditor(editor);
                             }
-                        } catch (exception) {
-                            // garbage collector was faster
-                            // already destroyed
                         }
-                    });
-
-                    editor.editors.clear();
-                }
+                    }
+                }.bind(this)
             }
         });
 
@@ -266,7 +263,7 @@ pimcore.settings.translations = Class.create({
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 "pimcore.gridfilters",
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: toolbar,
             viewConfig: {
@@ -320,10 +317,7 @@ pimcore.settings.translations = Class.create({
 
         var handler = function(rowIndex, cellIndex, mode) {
             record.set("editor", mode);
-            this.cellEditing.startEditByPosition({
-                row : rowIndex,
-                column: cellIndex
-            });
+            this.rowEditing.startEdit(rowIndex,cellIndex);
         };
 
         var menu = new Ext.menu.Menu();
@@ -458,16 +452,13 @@ pimcore.settings.translations = Class.create({
 
         Ext.MessageBox.prompt("", t("please_enter_the_new_name"), function (button, value) {
             if (button == "ok") {
-                this.cellEditing.cancelEdit();
+                this.rowEditing.cancelEdit();
 
                 this.grid.store.insert(0, {
                     key: value
                 });
 
-                this.cellEditing.startEditByPosition({
-                    row: 0,
-                    column: 2
-                });
+                this.rowEditing.startEdit(0, 2);
             }
         }.bind(this));
     },
