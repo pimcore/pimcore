@@ -29,7 +29,7 @@ class Version20211103055110 extends AbstractMigration
     {
         $db = \Pimcore\Db::get();
 
-        $classes = $db->fetchCol("SELECT id FROM classes");
+        $classes = $db->fetchCol('SELECT id FROM classes');
 
         foreach ($classes as $class) {
             $objectDatastoreTableRelation = 'object_relations_' . $class;
@@ -54,7 +54,7 @@ class Version20211103055110 extends AbstractMigration
     {
         $db = \Pimcore\Db::get();
 
-        $classes = $db->fetchRow("SELECT id FROM classes");
+        $classes = $db->fetchRow('SELECT id FROM classes');
 
         foreach ($classes as $class) {
             $objectDatastoreTableRelation = 'object_relations_' . $class;
@@ -71,4 +71,3 @@ class Version20211103055110 extends AbstractMigration
         }
     }
 }
-
