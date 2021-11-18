@@ -93,7 +93,7 @@ public function getSku(): ?string
 }
 ```
 
-You can either use [class inheritance](#parent-class-inheritance) [override your data model class](../../../20_Extending_Pimcore/03_Overriding_Models.md) and implement `PreGetValueHookInterface` to modify the behaviour of the data object's getter methods:
+You can either use [class inheritance](#parent-class-inheritance) or [override your data object class](../../../20_Extending_Pimcore/03_Overriding_Models.md) and implement `PreGetValueHookInterface` to modify the behaviour of the data object's getter methods:
 
 ```php
 namespace App\Model\DataObject;
