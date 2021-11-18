@@ -50,7 +50,7 @@ the attributes directly, you will not get the inherited values.
 > The complex data type *field collections* does not support inheritance.
 
 
-## Parent Class - Class Inheritance
+## Parent Class Inheritance
 
 Pimcore data objects support inheritance, just as any PHP object does. In Pimcore the class from which a specific data 
 class inherits can be changed. By default, a data class inherits from `Pimcore\Model\DataObject\Concrete`, but if required 
@@ -69,9 +69,13 @@ or its parent classes.
 
 It is also possible to use class inheritance and traits for listing data object model.
 
-### Modify inheritance behaviour
+## Overriding Pimcore Models
 
-#### Change behaviour of getter methods
+In addition to parent classes, it is also possible to override Pimcore object classes with custom classes and tell Pimcore to use the custom classes instead of the generated object classes. This can be done by using [model overrides](../../../20_Extending_Pimcore/03_Overriding_Models.md).
+
+## Modify inheritance behaviour
+
+### Change behaviour of getter methods
 A typical getter method for a data object class field looks like this:
 ```php
 public function getSku(): ?string
@@ -89,7 +93,7 @@ public function getSku(): ?string
 }
 ```
 
-You can [override your data model class](../../../20_Extending_Pimcore/03_Overriding_Models.md) and implement `PreGetValueHookInterface` to modify the behaviour of the data object's getter methods:
+You can either use [class inheritance](#parent-class-inheritance) [override your data model class](../../../20_Extending_Pimcore/03_Overriding_Models.md) and implement `PreGetValueHookInterface` to modify the behaviour of the data object's getter methods:
 
 ```php
 namespace App\Model\DataObject;
@@ -105,7 +109,7 @@ class Special extends DataObject\Concrete implements DataObject\PreGetValueHookI
 }
 ```
 
-#### Disable inheritance for single fields
+### Disable inheritance for single fields
 
 It is possible to have some fields of a data object class getting inherited but some others not. This can be done by overriding `getNextParentForInheritance($fieldName)` method in an [overriden data model class](../../../20_Extending_Pimcore/03_Overriding_Models.md):
 
@@ -119,7 +123,3 @@ public function getNextParentForInheritance($fieldName = null)
 }
 ```
 In this example all fields of the data object class get inherited - except the field `images`. The getter method of the latter will only return the field content of the object itself, not from any ancestor element.
-
-## Overriding Pimcore Models
-In addition to parent classes, it is also possible to override Pimcore object classes with custom classes and tell Pimcore 
-to use the custom classes instead of the generated object classes. This can be done by using [model overrides](../../../20_Extending_Pimcore/03_Overriding_Models.md).
