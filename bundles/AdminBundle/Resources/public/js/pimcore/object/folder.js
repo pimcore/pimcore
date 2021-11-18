@@ -47,10 +47,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
     getData: function () {
+
+        var eventData =  {requestParams: {id: this.id}};
+        pimcore.plugin.broker.fireEvent("preGetObjectFolder", eventData);
+
         var options = this.options || {};
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_getfolder'),
-            params: {id: this.id},
+            params: eventData.requestParams,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
             failure: function() {

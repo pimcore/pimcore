@@ -37,7 +37,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.value = this.data.value;
         }
 
-        if (!isNaN(this.fieldConfig.width) && this.fieldConfig.width) {
+        if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         }
 

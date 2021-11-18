@@ -57,6 +57,6 @@ final class Version20210706090823 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->write(sprintf('Please restore your class definition files in %s and run bin/console pimcore:deployment:classes-rebuild manually.', PIMCORE_CLASS_DIRECTORY));
+        $this->write(sprintf('Please restore your class definition files in %s and run bin/console pimcore:deployment:classes-rebuild manually.', PIMCORE_CLASS_DEFINITION_DIRECTORY));
     }
 }

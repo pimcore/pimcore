@@ -176,11 +176,8 @@ class Definition extends Model\AbstractModel
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
-        $existingDefinition = Definition::getByKey($this->getKey());
-        $isUpdate = $existingDefinition != null;
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('fieldcollection updates in config folder not allowed');
+        if ($generateDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
         }
 
         $infoDocBlock = $this->getInfoDocBlock();
@@ -301,7 +298,7 @@ class Definition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
@@ -317,7 +314,7 @@ class Definition extends Model\AbstractModel
      */
     public function getDefinitionFile($key = null)
     {
-        return $this->locateFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
+        return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
 
     /**

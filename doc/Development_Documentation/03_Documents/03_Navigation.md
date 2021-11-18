@@ -249,15 +249,15 @@ For example, generate bootstrap 4.0 style navigation:
                     {% set hasChildren = page.hasPages() %}
                     {% if not hasChildren %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ page.getHref() }}">{{ page.getLabel()|trans }}</a>
+                            <a class="nav-link" href="{{ page.getHref() }}">{{ page.getLabel() }}</a>
                         </li>
                     {% else %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="{{ page.getHref() }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.getLabel()|trans }}</a>
+                            <a class="nav-link dropdown-toggle" href="{{ page.getHref() }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.getLabel() }}</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 {% for child in page.getPages() %}
                                     {% if child.isVisible() and menuRenderer.accept(child) %}
-                                            <a class="dropdown-item" href="{{ child.getHref() }}">{{ child.getLabel()|trans }}</a>
+                                            <a class="dropdown-item" href="{{ child.getHref() }}">{{ child.getLabel() }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>

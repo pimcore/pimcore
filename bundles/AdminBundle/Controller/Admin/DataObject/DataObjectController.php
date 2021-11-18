@@ -278,12 +278,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
-        $hasChildren = $child->hasChildren($allowedTypes);
+        $hasChildren = (bool)$child->getChildAmount($allowedTypes, $this->getAdminUser());
 
-        $tmpObject['isTarget'] = false;
         $tmpObject['allowDrop'] = false;
-        $tmpObject['allowChildren'] = false;
-
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
@@ -724,6 +721,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
+            $objectData['type'] = $object->getType();
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {

@@ -403,6 +403,10 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+        }
+
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
@@ -437,9 +441,6 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $isUpdate = $this->exists();
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
-        }
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
@@ -801,7 +802,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
@@ -817,7 +818,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function getDefinitionFile($name = null)
     {
-        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+        return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
 
     private function getPhpClassFile(): string

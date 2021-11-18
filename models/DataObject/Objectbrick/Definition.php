@@ -236,11 +236,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
-        $existingDefinition = Definition::getByKey($this->getKey());
-        $isUpdate = $existingDefinition != null;
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('brick updates in config folder not allowed');
+        if ($generateDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
         }
 
         $definitionFile = $this->getDefinitionFile();
@@ -739,7 +736,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
@@ -755,7 +752,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function getDefinitionFile($key = null)
     {
-        return $this->locateFile($key ?? $this->getKey(), 'objectbricks/%s.php');
+        return $this->locateDefinitionFile($key ?? $this->getKey(), 'objectbricks/%s.php');
     }
 
     /**

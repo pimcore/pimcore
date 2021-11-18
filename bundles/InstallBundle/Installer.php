@@ -807,6 +807,7 @@ class Installer
             ['key' => 'workflow_details'],
             ['key' => 'notifications'],
             ['key' => 'notifications_send'],
+            ['key' => 'sites'],
         ];
 
         foreach ($userPermissions as $up) {
