@@ -77,6 +77,10 @@ Replace the `scripts` and `autoload` sections in your `composer.json` with the f
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
     ]
   },
+  "conflict": {
+    "monolog/monolog": ">=2",
+    "symfony/monolog-bundle": "3.6.0"
+  },
 ```
 
 ## 4. Install Pimcore as Composer dependency 
@@ -126,7 +130,7 @@ php manual-migration.php 100
 
 Additionally we have to update to files in the project manually, use the following commands: 
 ```
-wget https://raw.githubusercontent.com/pimcore/skeleton/master/bin/console -O bin/console
+wget https://raw.githubusercontent.com/pimcore/skeleton/v1.3.0/bin/console -O bin/console
 chmod 0755 bin/console
 wget https://raw.githubusercontent.com/pimcore/skeleton/41b065b663e675a941586abcac705220c0404756/web/app.php -O web/app.php
 wget https://raw.githubusercontent.com/pimcore/demo-basic/master/app/AppKernel.php -O app/AppKernel.php
