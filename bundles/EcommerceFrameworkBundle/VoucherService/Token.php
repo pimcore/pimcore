@@ -127,7 +127,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isReserved()
     {
