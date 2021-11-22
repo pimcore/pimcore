@@ -541,6 +541,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @internal
      *
      * @param string $fieldName allows to disable inheritance for single field by overriding the corresponding data object class
+     *
      * @return AbstractObject|null
      */
     public function getNextParentForInheritance($fieldName = null)
