@@ -56,6 +56,9 @@ class Reservation extends AbstractModel
         }
     }
 
+    /**
+     * @return bool
+     */
     public function exists()
     {
         return isset($this->id);
