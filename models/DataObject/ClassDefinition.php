@@ -400,12 +400,12 @@ final class ClassDefinition extends Model\AbstractModel
      * @param bool $saveDefinitionFile
      *
      * @throws \Exception
-     * @throws DataObject\ClassDefinition\Exception\WriteException
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
-            throw new DataObject\ClassDefinition\Exception\WriteException();
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();

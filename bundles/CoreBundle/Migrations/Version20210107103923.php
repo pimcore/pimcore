@@ -51,7 +51,7 @@ final class Version20210107103923 extends AbstractMigration
                 $this->write(sprintf('Saving field collection: %s', $fc->getKey()));
                 $fc->save();
             }
-        } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
+        } catch (DataObject\Exception\DefinitionWriteException $e) {
             $this->write(
                 'Could not write class definition file. Please set PIMCORE_CLASS_DEFINITION_WRITABLE env.' . "\n" .
                 sprintf(

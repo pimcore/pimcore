@@ -13,9 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Exception;
+namespace Pimcore\Model\DataObject\Exception;
 
-class WriteException extends \Exception
+class DefinitionWriteException extends \Exception
 {
     public function __construct()
     {
