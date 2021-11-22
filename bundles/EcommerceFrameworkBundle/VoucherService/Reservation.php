@@ -57,10 +57,18 @@ class Reservation extends AbstractModel
     }
 
     /**
+     * @deprecated
+     *
      * @return bool
      */
     public function exists()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.2.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return isset($this->id);
     }
 

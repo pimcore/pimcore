@@ -60,7 +60,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         $reservation = Reservation::get($this->model->getToken(), $cart);
 
-        return $reservation && $reservation->exists();
+        return $reservation !== null;
     }
 
     public function getTokenUsages($code)
