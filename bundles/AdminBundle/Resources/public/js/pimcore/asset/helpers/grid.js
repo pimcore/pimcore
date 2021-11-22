@@ -200,7 +200,7 @@ pimcore.asset.helpers.grid = Class.create({
                         renderer: function (value) {
                             if (value) {
                                 return  '<div class="list-img-container">' +
-                                    '<img style="max-width: 150px; max-height: 100px; object-fit: contain;" src="' + value + '" loading="lazy">'+
+                                    '<img src="' + value + '" loading="lazy">'+
                                     '</div>'
                             }
                         }.bind(this)
