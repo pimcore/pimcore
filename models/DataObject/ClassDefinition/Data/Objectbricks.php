@@ -140,7 +140,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $object = $data->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
         }
 
         if (!method_exists($data, $getter)) {
@@ -217,7 +217,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $result = new \stdClass();
         if ($baseObject) {
-            $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+            $parent = DataObject\Service::hasInheritableParentObject($baseObject, $key);
         }
         $valueGetter = 'get' . ucfirst($key);
 
@@ -683,7 +683,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
+        $parent = DataObject\Service::hasInheritableParentObject($data->getObject(), $this->getName());
         $item = $data->$getter();
 
         if (!$item && !empty($parent)) {
