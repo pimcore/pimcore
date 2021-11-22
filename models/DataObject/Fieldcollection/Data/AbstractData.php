@@ -39,9 +39,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $fieldname;
 
     /**
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected ?Concrete $object = null;
+    protected $object;
 
     /**
      * @var int|null
