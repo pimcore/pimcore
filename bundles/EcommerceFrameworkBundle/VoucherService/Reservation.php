@@ -75,12 +75,20 @@ class Reservation extends AbstractModel
     /**
      * Check whether the reservation object contains a reservations.
      *
+     * @deprecated
+     *
      * @param int $cart_id
      *
      * @return bool
      */
     public function check($cart_id)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.2.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $cart_id == $this->getCartId();
     }
 
