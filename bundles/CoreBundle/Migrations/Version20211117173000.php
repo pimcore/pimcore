@@ -33,44 +33,40 @@ final class Version20211117173000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $list = new DataObject\ClassDefinition\Listing();
-        foreach ($list->getClasses() as $class) {
-            $this->write(sprintf('Saving class: %s', $class->getName()));
-            try {
+        try {
+            $list = new DataObject\ClassDefinition\Listing();
+            foreach ($list->getClasses() as $class) {
+                $this->write(sprintf('Saving class: %s', $class->getName()));
                 $class->save();
-            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
-                $this->write($e->getMessage());
             }
-        }
 
-        $list = new DataObject\Objectbrick\Definition\Listing();
-        foreach ($list->load() as $brickDefinition) {
-            $this->write(sprintf('Saving object brick: %s', $brickDefinition->getKey()));
-            try {
+            $list = new DataObject\Objectbrick\Definition\Listing();
+            foreach ($list->load() as $brickDefinition) {
+                $this->write(sprintf('Saving object brick: %s', $brickDefinition->getKey()));
                 $brickDefinition->save();
-            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
-                $this->write($e->getMessage());
             }
-        }
 
-        $list = new DataObject\Fieldcollection\Definition\Listing();
-        foreach ($list->load() as $fc) {
-            $this->write(sprintf('Saving field collection: %s', $fc->getKey()));
-            try {
+            $list = new DataObject\Fieldcollection\Definition\Listing();
+            foreach ($list->load() as $fc) {
+                $this->write(sprintf('Saving field collection: %s', $fc->getKey()));
                 $fc->save();
-            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
-                $this->write($e->getMessage());
             }
-        }
 
-        $list = new DataObject\ClassDefinition\CustomLayout\Listing();
-        foreach ($list->getLayoutDefinitions() as $layout) {
-            $this->write(sprintf('Saving custom layout: %s', $layout->getName()));
-            try {
+            $list = new DataObject\ClassDefinition\CustomLayout\Listing();
+            foreach ($list->getLayoutDefinitions() as $layout) {
+                $this->write(sprintf('Saving custom layout: %s', $layout->getName()));
                 $layout->save();
-            } catch (DataObject\ClassDefinition\Exception\WriteException $e) {
-                $this->write($e->getMessage());
             }
+        } catch (DataObject\Exception\DefinitionWriteException $e) {
+            $this->write(
+                'Could not write class definition file. Please set PIMCORE_CLASS_DEFINITION_WRITABLE env.' . "\n" .
+                sprintf(
+                    'If you already have migrate the definitions you can skip this migration via "php bin/console doctrine:migrations:version --add %s"',
+                    __CLASS__
+                )
+            );
+
+            throw $e;
         }
     }
 
