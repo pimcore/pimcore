@@ -25,12 +25,12 @@ use Pimcore\Model\Version;
 interface ElementInterface extends ModelInterface
 {
     /**
-     * @return int
+     * @return int|null
      */
     public function getId();
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey();
 
@@ -42,7 +42,7 @@ interface ElementInterface extends ModelInterface
     public function setKey($key);
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPath();
 
@@ -74,7 +74,7 @@ interface ElementInterface extends ModelInterface
     public function getType();
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate();
 
@@ -86,7 +86,7 @@ interface ElementInterface extends ModelInterface
     public function setCreationDate($creationDate);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate();
 
@@ -201,7 +201,7 @@ interface ElementInterface extends ModelInterface
     public function getLocked();
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId();
 

@@ -1,5 +1,3 @@
-[![Pimcore Inspire 2021](doc/Development_Documentation/img/github-inspire-2021.jpg)](https://pimcore.com/inspire)
-
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   

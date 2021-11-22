@@ -173,12 +173,12 @@ class Definition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
-     * @throws DataObject\ClassDefinition\Exception\WriteException
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
-            throw new DataObject\ClassDefinition\Exception\WriteException();
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $infoDocBlock = $this->getInfoDocBlock();

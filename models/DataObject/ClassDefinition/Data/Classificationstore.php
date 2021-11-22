@@ -284,49 +284,47 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         // TODO
         if ($inheritanceAllowed) {
-            // check if there is a parent with the same type
-            $parent = DataObject\Service::hasInheritableParentObject($object);
-            if ($parent) {
-                // same type, iterate over all language and all fields and check if there is something missing
-                if ($this->localized) {
-                    $validLanguages = Tool::getValidLanguages();
-                } else {
-                    $validLanguages = [];
-                }
-                array_unshift($validLanguages, 'default');
+            // same type, iterate over all language and all fields and check if there is something missing
+            if ($this->localized) {
+                $validLanguages = Tool::getValidLanguages();
+            } else {
+                $validLanguages = [];
+            }
+            array_unshift($validLanguages, 'default');
 
-                $foundEmptyValue = false;
+            $foundEmptyValue = false;
 
-                $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
+            $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-                foreach ($validLanguages as $language) {
-                    foreach ($activeGroupIds as $groupId => $enabled) {
-                        if (!$enabled) {
-                            continue;
-                        }
+            foreach ($validLanguages as $language) {
+                foreach ($activeGroupIds as $groupId => $enabled) {
+                    if (!$enabled) {
+                        continue;
+                    }
 
-                        $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                        $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                        $relation = $relation->load();
-                        foreach ($relation as $key) {
-                            $keyId = $key->getKeyId();
-                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                    $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
+                    $relation->setCondition('groupId = ' . $relation->quote($groupId));
+                    $relation = $relation->load();
+                    foreach ($relation as $key) {
+                        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+                        $keyId = $key->getKeyId();
+                        $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
-                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
-                                $foundEmptyValue = true;
-                                $inherited = true;
-                                $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
-                            }
+                        if ($parent !== null && $fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
+                            $foundEmptyValue = true;
+                            $inherited = true;
+                            $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
                         }
                     }
                 }
+            }
 
-                if ($foundEmptyValue) {
-                    // still some values are missing, ask the parent
-                    $getter = 'get' . ucfirst($this->getName());
-                    $parentData = $parent->$getter();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
-                }
+            if ($foundEmptyValue) {
+                // still some values are missing, ask the parent
+                $getter = 'get' . ucfirst($this->getName());
+                $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
+                $parentData = $parent->$getter();
+                $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
             }
         }
 
@@ -1025,7 +1023,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
             if ($parent) {
                 $mergedMapping = $this->recursiveGetActiveGroupCollectionMapping($parent, $mergedMapping);
             }
@@ -1061,7 +1059,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
             if ($parent) {
                 $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }

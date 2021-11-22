@@ -527,7 +527,7 @@ final class Localizedfield extends Model\AbstractModel implements
                                 }
                             }
 
-                            if (method_exists($parentContainer, $method)) {
+                            if ($parentContainer && method_exists($parentContainer, $method)) {
                                 $localizedFields = $parentContainer->getLocalizedFields();
                                 if ($localizedFields instanceof Localizedfield) {
                                     if ($localizedFields->getObject()->getId() != $this->getObject()->getId()) {

@@ -79,12 +79,12 @@ final class Staticroute extends AbstractModel
     protected $priority = 1;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -632,7 +632,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -652,7 +652,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

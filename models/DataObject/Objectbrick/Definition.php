@@ -237,7 +237,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     protected function generateClassFiles($generateDefinitionFile = true)
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
-            throw new DataObject\ClassDefinition\Exception\WriteException();
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $definitionFile = $this->getDefinitionFile();
