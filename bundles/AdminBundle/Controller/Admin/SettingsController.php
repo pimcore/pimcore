@@ -887,8 +887,9 @@ class SettingsController extends AdminController
 
             if ($request->get('filter')) {
                 $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
+                $list->setFilter(function ($staticRoute) use ($filter) {
+                    $vars = $staticRoute->getObjectVars();
+                    foreach ($vars as $value) {
                         if (! is_scalar($value)) {
                             continue;
                         }
