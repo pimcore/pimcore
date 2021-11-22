@@ -40,7 +40,7 @@ interface CartInterface
     const COUNT_MAIN_AND_SUB_ITEMS = 'main_and_sub';
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId();
 
@@ -255,7 +255,7 @@ interface CartInterface
     public function setCreationDate(\DateTime $creationDate = null);
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getModificationDate();
 
