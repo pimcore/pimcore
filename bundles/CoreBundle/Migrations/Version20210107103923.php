@@ -59,6 +59,7 @@ final class Version20210107103923 extends AbstractMigration
                     __CLASS__
                 )
             );
+
             throw $e;
         }
     }
