@@ -62,7 +62,7 @@ When using `symfony-config` write target, configs are written to Symfony Config 
 changing configs in production you won't see any update, because these configs are read only.
 
 If you'd like to allow changes in production, switch to the alternate `settings-store` config storage. 
-You can do so by adding the following to your `.env` or just set the env variable accordingly .e.g.:
+You can do so by adding the following to your `.env` or just set the env variable accordingly, e.g.:
 ```
 PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 ```
