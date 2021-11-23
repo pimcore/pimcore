@@ -66,7 +66,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * @return PimcoreUser
      */
-    public function getUser()
+    public function getUser()/*: PimcoreUser */
     {
         return $this->user;
     }
@@ -97,7 +97,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getPassword()
+    public function getPassword()/*: ?string */
     {
         return $this->user->getPassword();
     }
@@ -105,7 +105,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getSalt()
+    public function getSalt()/*: ?string */
     {
         return null;
     }
