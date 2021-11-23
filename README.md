@@ -1,5 +1,3 @@
-[![Pimcore X out now!](doc/Development_Documentation/img/pimcore-x-banner.jpg)](https://pimcore.com/en/resources/blog/latest-technology-and-best-performance-pimcore-x-is-out-now_a150669)
-
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   

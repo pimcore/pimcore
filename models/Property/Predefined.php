@@ -44,7 +44,7 @@ final class Predefined extends Model\AbstractModel
     protected $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $key;
 
@@ -74,12 +74,12 @@ final class Predefined extends Model\AbstractModel
     protected $inheritable = false;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -139,7 +139,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -331,7 +331,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -351,7 +351,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

@@ -98,7 +98,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     protected $highResolution;
 
@@ -133,21 +133,21 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $filenameSuffix;
 
@@ -506,7 +506,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getHighResolution()
     {
@@ -546,7 +546,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilenameSuffix()
     {
@@ -769,7 +769,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -785,7 +785,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

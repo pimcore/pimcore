@@ -26,12 +26,12 @@ use Pimcore\Model\Exception\NotFoundException;
 class GridConfig extends AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $ownerId;
 
@@ -61,12 +61,12 @@ class GridConfig extends AbstractModel
     protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -134,7 +134,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -150,7 +150,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOwnerId()
     {
@@ -246,7 +246,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -262,7 +262,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,21 +13,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Test;
+namespace Pimcore\Model\DataObject\Exception;
 
-abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
+class DefinitionWriteException extends \Exception
 {
-    /**
-     * @param array $options
-     *
-     * @return KernelInterface
-     */
-    protected static function createKernel(array $options = [])/*: KernelInterface */
+    public function __construct()
     {
-        $kernel = parent::createKernel($options);
-
-        \Pimcore::setKernel($kernel);
-
-        return $kernel;
+        parent::__construct(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 }

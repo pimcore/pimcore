@@ -17,11 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Test;
 
-use Symfony\Component\HttpKernel\KernelInterface;
-
-/**
- * @internal
- */
 abstract class WebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
     /**

@@ -241,7 +241,7 @@ final class Config implements \ArrayAccess
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
-                    if ($itemSiteId !== 0 && $itemSiteId !== $siteId) {
+                    if ($itemSiteId && $itemSiteId !== $siteId) {
                         continue;
                     }
 
