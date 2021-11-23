@@ -173,6 +173,12 @@ class Reservation extends AbstractModel
         }
     }
 
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     *
+     * @return bool
+     */
     public static function reservationExists($code, $cart): bool
     {
         $db = \Pimcore\Db::get();
