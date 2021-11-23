@@ -92,11 +92,17 @@ class Reservation extends AbstractModel
         return $cart_id == $this->getCartId();
     }
 
-    public static function create($code, $cart_id): ?self
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     *
+     * @return self|null
+     */
+    public static function create($code, $cart): ?self
     {
         try {
             $config = new self();
-            $config->getDao()->create($code, $cart_id);
+            $config->getDao()->create($code, $cart);
 
             return $config;
         } catch (\Exception $ex) {

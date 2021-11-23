@@ -59,6 +59,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->model->setCartId($result['cart_id']);
     }
 
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     */
     public function create($code, $cart)
     {
         if (!Reservation::reservationExists($code, $cart)) {
