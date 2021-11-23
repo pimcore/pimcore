@@ -34,10 +34,10 @@ class Dao extends Model\Staticroute\Dao
             $staticRoutes[] = Model\Staticroute::getById($id);
         }
 
-        if($this->model->getFilter()) {
+        if ($this->model->getFilter()) {
             $staticRoutes = array_filter($staticRoutes, $this->model->getFilter());
         }
-        if($this->model->getOrder()) {
+        if ($this->model->getOrder()) {
             usort($staticRoutes, $this->model->getOrder());
         }
         $this->model->setRoutes($staticRoutes);
