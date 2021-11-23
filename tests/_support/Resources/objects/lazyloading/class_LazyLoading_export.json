@@ -26,7 +26,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -42,7 +42,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "panel",
                         "labelWidth": 100,
@@ -59,7 +59,7 @@
                         "bodyStyle": null,
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "manyToManyObjectRelation",
                                 "width": null,
@@ -254,7 +254,7 @@
                             {
                                 "fieldtype": "localizedfields",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToManyObjectRelation",
                                         "width": null,
@@ -516,7 +516,7 @@
                                 "columnType": "longtext",
                                 "styleElement": "",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToManyObjectRelation",
                                         "width": null,
@@ -737,7 +737,7 @@
                                 "columnType": "longtext",
                                 "styleElement": "",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToManyObjectRelation",
                                         "width": null,

@@ -20,7 +20,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -36,7 +36,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "panel",
                         "labelWidth": 100,
@@ -53,7 +53,7 @@
                         "bodyStyle": null,
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "input",
                                 "width": null,
@@ -84,7 +84,7 @@
                             {
                                 "fieldtype": "localizedfields",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToManyObjectRelation",
                                         "width": null,
