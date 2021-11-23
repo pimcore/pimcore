@@ -73,7 +73,8 @@ class ValidationException extends \Exception
         return $result;
     }
 
-    public function getAggregatedMessage() {
+    public function getAggregatedMessage(): string
+    {
         $msg = $this->getMessage();
         $contextStack = $this->getContextStack();
         if ($contextStack) {
