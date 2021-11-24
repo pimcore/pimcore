@@ -57,7 +57,7 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
      */
     public function getTabPosition(): string
     {
-        return $this->tabPosition;
+        return $this->tabPosition ?? 'top';
     }
 
     /**
