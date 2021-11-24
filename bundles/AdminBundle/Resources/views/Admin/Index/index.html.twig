@@ -203,9 +203,11 @@
     "lib/leaflet.draw/leaflet.draw.js",
     "lib/vrview/build/vrview.min.js",
     "lib/ace/src-min-noconflict/ace.js",
-    "lib/ace/src-min-noconflict/ext-modelist.js",
-    "lib/ext-locale/locale-" ~ language ~ ".js"
+    "lib/ace/src-min-noconflict/ext-modelist.js"
 ] %}
+{% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
+    {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
+{% endif %}
 
 {# PIMCORE SCRIPTS #}
 
