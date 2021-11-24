@@ -67,9 +67,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * @internal

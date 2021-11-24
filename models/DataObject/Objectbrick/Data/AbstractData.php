@@ -50,9 +50,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $doDelete = false;
 
     /**
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * @var int|null

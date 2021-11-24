@@ -251,6 +251,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
+            overflowHandler: 'scroller',
             frame: false,
             store: this.store,
             columnLines: true,
