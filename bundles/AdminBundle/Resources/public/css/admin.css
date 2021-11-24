@@ -434,7 +434,7 @@
     opacity: 0.6 !important;
 }
 
-.object_value_inherited .x-form-field {
+.object_value_inherited .x-form-field, .object_value_inherited .x-form-display-field {
     background-image: none !important;
     background-color: #dad9d9 !important;
 }
