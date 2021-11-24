@@ -562,6 +562,20 @@
     margin:10px;
 }
 
+.list-img-container {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    margin-left: -10px;
+    margin-right: -10px;
+    width: 150px;
+}
+
+.list-img-container img {
+    max-width: 150px;
+    max-height: 100px;
+    object-fit: contain;
+}
 
 .pimcore_analytics_filter_form_item {
     margin: 0 30px 0 0;
