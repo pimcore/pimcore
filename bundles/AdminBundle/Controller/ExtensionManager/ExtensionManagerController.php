@@ -487,9 +487,8 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
-            /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
             $output = $installer->getOutput();
-            if (!empty($output)) {
+            if ($output instanceof BufferedOutput) {
                 $converter = new AnsiToHtmlConverter(null);
 
                 $converted = Encoding::fixUTF8($output->fetch());
