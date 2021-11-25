@@ -74,7 +74,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables());
     }
 
-    private function getWhere()
+    private function getWhere(): string
     {
         $where = parent::getCondition();
         if ($where) {
@@ -95,7 +95,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $where;
     }
 
-    private function getFrom()
+    private function getFrom(): string
     {
         $from = ' FROM ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
             . ',' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
