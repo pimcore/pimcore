@@ -33,6 +33,8 @@ abstract class EcommerceTestCase extends TestCase
     private $environment;
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var SessionInterface
      */
     private $session;
@@ -48,15 +50,19 @@ abstract class EcommerceTestCase extends TestCase
 
     protected function buildSession(): SessionInterface
     {
-        if (null === $this->session) {
-            $this->session = new Session(new MockArraySessionStorage());
+        $session = \Pimcore::getContainer()->get('request_stack')->getSession();
+
+        if (null === $session) {
+            $session = new Session(new MockArraySessionStorage());
 
             $configurator = new SessionConfigurator();
             $configurator->configure($this->session);
 
-            $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART)->set('carts', []);
+            $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART)->set('carts', []);
         }
 
-        return $this->session;
+        $this->session = $session;
+
+        return $session;
     }
 }
