@@ -13,6 +13,8 @@ For more information, please also check out [Symfony's Translations Component](h
 
 Available languages are defined within the system languages, see [here](./README.md).
 
+Shared Pimcore translations are stored in `translations_messages` MySQL table and can be versioned using [Migrations]https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html and GIT. 
+
 ## Translations case sensitivity
 
 Translations are case sensitive by default. You can
