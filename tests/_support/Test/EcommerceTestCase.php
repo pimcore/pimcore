@@ -56,7 +56,7 @@ abstract class EcommerceTestCase extends TestCase
             $session = new Session(new MockArraySessionStorage());
 
             $configurator = new SessionConfigurator();
-            $configurator->configure($this->session);
+            $configurator->configure($session);
 
             $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART)->set('carts', []);
         }
