@@ -1128,6 +1128,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $errors[] = $e->getAggregatedMessage();
                     }
                     $message = implode(' / ', $errors);
+
                     throw new Model\Element\ValidationException($message);
                 }
             }
