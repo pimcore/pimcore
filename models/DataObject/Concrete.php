@@ -685,18 +685,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $listConfig['condition'] = $defaultCondition . $limitCondition;
             }
 
-            $list = static::getList($listConfig);
-
-            // Check if variants, in addition to objects, to be fetched
-            if (!empty($objectTypes)) {
-                if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
-                    Logger::error('Class: DataObject\\Concrete => Unsupported object type in array ' . implode(',', $objectTypes));
-
-                    throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\Concrete');
-                }
-
-                $list->setObjectTypes($objectTypes);
-            }
+            $list = static::makeList($listConfig, $objectTypes);
 
             if ($field instanceof AbstractRelations && $field->isFilterable()) {
                 $list = $field->addListingFilter($list, $value);
@@ -711,10 +700,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             return $list;
         }
 
-        // there is no property for the called method, so throw an exception
-        Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
+        try {
+            return call_user_func_array([parent::class, $method], $arguments);
+        } catch (\Exception $e) {
+            // there is no property for the called method, so throw an exception
+            Logger::error('Class: DataObject\\Concrete => call to undefined static method '.$method);
 
-        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
+            throw new \Exception('Call to undefined static method '.$method.' in class DataObject\\Concrete');
+        }
     }
 
     /**
