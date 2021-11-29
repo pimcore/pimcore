@@ -1007,6 +1007,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $errors[] = $e->getAggregatedMessage();
             }
             $message = implode(' / ', $errors);
+
             throw new Model\Element\ValidationException($message);
         }
     }

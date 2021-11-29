@@ -177,6 +177,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $errors[] = $e->getAggregatedMessage();
             }
             $message .= implode(' / ', $errors);
+
             throw new Model\Element\ValidationException($message);
         }
 
