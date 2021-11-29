@@ -19,14 +19,12 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
 /**
@@ -1527,7 +1525,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param string $method
      * @param array $arguments
+     *
      * @return mixed|Listing|null
+     *
      * @throws \Exception
      */
     public static function __callStatic($method, $arguments)
@@ -1581,7 +1581,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param  array  $listConfig
      * @param  mixed $objectTypes
+     *
      * @return Listing
+     *
      * @throws \Exception
      */
     protected static function makeList(array $listConfig, mixed $objectTypes): Listing
