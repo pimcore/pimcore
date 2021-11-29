@@ -953,5 +953,10 @@
     "selected_grid_columns": "Selected grid columns",
     "ungrouped": "ungrouped",
     "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?",
-    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs."
+    "filter_by_relation": "Filter by relation",
+    "filter_by_relation_field": "Filter by relation field",
+    "clear_relation_filter": "Clear active relation filter",
+    "apply_filter": "Apply filter",
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
+    "sites": "Sites"
 }

@@ -19,6 +19,7 @@ use Pimcore\Config;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Frontend;
 
 /**
@@ -46,6 +47,7 @@ trait DocumentTreeConfigTrait
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
+            'key' => $childDocument->getKey(),
             'idx' => (int)$childDocument->getIndex(),
             'text' => $childDocument->getKey(),
             'type' => $childDocument->getType(),
@@ -67,14 +69,16 @@ trait DocumentTreeConfigTrait
             ],
         ];
 
+        $hasChildren = (bool)$childDocument->getChildAmount(Admin::getCurrentUser());
+
         // add icon
-        $tmpDocument['expandable'] = $childDocument->hasChildren();
-        $tmpDocument['loaded'] = !$childDocument->hasChildren();
+        $tmpDocument['expandable'] = $hasChildren;
+        $tmpDocument['loaded'] = !$hasChildren;
 
         // set type specific settings
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
+            $tmpDocument['expanded'] = !$hasChildren;
 
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
@@ -83,7 +87,7 @@ trait DocumentTreeConfigTrait
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
+            $tmpDocument['expanded'] = !$hasChildren;
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);

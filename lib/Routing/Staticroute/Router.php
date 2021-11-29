@@ -322,18 +322,18 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
             $list->setOrder(function ($a, $b) {
                 // give site ids a higher priority
-                if ($a['siteId'] && !$b['siteId']) {
+                if ($a->getSiteId() && !$b->getSiteId()) {
                     return -1;
                 }
-                if (!$a['siteId'] && $b['siteId']) {
+                if (!$a->getSiteId() && $b->getSiteId()) {
                     return 1;
                 }
 
-                if ($a['priority'] == $b['priority']) {
+                if ($a->getPriority() == $b->getPriority()) {
                     return 0;
                 }
 
-                return ($a['priority'] < $b['priority']) ? 1 : -1;
+                return ($a->getPriority() < $b->getPriority()) ? 1 : -1;
             });
 
             $this->staticRoutes = $list->load();

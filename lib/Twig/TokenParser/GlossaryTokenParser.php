@@ -33,6 +33,12 @@ class GlossaryTokenParser extends AbstractTokenParser
      */
     public function parse(Token $token)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.1',
+            'Usage of pimcoreglossary tag is deprecated since version 10.1 and will be removed in Pimcore 11. Use pimcore_glossary Twig filter instead.'
+        );
+
         $lineno = $token->getLine();
 
         $stream = $this->parser->getStream();

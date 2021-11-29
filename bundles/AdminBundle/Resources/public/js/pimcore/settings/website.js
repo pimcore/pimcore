@@ -54,13 +54,11 @@ pimcore.settings.website = Class.create({
     },
 
     getRowEditor:function () {
-
-
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = Routing.generate('pimcore_admin_settings_websitesettings');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            url, ["id", 'name','type', "data", 'siteId', 'creationDate', 'modificationDate'],
+            url, ['id', 'name', 'type', 'language', 'data', 'siteId', 'creationDate', 'modificationDate'],
             itemsPerPage
         );
 
@@ -93,84 +91,63 @@ pimcore.settings.website = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
-        var languagestore = [["",t("none")]];
-        var websiteLanguages = pimcore.settings.websiteLanguages;
-        var selectContent = "";
-        for (var i=0; i<websiteLanguages.length; i++) {
+        this.languagestore = [["",t("none")]];
+        let websiteLanguages = pimcore.settings.websiteLanguages;
+        let selectContent = "";
+        for (let i=0; i<websiteLanguages.length; i++) {
             selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
-            languagestore.push([websiteLanguages[i], selectContent]);
+            this.languagestore.push([websiteLanguages[i], selectContent]);
         }
-
-        var customLanguage = new Ext.form.ComboBox({
-            name: "language",
-            store: languagestore,
-            editable: false,
-            triggerAction: 'all',
-            mode: "local",
-            width: 150,
-            emptyText: t('language')
-        });
 
         var typesColumns = [
             {
                 text: t("type"),
                 dataIndex: 'type',
                 editable: false,
-                width: 40,
+                flex: 20,
                 renderer: this.getTypeRenderer.bind(this),
                 sortable: true
             },
             {
                 text: t("name"),
                 dataIndex: 'name',
-                width: 200,
+                flex: 100,
                 editable: true,
-                getEditor: this.getCellEditor.bind(this),
-                sortable: true
+                sortable: true,
+                editor: new Ext.form.TextField({})
             },
             {
                 text: t('language'),
                 sortable: true,
                 dataIndex: "language",
-                getEditor: function() {
-                    return new Ext.form.ComboBox({
-                        name: "language",
-                        store: languagestore,
-                        editable: false,
-                        listConfig: {minWidth: 200},
-                        triggerAction: 'all',
-                        mode: "local"
-                    });
-                },
-                width: 80
+                editor: new Ext.form.ComboBox({
+                    store: this.languagestore,
+                    mode: "local",
+                    editable: false,
+                    triggerAction: "all"
+                }),
+                flex: 50
             },
             {
                 text: t("value"),
                 dataIndex: 'data',
-                flex: 10,
-                getEditor: this.getCellEditor.bind(this),
+                flex: 300,
                 editable: true,
                 renderer: this.getCellRenderer.bind(this),
-                listeners: {
-                    "mousedown": this.cellMousedown.bind(this)
-                }
             },
-            {text: t("site"), width: 250, sortable:true, dataIndex: "siteId",
-                getEditor: function() {
-                    return new Ext.form.ComboBox({
-                        store: pimcore.globalmanager.get("sites"),
-                        valueField: "id",
-                        displayField: "domain",
-                        editable: false,
-                        triggerAction: "all"
-                    });
-                },
+            {text: t("site"), flex: 100, sortable:true, dataIndex: "siteId",
+                editor: new Ext.form.ComboBox({
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    editable: false,
+                    triggerAction: "all"
+                }),
                 renderer: function (siteId) {
                     var store = pimcore.globalmanager.get("sites");
                     var pos = store.findExact("id", siteId);
-                    if(pos >= 0) {
-                        var val = store.getAt(pos).get("domain");
-                        return val;
+                    if (pos >= 0) {
+                        return store.getAt(pos).get("domain");
                     }
                     return null;
                 }
@@ -225,7 +202,6 @@ pimcore.settings.website = Class.create({
         ];
 
 
-
         var propertyTypes = new Ext.data.SimpleStore({
             fields: ['id', 'name'],
             data: [
@@ -256,25 +232,65 @@ pimcore.settings.website = Class.create({
             emptyText: t('type')
         });
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                beforeedit: function(editor, context, eOpts) {
-                    //need to clear cached editors of cell-editing editor in order to
-                    //enable different editors per row
-                    editor.editors.each(function (e) {
-                        try {
-                            // complete edit, so the value is stored when hopping around with TAB
-                            e.completeEdit();
-                            Ext.destroy(e);
-                        } catch (exception) {
-                            // garbage collector was faster
-                            // already destroyed
-                        }
-                    });
+                beforeedit: function(el, e) {
+                    let cm = this.grid.getColumnManager().getColumns();
+                    for (let i=0; i < cm.length; i++) {
+                        if (cm[i].dataIndex === 'data') {
+                            let editor = this.getCellEditor(e.record);
+                            if (editor) {
+                                e.grid.columns[i].setEditor(editor);
+                            }
 
-                    editor.editors.clear();
-                }
+                            break;
+                        }
+                    }
+
+                    var editorRow = el.editor.body;
+                    editorRow.rowIdx = e.rowIdx;
+                    // add dnd support
+                    var dd = new Ext.dd.DropZone(editorRow, {
+                        ddGroup: "element",
+
+                        getTargetFromEvent: function(e) {
+                            return this.getEl();
+                        },
+
+                        onNodeOver : function(elementType, node, dragZone, e, data ) {
+                            if (data.records.length == 1) {
+                                var record = data.records[0];
+                                var data = record.data;
+
+                                if (data.elementType == elementType) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                            }
+
+                            return Ext.dd.DropZone.prototype.dropNotAllowed;
+                        }.bind(this, e.record.get('type')),
+
+                        onNodeDrop : function(elementType, node, dragZone, e, data) {
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
+
+                                    if (data.elementType == elementType) {
+                                        Ext.getCmp('valueEditor').setValue(data.path);
+                                        return true;
+                                    }
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                            return false;
+                        }.bind(this, e.record.get('type'))
+                    });
+                }.bind(this),
+                delay: 1
             }
         });
 
@@ -292,7 +308,7 @@ pimcore.settings.website = Class.create({
             sm:  Ext.create('Ext.selection.RowModel', {}),
             bbar:this.pagingtoolbar,
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -348,24 +364,35 @@ pimcore.settings.website = Class.create({
         var type = data.type;
         var property;
 
-        if (type == "text") {
+        if (type === "text") {
             property = Ext.create('Ext.form.TextField');
         } else if (type == "textarea") {
             property = Ext.create('Ext.form.TextArea');
         } else if (type == "document" || type == "asset" || type == "object") {
-            //no editor needed here
+            property = {
+                xtype: 'textfield',
+                editable: false,
+                id: 'valueEditor',
+                fieldCls: "input_drop_target",
+                flex: 1,
+                value: data.data
+            }
         } else if (type == "date") {
             property = Ext.create('Ext.form.field.Date', {
                 format: "Y-m-d"
             });
-        } else if (type == "checkbox") {
-            //no editor needed here
+        } else if (type == "checkbox" || type == "bool") {
+            property =  {
+                xtype: 'checkbox',
+                flex: 1,
+            }
         } else if (type == "select") {
             var config = data.config;
             property =  Ext.create('Ext.form.ComboBox', {
                 triggerAction: 'all',
                 editable: false,
-                store: config.split(",")
+                store: config.split(","),
+                flex: 1,
             });
         }
 
@@ -454,24 +481,6 @@ pimcore.settings.website = Class.create({
         return Ext.util.Format.htmlEncode(value);
     },
 
-    cellMousedown: function (grid, cell, rowIndex, cellIndex, e) {
-
-        // this is used for the boolean field type
-
-        var store = this.store;
-        var record = store.getAt(rowIndex);
-        var data = record.data;
-        var type = data.type;
-
-        if (type == "bool") {
-
-            this.cellEditing.editors.each(Ext.destroy, Ext);
-            this.cellEditing.editors.clear();
-
-            record.set("data", !data.data);
-        }
-    },
-
     addSetFromUserDefined: function (customKey, customType) {
         if(in_array(customKey.getValue(), this.disallowedKeys)) {
             Ext.MessageBox.alert(t("error"), t("name_is_not_allowed"));
@@ -485,8 +494,8 @@ pimcore.settings.website = Class.create({
 
         var store = this.grid.getStore();
 
-        this.cellEditing.editors.each(Ext.destroy, Ext);
-        this.cellEditing.editors.clear();
+        //this.cellEditing.editors.each(Ext.destroy, Ext);
+        //this.cellEditing.editors.clear();
 
         // check for duplicate name
         var dublicateIndex = store.findBy(function (key, record, id) {
@@ -524,11 +533,14 @@ pimcore.settings.website = Class.create({
             value = "";
         }
 
-        store.add({
+        let res = store.add({
             name: key,
             data: value,
             type: type
         });
+
+        this.rowEditing.completeEdit();
+        this.rowEditing.startEdit(res[0], 1);
     }
 
 });

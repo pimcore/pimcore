@@ -286,8 +286,10 @@ pimcore.object.classes.data.data = Class.create({
         if (this.treeNode) {
             for (var i = 0; i < items.length; i++) {
                 if (items[i].name == "name") {
-                    this.treeNode.set("text", items[i].getValue());
-                    break;
+                    if(this.isValidName(items[i].getValue())) {
+                        this.treeNode.set("text", htmlspecialchars(items[i].getValue()));
+                        break;
+                    }
                 }
             }
         }
@@ -302,10 +304,9 @@ pimcore.object.classes.data.data = Class.create({
         var data = this.getData();
         data.name = trim(data.name);
 
-        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
         var isForbiddenName = in_arrayi(data.name, this.forbiddenNames);
 
-        if (data.name.length > 1 && isValidName.test(data.name) && !isForbiddenName) {
+        if (data.name.length > 1 && this.isValidName(data.name) && !isForbiddenName) {
             return true;
         }
 
@@ -314,6 +315,11 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         return false;
+    },
+
+    isValidName: function (name) {
+        let isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+        return isValidName.test(name);
     },
 
     applyData: function () {

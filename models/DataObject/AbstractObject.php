@@ -92,14 +92,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $o_id = 0;
+    protected $o_id;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_parentId;
 
@@ -120,14 +120,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_key;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_path;
 
@@ -136,19 +136,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int
      */
-    protected $o_index;
+    protected $o_index = 0;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_modificationDate;
 
@@ -961,7 +961,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -969,7 +969,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -990,7 +990,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -998,7 +998,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string path
+     * @return string|null
      */
     public function getPath()
     {
@@ -1014,7 +1014,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -1022,7 +1022,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -1095,7 +1095,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setKey($o_key)
     {
-        $this->o_key = $o_key;
+        $this->o_key = (string)$o_key;
 
         return $this;
     }

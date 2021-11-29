@@ -77,35 +77,35 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $videoBitrate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $audioBitrate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $filenameSuffix;
 
@@ -336,7 +336,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilenameSuffix()
     {
@@ -430,7 +430,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -446,7 +446,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

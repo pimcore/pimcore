@@ -45,12 +45,12 @@ class CustomLayout extends Model\AbstractModel
     protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -187,14 +187,16 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param bool $saveDefinitionFile
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
-        $isUpdate = $this->exists();
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
         }
+
+        $isUpdate = $this->exists();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
@@ -257,7 +259,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
@@ -405,7 +407,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -413,7 +415,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

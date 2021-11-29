@@ -77,6 +77,9 @@
 
         #pimcore_panel_tabs-body {
             background-image: url({{ path('pimcore_settings_display_custom_logo') }});
+            {% if config['branding']['color_admin_interface_background']|default(null) is not null %}
+                background-color: {{ config['branding']['color_admin_interface_background'] }};
+            {% endif %}
             background-repeat: no-repeat;
             background-position: center center;
             background-size: 500px auto;
@@ -205,6 +208,9 @@
     "lib/ace/src-min-noconflict/ace.js",
     "lib/ace/src-min-noconflict/ext-modelist.js"
 ] %}
+{% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
+    {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
+{% endif %}
 
 {# PIMCORE SCRIPTS #}
 
@@ -396,6 +402,7 @@
     "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
+    "pimcore/asset/archive.js",
     "pimcore/asset/video.js",
     "pimcore/asset/audio.js",
     "pimcore/asset/text.js",

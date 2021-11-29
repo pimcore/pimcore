@@ -18,6 +18,7 @@ namespace Pimcore\Tool;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 final class Console
@@ -64,6 +65,10 @@ final class Console
     public static function getExecutable($name, $throwException = false)
     {
         if (isset(self::$executableCache[$name])) {
+            if (!self::$executableCache[$name] && $throwException) {
+                throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
+            }
+
             return self::$executableCache[$name];
         }
 
@@ -178,7 +183,17 @@ final class Console
      */
     public static function getPhpCli()
     {
-        return self::getExecutable('php', true);
+        try {
+            return self::getExecutable('php', true);
+        } catch (\Exception $e) {
+            $phpFinder = new PhpExecutableFinder();
+            $phpPath = $phpFinder->find(true);
+            if (!$phpPath) {
+                throw $e;
+            }
+
+            return $phpPath;
+        }
     }
 
     /**
@@ -362,9 +377,9 @@ final class Console
      *
      * @param array|string $cmd
      *
-     * @return array|string
+     * @return void
      */
-    public static function addLowProcessPriority($cmd)
+    public static function addLowProcessPriority(&$cmd): void
     {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {
@@ -374,7 +389,5 @@ final class Console
                 array_unshift($cmd, $nice, '-n 19');
             }
         }
-
-        return $cmd;
     }
 }

@@ -22,6 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
+ * @method bool isReserved()
  */
 class Token extends AbstractModel
 {
@@ -124,14 +125,6 @@ class Token extends AbstractModel
         } else {
             return !$this->isUsed() && !$this->isReserved();
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isReserved()
-    {
-        return $this->getDao()->isReserved();
     }
 
     /**

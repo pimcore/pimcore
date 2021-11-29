@@ -37,7 +37,7 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
         config.name = id + "_editable";
         config.triggerAction = 'all';
-        config.editable = false;
+        config.editable = config.editable ? config.editable : false;
         config.value = data;
 
         this.config = config;
