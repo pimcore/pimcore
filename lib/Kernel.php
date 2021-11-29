@@ -71,14 +71,6 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function getRootDir()
-    {
-        return PIMCORE_PROJECT_ROOT;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getProjectDir()
     {
         return PIMCORE_PROJECT_ROOT;
