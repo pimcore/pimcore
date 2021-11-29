@@ -1122,10 +1122,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
-                    $aggregatedExceptions->setSubItems($validationExceptions);
-
-                    throw $aggregatedExceptions;
+                    $errors = [];
+                    /** @var Element\ValidationException $e */
+                    foreach ($validationExceptions as $e) {
+                        $errors[] = $e->getAggregatedMessage();
+                    }
+                    $message = implode(' / ', $errors);
+                    throw new Model\Element\ValidationException($message);
                 }
             }
         }
