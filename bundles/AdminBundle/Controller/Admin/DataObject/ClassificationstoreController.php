@@ -678,7 +678,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $mapping = [
             'groupName' => DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .'.name',
             'keyName' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .'.name',
-            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description', ];
+            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description',
+        ];
 
         $start = 0;
         $limit = 15;
@@ -727,10 +728,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
-            $count = 0;
-
             foreach ($filters as $f) {
-                $count++;
                 $fieldname = $mapping[$f->property];
                 $conditionParts[] = $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -749,12 +747,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $list->setCondition($condition);
         $list->setResolveGroupName(1);
 
-        $listItems = $list->load();
-
         $rootElement = [];
 
         $data = [];
-        foreach ($listItems as $config) {
+        foreach ($list->getList() as $config) {
             $item = [
                 'keyId' => $config->getKeyId(),
                 'groupId' => $config->getGroupId(),
