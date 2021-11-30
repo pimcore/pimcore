@@ -67,7 +67,9 @@ abstract class Kernel extends SymfonyKernel
      * @var BundleCollection
      */
     private $bundleCollection;
-    
+    /**
+     * @deprecated
+     */
     public function getRootDir()
     {
         trigger_deprecation(
