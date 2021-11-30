@@ -67,6 +67,17 @@ abstract class Kernel extends SymfonyKernel
      * @var BundleCollection
      */
     private $bundleCollection;
+    
+    public function getRootDir()
+    {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.3',
+            'Kernel::getRootDir() is deprecated and will be removed in Pimcore 11. Use Kernel::getProjectDir() instead.',
+        );
+
+        return PIMCORE_PROJECT_ROOT;
+    }
 
     /**
      * {@inheritdoc}
