@@ -67,7 +67,6 @@ abstract class Kernel extends SymfonyKernel
      * @var BundleCollection
      */
     private $bundleCollection;
-
     /**
      * @deprecated
      */
