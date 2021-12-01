@@ -43,7 +43,7 @@ framework:
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_core
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
-        default_bus: messenger.bus.portal-engine
+        default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
 
