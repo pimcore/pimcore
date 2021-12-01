@@ -45,12 +45,12 @@ class CustomLayout extends Model\AbstractModel
     protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -187,11 +187,13 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param bool $saveDefinitionFile
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
-            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $isUpdate = $this->exists();
@@ -405,7 +407,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -413,7 +415,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -82,14 +83,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var string[]
      */
-    protected $o_id = 0;
+    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname', 'o_path'];
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
+     */
+    protected $o_id;
+
+    /**
+     * @internal
+     *
+     * @var int|null
      */
     protected $o_parentId;
 
@@ -110,14 +118,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_key;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_path;
 
@@ -126,19 +134,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int
      */
-    protected $o_index;
+    protected $o_index = 0;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_modificationDate;
 
@@ -951,7 +959,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -959,7 +967,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -980,7 +988,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -988,7 +996,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string path
+     * @return string|null
      */
     public function getPath()
     {
@@ -1004,7 +1012,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -1012,7 +1020,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -1085,7 +1093,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setKey($o_key)
     {
-        $this->o_key = $o_key;
+        $this->o_key = (string)$o_key;
 
         return $this;
     }
@@ -1512,5 +1520,87 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return mixed|Listing|null
+     *
+     * @throws \Exception
+     */
+    public static function __callStatic($method, $arguments)
+    {
+        $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
+
+        $realPropertyName = 'o_'.$propertyName;
+
+        $db = \Pimcore\Db::get();
+
+        if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
+            $arguments = array_pad($arguments, 4, 0);
+            [$value, $limit, $offset, $objectTypes] = $arguments;
+
+            $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
+
+            $listConfig = [
+                'condition' => $defaultCondition,
+            ];
+
+            if (!is_array($limit)) {
+                if ($limit) {
+                    $listConfig['limit'] = $limit;
+                }
+                if ($offset) {
+                    $listConfig['offset'] = $offset;
+                }
+            } else {
+                $listConfig = array_merge($listConfig, $limit);
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition.$limitCondition;
+            }
+
+            $list = static::makeList($listConfig, $objectTypes);
+
+            if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
+                $elements = $list->getObjects();
+
+                return isset($elements[0]) ? $elements[0] : null;
+            }
+
+            return $list;
+        }
+
+        // there is no property for the called method, so throw an exception
+        Logger::error('Class: DataObject\\AbstractObject => call to undefined static method ' . $method);
+
+        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\AbstractObject');
+    }
+
+    /**
+     * @param  array  $listConfig
+     * @param  mixed $objectTypes
+     *
+     * @return Listing
+     *
+     * @throws \Exception
+     */
+    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    {
+        $list = static::getList($listConfig);
+
+        // Check if variants, in addition to objects, to be fetched
+        if (!empty($objectTypes)) {
+            if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+                Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
+
+                throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
+            }
+
+            $list->setObjectTypes($objectTypes);
+        }
+
+        return $list;
     }
 }

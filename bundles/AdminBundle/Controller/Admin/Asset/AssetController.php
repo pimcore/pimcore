@@ -680,6 +680,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $tmpAsset = [
             'id' => $asset->getId(),
+            'key' => $element->getKey(),
             'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
@@ -696,11 +697,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             ],
         ];
 
+        $hasChildren = (bool)$asset->getChildAmount($this->getAdminUser());
+
         // set type specific settings
         if ($asset instanceof Asset\Folder) {
             $tmpAsset['leaf'] = false;
-            $tmpAsset['expanded'] = !$asset->hasChildren();
-            $tmpAsset['loaded'] = !$asset->hasChildren();
+            $tmpAsset['expanded'] = !$hasChildren;
+            $tmpAsset['loaded'] = !$hasChildren;
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
             $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
         } else {

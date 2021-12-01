@@ -20,6 +20,7 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Tool\Glossary\Processor;
 use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
+use Twig\TokenParser\TokenParserInterface;
 use Twig\TwigFilter;
 
 /**
@@ -28,12 +29,12 @@ use Twig\TwigFilter;
 class GlossaryExtension extends AbstractExtension
 {
     /**
-     * @var \Pimcore\Tool\Glossary\Processor
+     * @var Processor
      */
     private $glossaryProcessor;
 
     /**
-     * @param \Pimcore\Tool\Glossary\Processor $glossaryProcessor
+     * @param Processor $glossaryProcessor
      *
      */
     public function __construct(Processor $glossaryProcessor)
@@ -61,18 +62,18 @@ class GlossaryExtension extends AbstractExtension
     {
         if (empty($string) || !is_string($string)) {
             return $string;
-        } else {
-            return $this->glossaryProcessor->process($string, $options);
         }
+
+        return $this->glossaryProcessor->process($string, $options);
     }
 
     /**
      * @deprecated
+     *
+     * @return TokenParserInterface[]
      */
     public function getTokenParsers(): array
     {
-        trigger_deprecation('pimcore/pimcore', '10.1', 'Usage of pimcoreglossary tag is deprecated since version 10.1 and will be removed in Pimcore 11. Use pimcore_glossary Twig filter instead.');
-
         return [
             new GlossaryTokenParser(),
         ];

@@ -56,13 +56,26 @@ class Reservation extends AbstractModel
         }
     }
 
+    /**
+     * @deprecated
+     *
+     * @return bool
+     */
     public function exists()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.2.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return isset($this->id);
     }
 
     /**
      * Check whether the reservation object contains a reservations.
+     *
+     * @deprecated
      *
      * @param int $cart_id
      *
@@ -70,14 +83,26 @@ class Reservation extends AbstractModel
      */
     public function check($cart_id)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.2.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $cart_id == $this->getCartId();
     }
 
-    public static function create($code, $cart_id): ?self
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     *
+     * @return self|null
+     */
+    public static function create($code, $cart): ?self
     {
         try {
             $config = new self();
-            $config->getDao()->create($code, $cart_id);
+            $config->getDao()->create($code, $cart);
 
             return $config;
         } catch (\Exception $ex) {
@@ -148,6 +173,12 @@ class Reservation extends AbstractModel
         }
     }
 
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     *
+     * @return bool
+     */
     public static function reservationExists($code, $cart): bool
     {
         $db = \Pimcore\Db::get();

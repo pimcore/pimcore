@@ -59,11 +59,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function isReserved(CartInterface $cart = null): bool
     {
         $reservation = Reservation::get($this->model->getToken(), $cart);
-        if (!$reservation->exists()) {
-            return false;
-        }
 
-        return true;
+        return $reservation !== null;
     }
 
     public function getTokenUsages($code)

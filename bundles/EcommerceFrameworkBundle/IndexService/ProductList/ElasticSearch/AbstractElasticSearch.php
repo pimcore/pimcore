@@ -622,7 +622,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $result = $this->sendRequest($params);
 
         $objectRaws = [];
-        if ($result['hits']) {
+        if ($result['hits'] ?? null) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = $hit['_id'];

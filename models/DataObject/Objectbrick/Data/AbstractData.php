@@ -50,9 +50,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $doDelete = false;
 
     /**
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * @var int|null
@@ -172,7 +172,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $object = $this->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $key);
 
             if (!empty($parent)) {
                 $containerGetter = 'get' . ucfirst($this->fieldname);

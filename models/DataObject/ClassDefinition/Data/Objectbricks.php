@@ -140,7 +140,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $object = $data->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
         }
 
         if (!method_exists($data, $getter)) {
@@ -217,7 +217,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $result = new \stdClass();
         if ($baseObject) {
-            $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+            $parent = DataObject\Service::hasInheritableParentObject($baseObject, $key);
         }
         $valueGetter = 'get' . ucfirst($key);
 
@@ -249,8 +249,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
             $data = [];
 
-            if ($fielddefinition instanceof ManyToOneRelation && isset($relations[0])) {
-                $data = $relations[0];
+            if ($fielddefinition instanceof ManyToOneRelation) {
+                $data = $relations[0] ?? null;
             } else {
                 foreach ($relations as $rel) {
                     $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
@@ -630,10 +630,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
 
             if ($validationExceptions) {
-                $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
-                $aggregatedExceptions->setSubItems($validationExceptions);
+                $errors = [];
+                /** @var Model\Element\ValidationException $e */
+                foreach ($validationExceptions as $e) {
+                    $errors[] = $e->getAggregatedMessage();
+                }
+                $message = implode(' / ', $errors);
 
-                throw $aggregatedExceptions;
+                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
             }
         }
     }
@@ -680,7 +684,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
+        $parent = DataObject\Service::hasInheritableParentObject($data->getObject(), $this->getName());
         $item = $data->$getter();
 
         if (!$item && !empty($parent)) {

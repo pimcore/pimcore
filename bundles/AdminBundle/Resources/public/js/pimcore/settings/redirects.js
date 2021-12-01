@@ -113,7 +113,7 @@ pimcore.settings.redirects = Class.create({
         var typesColumns = [
             {
                 text: t("type"),
-                width: 200,
+                flex: 200,
                 sortable: true,
                 dataIndex: 'type',
                 editor: getRedirectTypeCombo,
@@ -168,13 +168,17 @@ pimcore.settings.redirects = Class.create({
             },
             {
                 text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
-                editor: new Ext.form.TextField({}),
+                editor: {
+                    xtype: 'textfield',
+                    id: 'targetEditor',
+                    fieldCls: "input_drop_target",
+                },
                 tdCls: "input_drop_target",
                 renderer: function (value) {
                     return Ext.util.Format.htmlEncode(value);
                 }
             },
-            {text: t("status"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {text: t("status"), flex: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -189,7 +193,7 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {text: t("priority"), width: 60, sortable: true, dataIndex: 'priority',
+            {text: t("priority"), flex: 60, sortable: true, dataIndex: 'priority',
                 editor: new Ext.form.ComboBox({
                     store: [
                         [1, "1 - " + t("lowest")],
@@ -214,38 +218,45 @@ pimcore.settings.redirects = Class.create({
             new Ext.grid.column.Check({
                 text: t("regex"),
                 dataIndex: "regex",
-                width: 70,
-                listeners: {
-                    beforecheckchange: function (column, rowIndex, checked, eOpts) {
-                        if(checked) {
-                            Ext.MessageBox.show({
-                                title: t("warning"),
-                                msg: t("redirect_performance_warning"),
-                                buttons: Ext.MessageBox.YESNO,
-                                fn: function (result) {
-                                    if (result === 'yes') {
-                                        var record = redirectStore.getAt(rowIndex);
-                                        record.set('regex', true);
-                                    }
-                                }
-                            });
-                        }
+                flex: 70,
+                editor: {
+                    xtype: 'checkbox',
+                    id: 'regexEditor',
+                    listeners: {
+                        change: function (column, checked, oldChecked, eOpts) {
+                            if (checked) {
+                                Ext.MessageBox.show({
+                                    title: t("warning"),
+                                    msg: t("redirect_performance_warning"),
+                                    buttons: Ext.MessageBox.YESNO,
+                                    fn: function (result) {
+                                        Ext.getCmp('regexEditor').setValue(result === 'yes');
+                                    }.bind(this)
+                                });
+                            }
+                        }.bind(this)
                     }
-                }
+                },
             }),
             new Ext.grid.column.Check({
                 text: t("pass_through_params"),
                 dataIndex: "passThroughParameters",
-                width: 70
+                flex: 100,
+                editor: {
+                    xtype: 'checkbox',
+                }
             }),
             new Ext.grid.column.Check({
                 text: t("active"),
                 dataIndex: "active",
-                width: 70
+                flex: 70,
+                editor: {
+                    xtype: 'checkbox',
+                }
             }),
             {
                 text: t("expiry") + ' (' + t('optional') + ')',
-                width: 150, sortable:true, dataIndex: "expiry",
+                flex: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
                     format: 'Y-m-d'
@@ -259,7 +270,7 @@ pimcore.settings.redirects = Class.create({
             },
             {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
-                width: 150,
+                flex: 150,
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
@@ -271,7 +282,7 @@ pimcore.settings.redirects = Class.create({
             },
             {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
-                width: 150,
+                flex: 150,
                 renderer: function(d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
@@ -284,7 +295,7 @@ pimcore.settings.redirects = Class.create({
             {
                 xtype: 'actioncolumn',
                 menuText: t('delete'),
-                width: 30,
+                flex: 30,
                 items: [{
                     tooltip: t('delete'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
@@ -296,8 +307,58 @@ pimcore.settings.redirects = Class.create({
             }
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
+            listeners: {
+                beforeedit: function (el, e, eOpts, i) {
+                    var editorRow = el.editor.body;
+                    editorRow.rowIdx = e.rowIdx;
+
+                    let dd = new Ext.dd.DropZone(editorRow, {
+                        ddGroup: "element",
+
+                        getTargetFromEvent: function (e) {
+                            return this.getEl();
+                        },
+
+                        onNodeOver: function (target, dd, e, data) {
+                            if (data.records.length == 1) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
+
+                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                            return Ext.dd.DropZone.prototype.dropNotAllowed;
+
+                        },
+
+                        onNodeDrop: function (myRowIndex, target, dd, e1, data) {
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
+
+                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                        Ext.getCmp('targetEditor').setValue(data.path);
+
+                                        return true;
+                                    }
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            }
+                        }.bind(this, i)
+                    });
+                }.bind(this),
+                delay: 1
+            }
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
@@ -441,7 +502,7 @@ pimcore.settings.redirects = Class.create({
             bodyCls: "pimcore_editable_grid",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             stripeRows: true,
             bbar: this.pagingtoolbar,
