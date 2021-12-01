@@ -50,7 +50,7 @@ final class Executor implements ExecutorInterface
         string $pidFileName,
         LoggerInterface $logger,
         LockFactory $lockFactory,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messengerBusPimcoreCore
     ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
@@ -114,7 +114,7 @@ final class Executor implements ExecutorInterface
                 continue;
             }
 
-            $this->messageBus->dispatch(
+            $this->messengerBusPimcoreCore->dispatch(
                 new MaintenanceTaskMessage($name, $force)
             );
         }

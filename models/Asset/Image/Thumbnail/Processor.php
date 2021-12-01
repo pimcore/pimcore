@@ -403,7 +403,7 @@ class Processor
                 $generated = true;
 
                 if ($optimizeContent) {
-                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );
                 }

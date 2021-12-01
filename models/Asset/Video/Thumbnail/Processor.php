@@ -178,7 +178,7 @@ class Processor
 
         $instance->save();
 
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VideoConvertMessage($instance->getProcessId())
         );
 
