@@ -137,6 +137,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             fieldLabel: t('tab_position'),
                             name: 'tabPosition',
                             value: this.datax.tabPosition,
+                            editable: false,
                             store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                         },
                         {

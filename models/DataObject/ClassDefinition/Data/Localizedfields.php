@@ -112,7 +112,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $tabPosition = 'top';
 
@@ -1318,7 +1318,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param string $tabPosition
+     * @param string|null $tabPosition
      */
     public function setTabPosition($tabPosition): void
     {

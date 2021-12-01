@@ -32,7 +32,7 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
     public $border = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $tabPosition = 'top';
 
@@ -61,7 +61,7 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param string $tabPosition
+     * @param string $tabPosition|null
      */
     public function setTabPosition($tabPosition): void
     {
