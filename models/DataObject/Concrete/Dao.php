@@ -290,18 +290,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
 
         $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
-        $parentData = null;
-        if ($inheritanceEnabled) {
-            // get the next suitable parent for inheritance
-            $parentForInheritance = $this->model->getNextParentForInheritance();
-            if ($parentForInheritance) {
-                // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
-                // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
-                // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
-            }
-        }
 
         foreach ($fieldDefinitions as $key => $fd) {
             if ($fd instanceof QueryResourcePersistenceAwareInterface) {
@@ -326,7 +314,16 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
 
                     // if the current value is empty and we have data from the parent, we just use it
-                    if ($isEmpty && $parentData) {
+                    if ($isEmpty) {
+                        $parentForInheritance = $this->model->getNextParentForInheritance($key);
+                        $parentData = [];
+                        if ($parentForInheritance) {
+                            // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                            // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
+                            // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                            // so the data of the parent cannot be changed while this transaction is on progress
+                            $parentData = $this->db->fetchRow('SELECT * FROM object_query_'.$this->model->getClassId().' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
+                        }
                         foreach ($columnNames as $columnName) {
                             if (array_key_exists($columnName, $parentData)) {
                                 $data[$columnName] = $parentData[$columnName];
@@ -340,6 +337,15 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
 
                     if ($inheritanceEnabled && $fd->supportsInheritance()) {
+                        $parentForInheritance = $this->model->getNextParentForInheritance($key);
+                        $parentData = [];
+                        if ($parentForInheritance) {
+                            // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                            // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
+                            // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                            // so the data of the parent cannot be changed while this transaction is on progress
+                            $parentData = $this->db->fetchRow('SELECT * FROM object_query_'.$this->model->getClassId().' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
+                        }
                         //get changed fields for inheritance
                         if ($fd->isRelationType()) {
                             if (is_array($insertData)) {
