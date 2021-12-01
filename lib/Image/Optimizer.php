@@ -72,7 +72,7 @@ class Optimizer implements ImageOptimizerInterface
             unlink($tmpFile['path']);
         }
 
-        if (!stream_is_local($path)) {
+        if (is_file($workingPath)) {
             unlink($workingPath);
         }
     }

@@ -31,7 +31,7 @@ class DocType extends Model\AbstractModel
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $id;
 
@@ -67,7 +67,7 @@ class DocType extends Model\AbstractModel
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $template;
 
@@ -90,14 +90,14 @@ class DocType extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -293,7 +293,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -313,7 +313,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

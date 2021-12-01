@@ -17,9 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Test;
 
-/**
- * @internal
- */
 abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
     protected static function createKernel(array $options = [])

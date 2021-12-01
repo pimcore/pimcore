@@ -266,18 +266,19 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             store: store,
             componentCls: this.getWrapperClassNames(),
             width: 250,
-            displayField: 'key',
-            valueField: 'value',
-            labelWidth: 100
-        };
-
-        if(hasHTMLContent) {
-            options.displayTpl = Ext.create('Ext.XTemplate',
+            tpl: Ext.create('Ext.XTemplate',
+                '<ul class="x-list-plain"><tpl for=".">',
+                '<li role="option" class="x-boundlist-item">{key}</li>',
+                '</tpl></ul>'
+            ),
+            displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                 '{[Ext.util.Format.stripTags(values.key)]}',
                 '</tpl>'
-            );
-        }
+            ),
+            valueField: 'value',
+            labelWidth: 100
+        };
 
         if (this.fieldConfig.labelWidth) {
             options.labelWidth = this.fieldConfig.labelWidth;

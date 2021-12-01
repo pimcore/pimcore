@@ -79,12 +79,12 @@ final class Site extends AbstractModel
     protected $redirectToMainDomain = false;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -448,7 +448,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -468,7 +468,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

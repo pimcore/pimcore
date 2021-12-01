@@ -146,7 +146,7 @@ class Dao extends Model\Dao\AbstractDao
               `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
               `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
               `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
-              `type` varchar(50) NOT NULL DEFAULT '',
+              `type` enum('object', 'asset','document')  NULL DEFAULT NULL,
               `fieldname` varchar(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',

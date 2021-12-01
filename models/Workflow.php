@@ -24,7 +24,7 @@ use Pimcore\Model\Exception\NotFoundException;
 class Workflow extends AbstractModel
 {
     /**
-     * @var int $id
+     * @var int|null
      */
     protected $id;
 
@@ -33,35 +33,35 @@ class Workflow extends AbstractModel
      *
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * Cache of valid states in this workflow
      *
      * @var array
      */
-    protected $states;
+    protected $states = [];
 
     /**
      * Cache of valid statuses in this workflow
      *
      * @var array
      */
-    protected $statuses;
+    protected $statuses = [];
 
     /**
      * Cache of valid actions in this workflow
      *
      * @var array
      */
-    protected $actions;
+    protected $actions = [];
 
     /**
      * The actual workflow
      *
      * @var array
      */
-    protected $transitionDefinitions;
+    protected $transitionDefinitions = [];
 
     /**
      * The default state of the element
@@ -83,25 +83,25 @@ class Workflow extends AbstractModel
      *
      * @var bool
      */
-    protected $allowUnpublished;
+    protected $allowUnpublished = false;
 
     /**
      * @var array
      */
-    protected $workflowSubject;
+    protected $workflowSubject = [];
 
     /**
      * @var bool
      */
-    protected $enabled;
+    protected $enabled = false;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -144,7 +144,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -586,7 +586,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -602,7 +602,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

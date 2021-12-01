@@ -57,30 +57,30 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $creationDate = 0;
+    public $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $modificationDate = 0;
+    public $modificationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $userOwner = 0;
+    public $userOwner;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $userModification = 0;
+    public $userModification;
 
     /**
      * @internal
@@ -400,11 +400,12 @@ final class ClassDefinition extends Model\AbstractModel
      * @param bool $saveDefinitionFile
      *
      * @throws \Exception
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
-            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();
@@ -848,7 +849,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -856,7 +857,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -864,7 +865,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -872,7 +873,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {
