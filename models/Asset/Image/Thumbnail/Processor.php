@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
@@ -402,7 +403,8 @@ class Processor
 
                 $generated = true;
 
-                if ($optimizeContent) {
+                $config = PimcoreConfig::getSystemConfiguration('maintenance');
+                if ($optimizeContent && !($config['exclude-messages']['optimizeimage'] ?? false)) {
                     \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );
