@@ -163,10 +163,7 @@ class Installer extends AbstractInstaller
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
-        if ($this->db instanceof Connection) {
-            $this->schema = $this->db->getSchemaManager()->createSchema();
-        }
-
+        $this->schema = null;
         parent::__construct();
     }
 
@@ -348,7 +345,7 @@ class Installer extends AbstractInstaller
     private function installTables()
     {
         foreach ($this->tablesToInstall as $name => $statement) {
-            if ($this->schema->hasTable($name)) {
+            if ($this->getSchema()->hasTable($name)) {
                 $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping table "%s" as it already exists',
                     $name
@@ -364,7 +361,7 @@ class Installer extends AbstractInstaller
     private function uninstallTables()
     {
         foreach (array_keys($this->tablesToInstall) as $table) {
-            if (!$this->schema->hasTable($table)) {
+            if (!$this->getSchema()->hasTable($table)) {
                 $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Not dropping table "%s" as it doesn\'t exist',
                     $table
@@ -373,7 +370,7 @@ class Installer extends AbstractInstaller
                 continue;
             }
 
-            $this->schema->dropTable($table);
+            $this->getSchema()->dropTable($table);
         }
     }
 
@@ -413,5 +410,15 @@ class Installer extends AbstractInstaller
     public function needsReloadAfterInstall()
     {
         return true;
+    }
+
+    /**
+     * @return Schema
+     */
+    public function getSchema() : Schema {
+        if ($this->db instanceof Connection && is_null($this->schema)) {
+            $this->schema = $this->db->getSchemaManager()->createSchema();
+        }
+        return $this->schema;
     }
 }
