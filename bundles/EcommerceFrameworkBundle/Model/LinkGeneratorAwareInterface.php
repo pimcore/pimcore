@@ -4,7 +4,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Pimcore\Model\DataObject;
 
 /**
- * Interface IndexableInterface
+ * Interface LinkGeneratorAwareInterface
  */
 interface LinkGeneratorAwareInterface
 {
