@@ -50,10 +50,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
 
     public function getLinkGenerator(): ?DataObject\ClassDefinition\LinkGeneratorInterface {
         if($classId = $this->params['o_classId'] ?? null){
-            if(!array_key_exists($classId,static::$linkGenerators)){
-                static::$linkGenerators[$classId] = DataObject\ClassDefinition::getById($classId)->getLinkGenerator();
-            }
-            return static::$linkGenerators[$classId] ?? null;
+            return static::$linkGenerators[$classId] ??= DataObject\ClassDefinition::getById($classId)->getLinkGenerator();
         }
         return null;
     }
