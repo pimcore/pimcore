@@ -15,16 +15,13 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
-use Pimcore\Model\DataObject\Concrete;
-
 interface LinkGeneratorInterface
 {
     /**
-     * @param Concrete|DefaultMockup $object
+     * @param object $object
      * @param array $params
      *
      * @return string
      */
-    public function generate(Concrete|DefaultMockup $object, array $params = []): string;
+    public function generate(object $object, array $params = []): string;
 }
