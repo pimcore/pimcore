@@ -416,7 +416,7 @@ class Installer extends AbstractInstaller
      * @return Schema
      */
     public function getSchema() : Schema {
-        if (is_null($this->schema)) {
+        if (!$this->schema) {
             $this->schema = $this->db->getSchemaManager()->createSchema();
         }
         return $this->schema;
