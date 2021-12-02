@@ -108,12 +108,12 @@ A full configuration example can be found [on this page](../23_Installation_and_
 In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# config/routing.yaml
+# config/routes.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
-    defaults: { _controller: MyAssetController:protectedAsset }
+    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
     requirements:
         path: '.*'
 ```
