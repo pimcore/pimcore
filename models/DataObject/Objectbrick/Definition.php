@@ -27,6 +27,8 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
  * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method void createUpdateTable(DataObject\ClassDefinition $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
