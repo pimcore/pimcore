@@ -23,8 +23,14 @@ use Pimcore\Model\DataObject;
  *
  * @property \Pimcore\Model\DataObject\Objectbrick\Definition $model
  */
-class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
+class Dao extends Model\Dao\AbstractDao
 {
+    use DataObject\ClassDefinition\Helper\Dao;
+
+    /**
+     * @var array|null
+     */
+    protected $tableDefinitions = null;
     /**
      * @param DataObject\ClassDefinition $class
      * @param bool $query
@@ -40,6 +46,21 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
         }
     }
 
+    /**
+     * @param DataObject\ClassDefinition $class
+     * @param bool $query
+     * @param string $language
+     *
+     * @return string
+     */
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, $query = false, $language = 'en')
+    {
+        if ($query) {
+            return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;
+        } else {
+            return 'object_brick_localized_' . $this->model->getKey() . '_' . $class->getId();
+        }
+    }
     /**
      * @param DataObject\ClassDefinition $class
      */
