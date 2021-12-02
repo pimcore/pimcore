@@ -1350,7 +1350,7 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tempFile = $this->getTemporaryFile();
+                $tempFile = $this->getLocalFileFromStream($this->stream);
                 $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
