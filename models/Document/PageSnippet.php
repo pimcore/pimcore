@@ -225,7 +225,7 @@ abstract class PageSnippet extends Model\Document
     protected function doDelete()
     {
         // Dispatch Symfony Message Bus to delete versions
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VersionDeleteMessage(Service::getElementType($this), $this->getId())
         );
 
