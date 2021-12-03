@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal

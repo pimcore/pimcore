@@ -40,7 +40,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**

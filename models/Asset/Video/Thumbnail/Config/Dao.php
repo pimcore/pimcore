@@ -17,7 +17,6 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal

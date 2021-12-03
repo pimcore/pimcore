@@ -21,7 +21,6 @@ use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
