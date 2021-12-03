@@ -76,12 +76,12 @@ if($videoData) {
         "height" => 480,
         "attributes" => ["class" => "video-js custom-class", "preload" => "auto", "controls" => "", "data-custom-attr" => "my-test"]
     ]);
-    $video->type = $v->getType();
-    $video->id = ($videoData instanceof Asset) ? $videoData->getId() : $videoData;
-    $video->title = $v->getTitle();
-    $video->description = $v->getDescription();
+    $video->setObjectVar('type',$v->getType());
+    $video->setObjectVar('title',$v->getTitle());
+    $video->setObjectVar('description',$v->getDescription());
+    $video->setObjectVar('id',($videoData instanceof Asset) ? $videoData->getId() : $videoData);
     if($v->getPoster()) {
-        $video->poster = $v->getPoster()->getId();
+        $video->setObjectVar('poster',$v->getPoster()->getId());
     }
     echo $video->frontend();
  
