@@ -1547,13 +1547,13 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $compositeIndices
+     * @param array|null $compositeIndices
      *
      * @return $this
      */
-    public function setCompositeIndices(array $compositeIndices)
+    public function setCompositeIndices($compositeIndices)
     {
-        $this->compositeIndices = $compositeIndices;
+        $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;
     }
