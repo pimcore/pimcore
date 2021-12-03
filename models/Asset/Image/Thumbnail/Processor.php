@@ -404,7 +404,7 @@ class Processor
                 $generated = true;
 
                 $config = PimcoreConfig::getSystemConfiguration('maintenance');
-                if ($optimizeContent && !($config['exclude-messages']['optimizeimage'] ?? false)) {
+                if ($optimizeContent && !in_array('optimizeimage', $config['exclude_messages'], true)) {
                     \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );
