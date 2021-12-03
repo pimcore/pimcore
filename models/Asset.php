@@ -1064,7 +1064,7 @@ class Asset extends Element\AbstractElement
             }
 
             // Dispatch Symfony Message Bus to delete versions
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
@@ -2097,7 +2097,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }
