@@ -27,7 +27,6 @@ use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 abstract class Processor
 {
