@@ -1,5 +1,8 @@
 # Upgrade Notes
 ## 10.3.0
+- **Important notice**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
+  required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
+  the messages on default queue gets consumed.
 - [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 
 ## 10.2.0
