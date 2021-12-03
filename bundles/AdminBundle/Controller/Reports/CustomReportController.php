@@ -104,6 +104,9 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
         if (!$report->isWriteable()) {
             throw new ConfigWriteException();
         }
@@ -131,6 +134,9 @@ class CustomReportController extends ReportsControllerBase
         }
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
         $reportData = $this->encodeJson($report);
         $reportData = $this->decodeJson($reportData);
 
@@ -161,6 +167,9 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
@@ -179,6 +188,9 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
         if (!$report->isWriteable()) {
             throw new ConfigWriteException();
         }
@@ -213,6 +225,9 @@ class CustomReportController extends ReportsControllerBase
         $this->checkPermission('reports_config');
 
         $report = CustomReport\Config::getByName($request->get('name'));
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
         $columnConfiguration = $report->getColumnConfiguration();
         if (!is_array($columnConfiguration)) {
             $columnConfiguration = [];
@@ -316,6 +331,9 @@ class CustomReportController extends ReportsControllerBase
         $drillDownFilters = $request->get('drillDownFilters', null);
 
         $config = CustomReport\Config::getByName($request->get('name'));
+        if (!$config) {
+            throw $this->createNotFoundException();
+        }
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
@@ -345,6 +363,9 @@ class CustomReportController extends ReportsControllerBase
         $drillDownFilters = $request->get('drillDownFilters', null);
 
         $config = CustomReport\Config::getByName($request->get('name'));
+        if (!$config) {
+            throw $this->createNotFoundException();
+        }
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
@@ -373,6 +394,9 @@ class CustomReportController extends ReportsControllerBase
         $drillDownFilters = $request->get('drillDownFilters', null);
 
         $config = CustomReport\Config::getByName($request->get('name'));
+        if (!$config) {
+            throw $this->createNotFoundException();
+        }
 
         $configuration = $config->getDataSourceConfig();
 
@@ -406,6 +430,9 @@ class CustomReportController extends ReportsControllerBase
         $includeHeaders = $request->get('headers', false);
 
         $config = CustomReport\Config::getByName($request->get('name'));
+        if (!$config) {
+            throw $this->createNotFoundException();
+        }
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
