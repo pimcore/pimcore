@@ -20,7 +20,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\Asset[] load()
- * @method Model\Asset current()
+ * @method Model\Asset|false current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()

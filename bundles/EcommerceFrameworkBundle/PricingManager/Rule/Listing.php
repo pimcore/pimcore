@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 /**
  * @method Rule[] load()
- * @method Rule current()
+ * @method Rule|false current()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao getDao()
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing

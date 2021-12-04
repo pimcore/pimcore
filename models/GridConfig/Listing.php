@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\GridConfig\Listing\Dao getDao()
  * @method Model\GridConfig[] load()
- * @method Model\GridConfig current()
+ * @method Model\GridConfig|false current()
  *
  * @internal
  */
