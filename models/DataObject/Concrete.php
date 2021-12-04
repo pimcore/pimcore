@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -218,7 +217,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected function doDelete()
     {
         // Dispatch Symfony Message Bus to delete versions
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
         );
 

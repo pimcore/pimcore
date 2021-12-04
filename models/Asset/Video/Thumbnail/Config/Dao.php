@@ -17,7 +17,6 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -106,7 +105,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new CleanupThumbnailsMessage('video', $this->model->getName())
             );
         }

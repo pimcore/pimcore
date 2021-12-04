@@ -118,11 +118,35 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setPoster($id)
+    {
+        $this->poster = $id;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getPoster()
     {
         return $this->poster;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     /**

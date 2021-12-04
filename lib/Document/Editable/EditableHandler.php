@@ -362,8 +362,6 @@ class EditableHandler implements LoggerAwareInterface
                 $bundleName = substr($bundleName, 0, -6);
             }
 
-            $templateReference = '';
-
             foreach (['areas', 'Areas'] as $folderName) {
                 $templateReference = sprintf(
                     '@%s/%s/%s/%s.%s',

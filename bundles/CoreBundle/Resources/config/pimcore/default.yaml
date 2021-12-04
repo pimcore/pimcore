@@ -30,8 +30,14 @@ framework:
             pimcore_newsletter: native://default
     messenger:
         transports:
-            pimcore_core: "doctrine://default"
-            pimcore_maintenance: "doctrine://default"
+            pimcore_core:
+                dsn: "doctrine://default"
+                options:
+                    queue_name: pimcore_core
+            pimcore_maintenance:
+                dsn: "doctrine://default"
+                options:
+                    queue_name: pimcore_maintenance
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
@@ -43,6 +49,10 @@ framework:
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_core
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+        default_bus: messenger.bus.pimcore-core
+        buses:
+            messenger.bus.pimcore-core:
+
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
