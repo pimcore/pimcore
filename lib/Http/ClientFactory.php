@@ -57,7 +57,7 @@ class ClientFactory
                 $protocol = 'http';
             }
 
-            $proxyUri = $protocol . '://' . $authorization . $this->config['httpclient']['proxy_host'] ?? '' . ':' . $this->config['httpclient']['proxy_port'] ?? '';
+            $proxyUri = $protocol . '://' . $authorization . ($this->config['httpclient']['proxy_host'] ?? '') . ':' . ($this->config['httpclient']['proxy_port'] ?? '');
 
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }
