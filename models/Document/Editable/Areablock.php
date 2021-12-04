@@ -452,7 +452,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $brick = $areabrickManager->getBrick($this->indices[$this->current]['type']);
         if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
             $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
-            $dialogConfig->setId('dialogBox-' . $this->getName() . '-' . $this->indices[$this->current]['key']);
+            if( $dialogConfig->getItems()) {
+                $dialogConfig->setId('dialogBox-' . $this->getName() . '-' . $this->indices[$this->current]['key']);
+            } else {
+                $dialogConfig = null;
+            }
         }
 
         $attr = HtmlUtils::assembleAttributeString($attributes);
