@@ -469,7 +469,8 @@ class Cse implements PaginateListingInterface
     /**
      * @return bool
      */
-    public function valid(): bool
+    #[\ReturnTypeWillChange]
+    public function valid()
     {
         $this->getResults();
 
