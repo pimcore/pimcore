@@ -87,7 +87,7 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
         }
         if ($user instanceof PasswordHasherFactoryAwareInterface && (null !== $factoryName = $user->getHasherFactoryName())) {
             if (!array_key_exists($factoryName, $this->encoderFactories)) {
-                throw new \RuntimeException(sprintf('The encoder factory "%s" was not configured.', $factoryName));
+                throw new \RuntimeException(sprintf('The hasher factory "%s" was not configured.', $factoryName));
             }
 
             $factoryKey = $factoryName;

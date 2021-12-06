@@ -123,12 +123,12 @@ To achieve this, we define a factory service which builds `PasswordFieldhasher` 
 
 old way (deprecated):
 ```yaml
-# The password hasher factory is responsible for verifying the password hash for a given user. As we need some special
-# handling to be able to work with the password field, we use the UserAwareHasherFactory to build a dedicated
-# hasher per user. This service is configured in pimcore.security.password_hasher_factories to handle our user model.
+# The encoder factory is responsible for verifying the password hash for a given user. As we need some special
+# handling to be able to work with the password field, we use the UserAwareEncoderFactory to buiild a dedicated
+# encoder per user. This service is configured in pimcore.security.encoder_factories to handle our user model.
 services:
-    website_demo.security.password_hasher_factory:
-        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+    website_demo.security.password_encoder_factory:
+        class: Pimcore\Security\Encoder\Factory\UserAwarePasswordEncoderFactory
         arguments:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']

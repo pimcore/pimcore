@@ -8,8 +8,6 @@ services:
     # SECURITY
     #
 
-    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
-
     Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener:
         arguments:
             $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'

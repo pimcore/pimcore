@@ -101,8 +101,9 @@ pimcore:
                 - {path: '^/admin/asset/image-editor'}
 
     security:
-        encoder_factories:
-            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
+        factory_type: password_hasher
+        password_hasher_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
 
     bundles:
         search_paths:
