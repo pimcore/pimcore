@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Admin\Login\LogoutEvent as PimcoreLogoutEvent;
 use Pimcore\Model\Element\Editlock;
@@ -26,8 +25,6 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;

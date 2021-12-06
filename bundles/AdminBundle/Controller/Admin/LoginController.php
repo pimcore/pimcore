@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -155,7 +156,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      *
      * @Route("/login/login", name="pimcore_admin_login_check")
      *
-     * @see AdminAuthenticator for the security implementation
+     * @see AdminLoginAuthenticator for the security implementation
      */
     public function loginCheckAction()
     {

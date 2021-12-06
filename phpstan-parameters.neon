@@ -16,7 +16,6 @@ parameters:
         - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
