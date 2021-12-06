@@ -281,6 +281,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -425,6 +429,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -566,6 +574,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $count = 0;
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 if ($count > 0) {
                     $condition .= ' AND ';
                 }
@@ -729,6 +741,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->property];
                 $conditionParts[] = $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -839,6 +855,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -1230,6 +1250,10 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
