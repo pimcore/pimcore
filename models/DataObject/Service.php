@@ -1435,7 +1435,7 @@ class Service extends Model\Element\Service
     /**
      * Enriches the layout definition before it is returned to the admin interface.
      *
-     * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
+     * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
      * @param Concrete|null $object
      * @param array $context additional contextual data
      *
