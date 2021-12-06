@@ -276,10 +276,11 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $conditionParts[] = ' (storeId = ' . $db->quote($storeId) . ')';
 
+
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
@@ -427,7 +428,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
@@ -572,7 +573,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             $count = 0;
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
@@ -739,7 +740,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
@@ -853,7 +854,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
@@ -1248,7 +1249,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
                 if (!isset($f->value)) {
                     continue;
