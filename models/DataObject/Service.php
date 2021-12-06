@@ -1443,6 +1443,10 @@ class Service extends Model\Element\Service
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
+        if (is_null($layout)) {
+            return;
+        }
+
         $context['object'] = $object;
 
         //TODO Pimcore 11: remove method_exists BC layer
