@@ -1,4 +1,6 @@
 security:
+    enable_authenticator_manager: true
+
     providers:
         pimcore_admin:
             id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
@@ -16,7 +18,6 @@ security:
 
         # Pimcore admin form login // DO NOT CHANGE!
         pimcore_admin:
-            anonymous: ~
             pattern: ^/admin(/.*)?$
             # admin firewall is stateless as we open the admin
             # session on demand for non-blocking parallel requests
@@ -25,13 +26,13 @@ security:
             login_throttling:
                 max_attempts: 3
                 interval: '5 minutes'
-                logout:
-                    path: pimcore_admin_logout
-                    target: pimcore_admin_login
+            logout:
+                path: pimcore_admin_logout
+                target: pimcore_admin_login
             custom_authenticators:
-                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator
-                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
-                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator
+                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator
+                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
+                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator
             two_factor:
                 auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
                 check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check
