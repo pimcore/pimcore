@@ -330,7 +330,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * @return \Traversable
      */
     #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator()/* : \Traversable */
     {
         return $this->getContainer()->getIterator();
     }
