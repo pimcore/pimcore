@@ -30,7 +30,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param Carbon|null $paymentStart
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setPaymentStart(?Carbon $paymentStart);
 
@@ -42,7 +42,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param Carbon|null $paymentFinish
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setPaymentFinish(?Carbon $paymentFinish);
 
@@ -54,7 +54,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param string|null $paymentReference
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setPaymentReference(?string $paymentReference);
 
@@ -66,7 +66,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param string|null $paymentState
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setPaymentState(?string $paymentState);
 
@@ -83,7 +83,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param string|null $message
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setMessage(?string $message);
 
@@ -95,7 +95,14 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     /**
      * @param string|null $internalPaymentId
      *
-     * @return mixed
+     * @return self
      */
     abstract public function setInternalPaymentId(?string $internalPaymentId);
+
+    /**
+     * @param string|null $providerData
+     *
+     * @return self
+     */
+    abstract public function setProviderData(?string $providerData);
 }

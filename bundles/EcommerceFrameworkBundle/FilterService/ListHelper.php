@@ -121,7 +121,7 @@ class ListHelper
                 /** @var AbstractFilterDefinitionType $orderBy */
                 foreach ($orderByCollection as $orderBy) {
                     if ($orderBy->getField()) {
-                        $orderByList[] = [$orderBy->getField(), $orderBy->getDirection()];
+                        $orderByList[] = $orderBy->getField();
                     }
                 }
 
