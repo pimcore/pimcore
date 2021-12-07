@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\OrderByFields;
 
 /**
  * Helper service class for setting up a product list utilizing the filter service
@@ -118,10 +118,10 @@ class ListHelper
             $orderByCollection = $filterDefinition->getDefaultOrderBy();
             $orderByList = [];
             if ($orderByCollection) {
-                /** @var AbstractFilterDefinitionType $orderBy */
+                /** @var OrderByFields $orderBy */
                 foreach ($orderByCollection as $orderBy) {
                     if ($orderBy->getField()) {
-                        $orderByList[] = $orderBy->getField();
+                        $orderByList[] = [$orderBy->getField(), $orderBy->getDirection()];
                     }
                 }
 
