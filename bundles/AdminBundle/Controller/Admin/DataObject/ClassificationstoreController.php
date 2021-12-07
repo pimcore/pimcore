@@ -276,7 +276,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $conditionParts[] = ' (storeId = ' . $db->quote($storeId) . ')';
 
-
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
