@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.translations");
-pimcore.settings.translations = Class.create({
+pimcore.registerNS("pimcore.settings.translation.domain");
+pimcore.settings.translation.domain = Class.create({
     filterField: null,
     preconfiguredFilter: "",
     dataUrl: '',
@@ -21,9 +21,24 @@ pimcore.settings.translations = Class.create({
     importUrl: '',
     mergeUrl: '',
     cleanupUrl: '',
+    domain: 'messages',
 
     initialize: function (filter) {
+        this.dataUrl = Routing.generate('pimcore_admin_translation_translations');
+        this.exportUrl = Routing.generate('pimcore_admin_translation_export');
+        this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile');
+        this.importUrl = Routing.generate('pimcore_admin_translation_import');
+        this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {merge: 1});
+        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {type: 'website'});
 
+        this.initializeFilters();
+        this.preconfiguredFilter = filter;
+        this.filterField.setValue(filter);
+        this.getAvailableLanguages();
+        this.config = {};
+    },
+
+    initializeFilters: function () {
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",
             width: 200,
@@ -44,16 +59,137 @@ pimcore.settings.translations = Class.create({
             }
         });
 
-        this.preconfiguredFilter = filter;
-        this.filterField.setValue(filter);
-        this.getAvailableLanguages();
-        this.config = {};
+        this.filterDomainField = new Ext.form.ComboBox({
+            emptyText: t('translation_domain'),
+            name: "domain",
+            valueField: "name",
+            displayField: 'name',
+            tooltip: t('translation_domain'),
+            value: this.domain,
+            store: new Ext.data.ArrayStore({
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_translation_gettranslationdomains'),
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'domains'
+                    }
+                },
+                fields: ['name'],
+            }),
+            listeners: {
+                change: function (combo, newValue, oldValue) {
+                    this.domain = newValue;
+                    this.getAvailableLanguages();
+                }.bind(this),
+                render: function (c) {
+                    new Ext.ToolTip({
+                        target: c.getEl(),
+                        html: 'Translations Domain'
+                    });
+                }
+            },
+            editable: false,
+            triggerAction: 'all',
+            mode: "local",
+            width: 150
+        });
+
+        this.filterLocaleField = new Ext.form.ComboBox({
+            emptyText: t('locale'),
+            name: "locale",
+            valueField: "name",
+            displayField: 'name',
+            tooltip: t('locale'),
+            store: new Ext.data.ArrayStore({
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_translation_getwebsitetranslationlanguages'),
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'domains'
+                    }
+                },
+                fields: ['name'],
+            }),
+            editable: false,
+            triggerAction: 'all',
+            mode: "local",
+            width: 150
+        });
     },
 
+    getAvailableLanguages: function () {
+        let route = 'pimcore_admin_translation_getwebsitetranslationlanguages';
+        if (this.domain === 'admin') {
+            route = 'pimcore_admin_settings_getavailableadminlanguages';
+        }
 
-    getRowEditor: function () {
+        Ext.Ajax.request({
+            url: Routing.generate(route),
+            success: function (response) {
+                try {
+                    if (this.domain === 'admin') {
+                        let languages = Ext.decode(response.responseText);
+                        this.languages = [];
+                        for (let i = 0; i < languages.length; i++) {
+                            this.languages.push(languages[i]["language"]);
+                        }
+                    } else {
+                        let container = Ext.decode(response.responseText);
+                        this.languages = container.view;
+                        this.editableLanguages = container.edit;
+                        this.editableLanguages = this.languages;
+                    }
 
-        var stateId = "tr_" + this.translationType;
+                    this.getTabPanel();
+
+                    pimcore.layout.refresh();
+
+                } catch (e) {
+                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
+                        + '<br /><br /><a href="http://www.pimcore.org/docs/" target="_blank">'
+                        + t("read_more_here") + '</a>');
+                }
+            }.bind(this)
+        });
+    },
+
+    getTabPanel: function () {
+        if (!this.panel) {
+            this.panel = new Ext.Panel({
+                id: "pimcore_translations_domain",
+                iconCls: "pimcore_icon_translations",
+                title: t("domain_translations"),
+                border: false,
+                layout: "fit",
+                closable: true,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                }
+            });
+
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.panel);
+            tabPanel.setActiveItem("pimcore_translations_domain");
+
+            this.panel.on("destroy", function () {
+                pimcore.globalmanager.remove("translationdomainmanager");
+            }.bind(this));
+
+            pimcore.layout.refresh();
+        }
+
+        this.createGrid();
+
+        return this.panel;
+    },
+
+    createGrid: function () {
+
+        var stateId = "tr_" + this.domain;
         var applyInitialSettings = false;
         var showInfo = false;
         var state = Ext.state.Manager.getProvider().get(stateId, null);
@@ -117,7 +253,7 @@ pimcore.settings.translations = Class.create({
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
                     }
                 },
-                id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()
+                id: "translation_column_" + this.domain + "_" + languages[i].toLowerCase()
             };
             if (applyInitialSettings) {
                 var hidden = i >= maxLanguages;
@@ -145,7 +281,7 @@ pimcore.settings.translations = Class.create({
         })
         ;
 
-        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length || this.translationType === 'admin') {
+        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length || this.domain === 'admin') {
             typesColumns.push({
                 xtype: 'actioncolumn',
                 menuText: t('delete'),
@@ -178,8 +314,11 @@ pimcore.settings.translations = Class.create({
             });
         });
 
+        let proxy = store.getProxy();
+        proxy.extraParams["domain"] = this.domain;
+
         if (this.preconfiguredFilter) {
-            this.store.getProxy().extraParams.searchString = this.preconfiguredFilter;
+            proxy.extraParams["searchString"] = this.preconfiguredFilter;
         }
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
@@ -211,6 +350,8 @@ pimcore.settings.translations = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
+                this.filterDomainField,
+                this.filterLocaleField,
                 '-', {
                     text: this.getHint(),
                     xtype: "tbtext",
@@ -303,7 +444,9 @@ pimcore.settings.translations = Class.create({
 
         this.store.load();
 
-        return this.grid;
+        this.panel.removeAll();
+        this.panel.add(this.grid);
+        this.panel.updateLayout();
     },
 
     createCellContextMenu: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
@@ -461,6 +604,20 @@ pimcore.settings.translations = Class.create({
                 this.rowEditing.startEdit(0, 2);
             }
         }.bind(this));
+    },
+
+    activate: function (filter) {
+        if (filter) {
+            this.store.getProxy().setExtraParam("searchString", filter);
+            this.store.load();
+            this.filterField.setValue(filter);
+        }
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.setActiveItem("pimcore_translations_domain");
+    },
+
+    getHint: function () {
+        return this.domain === 'admin' ? t('translations_admin_hint') : "";
     },
 
     cleanup: function () {

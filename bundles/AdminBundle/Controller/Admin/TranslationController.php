@@ -340,14 +340,10 @@ class TranslationController extends AdminController
      */
     public function translationsAction(Request $request, TranslatorInterface $translator)
     {
-        $admin = $request->get('admin');
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
+        $admin = $domain === Translation::DOMAIN_ADMIN;
 
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
-
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($admin) {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
 
         $translation = new Translation();
         $translation->setDomain($domain);
@@ -1273,4 +1269,26 @@ class TranslationController extends AdminController
             ]
         );
     }
+
+
+    /**
+     * @Route("/get-translation-domains", name="pimcore_admin_translation_gettranslationdomains", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getTranslationDomainsAction(Request $request)
+    {
+        $translation = new Translation();
+
+        $domains = array_map(function ($domain) {
+            return [
+                'name' => $domain,
+            ];
+        }, $translation->getDao()->getAvailableDomains());
+
+        return $this->adminJson( ['domains' => $domains]);
+    }
+
 }

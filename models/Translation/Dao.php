@@ -116,6 +116,23 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * Returns a array containing all available domains
+     *
+     * @return array
+     */
+    public function getAvailableDomains()
+    {
+        $domainTables = $this->db->fetchAll("SHOW TABLES LIKE 'translations_%'");
+        $domains = [];
+
+        foreach ($domainTables as $domainTable) {
+            $domains[] = str_replace('translations_', '', current($domainTable));
+        }
+
+        return $domains;
+    }
+
+    /**
      * Returns boolean, if the domain table exists
      *
      * @param string $domain
