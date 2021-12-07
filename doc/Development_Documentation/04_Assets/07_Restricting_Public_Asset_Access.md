@@ -125,15 +125,16 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
+use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RouteCollection;use Symfony\Component\Templating\Storage\Storage;
+use Symfony\Component\Routing\RouteCollection;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAssetAction(Request $request)
+    public function protectedAsset(Request $request)
     {
         // IMPORTANT!
         // Add your code here to check permission!
