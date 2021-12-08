@@ -19,6 +19,7 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Symfony\Component\Mime\Address;
 
 /**
  * @internal
