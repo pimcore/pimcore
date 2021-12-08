@@ -271,6 +271,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         if (method_exists($parent, 'getLocalizedFields')) {
                             $parentData = $parent->getLocalizedFields();
                         }
+                        // if we have a fieldcollection within a localized field, this ends in naming collision
+                        // as default the fieldcollections supports no inheritance we just return "null"
+                        if (isset($params['fieldcollection'])) {
+                            $parentData = null;
+                        }
                     }
                     if ($parentData) {
                         $parentResult = $this->doGetDataForEditMode(
