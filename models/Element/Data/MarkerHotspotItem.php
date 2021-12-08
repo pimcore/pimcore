@@ -99,19 +99,9 @@ class MarkerHotspotItem implements \ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Whether a offset exists
+     * @param string $offset
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     *
-     * @return bool true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -119,42 +109,26 @@ class MarkerHotspotItem implements \ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to retrieve
+     * @param string $offset
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     *
-     * @return mixed Can return all value types.
+     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if ($this->offsetExists($offset)) {
-            if ($offset == 'value' && in_array($this->type, ['object', 'asset', 'document'])) {
+            if ($offset === 'value' && in_array($this->type, ['object', 'asset', 'document'])) {
                 return Model\Element\Service::getElementById($this->type, $this->value);
-            } else {
-                return $this->$offset;
             }
+
+            return $this->$offset;
         }
 
         return null;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to set
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     *
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
+     * @param string $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value): void
     {
@@ -168,14 +142,7 @@ class MarkerHotspotItem implements \ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to unset
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
+     * @param string $offset
      */
     public function offsetUnset($offset): void
     {

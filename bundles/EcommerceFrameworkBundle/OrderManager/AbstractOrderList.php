@@ -244,6 +244,8 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
+     * @param int $position
+     *
      * @return void
      */
     #[\ReturnTypeWillChange]
