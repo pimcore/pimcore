@@ -86,7 +86,9 @@ class LogMailMaintenanceTask implements TaskInterface
                     $mail = new \Pimcore\Mail();
                     $mail->setIgnoreDebugMode(true);
                     $mail->html($html);
-                    $mail->addTo($receivers);
+                    foreach ($receivers as $receiver){
+                            $mail->addTo(new Address($receiver, $receiver));
+                    }
                     $mail->setSubject('Error Log '.\Pimcore\Tool::getHostUrl());
                     $mail->send();
                 }
