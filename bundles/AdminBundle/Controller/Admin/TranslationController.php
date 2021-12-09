@@ -1282,11 +1282,10 @@ class TranslationController extends AdminController
     {
         $translation = new Translation();
 
-        $domains = array_map(function ($domain) {
-            return [
-                'name' => $domain,
-            ];
-        }, $translation->getDao()->getAvailableDomains());
+        $domains = array_map(
+            fn ($domain) => ['name' => $domain],
+            $translation->getDao()->getAvailableDomains(),
+        );
 
         return $this->adminJson( ['domains' => $domains]);
     }
