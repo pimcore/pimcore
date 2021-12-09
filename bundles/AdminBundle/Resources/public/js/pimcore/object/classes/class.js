@@ -607,7 +607,12 @@ pimcore.object.classes.klass = Class.create({
                 for (var i = 0; i < items.length; i++) {
                     var item = items[i];
                     if (typeof item.getValue == "function") {
-                        this.data[item.name] = item.getValue();
+                        let value = item.getValue();
+                        if (typeof item.config.xtype != 'undefined' && item.config.xtype === 'textfield') {
+                            value = Ext.util.Format.htmlEncode(value);
+                        }
+
+                        this.data[item.name] = value;
                     }
                 }
 
@@ -742,7 +747,8 @@ pimcore.object.classes.klass = Class.create({
             bodyStyle: 'padding: 10px;',
             autoScroll: true,
             defaults: {
-                labelWidth: 200
+                labelWidth: 200,
+                renderer: Ext.util.Format.htmlEncode
             },
             items: [
                 {
