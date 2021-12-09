@@ -24,7 +24,8 @@ interface LinkGeneratorInterface
      * If you want to support mockups or arbitrary objects you can change the typehint to
      * public function generate(object $object, array $params = []): string
      *
-     * Concrete $object
+     * TODO: Change stypehint in Pimcore 11
+     *
      * @param Concrete $object
      * @param array $params
      *
