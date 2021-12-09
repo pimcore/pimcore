@@ -131,7 +131,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if ($isLocalized) {
                 foreach ($validLanguages as $validLanguage) {
                     $tables[] = 'object_brick_localized_query_' . $key . '_' . $class->getId() . '_' . $validLanguage;
-                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId() . '_' . $validLanguage;
+                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId();
                 }
             }
         }
