@@ -747,8 +747,7 @@ pimcore.object.classes.klass = Class.create({
             bodyStyle: 'padding: 10px;',
             autoScroll: true,
             defaults: {
-                labelWidth: 200,
-                renderer: Ext.util.Format.htmlEncode
+                labelWidth: 200
             },
             items: [
                 {
@@ -758,6 +757,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 500,
                     enableKeyEvents: true,
                     value: this.data.name,
+                    renderer: Ext.util.Format.htmlEncode,
                     listeners: {
                         keyup: function (el) {
                             this.rootPanel.getComponent("phpClassName").setValue(getPhpClassName(el.getValue()))
@@ -769,12 +769,14 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("description"),
                     name: "description",
                     width: 500,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.description
                 },
                 {
                     xtype: "textfield",
                     fieldLabel: t("unique_identifier"),
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.id,
                     width: 500
                 },
@@ -785,6 +787,7 @@ pimcore.object.classes.klass = Class.create({
                     itemId: "phpClassName",
                     width: 500,
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: getPhpClassName(this.data.name)
                 },
                 {
@@ -792,6 +795,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("parent_php_class"),
                     name: "parentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.parentClass
                 },
                 {
@@ -799,6 +803,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 600,
                     name: "implementsInterfaces",
                     fieldLabel: t("implements_interfaces"),
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.implementsInterfaces
                 },
                 {
@@ -806,6 +811,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("use_traits"),
                     name: "useTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.useTraits
                 },
                 {
@@ -813,6 +819,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_parent_php_class"),
                     name: "listingParentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingParentClass
                 },
                 {
@@ -820,6 +827,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_use_traits"),
                     name: "listingUseTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingUseTraits
                 },
                 {
@@ -827,6 +835,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("link_generator_reference"),
                     name: "linkGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.linkGeneratorReference
                 },
                 {
@@ -834,6 +843,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_generator_reference"),
                     name: "previewGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewGeneratorReference
                 },
                 {
@@ -841,6 +851,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_url"),
                     name: "previewUrl",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewUrl
                 },
                 {
@@ -872,6 +883,7 @@ pimcore.object.classes.klass = Class.create({
                             iconCls: "pimcore_icon_refresh",
                             xtype: "button",
                             tooltip: t("refresh"),
+                            renderer: Ext.util.Format.htmlEncode,
                             handler: function(iconField) {
                                 iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
                             }.bind(this, iconField)
@@ -880,6 +892,7 @@ pimcore.object.classes.klass = Class.create({
                             xtype: "button",
                             iconCls: "pimcore_icon_icons",
                             text: t('icon_library'),
+                            renderer: Ext.util.Format.htmlEncode,
                             handler: function () {
                                 pimcore.helpers.openGenericIframeWindow("icon-library", Routing.generate('pimcore_admin_misc_iconlist'), "pimcore_icon_icons", t("icon_library"));
                             }
