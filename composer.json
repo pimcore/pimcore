@@ -163,7 +163,8 @@
     "symfony/monolog-bundle": "3.6.0",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
     "webmozarts/console-parallelization": "1.2.2",
-    "thecodingmachine/safe": "<1.2.0"
+    "thecodingmachine/safe": "<1.2.0",
+    "sabre/dav": "4.2.2"
   },
   "require-dev": {
     "cache/integration-tests": "dev-master",

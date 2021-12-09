@@ -148,9 +148,15 @@
     <div id="pimcore_avatar" style="display:none;">
         <img src="{{ path('pimcore_admin_user_getimage') }}" data-menu-tooltip="{{ user.name }} | {{ 'my_profile'|trans([],'admin') }}"/>
     </div>
-    <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="{{ path('pimcore_admin_logout') }}" style="display: none">
-        <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
-    </a>
+
+    <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+
+        <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}"
+           href="#" onclick="document.getElementById('pimcore_logout_form').submit();" style="display: none">
+            <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
+        </a>
+    </form>
     <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform ({{ settings.version }}|{{ settings.build }})" style="text-indent: -10000px">
         BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
         WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!

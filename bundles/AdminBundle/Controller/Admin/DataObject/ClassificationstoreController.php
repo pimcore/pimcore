@@ -279,8 +279,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -423,8 +427,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -564,8 +572,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             $count = 0;
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 if ($count > 0) {
                     $condition .= ' AND ';
                 }
@@ -727,8 +739,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->property];
                 $conditionParts[] = $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -837,8 +853,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -1228,8 +1248,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
