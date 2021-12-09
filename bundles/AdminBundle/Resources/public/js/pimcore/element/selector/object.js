@@ -574,12 +574,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     applyExtraParamsToStore: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
-
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("type", "object");
-        proxy.setExtraParam("query", formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
 
@@ -591,7 +591,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
         }
 
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     },
 
     search: function () {

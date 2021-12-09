@@ -243,11 +243,12 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
     },
 
     search: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("type", "document");
-        proxy.setExtraParam("query", formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {
@@ -255,6 +256,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         }
 
         this.pagingtoolbar.moveFirst();
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     }
 });
