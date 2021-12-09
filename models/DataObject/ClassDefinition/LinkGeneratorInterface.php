@@ -25,7 +25,7 @@ interface LinkGeneratorInterface
      * public function generate(object $object, array $params = []): string
      *
      * Concrete $object
-     * @param object $object
+     * @param Concrete $object
      * @param array $params
      *
      * @return string
