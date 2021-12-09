@@ -710,6 +710,7 @@ pimcore.object.classes.klass = Class.create({
             id: "iconfield-" + this.getId(),
             name: "icon",
             width: 396,
+            renderer: Ext.util.Format.htmlEncode,
             value: this.data.icon,
             listeners: {
                 "afterrender": function (el) {
@@ -883,7 +884,6 @@ pimcore.object.classes.klass = Class.create({
                             iconCls: "pimcore_icon_refresh",
                             xtype: "button",
                             tooltip: t("refresh"),
-                            renderer: Ext.util.Format.htmlEncode,
                             handler: function(iconField) {
                                 iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
                             }.bind(this, iconField)
@@ -892,7 +892,6 @@ pimcore.object.classes.klass = Class.create({
                             xtype: "button",
                             iconCls: "pimcore_icon_icons",
                             text: t('icon_library'),
-                            renderer: Ext.util.Format.htmlEncode,
                             handler: function () {
                                 pimcore.helpers.openGenericIframeWindow("icon-library", Routing.generate('pimcore_admin_misc_iconlist'), "pimcore_icon_icons", t("icon_library"));
                             }
@@ -904,6 +903,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("group"),
                     name: "group",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.group
                 },
                 this.allowInheritance,
