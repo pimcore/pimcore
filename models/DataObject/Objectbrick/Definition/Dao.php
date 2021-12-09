@@ -31,6 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      * @var array|null
      */
     protected $tableDefinitions = null;
+
     /**
      * @param DataObject\ClassDefinition $class
      * @param bool $query
@@ -61,6 +62,7 @@ class Dao extends Model\Dao\AbstractDao
             return 'object_brick_localized_' . $this->model->getKey() . '_' . $class->getId();
         }
     }
+
     /**
      * @param DataObject\ClassDefinition $class
      */
