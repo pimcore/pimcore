@@ -145,7 +145,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/logout", name="pimcore_admin_logout")
+     * @Route("/logout", name="pimcore_admin_logout" , methods={"POST"})
      */
     public function logoutAction()
     {
