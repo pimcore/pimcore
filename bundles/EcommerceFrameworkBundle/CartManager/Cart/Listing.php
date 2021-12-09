@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
 /**
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart[] load()
- * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart current()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart|false current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao getDao()
  * @method void setCartClass(string $cartClass)
