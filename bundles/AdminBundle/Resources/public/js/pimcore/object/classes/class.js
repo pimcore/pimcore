@@ -608,7 +608,7 @@ pimcore.object.classes.klass = Class.create({
                     var item = items[i];
                     if (typeof item.getValue == "function") {
                         let value = item.getValue();
-                        if (typeof item.config.xtype != 'undefined' && item.config.xtype === 'textfield') {
+                        if (typeof item.config.xtype !== 'undefined' && item.config.xtype === 'textfield') {
                             value = Ext.util.Format.htmlEncode(value);
                         }
 
