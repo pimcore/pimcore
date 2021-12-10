@@ -200,11 +200,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             // timeout for search queries is important, because long queries can block PHP FPM
             // distinguish CLI, because reindexing scripts tend to run longer than frontend search queries
-            $timeoutMsParamName = php_sapi_name() == PHP_SAPI ? 'timeoutMsBackend' : 'timeoutMs';
+            $timeoutMsParamName = php_sapi_name() == 'cli' ? 'timeoutMsBackend' : 'timeoutMs';
             if (isset($esSearchParams[$timeoutMsParamName])) {
                 $timeoutMs = $esSearchParams[$timeoutMsParamName];
             } else {
-                $timeoutMs = php_sapi_name() == PHP_SAPI ? self::DEFAULT_TIMEOUT_MS_BACKEND : self::DEFAULT_TIMEOUT_MS_FRONTEND;
+                $timeoutMs = php_sapi_name() == 'cli' ? self::DEFAULT_TIMEOUT_MS_BACKEND : self::DEFAULT_TIMEOUT_MS_FRONTEND;
             }
             $builder->setConnectionParams([
                 'client' => [

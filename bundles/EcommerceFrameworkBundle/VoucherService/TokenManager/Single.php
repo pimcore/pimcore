@@ -208,7 +208,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function reserveToken($code, CartInterface $cart)
     {
-        if ($token = Token::getByCode($code)) {
+        if (Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
                 return true;
             }

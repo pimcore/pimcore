@@ -23,7 +23,7 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
  *
  * @method Listing\Dao getDao()
  * @method TargetGroup[] load()
- * @method TargetGroup current()
+ * @method TargetGroup|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

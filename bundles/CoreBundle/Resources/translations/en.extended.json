@@ -665,5 +665,7 @@
   "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
   "json_converter": "Formatting the Options",
   "json_converter_link": "JSON Formatter",
-  "max_characters": "Maximum Characters"
+  "max_characters": "Maximum Characters",
+  "show_hide_areablock": "Show or Hide on frontend",
+  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes."
 }

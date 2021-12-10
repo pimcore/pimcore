@@ -25,12 +25,12 @@ use Pimcore\Model;
 class Definition extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $key;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $category;
 
@@ -45,7 +45,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -65,7 +65,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getCategory(): ?string
     {

@@ -92,9 +92,6 @@ class ClassesRebuildCommand extends AbstractCommand
             }
         }
 
-        $list = new ClassDefinition\Listing();
-        $list->load();
-
         if ($output->isVerbose()) {
             $output->writeln('---------------------');
             $output->writeln('Saving all classes');
@@ -108,10 +105,11 @@ class ClassesRebuildCommand extends AbstractCommand
                 }
             }
         } else {
-            foreach ($list->getClasses() as $class) {
+            $list = new ClassDefinition\Listing();
+            foreach ($list->getData() as $class) {
                 if ($class instanceof ClassDefinition) {
                     if ($output->isVerbose()) {
-                        $output->writeln(sprintf('%s [%s] created', $class->getName(), $class->getId()));
+                        $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
                     }
 
                     $class->save(false);

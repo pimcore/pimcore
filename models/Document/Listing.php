@@ -21,7 +21,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Document[] load()
- * @method Document current()
+ * @method Document|false current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()

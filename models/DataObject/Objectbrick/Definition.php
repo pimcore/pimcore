@@ -27,6 +27,8 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
  * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method void createUpdateTable(DataObject\ClassDefinition $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
@@ -129,7 +131,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if ($isLocalized) {
                 foreach ($validLanguages as $validLanguage) {
                     $tables[] = 'object_brick_localized_query_' . $key . '_' . $class->getId() . '_' . $validLanguage;
-                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId() . '_' . $validLanguage;
+                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId();
                 }
             }
         }
@@ -236,11 +238,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
-        $existingDefinition = Definition::getByKey($this->getKey());
-        $isUpdate = $existingDefinition != null;
-
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('brick updates in config folder not allowed');
+        if ($generateDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
         }
 
         $definitionFile = $this->getDefinitionFile();
@@ -739,7 +738,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 

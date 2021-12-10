@@ -47,7 +47,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
             var columnConfig = {name: this.relationsFields[i]};
-            if (this.relationsFields[i] == "sorter") {
+            if (this.relationsFields[i] == "sorter" || this.relationsFields[i] == "groupId") {
                 columnConfig["type"] = "int";
             }
             readerFields.push(columnConfig);

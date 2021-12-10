@@ -57,30 +57,30 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $creationDate = 0;
+    public $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $modificationDate = 0;
+    public $modificationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $userOwner = 0;
+    public $userOwner;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public $userModification = 0;
+    public $userModification;
 
     /**
      * @internal
@@ -403,6 +403,10 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+        }
+
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
@@ -437,9 +441,6 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $isUpdate = $this->exists();
-        if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
-        }
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
@@ -612,7 +613,7 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= 'use Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
         $cd .= "/**\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."|false current()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
@@ -801,7 +802,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
             return true;
         }
 
@@ -847,7 +848,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -855,7 +856,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -863,7 +864,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -871,7 +872,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TemplateResolver extends AbstractRequestResolver
 {
     /**
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return null|string
      */
@@ -34,9 +34,7 @@ class TemplateResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        $template = $request->get(DynamicRouter::CONTENT_TEMPLATE, null);
-
-        return $template;
+        return $request->get(DynamicRouter::CONTENT_TEMPLATE);
     }
 
     /**

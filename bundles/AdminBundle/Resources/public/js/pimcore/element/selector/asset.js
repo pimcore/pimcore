@@ -269,11 +269,12 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     },
 
     search: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("type", "asset");
-        proxy.setExtraParam("query", formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {
@@ -281,6 +282,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         }
 
         this.pagingtoolbar.moveFirst();
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     }
 });
