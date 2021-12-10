@@ -33,17 +33,17 @@ The path of Pimcore Documents also defines its public URL. In addition to the pa
 
 
 #### 4. URL Slugs of Data Objects 
-With the special data type [URL Slug](../../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md#page_URL-Slug) URLs for data objects can be defined. These need to be unique and are evaluated in the fourth priority for the current site. See [URL Slug](../../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md#page_URL-Slug) for details.
+With the special data type [URL Slug](../../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md#page_URL-Slug) URLs for data objects can be defined. These need to be unique and are evaluated for the current site. See [URL Slug](../../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md#page_URL-Slug) for details.
 
 
 #### 5. Static Routes / Custom Routes: 
 When your application has functionality where there is no Pimcore Document necessary (e.g. product lists, detail pages, 
  cart pages or checkout process, ...), Custom Routes allow the definition of URL patterns that are delegated to specific
- controllers. Custom Routes come fifth in the processing priority. See [Custom Routes](./02_Custom_Routes.md) for details.
+ controllers. Custom Routes come fourth in the processing priority. See [Custom Routes](./02_Custom_Routes.md) for details.
 
 
 #### 6. Redirects: 
-All Redirects with priority lower than 99 come six in the processing priority and once again processed based on their configured priority. 
+All Redirects with priority lower than 99 come fifth in the processing priority. 
 See [Redirects](./04_Redirects.md) for details. 
 
 
