@@ -547,13 +547,13 @@ pimcore.settings.translation.domain = Class.create({
                             var csvSettings = Ext.encode(this.config.csvSettings);
                             ImportForm.getForm().submit({
                                 url: this.mergeUrl,
-                                params: {importFile: this.config.tmpFile, csvSettings: csvSettings},
+                                params: {importFile: this.config.tmpFile, csvSettings: csvSettings, domain: this.domain},
                                 waitMsg: t("please_wait"),
                                 success: function (el, response) {
                                     try {
                                         var data = response.response.responseText;
                                         data = Ext.decode(data);
-                                        var merger = new pimcore.settings.translation.translationmerger(this.translationType, data, this);
+                                        var merger = new pimcore.settings.translation.translationmerger(this.domain, data, this);
                                         this.refresh();
                                         win.close();
                                     } catch (e) {
@@ -573,7 +573,7 @@ pimcore.settings.translation.domain = Class.create({
         });
 
         var windowCfg = {
-            title: t("merge_csv"),
+            title: t("merge_csv") + " (Domain: " + this.domain + ")",
             width: 600,
             layout: "fit",
             closeAction: "close",
@@ -586,25 +586,22 @@ pimcore.settings.translation.domain = Class.create({
     },
 
     doExport: function () {
-        var store = this.grid.store;
-        var storeFilters = store.getFilters().items;
-        var proxy = store.getProxy();
+        let store = this.grid.store;
+        let storeFilters = store.getFilters().items;
+        let proxy = store.getProxy();
+        let queryString = "domain=" + this.domain;
 
-        var filtersActive = this.filterField.getValue() || storeFilters.length > 0;
+        let filtersActive = this.filterField.getValue() || storeFilters.length > 0;
         if (filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
-                    var queryString = "searchString=" + this.filterField.getValue();
-                    var encodedFilters = proxy.encodeFilters(storeFilters);
-                    queryString += "&filter=" + encodedFilters;
-                    pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
-                } else {
-                    pimcore.helpers.download(this.exportUrl);
+                    queryString += "&searchString=" + this.filterField.getValue() + "&domain=" + this.domain;
+                    queryString += "&filter=" + proxy.encodeFilters(storeFilters);
                 }
             }.bind(this));
-        } else {
-            pimcore.helpers.download(this.exportUrl);
         }
+
+        pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
     },
 
     onAdd: function (btn, ev) {
