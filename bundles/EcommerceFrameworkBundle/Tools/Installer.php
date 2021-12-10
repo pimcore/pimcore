@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -412,9 +413,15 @@ class Installer extends AbstractInstaller
 
     /**
      * @return Schema
+     * @throws \Exception
      */
     protected function getSchema(): Schema
     {
-        return $this->schema ??= $this->db->getSchemaManager()->createSchema();
+        if ($this->db instanceof Connection) {
+            $this->schema ??= $this->db->getSchemaManager()->createSchema();
+            return $this->schema;
+        } else {
+            throw new \Exception('Cannot create schema.');
+        }
     }
 }

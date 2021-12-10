@@ -297,9 +297,4 @@ interface ConnectionInterface extends Connection
      * @return \PDO
      */
     public function getWrappedConnection();
-    
-    /**
-     * @return \Doctrine\DBAL\Schema\AbstractSchemaManager
-     */
-    public function getSchemaManager();
 }
