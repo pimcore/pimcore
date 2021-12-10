@@ -126,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
-            $domains[] = str_replace('translations_', '', current($domainTable));
+            $domains[] = str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
         }
 
         return $domains;
