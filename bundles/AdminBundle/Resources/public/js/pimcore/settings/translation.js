@@ -15,27 +15,20 @@ pimcore.registerNS("pimcore.settings.translation.domain");
 pimcore.settings.translation.domain = Class.create({
     filterField: null,
     preconfiguredFilter: "",
-    dataUrl: '',
-    exportUrl: '',
-    uploadImportUrl: '',
-    importUrl: '',
-    mergeUrl: '',
-    cleanupUrl: '',
-    domain: 'messages',
 
     initialize: function (filter) {
+        this.domain = 'messages';
         this.dataUrl = Routing.generate('pimcore_admin_translation_translations');
         this.exportUrl = Routing.generate('pimcore_admin_translation_export');
         this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile');
         this.importUrl = Routing.generate('pimcore_admin_translation_import');
         this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {merge: 1});
         this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {type: 'website'});
+        this.preconfiguredFilter = filter;
+        this.config = {};
 
         this.initializeFilters();
-        this.preconfiguredFilter = filter;
-        this.filterField.setValue(filter);
         this.getAvailableLanguages();
-        this.config = {};
     },
 
     initializeFilters: function () {
@@ -64,7 +57,6 @@ pimcore.settings.translation.domain = Class.create({
             name: "domain",
             valueField: "name",
             displayField: 'name',
-            tooltip: t('translation_domain'),
             value: this.domain,
             store: new Ext.data.ArrayStore({
                 autoDestroy: true,
@@ -86,7 +78,7 @@ pimcore.settings.translation.domain = Class.create({
                 render: function (c) {
                     new Ext.ToolTip({
                         target: c.getEl(),
-                        html: 'Translations Domain'
+                        html: t('translation_domain')
                     });
                 }
             },
@@ -99,24 +91,42 @@ pimcore.settings.translation.domain = Class.create({
         this.filterLocaleField = new Ext.form.ComboBox({
             emptyText: t('locale'),
             name: "locale",
-            valueField: "name",
+            valueField: "key",
             displayField: 'name',
             tooltip: t('locale'),
-            store: new Ext.data.ArrayStore({
-                autoDestroy: true,
-                proxy: {
-                    type: 'ajax',
-                    url: Routing.generate('pimcore_admin_translation_getwebsitetranslationlanguages'),
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'domains'
-                    }
-                },
-                fields: ['name'],
+            store: new Ext.data.SimpleStore({
+                fields: ['key', 'name'],
+                data: []
             }),
-            editable: false,
+            multiSelect: true,
+            listeners: {
+                render: function (c) {
+                    new Ext.ToolTip({
+                        target: c.getEl(),
+                        html: t('locale')
+                    });
+                },
+                change: function (combo, records) {
+                    let languages = [];
+                    Ext.each(records, function (rec) {
+                        languages.push('translation_column_' + this.domain + '_' + rec.toLowerCase());
+                    }.bind(this));
+
+                    let cm = this.grid.getColumnManager().getColumns();
+                    for (let i = 0; i < cm.length; i++) {
+                        let columnId = cm[i].id;
+                        if (columnId.startsWith('translation_column_')) {
+                            cm[i].hide();
+                            if (languages.length <= 0 || in_array(columnId, languages)) {
+                                cm[i].show();
+                            }
+                        }
+                    }
+                }.bind(this),
+            },
             triggerAction: 'all',
             mode: "local",
+            queryMode: 'local',
             width: 150
         });
     },
@@ -141,9 +151,15 @@ pimcore.settings.translation.domain = Class.create({
                         let container = Ext.decode(response.responseText);
                         this.languages = container.view;
                         this.editableLanguages = container.edit;
-                        this.editableLanguages = this.languages;
                     }
 
+                    let languageStore = [];
+                    for (var i = 0; i < this.languages.length; i++) {
+                        languageStore.push([this.languages[i], t(this.languages[i])]);
+                    }
+
+                    this.filterLocaleField.getStore().loadData(languageStore);
+                    this.filterLocaleField.reset();
                     this.getTabPanel();
 
                     pimcore.layout.refresh();
