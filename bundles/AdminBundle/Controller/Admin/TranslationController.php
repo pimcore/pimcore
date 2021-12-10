@@ -675,12 +675,7 @@ class TranslationController extends AdminController
      */
     public function cleanupAction(Request $request)
     {
-        $admin = $request->get('admin');
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($admin) {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
-
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $list = new Translation\Listing();
         $list->setDomain($domain);
         $list->cleanup();

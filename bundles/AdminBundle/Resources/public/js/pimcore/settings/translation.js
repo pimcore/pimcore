@@ -23,7 +23,7 @@ pimcore.settings.translation.domain = Class.create({
         this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile');
         this.importUrl = Routing.generate('pimcore_admin_translation_import');
         this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {merge: 1});
-        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {type: 'website'});
+        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup');
         this.preconfiguredFilter = filter;
         this.config = {};
 
@@ -637,6 +637,9 @@ pimcore.settings.translation.domain = Class.create({
         Ext.Ajax.request({
             url: this.cleanupUrl,
             method: 'DELETE',
+            params: {
+                domain: this.domain
+            },
             success: function (response) {
                 this.store.reload();
             }.bind(this)
