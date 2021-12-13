@@ -827,6 +827,7 @@ class Document extends Element\AbstractElement
 
         //clear document from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
+        \Pimcore\Cache\Runtime::set('document_path_' . md5($this->getRealFullPath()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
