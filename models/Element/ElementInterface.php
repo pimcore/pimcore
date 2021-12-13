@@ -22,6 +22,9 @@ use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
 
+/**
+ * @method self setParent(?ElementInterface $parent)
+ */
 interface ElementInterface extends ModelInterface
 {
     /**
