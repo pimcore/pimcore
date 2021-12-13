@@ -224,8 +224,6 @@ class Document extends Element\AbstractElement
             return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
-        $doc = null;
-
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
