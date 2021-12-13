@@ -220,7 +220,7 @@ class Document extends Element\AbstractElement
 
         $cacheKey = 'document_path_' . md5($path);
 
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
