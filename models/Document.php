@@ -24,6 +24,7 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
@@ -209,6 +210,18 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected static function getPathCacheKey(string $path): string
+    {
+        return 'document_path_' . md5($path);
+    }
+
+    /**
      * @param string $path
      * @param bool $force
      *
@@ -218,7 +231,7 @@ class Document extends Element\AbstractElement
     {
         $path = Element\Service::correctPath($path);
 
-        $cacheKey = 'document_path_' . md5($path);
+        $cacheKey = self::getPathCacheKey($path);
 
         if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             return \Pimcore\Cache\Runtime::get($cacheKey);
@@ -827,7 +840,7 @@ class Document extends Element\AbstractElement
 
         //clear document from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
-        \Pimcore\Cache\Runtime::set('document_path_' . md5($this->getRealFullPath()), null);
+        \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
