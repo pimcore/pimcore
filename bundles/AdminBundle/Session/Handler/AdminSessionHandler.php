@@ -19,6 +19,7 @@ use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -38,15 +39,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     private $openedSessions = 0;
 
     /**
-     * @var SessionInterface
+     * @var RequestStack
      */
-    protected $session;
+    protected RequestStack $requestStack;
 
     protected $readOnlySessionBagsCache = [];
 
-    public function __construct(SessionInterface $session)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -54,14 +55,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        if (!$this->session->isStarted()) {
+        $session = $this->requestStack->getSession();
+        if (!$session->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
             });
         }
 
-        return $this->session->getId();
+        return $session->getId();
     }
 
     /**
@@ -69,7 +71,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionName()
     {
-        return $this->session->getName();
+        return $this->requestStack->getSession()->getName();
     }
 
     /**
@@ -128,7 +130,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function invalidate(int $lifetime = null): bool
     {
-        return $this->session->invalidate($lifetime);
+        return $this->requestStack->getSession()->invalidate($lifetime);
     }
 
     /**
@@ -218,11 +220,12 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
+        $session = $this->requestStack->getSession();
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
-        if (!$this->session->isStarted()) {
-            $this->session->start();
+        if (!$session->isStarted()) {
+            $session->start();
         }
 
         $this->openedSessions++;
@@ -232,7 +235,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             'count' => $this->openedSessions,
         ]);
 
-        return $this->session;
+        return $session;
     }
 
     /**
@@ -243,7 +246,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
-            $this->session->save();
+            $this->requestStack->getSession()->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
                 'name' => $this->getSessionName(),
