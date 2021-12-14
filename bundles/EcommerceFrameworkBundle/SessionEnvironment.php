@@ -37,6 +37,10 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
     /**
+     * TODO: use RequestStack to get session
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var SessionInterface
      */
     protected $session;
