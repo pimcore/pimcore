@@ -23,6 +23,7 @@ use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Logger;
+use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
@@ -31,6 +32,7 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
@@ -246,22 +248,25 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
+     * @Route("/generate-previews", name="pimcore_admin_document_page_generatepreviews", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getListAction(Request $request)
+    public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore)
     {
         $list = new Document\Listing();
         $list->setCondition('type = ?', ['page']);
-        $data = $list->loadIdPathList();
 
-        return $this->adminJson([
-            'success' => true,
-            'data' => $data,
-        ]);
+        foreach ($list->loadIdList() as $docId) {
+            $messengerBusPimcoreCore->dispatch(
+                new GeneratePagePreviewMessage($docId, \Pimcore\Tool::getHostUrl())
+            );
+            break;
+        }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -271,15 +276,14 @@ class PageController extends DocumentControllerBase
      *
      * @return JsonResponse
      */
-    public function generateScreenshotAction(Request $request)
+    public function generateScreenshotAction(Request $request, MessageBusInterface $messengerBusPimcoreCore)
     {
         $success = false;
-        if ($request->get('id')) {
-            try {
-                $success = Document\Service::generatePagePreview($request->get('id'), $request);
-            } catch (\Exception $e) {
-                Logger::err($e);
-            }
+        if ($docId = $request->get('id')) {
+            $messengerBusPimcoreCore->dispatch(
+                new GeneratePagePreviewMessage($docId, \Pimcore\Tool::getHostUrl())
+            );
+            $success = true;
         }
 
         return $this->adminJson(['success' => $success]);
