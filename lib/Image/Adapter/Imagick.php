@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 
 class Imagick extends Adapter
 {
@@ -773,8 +774,19 @@ class Imagick extends Adapter
         $newImage = null;
 
         if (is_string($image)) {
-            $image = ltrim($image, '/');
-            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            $asset = Asset\Image::getByPath($image);
+            if ($asset instanceof Asset\Image) {
+                $image = $asset->getTemporaryFile();
+            } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.3',
+                    sprintf('Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.', __METHOD__)
+                );
+
+                $image = ltrim($image, '/');
+                $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            }
 
             $newImage = new \Imagick();
             $newImage->readimage($image);
@@ -809,8 +821,19 @@ class Imagick extends Adapter
      */
     public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
     {
-        $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $asset = Asset\Image::getByPath($image);
+        if ($asset instanceof Asset\Image) {
+            $image = $asset->getTemporaryFile();
+        } else {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.3',
+                sprintf('Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.', __METHOD__)
+            );
+
+            $image = ltrim($image, '/');
+            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        }
 
         $newImage = new \Imagick();
         $newImage->readimage($image);
