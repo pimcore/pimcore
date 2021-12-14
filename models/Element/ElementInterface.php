@@ -23,7 +23,7 @@ use Pimcore\Model\User;
 use Pimcore\Model\Version;
 
 /**
- * @method self setParent(?ElementInterface $parent)
+ * @method static setParent(?ElementInterface $parent)
  */
 interface ElementInterface extends ModelInterface
 {
