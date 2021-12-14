@@ -19,7 +19,8 @@ CREATE TABLE `application_logs` (
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
   KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`)
+  KEY `priority` (`priority`),
+  KEY `maintenanceChecked` (`maintenanceChecked`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
