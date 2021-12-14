@@ -113,7 +113,7 @@ In the application, there has to be a route in (config/routing.yaml) and a contr
 # important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
-    defaults: { _controller: MyAssetController:protectedAsset }
+    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
     requirements:
         path: '.*'
 ```
@@ -134,7 +134,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAsset(Request $request)
+    public function protectedAssetAction(Request $request)
     {
         // IMPORTANT!
         // Add your code here to check permission!
