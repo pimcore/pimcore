@@ -781,7 +781,7 @@ class Imagick extends Adapter
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.3',
-                    sprintf('Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.', __METHOD__)
+                    'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
                 );
 
                 $image = ltrim($image, '/');
@@ -828,7 +828,7 @@ class Imagick extends Adapter
             trigger_deprecation(
                 'pimcore/pimcore',
                 '10.3',
-                sprintf('Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.', __METHOD__)
+                'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
             );
 
             $image = ltrim($image, '/');
