@@ -27,6 +27,8 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
  * @method string getTableName(DataObject\ClassDefinition $class, $query)
+ * @method void createUpdateTable(DataObject\ClassDefinition $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
@@ -129,7 +131,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             if ($isLocalized) {
                 foreach ($validLanguages as $validLanguage) {
                     $tables[] = 'object_brick_localized_query_' . $key . '_' . $class->getId() . '_' . $validLanguage;
-                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId() . '_' . $validLanguage;
+                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId();
                 }
             }
         }

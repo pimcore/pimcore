@@ -199,7 +199,9 @@ pimcore.asset.helpers.grid = Class.create({
                         locked: this.getColumnLock(field),
                         renderer: function (value) {
                             if (value) {
-                                return '<img style="max-width: 200px; max-height: 100px;" src="' + value + '" loading="lazy">';
+                                return  '<div class="list-img-container">' +
+                                    '<img src="' + value + '" loading="lazy">'+
+                                    '</div>'
                             }
                         }.bind(this)
                     });

@@ -717,7 +717,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             }
                         }
                     }
-                    menu.push(groupMenu);
+                    if(groupMenu.menu.length) {
+                        menu.push(groupMenu);
+                    }
                 }
             }
         } else {

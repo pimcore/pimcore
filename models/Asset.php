@@ -40,7 +40,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -1064,7 +1063,7 @@ class Asset extends Element\AbstractElement
             }
 
             // Dispatch Symfony Message Bus to delete versions
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
@@ -1354,7 +1353,7 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tempFile = $this->getTemporaryFile();
+                $tempFile = $this->getLocalFileFromStream($this->stream);
                 $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
@@ -2097,7 +2096,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }

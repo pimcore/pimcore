@@ -22,11 +22,11 @@ class ValidationException extends \Exception
      */
     protected $contextStack = [];
 
-    /** @var array */
+    /** @var \Exception[] */
     protected $subItems = [];
 
     /**
-     * @return array
+     * @return \Exception[]
      */
     public function getSubItems()
     {
@@ -34,7 +34,7 @@ class ValidationException extends \Exception
     }
 
     /**
-     * @param array $subItems
+     * @param \Exception[] $subItems
      */
     public function setSubItems(array $subItems = [])
     {
@@ -71,5 +71,37 @@ class ValidationException extends \Exception
         }
 
         return $result;
+    }
+
+    public function getAggregatedMessage(): string
+    {
+        $msg = $this->getMessage();
+        $contextStack = $this->getContextStack();
+        if ($contextStack) {
+            $msg .= '[ '.$contextStack[0].' ]';
+        }
+
+        $subItems = $this->getSubItems();
+        if (count($subItems) > 0) {
+            $msg .= ' (';
+            $subItemParts = [];
+
+            foreach ($subItems as $subItem) {
+                if ($subItem instanceof self) {
+                    $subItemMessage = $subItem->getAggregatedMessage();
+                    $contextStack = $subItem->getContextStack();
+                    if ($contextStack) {
+                        $subItemMessage .= '[ '.$contextStack[0].' ]';
+                    }
+                } else {
+                    $subItemMessage = $subItem->getMessage();
+                }
+                $subItemParts[] = $subItemMessage;
+            }
+            $msg .= implode(', ', $subItemParts);
+            $msg .= ')';
+        }
+
+        return $msg;
     }
 }

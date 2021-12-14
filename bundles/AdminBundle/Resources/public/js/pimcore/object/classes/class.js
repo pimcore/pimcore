@@ -607,7 +607,12 @@ pimcore.object.classes.klass = Class.create({
                 for (var i = 0; i < items.length; i++) {
                     var item = items[i];
                     if (typeof item.getValue == "function") {
-                        this.data[item.name] = item.getValue();
+                        let value = item.getValue();
+                        if (typeof item.config.xtype !== 'undefined' && item.config.xtype === 'textfield') {
+                            value = Ext.util.Format.htmlEncode(value);
+                        }
+
+                        this.data[item.name] = value;
                     }
                 }
 
@@ -705,6 +710,7 @@ pimcore.object.classes.klass = Class.create({
             id: "iconfield-" + this.getId(),
             name: "icon",
             width: 396,
+            renderer: Ext.util.Format.htmlEncode,
             value: this.data.icon,
             listeners: {
                 "afterrender": function (el) {
@@ -752,6 +758,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 500,
                     enableKeyEvents: true,
                     value: this.data.name,
+                    renderer: Ext.util.Format.htmlEncode,
                     listeners: {
                         keyup: function (el) {
                             this.rootPanel.getComponent("phpClassName").setValue(getPhpClassName(el.getValue()))
@@ -763,12 +770,14 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("description"),
                     name: "description",
                     width: 500,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.description
                 },
                 {
                     xtype: "textfield",
                     fieldLabel: t("unique_identifier"),
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.id,
                     width: 500
                 },
@@ -779,6 +788,7 @@ pimcore.object.classes.klass = Class.create({
                     itemId: "phpClassName",
                     width: 500,
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: getPhpClassName(this.data.name)
                 },
                 {
@@ -786,6 +796,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("parent_php_class"),
                     name: "parentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.parentClass
                 },
                 {
@@ -793,6 +804,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 600,
                     name: "implementsInterfaces",
                     fieldLabel: t("implements_interfaces"),
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.implementsInterfaces
                 },
                 {
@@ -800,6 +812,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("use_traits"),
                     name: "useTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.useTraits
                 },
                 {
@@ -807,6 +820,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_parent_php_class"),
                     name: "listingParentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingParentClass
                 },
                 {
@@ -814,6 +828,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_use_traits"),
                     name: "listingUseTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingUseTraits
                 },
                 {
@@ -821,6 +836,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("link_generator_reference"),
                     name: "linkGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.linkGeneratorReference
                 },
                 {
@@ -828,6 +844,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_generator_reference"),
                     name: "previewGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewGeneratorReference
                 },
                 {
@@ -835,6 +852,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_url"),
                     name: "previewUrl",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewUrl
                 },
                 {
@@ -885,6 +903,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("group"),
                     name: "group",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.group
                 },
                 this.allowInheritance,

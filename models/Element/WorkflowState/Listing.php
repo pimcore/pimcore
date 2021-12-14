@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\WorkflowState\Listing\Dao getDao()
  * @method Model\Element\WorkflowState[] load()
- * @method Model\Element\WorkflowState current()
+ * @method Model\Element\WorkflowState|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

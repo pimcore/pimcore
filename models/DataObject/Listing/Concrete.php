@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 /**
  * @method DataObject\Listing\Concrete\Dao getDao()
  * @method DataObject\Concrete[] load()
- * @method DataObject\Concrete current()
+ * @method DataObject\Concrete|false current()
  */
 abstract class Concrete extends Model\DataObject\Listing
 {

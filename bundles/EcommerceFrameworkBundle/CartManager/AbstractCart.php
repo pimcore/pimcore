@@ -935,7 +935,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
             //check for each voucher token if reservation is valid or it is already applied to order
             foreach ($this->getVoucherTokenCodes() as $code) {
                 $reservation = Reservation::get($code, $this);
-                if (!$reservation->check($this->getId()) && !array_key_exists($code, $appliedVoucherCodes)) {
+                if (!$reservation && !array_key_exists($code, $appliedVoucherCodes)) {
                     unset($this->checkoutData['voucher_'.$code]);
                 }
             }

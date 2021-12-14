@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\StoreConfig\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\StoreConfig[] load()
- * @method Model\DataObject\Classificationstore\StoreConfig current()
+ * @method Model\DataObject\Classificationstore\StoreConfig|false current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing

@@ -50,6 +50,7 @@ pimcore.object.classes.layout.tabpanel = Class.create(pimcore.object.classes.lay
                     fieldLabel: t('tab_position'),
                     name: 'tabPosition',
                     value: this.datax.tabPosition,
+                    editable: false,
                     store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                 }
             ]

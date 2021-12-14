@@ -41,9 +41,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @internal
      *
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected ?Concrete $object = null;
+    protected $object;
 
     /**
      * @internal

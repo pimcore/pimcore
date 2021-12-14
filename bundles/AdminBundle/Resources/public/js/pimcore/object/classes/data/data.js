@@ -114,7 +114,12 @@ pimcore.object.classes.data.data = Class.create({
                         // autofill title field if untouched and empty
                         var title = el.ownerCt.getComponent("title");
                         if (title["_autooverwrite"] === true) {
-                            el.ownerCt.getComponent("title").setValue(el.getValue());
+                            let fixedTitle = '';
+                            for (let i = 0; i < el.getValue().length; i++) {
+                                let currentChar = el.getValue()[i];
+                                fixedTitle += i === 0 ? currentChar.toUpperCase() : (currentChar === currentChar.toUpperCase() && (currentChar.charCodeAt(0) < 48 ||  currentChar.charCodeAt(0) > 57)) ? ' ' + currentChar : currentChar;
+                            }
+                            el.ownerCt.getComponent("title").setValue(fixedTitle);
                         }
                     }
                 }

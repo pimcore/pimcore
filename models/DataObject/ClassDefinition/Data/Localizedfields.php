@@ -112,7 +112,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $tabPosition = 'top';
 
@@ -1001,10 +1001,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         if (count($validationExceptions) > 0) {
-            $aggregatedExceptions = new Model\Element\ValidationException();
-            $aggregatedExceptions->setSubItems($validationExceptions);
+            $errors = [];
+            /** @var Element\ValidationException $e */
+            foreach ($validationExceptions as $e) {
+                $errors[] = $e->getAggregatedMessage();
+            }
+            $message = implode(' / ', $errors);
 
-            throw $aggregatedExceptions;
+            throw new Model\Element\ValidationException($message);
         }
     }
 
@@ -1314,11 +1318,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function getTabPosition(): string
     {
-        return $this->tabPosition;
+        return $this->tabPosition ?? 'top';
     }
 
     /**
-     * @param string $tabPosition
+     * @param string|null $tabPosition
      */
     public function setTabPosition($tabPosition): void
     {
