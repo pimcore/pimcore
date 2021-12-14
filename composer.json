@@ -98,7 +98,7 @@
     "symfony/filesystem": "^5.2.0",
     "symfony/finder": "^5.2.0",
     "symfony/form": "^5.2.0",
-    "symfony/framework-bundle": "^5.2.0",
+    "symfony/framework-bundle": "^5.3.0",
     "symfony/http-client": "^5.2.0",
     "symfony/http-foundation": "^5.3.0",
     "symfony/http-kernel": "^5.2.0",
