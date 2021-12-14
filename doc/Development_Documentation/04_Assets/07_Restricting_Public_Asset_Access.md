@@ -113,7 +113,7 @@ In the application, there has to be a route in (config/routing.yaml) and a contr
 # important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
-    defaults: { _controller: MyAssetController:protectedAsset }
+    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
     requirements:
         path: '.*'
 ```
@@ -125,11 +125,12 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
+use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RouteCollection;use Symfony\Component\Templating\Storage\Storage;
+use Symfony\Component\Routing\RouteCollection;
 
 class MyAssetController extends FrontendController
 {
