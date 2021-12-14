@@ -1772,19 +1772,21 @@ class Asset extends Element\AbstractElement
         \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
-        $convert = function ($metaData) {
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $metaData['data'];
+        if (!$raw) {
+            $convert = function ($metaData) {
+                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                $transformedData = $metaData['data'];
 
-            try {
-                /** @var Data $instance */
-                $instance = $loader->build($metaData['type']);
-                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
-            } catch (UnsupportedException $e) {
-            }
+                try {
+                    /** @var Data $instance */
+                    $instance = $loader->build($metaData['type']);
+                    $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+                } catch (UnsupportedException $e) {
+                }
 
-            return $transformedData;
-        };
+                return $transformedData;
+            };
+        }
 
         if ($name) {
             if ($language === null) {
