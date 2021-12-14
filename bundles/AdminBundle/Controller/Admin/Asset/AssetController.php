@@ -394,6 +394,23 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
+     * @Route("/exists", name="pimcore_admin_asset_exists", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function existsAction(Request $request)
+    {
+        $parentAsset = \Pimcore\Model\Asset::getById((int)$request->get('parentId'));
+        return new JsonResponse([
+            'exists' => Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$request->get('filename'))
+        ]);
+    }
+
+    /**
      * @param Request $request
      * @param Config $config
      *
@@ -479,9 +496,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $parentAsset = Asset::getById((int)$parentId);
 
-        // check for duplicate filename
-        $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
-        $asset = null;
+        if(!$request->get('allowOverwrite')) {
+            // check for duplicate filename
+            $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
+        }
 
         if (!$parentAsset->isAllowed('create')) {
             throw $this->createAccessDeniedHttpException(
@@ -495,12 +513,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions of your temporary directories.');
         }
 
-        $asset = Asset::create($parentId, [
-            'filename' => $filename,
-            'sourcePath' => $sourcePath,
-            'userOwner' => $this->getAdminUser()->getId(),
-            'userModification' => $this->getAdminUser()->getId(),
-        ]);
+        if ($request->get('allowOverwrite') && Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$filename)) {
+            $asset = Asset::getByPath($parentAsset->getRealFullPath().'/'.$filename);
+            $asset->setStream(fopen($sourcePath, 'rb', false, File::getContext()));
+            $asset->save();
+        } else {
+            $asset = Asset::create($parentId, [
+                'filename' => $filename,
+                'sourcePath' => $sourcePath,
+                'userOwner' => $this->getAdminUser()->getId(),
+                'userModification' => $this->getAdminUser()->getId(),
+            ]);
+        }
 
         @unlink($sourcePath);
 
