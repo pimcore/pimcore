@@ -466,12 +466,13 @@ class Document extends Element\AbstractElement
 
             $additionalTags = [];
             if (isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $documentId) {
-                    $tag = 'document_' . $documentId;
+                foreach ($updatedChildren as $updatedDocument) {
+                    $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
                     \Pimcore\Cache\Runtime::set($tag, null);
+                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['fullPath']), null);
                 }
             }
             $this->clearDependentCache($additionalTags);
