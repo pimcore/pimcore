@@ -55,7 +55,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        $session = $this->requestStack->getSession();
+        $session = $this->getSession();
         if (!$session->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
@@ -71,7 +71,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionName()
     {
-        return $this->requestStack->getSession()->getName();
+        return $this->getSession()->getName();
     }
 
     /**
@@ -130,7 +130,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function invalidate(int $lifetime = null): bool
     {
-        return $this->requestStack->getSession()->invalidate($lifetime);
+        return $this->getSession()->invalidate($lifetime);
     }
 
     /**
@@ -220,7 +220,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
-        $session = $this->requestStack->getSession();
+        $session = $this->getSession();
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
@@ -239,6 +239,16 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
+     * Gets the Session.
+     *
+     * @return SessionInterface
+     */
+    private function getSession(): SessionInterface
+    {
+        $this->requestStack->getCurrentRequest()->getSession();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function writeClose()
@@ -246,7 +256,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
-            $this->requestStack->getSession()->save();
+            $this->getSession()->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
                 'name' => $this->getSessionName(),
