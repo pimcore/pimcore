@@ -58,7 +58,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getUserIdentifier()/*: string */
+    public function getUserIdentifier()// : string
     {
         return $this->user->getName();
     }
@@ -66,7 +66,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * @return PimcoreUser
      */
-    public function getUser()/*: PimcoreUser */
+    public function getUser()// : PimcoreUser
     {
         return $this->user;
     }
@@ -74,7 +74,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getRoles()/*: array */
+    public function getRoles()// : array
     {
         $roles = [];
 
@@ -97,7 +97,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getPassword()/*: ?string */
+    public function getPassword()// : ?string
     {
         return $this->user->getPassword();
     }
@@ -105,7 +105,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getSalt()/*: ?string */
+    public function getSalt()// : ?string
     {
         return null;
     }
@@ -122,7 +122,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function isEqualTo(UserInterface $user)/*: bool */
+    public function isEqualTo(UserInterface $user)// : bool
     {
         return $user instanceof self && $user->getId() === $this->getId();
     }

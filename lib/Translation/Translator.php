@@ -148,7 +148,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function getCatalogue(string $locale = null)/*: MessageCatalogueInterface */
+    public function getCatalogue(string $locale = null)// : MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }

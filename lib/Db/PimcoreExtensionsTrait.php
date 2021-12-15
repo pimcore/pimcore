@@ -42,7 +42,7 @@ trait PimcoreExtensionsTrait
      *
      *@see \Doctrine\DBAL\Connection::connect
      */
-    public function connect()/*: bool */
+    public function connect()// : bool
     {
         $returnValue = parent::connect();
 

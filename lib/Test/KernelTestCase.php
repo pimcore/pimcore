@@ -26,7 +26,7 @@ abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\Kerne
      *
      * @return KernelInterface
      */
-    protected static function createKernel(array $options = [])/*: KernelInterface */
+    protected static function createKernel(array $options = [])// : KernelInterface
     {
         $kernel = parent::createKernel($options);
 

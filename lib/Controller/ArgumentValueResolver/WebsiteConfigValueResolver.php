@@ -28,6 +28,7 @@ final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
+     *
      * @return bool
      */
     public function supports(Request $request, ArgumentMetadata $argument): bool
