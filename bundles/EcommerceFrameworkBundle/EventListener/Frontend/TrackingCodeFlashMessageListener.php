@@ -37,18 +37,12 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     const FLASH_MESSAGE_BAG_KEY = 'ecommerceframework_trackingcode_flashmessagelistener';
 
     /**
-     * @var RequestStack
-     */
-    protected RequestStack $requestStack;
-
-    /**
      * @var TrackingManager
      */
     protected $trackingManger;
 
     public function __construct(RequestStack $requestStack, TrackingManager $trackingManager)
     {
-        $this->requestStack = $requestStack;
         $this->trackingManger = $trackingManager;
     }
 
@@ -74,7 +68,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
         // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
         $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY, false);
-        $session = $this->requestStack->getCurrentRequest()->getSession();
+        $session = $request->hasSession() ? $request->getSession() : null;
         if ($flashBagCookie && $session instanceof Session) {
             $trackedCodes = $session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
@@ -97,7 +91,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
-        $session = $this->requestStack->getCurrentRequest()->getSession();
+        $session = $request->hasSession() ? $request->getSession() : null;
 
         /**
          * If tracking codes are forwarded as FlashMessage, then set a cookie which is checked in subsequent request for successful handshake
