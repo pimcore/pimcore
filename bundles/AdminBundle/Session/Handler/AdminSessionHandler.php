@@ -253,7 +253,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * Gets the Session.
+     * returns if the session is set
      *
      * @return bool
      */
