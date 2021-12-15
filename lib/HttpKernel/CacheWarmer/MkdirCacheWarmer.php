@@ -41,7 +41,7 @@ class MkdirCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
@@ -49,7 +49,7 @@ class MkdirCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): array
     {
         $directories = [
             // var

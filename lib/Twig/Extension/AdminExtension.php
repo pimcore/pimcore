@@ -31,7 +31,7 @@ class AdminExtension extends AbstractExtension
     {
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),

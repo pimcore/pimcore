@@ -30,7 +30,7 @@ use Twig\TwigFunction;
  */
 class PimcoreObjectExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         // simple object access functions in case documents/assets/objects need to be loaded directly in the template
         return [

@@ -28,7 +28,7 @@ class JsonResponse extends BaseJsonResponse
     /**
      * {@inheritdoc}
      */
-    public function setData($data = [])
+    public function setData($data = [])/*: self */
     {
         $serializer = Serialize::getAdminSerializer();
 

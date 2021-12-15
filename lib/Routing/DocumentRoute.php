@@ -32,7 +32,7 @@ final class DocumentRoute extends Route implements RouteObjectInterface
     /**
      * @return Document|null
      */
-    public function getDocument()
+    public function getDocument(): ?Document
     {
         return $this->document;
     }
@@ -52,7 +52,7 @@ final class DocumentRoute extends Route implements RouteObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getContent()
+    public function getContent(): ?object
     {
         return $this->getDocument();
     }
@@ -60,7 +60,7 @@ final class DocumentRoute extends Route implements RouteObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteKey()
+    public function getRouteKey(): ?string
     {
         if ($this->document) {
             return sprintf('document_%d', $this->document->getId());

@@ -42,7 +42,7 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_*', [$this, 'renderEditable'], [
