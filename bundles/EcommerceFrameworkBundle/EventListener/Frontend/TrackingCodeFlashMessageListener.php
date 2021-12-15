@@ -41,7 +41,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
      */
     protected $trackingManger;
 
-    public function __construct(RequestStack $requestStack, TrackingManager $trackingManager)
+    public function __construct(TrackingManager $trackingManager)
     {
         $this->trackingManger = $trackingManager;
     }
