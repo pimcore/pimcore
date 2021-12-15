@@ -92,5 +92,5 @@ Register event listener:
 services:
   App\EventListener\PimcoreAdminListener:
     tags:
-      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
+      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.editmode_js, method: addJSFiles }
 ```
