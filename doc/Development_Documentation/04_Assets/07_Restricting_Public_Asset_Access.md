@@ -108,7 +108,7 @@ A full configuration example can be found [on this page](../23_Installation_and_
 In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# config/routing.yaml
+# config/routes.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
@@ -126,15 +126,16 @@ namespace App\Controller;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAssetAction(Request $request)
+    public function protectedAssetAction(Request $request, RouterInterface $router)
     {
         // IMPORTANT!
         // Add your code here to check permission!
@@ -164,15 +165,14 @@ class MyAssetController extends FrontendController
                 ]);
             } else {
                 $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
-                $route = $this->get('router')->getRouteCollection()->get($pimcoreThumbnailRoute);
+                $route = $router->getRouteCollection()->get($pimcoreThumbnailRoute);
                 $collection = new RouteCollection();
                 $collection->add($pimcoreThumbnailRoute, $route);
-                $matcher = new UrlMatcher($collection, $this->get('router')->getContext());
+                $matcher = new UrlMatcher($collection, $router->getContext());
 
                 try {
                     $parameters = $matcher->matchRequest($request);
-                    $response = $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
-                    return $response;
+                    return $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
                 } catch (\Exception $e) {
                     // nothing to do
                 }
