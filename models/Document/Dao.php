@@ -326,15 +326,22 @@ class Dao extends Model\Element\Dao
      * Quick check if there are children.
      *
      * @param bool|null $includingUnpublished
+     * @param Model\User $user
      *
      * @return bool
      */
-    public function hasChildren($includingUnpublished = null)
+    public function hasChildren($includingUnpublished = null, $user = null)
     {
-        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+        $sql = 'SELECT id FROM documents d WHERE parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
+        }
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
         }
 
         $sql .= ' LIMIT 1';
