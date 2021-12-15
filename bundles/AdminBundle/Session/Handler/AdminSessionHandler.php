@@ -167,6 +167,10 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
+        if (!$this->hasSession()) {
+            return false;
+        }
+
         $sessionName = $this->getSessionName();
         if (empty($sessionName)) {
             return false;
@@ -245,7 +249,17 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     private function getSession(): SessionInterface
     {
-        $this->requestStack->getCurrentRequest()->getSession();
+        return $this->requestStack->getCurrentRequest()->getSession();
+    }
+
+    /**
+     * Gets the Session.
+     *
+     * @return bool
+     */
+    private function hasSession(): bool
+    {
+        return $this->requestStack->getCurrentRequest()->hasSession();
     }
 
     /**
