@@ -192,7 +192,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchAll('SELECT id, CONCAT(path,`key`) AS fullPath FROM documents WHERE path LIKE ?', [$this->db->escapeLike($oldPath) . '%']);
+        $documents = $this->db->fetchAll('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [$this->db->escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {

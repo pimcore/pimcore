@@ -433,10 +433,17 @@ class Document extends Element\AbstractElement
 
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    if ($oldPath && $oldPath !== $newPath = $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                        $updatedChildren = array_map(
+                            static function (array $doc) use ($oldPath, $newPath): array {
+                                $doc['oldPath'] = substr_replace($doc['path'], $oldPath, 0, strlen($newPath));
+
+                                return $doc;
+                            },
+                            $this->getDao()->updateChildPaths($oldPath),
+                        );
                     }
 
                     $this->commit();
@@ -470,9 +477,9 @@ class Document extends Element\AbstractElement
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
 
-                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long-running scripts, such as CLI
                     \Pimcore\Cache\Runtime::set($tag, null);
-                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['fullPath']), null);
+                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
             }
             $this->clearDependentCache($additionalTags);
