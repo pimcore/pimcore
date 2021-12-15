@@ -320,11 +320,21 @@ class Dao extends Model\Element\Dao
     /**
      * quick test if there are children
      *
+     * @param Model\User $user
+     *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($user = null)
     {
-        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? LIMIT 1', $this->model->getId());
+        $query = 'SELECT `a`.`id` FROM `assets` a WHERE `parentId` = ?';
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $query .= ' AND (select `list` as locate from `users_workspaces_asset` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
+        }
+        $query .= ' LIMIT 1;';
+        $c = $this->db->fetchOne($query, $this->model->getId());
 
         return (bool)$c;
     }
