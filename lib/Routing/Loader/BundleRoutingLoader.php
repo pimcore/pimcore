@@ -40,7 +40,7 @@ class BundleRoutingLoader extends Loader
     /**
      * {@inheritdoc}
      */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): mixed
     {
         $collection = new RouteCollection();
         $files = $this->locator->locate('routing');
@@ -60,7 +60,7 @@ class BundleRoutingLoader extends Loader
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return 'pimcore_bundle' === $type;
     }
