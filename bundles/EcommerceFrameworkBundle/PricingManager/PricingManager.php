@@ -48,10 +48,6 @@ class PricingManager implements PricingManagerInterface
     protected $actionMapping = [];
 
     /**
-     * TODO: use RequestStack to get session
-     *
-     * @deprecated will be removed in Pimcore 11
-     *
      * @var SessionInterface
      */
     protected $session;

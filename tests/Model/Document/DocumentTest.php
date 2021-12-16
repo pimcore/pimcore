@@ -267,7 +267,6 @@ class DocumentTest extends ModelTestCase
 
         $document->setEditable($input);
 
-        $this->buildSession();
         ElementService::saveElementToSession($document);
         $loadedDocument = Service::getElementFromSession('document', $document->getId());
 
