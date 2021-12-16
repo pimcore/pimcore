@@ -29,7 +29,26 @@ class ReferenceLoopNormalizer implements NormalizerInterface
      */
     public function normalize($object, $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        return Serialize::removeReferenceLoops($object);
+        $object = Serialize::removeReferenceLoops($object);
+
+        if($object instanceof \JsonSerializable) {
+            return $object->jsonSerialize();
+        }
+
+        if(is_object($object)) {
+
+            $propCollection = get_object_vars($object);
+
+            $array = [];
+            foreach ($propCollection as $name => $propValue) {
+                $array[$name] = $propValue;
+            }
+
+            return $array;
+
+        }
+
+        return $object;
     }
 
     /**
