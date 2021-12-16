@@ -31,12 +31,11 @@ class ReferenceLoopNormalizer implements NormalizerInterface
     {
         $object = Serialize::removeReferenceLoops($object);
 
-        if($object instanceof \JsonSerializable) {
+        if ($object instanceof \JsonSerializable) {
             return $object->jsonSerialize();
         }
 
-        if(is_object($object)) {
-
+        if (is_object($object)) {
             $propCollection = get_object_vars($object);
 
             $array = [];
@@ -45,7 +44,6 @@ class ReferenceLoopNormalizer implements NormalizerInterface
             }
 
             return $array;
-
         }
 
         return $object;
