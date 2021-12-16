@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.fileexplorer.file");
@@ -44,10 +44,35 @@ pimcore.settings.fileexplorer.file = Class.create({
                 });
             }
 
-            this.textarea = new Ext.form.TextArea({
-                value: response.content,
-                fieldStyle: {
-                    "fontFamily": "courier"
+            let editorId = 'editor_' + this.path;
+            var editorContainer = new Ext.Component({
+                html: '<div id="' + editorId + '" style="height:100%;width:100%"></div>',
+                listeners: {
+                    afterrender: function (cmp) {
+                        var editor = ace.edit(editorId);
+                        editor.setTheme('ace/theme/chrome');
+
+                        //set editor file mode
+                        let modelist = ace.require('ace/ext/modelist');
+                        let mode = modelist.getModeForPath(this.path).mode;
+                        editor.getSession().setMode(mode);
+
+                        editor.setOptions({
+                            showLineNumbers: true,
+                            showPrintMargin: false,
+                            wrap: true,
+                            fontFamily: 'Courier New, Courier, monospace;'
+                        });
+
+                        //set data
+                        if (response.content) {
+                            editor.setValue(response.content);
+                            editor.clearSelection();
+                            editor.resize();
+                        }
+
+                        this.textEditor = editor;
+                    }.bind(this)
                 }
             });
 
@@ -70,10 +95,14 @@ pimcore.settings.fileexplorer.file = Class.create({
                     delete this.explorer.openfiles[this.path];
                 }.bind(this));
 
+                this.editor.on('resize', function (el, width, height) {
+                    this.textEditor.resize();
+                }.bind(this));
+
             }
             this.editor.removeAll();
             this.editor.setTitle(response.filename);
-            this.editor.add(this.textarea);
+            this.editor.add(editorContainer);
 
             if (isNew) {
                 this.explorer.editorPanel.add(this.editor);
@@ -84,7 +113,7 @@ pimcore.settings.fileexplorer.file = Class.create({
     },
 
     saveFile: function () {
-        var content = this.textarea.getValue();
+        var content = this.textEditor.getValue();
         Ext.Ajax.request({
             method: "put",
             url: Routing.generate('pimcore_admin_misc_fileexplorercontentsave'),

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.report.custom.panel");
@@ -69,7 +69,8 @@ pimcore.report.custom.panel = Class.create({
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addField.bind(this)
+                            handler: this.addField.bind(this),
+                            disabled: !pimcore.settings['custom-reports-writeable']
                         }
                     ]
                 }
@@ -143,7 +144,8 @@ pimcore.report.custom.panel = Class.create({
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
-            handler: this.deleteField.bind(this, tree, record)
+            handler: this.deleteField.bind(this, tree, record),
+            disabled: !record.data.writeable
         }));
 
         menu.add(new Ext.menu.Item({

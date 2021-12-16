@@ -1,8 +1,8 @@
 # Working with Objects via PHP API
 
-Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities 
+Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities
 provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
-with these objects via a comfortable PHP API and take full advantage of a IDE (e.g. code completion etc.). 
+with these objects via a comfortable PHP API and take full advantage of an IDE (e.g. code completion etc.).
 
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
@@ -36,11 +36,13 @@ $myObject->getDescription();
 $city = DataObject\City::getByZip(5020,1);
 
 // you can also get an object by id where you don't know the type
-$object = DataObject\AbstractObject::getById(235);
+$object = DataObject::getById(235);
 
 // or obtain an object by path
-$object = DataObject\AbstractObject::getByPath("/path/to/the/object");
+$object = DataObject::getByPath("/path/to/the/object");
 
+// or get variants matching a value (default is to only fetch objects)
+$city = DataObject\Product::getByColor('purple', 1, 0, [Product::OBJECT_TYPE_VARIANT]);
 
 //updating and saving objects
 $myObject->setName("My Name");
@@ -58,19 +60,19 @@ $city->delete();
 <a name="objectsListing">&nbsp;</a>
 
 ## Object Listings
-Once data is available in a structured manner, it can not only be accessed more conveniently but also be filtered, 
-sorted, grouped and displayed intuitively by the use of an object listing. Moreover, data can be exported very easily 
+Once data is available in a structured manner, it can not only be accessed more conveniently but also be filtered,
+sorted, grouped and displayed intuitively by the use of an object listing. Moreover, data can be exported very easily
 not only programmatically but also through the Pimcore object csv export.
 
-Object listings are a simple way to retrieve objects from Pimcore while being able to filter and sort data along that 
+Object listings are a simple way to retrieve objects from Pimcore while being able to filter and sort data along that
 process. Object listings also come with a built-in paginator that simplifies the display of results in a paged manner.
 
-When working with object listings, user defined routes come in handy while implementing a object detail views. 
-User defined routes allow directing requests to certain detail pages, even though the request does not portray the path 
-of a document, but matches a certain route. For more information have a look at 
+When working with object listings, user defined routes come in handy while implementing object detail views.
+User defined routes allow directing requests to certain detail pages, even though the request does not portray the path
+of a document, but matches a certain route. For more information have a look at
 [URLs based on Custom Routes](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md).
 
-An object listing class is created automatically for each class defined in Pimcore. Objects for the class `Myobject` 
+An object listing class is created automatically for each class defined in Pimcore. Objects for the class `Myobject`
 are retrieved through a listing as in the following example:
 
 ```php
@@ -146,7 +148,7 @@ $items->setOrderKey("(SELECT id FROM sometable GROUP BY someField)", false);
 ```
 
 ### Using prepared statement placeholders and variables
-The syntax is similar to that from the Zend Framework described 
+The syntax is similar to that from the Zend Framework described
 [here](http://framework.zend.com/manual/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
 
 ```php
@@ -185,9 +187,9 @@ $entries->setCondition("name LIKE :name", ["name" => "%term%"]); // name is a fi
 ```
 
 ##### Disable Localized Fields in listings
-Sometimes you don't want to have localized data on the listings (condition & order by). For this particular case you 
-can disable localized fields on your listing (the objects in the list will still include the localized fields). 
-Conditions and order by statements on localized fields are then not possible anymore. 
+Sometimes you don't want to have localized data on the listings (condition & order by). For this particular case you
+can disable localized fields on your listing (the objects in the list will still include the localized fields).
+Conditions and order by statements on localized fields are then not possible anymore.
 
 ```php
 <?php
@@ -204,10 +206,19 @@ This is especially useful to get an object matching a foreign key, or get a list
 ```php
 $result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset]);
 
+// or object variants matching a value
+$result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT]]);
+
 // or for localized fields
-$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => locale, 'limit' => $limit, 'offset' => $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset]);
+
+// or object variants matching a value in localized fields
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT]]);
+
+// or object variants and objects matching a value in localized fields
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]]);
 ```
-If you set no limit, a list object containing all matching objects is returned. If the limit is set to 1 
+If you set no limit, a list object containing all matching objects are returned. If the limit is set to 1
 the first matching object is returned directly (without listing). Only published objects are return.
 
 Alternatively you can pass an array as second parameter which will be applied to the object listing.
@@ -292,8 +303,7 @@ $country = DataObject\Country::getByName("Austria", "en", 1);
 
 
 ### Get an Object List including unpublished Objects
-Normally object lists only give published objects. This can be changed by setting a lists `unpublished` property to 
-`true`.
+Normally object lists only give published objects. This can be changed by setting a lists `unpublished` property to `true`.
 
 ```php
 <?php
@@ -314,14 +324,14 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 <?php
 
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections
-To filter objects by attributes from field collections, you can use following syntax 
+To filter objects by attributes from field collections, you can use following syntax
 (Both code snippets result in the same object listing).
 
 ```php
@@ -343,39 +353,42 @@ $list = \Pimcore\Model\DataObject\Collectiontest::getList([
 ]);
 ```
 
-You can add field collections to an listing object by specifying the type of the field collection and optionally the 
+You can add field collections to a listing object by specifying the type of the field collection and optionally the
 fieldname. The fieldname is the fieldname of the field collection in the class definition of the current object.
-Once field collections are added to an object listing, you can access attributes of field collections in the condition 
-of the object listing. The syntax is as shown in the examples above `FIELDCOLLECTIONTYPE~FIELDNAME.ATTRIBUTE_OF_FIELDCOLLECTION`, 
+Once field collections are added to an object listing, you can access attributes of field collections in the condition
+of the object listing. The syntax is as shown in the examples above `FIELDCOLLECTIONTYPE~FIELDNAME.ATTRIBUTE_OF_FIELDCOLLECTION`,
 or if you have not specified a fieldname `FIELDCOLLECTION.ATTRIBUTE_OF_FIELDCOLLECTION`.
 
 The object listing of this example only delivers objects of the type Collectiontest, which have
-* an Fieldcollection of the type `MyCollection` and the value `testinput` in the attribute `myinput` and
-* an Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`. 
+* a Fieldcollection of the type `MyCollection` and the value `testinput` in the attribute `myinput` and
+* a Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`.
 
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend\Paginator
+### Working with Knp\Component\Pager\Paginator
 
-##### Action 
+##### Action
 ```php
-public function testAction( Request $request )
+public function testAction( Request $request, \Knp\Component\Pager\PaginatorInterface $paginator)
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = new \Zend\Paginator\Paginator($list);
-    $paginator->setCurrentPageNumber( $request->get('page') );
-    $paginator->setItemCountPerPage(10);
+    $paginator = $paginator->paginate(
+        $list,
+        $request->get('page', 1),
+        10
+    );
 
     return $this->render('Test/Test.html.twig', [
         'paginator' => $paginator,
-        'paginationVariables' => $paginator->getPages('Sliding')
+        'paginationVariables' => $paginator->getPaginationData()
     ]);
 }
 ```
+
 ##### View
 ```twig
 {% for item in paginator %}
@@ -428,31 +441,27 @@ public function testAction( Request $request )
 
 ### Access and modify internal object list query
 
-It is possible to access and modify the internal query from every object listing. The internal query is based 
-on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
+It is possible to access and modify the internal query from every object listing. The internal query is based
+on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
-
 <?php
 // get all news with ratings that is stored in a not Pimcore related table
  
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
-$list->onCreateQuery(
-    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list) {
-        $select->join(
-        ['rating' => 'plugin_rating_ratings'],
-        'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
-        ''
-    );
+// set  callback
+$list->onCreateQueryBuilder(
+    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
+        $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
+                    'orderItemObjects.o_id = orderItem.product__id');
     }
 );
 ```
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
+You can access and print the internal query which is based on `\Doctrine\DBAL\Query\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
@@ -461,10 +470,10 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
+// set onCreateQueryBuilder callback
+$list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
     // echo query
-    echo $query;
+    echo $queryBuilder->getSQL();
 });
 ```
 

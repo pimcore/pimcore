@@ -2,7 +2,7 @@
 
 Pimcore `/admin` login entry point can be restricted/changed by using pimcore configuration.
 
-Add custom admin identifier in your `app/config/config.yml`:
+Add custom admin identifier in your `config/config.yaml`:
 ```yml
 
 pimcore_admin: 

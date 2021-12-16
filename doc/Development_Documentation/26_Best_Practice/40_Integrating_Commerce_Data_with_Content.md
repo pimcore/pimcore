@@ -17,7 +17,7 @@ Follow the steps to create a Product teaser similar to the one in our [demo](htt
 **MyProductTeaser Implementation** 
 ```php
 <?php
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 class MyProductTeaser extends AbstractAreabrick
 {

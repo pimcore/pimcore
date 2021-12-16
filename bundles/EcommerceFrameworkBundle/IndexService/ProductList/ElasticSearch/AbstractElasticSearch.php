@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
@@ -24,7 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
+
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+
     const ADVANCED_SORT = 'advanced_sort';
 
     /**
@@ -52,7 +55,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearch
+     * @var ElasticSearchConfigInterface
      */
     protected $tenantConfig;
 
@@ -77,7 +80,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $order;
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $orderKey;
 
@@ -92,7 +95,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $offset = 0;
 
     /**
-     * @var AbstractCategory
+     * @var AbstractCategory|null
      */
     protected $category;
 
@@ -102,29 +105,29 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $inProductList;
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $filterConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $queryConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $relationConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
-    protected $conditionPriceFrom = null;
+    protected $conditionPriceFrom;
 
     /**
-     * @var float
+     * @var float|null
      */
-    protected $conditionPriceTo = null;
+    protected $conditionPriceTo;
 
     /**
      * @var array
@@ -209,11 +212,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $this;
     }
 
-    /**
-     * Returns all products valid for this search
-     *
-     * @return IndexableInterface[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -405,7 +404,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return string
+     * @return string|array
      */
     public function getOrderKey()
     {
@@ -476,7 +475,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public function getCategory()
     {
@@ -572,6 +571,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
+        $params['track_total_hits'] = true;
+        $params['rest_total_hits_as_int'] = true;
+
         $params['body']['_source'] = true;
 
         if (is_int($this->getLimit())) { // null not allowed
@@ -620,7 +622,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $result = $this->sendRequest($params);
 
         $objectRaws = [];
-        if ($result['hits']) {
+        if ($result['hits'] ?? null) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = $hit['_id'];
@@ -881,7 +883,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             //mapping of relations
             $relationFormatPimcore = [];
-            foreach ($sourceData['relations'] ?: [] as $name => $relation) {
+            foreach ($sourceData['relations'] ?? [] as $name => $relation) {
                 $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
             }
             $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);
@@ -1036,7 +1038,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->doLoadGroupByValues();
         }
 
-        $results = $this->preparedGroupByValuesResults[$fieldname];
+        $results = $this->preparedGroupByValuesResults[$fieldname] ?? null;
         if ($results) {
             if ($countValues) {
                 return $results;
@@ -1399,16 +1401,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      *
@@ -1425,30 +1417,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function rewind()
     {
         $this->getProducts();

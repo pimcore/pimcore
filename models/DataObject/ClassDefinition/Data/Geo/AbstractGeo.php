@@ -1,52 +1,66 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 
-use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
 use Pimcore\Tool\Serialize;
 
-abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
+abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {
     /**
+     * @internal
+     *
      * @var float
      */
     public $lat = 0.0;
 
     /**
+     * @internal
+     *
      * @var float
      */
     public $lng = 0.0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $zoom = 1;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $mapType = 'roadmap';
@@ -112,7 +126,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -120,19 +134,22 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -140,37 +157,28 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
         $this->height = $height;
 
         return $this;
     }
 
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
-    /**
-     * @param string $value
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    /** { @inheritdoc } */
+    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -45,8 +43,6 @@ class EncryptedField implements OwnerAwareFieldInterface
     protected $encrypted;
 
     /**
-     * EncryptedField constructor.
-     *
      * @param mixed $plain
      * @param Data $delegate
      */
@@ -101,16 +97,23 @@ class EncryptedField implements OwnerAwareFieldInterface
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 $key = Key::loadFromAsciiSafeString($key);
-                $data = Serialize::serialize($this->plain);
+                $data = $this->plain;
+                //clear owner to avoid recursion
+                if ($data instanceof OwnerAwareFieldInterface) {
+                    $data->_setOwner(null);
+                    $data->_setOwnerFieldname('');
+                }
+                $data = Serialize::serialize($data);
 
                 $data = Crypto::encrypt($data, $key, true);
                 $this->encrypted = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 throw new \Exception('could not load key');
             }
 
-            return ['encrypted'];
+            return ['encrypted', '_owner'];
         }
 
         return [];
@@ -129,9 +132,16 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = Crypto::decrypt($this->encrypted, $key, true);
 
                 $data = Serialize::unserialize($data);
+
+                if ($data instanceof OwnerAwareFieldInterface) {
+                    $data->_setOwner($this->_owner);
+                    $data->_setOwnerFieldname('_owner');
+                }
+
                 $this->plain = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 throw new \Exception('could not load key');
             }
         }

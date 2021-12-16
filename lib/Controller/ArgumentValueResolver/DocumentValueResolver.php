@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Controller\ArgumentValueResolver;
@@ -22,8 +23,10 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
  * Adds support for type hinting controller actions against `Document $document` and getting the current document.
+ *
+ * @internal
  */
-class DocumentValueResolver implements ArgumentValueResolverInterface
+final class DocumentValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var DocumentResolver
@@ -44,7 +47,7 @@ class DocumentValueResolver implements ArgumentValueResolverInterface
      *
      * @return bool
      */
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         if ($argument->getType() !== Document::class) {
             return false;
@@ -63,9 +66,9 @@ class DocumentValueResolver implements ArgumentValueResolverInterface
      * @param Request $request
      * @param ArgumentMetadata $argument
      *
-     * @return \Generator|Document
+     * @return iterable
      */
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->documentResolver->getDocument($request);
     }

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /*global google */
@@ -47,7 +47,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             width: this.fieldConfig.width,
             border: true,
             style: "margin-bottom: 10px",
-            componentCls: 'object_field object_geo_field object_field_type_' + this.type,
+            componentCls: this.getWrapperClassNames('object_geo_field'),
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
                 xtype: 'button',

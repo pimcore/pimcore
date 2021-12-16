@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
@@ -22,14 +20,18 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
- * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
- * @method void save()
- * @method void delete()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
+ * @method void delete(bool $forceClearTempFiles = false)
+ * @method void save(bool $forceClearTempFiles = false)
  */
-class Config extends Model\AbstractModel
+final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
+    /**
+     * @internal
+     */
     protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
 
     /**
@@ -45,91 +47,120 @@ class Config extends Model\AbstractModel
      )
      * )
      *
+     * @internal
+     *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
-    public $medias = [];
+    protected $medias = [];
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $format = 'SOURCE';
+    protected $format = 'SOURCE';
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $quality = 85;
+    protected $quality = 85;
 
     /**
-     * @var float
+     * @internal
+     *
+     * @var float|null
      */
-    public $highResolution;
+    protected $highResolution;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $preserveColor = false;
+    protected $preserveColor = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $preserveMetaData = false;
+    protected $preserveMetaData = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $rasterizeSVG = false;
+    protected $rasterizeSVG = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $downloadable = false;
+    protected $downloadable = false;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
-    public $filenameSuffix;
+    protected $filenameSuffix;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $forcePictureTag = false;
+    protected $preserveAnimation = false;
 
     /**
-     * @var bool
-     */
-    public $preserveAnimation = false;
-
-    /**
+     * @internal
+     *
      * @param string|array|self $config
      *
      * @return self|null
@@ -177,14 +208,17 @@ class Config extends Model\AbstractModel
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
-            $thumbnail->setName($name);
             if (!$thumbnail) {
                 throw new \Exception('Thumbnail in registry is null');
             }
+
+            $thumbnail->setName($name);
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->getDao()->getByName($name);
+                /** @var Model\Asset\Image\Thumbnail\Config\Dao $dao */
+                $dao = $thumbnail->getDao();
+                $dao->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
@@ -226,17 +260,15 @@ class Config extends Model\AbstractModel
             return true;
         }
 
-        $thumbnail = new self();
-
-        return $thumbnail->getDao()->exists($name);
+        return (bool) self::getByName($name);
     }
 
     /**
-     * @param bool $hdpi
+     * @internal
      *
      * @return Config
      */
-    public static function getPreviewConfig($hdpi = false)
+    public static function getPreviewConfig()
     {
         $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
         $thumbnail = null;
@@ -259,9 +291,7 @@ class Config extends Model\AbstractModel
             $thumbnail->setFormat('PJPEG');
         }
 
-        if ($hdpi) {
-            $thumbnail->setHighResolution(2);
-        }
+        $thumbnail->setHighResolution(2);
 
         return $thumbnail;
     }
@@ -277,6 +307,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string $media
@@ -302,6 +334,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
@@ -326,6 +360,9 @@ class Config extends Model\AbstractModel
         return true;
     }
 
+    /**
+     * @internal
+     */
     public function resetItems()
     {
         $this->items = [];
@@ -469,7 +506,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getHighResolution()
     {
@@ -509,7 +546,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilenameSuffix()
     {
@@ -517,7 +554,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param array $config
      *
@@ -549,10 +586,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * This is just for compatibility, this method will be removed with the next major release
+     * This is mainly here for backward compatibility
      *
-     * @deprecated
-     * @static
+     * @internal
      *
      * @param array $config
      *
@@ -637,6 +673,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param Model\Asset\Image $asset
      *
      * @return array
@@ -731,25 +769,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @deprecated
-     *
-     * @param string $colorspace
-     */
-    public function setColorspace($colorspace)
-    {
-        // no functionality, just for compatibility reasons
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getColorspace()
-    {
-        // no functionality, just for compatibility reasons
-    }
-
-    /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -765,7 +785,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -862,22 +882,6 @@ class Config extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function getForcePictureTag(): bool
-    {
-        return $this->forcePictureTag;
-    }
-
-    /**
-     * @param bool $forcePictureTag
-     */
-    public function setForcePictureTag(bool $forcePictureTag): void
-    {
-        $this->forcePictureTag = $forcePictureTag;
-    }
-
-    /**
-     * @return bool
-     */
     public function getPreserveAnimation(): bool
     {
         return $this->preserveAnimation;
@@ -907,8 +911,11 @@ class Config extends Model\AbstractModel
         $this->downloadable = $downloadable;
     }
 
-    public function clearTempFiles()
+    public function __clone()
     {
-        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', $this->getName());
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
+        }
     }
 }

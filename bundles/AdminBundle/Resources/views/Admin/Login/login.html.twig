@@ -2,7 +2,7 @@
 
 {% block content %}
 <div id="loginform">
-    <form method="post" action="{{ path('pimcore_admin_login_check', {'perspective' : app.request.get('perspective')|striptags}) }}">
+    <form id="form-element" method="post" action="{{ path('pimcore_admin_login_check', {'perspective' : app.request.get('perspective')|striptags}) }}">
 
         {% if error is defined %}
         <div class="text error">
@@ -12,7 +12,7 @@
 
         <input type="text" name="username" autocomplete="username" placeholder="{{ 'username'|trans([], 'admin') }}" required autofocus>
         <input type="password" name="password" autocomplete="current-password" placeholder="{{ 'password'|trans([], 'admin') }}" required>
-        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <input type="hidden" name="csrfToken" id="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
 
         <button type="submit">{{ 'login'|trans([], 'admin') }}</button>
     </form>
@@ -27,10 +27,10 @@
     </div>
 
     <div class="text browserinfo">
-        <a href="http://www.google.com/chrome/" target="_blank" title="Chrome"><img src="/bundles/pimcoreadmin/img/login/chrome.svg" alt="Chrome"/></a>
-        <a href="http://www.mozilla.org/" target="_blank" title="Firefox"><img src="/bundles/pimcoreadmin/img/login/firefox.svg" alt="Firefox"/></a>
-        <a href="http://www.apple.com/safari/" target="_blank" title="Safari"><img src="/bundles/pimcoreadmin/img/login/safari.svg" alt="Safari"/></a>
-        <a href="http://www.microsoft.com/" target="_blank" title="Edge"><img src="/bundles/pimcoreadmin/img/login/edge.svg" alt="Edge"/></a>
+        <a href="https://www.google.com/chrome" target="_blank" rel="noopener noreferrer" title="Chrome"><img src="/bundles/pimcoreadmin/img/login/chrome.svg" alt="Chrome"/></a>
+        <a href="https://www.mozilla.org/firefox" target="_blank" rel="noopener noreferrer" title="Firefox"><img src="/bundles/pimcoreadmin/img/login/firefox.svg" alt="Firefox"/></a>
+        <a href="https://www.apple.com/safari" target="_blank" rel="noopener noreferrer" title="Safari"><img src="/bundles/pimcoreadmin/img/login/safari.svg" alt="Safari"/></a>
+        <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener noreferrer" title="Edge"><img src="/bundles/pimcoreadmin/img/login/edge.svg" alt="Edge"/></a>
     </div>
 
     <a href="#" onclick="showLogin();">{{ 'Click here to proceed'|trans([], 'admin') }}</a>
@@ -62,7 +62,40 @@
     if(!window.localStorage.getItem(symfonyToolbarKey)) {
         window.localStorage.setItem(symfonyToolbarKey, 'none');
     }
-</script>
-{% endblock %}
 
-{% do pimcore_breach_attack_random_content() %}
+
+    // CSRF token refresh
+    var formElement = document.getElementById('form-element');
+    var csrfRefreshInProgress = false;
+    function refreshCsrfToken() {
+        csrfRefreshInProgress = true;
+        formElement.style.opacity = '0.3';
+        var request = new XMLHttpRequest();
+        request.open('GET', '{{ path("pimcore_admin_login_csrf_token") }}');
+        request.onload = function () {
+            if (this.status >= 200 && this.status < 400) {
+                var res = JSON.parse(this.response);
+                document.getElementById('csrfToken').setAttribute('value', res['csrfToken']);
+                formElement.style.opacity = '1';
+                csrfRefreshInProgress = false;
+            }
+        };
+        request.send();
+    }
+    document.addEventListener('visibilitychange', function(ev) {
+        if(document.visibilityState === 'visible') {
+            refreshCsrfToken();
+        }
+    });
+    window.setInterval(refreshCsrfToken, {{ csrfTokenRefreshInterval }});
+    formElement.addEventListener("submit", function(evt) {
+        if(csrfRefreshInProgress) {
+            evt.preventDefault();
+        }
+    }, true);
+
+</script>
+
+{{ pimcore_breach_attack_random_content() }}
+
+{% endblock %}

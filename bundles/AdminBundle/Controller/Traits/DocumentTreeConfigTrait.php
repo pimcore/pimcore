@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
@@ -21,8 +19,12 @@ use Pimcore\Config;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Frontend;
 
+/**
+ * @internal
+ */
 trait DocumentTreeConfigTrait
 {
     use AdminStyleTrait;
@@ -45,6 +47,7 @@ trait DocumentTreeConfigTrait
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
+            'key' => $childDocument->getKey(),
             'idx' => (int)$childDocument->getIndex(),
             'text' => $childDocument->getKey(),
             'type' => $childDocument->getType(),
@@ -66,23 +69,25 @@ trait DocumentTreeConfigTrait
             ],
         ];
 
+        $hasChildren = (bool)$childDocument->getChildAmount(Admin::getCurrentUser());
+
         // add icon
-        $tmpDocument['expandable'] = $childDocument->hasChildren();
-        $tmpDocument['loaded'] = !$childDocument->hasChildren();
+        $tmpDocument['expandable'] = $hasChildren;
+        $tmpDocument['loaded'] = !$hasChildren;
 
         // set type specific settings
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
+            $tmpDocument['expanded'] = !$hasChildren;
 
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
-                unset($site->rootDocument);
-                $tmpDocument['site'] = $site;
+                $site->setRootDocument(null);
+                $tmpDocument['site'] = $site->getObjectVars();
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
+            $tmpDocument['expanded'] = !$hasChildren;
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);
@@ -96,11 +101,6 @@ trait DocumentTreeConfigTrait
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
                 $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_page_display_preview_image', ['id' => $childDocument->getId()]);
-                $thumbnailFileHdpi = $childDocument->getPreviewImageFilesystemPath(true);
-                if (file_exists($thumbnailFileHdpi)) {
-                    $tmpDocument['thumbnailHdpi'] = $this->generateUrl('pimcore_admin_page_display_preview_image',
-                        ['id' => $childDocument->getId(), 'hdpi' => true]);
-                }
             }
         }
 

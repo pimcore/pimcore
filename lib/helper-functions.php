@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -42,35 +43,30 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
+    $mode = 'wb' . $level;
     $error = false;
-
-    $fp_in = fopen($source, 'rb');
-
-    $fp_out = fopen($dest, 'wb');
-    $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
-
-    if ($fp_out && $fp_in) {
-        while (!feof($fp_in)) {
-            fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
+    if ($fp_out = gzopen($dest, $mode)) {
+        if ($fp_in = fopen($source, 'rb')) {
+            while (!feof($fp_in)) {
+                gzwrite($fp_out, fread($fp_in, 1024 * 512));
+            }
+            fclose($fp_in);
+        } else {
+            $error = true;
         }
-
-        fclose($fp_in);
-
-        fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
-        fclose($fp_out);
+        gzclose($fp_out);
     } else {
         $error = true;
     }
-
     if ($error) {
         return false;
+    } else {
+        return $dest;
     }
-
-    return $dest;
 }
 
 /**
- * @param string $string
+ * @param mixed $string
  *
  * @return bool
  */
@@ -80,9 +76,9 @@ function is_json($string)
         json_decode($string);
 
         return json_last_error() == JSON_ERROR_NONE;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
@@ -315,12 +311,10 @@ function formatBytes($bytes, $precision = 2)
 /**
  * @param string $str
  *
- * @return float|int
+ * @return int
  */
 function filesize2bytes($str)
 {
-    $bytes = 0;
-
     $bytes_array = [
         'K' => 1024,
         'M' => 1024 * 1024,
@@ -537,6 +531,7 @@ function resolvePath($filename)
         }
         if ($part == '..') {
             array_pop($out);
+
             continue;
         }
         $out[] = $part;
@@ -630,7 +625,7 @@ function to_php_data_file_format($contents, $comments = null)
 {
     $contents = var_export_pretty($contents);
 
-    $export = '<?php ';
+    $export = '<?php';
 
     if (!empty($comments)) {
         $export .= "\n\n";

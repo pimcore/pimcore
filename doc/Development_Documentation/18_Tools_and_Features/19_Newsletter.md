@@ -66,12 +66,12 @@ This simple framework allows you to create a hassle free subscribe/confirm/unsub
  
 ### Controller
 
-For example, `\NewsletterController`: `src/AppBundle/Controllers/NewsletterController.php`
+For example, `\NewsletterController`: `src/Controllers/NewsletterController.php`
 
 ```php
 <?php
 
-namespace AppBundle\Controller; 
+namespace App\Controller; 
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model;
@@ -91,7 +91,7 @@ class NewsletterController extends FrontendController
         if ($newsletter->checkParams($params)) {
             try {
                 $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
-                $newsletterFolder = Model\DataObject\AbstractObject::getByPath("/crm/newsletter");
+                $newsletterFolder = Model\DataObject::getByPath("/crm/newsletter");
                 if ($newsletterFolder) {
                     $params["parentId"] = $newsletterFolder->getId();
                 }
@@ -156,7 +156,7 @@ class NewsletterController extends FrontendController
 
 ### Views
 
-The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.twig`
+The subscribe action view: `templates/Newsletter/subscribe.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -213,7 +213,7 @@ The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.twig`
 {% endif %}
 ```
 
-The confirm action view: `app/Resources/views/Newsletter/confirm.html.twig`
+The confirm action view: `templates/Newsletter/confirm.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -229,7 +229,7 @@ The confirm action view: `app/Resources/views/Newsletter/confirm.html.twig`
 {% endif %}
 ```
 
-The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.twig`
+The unsubscribe action view: `templates/Newsletter/unsubscribe.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}

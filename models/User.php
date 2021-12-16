@@ -1,106 +1,106 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\User\Dao getDao()
  */
-class User extends User\UserRole
+final class User extends User\UserRole
 {
-    /**
-     * @var string
-     */
-    public $type = 'user';
+    use TemporaryFileHelperTrait;
 
     /**
      * @var string
      */
-    public $password;
+    protected $type = 'user';
 
     /**
      * @var string
      */
-    public $firstname;
+    protected $password;
 
     /**
      * @var string
      */
-    public $lastname;
+    protected $firstname;
 
     /**
      * @var string
      */
-    public $email;
+    protected $lastname;
 
     /**
      * @var string
      */
-    public $language = 'en';
+    protected $email;
+
+    /**
+     * @var string
+     */
+    protected $language = 'en';
 
     /**
      * @var bool
      */
-    public $admin = false;
+    protected $admin = false;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var array
      */
-    public $roles = [];
+    protected $roles = [];
 
     /**
      * @var bool
      */
-    public $welcomescreen = false;
+    protected $welcomescreen = false;
 
     /**
      * @var bool
      */
-    public $closeWarning = true;
+    protected $closeWarning = true;
 
     /**
      * @var bool
      */
-    public $memorizeTabs = true;
+    protected $memorizeTabs = true;
 
     /**
      * @var bool
      */
-    public $allowDirtyClose = false;
+    protected $allowDirtyClose = false;
 
     /**
      * @var string|null
      */
-    public $contentLanguages;
+    protected $contentLanguages;
 
     /**
      * @var string|null
      */
-    public $activePerspective;
+    protected $activePerspective;
 
     /**
      * @var null|array
@@ -120,17 +120,17 @@ class User extends User\UserRole
     /**
      * @var int
      */
-    public $lastLogin;
+    protected $lastLogin;
 
     /**
      * @var string
      */
-    public $keyBindings;
+    protected $keyBindings;
 
     /**
      * @var array
      */
-    public $twoFactorAuthentication;
+    protected $twoFactorAuthentication;
 
     /**
      * @return string
@@ -156,8 +156,6 @@ class User extends User\UserRole
 
     /**
      * Alias for getName()
-     *
-     * @deprecated
      *
      * @return string
      */
@@ -506,22 +504,45 @@ class User extends User\UserRole
     }
 
     /**
+     * @internal
+     *
+     * @return string
+     */
+    protected function getOriginalImageStoragePath(): string
+    {
+        return sprintf('/user-image/user-%s.png', $this->getId());
+    }
+
+    /***
+     * @internal
+     * @return string
+     */
+    protected function getThumbnailImageStoragePath(): string
+    {
+        return sprintf('/user-image/user-thumbnail-%s.png', $this->getId());
+    }
+
+    /**
      * @param string|null $path
      */
     public function setImage($path)
     {
-        if (!is_dir(PIMCORE_USERIMAGE_DIRECTORY)) {
-            File::mkdir(PIMCORE_USERIMAGE_DIRECTORY);
+        $storage = Tool\Storage::get('admin');
+        $originalFileStoragePath = $this->getOriginalImageStoragePath();
+        $thumbFileStoragePath = $this->getThumbnailImageStoragePath();
+
+        if ($storage->fileExists($originalFileStoragePath)) {
+            $storage->delete($originalFileStoragePath);
         }
 
-        $destFile = PIMCORE_USERIMAGE_DIRECTORY . '/user-' . $this->getId() . '.png';
-        $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/user-thumbnail-' . $this->getId() . '.png';
-        @unlink($destFile);
-        @unlink($thumb);
+        if ($storage->fileExists($thumbFileStoragePath)) {
+            $storage->delete($thumbFileStoragePath);
+        }
 
         if ($path) {
-            copy($path, $destFile);
-            @chmod($destFile, File::getDefaultMode());
+            $handle = fopen($path, 'rb');
+            $storage->writeStream($originalFileStoragePath, $handle);
+            fclose($handle);
         }
     }
 
@@ -529,7 +550,7 @@ class User extends User\UserRole
      * @param int|null $width
      * @param int|null $height
      *
-     * @return string
+     * @return resource
      */
     public function getImage($width = null, $height = null)
     {
@@ -540,21 +561,25 @@ class User extends User\UserRole
             $height = 46;
         }
 
-        $id = $this->getId();
-        $user = PIMCORE_USERIMAGE_DIRECTORY . '/user-' . $id . '.png';
-        if (file_exists($user)) {
-            $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/user-thumbnail-' . $id . '.png';
-            if (!file_exists($thumb)) {
+        $storage = Tool\Storage::get('admin');
+        if ($storage->fileExists($this->getOriginalImageStoragePath())) {
+            if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
+                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
+                $targetFile = File::getLocalTempFilePath('png');
+
                 $image = \Pimcore\Image::getInstance();
-                $image->load($user);
+                $image->load($localFile);
                 $image->cover($width, $height);
-                $image->save($thumb, 'png');
+                $image->save($targetFile, 'png');
+
+                $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                unlink($targetFile);
             }
 
-            return $thumb;
+            return $storage->readStream($this->getThumbnailImageStoragePath());
         }
 
-        return $this->getFallbackImage();
+        return fopen($this->getFallbackImage(), 'rb');
     }
 
     /**
@@ -570,7 +595,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param null|string $contentLanguages
+     * @param null|string|array $contentLanguages
      */
     public function setContentLanguages($contentLanguages)
     {
@@ -605,7 +630,7 @@ class User extends User\UserRole
      *
      * @return array|string[]
      */
-    public function getMergedPerspectives()
+    private function getMergedPerspectives()
     {
         if (null === $this->mergedPerspectives) {
             $this->mergedPerspectives = $this->getPerspectives();
@@ -617,7 +642,7 @@ class User extends User\UserRole
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
             if (!$this->mergedPerspectives) {
                 // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = Config::getPerspectivesConfig()->toArray();
+                $allPerspectives = \Pimcore\Perspective\Config::get()->toArray();
                 $this->mergedPerspectives = [];
 
                 $this->mergedPerspectives = array_keys($allPerspectives);
@@ -630,6 +655,8 @@ class User extends User\UserRole
     /**
      * Returns the first perspective name
      *
+     * @internal
+     *
      * @return string
      */
     public function getFirstAllowedPerspective()
@@ -639,7 +666,7 @@ class User extends User\UserRole
             return $perspectives[0];
         } else {
             // all perspectives are allowed
-            $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+            $perspectives = \Pimcore\Perspective\Config::getAvailablePerspectives($this);
 
             return $perspectives[0]['name'];
         }
@@ -648,9 +675,9 @@ class User extends User\UserRole
     /**
      * Returns array of website translation languages for editing related to user and all related roles
      *
-     * @return array|null
+     * @return array
      */
-    public function getMergedWebsiteTranslationLanguagesEdit()
+    private function getMergedWebsiteTranslationLanguagesEdit(): array
     {
         if (null === $this->mergedWebsiteTranslationLanguagesEdit) {
             $this->mergedWebsiteTranslationLanguagesEdit = $this->getWebsiteTranslationLanguagesEdit();
@@ -669,29 +696,29 @@ class User extends User\UserRole
      * Returns array of languages allowed for editing. If edit and view languages are empty all languages are allowed.
      * If only edit languages are empty (but view languages not) empty array is returned.
      *
+     * @internal
+     *
      * @return array|null
      */
     public function getAllowedLanguagesForEditingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if (empty($mergedWebsiteTranslationLanguagesEdit)) {
+        if (empty($mergedWebsiteTranslationLanguagesEdit) || $this->isAdmin()) {
             $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
             if (empty($mergedWebsiteTranslationLanguagesView)) {
                 return Tool::getValidLanguages();
-            } else {
-                return $mergedWebsiteTranslationLanguagesEdit;
             }
-        } else {
-            return $mergedWebsiteTranslationLanguagesEdit;
         }
+
+        return $mergedWebsiteTranslationLanguagesEdit;
     }
 
     /**
      * Returns array of website translation languages for viewing related to user and all related roles
      *
-     * @return array|null
+     * @return array
      */
-    public function getMergedWebsiteTranslationLanguagesView()
+    private function getMergedWebsiteTranslationLanguagesView(): array
     {
         if (null === $this->mergedWebsiteTranslationLanguagesView) {
             $this->mergedWebsiteTranslationLanguagesView = $this->getWebsiteTranslationLanguagesView();
@@ -709,16 +736,18 @@ class User extends User\UserRole
     /**
      * Returns array of languages allowed for viewing. If view languages are empty all languages are allowed.
      *
+     * @internal
+     *
      * @return array|null
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations()
     {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-        if (empty($mergedWebsiteTranslationLanguagesView)) {
+        if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
             return Tool::getValidLanguages();
-        } else {
-            return $mergedWebsiteTranslationLanguagesView;
         }
+
+        return $mergedWebsiteTranslationLanguagesView;
     }
 
     /**
@@ -742,6 +771,8 @@ class User extends User\UserRole
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     public static function getDefaultKeyBindings()
@@ -1021,13 +1052,14 @@ class User extends User\UserRole
 
     public function hasImage()
     {
-        if ($this->getImage() == $this->getFallbackImage()) {
-            return false;
-        }
-
-        return true;
+        return Tool\Storage::get('admin')->fileExists($this->getOriginalImageStoragePath());
     }
 
+    /**
+     * @internal
+     *
+     * @return string
+     */
     protected function getFallbackImage()
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';

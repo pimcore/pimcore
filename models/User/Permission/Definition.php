@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\User\Permission;
@@ -27,14 +25,14 @@ use Pimcore\Model;
 class Definition extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
-    public $key;
+    protected $key;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $category;
+    protected $category;
 
     /**
      * @param array $data
@@ -47,7 +45,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -67,7 +65,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getCategory(): ?string
     {

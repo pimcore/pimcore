@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.folder");
@@ -47,10 +47,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
     getData: function () {
+
+        var eventData =  {requestParams: {id: this.id}};
+        pimcore.plugin.broker.fireEvent("preGetObjectFolder", eventData);
+
         var options = this.options || {};
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_getfolder'),
-            params: {id: this.id},
+            params: eventData.requestParams,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
             failure: function() {
@@ -343,6 +347,22 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab.mask();
 
+        try {
+            pimcore.plugin.broker.fireEvent('preSaveObject', this, 'object');
+        } catch (e) {
+            if (e instanceof pimcore.error.ValidationException) {
+                this.tab.unmask();
+                pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
+                return false;
+            }
+
+            if (e instanceof pimcore.error.ActionCancelledException) {
+                this.tab.unmask();
+                pimcore.helpers.showNotification(t("Info"), 'Object folder not saved: ' + e.message, 'info');
+                return false;
+            }
+        }
+
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_savefolder', {task: task}),
             method: "PUT",
@@ -353,6 +373,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         this.resetChanges();
+
+                        pimcore.plugin.broker.fireEvent("postSaveObject", this);
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"),

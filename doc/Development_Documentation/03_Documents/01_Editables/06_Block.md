@@ -12,6 +12,7 @@ The items in the loop as well as their order can be defined by the editor with t
 | Name        | Type      | Description                                                                                                                  |
 |-------------|-----------|------------------------------------------------------------------------------------------------------------------------------|
 | `limit`     | integer   | Max. amount of iterations.                                                                                                   |
+| `reload`    | bool      | Reload editmode on add, move or remove (default=false)                                                                       |
 | `default`   | integer   | If block is empty, this specifies the iterations at startup.                                                                 |
 | `manual`    | bool      | Forces the manual mode, which enables a complete custom HTML implementation for blocks, for example using `<table>` elements |
 | `class`     | string    | A CSS class that is added to the surrounding container of this element in editmode                                           |
@@ -53,7 +54,7 @@ And in the frontend of the application:
 ### Example for `getCurrent()`
 
 ```twig
-{% set myBlock = pimcore_block('contentblock') %}
+{% set myBlock = pimcore_block('contentblock', {'reload': true}) %}
 {% for i in myBlock.iterator %}
     {% if myBlock.current > 0 %}
         Insert this line only after the first iteration<br />
@@ -62,6 +63,9 @@ And in the frontend of the application:
     <h2>{{ pimcore_input('subline') }}</h2>
 {% endfor %}
 ```
+
+> **IMPORTANT**
+> If you want to change content structure dynamically for each index in editmode, then it is required to use `reload=true` config.
 
 ### Using Manual Mode
 
@@ -98,7 +102,7 @@ If you want to wrap buttons in a div or change the Position.
         {% for b in block.iterator %}
             {% do block.blockConstruct() %}
                 <td customAttribute="{{ pimcore_input("myInput").data }}">
-                    {% do block.blockStart() %}
+                    {% do block.blockStart(false) %}
                         <div style="background-color: #fc0; margin-bottom: 10px; padding: 5px; border: 1px solid black;">
                             {% do block.blockControls() %}
                         </div>
@@ -108,29 +112,24 @@ If you want to wrap buttons in a div or change the Position.
                     {% do block.blockEnd() %}
                 </td>
             {% do block.blockDestruct() %}
-        <?php } ?>
+        {% endfor %}
     </tr>
 </table>
-<?php $block->end(); ?>
+{% do block.end() %}
 ```
 
 ### Accessing Data Within a Block Element
 
 Bricks and structure refer to the CMS demo (content/default template).
 
-```php
-<?php
-// load document
-$document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
- 
-// Bsp #1 | get the first picture from the first "gallery-single-images" brick
-$image = $document
-    ->getElement('content')                             // view.html.php > $this->areablock('content')
-        ->getElement('gallery-single-images')[0]        // get the first entry for this brick
-            ->getBlock('gallery')->getElements()[0]     // view.html.php > $this->block("gallery")->loop()
-                ->getImage('image')                     // view.html.php > $this->image("image")
-;
- 
- 
-var_dump("Bsp #1: " . $image->getSrc());
+```twig
+
+{# load document #}
+{% set document = pimcore_document_by_path('/en/More-Stuff/Developers-Corner/Galleries') %}
+
+{# get the first picture from the first "gallery-carousel" brick #}
+{% set image = document.getEditable('content').getElement('gallery-single-images')[5].getBlock('gallery').getElements()[0].getImage('image') %}
+
+{{ dump(document.getEditable('content').getElement('gallery-single-images')) }}
+{{ dump(image.getSrc()) }}
 ```

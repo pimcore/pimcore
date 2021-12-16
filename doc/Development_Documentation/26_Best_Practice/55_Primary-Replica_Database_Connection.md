@@ -9,12 +9,12 @@ Note: Doctrine\DBAL versions older than 2.11 uses master/slave terminology.
 
 ### Create a Project specific Database Connection Class 
 
-Create a new class at `src\AppBundle\Db\Connection.php`, with the following content: 
+Create a new class at `src\Db\Connection.php`, with the following content: 
 
 ```php
 <?php
 
-namespace AppBundle\Db;
+namespace App\Db;
 
 use Pimcore\Db\PimcoreExtensionsTrait;
 use Pimcore\Db\ConnectionInterface;
@@ -49,7 +49,7 @@ doctrine:
     dbal:
         connections:
             default:
-                wrapper_class: '\AppBundle\Db\Connection'
+                wrapper_class: '\App\Db\Connection'
                 replicas:
                     replica1:
                           host: 'replica1'

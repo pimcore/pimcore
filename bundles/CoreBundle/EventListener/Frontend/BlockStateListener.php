@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -26,6 +27,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)
+ *
+ * @internal
  */
 class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
@@ -33,20 +36,14 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     use PimcoreContextAwareTrait;
 
     /**
-     * @var BlockStateStack
-     */
-    protected $blockStateStack;
-
-    /**
      * @param BlockStateStack $blockStateStack
      */
-    public function __construct(BlockStateStack $blockStateStack)
+    public function __construct(protected BlockStateStack $blockStateStack)
     {
-        $this->blockStateStack = $blockStateStack;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -72,7 +69,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         }
 
         // master request already has a state on the stack
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             return;
         }
 

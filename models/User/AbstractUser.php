@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\User;
@@ -30,22 +28,22 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @param int $id
@@ -55,6 +53,7 @@ class AbstractUser extends Model\AbstractModel
     public static function getById($id)
     {
         $cacheKey = 'user_' . $id;
+
         try {
             if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
                 $user = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -71,7 +70,7 @@ class AbstractUser extends Model\AbstractModel
             }
 
             return $user;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -84,6 +83,7 @@ class AbstractUser extends Model\AbstractModel
     public static function create($values = [])
     {
         $user = new static();
+        self::checkCreateData($values);
         $user->setValues($values);
         $user->save();
 
@@ -94,8 +94,6 @@ class AbstractUser extends Model\AbstractModel
      * @param string $name
      *
      * @return static|null
-     *
-     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -197,6 +195,7 @@ class AbstractUser extends Model\AbstractModel
         }
 
         $this->beginTransaction();
+
         try {
             if (!$this->getId()) {
                 $this->getDao()->create();
@@ -207,6 +206,7 @@ class AbstractUser extends Model\AbstractModel
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
+
             throw $e;
         }
 
@@ -288,7 +288,10 @@ class AbstractUser extends Model\AbstractModel
         return $this;
     }
 
-    public function update()
+    /**
+     * @throws \Exception
+     */
+    protected function update()
     {
         $this->getDao()->update();
     }

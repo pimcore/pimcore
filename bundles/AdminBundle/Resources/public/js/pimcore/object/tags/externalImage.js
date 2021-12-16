@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.externalImage");
@@ -39,7 +39,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value) {
-                    return '<img style="max-width:88px;max-height:88px" src="' + value  + '" />';
+                    return '<img style="max-width:88px;max-height:88px" src="' + value  + '" loading="lazy" />';
                 }
             }.bind(this, field.key)};
     },
@@ -102,7 +102,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 },
                 this.deleteButton
             ],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

@@ -49,10 +49,15 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "textfield",
@@ -77,7 +82,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
                 xtype: 'multiselect',
                 queryDelay: 0,
                 triggerAction: 'all',
-                resizable: true,
+                resizable: false,
                 width: 600,
                 fieldLabel: t("valid_quantityValue_units"),
                 typeAhead: true,
@@ -91,7 +96,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
 
         return this.layout;
     },
-    
+
     applySpecialData: function(source) {
         if (source.datax) {
             if (!this.datax) {

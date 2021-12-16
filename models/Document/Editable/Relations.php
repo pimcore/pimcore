@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -26,22 +24,24 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator
+class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
+     * @internal
+     *
      * @var array
      */
     protected $elements = [];
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $elementIds = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -75,9 +75,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -87,7 +85,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -95,11 +93,9 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $this->setElements();
         $return = [];
@@ -107,9 +103,9 @@ class Relations extends Model\Document\Editable implements \Iterator
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
                 if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {
@@ -122,9 +118,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -141,11 +135,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -157,16 +147,13 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
         if (is_array($data)) {
             $this->elementIds = $data;
+            $this->elements = [];
         }
 
         return $this;
@@ -195,7 +182,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -205,7 +192,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -230,19 +217,9 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         // reset existing elements store
         $this->elements = [];
@@ -260,7 +237,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {
@@ -276,13 +253,20 @@ class Relations extends Model\Document\Editable implements \Iterator
         return $finalVars;
     }
 
-    public function load()
+    /**
+     * {@inheritdoc}
+     */
+    public function load() /** : void */
     {
         $this->setElements();
     }
 
     /**
      * Methods for Iterator
+     */
+
+    /**
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -291,7 +275,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -302,7 +286,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -313,18 +297,16 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function next()
     {
         $this->setElements();
-        $var = next($this->elements);
-
-        return $var;
+        next($this->elements);
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {

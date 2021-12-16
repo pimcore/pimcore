@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -29,10 +27,12 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Renderlet extends Model\Document\Editable
+class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * Contains the ID of the linked object
+     *
+     * @internal
      *
      * @var int|null
      */
@@ -41,12 +41,16 @@ class Renderlet extends Model\Document\Editable
     /**
      * Contains the object
      *
+     * @internal
+     *
      * @var Document|Asset|DataObject|null
      */
     protected $o;
 
     /**
      * Contains the type
+     *
+     * @internal
      *
      * @var string|null
      */
@@ -55,14 +59,14 @@ class Renderlet extends Model\Document\Editable
     /**
      * Contains the subtype
      *
+     * @internal
+     *
      * @var string|null
      */
     protected $subtype;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -70,9 +74,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -84,11 +86,9 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [
@@ -102,9 +102,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -112,20 +110,29 @@ class Renderlet extends Model\Document\Editable
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
-        if (empty($this->config['controller'])) {
-            if (is_null($this->config)) {
-                $this->config = [];
-            }
+        if (!is_array($this->config)) {
+            $this->config = [];
+        }
+
+        if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
 
-        if (method_exists($this->o, 'isPublished')) {
-            if (!$this->o->isPublished()) {
-                return '';
-            }
+        if (empty($this->config['controller'])) {
+            // this can be the case e.g. in \Pimcore\Model\Search\Backend\Data::setDataFromElement() where
+            // this method is called without the config, so it would just render the default controller with the default template
+            return '';
         }
 
+        $this->load();
+
         if ($this->o instanceof Element\ElementInterface) {
+            if (method_exists($this->o, 'isPublished')) {
+                if (!$this->o->isPublished()) {
+                    return '';
+                }
+            }
+
             // apply best matching target group (if any)
             if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
                 $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
@@ -158,11 +165,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -178,11 +181,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -210,7 +209,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -240,7 +239,7 @@ class Renderlet extends Model\Document\Editable
      *
      * @internal param mixed $data
      */
-    public function getObjectType($object = null)
+    private function getObjectType($object = null)
     {
         $this->load();
 
@@ -248,14 +247,14 @@ class Renderlet extends Model\Document\Editable
             $object = $this->o;
         }
         if ($object instanceof Element\ElementInterface) {
-            return Element\Service::getType($object);
+            return Element\Service::getElementType($object);
         }
 
         return null;
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -269,7 +268,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -290,7 +289,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {
@@ -307,9 +306,9 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
+     * {@inheritdoc}
      */
-    public function load()
+    public function load() /** : void */
     {
         if (!$this->o) {
             $this->setElement();
@@ -337,7 +336,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Object|null $o
      *
      * @return Document\Editable\Renderlet
      */
@@ -377,22 +376,12 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         $type = (string) $this->type;
-        if ($type && array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+        if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->setId($idMapping[$this->type][$this->getId()]);
             $this->setO(null);
         }

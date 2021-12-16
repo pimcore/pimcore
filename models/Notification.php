@@ -1,27 +1,26 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Notification
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Model;
 
 use Pimcore\Cache;
 use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Notification\Dao getDao()
@@ -29,56 +28,78 @@ use Pimcore\Event\NotificationEvents;
 class Notification extends AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
     protected $creationDate;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
     protected $modificationDate;
 
     /**
+     * @internal
+     *
      * @var User
      */
     protected $sender;
 
     /**
+     * @internal
+     *
      * @var User
      */
     protected $recipient;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $title;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $message;
 
     /**
+     * @internal
+     *
      * @var Element\ElementInterface|null
      */
     protected $linkedElement;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $linkedElementType;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $read = false;
@@ -99,7 +120,7 @@ class Notification extends AbstractModel
                 $notification = new self();
                 $notification->getDao()->getById($id);
                 Cache\Runtime::set($cacheKey, $notification);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 $notification = null;
             }
         }

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Image\Adapter;
@@ -24,17 +25,12 @@ class GD extends Adapter
     protected $path;
 
     /**
-     * contains imageresource
-     *
-     * @var mixed
+     * @var resource|\GdImage|false
      */
     protected $resource;
 
     /**
-     * @param string $imagePath
-     * @param array $options
-     *
-     * @return $this|self|false
+     * {@inheritdoc}
      */
     public function load($imagePath, $options = [])
     {
@@ -63,7 +59,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getContentOptimizedFormat()
     {
@@ -76,11 +72,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $path
-     * @param string|null $format
-     * @param int|null $quality
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function save($path, $format = null, $quality = null)
     {
@@ -126,7 +118,7 @@ class GD extends Adapter
     /**
      * @return bool
      */
-    protected function hasAlphaChannel()
+    private function hasAlphaChannel()
     {
         if ($this->isAlphaPossible) {
             $width = imagesx($this->resource); // Get the width of the image
@@ -147,6 +139,9 @@ class GD extends Adapter
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function destroy()
     {
         if ($this->resource) {
@@ -158,9 +153,9 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return resource
+     * @return \GdImage|false
      */
-    protected function createImage($width, $height)
+    private function createImage($width, $height)
     {
         $newImg = imagecreatetruecolor($width, $height);
 
@@ -173,10 +168,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function resize($width, $height)
     {
@@ -195,12 +187,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $x
-     * @param int $y
-     * @param int $width
-     * @param int $height
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function crop($x, $y, $width, $height)
     {
@@ -225,11 +212,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param bool $forceResize
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function frame($width, $height, $forceResize = false)
     {
@@ -255,9 +238,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $color
-     *
-     * @return Adapter
+     * {@inheritdoc}
      */
     public function setBackgroundColor($color)
     {
@@ -282,10 +263,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $image
-     * @param null|string $mode
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setBackgroundImage($image, $mode = null)
     {
@@ -322,7 +300,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return self
+     * {@inheritdoc}
      */
     public function grayscale()
     {
@@ -336,7 +314,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return self
+     * {@inheritdoc}
      */
     public function sepia()
     {
@@ -351,14 +329,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $image
-     * @param int $x
-     * @param int $y
-     * @param int $alpha
-     * @param string $composite
-     * @param string $origin
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
     {
@@ -367,23 +338,17 @@ class GD extends Adapter
         $image = ltrim($image, '/');
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
-        // 100 alpha is default
-        if (empty($alpha)) {
-            $alpha = 100;
-        }
-        $alpha = round($alpha / 100, 1);
-
         if (is_file($image)) {
             list($oWidth, $oHeight) = getimagesize($image);
 
-            if ($origin == 'top-right') {
+            if ($origin === 'top-right') {
                 $x = $this->getWidth() - $oWidth - $x;
-            } elseif ($origin == 'bottom-left') {
+            } elseif ($origin === 'bottom-left') {
                 $y = $this->getHeight() - $oHeight - $y;
-            } elseif ($origin == 'bottom-right') {
+            } elseif ($origin === 'bottom-right') {
                 $x = $this->getWidth() - $oWidth - $x;
                 $y = $this->getHeight() - $oHeight - $y;
-            } elseif ($origin == 'center') {
+            } elseif ($origin === 'center') {
                 $x = round($this->getWidth() / 2) - round($oWidth / 2) + $x;
                 $y = round($this->getHeight() / 2) - round($oHeight / 2) + $y;
             }
@@ -399,9 +364,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $mode
-     *
-     * @return $this|self
+     * {@inheritdoc}
      */
     public function mirror($mode)
     {
@@ -419,9 +382,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $angle
-     *
-     * @return $this|self
+     * {@inheritdoc}
      */
     public function rotate($angle)
     {
@@ -442,7 +403,7 @@ class GD extends Adapter
     protected static $supportedFormatsCache = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsFormat(string $format, bool $force = false)
     {
@@ -457,7 +418,7 @@ class GD extends Adapter
                 'png' => 'PNG Support',
             ];
 
-            if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
+            if (isset($mappings[$format]) && isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
                 self::$supportedFormatsCache[$format] = true;
             } else {
                 self::$supportedFormatsCache[$format] = false;

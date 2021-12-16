@@ -1,25 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
 
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
-class Dashboard
+/**
+ * @internal
+ */
+final class Dashboard
 {
     /**
      * @var User
@@ -81,9 +84,9 @@ class Dashboard
             }
 
             if (empty($this->dashboards)) {
-                $perspectiveCfg = Config::getRuntimePerspective();
-                $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
-                $this->dashboards = $dasboardCfg['predefined'] ?? [];
+                $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective();
+                $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];
+                $this->dashboards = $dashboardCfg['predefined'] ?? [];
             }
         }
 
@@ -159,9 +162,9 @@ class Dashboard
      */
     public function getDisabledPortlets()
     {
-        $perspectiveCfg = Config::getRuntimePerspective($this->user);
-        $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
+        $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective($this->user);
+        $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];
 
-        return $dasboardCfg['disabledPortlets'] ?? [];
+        return $dashboardCfg['disabledPortlets'] ?? [];
     }
 }

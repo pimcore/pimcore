@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /*global localStorage */
@@ -195,12 +195,12 @@ pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
         if (pimcore.globalmanager.exists(key)) {
             var editMask = pimcore.globalmanager.get(key);
             if (editMask.tab) {
-                if (typeof treeData.icon !== "undefined") {
-                    editMask.tab.setIcon(treeData.icon);
-                }
-
                 if (typeof treeData.iconCls !== "undefined") {
                     editMask.tab.setIconCls(treeData.iconCls);
+                }
+
+                if (typeof treeData.icon !== "undefined") {
+                    editMask.tab.setIcon(treeData.icon);
                 }
             }
         }
@@ -550,6 +550,18 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
         });
         errWin.show();
     } else {
+        // Avoid overlapping any footer toolbar buttons
+        // Find current active tab to find its footer if there is one
+        let paddingY = 10;
+        let tabsBody = document.getElementById('pimcore_panel_tabs-body');
+        let activeTab = tabsBody.querySelector(':scope > [aria-expanded="true"]');
+        if (activeTab) {
+            let footerToolbar = activeTab.querySelector(':scope .x-toolbar-footer');
+            if (footerToolbar) {
+                paddingY += footerToolbar.scrollHeight;
+            }
+        }
+
         var notification = Ext.create('Ext.window.Toast', {
             iconCls: 'pimcore_icon_' + type,
             title: title,
@@ -557,7 +569,11 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
             autoShow: true,
             width: 'auto',
             maxWidth: 350,
-            closeable: true
+            closeable: true,
+            align: "br",
+            anchor: Ext.get(tabsBody),
+            paddingX: 5,
+            paddingY: paddingY
         });
         notification.show(document);
     }
@@ -954,7 +970,7 @@ pimcore.helpers.addCsrfTokenToUrl = function (url) {
     return url;
 };
 
-pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
+pimcore.helpers.uploadDialog = function (url, filename, success, failure, description) {
 
     if (typeof success != "function") {
         success = function () {
@@ -982,42 +998,54 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
         modal: true
     });
 
+    var items = [];
+
+    if (description) {
+        items.push({
+           xtype: 'displayfield',
+           value: description
+        });
+    }
+
+    items.push({
+        xtype: 'fileuploadfield',
+        emptyText: t("select_a_file"),
+        fieldLabel: t("file"),
+        width: 470,
+        name: filename,
+        buttonText: "",
+        buttonConfig: {
+            iconCls: 'pimcore_icon_upload'
+        },
+        listeners: {
+            change: function () {
+                uploadForm.getForm().submit({
+                    url: url,
+                    params: {
+                        csrfToken: pimcore.settings['csrfToken']
+                    },
+                    waitMsg: t("please_wait"),
+                    success: function (el, res) {
+                        // content-type in response has to be text/html, otherwise (when application/json is sent)
+                        // chrome will complain in Ext.form.Action.Submit and mark the submission as failed
+                        success(res);
+                        uploadWindowCompatible.close();
+                    },
+                    failure: function (el, res) {
+                        failure(res);
+                        uploadWindowCompatible.close();
+                    }
+                });
+            }
+        }
+    });
+
+
     var uploadForm = new Ext.form.FormPanel({
         fileUpload: true,
         width: 500,
         bodyStyle: 'padding: 10px;',
-        items: [{
-            xtype: 'fileuploadfield',
-            emptyText: t("select_a_file"),
-            fieldLabel: t("file"),
-            width: 470,
-            name: filename,
-            buttonText: "",
-            buttonConfig: {
-                iconCls: 'pimcore_icon_upload'
-            },
-            listeners: {
-                change: function () {
-                    uploadForm.getForm().submit({
-                        url: url,
-                        params: {
-                            csrfToken: pimcore.settings['csrfToken']
-                        },
-                        waitMsg: t("please_wait"),
-                        success: function (el, res) {
-                            // content-type in response has to be text/html, otherwise (when application/json is sent)
-                            // chrome will complain in Ext.form.Action.Submit and mark the submission as failed
-                            success(res);
-                            uploadWindowCompatible.close();
-                        },
-                        failure: function (el, res) {
-                            failure(res);
-                            uploadWindowCompatible.close();
-                        }
-                    });
-                }
-            }
-        }]
+        items: items
     });
 
     uploadWindowCompatible.add(uploadForm);
@@ -1112,8 +1140,7 @@ pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
 pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
 
-    if (typeof record.data["thumbnail"] != "undefined" ||
-        typeof record.data["thumbnails"] != "undefined") {
+    if (typeof record.data["thumbnail"] != "undefined") {
 
         // only display thumbnails when dnd is not active
         if (Ext.dd.DragDropMgr.dragCurrent) {
@@ -1123,26 +1150,10 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
         var imageHtml = "";
         var uriPrefix = window.location.protocol + "//" + window.location.host;
 
-        var thumbnails = record.data["thumbnails"];
-        if (thumbnails && thumbnails.length) {
-            imageHtml += '<div class="thumbnails">';
-            for (var i = 0; i < thumbnails.length; i++) {
-                imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
-                    + '" onload="this.parentNode.className += \' complete\';" /></div>';
-            }
-            imageHtml += '</div>';
-        }
-
         var thumbnail = record.data["thumbnail"];
         if (thumbnail) {
-            var srcset = thumbnail + ' 1x';
-            var thumbnailHdpi = record.data["thumbnailHdpi"];
-            if(thumbnailHdpi) {
-                    srcset += ', ' + thumbnailHdpi + " 2x";
-            }
-
-            imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
-                + '" onload="this.parentNode.className += \' complete\';" srcset="' + srcset + '" /></div>';
+            imageHtml = '<div class="thumb"><img src="' + uriPrefix + thumbnail
+                + '" onload="this.parentNode.className += \' complete\';" /></div>';
         }
 
         if (imageHtml) {
@@ -1188,13 +1199,9 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
             imageHtml =
                 '<style type="text/css">' +
                 'body { margin:0; padding: 0; } ' +
-                '.thumbnails { width: 410px; } ' +
-                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; } ' +
-                '.big { min-height: 300px; } ' +
-                '.complete { border:none; border-radius: 0; background:none; }' +
-                '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
-                '.small.complete img { min-width: 100%; max-height: 100%; } ' +
-                '.big.complete img { max-width: 100%; } ' +
+                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; min-height: 300px; } ' +
+                '.complete { border:none; border-radius: 0; background:none; max-width: 100%; }' +
+                '.complete img { max-width: 100%; }' +
                 '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
                 '</style>' +
                 imageHtml;
@@ -2288,7 +2295,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.x/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
@@ -2531,7 +2538,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (context && context['containerType'] == "batch") {
+    if (context && (context['containerType'] == "batch" || context['containerType'] == "filterByRelationWindow")) {
         return;
     }
 
@@ -2688,8 +2695,10 @@ pimcore.helpers.exportWarning = function (type, callback) {
         buttons: [{
             text: t("OK"),
             handler: function () {
-                callback(formPanel.getValues());
-                window.close();
+                if (formPanel.isValid()) {
+                    callback(formPanel.getValues());
+                    window.close();
+                }
             }.bind(this)
         },
             {
@@ -3196,3 +3205,28 @@ pimcore.helpers.reloadUserImage = function (userId) {
         Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
     }
 };
+
+/**
+ * Takes a number representing seconds and formats it as a human-readable string such as "1:15:05" for 1 hour 15 minutes 5 seconds
+ * @param {int|float} dataDuration duration in seconds
+ * @returns {string|*}
+ */
+pimcore.helpers.formatTimeDuration = function (dataDuration) {
+    if (!is_numeric(dataDuration)) {
+        // Unknown data, return as is
+        return dataDuration;
+    }
+
+    let durationString = '';
+
+    let hours = Math.floor(dataDuration / 3600);
+    dataDuration %= 3600;
+    if (hours > 0) {
+        durationString += hours + ":";
+    }
+
+    durationString += Math.floor(dataDuration / 60) + ":";
+    durationString += ("0" + Math.round(dataDuration % 60)).slice(-2);
+
+    return durationString;
+}

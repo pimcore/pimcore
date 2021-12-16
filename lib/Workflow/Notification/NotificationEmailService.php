@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\Notification;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
@@ -177,7 +178,7 @@ class NotificationEmailService extends AbstractNotificationService
             $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
         );
 
-        $mail->setBodyHtml($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
+        $mail->html($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
 
         $mail->send();
     }
@@ -196,8 +197,8 @@ class NotificationEmailService extends AbstractNotificationService
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
-        $inheritanceBackup = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(true);
+        $inheritanceBackup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(true);
 
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -210,7 +211,7 @@ class NotificationEmailService extends AbstractNotificationService
         );
 
         //reset inheritance
-        AbstractObject::setGetInheritedValues($inheritanceBackup);
+        DataObject::setGetInheritedValues($inheritanceBackup);
 
         if ($this->translator instanceof LocaleAwareInterface) {
             //reset translation locale

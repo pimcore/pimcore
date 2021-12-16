@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.elementservice.x");
@@ -768,7 +768,8 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
         if (response && response.success) {
             pimcore.elementservice.refreshNodeAllTrees(options.elementType, options.parentId);
 
-            if(in_array(response["type"], ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"])) {
+            let docTypes = pimcore.globalmanager.get('document_valid_types');
+            if (in_array(response["type"], docTypes)) {
                 pimcore.helpers.openDocument(response.id, response.type);
                 pimcore.plugin.broker.fireEvent("postAddDocumentTree", response.id);
             }

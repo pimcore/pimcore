@@ -14,8 +14,8 @@ To define document-type go to *Settings* > *Document-Types*.
 
 Let's suppose that you've created controller, action and template for a books listing.
 
-Reference to the action: `AppBundle\Controller\BookController::listAction`  
-Reference to the template: `app/Resources/views/book/list.html.twig`
+Reference to the action: `App\Controller\BookController::listAction`  
+Reference to the template: `templates/book/list.html.twig`
 
 To add a new document-type which renders the book listing template, you have to click on the *Add* button first and then
 fill out the newly created configuration row accordingly. 

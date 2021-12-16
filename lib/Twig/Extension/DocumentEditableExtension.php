@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -20,6 +21,9 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class DocumentEditableExtension extends AbstractExtension
 {
     /**
@@ -38,7 +42,7 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_*', [$this, 'renderEditable'], [
@@ -48,7 +52,7 @@ class DocumentEditableExtension extends AbstractExtension
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
         ];
 
-        // those are just for auto-complete, not nice, but works ;-)
+        // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
         new TwigFunction('pimcore_area');
         new TwigFunction('pimcore_areablock');
         new TwigFunction('pimcore_block');
@@ -67,22 +71,25 @@ class DocumentEditableExtension extends AbstractExtension
         new TwigFunction('pimcore_scheduledblock');
         new TwigFunction('pimcore_select');
         new TwigFunction('pimcore_snippet');
+        new TwigFunction('pimcore_table');
         new TwigFunction('pimcore_textarea');
         new TwigFunction('pimcore_video');
         new TwigFunction('pimcore_wysiwyg');
     }
 
     /**
+     * @internal
+     *
      * @param array $context
+     * @param string $type
      * @param string $name
-     * @param string $inputName
      * @param array $options
      *
      * @return \Pimcore\Model\Document\Editable|string
      *
      * @throws \Exception
      */
-    public function renderEditable($context, $name, $inputName, array $options = [])
+    public function renderEditable(array $context, string $type, string $name, array $options = [])
     {
         $document = $context['document'];
         $editmode = $context['editmode'];
@@ -90,11 +97,13 @@ class DocumentEditableExtension extends AbstractExtension
             return '';
         }
 
-        return $this->editableRenderer->render($document, $name, $inputName, $options, $editmode);
+        return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
     }
 
     /**
      * Returns an iterator which can be used instead of while($block->loop())
+     *
+     * @internal
      *
      * @param BlockInterface $block
      *

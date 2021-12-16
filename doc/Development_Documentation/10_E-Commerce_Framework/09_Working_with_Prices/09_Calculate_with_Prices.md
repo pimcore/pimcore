@@ -2,7 +2,7 @@
 
 As floating point numbers (`float`, `double`) are not able to represent numbers exactly (see [here](http://floating-point-gui.de/)
 if you want to know details), and exact numbers are a strict demand to e-commerce applications the E-Commerce Framrwork
-uses [`Decimal`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Type/Decimal.php)
+uses [`Decimal`](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Type/Decimal.php)
 value objects instead of floats to represent prices. These value objects internally store the represented value as integer
 by defining a fixed amount of supported digits (so-called `scale`) after the comma and by multiplying the actual value
 with the given scale on construction. The scale is set to 4 by default, but can be changed globally in the `pimcore_ecommerce_framework.decimal_scale`
@@ -12,8 +12,8 @@ An example: Given a scale of 4, a `Decimal` will internally represent a number o
 `123.45 * 10^4 = 1234500`. 
  
 To calculate with these values, the `Decimal` class exposes methods like `add()`, `sub()`, `mul()`, `div()` and others
-to run calculations without having to deal with the internal scale representation. For details see the [Decimal class definition](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Type/Decimal.php)
-and the corresponding [test](https://github.com/pimcore/pimcore/blob/master/tests/ecommerce/Type/DecimalTest.php)
+to run calculations without having to deal with the internal scale representation. For details see the [Decimal class definition](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Type/Decimal.php)
+and the corresponding [test](https://github.com/pimcore/pimcore/blob/10.x/tests/ecommerce/Type/DecimalTest.php)
 which contains a lot of usage examples and describes the `Decimal` behaviour quite well.
 
 > **Important**: The `Decimal` is designed as *immutable* value object. Every operation yields a *new* instance of a `Decimal`
@@ -68,7 +68,7 @@ float calculations and rounding to generate the integer representation:
 * `Decimal::create('123.1234567')` with a string value will fall back to float calculations as the amount of digits after
   the comma exceed the scale of `4`. The value is first multiplied with `10^4`, resulting in PHP casting the string to float.
   The float `1231234.567` is then passed to PHP's `round()` function with a `precision` parameter of `0` and a default rounding
-  mode of `PHP_ROUND_HALF_EVEN`, resulting in an integer representation of `1231235` (note the rounding on the last digit).
+  mode of `PHP_ROUND_HALF_UP`, resulting in an integer representation of `1231235` (note the rounding on the last digit).
 * `Decimal::create(123.1234567)` with a float value will have the same behaviour as above (skipping the string conversion). 
 
 You can influence how rounding is applied by specifying the `$roundingMode` parameter on the `create()` method:

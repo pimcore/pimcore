@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Traits;
@@ -20,6 +18,9 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
+/**
+ * @internal
+ */
 trait OwnerAwareFieldTrait
 {
     /**
@@ -106,13 +107,13 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      */
-    protected function markMeDirty()
+    protected function markMeDirty($dirty = true)
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
-            $this->_owner->markFieldDirty($this->_fieldname, true);
+            $this->_owner->markFieldDirty($this->_fieldname, $dirty);
         }
         if ($this->_language && $this->_owner instanceof Localizedfield) {
-            $this->_owner->markLanguageAsDirty($this->_language);
+            $this->_owner->markLanguageAsDirty($this->_language, $dirty);
         }
     }
 }

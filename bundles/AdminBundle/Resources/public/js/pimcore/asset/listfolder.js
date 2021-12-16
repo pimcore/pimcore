@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.listfolder");
@@ -222,7 +222,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.buildColumnConfigMenu();
 
         var exportButtons = this.getExportButtons();
-        var firstButton = exportButtons.pop();
+        var firstButton = exportButtons.shift();
 
         this.exportButton = new Ext.SplitButton({
             text: firstButton.text,
@@ -251,6 +251,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
+            overflowHandler: 'scroller',
             frame: false,
             store: this.store,
             columnLines: true,
@@ -272,9 +273,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                     this.store.load();
                 }.bind(this),
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                    var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].dataIndex == 'id~system' || columnName[cellIndex].dataIndex == 'fullpath~system'
-                        || columnName[cellIndex].dataIndex == 'preview~system') {
+                    var columns = grid.grid.getColumnManager().getColumns();
+                    if(columns[cellIndex].dataIndex == 'id~system' || columns[cellIndex].dataIndex == 'fullpath~system'
+                        || columns[cellIndex].dataIndex == 'preview~system') {
                         var data = this.store.getAt(rowIndex);
                         pimcore.helpers.openAsset(data.id, data.get("type~system"));
                     }

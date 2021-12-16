@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.translations");
@@ -88,12 +88,18 @@ pimcore.settings.translations = Class.create({
             {name: 'id', persist: false},
             {name: 'editor', persist: false},
             {name: 'key', allowBlank: false},
+            {name: 'type', allowBlank: false},
             {name: 'creationDate', type: 'date', convert: dateConverter, persist: false},
             {name: 'modificationDate', type: 'date', convert: dateConverter, persist: false}
         ];
 
         var typesColumns = [
-            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'}
+            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'},
+            {text: t("type"), sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    store: ["simple","custom"]
+                })},
         ];
 
         for (var i = 0; i < languages.length; i++) {
@@ -105,7 +111,7 @@ pimcore.settings.translations = Class.create({
                 sortable: true,
                 dataIndex: "_" + languages[i],
                 filter: 'string',
-                getEditor: this.getCellEditor.bind(this, languages[i]),
+                editor: new Ext.form.TextField({}),
                 renderer: function (text) {
                     if (text) {
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
@@ -178,23 +184,22 @@ pimcore.settings.translations = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                beforeedit: function(editor, context, eOpts) {
-                    editor.editors.each(function (e) {
-                        try {
-                            // complete edit, so the value is stored when hopping around with TAB
-                            e.completeEdit();
-                            Ext.destroy(e);
-                        } catch (exception) {
-                            // garbage collector was faster
-                            // already destroyed
+                beforeedit: function(editor, e) {
+                    let cm = this.grid.getColumnManager().getColumns();
+                    for (let i=0; i < cm.length; i++) {
+                        let columnId = cm[i].id;
+                        if (columnId.startsWith('translation_column_')) {
+                            let editor = this.getCellEditor(e.column.dataIndex.substring(1), e.record);
+                            if (editor) {
+                                e.grid.getColumnManager().columns[i].setEditor(editor);
+                            }
                         }
-                    });
-
-                    editor.editors.clear();
-                }
+                    }
+                }.bind(this)
             }
         });
 
@@ -258,7 +263,7 @@ pimcore.settings.translations = Class.create({
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 "pimcore.gridfilters",
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: toolbar,
             viewConfig: {
@@ -275,15 +280,20 @@ pimcore.settings.translations = Class.create({
                         return;
                     }
 
-                    var data = record.get(dataIndex);
+                    let data = record.get(dataIndex);
+                    let type = record.get('type');
 
-                    var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
-                    if (htmlRegex.test(data)) {
-                        record.set("editor", "html");
-                    } else if (data && data.match(/\n/gm))  {
-                        record.set("editor", "plain");
+                    if (type == "custom") {
+                        record.set("editor", type);
                     } else {
-                        record.set("editor", null);
+                        var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
+                        if (htmlRegex.test(data)) {
+                            record.set("editor", "html");
+                        } else if (data && data.match(/\n/gm))  {
+                            record.set("editor", "plain");
+                        } else {
+                            record.set("editor", null);
+                        }
                     }
                     return true;
 
@@ -307,10 +317,7 @@ pimcore.settings.translations = Class.create({
 
         var handler = function(rowIndex, cellIndex, mode) {
             record.set("editor", mode);
-            this.cellEditing.startEditByPosition({
-                row : rowIndex,
-                column: cellIndex
-            });
+            this.rowEditing.startEdit(rowIndex,cellIndex);
         };
 
         var menu = new Ext.menu.Menu();
@@ -351,7 +358,7 @@ pimcore.settings.translations = Class.create({
     },
 
     showImportForm: function () {
-        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, false, this);
+        this.csvSettingsPanel = new pimcore.settings.translation.translationSettingsTab(this.config, false, this);
 
         var ImportForm = new Ext.form.FormPanel({
             width: 500,
@@ -445,16 +452,13 @@ pimcore.settings.translations = Class.create({
 
         Ext.MessageBox.prompt("", t("please_enter_the_new_name"), function (button, value) {
             if (button == "ok") {
-                this.cellEditing.cancelEdit();
+                this.rowEditing.cancelEdit();
 
                 this.grid.store.insert(0, {
                     key: value
                 });
 
-                this.cellEditing.startEditByPosition({
-                    row: 0,
-                    column: 1
-                });
+                this.rowEditing.startEdit(0, 2);
             }
         }.bind(this));
     },
@@ -476,10 +480,17 @@ pimcore.settings.translations = Class.create({
         if (!record.data.editor) {
             editor = this.editableLanguages.indexOf(language) >= 0 ? new Ext.form.TextField({}) : null;
         } else {
+            let __innerTitle = record.data.key;
+            let __outerTitle = record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html");
+
+            if(record.data.editor == "custom") {
+                __outerTitle = t("edit_as_custom_text");
+            }
+
             editor = new pimcore.settings.translationEditor({
                 __editorType: record.data.editor,
-                __outerTitle: record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html"),
-                __innerTitle: record.data.key
+                __outerTitle: __outerTitle,
+                __innerTitle: __innerTitle
             });
 
         }

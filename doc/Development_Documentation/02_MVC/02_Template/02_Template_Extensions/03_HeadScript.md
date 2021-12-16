@@ -52,7 +52,7 @@ HeadScript's sibling helper, InlineScript, should be used when you wish to inclu
 Placing scripts at the end of your document is a good practice for speeding up delivery of your page, particularly when using 3rd party analytics scripts. 
 Note: Arbitrary Attributes are Disabled by Default
 By default, HeadScript only will render `<script>` attributes that are blessed by the W3C. 
-These include 'type', 'charset', 'defer', 'language', and 'src'. However, some javascript frameworks, 
+These include 'type', 'charset', 'defer', 'async', 'language' and 'src'. However, some javascript frameworks, 
  utilize custom attributes in order to modify behavior. 
 To allow such attributes, you can enable them via the setAllowArbitraryAttributes() method: 
 

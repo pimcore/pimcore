@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.input");
@@ -30,18 +30,6 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
         this.setupWrapper();
         this.element = Ext.get(this.id);
         this.element.dom.setAttribute("contenteditable", true);
-
-        // set min height for IE, as he isn't able to update :after css selector
-        this.element.update("|"); // dummy content to get appropriate height
-        if(this.element.getHeight()) {
-            this.element.applyStyles({
-                "min-height": this.element.getHeight() + "px"
-            });
-        } else {
-            this.element.applyStyles({
-                "min-height": this.element.getStyle("font-size")
-            });
-        }
 
         this.element.update(this.data + "<br>");
 

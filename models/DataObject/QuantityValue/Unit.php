@@ -1,23 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Cache;
+use Pimcore\Event\DataObjectQuantityValueEvents;
+use Pimcore\Event\Model\DataObject\QuantityValueUnitEvent;
 use Pimcore\Model;
 
 /**
@@ -30,47 +30,47 @@ class Unit extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $abbreviation;
+    protected $abbreviation;
 
     /**
      * @var string
      */
-    public $group;
+    protected $group;
 
     /**
      * @var string
      */
-    public $longname;
-
-    /**
-     * @var int
-     */
-    public $baseunit;
+    protected $longname;
 
     /**
      * @var string
      */
-    public $reference;
-
-    /**
-     * @var float
-     */
-    public $factor;
-
-    /**
-     * @var float
-     */
-    public $conversionOffset;
+    protected $baseunit;
 
     /**
      * @var string
      */
-    public $converter;
+    protected $reference;
+
+    /**
+     * @var float|null
+     */
+    protected $factor;
+
+    /**
+     * @var float|null
+     */
+    protected $conversionOffset;
+
+    /**
+     * @var string
+     */
+    protected $converter;
 
     /**
      * @param string $abbreviation
@@ -84,7 +84,7 @@ class Unit extends Model\AbstractModel
             $unit->getDao()->getByAbbreviation($abbreviation);
 
             return $unit;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -101,7 +101,7 @@ class Unit extends Model\AbstractModel
             $unit->getDao()->getByReference($reference);
 
             return $unit;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -163,16 +163,32 @@ class Unit extends Model\AbstractModel
 
     public function save()
     {
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_UPDATE);
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_ADD);
+        }
+
         $this->getDao()->save();
         Cache\Runtime::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_UPDATE);
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_ADD);
+        }
     }
 
     public function delete()
     {
+        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
         $this->getDao()->delete();
         Cache\Runtime::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
+        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
     }
 
     /**
@@ -243,7 +259,7 @@ class Unit extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getFactor()
     {
@@ -331,7 +347,7 @@ class Unit extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getConversionOffset()
     {

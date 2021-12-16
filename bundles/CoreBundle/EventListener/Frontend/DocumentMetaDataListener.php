@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -25,31 +26,21 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Adds Meta Data entries of document to HeadMeta view helper
+ *
+ * @internal
  */
 class DocumentMetaDataListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
-
-    /**
-     * @var DocumentResolverService
-     */
-    protected $documentResolverService;
-
-    /**
-     * @var HeadMeta
-     */
-    protected $headMeta;
+    public const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
 
     /**
      * @param DocumentResolverService $documentResolverService
      * @param HeadMeta $headMeta
      */
-    public function __construct(DocumentResolverService $documentResolverService, HeadMeta $headMeta)
+    public function __construct(protected DocumentResolverService $documentResolverService, protected HeadMeta $headMeta)
     {
-        $this->documentResolverService = $documentResolverService;
-        $this->headMeta = $headMeta;
     }
 
     /**
@@ -72,7 +63,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // just add meta data on master request
-        if (!$event->isMasterRequest() && !$event->getRequest()->attributes->get(self::FORCE_INJECTION)) {
+        if (!$event->isMainRequest() && !$event->getRequest()->attributes->get(self::FORCE_INJECTION)) {
             return;
         }
 

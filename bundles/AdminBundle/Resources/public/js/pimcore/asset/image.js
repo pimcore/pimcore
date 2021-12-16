@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.image");
@@ -123,10 +123,10 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getDisplayPanel: function () {
 
         if (!this.displayPanel) {
-            let detectImageFeaturesHidden = true;
+            let detectImageFeaturesHidden = false;
             if(this.isAllowed('publish')) {
                 if(this.data['customSettings'] && this.data['customSettings']['disableImageFeatureAutoDetection'] === true) {
-                    detectImageFeaturesHidden = false;
+                    detectImageFeaturesHidden = true;
                 }
             }
 

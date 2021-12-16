@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
@@ -59,7 +60,7 @@ class TrackingManager implements TrackingManagerInterface
      * @param TrackerInterface[] $trackers
      * @param EnvironmentInterface $environment
      */
-    public function __construct(array $trackers = [], EnvironmentInterface $environment)
+    public function __construct(EnvironmentInterface $environment, array $trackers = [])
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);
@@ -164,8 +165,6 @@ class TrackingManager implements TrackingManagerInterface
      * Track product view
      *
      * @param ProductInterface $product
-     *
-     * @implements ProductInterfaceView
      */
     public function trackProductView(ProductInterface $product)
     {
@@ -225,8 +224,6 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * Track start checkout with first step
      *
-     * @implements CheckoutCompleteInterface
-     *
      * @param CartInterface $cart
      */
     public function trackCheckout(CartInterface $cart)
@@ -240,8 +237,6 @@ class TrackingManager implements TrackingManagerInterface
 
     /**
      * Track checkout complete
-     *
-     * @implements CheckoutCompleteInterface
      *
      * @param AbstractOrder $order
      */
@@ -264,8 +259,6 @@ class TrackingManager implements TrackingManagerInterface
 
     /**
      * Track checkout step
-     *
-     * @implements CheckoutStepInterface
      *
      * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart

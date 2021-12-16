@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -25,55 +26,27 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Disables the web debug toolbar for frontend requests by admins (iframes inside admin interface)
+ *
+ * @internal
  */
 class WebDebugToolbarListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var RequestMatcherFactory
-     */
-    protected $requestMatcherFactory;
-
-    /**
-     * @var array
-     */
-    protected $excludeRoutes = [];
-
     /**
      * @var RequestMatcherInterface[]
      */
     protected $excludeMatchers;
 
-    /**
-     * @var SymfonyWebDebugToolbarListener|null
-     */
-    protected $debugToolbarListener;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
     public function __construct(
-        RequestHelper $requestHelper,
-        RequestMatcherFactory $requestMatcherFactory,
-        ?SymfonyWebDebugToolbarListener $debugToolbarListener,
-        EventDispatcherInterface $eventDispatcher,
-        array $excludeRoutes
+        protected RequestHelper $requestHelper,
+        protected RequestMatcherFactory $requestMatcherFactory,
+        protected ?SymfonyWebDebugToolbarListener $debugToolbarListener,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected array $excludeRoutes
     ) {
-        $this->requestHelper = $requestHelper;
-        $this->requestMatcherFactory = $requestMatcherFactory;
-        $this->excludeRoutes = $excludeRoutes;
-        $this->debugToolbarListener = $debugToolbarListener;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -87,7 +60,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
      */
     public function onKernelResponse(RequestEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

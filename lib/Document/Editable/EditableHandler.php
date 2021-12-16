@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Editable;
@@ -31,11 +32,16 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -90,7 +96,19 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected $httpKernelRuntime;
 
+    /**
+     * @var FragmentRendererInterface
+     */
+    protected $fragmentRenderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
+    private EditmodeEditableDefinitionCollector $definitionCollector;
 
     /**
      * @param AreabrickManagerInterface $brickManager
@@ -102,6 +120,7 @@ class EditableHandler implements LoggerAwareInterface
      * @param ResponseStack $responseStack
      * @param EditmodeResolver $editmodeResolver
      * @param HttpKernelRuntime $httpKernelRuntime
+     * @param EditmodeEditableDefinitionCollector $definitionCollector
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -112,7 +131,10 @@ class EditableHandler implements LoggerAwareInterface
         TranslatorInterface $translator,
         ResponseStack $responseStack,
         EditmodeResolver $editmodeResolver,
-        HttpKernelRuntime $httpKernelRuntime
+        HttpKernelRuntime $httpKernelRuntime,
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        FragmentRendererInterface $fragmentRenderer,
+        RequestStack $requestStack
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -123,10 +145,13 @@ class EditableHandler implements LoggerAwareInterface
         $this->responseStack = $responseStack;
         $this->editmodeResolver = $editmodeResolver;
         $this->httpKernelRuntime = $httpKernelRuntime;
+        $this->definitionCollector = $definitionCollector;
+        $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {
@@ -165,6 +190,7 @@ class EditableHandler implements LoggerAwareInterface
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
+
                 try {
                     $bundle = $this->bundleLocator->getBundle($brick);
 
@@ -190,6 +216,7 @@ class EditableHandler implements LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
@@ -198,9 +225,12 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Info $info
+     * @param array $templateParams
+     *
+     * @return string
      */
-    public function renderAreaFrontend(Info $info)
+    public function renderAreaFrontend(Info $info, $templateParams = []): string
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -235,18 +265,22 @@ class EditableHandler implements LoggerAwareInterface
         // general parameters
         $editmode = $this->editmodeResolver->isEditmode();
 
+        if (!isset($templateParams['isAreaBlock'])) {
+            $templateParams['isAreaBlock'] = false;
+        }
+
         // render complete areabrick
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
+        $html = $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', array_merge([
             'brick' => $brick,
             'info' => $info,
             'templating' => $this->templating,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
             'viewParameters' => $params,
-        ]);
+        ], $templateParams));
 
         if ($brickInfoRestoreValue === null) {
             $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);
@@ -256,6 +290,8 @@ class EditableHandler implements LoggerAwareInterface
 
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
+
+        return $html;
     }
 
     protected function handleBrickActionResult($result)
@@ -324,17 +360,31 @@ class EditableHandler implements LoggerAwareInterface
     {
         if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
             $bundle = $this->bundleLocator->getBundle($brick);
+            $bundleName = $bundle->getName();
+            if (str_ends_with($bundleName, 'Bundle')) {
+                $bundleName = substr($bundleName, 0, -6);
+            }
 
-            return sprintf(
-                '%s:Areas/%s:%s.%s',
-                $bundle->getName(),
-                $brick->getId(),
-                $type,
-                $brick->getTemplateSuffix()
-            );
+            foreach (['areas', 'Areas'] as $folderName) {
+                $templateReference = sprintf(
+                    '@%s/%s/%s/%s.%s',
+                    $bundleName,
+                    $folderName,
+                    $brick->getId(),
+                    $type,
+                    $brick->getTemplateSuffix()
+                );
+
+                if ($this->templating->exists($templateReference)) {
+                    return $templateReference;
+                }
+            }
+
+            // return the last reference, even we know that it doesn't exist -> let care the templating engine
+            return $templateReference;
         } else {
             return sprintf(
-                'Areas/%s/%s.%s',
+                'areas/%s/%s.%s',
                 $brick->getId(),
                 $type,
                 $brick->getTemplateSuffix()
@@ -355,7 +405,17 @@ class EditableHandler implements LoggerAwareInterface
 
         $uri = new ControllerReference($controller, $attributes, $query);
 
-        return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        if ($this->requestHelper->hasCurrentRequest()) {
+            return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        } else {
+            // this case could happen when rendering on CLI, e.g. search-reindex ...
+            $request = $this->requestHelper->createRequestWithContext();
+            $this->requestStack->push($request);
+            $response = $this->fragmentRenderer->render($uri, $request, $attributes);
+            $this->requestStack->pop();
+
+            return $response;
+        }
     }
 
     /**

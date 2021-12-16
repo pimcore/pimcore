@@ -14,6 +14,8 @@ In order to set a checkbox value, a bool value needs to be passed to the accordi
 $object->setCheckbox(true);
 ```
 
+If inheritance is activated in the corresponding DataObject class, a trashcan icon is displayed next to the checkbox. This can be used to reset the value of the checkbox in order to guarantee inheritance from parents again.
+
 ## Boolean Select
 
 A `Boolean Select` is kind of a tri-state checkbox which is rendered as a select datatype in the admin UI.
@@ -49,7 +51,7 @@ In the frontend (template) you can use the following code to the the html for th
 
 ```php
 <?php
-$object = AbstractObject::getById(234);
+$object = DataObject::getById(234);
 ?>
 
 <ul>
@@ -93,7 +95,7 @@ Offers data encryption for certain data types.
 
 ![Encrypted Field](../../../img/encrypted_field.png)
 
-> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/config.yml
+> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to config/config.yaml
 
 Example:
 ```
@@ -115,41 +117,41 @@ You can switch this off by calling
 Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(false)
 ```
 
-## URL Slug (experimental)
-> **This feature is experimental!**  
-> Subject to change with short notice in upgrade notes
+## URL Slug
 
 A slug is the part of a URL which identifies a particular page on a website in an easy 
 to read form. In other words, it’s the part of the URL that explains the page’s content.
-For example, the URL is https://demo.pimcore.fun/slug, and the slug simply is ‘/slug’.
+For example, if the URL is `https://demo.pimcore.fun/slug`, and the slug simply is `/slug`.
 
 ![URL Slug](../../../img/classes-datatypes-urlslug.png)
 
-> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md).
+> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
 
 This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
 Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.
+
+Slugs are validated against [`FILTER_VALIDATE_URL`](https://www.php.net/manual/en/filter.filters.validate.php) and you could use the [Symfony String component's slugger](https://symfony.com/doc/current/components/string.html#slugger) to generate them 
 
 ### Example
 
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 
-class ExampleController extends FrontendController
+class ProductController extends FrontendController
 {
-    public function mySlugAction(Request $request, DataObject\Foo $object, DataObject\Data\UrlSlug $urlSlug) {
+    public function slugAction(Request $request, DataObject\Foo $object, DataObject\Data\UrlSlug $urlSlug) {
         
         // we use param converters to the the matched data object ($object)
         // $urlSlug contains the context information of the slug
 
         return [
-            'news' => $object
+            'product' => $object
         ];
     }
 }

@@ -1,7 +1,7 @@
 # Working with Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
-For details see [sessions docs](https://symfony.com/doc/3.4/components/http_foundation/sessions.html). 
+For details see [sessions docs](https://symfony.com/doc/5.2/components/http_foundation/sessions.html). 
 
 Pimcore adds the possibility to configure sessions before they are started through `SessionConfiguratorInterface` registered 
 as service with the `pimcore.session.configurator` tag. This is useful when you need a custom session bag for your bundle
@@ -14,17 +14,17 @@ or application.
 namespace TestBundle\Session\Configurator;
  
 use Pimcore\Session\SessionConfiguratorInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
  
 class SessionCartConfigurator implements SessionConfiguratorInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function configure(SessionInterface $session)
     {
-        $bag = new NamespacedAttributeBag('_session_cart');
+        $bag = new AttributeBag('_session_cart');
         $bag->setName('session_cart');
  
         $session->registerBag($bag);
@@ -46,13 +46,13 @@ services:
 if ($request->hasSession()) {
     $session = $request->getSession();
      
-    /** @var NamespacedAttributeBag $bag */
+    /** @var AttributeBag $bag */
     $bag = $session->getBag('session_cart');
     $bag->set('foo', 1);
 }
 ```
 
-Symfony framework session is configured by default, so you don't need to configure the session in your `config.yml`.
+Symfony framework session is configured by default, so you don't need to configure the session in your `config.yaml`.
 
 
 Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`. 

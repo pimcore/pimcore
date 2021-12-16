@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
@@ -22,27 +23,32 @@ class DefaultClassificationStore implements InterpreterInterface
      * @param Classificationstore|null $value
      * @param array|null $config
      *
-     * @return array|void
+     * @return array|null
      *
      * @throws \Exception
      */
     public function interpret($value, $config = null)
     {
         if (!$value instanceof Classificationstore) {
-            return;
+            return null;
         }
 
-        $data = [];
+        $data = [
+            'values' => [],
+            'keys' => [],
+        ];
+
         foreach ($this->getAllKeysFromStore($value) as $groupId => $groupItem) {
             foreach ($groupItem as $keyId => $item) {
+                if (!isset($data['values'][$keyId])) {
+                    $data['values'][$keyId] = [];
+                }
                 $data['values'][$keyId][] = (string) $value->getLocalizedKeyValue($groupId, $keyId, 'en');
                 $data['keys'][$keyId] = $keyId;
             }
         }
 
-        if ($data['keys']) {
-            $data['keys'] = array_values($data['keys']);
-        }
+        $data['keys'] = array_values($data['keys']);
 
         return $data;
     }
@@ -79,8 +85,8 @@ class DefaultClassificationStore implements InterpreterInterface
             }
 
             return $items;
-        } else {
-            return $store->getItems();
         }
+
+        return $store->getItems();
     }
 }

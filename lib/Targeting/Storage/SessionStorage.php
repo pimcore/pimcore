@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Storage;
@@ -20,13 +20,14 @@ namespace Pimcore\Targeting\Storage;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Session\SessionConfigurator;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class SessionStorage implements TargetingStorageInterface
 {
     use TimestampsTrait;
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     public function all(VisitorInfo $visitorInfo, string $scope): array
@@ -149,7 +150,9 @@ class SessionStorage implements TargetingStorageInterface
      * @param string $scope
      * @param bool $checkPreviousSession
      *
-     * @return null|NamespacedAttributeBag
+     * @throws \Exception
+     *
+     * @return null|AttributeBag
      */
     private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
     {
@@ -165,16 +168,15 @@ class SessionStorage implements TargetingStorageInterface
 
         $session = $request->getSession();
 
-        /** @var NamespacedAttributeBag $bag */
-        $bag = null;
-
         switch ($scope) {
             case self::SCOPE_SESSION:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+
                 break;
 
             case self::SCOPE_VISITOR:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+
                 break;
 
             default:
@@ -184,11 +186,15 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        return $bag;
+        if ($bag instanceof AttributeBag) {
+            return $bag;
+        }
+
+        throw new \Exception('wrong type');
     }
 
     private function updateTimestamps(
-        NamespacedAttributeBag $bag,
+        AttributeBag $bag,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
     ) {

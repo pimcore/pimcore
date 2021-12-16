@@ -1,7 +1,7 @@
 
 # Dependency Injection Tags
 
-Please read the intro of [dependency injection tags](http://symfony.com/doc/3.4/reference/dic_tags.html) of Symfony first.
+Please read the intro of [dependency injection tags](https://symfony.com/doc/5.2/reference/dic_tags.html) of Symfony first.
  
 In addition to the tags provided by Symfony, Pimcore adds it's own tags to flag special purpose services. 
 

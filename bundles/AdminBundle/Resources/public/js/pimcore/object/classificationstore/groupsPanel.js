@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.groupsPanel");
@@ -45,7 +45,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
             var columnConfig = {name: this.relationsFields[i], type: 'string'};
-            if (this.relationsFields[i] == "sorter") {
+            if (this.relationsFields[i] == "sorter" || this.relationsFields[i] == "keyId") {
                 columnConfig["type"] = "int";
             }
             readerFields.push(columnConfig);

@@ -1,0 +1,27 @@
+name: Improvement
+description: Request or propose an improvement
+title: "[Improvement]: "
+labels: ["Improvement"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              ## Important notice
+              As an open source project we love to work together with our community to improve and develop our products.
+              It's also important for us to make clear that **we're not working for you or your company**,
+              but we enjoy to work together to improve or add new features to the product.
+              So we are always ready to discuss features and improvements with our community.
+              Especially for bigger topics, please [start a discussion](https://github.com/pimcore/pimcore/discussions) first to aviod unnecessary efforts.
+
+              As soon as a topic is more specific, feel free to create issues for it or even better provide a corresponding PR as we love to
+              review and merge contributions.
+
+              Feature requests that do not meet the conditions listed below will be closed/deleted without comment.
+              - There's no existing ticket for the same topic
+              - This is already a specific ready-to-work-on feature request
+
+    - type: textarea
+      attributes:
+          label: Improvement description
+      validations:
+          required: true

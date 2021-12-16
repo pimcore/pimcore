@@ -3,7 +3,7 @@
 Pimcore offers some static helpers:
 
 ## Pimcore Tool
-The `Pimcore\Tool` class is a collection of general service methods. Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/master/lib/Tool.php).
+The `Pimcore\Tool` class is a collection of general service methods. Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/10.x/lib/Tool.php).
 
 Particular useful can be following methods:
 * `isValidPath()`
@@ -16,17 +16,17 @@ Particular useful can be following methods:
 
 ### E-Mail
 There is a convenience function which allows any Pimcore system component or plugin to use a 
-preconfigured `Swift_Message` instance based on the Pimcore system settings' email configuration.
+preconfigured `Symfony\Component\Mime\Email` instance based on the Pimcore system settings' email configuration.
 
 ```php
 $mail = Pimcore\Tool::getMail($recipients, $subject);
-For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
+// For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
 ```
 
 
 ## Element Service
 The `Pimcore\Model\Element\Service` class is a collection of service methods for elements (documents, assets, objects). 
-Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/master/models/Element/Service.php). 
+Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/10.x/models/Element/Service.php). 
 
 Particular useful can be following methods:
 * `getElementByPath()`

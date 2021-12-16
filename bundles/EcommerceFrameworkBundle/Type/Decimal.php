@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Type;
@@ -146,7 +146,7 @@ class Decimal
         } else {
             throw new \TypeError(
                 'Expected (int, float, string, self), but received ' .
-                (is_object($amount) ? get_class($amount) : gettype($amount))
+                get_debug_type($amount)
             );
         }
     }
@@ -754,14 +754,15 @@ class Decimal
     {
         if (is_numeric($operand)) {
             return $operand;
-        } elseif ($operand instanceof static) {
+        }
+        if ($operand instanceof static) {
             return $operand->asNumeric();
         }
 
         throw new \InvalidArgumentException(sprintf(
             'Value "%s" with type "%s" is no valid operand',
             (is_scalar($operand)) ? $operand : (string)$operand,
-            (is_object($operand) ? get_class($operand) : gettype($operand))
+            get_debug_type($operand)
         ));
     }
 

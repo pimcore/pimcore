@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -274,7 +275,7 @@ class Container extends \ArrayObject
      * Start capturing content to push into placeholder
      *
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
-     * @param null       $key
+     * @param mixed $key
      *
      * @throws Exception
      *
@@ -314,6 +315,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->exchangeArray([$data]);
                 }
+
                 break;
             case self::PREPEND:
                 if (null !== $key) {
@@ -324,6 +326,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->prepend($data);
                 }
+
                 break;
             case self::APPEND:
             default:
@@ -336,6 +339,7 @@ class Container extends \ArrayObject
                 } else {
                     $this[$this->nextIndex()] = $data;
                 }
+
                 break;
         }
     }

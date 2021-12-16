@@ -1,68 +1,84 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
+use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
     public $fieldtype = 'block';
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $lazyLoading;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $disallowAddRemove;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $disallowReorder;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $collapsible;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $collapsed;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $maxItems;
@@ -70,21 +86,29 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * Type for the column
      *
+     * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $styleElement = '';
 
     /**
+     * @internal
+     *
      * @var array
      */
     public $childs = [];
 
     /**
+     * @internal
+     *
      * @var array|null
      */
     public $layout;
@@ -92,11 +116,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * contains further child field definitions if there are more than one localized fields in on class
      *
+     * @internal
+     *
      * @var array
      */
     protected $referencedFields = [];
 
     /**
+     * @internal
+     *
      * @var array|null
      */
     public $fieldDefinitionsCache;
@@ -126,19 +154,36 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
 
-                    $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
-                    //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
+                    // $encodedDataBC = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
 
-                    // do not serialize the block element itself
-                    $resultElement[$elementName] = [
-                        'name' => $blockElement->getName(),
-                        'type' => $blockElement->getType(),
-                        'data' => $dataForResource,
-                    ];
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($elementData, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd,
+                        ]);
+                        $encodedData = $normalizedData;
+
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
+                            $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        }
+
+                        // do not serialize the block element itself
+                        $resultElement[$elementName] = [
+                            'name' => $blockElement->getName(),
+                            'type' => $blockElement->getType(),
+                            'data' => $encodedData,
+                        ];
+                    }
                 }
                 $result[] = $resultElement;
             }
@@ -162,6 +207,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         if ($data) {
             $count = 0;
 
+            //Fix old serialized data protected properties with \0*\0 prefix
+            //https://github.com/pimcore/pimcore/issues/9973
+            if (str_contains($data, ':" * ')) {
+                $data = preg_replace_callback('!s:(\d+):" \* (.*?)";!', function ($match) {
+                    return ($match[1] == strlen($match[2])) ? $match[0] : 's:' . strlen($match[2]) .   ':"' . $match[2] . '";';
+                }, $data);
+            }
+
             $unserializedData = Serialize::unserialize($data);
             $result = [];
 
@@ -172,20 +225,36 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
                     // do not serialize the block element itself
-                    //                    $elementData = $blockElement->getData();
+
                     $elementData = $blockElementRaw['data'];
 
-                    $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
-                    $blockElementRaw['data'] = $dataFromResource;
+                    if ($fd instanceof NormalizerInterface) {
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
+                            $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $elementData = $unmarshaller->unmarshal($elementData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        }
+
+                        $dataFromResource = $fd->denormalize($elementData, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd,
+                        ]);
+
+                        $blockElementRaw['data'] = $dataFromResource;
+                    }
 
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
 
                     if ($blockElementRaw['type'] == 'localizedfields') {
-                        /** @var DataObject\Localizedfield $data */
+                        /** @var DataObject\Localizedfield|null $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
@@ -220,7 +289,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -243,6 +312,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -291,7 +361,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $items = $object->$blockGetter($language);
                         if (isset($items[$oIndex])) {
                             $item = $items[$oIndex][$elementName];
-                            $blockData = $item->getData();
+                            $blockData = $blockElement[$elementName] ?: $item->getData();
                             $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                         }
                     } else {
@@ -302,7 +372,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         }
                     }
                 } else {
-                    $elementData = $blockElement[$elementName];
+                    $elementData = $blockElement[$elementName] ?? null;
                     $blockData = $fd->getDataFromEditmode(
                         $elementData,
                         $object,
@@ -379,7 +449,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
@@ -411,14 +481,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -426,23 +489,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
-    }
-
-    /** True if change is allowed in edit mode.
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -551,7 +598,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array
@@ -647,7 +694,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
+            }
             $context['containerType'] = 'block';
             $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -662,6 +715,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setReferencedFields($referencedFields)
     {
         $this->referencedFields = $referencedFields;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -678,6 +732,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
+        $this->fieldDefinitionsCache = null;
     }
 
     /**
@@ -686,8 +741,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }
@@ -711,6 +773,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $elementData = $blockElement->getData();
@@ -723,17 +786,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($this->getLazyLoading()) {
             return $tags;
         }
@@ -748,6 +804,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $data = $blockElement->getData();
@@ -832,26 +889,21 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param null|DataObject\Data\BlockElement[] $data
-     * @param array $params
-     *
-     * @return mixed
+     * { @inheritdoc }
      */
-    public function preSetData($object, $data, $params = [])
+    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
-        $this->markLazyloadedFieldAsLoaded($object);
+        $this->markLazyloadedFieldAsLoaded($container);
 
         $lf = $this->getFieldDefinition('localizedfields');
         if ($lf && is_array($data)) {
-            /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {
                 if (is_array($item)) {
                     foreach ($item as $itemElement) {
-                        if ($itemElement->getType() == 'localizedfields') {
+                        if ($itemElement->getType() === 'localizedfields') {
                             /** @var DataObject\Localizedfield $itemElementData */
                             $itemElementData = $itemElement->getData();
-                            $itemElementData->setObject($object);
+                            $itemElementData->setObject($container);
 
                             // the localized field needs at least the containerType as this is important
                             // for lazy loading
@@ -869,18 +921,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function load($container, $params = [])
     {
@@ -935,41 +983,37 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array|mixed|null
+     * {@inheritdoc}
      */
-    public function preGetData($object, $params = [])
+    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
         $data = null;
-        $params['owner'] = $object;
+        $params['owner'] = $container;
         $params['fieldname'] = $this->getName();
-        if ($object instanceof DataObject\Concrete) {
-            $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, $params);
+        if ($container instanceof DataObject\Concrete) {
+            $data = $container->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$container->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($container, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                    $this->markLazyloadedFieldAsLoaded($object);
+                if (method_exists($container, $setter)) {
+                    $container->$setter($data);
+                    $this->markLazyloadedFieldAsLoaded($container);
                 }
             }
-        } elseif ($object instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $data = $container->getObjectVar($this->getName());
         }
 
         return is_array($data) ? $data : [];
@@ -1024,14 +1068,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck) {
             if (is_array($data)) {
@@ -1074,7 +1113,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 $fd->performMultipleAssignmentCheck($data);
                             }
 
-                            $fd->checkValidity($data);
+                            $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
@@ -1083,9 +1122,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
-                    $aggregatedExceptions->setSubItems($validationExceptions);
-                    throw $aggregatedExceptions;
+                    $errors = [];
+                    /** @var Element\ValidationException $e */
+                    foreach ($validationExceptions as $e) {
+                        $errors[] = $e->getAggregatedMessage();
+                    }
+                    $message = implode(' / ', $errors);
+
+                    throw new Model\Element\ValidationException($message);
                 }
             }
         }
@@ -1115,7 +1159,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -1123,7 +1167,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
@@ -1153,13 +1197,91 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\BlockElement::class . '[][]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        $result = null;
+        if ($value) {
+            $result = [];
+            $fieldDefinitions = $this->getFieldDefinitions();
+            foreach ($value as $block) {
+                $resultItem = [];
+                /**
+                 * @var  string $key
+                 * @var  DataObject\Data\BlockElement $fieldValue
+                 */
+                foreach ($block as $key => $fieldValue) {
+                    $fd = $fieldDefinitions[$key];
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($fieldValue->getData(), [
+                            'object' => $params['object'] ?? null,
+                            'fieldDefinition' => $fd,
+                        ]);
+                        $resultItem[$key] = $normalizedData;
+                    } else {
+                        throw new \Exception('data type ' . $fd->getFieldtype() . ' does not implement normalizer interface');
+                    }
+                }
+                $result[] = $resultItem;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            $fieldDefinitions = $this->getFieldDefinitions();
+
+            foreach ($value as $idx => $blockItem) {
+                $resultItem = [];
+                /**
+                 * @var  string $key
+                 * @var  DataObject\Data\BlockElement $fieldValue
+                 */
+                foreach ($blockItem as $key => $fieldValue) {
+                    $fd = $fieldDefinitions[$key];
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $denormalizedData = $fd->denormalize($fieldValue, [
+                            'object' => $params['object'],
+                            'fieldDefinition' => $fd,
+                        ]);
+                        $resultItem[$key] = $denormalizedData;
+                    } else {
+                        throw new \Exception('data type does not implement normalizer interface');
+                    }
+                }
+                $result[] = $resultItem;
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 }

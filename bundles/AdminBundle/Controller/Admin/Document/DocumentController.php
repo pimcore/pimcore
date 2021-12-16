@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -23,6 +24,8 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\DocType;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
@@ -30,7 +33,6 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,9 +41,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/document")
+ *
+ * @internal
  */
 class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
@@ -170,8 +175,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             if ($filter) {
-                $db = Db::get();
-
                 $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
@@ -253,16 +256,23 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById((int)$request->get('docTypeId'));
+                $docType = Document\DocType::getById($request->get('docTypeId'));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
+                    $createValues['staticGeneratorEnabled'] = $docType->getStaticGeneratorEnabled();
                 } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
-                    $createValues['template'] = $translationsBaseDocument->getTemplate();
-                    $createValues['controller'] = $translationsBaseDocument->getController();
+                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                    if ($translationsBaseDocument instanceof Document\PageSnippet) {
+                        $createValues['template'] = $translationsBaseDocument->getTemplate();
+                        $createValues['controller'] = $translationsBaseDocument->getController();
+                    }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
+                } elseif ($request->get('type') == 'printpage') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_page');
+                } elseif ($request->get('type') == 'printcontainer') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_container');
                 }
 
                 if ($request->get('inheritanceSource')) {
@@ -276,32 +286,39 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
                         $success = true;
+
                         break;
                     case 'snippet':
                         $document = Document\Snippet::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'email': //ckogler
                         $document = Document\Email::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'link':
                         $document = Document\Link::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'hardlink':
                         $document = Document\Hardlink::create($request->get('parentId'), $createValues);
                         $success = true;
+
                         break;
                     case 'folder':
                         $document = Document\Folder::create($request->get('parentId'), $createValues);
                         $document->setPublished(true);
+
                         try {
                             $document->save();
                             $success = true;
                         } catch (\Exception $e) {
                             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
+
                         break;
                     default:
                         $classname = '\\Pimcore\\Model\\Document\\' . ucfirst($request->get('type'));
@@ -317,16 +334,19 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         if (Tool::classExists($classname)) {
                             $document = $classname::create($request->get('parentId'), $createValues);
+
                             try {
                                 $document->save();
                                 $success = true;
                             } catch (\Exception $e) {
                                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                             }
+
                             break;
                         } else {
                             Logger::debug("Unknown document type, can't add [ " . $request->get('type') . ' ] ');
                         }
+
                         break;
                 }
             } else {
@@ -345,7 +365,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
                 $document->setProperties($properties);
-                $document->setProperty('language', 'text', $request->get('language'));
+                $document->setProperty('language', 'text', $request->get('language'), false, true);
                 $document->save();
 
                 $service = new Document\Service();
@@ -489,6 +509,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 }
 
                 $document->setUserModification($this->getAdminUser()->getId());
+
                 try {
                     $document->save();
 
@@ -532,12 +553,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
                 if ($oldPath && $oldPath != $document->getRealFullPath()) {
-                    $sourceSite = null;
-                    if ($oldDocument) {
-                        $sourceSite = Frontend::getSiteForDocument($oldDocument);
-                        if ($sourceSite) {
-                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
-                        }
+                    $sourceSite = Frontend::getSiteForDocument($oldDocument);
+                    if ($sourceSite) {
+                        $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
                     }
 
                     $targetSite = Frontend::getSiteForDocument($document);
@@ -647,7 +665,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
             if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                $docTypes[] = $type->getObjectVars();
+                $data = $type->getObjectVars();
+                $data['writeable'] = $type->isWriteable();
+                $docTypes[] = $data;
             }
         }
 
@@ -670,6 +690,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
                 $type = Document\DocType::getById($id);
+                if (!$type->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $type->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
@@ -679,11 +702,22 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 // save type
                 $type = Document\DocType::getById($data['id']);
 
+                if (!$type->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
+
                 $type->setValues($data);
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
+                if (!(new DocType())->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
+
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
@@ -693,7 +727,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $type->save();
 
-                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
+                $responseData = $type->getObjectVars();
+                $responseData['writeable'] = $type->isWriteable();
+
+                return $this->adminJson(['data' => $responseData, 'success' => true]);
             }
         }
 
@@ -765,6 +802,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $currentDocument = Document::getById($document->getId());
         if ($currentDocument->isAllowed('publish')) {
             $document->setPublished(true);
+
             try {
                 $document->setKey($currentDocument->getKey());
                 $document->setPath($currentDocument->getRealPath());
@@ -800,14 +838,28 @@ class DocumentController extends ElementControllerBase implements KernelControll
             ]);
         }
 
+        $localizedErrorDocuments = [];
+        $validLanguages = \Pimcore\Tool::getValidLanguages();
+
+        foreach ($validLanguages as $language) {
+            // localized error pages
+            $requestValue = $request->get('errorDocument_localized_' . $language);
+
+            if (isset($requestValue)) {
+                $localizedErrorDocuments[$language] = $requestValue;
+            }
+        }
+
         $site->setDomains($domains);
         $site->setMainDomain($request->get('mainDomain'));
         $site->setErrorDocument($request->get('errorDocument'));
+        $site->setLocalizedErrorDocuments($localizedErrorDocuments);
         $site->setRedirectToMainDomain(($request->get('redirectToMainDomain') == 'true') ? true : false);
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
-        return $this->adminJson($site);
+
+        return $this->adminJson($site->getObjectVars());
     }
 
     /**
@@ -1041,6 +1093,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 }
             } else {
                 Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
+
                 throw $this->createAccessDeniedHttpException();
             }
         }
@@ -1348,7 +1401,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
 
         foreach ($languages as $language) {
-            if ($languageDocument = $translations[$language]) {
+            if ($languageDocument = $translations[$language] ?? false) {
                 $languageDocument = Document::getById($languageDocument);
                 $config[$language] = [
                     'text' => $languageDocument->getKey(),
@@ -1555,8 +1608,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

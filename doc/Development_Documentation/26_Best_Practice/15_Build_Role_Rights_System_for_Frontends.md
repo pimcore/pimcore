@@ -4,7 +4,7 @@ A common use case for Pimcore applications are portals with user logins and a co
  example b2b portals. 
  
 One way of archiving this is to leverage Symfony Security functionality with access control configuration
-and ACLs as described [here](http://symfony.com/doc/current/security.html).
+and ACLs as described [here](https://symfony.com/doc/5.2/security.html).
    
 But, it might be handy to empower admin users to configure and maintain user permissions themselves. And therefore, 
 Pimcore data objects are also a great choice.
@@ -82,7 +82,7 @@ There are several ways how to integrate the configured user permissions into the
 
 2) Integrate `permissionResources` to Symfony Security as Roles: 
 There are several ways to integrate the object `permissionResource` permissions into the Symfony Security system. 
-One would be to implement a custom voter as described [here](http://symfony.com/doc/current/security/voters.html). 
+One would be to implement a custom voter as described [here](https://symfony.com/doc/5.2/security/voters.html). 
 The simplest (but maybe not prettiest) way would be to return all allowed `permissionResources` of an user object as roles
 of this user. In this case you can access this information everywhere in the Synfony framework. For details see docs in the
 [Frontend Permission Toolkit](https://github.com/pimcore/frontend-permission-toolkit#integration-with-symfony-security). 

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.properties.predefined");
@@ -90,6 +90,9 @@ pimcore.settings.properties.predefined = Class.create({
         var inheritableCheck = new Ext.grid.column.Check({
             text: t("inheritable"),
             dataIndex: "inheritable",
+            editor: {
+                xtype: 'checkbox',
+            },
             width: 50
         });
 
@@ -115,34 +118,51 @@ pimcore.settings.properties.predefined = Class.create({
                }
             },
             {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
-                triggerAction: 'all',
-                editable: false,
-                store: ["text","document","asset","object","bool","select"]
+            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type',
+                editor: new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    store: ["text","document","asset","object","bool","select"]
 
             })},
             {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
-            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
-                                                                editor: new Ext.form.TextField({})},
-            {
-                text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
-                getEditor: function (fieldInfo) {
-                    return new pimcore.object.helpers.metadataMultiselectEditor({
-                        fieldInfo: fieldInfo
-                    });
-                }.bind(this, {value: "document;asset;object" })
-            }
-
-
-            ,
+            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
+            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                editor: new Ext.ux.form.MultiSelect({
+                    store: new Ext.data.ArrayStore({
+                        fields: ['key', {
+                            name: 'value',
+                            convert: function (v, r) {
+                                if (Array.isArray(v)) {
+                                    return v.join(";");
+                                }
+                                return v;
+                            }
+                        }],
+                        data: [
+                            ['document', 'document'],
+                            ['object', ['object']],
+                            ['asset', ['asset']]
+                        ],
+                    }),
+                    displayField: 'key',
+                    valueField: 'value',
+                }),
+            },
             inheritableCheck,
             {
                 xtype: 'actioncolumn',
                 menuText: t('delete'),
                 width: 30,
                 items: [{
+                    getClass: function(v, meta, rec) {
+                      var klass = "pimcore_action_column ";
+                      if(rec.data.writeable) {
+                          klass += "pimcore_icon_minus";
+                      }
+                      return klass;
+                    },
                     tooltip: t('delete'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -191,8 +211,16 @@ pimcore.settings.properties.predefined = Class.create({
 
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
+            listeners: {
+                beforeedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        return false;
+                    }
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -211,7 +239,7 @@ pimcore.settings.properties.predefined = Class.create({
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -219,7 +247,8 @@ pimcore.settings.properties.predefined = Class.create({
                     {
                         text: t('add'),
                         handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
+                        iconCls: "pimcore_icon_add",
+                        disabled: !pimcore.settings['predefined-properties-writeable']
                     },"->",{
                         text: t("filter") + "/" + t("search"),
                         xtype: "tbtext",
@@ -229,7 +258,10 @@ pimcore.settings.properties.predefined = Class.create({
                 ]
             },
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             }
         });
 

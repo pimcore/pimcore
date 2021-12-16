@@ -1,22 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Localizedfield;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -35,7 +34,6 @@ use Pimcore\Tool;
 class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
-
     use DataObject\Traits\CompositeIndexTrait;
 
     /**
@@ -101,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
         $forceUpdate = false;
-        if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
+        if ((isset($params['newParent']) && $params['newParent']) || DataObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
             $forceUpdate = $this->delete(false, true);
         }
@@ -138,6 +136,27 @@ class Dao extends Model\Dao\AbstractDao
          * which is a great performance gain if you have a lot of languages
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
+
+        $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
+        if (!$ignoreLocalizedQueryFallback) {
+            foreach ($validLanguages as $validLanguage) {
+                $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
+                foreach ($fallbackLanguages as $fallbackLanguage) {
+                    if ($this->model->isLanguageDirty($fallbackLanguage)) {
+                        $this->model->markLanguageAsDirty($validLanguage);
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        $flag = DataObject\Localizedfield::getGetFallbackValues();
+
+        if (!$ignoreLocalizedQueryFallback) {
+            DataObject\Localizedfield::setGetFallbackValues(true);
+        }
+
         foreach ($validLanguages as $language) {
             if (empty($params['newParent'])
                 && !empty($params['isUpdate'])
@@ -146,8 +165,9 @@ class Dao extends Model\Dao\AbstractDao
             ) {
                 continue;
             }
-            $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-            DataObject\AbstractObject::setGetInheritedValues(false);
+
+            $inheritedValues = DataObject::doGetInheritedValues();
+            DataObject::setGetInheritedValues(false);
 
             $insertData = [
                 'ooo_id' => $this->model->getObject()->getId(),
@@ -223,6 +243,7 @@ class Dao extends Model\Dao\AbstractDao
                     // throw exception which gets caught in AbstractObject::save() -> retry saving
                     throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
+
                 throw $e;
             }
 
@@ -243,6 +264,7 @@ class Dao extends Model\Dao\AbstractDao
                     )." AND language = '".$language."'";
 
                 $oldData = [];
+
                 try {
                     $oldData = $this->db->fetchRow($sql);
                 } catch (\Exception $e) {
@@ -292,7 +314,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!in_array($key, $untouchable)) {
-                            $localizedValue = $this->model->getLocalizedValue($key, $language);
+                            $localizedValue = $this->model->getLocalizedValue($key, $language, $ignoreLocalizedQueryFallback);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,
                                 $object,
@@ -334,6 +356,7 @@ class Dao extends Model\Dao\AbstractDao
                                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldDataValue != $insertDataValue) {
                                                 $doInsert = true;
+
                                                 break;
                                             }
                                         }
@@ -408,8 +431,12 @@ class Dao extends Model\Dao\AbstractDao
                 $this->inheritanceHelper->resetFieldsToCheck();
             }
 
-            DataObject\AbstractObject::setGetInheritedValues($inheritedValues);
+            DataObject::setGetInheritedValues($inheritedValues);
         } // foreach language
+
+        if (!$ignoreLocalizedQueryFallback) {
+            DataObject\Localizedfield::setGetFallbackValues($flag);
+        }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
@@ -422,7 +449,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($deleteQuery = true, $isUpdate = true)
     {
-        if ($isUpdate && !DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if ($isUpdate && !DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return false;
         }
         $object = $this->model->getObject();
@@ -479,11 +506,18 @@ class Dao extends Model\Dao\AbstractDao
             }
         } catch (\Exception $e) {
             Logger::error($e);
-            $this->createUpdateTable();
+
+            if ($isUpdate && $e instanceof TableNotFoundException) {
+                $this->db->rollBack();
+                $this->createUpdateTable();
+
+                // throw exception which gets caught in AbstractObject::save() -> retry saving
+                throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+            }
         }
 
         // remove relations
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        if (!DataObject::isDirtyDetectionDisabled()) {
             if (!$this->model->hasDirtyFields()) {
                 return false;
             }
@@ -509,7 +543,7 @@ class Dao extends Model\Dao\AbstractDao
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
         }
 
-        if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'] ?? null;
             $containerName = $context['fieldname'];
@@ -524,14 +558,12 @@ class Dao extends Model\Dao\AbstractDao
                 ).$dirtyLanguageCondition;
 
             $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
-            if ($container instanceof DataObject\Fieldcollection\Definition) {
-                return true;
-            }
-        } else {
-            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
-                )->getId().$dirtyLanguageCondition;
-            $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
+
+            return true;
         }
+
+        $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
+        $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
 
         return false;
     }
@@ -605,37 +637,35 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($localizedfields->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
-                if ($fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        // datafield has it's own loader
-                        $params['language'] = $row['language'];
-                        $params['object'] = $object;
-                        if (!isset($params['context'])) {
-                            $params['context'] = [];
-                        }
-                        $params['context']['object'] = $object;
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    // datafield has it's own loader
+                    $params['language'] = $row['language'];
+                    $params['object'] = $object;
+                    if (!isset($params['context'])) {
+                        $params['context'] = [];
+                    }
+                    $params['context']['object'] = $object;
 
-                        if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
-                        } else {
-                            $value = $fd->load($this->model, $params);
-                            if ($value === 0 || !empty($value)) {
-                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                            }
+                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                        $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                    } else {
+                        $value = $fd->load($this->model, $params);
+                        if ($value === 0 || !empty($value)) {
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
-                            $multidata = [];
-                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
-                            }
-                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        } else {
-                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                }
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                    if (is_array($fd->getColumnType())) {
+                        $multidata = [];
+                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                            $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                         }
+                        $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                    } else {
+                        $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
                     }
                 }
             }
@@ -762,24 +792,26 @@ QUERY;
         if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
-              INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;"
+              INDEX `language` (`language`),
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
-              INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;"
+              INDEX `language` (`language`),
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            ) DEFAULT CHARSET=utf8mb4;'
             );
         }
 
@@ -828,6 +860,7 @@ QUERY;
             }
         }
 
+        $this->removeIndices($table, $columnsToRemove, $protectedColumns);
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
         $validLanguages = Tool::getValidLanguages();
@@ -839,11 +872,12 @@ QUERY;
 
                 $this->db->query(
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
-                      `ooo_id` int(11) NOT NULL default '0',
+                      `ooo_id` int(11) UNSIGNED NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
-                      INDEX `language` (`language`)
-                    ) DEFAULT CHARSET=utf8mb4;"
+                      INDEX `language` (`language`),
+                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+                    ) DEFAULT CHARSET=utf8mb4;'
                 );
 
                 $this->handleEncryption($this->model->getClass(), [$queryTable]);

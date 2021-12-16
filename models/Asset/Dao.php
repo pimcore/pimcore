@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset;
@@ -31,6 +29,9 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\ScheduledTasksDaoTrait;
+    use Model\Element\Traits\VersionDaoTrait;
+
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
@@ -280,33 +281,9 @@ class Dao extends Model\Element\Dao
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
     }
 
-    /**
-     * get versions from database, and assign it to object
-     *
-     * @return Model\Version[]
-     */
-    public function getVersions()
-    {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` ASC", [$this->model->getId()]);
-
-        $versions = [];
-        foreach ($versionIds as $versionId) {
-            $versions[] = Model\Version::getById($versionId['id']);
-        }
-
-        $this->model->setVersions($versions);
-
-        return $versions;
-    }
-
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
-    }
-
-    public function deleteAllTasks()
-    {
-        $this->db->delete('schedule_tasks', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
     }
 
     /**
@@ -373,7 +350,7 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
-        if ($user and !$user->isAdmin()) {
+        if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
@@ -422,28 +399,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
-     *
-     * @param bool $force
-     *
-     * @return Model\Version|null
-     */
-    public function getLatestVersion($force = false)
-    {
-        if ($this->model->getType() != 'folder') {
-            $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-
-            if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
-                $version = Model\Version::getById($versionData['id']);
-
-                return $version;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param string $type
      * @param Model\User $user
      *
@@ -468,7 +423,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC  LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC  LIMIT 1');
 
             if ($permissionsParent) {
                 return true;

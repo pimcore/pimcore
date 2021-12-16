@@ -26,22 +26,43 @@ Also, lots of other Pimcore tools and functionalities like Glossary, Tag & Snipp
 
 #### Check if Current Request is Inside a Subsite
 
+<div class="code-section">
+
 ```php
 if(\Pimcore\Model\Site::isSiteRequest()) { /* ... */ }
 ```
+
+```twig
+{% if pimcore_site_is_request() %}
+    {# ... #}
+{% endif %}
+```
+
+</div>
 
 #### Working with the Navigation Helper
 See [Navigation](../../03_Documents/03_Navigation.md) for more information. 
 
 
 #### Getting the full path of a document inside a subsite-request
+
+<div class="code-section">
+
 ```php
 $document->getRealFullpath(); // returns the path including the site-root
 $document->getFullPath(); // returns the path relative to the site-root
 ```
 
+```twig
+document.getRealFullpath()   {# returns the path including the site-root #}
+document->getFullPath()  {# returns the path relative to the site-root #}
+```
+</div>
 
 #### Getting the root-document of the current site
+
+<div class="code-section">
+
 ```php
 if (\Pimcore\Model\Site::isSiteRequest()) {
     $site = \Pimcore\Model\Site::getCurrentSite();
@@ -50,6 +71,17 @@ if (\Pimcore\Model\Site::isSiteRequest()) {
     $navStartNode = \Pimcore\Model\Document::getById(1);
 }
 ```
+
+```twig
+    {% if pimcore_site_is_request() %}
+        {% set site = pimcore_site_current() %}
+        {% set navStartNode = site.getRootDocument() %}
+    {% else %}
+        {% set navStartNode = pimcore_document(1) %}
+    {% endif %}
+```
+
+</div>
 
 #### Some other Tools
 The functionality should be pretty self-explanatory: 

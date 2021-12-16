@@ -13,7 +13,7 @@ Alternatively, you can setup this via an Eventlistener:
 ```yaml
 services:
   # adds additional static files to admin backend
-  AppBundle\EventListener\PimcoreAdminListener:
+  App\EventListener\PimcoreAdminListener:
     tags:
       - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.css, method: addCSSFiles }
       - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
@@ -21,7 +21,7 @@ services:
 
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Event\BundleManager\PathsEvent;
 
@@ -113,6 +113,9 @@ corresponding method to the javascript plugin class.
 | prepareDocumentTreeContextMenu       | before context menu is opened, menu, tree and document record are passed as parameters                          |          |
 | prepareClassLayoutContextMenu        | before context menu is opened, allowedTypes array is passed as parameters                                       |          |
 | prepareOnRowContextmenu              | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |          |
+| prepareOnObjectTreeNodeClick         | before the data object is opened, after a tree node has been clicked. The node item is passed as parameter.     |          | 
+| preGetObjectFolder                   | before the data object grid folder configuration is loaded from the server. request configuration is passed.    |          |
+| preCreateObjectGrid                  | before the data object grid items are loaded from the server. request configuration are passed.                 |          |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.
@@ -128,7 +131,7 @@ This can be done by throwing any of the following two exceptions and passing in 
 
 ```
 pimcore.error.ActionCancelledException
-pimcore.error.ValidationCancelledException
+pimcore.error.ValidationException
 ```
 
 

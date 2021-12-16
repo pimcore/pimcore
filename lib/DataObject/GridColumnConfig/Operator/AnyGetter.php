@@ -1,46 +1,67 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\AbstractModel;
+use Pimcore\Tool\Admin;
 
-class AnyGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class AnyGetter extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $attribute;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $param1;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $isArrayType;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $forwardAttribute;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $forwardParam1;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $returnLastResult;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
+        if (!Admin::getCurrentUser()->isAdmin()) {
+            throw new \Exception('AnyGetter only allowed for admin users');
+        }
+
         parent::__construct($config, $context);
 
         $this->attribute = $config->attribute ?? '';
@@ -53,6 +74,9 @@ class AnyGetter extends AbstractOperator
         $this->returnLastResult = $config->returnLastResult ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -90,7 +114,7 @@ class AnyGetter extends AbstractOperator
                 if ($this->forwardAttribute) {
                     $forwardGetter = 'get'.ucfirst($this->forwardAttribute);
                     $forwardParam = $this->getForwardParam1();
-                    if ($this->forwardAttribute && method_exists($element, $forwardGetter)) {
+                    if (method_exists($element, $forwardGetter)) {
                         $forwardObject = $element->$forwardGetter($forwardParam);
                         if (!$forwardObject) {
                             return $result;
@@ -113,20 +137,24 @@ class AnyGetter extends AbstractOperator
                     if (is_array($value)) {
                         $subValues = [];
                         foreach ($value as $o) {
-                            if ($this->attribute && method_exists($o, $getter)) {
-                                $subValues[] = $o->$getter($this->getParam1());
-                            } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
-                                $subValues[] = $o->$fallbackGetter($this->getParam1());
+                            if ($o) {
+                                if ($this->attribute && method_exists($o, $getter)) {
+                                    $subValues[] = $o->$getter($this->getParam1());
+                                } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                                    $subValues[] = $o->$fallbackGetter($this->getParam1());
+                                }
                             }
                         }
                         $resultElementValue = $subValues;
                     }
                 } else {
                     $o = $value;
-                    if ($this->attribute && method_exists($o, $getter)) {
-                        $resultElementValue = $o->$getter($this->getParam1());
-                    } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
-                        $resultElementValue = $o->$fallbackGetter($this->getParam1());
+                    if ($o) {
+                        if ($this->attribute && method_exists($o, $getter)) {
+                            $resultElementValue = $o->$getter($this->getParam1());
+                        } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                            $resultElementValue = $o->$fallbackGetter($this->getParam1());
+                        }
                     }
                 }
                 $resultElements[] = $resultElementValue;

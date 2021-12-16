@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -24,49 +22,52 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
+ * @method int hasChildren()
  */
-class GroupConfig extends Model\AbstractModel
+final class GroupConfig extends Model\AbstractModel
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
-    /** Group id.
+    /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
-    /** Parent id
+    /**
+     * Parent id
+     *
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
-    /** The group name.
+    /**
+     * The group name.
+     *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The group description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -93,7 +94,7 @@ class GroupConfig extends Model\AbstractModel
             Cache\Runtime::set($cacheKey, $config);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -118,14 +119,6 @@ class GroupConfig extends Model\AbstractModel
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
-    }
-
-    /**
-     * @return int
-     */
-    public function hasChildren()
-    {
-        return $this->getDao()->hasChildren();
     }
 
     /**
@@ -275,7 +268,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -295,7 +288,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

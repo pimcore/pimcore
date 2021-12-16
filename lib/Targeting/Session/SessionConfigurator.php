@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Session;
@@ -23,12 +23,13 @@ use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionConfigurator implements SessionConfiguratorInterface, EventSubscriberInterface
 {
     const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
+
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
     public static function getSubscribedEvents()
@@ -41,10 +42,10 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
 
     public function configure(SessionInterface $session)
     {
-        $sessionBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_SESSION);
+        $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
         $sessionBag->setName(self::TARGETING_BAG_SESSION);
 
-        $visitorBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_VISITOR);
+        $visitorBag = new AttributeBag('_' . self::TARGETING_BAG_VISITOR);
         $visitorBag->setName(self::TARGETING_BAG_VISITOR);
 
         $session->registerBag($sessionBag);

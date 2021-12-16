@@ -1,27 +1,31 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 class Assets extends Elements implements DataProviderInterface
 {
     /**
@@ -40,7 +44,7 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -48,7 +52,7 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -65,10 +69,7 @@ class Assets extends Elements implements DataProviderInterface
     public function doExportData(Asset $asset)
     {
         $this->exportIds = [];
-
-        $this->fillIds($asset);
-
-        $exportResult = [];
+        $this->exportIds[$asset->getId()] = true;
 
         // Prepare File
         $file = tempnam('/tmp', 'zip');
@@ -77,13 +78,9 @@ class Assets extends Elements implements DataProviderInterface
 
         foreach (array_keys($this->exportIds) as $id) {
             $theAsset = Asset::getById($id);
-            // @TODO: this needs to be done independently from the REST webservices
-            $webAsset = [];
-            //$webAsset = $this->service->getAssetFileById($id);
 
-            $resultItem = json_decode(json_encode($webAsset), true);
-            unset($resultItem['data']);
-            $resultItem = json_encode($resultItem, JSON_PRETTY_PRINT);
+            $resultItem = Exporter::exportAsset($theAsset);
+            $resultItem = json_encode($resultItem);
 
             $zip->addFromString($asset->getFilename() . '.txt', $resultItem);
 
@@ -107,21 +104,13 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @param ElementInterface $element
-     */
-    protected function fillIds(ElementInterface $element)
-    {
-        $this->exportIds[$element->getId()] = true;
-    }
-
-    /**
      * @param int $id
      * @param string $firstname
      * @param string $lastname
      * @param string $email
      * @param int $start
      * @param int $limit
-     * @param string $sort
+     * @param string|null $sort
      *
      * @return array
      */
@@ -132,8 +121,8 @@ class Assets extends Elements implements DataProviderInterface
         }
 
         $offset = $start;
-        $offset = $offset ? $offset : 0;
-        $limit = $limit ? $limit : 50;
+        $offset = $offset ?: 0;
+        $limit = $limit ?: 50;
 
         $searcherList = new Data\Listing();
         $conditionParts = [];
@@ -167,10 +156,8 @@ class Assets extends Elements implements DataProviderInterface
 
         $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';
 
-        if (count($conditionParts) > 0) {
-            $condition = implode(' AND ', $conditionParts);
-            $searcherList->setCondition($condition);
-        }
+        $condition = implode(' AND ', $conditionParts);
+        $searcherList->setCondition($condition);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
@@ -205,18 +192,13 @@ class Assets extends Elements implements DataProviderInterface
             }
         }
 
-        // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($limit) {
-            $totalMatches = $searcherList->getTotalCount();
-        } else {
-            $totalMatches = count($elements);
-        }
+        $totalMatches = $searcherList->getTotalCount();
 
         return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

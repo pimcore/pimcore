@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
@@ -79,7 +80,7 @@ abstract class AbstractWorker implements WorkerInterface
             ];
 
             foreach ($this->tenantConfig->getAttributes() as $attribute) {
-                if (!$considerHideInFieldList || ($considerHideInFieldList && !$attribute->getHideInFieldlistDatatype())) {
+                if (!$considerHideInFieldList || !$attribute->getHideInFieldlistDatatype()) {
                     $indexColumns[$attribute->getName()] = $attribute->getName();
                 }
             }
@@ -94,7 +95,7 @@ abstract class AbstractWorker implements WorkerInterface
     {
         $this->getAllFilterGroups();
 
-        return $this->filterGroups[$filterGroup] ? $this->filterGroups[$filterGroup] : [];
+        return $this->filterGroups[$filterGroup] ?? [];
     }
 
     public function getAllFilterGroups()

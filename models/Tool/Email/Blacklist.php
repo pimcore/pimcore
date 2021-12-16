@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Email;
@@ -20,26 +18,28 @@ namespace Pimcore\Model\Tool\Email;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao delete()
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao save()
+ * @method void delete()
+ * @method void save()
  */
 class Blacklist extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
-    public $address;
+    protected $address;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param string $addr
@@ -53,7 +53,7 @@ class Blacklist extends Model\AbstractModel
             $address->getDao()->getByAddress($addr);
 
             return $address;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -67,7 +67,7 @@ class Blacklist extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAddress()
     {

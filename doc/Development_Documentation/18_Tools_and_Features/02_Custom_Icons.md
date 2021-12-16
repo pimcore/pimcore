@@ -3,10 +3,6 @@
 Pimcore allows to dynamically define custom element icons & tooltips in the element tree. In addition, the icon of the editor tab can
 be changed.
 
-> Support for the event-based approach for Documents, Assets and Data Objects is available since release 6.4.1
-> If you you are looking for the (deprecated) pre 6.4.1 way (supporting Data Objects only) read these
-> [instructions](https://pimcore.com/docs/6.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
-
 #### Properties that can be changed
 * Element CSS class
 * Element icon
@@ -17,14 +13,14 @@ be changed.
  
 The basic idea is to provide one's own implementation of `Pimcore\Model\Element\AdminStyle`.
  
-This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L396-L407) event. 
+This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php#L396-L407) event. 
 
 Example:
 
-In `app/config/services.yaml` add
+In `config/services.yaml` add
 
 ```yaml
-  AppBundle\EventListener\AdminStyleListener:
+  App\EventListener\AdminStyleListener:
     tags:
       - { name: kernel.event_listener, event: pimcore.admin.resolve.elementAdminStyle, method: onResolveElementAdminStyle }
 ```
@@ -34,7 +30,7 @@ Create AdminStyleListener in EventListeners
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class AdminStyleListener
 {
@@ -42,8 +38,8 @@ class AdminStyleListener
     {
         $element = $event->getElement();
         // decide which default styles you want to override
-        if ($element instanceof \AppBundle\Model\Product\Car) {
-            $event->setAdminStyle(new \AppBundle\Model\Product\AdminStyle\Car($element));
+        if ($element instanceof \App\Model\Product\Car) {
+            $event->setAdminStyle(new \App\Model\Product\AdminStyle\Car($element));
         }
     }
 }
@@ -56,9 +52,9 @@ class AdminStyleListener
 This will change the `Car` icon depending on the car type:
 
 ```php
-namespace AppBundle\Model\Product\AdminStyle;
+namespace App\Model\Product\AdminStyle;
 
-use AppBundle\Website\Tool\ForceInheritance;
+use App\Website\Tool\ForceInheritance;
 use Pimcore\Model\Element\AdminStyle;
 
 class Car extends AdminStyle
@@ -72,7 +68,7 @@ class Car extends AdminStyle
 
         $this->element = $element;
 
-        if ($element instanceof \AppBundle\Model\Product\Car) {
+        if ($element instanceof \App\Model\Product\Car) {
             ForceInheritance::run(function () use ($element) {
                 if ($element->getObjectType() == 'actual-car') {
                     $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f697.svg';
@@ -96,11 +92,11 @@ The example outlines how to provide a custom tooltip for `Car` objects.
 
 ```php
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getElementQtipConfig()
     {
-        if ($this->element instanceof \AppBundle\Model\Product\Car) {
+        if ($this->element instanceof \App\Model\Product\Car) {
             $element = $this->element;
 
             return ForceInheritance::run(function () use ($element) {
@@ -135,7 +131,7 @@ This will display the modification date and image size as additional information
 a different icon for all assets starting with a capital 'C' in their key. 
 
 ```php
-namespace AppBundle\Model\Product\AdminStyle;
+namespace App\Model\Product\AdminStyle;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\AdminStyle;

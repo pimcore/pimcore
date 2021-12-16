@@ -4,12 +4,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.element.properties");
@@ -117,7 +117,7 @@ pimcore.element.properties = Class.create({
                             inheritable: property.inheritable,
                             all: property,
                             config: property.config,
-                            description: property["description"]
+                            description: property.description
                         });
                     }
                 }
@@ -260,7 +260,7 @@ pimcore.element.properties = Class.create({
                         sortable: true
                     },
                     {
-                        text: t("name"),
+                        text: t("key"),
                         dataIndex: 'name',
                         getEditor: function() {
                             return new Ext.form.TextField({
@@ -268,6 +268,7 @@ pimcore.element.properties = Class.create({
                             });
                         },
                         sortable: true,
+                        renderer: Ext.util.Format.htmlEncode,
                         width: 230
                     },
                     {
@@ -275,17 +276,16 @@ pimcore.element.properties = Class.create({
                         dataIndex: 'description',
                         editable: false,
                         sortable: true,
+                        renderer: Ext.util.Format.htmlEncode,
                         width: 230
                     },
                     {
-                        //id: "property_value_col",
                         text: t("value"),
                         dataIndex: 'data',
                         flex: 1,
                         getEditor: this.getCellEditor.bind(this),
                         editable: true,
-                        renderer: this.getCellRenderer.bind(this)
-                        ,
+                        renderer: this.getCellRenderer.bind(this),
                         listeners: {
                             "mousedown": this.cellMousedown.bind(this)
                         }
@@ -430,6 +430,8 @@ pimcore.element.properties = Class.create({
             } else {
                 return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
+        } else if (type == 'text') {
+            return Ext.util.Format.htmlEncode(value);
         }
 
         return value;

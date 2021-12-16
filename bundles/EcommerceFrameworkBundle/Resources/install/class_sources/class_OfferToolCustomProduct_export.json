@@ -1,24 +1,23 @@
 {
     "description": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OfferTool\\AbstractOfferToolProduct",
-    "listingParentClass": null,
-    "useTraits": null,
-    "listingUseTraits": null,
+    "implementsInterfaces": "",
+    "listingParentClass": "",
+    "useTraits": "",
+    "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": false,
+    "allowVariants": null,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
-        "icon": null,
         "name": "pimcore_root",
         "type": null,
         "region": null,
         "title": null,
-        "width": null,
-        "height": null,
+        "width": 0,
+        "height": 0,
         "collapsible": false,
         "collapsed": false,
         "bodyStyle": null,
@@ -27,10 +26,8 @@
         "childs": [
             {
                 "fieldtype": "panel",
-                "labelWidth": 100,
                 "layout": null,
                 "border": false,
-                "icon": null,
                 "name": "Layout",
                 "type": null,
                 "region": null,
@@ -66,10 +63,10 @@
                     {
                         "fieldtype": "input",
                         "width": 400,
+                        "defaultValue": null,
                         "queryColumnType": "varchar",
                         "columnType": "varchar",
                         "columnLength": 255,
-                        "phpdocType": "string",
                         "regex": "",
                         "unique": null,
                         "showCharCount": null,
@@ -86,15 +83,16 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     },
                     {
                         "fieldtype": "input",
                         "width": 400,
+                        "defaultValue": null,
                         "queryColumnType": "varchar",
                         "columnType": "varchar",
                         "columnLength": 255,
-                        "phpdocType": "string",
                         "regex": "",
                         "unique": null,
                         "showCharCount": null,
@@ -111,7 +109,8 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     },
                     {
                         "fieldtype": "select",
@@ -132,7 +131,6 @@
                         "queryColumnType": "varchar",
                         "columnType": "varchar",
                         "columnLength": 190,
-                        "phpdocType": "string",
                         "dynamicOptions": false,
                         "name": "productGroup",
                         "title": "Product Group",
@@ -147,7 +145,8 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     },
                     {
                         "fieldtype": "numeric",
@@ -155,7 +154,6 @@
                         "defaultValue": null,
                         "queryColumnType": "double",
                         "columnType": "double",
-                        "phpdocType": "float",
                         "integer": false,
                         "unsigned": false,
                         "minValue": null,
@@ -176,18 +174,29 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     }
                 ],
-                "locked": false
+                "locked": false,
+                "icon": null,
+                "labelWidth": 100,
+                "labelAlign": "left"
             }
         ],
-        "locked": false
+        "locked": false,
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
-    "icon": null,
-    "previewUrl": null,
+    "icon": "",
+    "previewUrl": "",
     "group": "E-Commerce",
-    "linkGeneratorReference": null,
+    "showAppLoggerTab": false,
+    "linkGeneratorReference": "",
+    "compositeIndices": [],
+    "generateTypeDeclarations": true,
+    "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {
             "id": true,
@@ -205,5 +214,6 @@
             "modificationDate": true,
             "creationDate": true
         }
-    }
+    },
+    "enableGridLocking": false
 }

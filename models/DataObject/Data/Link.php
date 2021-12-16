@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -43,7 +41,7 @@ class Link implements OwnerAwareFieldInterface
     protected $internalType;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $internal;
 
@@ -53,7 +51,7 @@ class Link implements OwnerAwareFieldInterface
     protected $direct;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $linktype;
 
@@ -124,7 +122,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getInternalType()
     {
@@ -132,7 +130,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $internalType
+     * @param string|null $internalType
      *
      * @return $this
      */
@@ -145,7 +143,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getInternal()
     {
@@ -153,7 +151,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $internal
+     * @param int|null $internal
      *
      * @return $this
      */
@@ -187,7 +185,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLinktype()
     {
@@ -195,7 +193,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $linktype
+     * @param string|null $linktype
      *
      * @return $this
      */
@@ -438,8 +436,8 @@ class Link implements OwnerAwareFieldInterface
     {
         $path = '';
         if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset || $this->getObject() instanceof Concrete) {
-                $path = $this->getObject()->getFullPath();
+            if ($this->getElement() instanceof ElementInterface) {
+                $path = $this->getElement()->getFullPath();
             }
         } else {
             $path = $this->getDirect();
@@ -457,11 +455,11 @@ class Link implements OwnerAwareFieldInterface
     {
         $path = '';
         if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                $path = $this->getObject()->getFullPath();
-            } elseif ($this->getObject() instanceof Concrete) {
-                if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
-                    $path = $linkGenerator->generate($this->getObject(), [
+            if ($this->getElement() instanceof Document || $this->getElement() instanceof Asset) {
+                $path = $this->getElement()->getFullPath();
+            } elseif ($this->getElement() instanceof Concrete) {
+                if ($linkGenerator = $this->getElement()->getClass()->getLinkGenerator()) {
+                    $path = $linkGenerator->generate($this->getElement(), [
                         'context' => $this,
                     ]);
                 }
@@ -483,7 +481,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @return Document|Asset|DataObject|null
      */
-    public function getObject()
+    public function getElement()
     {
         $element = null;
 
@@ -501,9 +499,9 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @param ElementInterface $object
      *
-     * @return $this
+     * @return self
      */
-    public function setObject($object)
+    public function setElement($object)
     {
         if ($object instanceof ElementInterface) {
             $this->internal = $object->getId();
@@ -513,6 +511,26 @@ class Link implements OwnerAwareFieldInterface
         $this->markMeDirty();
 
         return $this;
+    }
+
+    /**
+     * @deprecated use getElement() instead - will be removed in Pimcore 11
+     *
+     * @return Asset|DataObject|Document|null
+     */
+    public function getObject()
+    {
+        return $this->getElement();
+    }
+
+    /**
+     * @deprecated use setElement() instead - will be removed in Pimcore 11
+     *
+     * @param ElementInterface $object
+     */
+    public function setObject($object)
+    {
+        return $this->setElement($object);
     }
 
     /**

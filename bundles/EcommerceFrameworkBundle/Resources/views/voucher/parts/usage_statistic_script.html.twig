@@ -24,28 +24,6 @@
             ]
         };
 
-        var pieData = [
-            {
-                value: {{ statistics['usageCount'] }},
-                color: "{{ colors['used'] }}",
-                highlight: "#FE6B4F",
-                label: "Used"
-            },
-            {
-                value: {{ statistics['freeCount'] }},
-                color: "{{ colors['free'] }}",
-                highlight: "#5AD2D2",
-                label: "Free"
-            },
-            {
-                value: {{ statistics['reservedCount'] }},
-                color: "{{ colors['reserved'] }}",
-                highlight: "#FEC770",
-                label: "Reserved"
-            }
-        ];
-
-
         /**
          * Init Statistics canvas on tab click.
          */
@@ -54,14 +32,32 @@
 
                 var usage = document.getElementById("canvas-usage").getContext("2d");
 
-                var usageChart = new Chart(usage).Line(lineChartData, {
-                    responsive: true,
-                    showTooltips: false
+                var usageChart = new Chart(usage, {
+                    type: 'line',
+                    data: lineChartData,
+                    options: {
+                        responsive: true,
+                        showTooltips: false
+                    }
                 });
 
                 var tokens = document.getElementById("canvas-token").getContext("2d");
-                var tokenChart = new Chart(tokens).Pie(pieData, {
-                    responsive: true
+                var tokenChart = new Chart(tokens, {
+                    type: 'pie',
+                    data: {
+                        labels: ['{{ 'Used'|trans }}', '{{ 'Free'|trans }}', '{{ 'Reserved'|trans }}'],
+                        datasets: [{
+                            data: [{{ statistics['usageCount'] }}, {{ statistics['freeCount'] }}, {{ statistics['reservedCount'] }}],
+                            backgroundColor: [
+                                "{{ colors['used'] }}",
+                                "{{ colors['free'] }}",
+                                "{{ colors['reserved'] }}"
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
                 });
             }, 50);
         }

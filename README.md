@@ -1,18 +1,17 @@
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   
-Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & eCommerce
+Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Build Status](https://travis-ci.com/pimcore/pimcore.svg)](https://travis-ci.com/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
+* 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
-* 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
-* 👍 Like us on [Facebook](https://www.facebook.com/pimcore)
-* 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
+* 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
+* 👍 Like us on [Facebook](https://www.facebook.com/pimcore), follow us on [LinkedIn](https://www.linkedin.com/company/3505853/) and [Twitter](https://twitter.com/pimcore)
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
 * 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions
 * 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter
@@ -24,6 +23,19 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 **Security vulnerabilities:** please use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
+
+## Supported Versions
+
+| Version  | Supported | LTS** | CE End of life*** |
+| -------- |    :---:  | :---: |   :---:          |
+| `<= 4.x` |    ❌     |  ❌  | `2017-09-28`     |
+| `5.x`    |    ❌     |  ✅  | `2019-12-09`     |
+| `6.x`    |    ❌     |  ✅  | `2021-06-23`     |
+| `10.x`   |    ✅     |  ☑   |                  |
+
+** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
+*** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
+
 
 ## Overview
 ![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
@@ -51,18 +63,19 @@ We love good looking user interfaces, designed to be efficient for the daily use
 experience for editors. 
 
 ## Preview and Demo
-### Documents
-![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
-The CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Physical HTML/CSS pages which are displayed in the browser. Documents can be filled with various content areas, which consist of predefined layout elements. Pimcore documents provide multi-lingual capabilities and powerful features for managing multiple websites at once. Full frontend flexibility enables a complete blend of content and commerce.
-### Digital Assets
-![Pimcore Admin Interface Screenshot DAM](./doc/Development_Documentation/img/pimcore-screenshot-2.png)
-Images, videos, PDF, Word/Excel documents and other files can be managed and organized into folders. Pimcore renders preview images for more than 200 file types. An integrated image editor is included. Facial recognition for focal points in images and support for VR/360° previews is integrated. Editors maintain images only once at the highest resolution in the system. The output formats for channels such as online shop, app, website, etc. are automatically created.
 ### Data Objects
 ![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
-Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
+Manage any structured data based on a predefined data model, either manually or automatically via the APIs. Define the structure and attributes of your objects by using the class editor. Manage any data – products (PIM/MDM), categories, customers (CDP), orders (digital commerce), blog articles (DXP/CMS). Data Objects provide the possibility to manage structured data for multiple output channels from a single source. By centralizing data in one place, Pimcore's data objects enable you to achieve better data completeness and data quality, allowing you to create and maintain a consistent, up-to-date customer experience across multiple touchpoints in less time.
+### Digital Assets
+![Pimcore Admin Interface Screenshot DAM](./doc/Development_Documentation/img/pimcore-screenshot-2.png)
+Assets are the DAM part of Pimcore. Store, manage and organize digital files such as images, videos, PDFs, Word/Excel documents in a folder structure. Preview 200+ file types directly in Pimcore, edit pictures, and enrich files with additional meta-data. Facial recognition for focal points in images and support for VR/360° previews is available. Editors only need to maintain one high-resolution version of a file in the system. Pimcore can automatically generate all required output formats for various channels such as commerce, apps, websites. Of course, including comprehensive user management and version control.
+### Documents
+![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multi-lingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
 
-#### Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+#### Demo (Community Edition)
+_Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://10.x-dev.pimcore.fun/admin/](https://10.x-dev.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

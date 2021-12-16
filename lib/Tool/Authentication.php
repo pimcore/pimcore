@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -38,6 +39,7 @@ class Authentication
         if (self::isValidUser($user)) {
             if (self::verifyPassword($user, $password)) {
                 $user->setLastLoginDate(); //set user current login date
+
                 return $user;
             }
         }
@@ -46,8 +48,6 @@ class Authentication
     }
 
     /**
-     * @static
-     *
      * @param Request $request
      *
      * @return User|null
@@ -83,15 +83,12 @@ class Authentication
     }
 
     /**
-     * @static
-     *
      * @throws \Exception
      *
      * @return User
      */
     public static function authenticateHttpBasic()
     {
-
         // we're using Sabre\HTTP for basic auth
         $request = \Sabre\HTTP\Sapi::getRequest();
         $response = new \Sabre\HTTP\Response();
@@ -123,6 +120,7 @@ class Authentication
     {
         $username = null;
         $timestamp = null;
+
         try {
             $decrypted = self::tokenDecrypt($token);
             list($timestamp, $username) = $decrypted;
@@ -132,14 +130,14 @@ class Authentication
 
         $user = User::getByName($username);
         if (self::isValidUser($user)) {
-            if ($adminRequired and !$user->isAdmin()) {
+            if ($adminRequired && !$user->isAdmin()) {
                 return null;
             }
 
             $timeZone = date_default_timezone_get();
             date_default_timezone_set('UTC');
 
-            if ($timestamp > time() or $timestamp < (time() - (60 * 60 * 24))) {
+            if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
                 return null;
             }
             date_default_timezone_set($timeZone);
@@ -189,6 +187,8 @@ class Authentication
     }
 
     /**
+     * @internal
+     *
      * @param string $username
      * @param string $plainTextPassword
      *
@@ -212,7 +212,7 @@ class Authentication
      *
      * @return string
      */
-    public static function preparePlainTextPassword($username, $plainTextPassword)
+    private static function preparePlainTextPassword($username, $plainTextPassword)
     {
         // plaintext password is prepared as digest A1 hash, this is to be backward compatible because this was
         // the former hashing algorithm in pimcore (< version 2.1.1)
@@ -220,6 +220,8 @@ class Authentication
     }
 
     /**
+     * @internal
+     *
      * @param string $username
      *
      * @return string
@@ -239,7 +241,7 @@ class Authentication
      *
      * @return array
      */
-    public static function tokenDecrypt($token)
+    private static function tokenDecrypt($token)
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);

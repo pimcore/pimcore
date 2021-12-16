@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 .pimcore_icon_overlay_add, .pimcore_icon_overlay_delete, .pimcore_icon_overlay_edit, .pimcore_icon_overlay_go,
@@ -315,16 +315,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/settings.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_matomo {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
-.pimcore_icon_matomo {
-    background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
 .pimcore_nav_icon_doctypes {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/file-types.svg) center center no-repeat !important;
 }
@@ -402,7 +392,7 @@
 }
 
 .pimcore_nav_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_clear_cache {
@@ -479,6 +469,10 @@
 
 .pimcore_icon_page {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/page.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_page_static {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/static_page.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_folder, .pimcore_icon_load_import_config {
@@ -618,7 +612,7 @@
 .pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
 .pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,.pimcore_icon_cr2,
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
-.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
+.pimcore_icon_heic,.pimcore_icon_heif, .pimcore_icon_ico, .pimcore_icon_tiff, .pimcore_icon_avif, .pimcore_icon_apng {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
 }
 
@@ -632,7 +626,7 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_pdf {
+.pimcore_icon_pdf, .pimcore_icon_ps {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
 
@@ -648,11 +642,19 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video, .pimcore_icon_vob {
+.pimcore_icon_json {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/file-types.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv,
+.pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video,
+.pimcore_icon_vob, .pimcore_icon_mkv, .pimcore_icon_ogv, .pimcore_icon_qt, .pimcore_icon_m4v, .pimcore_icon_m4p,
+.pimcore_icon_asf, .pimcore_icon_mp2, .pimcore_icon_ts, .pimcore_icon_mpv, .pimcore_icon_mpe, .pimcore_icon_mts {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/video_file.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_mp3, .pimcore_icon_aac, .pimcore_icon_flac, .pimcore_icon_ogg, .pimcore_icon_wav, .pimcore_icon_wma, .pimcore_icon_ogg {
+.pimcore_icon_mp3, .pimcore_icon_aac, .pimcore_icon_flac, .pimcore_icon_ogg, .pimcore_icon_wav, .pimcore_icon_wma,
+.pimcore_icon_ogg {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg) center center no-repeat !important;
 }
 
@@ -802,7 +804,7 @@
 
 
 .pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_redirects {
@@ -1040,10 +1042,6 @@
 
 .pimcore_icon_mysql {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/mysql.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_news {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/news.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_videothumbnails {
@@ -1432,8 +1430,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/neutral_trading.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_reverseManyToManyObjectRelation {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_many_to_many_object_relation.svg) center center no-repeat !important;
+.pimcore_icon_reverseObjectRelation {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_object_relation.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_manyToManyObjectRelation {
@@ -1585,19 +1583,6 @@
 
 .pimcore_icon_expand_children {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_piwik {
-    background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
-.pimcore_icon_piwik_api_create {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_piwik_api_update {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_operator_ignore {
@@ -1840,6 +1825,10 @@
 
 .pimcore_material_icon_dependencies {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-turned_in_not-24px.svg) center center no-repeat;
+}
+
+.pimcore_material_icon_reports {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat;
 }
 
 .pimcore_material_icon_notes {

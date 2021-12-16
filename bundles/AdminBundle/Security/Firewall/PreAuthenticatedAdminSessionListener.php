@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Firewall;
@@ -71,7 +71,7 @@ class PreAuthenticatedAdminSessionListener
             $user = new User($pimcoreUser);
 
             $token = new PreAuthenticatedAdminToken($user, '', $this->providerKey);
-            $token->setUser($user->getUsername());
+            $token->setUser($user->getUserIdentifier());
 
             try {
                 $authenticatedToken = $this->authenticationManager->authenticate($token);
@@ -79,7 +79,7 @@ class PreAuthenticatedAdminSessionListener
             } catch (AuthenticationException $e) {
                 // clear token on auth failure
                 $storedToken = $this->tokenStorage->getToken();
-                if ($storedToken instanceof PreAuthenticatedAdminToken && $storedToken->getProviderKey() === $this->providerKey) {
+                if ($storedToken instanceof PreAuthenticatedAdminToken && $storedToken->getFirewallName() === $this->providerKey) {
                     $this->tokenStorage->setToken(null);
                 }
             }

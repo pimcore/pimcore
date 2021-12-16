@@ -2,13 +2,13 @@
 
 ## Introduction
 
-In general the templates are located in: `/app/Resources/views/[controller]/[action].html.twig` 
+In general the templates are located in: `templates/[controller]/[action].html.twig` 
 but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#use-the-default-directory-structure) also work (both controller as well as action without their suffix).  
 
 Pimcore uses the Twig templating engine, you can use Twig exactly as documented in:
 
-* [Twig Documentation](https://twig.symfony.com/doc/2.x/)
-* [Symfony Templating Documentation](https://symfony.com/doc/3.4/templating.html)
+* [Twig Documentation](https://twig.symfony.com/doc/3.x/)
+* [Symfony Templating Documentation](https://symfony.com/doc/5.2/templating.html)
 * Check also our [Demo](https://github.com/pimcore/demo) as starting point
 
 Just use annotations or render the view directly to use Twig:
@@ -16,7 +16,7 @@ Just use annotations or render the view directly to use Twig:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -48,7 +48,7 @@ template will be used for auto-rendering when the controller does not return a r
 To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
 as first reference how to use Pimcore with Twig. 
 
-You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Twig)
+You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Twig)
 for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
 
 ### Pimcore Editables
@@ -100,16 +100,13 @@ or
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
 
-See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/master/lib/Twig/Extension/PimcoreObjectExtension.php)
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/10.x/lib/Twig/Extension/PimcoreObjectExtension.php)
 for details.
 
 
 #### Subrequests
 
 ```twig
-{# render an action #}
-{{ pimcore_action('sidebarBox', 'Blog', null, { items: count }) }}
-
 {# include another document #}
 {{ pimcore_inc('/snippets/foo') }}
 ```

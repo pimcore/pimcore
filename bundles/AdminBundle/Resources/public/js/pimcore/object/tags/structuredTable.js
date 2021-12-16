@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.structuredTable");
@@ -105,9 +105,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     },
 
     getLayoutEdit: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -177,7 +176,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             border: true,
             style: "margin-bottom: 10px",
             columns: columns,
-            componentCls: 'object_field object_field_type_' + this.type,
+            componentCls: this.getWrapperClassNames(),
             bodyCls: "pimcore_editable_grid",
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
@@ -218,8 +217,6 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             autoHeight = true;
         }
 
-        var cls = 'object_field object_field_type_' + this.type;
-
         var columns = [
             {text: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,
                 renderer: function(value, metaData) {
@@ -250,7 +247,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns: columns,
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             border: true,
             style: "margin-bottom: 10px",
             width: this.fieldConfig.width,

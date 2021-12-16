@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Controller\ArgumentValueResolver;
@@ -19,7 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class EditmodeValueResolver implements ArgumentValueResolverInterface
+/**
+ * @internal
+ */
+final class EditmodeValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var EditmodeResolver
@@ -31,12 +35,24 @@ class EditmodeValueResolver implements ArgumentValueResolverInterface
         $this->editmodeResolver = $editmodeResolver;
     }
 
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return bool
+     */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $argument->getType() === 'bool' && $argument->getName() === 'editmode';
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return iterable
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->editmodeResolver->isEditmode($request);
     }

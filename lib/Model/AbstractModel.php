@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -28,6 +29,7 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
+
     /**
      * @var \Pimcore\Model\Dao\AbstractDao|null
      */
@@ -56,7 +58,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param \Pimcore\Model\Dao\AbstractDao $dao
+     * @param \Pimcore\Model\Dao\AbstractDao|null $dao
      *
      * @return self
      */
@@ -93,9 +95,9 @@ abstract class AbstractModel implements ModelInterface
             } else {
                 $dao = self::locateDaoClass($myClass);
             }
-        } elseif ($key) {
+        } else {
             $delimiter = '_'; // old prefixed class style
-            if (strpos($key, '\\') !== false) {
+            if (str_contains($key, '\\') !== false) {
                 $delimiter = '\\'; // that's the new with namespaces
             }
 
@@ -104,6 +106,7 @@ abstract class AbstractModel implements ModelInterface
 
         if (!$dao) {
             Logger::critical('No dao implementation found for: ' . $myClass);
+
             throw new \Exception('No dao implementation found for: ' . $myClass);
         }
 
@@ -152,6 +155,7 @@ abstract class AbstractModel implements ModelInterface
                 foreach ($classNames as $tmpClassName) {
                     if (class_exists($tmpClassName) && !in_array($tmpClassName, $forbiddenClassNames)) {
                         $daoClass = $tmpClassName;
+
                         break;
                     }
                 }
@@ -244,10 +248,12 @@ abstract class AbstractModel implements ModelInterface
                 return $r;
             } catch (\Exception $e) {
                 Logger::emergency($e);
+
                 throw $e;
             }
         } else {
             Logger::error('Class: ' . get_class($this) . ' => call to undefined method ' . $method);
+
             throw new \Exception('Call to undefined method ' . $method . ' in class ' . get_class($this));
         }
     }
@@ -274,5 +280,19 @@ abstract class AbstractModel implements ModelInterface
     protected static function getModelFactory()
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $data
+     *
+     * @throws \Exception
+     */
+    protected static function checkCreateData(array $data)
+    {
+        if (isset($data['id'])) {
+            throw new \Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));
+        }
     }
 }

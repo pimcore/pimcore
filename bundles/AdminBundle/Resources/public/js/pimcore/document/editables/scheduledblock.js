@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.scheduledblock");
@@ -68,13 +68,13 @@ pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editab
         this.dateField = new Ext.form.DateField({
             cls: "pimcore_block_field_date",
             value: initialDate,
-            region: 'west',
-            listeners: {
-                'change': function() {
-                    this.loadTimestampsForDate();
-                }.bind(this)
-            }
+            region: 'west'
         });
+          
+        this.dateField.on('select', function() {
+            this.loadTimestampsForDate();
+        }.bind(this));
+      
         controlItems.push(this.dateField);
 
         this.slider = Ext.create('Ext.pimcore.slider.Milestone', {
@@ -136,7 +136,7 @@ pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editab
             handler: function(element, timestamp) {
                 Ext.MessageBox.confirm("", t("scheduled_block_really_delete_all"), function (buttonValue) {
                     if (buttonValue == "yes") {
-                        this.cleanupTimestamps(false);
+                        this.cleanupTimestamps(true);
                     }
                 }.bind(this));
             }.bind(this)

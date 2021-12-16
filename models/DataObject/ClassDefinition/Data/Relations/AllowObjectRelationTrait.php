@@ -1,14 +1,32 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 trait AllowObjectRelationTrait
 {
     /**
      * Checks if an object is an allowed relation
+     *
+     * @internal
      *
      * @param DataObject\AbstractObject $object
      *
@@ -46,12 +64,7 @@ trait AllowObjectRelationTrait
             //don't check if no allowed classes set
         }
 
-        if ($object instanceof DataObject\AbstractObject) {
-            Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
-        } else {
-            Logger::debug('checked object relation to target in field [' . $this->getName() . '], not allowed, target ist not an object');
-            Logger::debug($object);
-        }
+        Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
 
         return $allowed;
     }

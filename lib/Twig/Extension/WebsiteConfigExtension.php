@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -21,9 +21,12 @@ use Pimcore\Config;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class WebsiteConfigExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_website_config', [$this, 'getWebsiteConfig']),
@@ -39,7 +42,7 @@ class WebsiteConfigExtension extends AbstractExtension
      *
      * @return Config\Config|mixed
      */
-    public function getWebsiteConfig($key = null, $default = null, $language = null)
+    public function getWebsiteConfig($key = null, $default = null, $language = null): mixed
     {
         return Config::getWebsiteConfigValue($key, $default, $language);
     }

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
@@ -19,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -37,38 +39,28 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @param string $code
      *
-     * @return bool
+     * @throws NotFoundException
      */
     public function getByCode($code)
     {
-        try {
-            $result = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
-            if (empty($result)) {
-                throw new \Exception('Token ' . $code . ' not found.');
-            }
-            $this->assignVariablesToModel($result);
-            $this->model->setValue('id', $result['id']);
-
-            return true;
-        } catch (\Exception $e) {
-            //            \Pimcore\Log\Simple::log('VoucherService',$e);
-            return false;
+        $result = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
+        if (empty($result)) {
+            throw new NotFoundException('Token ' . $code . ' not found.');
         }
+        $this->assignVariablesToModel($result);
+        $this->model->setValue('id', $result['id']);
     }
 
     /**
-     * @return bool
+     * @param CartInterface|null $cart
      *
-     * @param CartInterface $cart
+     * @return bool
      */
-    public function isReserved(CartInterface $cart = null)
+    public function isReserved(CartInterface $cart = null): bool
     {
         $reservation = Reservation::get($this->model->getToken(), $cart);
-        if (!$reservation->exists()) {
-            return false;
-        }
 
-        return true;
+        return $reservation !== null;
     }
 
     public function getTokenUsages($code)

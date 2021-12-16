@@ -1,38 +1,49 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ExtJSFilterParser
+ * @internal
  */
 class NotificationServiceFilterParser
 {
     const KEY_FILTER = 'filter';
+
     const KEY_TYPE = 'type';
+
     const KEY_PROPERTY = 'property';
+
     const KEY_OPERATOR = 'operator';
+
     const KEY_VALUE = 'value';
+
     const TYPE_STRING = 'string';
+
     const TYPE_DATE = 'date';
+
     const OPERATOR_LIKE = 'like';
+
     const OPERATOR_EQ = 'eq';
+
     const OPERATOR_GT = 'gt';
+
     const OPERATOR_LT = 'lt';
 
     /**
@@ -75,10 +86,12 @@ class NotificationServiceFilterParser
                 case self::TYPE_STRING:
                     list($key, $value) = $this->parseString($item);
                     $result[$key] = $value;
+
                     break;
                 case self::TYPE_DATE:
                     list($key, $value) = $this->parseDate($item);
                     $result[$key] = $value;
+
                     break;
             }
         }
@@ -102,6 +115,7 @@ class NotificationServiceFilterParser
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
                 $result = ["{$property} LIKE ?", ["%{$value}%"]];
+
                 break;
         }
 
@@ -128,12 +142,15 @@ class NotificationServiceFilterParser
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:
                 $result = ["{$property} BETWEEN ? AND ?", [$value, $value + (86400 - 1)]];
+
                 break;
             case self::OPERATOR_GT:
                 $result = ["{$property} > ?", [$value]];
+
                 break;
             case self::OPERATOR_LT:
                 $result = ["{$property} < ?", [$value]];
+
                 break;
         }
 

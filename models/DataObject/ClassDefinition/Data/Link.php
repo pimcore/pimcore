@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -21,16 +20,20 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\Traits\ObjectVarTrait;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
@@ -39,12 +42,16 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * Type for the column to query
      *
+     * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
      * Type for the column
+     *
+     * @internal
      *
      * @var string
      */
@@ -53,7 +60,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Link $data
+     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -76,7 +83,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data->setInternalType(null);
                 $data->setInternal(null);
@@ -111,7 +118,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             try {
-                $this->checkValidity($link, true);
+                $this->checkValidity($link, true, $params);
             } catch (\Exception $e) {
                 $link->setInternalType(null);
                 $link->setInternal(null);
@@ -138,7 +145,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -149,13 +156,14 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if (!$data instanceof DataObject\Data\Link) {
             return null;
         }
-        $data->path = $data->getPath();
+        $dataArray = $data->getObjectVars();
+        $dataArray['path'] = $data->getPath();
 
-        return $data->getObjectVars();
+        return $dataArray;
     }
 
     /**
-     * @param string $data
+     * @param DataObject\Data\Link|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -169,7 +177,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -188,11 +196,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -213,29 +221,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /** @inheritDoc */
-    public function unmarshal($data, $object = null, $params = [])
-    {
-        if ($data instanceof DataObject\Data\Link) {
-            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
-            if (!$target) {
-                $data->setInternal(0);
-                $data->setInternalType(null);
-            }
-        }
-
-        return parent::unmarshal($data, $object, $params);
-    }
-
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data) {
             if ($data instanceof DataObject\Data\Link) {
@@ -265,7 +254,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $dependencies = [];
 
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -292,18 +281,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
+        if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -325,14 +307,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -345,29 +320,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\Link|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\Link) {
-            return $value;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -379,11 +332,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -413,30 +363,16 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return Element\ElementInterface
+     * { @inheritdoc }
      */
-    public function rewriteIds($object, $idMapping, $params = [])
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\Link && $data->getLinktype() == 'internal') {
             $id = $data->getInternal();
             $type = $data->getInternalType();
 
-            if (array_key_exists($type, $idMapping) and array_key_exists($id, $idMapping[$type])) {
+            if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                 $data->setInternal($idMapping[$type][$id]);
             }
         }
@@ -476,23 +412,64 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Link) {
+            return $value->getObjectVars();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $link = new DataObject\Data\Link();
+            $link->setValues($value);
+
+            return $link;
+        } elseif ($value instanceof DataObject\Data\Link) {
+            return $value;
+        }
+
+        return null;
     }
 }

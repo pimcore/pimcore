@@ -1,21 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Glossary
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
+
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Glossary\Dao getDao()
@@ -25,54 +25,74 @@ namespace Pimcore\Model;
 class Glossary extends AbstractModel
 {
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
-    public $text;
+    protected $text;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
-    public $link;
+    protected $link;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
-    public $abbr;
+    protected $abbr;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
-    public $language;
+    protected $language;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $casesensitive;
+    protected $casesensitive = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $exactmatch;
+    protected $exactmatch = false;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $site;
+    protected $site;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -87,7 +107,7 @@ class Glossary extends AbstractModel
             $glossary->getDao()->getById();
 
             return $glossary;
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -116,7 +136,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -136,7 +156,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getText()
     {
@@ -156,7 +176,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLink()
     {
@@ -176,7 +196,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAbbr()
     {
@@ -196,7 +216,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLanguage()
     {
@@ -259,7 +279,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSite()
     {
@@ -279,7 +299,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

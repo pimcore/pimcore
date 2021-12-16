@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.layout");
@@ -92,16 +92,26 @@ pimcore.object.classes.layout.layout = Class.create({
 
         items = items.concat([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
             },
             {
                 xtype: "checkbox",
@@ -143,6 +153,7 @@ pimcore.object.classes.layout.layout = Class.create({
         this.layout = new Ext.Panel({
             title: '<b>' + this.getTypeName() + '</b>',
             bodyStyle: 'padding: 10px;',
+            autoScroll: true,
             items: [
                 {
                     xtype: "form",
@@ -181,7 +192,7 @@ pimcore.object.classes.layout.layout = Class.create({
 
         for (var i = 0; i < items.length; i++) {
             if (items[i].name == "name") {
-                this.treeNode.set('text', items[i].getValue());
+                this.treeNode.set('text', htmlspecialchars(items[i].getValue()));
                 break;
             }
         }

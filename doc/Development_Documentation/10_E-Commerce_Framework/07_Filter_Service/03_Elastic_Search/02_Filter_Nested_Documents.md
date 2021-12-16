@@ -30,7 +30,7 @@ other, i.e. if you want to store an array of additional data from field collecti
 ```
 
 To utilize the `nested` document functionality the mapping type of the field `my_attributes` must be defined as `nested`, 
-to let elastic search know about the sub-documents:
+to let elasticsearch know about the sub-documents:
 
 ```yaml
  attributes:
@@ -39,7 +39,7 @@ to let elastic search know about the sub-documents:
     options:
         mapping:
             type: 'nested'
-    interpreter_id: AppBundle\Ecommerce\IndexService\Interpreter\MyAttributes
+    interpreter_id: App\Ecommerce\IndexService\Interpreter\MyAttributes
     interpreter_options:
         locale: '%%locale%%'
 ```

@@ -6,17 +6,50 @@
 
 {# @var viewTemplate string #}
 {# @var viewParameters array #}
+{# @var editableDialog \Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration #}
 
-{% block areabrickWrapper %}
-    {% block areabrickOpenTag %}
-        {{ brick.htmlTagOpen(info) | raw }}
-    {% endblock %}
+{% if editmode and isAreaBlock %}
+    <div class="pimcore_area_entry pimcore_block_entry" {{ editmodeOuterAttributes|raw }} {{ editmodeGenericAttributes|raw }}>
+        <div class="pimcore_area_buttons" {{ editmodeGenericAttributes|raw }}>
+            <div class="pimcore_area_buttons_inner">
+                <div class="pimcore_block_plus_up" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_plus" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_minus" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_up" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_down" {{ editmodeGenericAttributes|raw }}></div>
 
-        {% block areabrickFrontend %}
-            {{ templating.render(viewTemplate, viewParameters) | raw }}
+                <div class="pimcore_block_type" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_options" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_visibility" {{ editmodeGenericAttributes|raw }}></div>
+
+                {% if editableDialog %}
+                    <div class="pimcore_block_dialog" {{ editmodeGenericAttributes|raw }} {{ editableDialogAttributes|raw }}></div>
+                {% endif %}
+
+                <div class="pimcore_block_label" {{ editmodeGenericAttributes|raw }}></div>
+                <div class="pimcore_block_clear" {{ editmodeGenericAttributes|raw }}></div>
+            </div>
+        </div>
+        {% if editableDialog %}
+            <template id="dialogBoxConfig-{{ editableDialog.id }}">{{ editableDialog|json_encode() }}</template>
+            {{ dialogHtml|raw }}
+        {% endif %}
+{% endif %}
+
+        {% block areabrickWrapper %}
+            {% block areabrickOpenTag %}
+                {{ brick.htmlTagOpen(info) | raw }}
+            {% endblock %}
+
+                {% block areabrickFrontend %}
+                    {{ templating.render(viewTemplate, viewParameters) | raw }}
+                {% endblock %}
+
+            {% block areabrickCloseTag %}
+                {{ brick.htmlTagClose(info) | raw }}
+            {% endblock %}
         {% endblock %}
 
-    {% block areabrickCloseTag %}
-        {{ brick.htmlTagClose(info) | raw }}
-    {% endblock %}
-{% endblock %}
+{% if editmode and isAreaBlock %}
+    </div>
+{% endif %}

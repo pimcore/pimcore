@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -18,13 +19,24 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * @internal
+ */
 class SearchBackendListener implements EventSubscriberInterface
 {
+    public function __construct(
+        private MessageBusInterface $messengerBusPimcoreCore
+    ) {
+    }
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -48,8 +60,10 @@ class SearchBackendListener implements EventSubscriberInterface
      */
     public function onPostAddElement(ElementEventInterface $e)
     {
-        $searchEntry = new Data($e->getElement());
-        $searchEntry->save();
+        $element = $e->getElement();
+        $this->messengerBusPimcoreCore->dispatch(
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
+        );
     }
 
     /**
@@ -58,7 +72,7 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPreDeleteElement(ElementEventInterface $e)
     {
         $searchEntry = Data::getForElement($e->getElement());
-        if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
+        if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->delete();
         }
     }
@@ -69,12 +83,8 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPostUpdateElement(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        $searchEntry = Data::getForElement($element);
-        if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
-            $searchEntry->setDataFromElement($element);
-            $searchEntry->save();
-        } else {
-            $this->onPostAddElement($e);
-        }
+        $this->messengerBusPimcoreCore->dispatch(
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
+        );
     }
 }

@@ -23,10 +23,12 @@ foreach($orderList as $order)
 }
 
 
-// ALTERNATE: use zend paginator
-$paginator = new Paginator( $orderList);
-$paginator->setItemCountPerPage( 10 );
-$paginator->setCurrentPageNumber( $request->get('page', 1) );
+// ALTERNATE: use knp paginator service: PaginatorInterface $paginator
+$paginator = $paginator->paginate(
+    $orderList,
+    $request->get('page', 1),
+    10
+);
 
 foreach($paginator as $order) {
    ...

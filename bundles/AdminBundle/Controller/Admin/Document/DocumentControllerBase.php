@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -25,17 +26,21 @@ use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
+use Pimcore\Model\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
+/**
+ * @internal
+ */
 abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
 
-    protected function preSendDataActions(&$data, Model\Document $document)
+    protected function preSendDataActions(&$data, Model\Document $document, ?Version $draftVersion = null)
     {
         $documentFromDatabase = Model\Document::getById($document->getId(), true);
 
@@ -49,6 +54,13 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         ];
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
+        if ($draftVersion && $documentFromDatabase->getModificationDate() < $draftVersion->getDate()) {
+            $data['draft'] = [
+                'id' => $draftVersion->getId(),
+                'modificationDate' => $draftVersion->getDate(),
+            ];
+        }
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -132,7 +144,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            // ensure editable are loaded
             $document->getEditables();
+        } else {
+            // ensure no editables (e.g. from session, version, ...) are still referenced
+            $document->setEditables(null);
         }
 
         if ($request->get('data')) {
@@ -260,17 +276,17 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param Model\Document\PageSnippet $document
-     * @param bool $isLatestVersion
+     * @param null|Version $draftVersion
      *
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document, &$isLatestVersion = true)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
     {
-        $latestVersion = $document->getLatestVersion();
+        $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
-                $isLatestVersion = false;
+                $draftVersion = $latestVersion;
 
                 return $latestDoc;
             }
@@ -303,8 +319,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -317,4 +332,15 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Model\Document $page
      */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
+
+    /**
+     * @param string $task
+     * @param Model\Document\Snippet $page
+     */
+    protected function handleTask($task, $page)
+    {
+        if ($task == 'publish' || $task == 'version') {
+            $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
+        }
+    }
 }

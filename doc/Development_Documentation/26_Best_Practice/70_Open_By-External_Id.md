@@ -79,7 +79,7 @@ pimcore.plugin.sample = Class.create(pimcore.plugin.admin, {
 Create a controller to find your DataObject
 
 ```php
-namespace AppBundle\Controller\Admin;
+namespace App\Controller\Admin;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;

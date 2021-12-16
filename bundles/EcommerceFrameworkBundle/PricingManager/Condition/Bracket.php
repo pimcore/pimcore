@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -21,12 +22,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class Bracket implements BracketInterface
 {
     /**
-     * @var array|ConditionInterface
+     * @var ConditionInterface[]
      */
     protected $conditions = [];
 
     /**
-     * @var array|BracketInterface::OPERATOR_*
+     * @var string[] BracketInterface::OPERATOR_*
      */
     protected $operator = [];
 
@@ -57,38 +58,46 @@ class Bracket implements BracketInterface
         }
 
         // default
-        $state = false;
+        $state = null;
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
-            /* @var ConditionInterface $condition */
+            //The first condition shouldn't have an operator.
+            //https://github.com/pimcore/pimcore/pull/7902
+            $operator = $this->operator[$num];
+            if ($num === 0) {
+                $operator = null;
+            }
 
             // test condition
             $check = $condition->check($environment);
 
             // check
-            switch ($this->operator[$num]) {
+            switch ($operator) {
                 // first condition
                 case null:
                     $state = $check;
+
                     break;
 
                 // AND
                 case BracketInterface::OPERATOR_AND:
                     if ($check === false) {
                         return false;
-                    } else {
-                        $state = true;
                     }
+                    //consider current state with check, if not default.
+                    $state = $state ?? true;
+
                     break;
 
                 // AND FALSE
                 case BracketInterface::OPERATOR_AND_NOT:
                     if ($check === true) {
                         return false;
-                    } else {
-                        $state = true;
                     }
+                    //consider current state with check, if not default.
+                    $state = $state ?? true;
+
                     break;
 
                 // OR
@@ -96,11 +105,12 @@ class Bracket implements BracketInterface
                     if ($check === true) {
                         $state = $check;
                     }
+
                     break;
             }
         }
 
-        return $state;
+        return $state ?? false;
     }
 
     /**
@@ -110,14 +120,11 @@ class Bracket implements BracketInterface
     {
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
-            if ($condition) {
-                /* @var ConditionInterface $condition */
-                $cond = [
-                    'operator' => $this->operator[$num],
-                    'condition' => json_decode($condition->toJSON()),
-                ];
-                $json['conditions'][] = $cond;
-            }
+            $cond = [
+                'operator' => $this->operator[$num],
+                'condition' => json_decode($condition->toJSON()),
+            ];
+            $json['conditions'][] = $cond;
         }
 
         return json_encode($json);

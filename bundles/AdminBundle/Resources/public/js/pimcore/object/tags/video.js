@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.video");
@@ -47,18 +47,17 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         height: 88,
                         frame: true
                     });
-                    return '<img src="' + path + '" />';
+                    return '<img src="' + path + '" loading="lazy" />';
                 }
             }.bind(this, field.key)
         };
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 
@@ -79,7 +78,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_delete",
                 handler: this.empty.bind(this)
             }],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             bodyCls: "pimcore_video_container"
         };
 
@@ -96,11 +95,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutShow: function () {
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 
@@ -181,7 +179,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     updateVideo: function () {
 
         var width = this.component.getWidth();
-        //need to geht height this way, because element has no hight at afterrender (whyever)
+        //need to geht height this way, because element has no height at afterrender (whyever)
         var height = this.fieldConfig.height - 55;
 
         var content = '';

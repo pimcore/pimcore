@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Core;
@@ -26,13 +27,17 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
  * cache calls are forwarded to a PSR-6 cache implementation though.
+ *
+ * Use Pimcore\Cache static interface, do not use this handler directly
+ *
+ * @internal
  */
 class CoreCacheHandler implements LoggerAwareInterface
 {
@@ -155,6 +160,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
+     *
      * @param TagAwareAdapterInterface $pool
      */
     public function setPool(TagAwareAdapterInterface $pool): void
@@ -163,7 +170,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * @return WriteLock
      */
     public function getWriteLock()
     {
@@ -181,7 +188,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -192,7 +199,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -288,11 +295,16 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function load($key)
     {
+        if (!$this->enabled) {
+            $this->logger->debug('Not loading object {key} from cache (deactivated)', ['key' => $key]);
+
+            return false;
+        }
+
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
             $data = $item->get();
-            $data = unserialize($data);
 
             if (is_object($data)) {
                 $data->____pimcore_cache_item__ = $key; // TODO where is this used?
@@ -390,52 +402,32 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     protected function addToSaveQueue(CacheQueueItem $item)
     {
-        $this->saveQueue[$item->getKey()] = $item;
+        $data = $this->prepareCacheData($item->getData());
+        if ($data) {
+            $this->saveQueue[$item->getKey()] = $item;
 
-        // order by priority
-        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
-            if ($a->getPriority() === $b->getPriority()) {
-                // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
-                // was already serialized
-                if (is_scalar($a->getData())) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+            if (count($this->saveQueue) > ($this->maxWriteToCacheItems*3)) {
+                $this->cleanupQueue();
             }
 
-            return $a->getPriority() < $b->getPriority() ? 1 : -1;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     */
+    public function cleanupQueue(): void
+    {
+        // order by priority
+        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
+            return $b->getPriority() <=> $a->getPriority();
         });
 
         // remove overrun
         array_splice($this->saveQueue, $this->maxWriteToCacheItems);
-
-        // check if item is still on queue and serialize the data into a CacheItem
-        if (isset($this->saveQueue[$item->getKey()])) {
-            $data = $this->prepareCacheData($item->getData());
-            if ($data) {
-                // add cache item with serialized data to queue item
-                $item->setData($data);
-
-                return true;
-            } else {
-                // cache item could not be created - remove queue item
-                unset($this->saveQueue[$item->getKey()]);
-
-                // logging is done in prepare method if item could not be created
-                return false;
-            }
-        } else {
-            $this->logger->info(
-                'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
-                [
-                    'key' => $item->getKey(),
-                    'maxItems' => $this->maxWriteToCacheItems,
-                ]
-            );
-        }
-
-        return false;
     }
 
     /**
@@ -458,18 +450,9 @@ class CoreCacheHandler implements LoggerAwareInterface
             if (!$data->getId()) {
                 return null;
             }
-
-            // Objects implementing ElementInterface are getting serialized later in storeCacheItem()
-            // where we obtain a fresh copy of the element from the database to ensure data-consistency
-            $itemData = $data;
-        } else {
-            // See #1005 - serialize the element now as we don't know what happens until it is actually persisted
-            // on shutdown and we could end up with corrupt objects in cache
-            // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
-            $itemData = serialize($data);
         }
 
-        return $itemData;
+        return $data;
     }
 
     /**
@@ -496,11 +479,6 @@ class CoreCacheHandler implements LoggerAwareInterface
                     'tags' => $tags,
                 ]
             );
-        }
-
-        // normalize tags to array
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
         }
 
         // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
@@ -537,8 +515,8 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $key
      * @param mixed $data
      * @param array $tags
-     * @param null $lifetime
-     * @param false $force
+     * @param int|\DateInterval|null $lifetime
+     * @param bool $force
      *
      * @return bool
      */
@@ -601,8 +579,6 @@ class CoreCacheHandler implements LoggerAwareInterface
             );
 
             $data = $copier->copy($data);
-
-            $data = serialize($data);
         }
 
         $item = $this->pool->getItem($key);
@@ -682,7 +658,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function clearTags(array $tags)
+    public function clearTags(array $tags): bool
     {
         $this->writeLock->lock();
 
@@ -789,6 +765,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
      *
+     * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -804,6 +782,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -817,6 +797,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -831,6 +813,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -844,6 +828,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -859,6 +845,8 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Writes save queue to the cache
+     *
+     * @internal
      *
      * @return bool
      */
@@ -877,6 +865,8 @@ class CoreCacheHandler implements LoggerAwareInterface
             return false;
         }
 
+        $this->cleanupQueue();
+
         $processedKeys = [];
         foreach ($this->saveQueue as $queueItem) {
             $key = $queueItem->getKey();
@@ -893,7 +883,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 $result = false;
             // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
             } else {
-                $result = $this->storeCacheData($queueItem->getKey(), $queueItem->getData(), $queueItem->getTags(), $queueItem->getLifetime(), $queueItem->isForce());
+                $result = $this->storeCacheData($queueItem->getKey(), $queueItem->getData(), $tags, $queueItem->getLifetime(), $queueItem->isForce());
             }
 
             $processedKeys[] = $key;
@@ -908,6 +898,8 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Shut down pimcore - write cache entries and clean up
+     *
+     * @internal
      *
      * @param bool $forceWrite
      *

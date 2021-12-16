@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
@@ -30,7 +31,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
-    public static function getSubscribedServices()
+    /**
+     * {@inheritdoc}
+     *
+     */
+    public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
         $services['translator'] = TranslatorInterface::class;
@@ -42,7 +47,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsSessionDoubleAuthenticationCheck()
     {
@@ -50,7 +55,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsStorageDoubleAuthenticationCheck()
     {
@@ -62,7 +67,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
      *
-     * @return UserProxy|User
+     * @return UserProxy|User|null
      */
     protected function getAdminUser($proxyUser = false)
     {
@@ -70,9 +75,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
         if ($proxyUser) {
             return $resolver->getUserProxy();
-        } else {
-            return $resolver->getUser();
         }
+
+        return $resolver->getUser();
     }
 
     /**
@@ -108,7 +113,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
     {
         // $headers parameter not supported by Symfony 3.4
-        return new AccessDeniedHttpException($message, $previous, $code);
+        return new AccessDeniedHttpException($message, $previous, $code, $headers);
     }
 
     /**
@@ -121,6 +126,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         foreach ($permissions as $permission) {
             if ($this->getAdminUser()->isAllowed($permission)) {
                 $allowed = true;
+
                 break;
             }
         }

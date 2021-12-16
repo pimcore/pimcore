@@ -28,7 +28,7 @@ and therefore it can be used the usual way.
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Controller\FrontendController;
@@ -55,7 +55,7 @@ class TestController extends FrontendController
 #### Dependency Injection
 
 ```yaml
-AppBundle\YourService: 
+App\YourService: 
     calls:
         - [setLogger, ['@Pimcore\Log\ApplicationLogger']]
 ```
@@ -67,13 +67,13 @@ services:
     _defaults:
         autowire: true
 
-    AppBundle\YourService: ~
+    App\YourService: ~
 ```
 
 ```php
 <?php
 
-namespace AppBundle;
+namespace App;
 
 use Pimcore\Log\ApplicationLogger;
 
@@ -110,8 +110,8 @@ monolog:
             channels: ["application_logger"]
 ``` 
 
-Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/3.4/logging/channels_handlers.html#creating-your-own-channel)
-or by using [DI tags](https://symfony.com/doc/3.4/reference/dic_tags.html#dic-tags-monolog) to select the logger for
+Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/5.2/logging/channels_handlers.html#creating-your-own-channel)
+or by using [DI tags](https://symfony.com/doc/5.2/reference/dic_tags.html#dic-tags-monolog) to select the logger for
 the channel you want to log to. When using DI tags, the channel will be created implicitly by monolog.
 
 > **IMPORTANT**: As the `ApplicationLoggerDb` handler has a dependency on the database connection it is important to exclude
@@ -140,8 +140,8 @@ monolog:
             id: Pimcore\Log\Handler\ApplicationLoggerDb
 ```
 
-Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/3.4/logging.html#handlers-that-modify-log-entries).
-See the [Symfony Logging Documentation](https://symfony.com/doc/3.4/logging.html) for details.
+Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/5.2/logging.html#handlers-that-modify-log-entries).
+See the [Symfony Logging Documentation](https://symfony.com/doc/5.2/logging.html) for details.
 
 As soon as the handler is configured, you can use it (as any other monolog logger) either by fetching a dedicated monolog
 channel logger or by using a DI tag to specify the channel you want to log to:
@@ -149,7 +149,7 @@ channel logger or by using a DI tag to specify the channel you want to log to:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 
@@ -169,7 +169,7 @@ Or use DI tags in combination with the `@logger` service to inject the channel l
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Psr\Log\LoggerInterface;
 
@@ -199,7 +199,7 @@ The service definition can add a DI tag to specify which logger should be inject
 
 ```yaml
 services:
-    AppBundle\Controller\TestController:
+    App\Controller\TestController:
         arguments:
             $logger: '@logger'
         tags:
@@ -213,7 +213,7 @@ There are some context variables with a special functionality: `fileObject`, `re
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
@@ -224,7 +224,7 @@ class TestController
     public function testAction(ApplicationLogger $logger)
     {
         $fileObject = new FileObject('some interesting data');
-        $myObject   = AbstractObject::getById(73);
+        $myObject   = DataObject::getById(73);
         
         $logger->error('my error message', [
             'fileObject'    => $fileObject,

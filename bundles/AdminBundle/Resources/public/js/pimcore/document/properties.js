@@ -3,17 +3,22 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.element.properties, {
+    showNavigationProperties: false,
 
+    initialize: function($super, element, type, showNavigationProperties) {
+        $super(element, type);
+        this.showNavigationProperties = showNavigationProperties;
+    },
 
     disallowedKeys: ["language", "navigation_exclude", "navigation_name", "navigation_title", "navigation_relation",
         "navigation_parameters", "navigation_anchor", "navigation_target", "navigation_class",
@@ -87,7 +92,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
 
             var systempropertiesItems = [this.languagesPanel];
 
-            if (this.element.type == "page" || this.element.type == "link" || this.element.type == "folder") {
+            if (this.showNavigationProperties) {
                 this.layout.setTitle(t("navigation") + ' &amp; ' + t("properties"));
                 var items = [{
                     xtype: "textfield",

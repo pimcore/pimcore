@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.objectbricks.field");
@@ -16,7 +16,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',
     disallowedDataTypes: [
-        "reverseManyToManyObjectRelation",
+        "reverseObjectRelation",
         "user",
         "fieldcollections",
         "localizedfields",
@@ -50,6 +50,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.rootPanel = new Ext.form.FormPanel({
             title: '<b>' + t("general_settings") + '</b>',
             bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+            autoScroll: true,
             defaults: {
                 labelWidth: 200
             },
@@ -178,10 +179,16 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         var objectTypeStore = pimcore.globalmanager.get("object_types_store");
         objectTypeStore.load();
 
+        // Refresh otherwise sort will be wrong
+        this.availableClasses = {};
+        this.baseStore = {};
+
         objectTypeStore.each(function (rec) {
-            var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
-            this.availableClasses[rec.get("text")] = data;
-            this.baseStore[rec.get("text")] = data;
+            if (rec.data.hasBrickField) {
+                var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
+                this.availableClasses[rec.get("text")] = data;
+                this.baseStore[rec.get("text")] = data;
+            }
         }.bind(this));
     },
 

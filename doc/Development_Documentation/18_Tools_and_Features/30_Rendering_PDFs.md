@@ -53,7 +53,7 @@ class BlogController extends FrontendController
             //add custom settings if necessary
             if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
                 $params['adapterConfig'] = '-O landscape';
-            } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+            } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
                 //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
                 $params['adapterConfig'] = [
                     'author' => 'Max Mustermann',

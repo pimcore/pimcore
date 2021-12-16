@@ -1,9 +1,9 @@
-# Filter Service with Elastic Search
+# Filter Service with Elasticsearch
 
 ## Definition of Filter Types
 
-When using Elastic Search as Product Index, different FilterTypes must be configured for the corresponding tenant. 
-These filter types create the elastic search specific conditions for each filter.
+When using elasticsearch as Product Index, different FilterTypes must be configured for the corresponding tenant. 
+These filter types create the elasticsearch specific conditions for each filter.
 
 Here is an example for the configuration: 
 ```yml
@@ -53,11 +53,11 @@ pimcore_ecommerce_framework:
 
 ## Filtering for Classification Store Attributes
 
-With the document structure of Elastic Search it is easily possible to index and filter for classification store attributes
+With the document structure of elasticsearch it is easily possible to index and filter for classification store attributes
 without defining them all als separate attributes in the index definition. 
 See [Filter Classification Store](01_Filter_Classification_Store.md) for details.  
 
 
 ## Filtering for Nested Documents in General
-For information how to take leverage of the nested documents feature for elastic search and make even more sophisticated
+For information how to take leverage of the nested documents feature for elasticsearch and make even more sophisticated
 search queries, have a look at [Filter Nested Documents](02_Filter_Nested_Documents.md). 

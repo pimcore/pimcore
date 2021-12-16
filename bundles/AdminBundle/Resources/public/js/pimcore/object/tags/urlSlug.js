@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.urlSlug");
@@ -34,9 +34,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -51,9 +49,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-        this.component = new Ext.Panel({
-            layout: "fit"
-        });
+        this.component = new Ext.Panel();
 
         this.addFallbackSlug();
         if (this.data.length > 0) {
@@ -61,6 +57,8 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                 this.addSiteElement(this.data[i]);
             }
         }
+
+        this.updateSiteFilter();
 
         return this.component;
     },
@@ -85,6 +83,10 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateSiteFilter: function () {
+        if (typeof this.siteCombo === 'undefined') {
+            return;
+        }
+
         var showCombo = false;
         this.siteCombo.setFilters([
             function (item) {
@@ -133,7 +135,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             name: "slug",
             labelWidth: 100,
             value: siteData['slug'],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             validator: function(value) {
 
 
@@ -182,7 +184,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            textConfig.width += textConfig.labelWidth;
+            textConfig.width = this.sumWidths(textConfig.width, textConfig.labelWidth);
         }
 
         var text = new Ext.form.TextField(textConfig);
@@ -261,7 +263,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         this.elements[siteData['siteId']] = text;
         fieldContainer.add(containerItems);
-        this.component.insert(1, fieldContainer);
+        this.component.add(fieldContainer);
         Ext.resumeLayouts();
     },
 
@@ -305,17 +307,20 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function () {
-        var dirty = this.dirty;
+        if (this.dirty) {
+            return true;
+        }
 
         for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 if (textfield.isDirty()) {
+                    this.dirty = true;
                     return true;
                 }
             }
         }
 
-        return dirty;
+        return false;
     }
 });

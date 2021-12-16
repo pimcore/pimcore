@@ -1,24 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Version
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Version;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -30,14 +29,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM versions WHERE id = ?', $id);
 
-        if (!$data['id']) {
-            throw new \Exception('version with id ' . $id . ' not found');
+        if (!$data) {
+            throw new NotFoundException('version with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);
@@ -143,7 +142,7 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days']) && $elementType['days'] > 0) {
+                if (isset($elementType['days']) && !is_null($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
                     $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
@@ -166,6 +165,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         if (count($versionIds) > 1000) {
                             $stop = true;
+
                             break;
                         }
                     }

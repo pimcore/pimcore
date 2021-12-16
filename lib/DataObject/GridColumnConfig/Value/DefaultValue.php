@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
@@ -24,16 +22,21 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\Element\ElementInterface;
 
-class DefaultValue extends AbstractValue
+/**
+ * @internal
+ */
+final class DefaultValue extends AbstractValue
 {
     /**
      * @var LocaleServiceInterface
      */
     protected $localeService;
 
-    public function __construct($config, $context = null, LocaleServiceInterface $localeService = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(\stdClass $config, $context = null, LocaleServiceInterface $localeService = null)
     {
         parent::__construct($config, $context);
         $this->localeService = $localeService;
@@ -89,7 +92,7 @@ class DefaultValue extends AbstractValue
         }
 
         if ($fieldDefinition->isEmpty($value)) {
-            $parent = Service::hasInheritableParentObject($object);
+            $parent = Service::hasInheritableParentObject($object, $key);
 
             if (!empty($parent)) {
                 return $this->getValueForObject($parent, $key, $brickType, $brickKey);
@@ -176,24 +179,22 @@ class DefaultValue extends AbstractValue
     }
 
     /**
-     * @param ElementInterface|Concrete $element
-     *
      * {@inheritdoc}
      */
     public function getLabeledValue($element)
     {
-        /** @var Concrete $element */
         $attributeParts = explode('~', $this->attribute);
 
         $getter = 'get' . ucfirst($this->attribute);
         $brickType = null;
         $brickKey = null;
 
-        if (substr($this->attribute, 0, 1) == '~') {
+        if (str_starts_with($this->attribute, '~')) {
             // key value, ignore for now
 
             return $this->getClassificationStoreValueForObject($element, $this->attribute);
-        } elseif (count($attributeParts) > 1) {
+        }
+        if ($element instanceof Concrete && count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
 

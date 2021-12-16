@@ -15,7 +15,7 @@ Shared Translations. All installed system languages are available for translatio
 the system translations shipped with Pimcore, so basically you can translate anything within the backend UI. 
 
 Strings which are subject to special translations, but have not been translated yet, are displayed with a "+" in front 
-and after the string, if Pimcore is in DEBUG mode.
+and after the string, if `Debug Admin-Translations (wrapped in +)` is activated in system settings (*Settings* > *System Settings*).
 
 But you can use the admin translation also in your custom templates. 
 Admin translations use the same translator component (Symfony) but on a different domain.
@@ -40,14 +40,14 @@ However, the amount of available languages is limited, because only languages wi
 included in the main distribution. 
 If you want make additional languages available for the admin interface, you can do so by putting a symfony translation
 file for the desired language into the default path for the symfony translator 
-(e.g. use `translations/admin.af.yml` for making `Afrikaans` available, the translation file can be also empty). 
+(e.g. use `translations/admin.af.yaml` for making `Afrikaans` available, the translation file can be also empty). 
 If you haven't configured anything different this is `%kernel.project_dir%/translations` for Symfony 4 projects.
 
 #### Override language of admin translations in editmode of documents
 In some projects you want to use a different language as admin translations, e.g. English (en) instead of Croatian (hr) or Chinese (zh_Hans) instead of Chinese (zh).
 
 ```yaml
-# src/AppBundle/Resources/config/pimcore/config.yml
+# config/config.yaml
 pimcore:
     translations:
         admin_translation_mapping:

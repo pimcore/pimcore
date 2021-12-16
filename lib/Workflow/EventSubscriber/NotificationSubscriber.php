@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\EventSubscriber;
@@ -25,12 +26,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class NotificationSubscriber implements EventSubscriberInterface
 {
     const MAIL_TYPE_TEMPLATE = 'template';
+
     const MAIL_TYPE_DOCUMENT = 'pimcore_document';
 
     const NOTIFICATION_CHANNEL_MAIL = 'mail';
+
     const NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION = 'pimcore_notification';
 
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';
@@ -129,7 +135,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
     {
         //notify users
-        $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getType($subject));
+        $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
 
         $this->mailService->sendWorkflowEmailNotification(
             $notifyUsers,
@@ -152,7 +158,7 @@ class NotificationSubscriber implements EventSubscriberInterface
      */
     private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles)
     {
-        $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getType($subject));
+        $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
             $notifyUsers,
             $notifyRoles,

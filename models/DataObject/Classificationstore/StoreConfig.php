@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -24,26 +22,26 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\StoreConfig\Dao getDao()
  */
-class StoreConfig extends Model\AbstractModel
+final class StoreConfig extends Model\AbstractModel
 {
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * The store name.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The store description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @param int $id
@@ -57,7 +55,7 @@ class StoreConfig extends Model\AbstractModel
             $config->getDao()->getById((int)$id);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -66,8 +64,6 @@ class StoreConfig extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
-     *
-     * @throws \Exception
      */
     public static function getByName($name)
     {

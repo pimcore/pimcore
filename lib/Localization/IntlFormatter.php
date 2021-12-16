@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Localization;
@@ -20,13 +21,21 @@ namespace Pimcore\Localization;
 class IntlFormatter
 {
     const DATE_SHORT = 'date_short';
+
     const DATE_MEDIUM = 'date_medium';
+
     const DATE_LONG = 'date_long';
+
     const DATETIME_SHORT = 'datetime_short';
+
     const DATETIME_MEDIUM = 'datetime_medium';
+
     const DATETIME_LONG = 'datetime_long';
+
     const TIME_SHORT = 'time_short';
+
     const TIME_MEDIUM = 'time_medium';
+
     const TIME_LONG = 'time_long';
 
     /**
@@ -43,7 +52,7 @@ class IntlFormatter
     protected $dateFormatters = [];
 
     /**
-     * @var \NumberFormatter
+     * @var \NumberFormatter|null
      */
     protected $numberFormatter;
 
@@ -227,7 +236,7 @@ class IntlFormatter
 
             if ($pattern !== 'default') {
                 $formatter->setPattern($pattern);
-            } elseif ($this->currencyFormats[$this->getLocale()]) {
+            } elseif ($this->currencyFormats[$this->getLocale()] ?? null) {
                 $formatter->setPattern($this->currencyFormats[$this->getLocale()]);
             }
 

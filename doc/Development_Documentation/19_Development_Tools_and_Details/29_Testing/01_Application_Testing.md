@@ -2,17 +2,17 @@
 
 Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
 
-1. [Symfony's default testing setup](https://symfony.com/doc/3.4/testing.html) with PHPUnit
+1. [Symfony's default testing setup](https://symfony.com/doc/5.2/testing.html) with PHPUnit
 2. [Codeception](https://codeception.com/) (which is based on PHPUnit) for more advanced features like Selenium testing by using Codeception's module system
 
 In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
 
-In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/master/tests).
+In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/10.x/tests).
 
 ## PHPUnit
 
 As Pimcore is a standard Symfony application, you can use Symfony's PHPUnit testing setup exactly as described in
-[Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). All you need to do is to create a custom
+[Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). All you need to do is to create a custom
 bootstrap file to ensure the Pimcore startup process has everything it needs. Start by adding Symfony's PHPUnit bridge
 to your project:
 
@@ -57,18 +57,18 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 </phpunit>
 ``` 
 
-Now we're ready to write a first test. Assuming we have an `AppBundle\Calculator` class which has an `add(int $a, int $b): int`
-method, add a test in `tests/AppBundle/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
+Now we're ready to write a first test. Assuming we have an `App\Calculator` class which has an `add(int $a, int $b): int`
+method, add a test in `tests/App/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
 structure from your application code in your test directory.
 
 ```php
 <?php
 
-// tests/AppBundle/CalculatorTest.php
+// tests/App/CalculatorTest.php
 
-namespace Tests\AppBundle;
+namespace Tests\App;
 
-use AppBundle\Calculator;
+use App\Calculator;
 use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
@@ -184,11 +184,11 @@ below assumes an installation running the `demo-basic` install profile.
 ```php
 <?php
 
-// tests/AppBundle/Controller/ContentControllerTest.php
+// tests/App/Controller/ContentControllerTest.php
 
 declare(strict_types=1);
 
-namespace Tests\AppBundle\Controller;
+namespace Tests\App\Controller;
 
 use Pimcore\Test\WebTestCase;
 
@@ -230,10 +230,10 @@ class ContentControllerTest extends WebTestCase
 
 If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/master/app/config/config_test.yml)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config/packages/test/config.yaml](https://github.com/pimcore/pimcore/blob/10.x/.github/ci/files/config/packages/test/config.yaml#L19)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
-recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely. What to use depends highly on your environment and your tests - if you have
+recommended) or remove/alter the customized `doctrine` section from `config/packages/test/config.yaml` completely. What to use depends highly on your environment and your tests - if you have
 tests which make changes to the database you'll probably want to run them on a different database with a predefined data
 set. The example below just passes the DB connection as env variable:
 
@@ -249,7 +249,7 @@ Time: 2.69 seconds, Memory: 36.00MB
 OK (10 tests, 15 assertions)
 ```
 
-For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). Just keep
+For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). Just keep
 in mind to make sure Pimcore is properly bootstrapped before tests are run.
 
 
@@ -331,7 +331,7 @@ use Pimcore\Tests\Util\Autoloader;
 define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 
 // set the used pimcore/symfony environment
-putenv('PIMCORE_ENVIRONMENT=test');
+putenv('APP_ENV=test');
 
 
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
@@ -378,7 +378,7 @@ Let's start writing tests by adding a simple unit test:
 
 // tests/unit/ExampleTest.php
 
-namespace Tests\Unit\AppBundle;
+namespace Tests\Unit\App;
 
 use Codeception\Test\Unit;
 
@@ -461,9 +461,9 @@ can directly use Symfony tests such as `$I->amOnRoute()`.
 ```php
 <?php
 
-// tests/functional/AppBundle/IndexPageCest.php
+// tests/functional/App/IndexPageCest.php
 
-namespace Tests\Functional\AppBundle;
+namespace Tests\Functional\App;
 
 use Tests\FunctionalTester;
 

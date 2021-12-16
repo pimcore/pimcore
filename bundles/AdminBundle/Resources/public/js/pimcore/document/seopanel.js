@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.seopanel");
@@ -74,14 +74,17 @@ pimcore.document.seopanel = Class.create({
             xtype: 'treecolumn',
             text: t("name"),
             dataIndex: 'text',
+            renderer: Ext.util.Format.htmlEncode,
             width: 300
         },{
             text: t("pretty_url"),
             dataIndex: 'prettyUrl',
+            renderer: Ext.util.Format.htmlEncode,
             width: 180
         },{
             text: t("title"),
             dataIndex: 'title',
+            renderer: Ext.util.Format.htmlEncode,
             width: 230
         },{
             text: t("length"),
@@ -90,6 +93,7 @@ pimcore.document.seopanel = Class.create({
         },{
             text: t("description"),
             dataIndex: 'description',
+            renderer: Ext.util.Format.htmlEncode,
             width: 400
         },{
             text: t("length"),

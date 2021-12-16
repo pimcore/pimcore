@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.data");
@@ -72,6 +72,7 @@ pimcore.object.classes.data.data = Class.create({
         this.specificPanel = new Ext.form.FormPanel({
             title: t("specific_settings"),
             bodyStyle: "padding: 10px;",
+            autoScroll: true,
             style: "margin: 10px 0 10px 0",
             items: [],
             defaults: {
@@ -113,7 +114,12 @@ pimcore.object.classes.data.data = Class.create({
                         // autofill title field if untouched and empty
                         var title = el.ownerCt.getComponent("title");
                         if (title["_autooverwrite"] === true) {
-                            el.ownerCt.getComponent("title").setValue(el.getValue());
+                            let fixedTitle = '';
+                            for (let i = 0; i < el.getValue().length; i++) {
+                                let currentChar = el.getValue()[i];
+                                fixedTitle += i === 0 ? currentChar.toUpperCase() : (currentChar === currentChar.toUpperCase() && (currentChar.charCodeAt(0) < 48 ||  currentChar.charCodeAt(0) > 57)) ? ' ' + currentChar : currentChar;
+                            }
+                            el.ownerCt.getComponent("title").setValue(fixedTitle);
                         }
                     }
                 }
@@ -222,6 +228,7 @@ pimcore.object.classes.data.data = Class.create({
         this.standardSettingsForm = new Ext.form.FormPanel(
             {
                 bodyStyle: "padding: 10px;",
+                autoScroll: true,
                 style: "margin: 0 0 10px 0",
                 defaults: {
                     labelWidth: 140
@@ -235,6 +242,7 @@ pimcore.object.classes.data.data = Class.create({
             {
                 title: t("layout_settings"),
                 bodyStyle: "padding: 10px;",
+                autoScroll: true,
                 style: "margin: 10px 0 10px 0",
                 defaults: {
                     labelWidth: 230
@@ -247,6 +255,7 @@ pimcore.object.classes.data.data = Class.create({
         this.layout = new Ext.Panel({
             title: '<b>' + this.datax.name + " (" + t("type") + ": " + niceName + ")</b>",
             bodyStyle: 'padding: 10px;',
+            autoScroll: true,
             items: [
                 this.standardSettingsForm,
                 this.layoutSettingsForm,
@@ -282,8 +291,10 @@ pimcore.object.classes.data.data = Class.create({
         if (this.treeNode) {
             for (var i = 0; i < items.length; i++) {
                 if (items[i].name == "name") {
-                    this.treeNode.set("text", items[i].getValue());
-                    break;
+                    if(this.isValidName(items[i].getValue())) {
+                        this.treeNode.set("text", htmlspecialchars(items[i].getValue()));
+                        break;
+                    }
                 }
             }
         }
@@ -298,10 +309,9 @@ pimcore.object.classes.data.data = Class.create({
         var data = this.getData();
         data.name = trim(data.name);
 
-        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
         var isForbiddenName = in_arrayi(data.name, this.forbiddenNames);
 
-        if (data.name.length > 1 && isValidName.test(data.name) && !isForbiddenName) {
+        if (data.name.length > 1 && this.isValidName(data.name) && !isForbiddenName) {
             return true;
         }
 
@@ -310,6 +320,11 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         return false;
+    },
+
+    isValidName: function (name) {
+        let isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+        return isValidName.test(name);
     },
 
     applyData: function () {

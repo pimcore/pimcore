@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -18,8 +19,12 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Symfony\Component\Mime\Address;
 
-final class LogMailMaintenanceTask implements TaskInterface
+/**
+ * @internal
+ */
+class LogMailMaintenanceTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface
@@ -81,8 +86,10 @@ final class LogMailMaintenanceTask implements TaskInterface
                     $html = "<pre>$html</pre>";
                     $mail = new \Pimcore\Mail();
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setBodyHtml($html);
-                    $mail->addTo($receivers);
+                    $mail->html($html);
+                    foreach ($receivers as $receiver) {
+                        $mail->addTo(new Address($receiver, $receiver));
+                    }
                     $mail->setSubject('Error Log '.\Pimcore\Tool::getHostUrl());
                     $mail->send();
                 }
@@ -92,6 +99,6 @@ final class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1');
+        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1');
     }
 }

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -28,7 +26,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /** @var DataObject\AbstractObject */
+    /** @var DataObject\AbstractObject|null */
     protected $object;
 
     /**
@@ -54,7 +52,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param string $fieldname
      * @param array $columns
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      */
     public function __construct($fieldname, $columns = [], $object = null)
     {
@@ -64,11 +62,11 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?DataObject\Concrete $object)
     {
         $this->markMeDirty();
 
@@ -145,7 +143,10 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
+        $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
+        $this->markMeDirty(false);
+
+        return $return;
     }
 
     /**
@@ -257,7 +258,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function getObjectId()
     {
-        return $this->objectId;
+        return (int) $this->objectId;
     }
 
     /**

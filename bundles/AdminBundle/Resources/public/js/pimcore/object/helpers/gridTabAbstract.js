@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.helpers.gridTabAbstract");
@@ -207,6 +207,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     }
                 );
 
+                this.grid.getStore().clearFilter();
                 this.grid.filters.clearFilters();
 
                 this.pagingtoolbar.moveFirst();
@@ -232,6 +233,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         );
         proxy.setExtraParam("condition", this.sqlEditor.getValue());
         if (this.grid && this.grid.filters) {
+            this.grid.getStore().clearFilter();
             this.grid.filters.clearFilters();
         }
 
@@ -295,6 +297,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 text: t("clear_filters"),
                 tooltip: t("clear_filters"),
                 handler: function (button) {
+                    this.grid.getStore().clearFilter();
                     this.grid.filters.clearFilters();
                     this.toolbarFilterInfo.hide();
                     this.clearFilterButton.hide();
@@ -312,6 +315,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 listeners: {
                     "change": function (field, checked) {
                         this.grid.getStore().setRemoteFilter(false);
+                        this.grid.getStore().clearFilter();
                         this.grid.filters.clearFilters();
 
                         this.store.getProxy().setExtraParam("only_direct_children", checked);
@@ -327,7 +331,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             });
 
             var exportButtons = this.getExportButtons();
-            var firstButton = exportButtons.pop();
+            var firstButton = exportButtons.shift();
 
             this.exportButton = new Ext.SplitButton({
                 text: firstButton.text,

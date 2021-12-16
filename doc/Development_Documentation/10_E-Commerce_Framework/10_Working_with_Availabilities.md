@@ -12,7 +12,7 @@ Each product can have its own Availability System.
 A availability system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface` which 
 is defined as service and registered with a name in the `pimcore_ecommerce_framework.availability_systems` configuration tree. 
 
-Currently the framework ships only with a [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/AvailabilitySystem/AvailabilitySystem.php#L20)
+Currently the framework ships only with a [sample implementation](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/AvailabilitySystem/AvailabilitySystem.php#L20)
 which you can use as starting point.
 
 There are 3 places where the configuration of Availability Systems takes place: 
@@ -40,7 +40,7 @@ class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Checko
 Each Availability System must be defined as service (either a service defined by core configuration or your custom services):
 
 ```
-# services.yml
+# services.yaml
     _defaults:
         public: false
         autowire: true
@@ -59,7 +59,7 @@ The `availability_systems` configuration maps names to service IDs:
 pimcore_ecommerce_framework:
     # defines 3 availability systems
     availability_systems:
-        # the attribute price system is already defined in core price_systems.yml service definition
+        # the attribute price system is already defined in core price_systems.yaml service definition
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
        

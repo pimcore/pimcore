@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension\Templating;
@@ -23,6 +24,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class PimcoreUrl implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
+
     /**
      * @var UrlGeneratorInterface
      */
@@ -55,8 +57,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
     public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
     {
         // merge all parameters from request to parameters
-        if (!$reset && $this->requestHelper->hasMasterRequest()) {
-            $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
+        if (!$reset && $this->requestHelper->hasMainRequest()) {
+            $urlOptions = array_replace($this->requestHelper->getMainRequest()->query->all(), $urlOptions);
         }
 
         return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH, $encode);
@@ -65,8 +67,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param string|null $name
-     * @param array $parameters
+     * @param string|array|null $name
+     * @param array|null $parameters
      * @param int $referenceType
      * @param bool $encode
      *
@@ -131,8 +133,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
         }
 
-        if (!$route && $this->requestHelper->hasMasterRequest()) {
-            $route = $this->requestHelper->getMasterRequest()->attributes->get('_route');
+        if (!$route && $this->requestHelper->hasMainRequest()) {
+            $route = $this->requestHelper->getMainRequest()->attributes->get('_route');
         }
 
         return $route;

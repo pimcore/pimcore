@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Http\Request\Resolver;
@@ -27,6 +28,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_CONTEXT = '_pimcore_context';
 
     const CONTEXT_ADMIN = 'admin';
+
     const CONTEXT_DEFAULT = 'default';
 
     /**
@@ -35,7 +37,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     protected $guesser;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {

@@ -73,12 +73,12 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 
 **Apache**
 
-In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
+In the `.htaccess` of the project, requests to assets of this folder need to be routed to `index.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
 ```apache
 ...
-RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
+RewriteRule ^protected/(.*) %{ENV:BASE}/index.php [L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
 RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
@@ -91,7 +91,7 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 Add the following parts to your Nginx configuration directly after the index directive. 
 
 ```nginx
-rewrite ^(/protected/.*) /app.php$is_args$args last;
+rewrite ^(/protected/.*) /index.php$is_args$args last;
 
 location ~ ^/var/.*/protected(.*) {
   return 403;
@@ -105,15 +105,15 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
-In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# app/config/routing.yml
+# config/routes.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
-    defaults: { _controller: MyAssetController:protectedAsset }
+    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
     requirements:
         path: '.*'
 ```
@@ -121,19 +121,21 @@ asset_protect:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAssetAction(Request $request)
+    public function protectedAssetAction(Request $request, RouterInterface $router)
     {
         // IMPORTANT!
         // Add your code here to check permission!
@@ -144,24 +146,33 @@ class MyAssetController extends FrontendController
         $pathInfo = $request->getPathInfo();
         $asset = Asset::getByPath($pathInfo);
         if ($asset){
-            return new BinaryFileResponse($asset->getFileSystemPath());
+            $stream = $asset->getStream();
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+            ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
-            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
-
-            if(is_file($filePath)){
-                return new BinaryFileResponse($filePath);
+            $storage = Storage::get('thumbnail');
+            $storagePath = urldecode($pathInfo);
+            if($storage->fileExists($storagePath)){
+                $stream = $storage->readStream($storagePath);
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Content-Type' => $storage->mimeType($storagePath),
+                ]);
             } else {
                 $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
-                $route = $this->get('router')->getRouteCollection()->get($pimcoreThumbnailRoute);
+                $route = $router->getRouteCollection()->get($pimcoreThumbnailRoute);
                 $collection = new RouteCollection();
                 $collection->add($pimcoreThumbnailRoute, $route);
-                $matcher = new UrlMatcher($collection, $this->get('router')->getContext());
+                $matcher = new UrlMatcher($collection, $router->getContext());
 
                 try {
                     $parameters = $matcher->matchRequest($request);
-                    $response = $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
-                    return $response;
+                    return $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
                 } catch (\Exception $e) {
                     // nothing to do
                 }

@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
@@ -22,18 +22,14 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * @internal
+ */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
-    /**
-     * @var PimcoreBundleManager
-     */
-    protected $bundleManager;
-
-    public function __construct(PimcoreBundleManager $bundleManager, ?string $name = null)
+    public function __construct(protected PimcoreBundleManager $bundleManager, ?string $name = null)
     {
         parent::__construct($name);
-
-        $this->bundleManager = $bundleManager;
     }
 
     protected function configureDescriptionAndHelp(string $description, string $help = null): self

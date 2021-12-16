@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -17,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -46,6 +48,10 @@ class PricingManager implements PricingManagerInterface
     protected $actionMapping = [];
 
     /**
+     * TODO: use RequestStack to get session
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var SessionInterface
      */
     protected $session;
@@ -56,12 +62,12 @@ class PricingManager implements PricingManagerInterface
     protected $options;
 
     /**
-     * @var VisitorInfoStorageInterface
+     * @var VisitorInfoStorageInterface|null
      */
-    protected $visitorInfoStorage = null;
+    protected ?VisitorInfoStorageInterface $visitorInfoStorage = null;
 
     /**
-     * @var Rule[]
+     * @var RuleInterface[]|null
      */
     protected $rules;
 
@@ -126,7 +132,6 @@ class PricingManager implements PricingManagerInterface
 
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
-            /* @var RuleInterface $rule */
             $priceInfoWithRules->addRule($rule);
         }
 
@@ -157,13 +162,12 @@ class PricingManager implements PricingManagerInterface
 
         $categories = [];
         foreach ($cart->getItems() as $item) {
-            if ($product = $item->getProduct()) {
-                if (method_exists($product, 'getCategories')) {
-                    $productCategories = $product->getCategories();
-                    if (is_array($productCategories)) {
-                        foreach ($productCategories as $c) {
-                            $categories[$c->getId()] = $c;
-                        }
+            $product = $item->getProduct();
+            if ($product instanceof CheckoutableInterface && method_exists($product, 'getCategories')) {
+                $productCategories = $product->getCategories();
+                if (is_array($productCategories)) {
+                    foreach ($productCategories as $c) {
+                        $categories[$c->getId()] = $c;
                     }
                 }
             }
@@ -213,6 +217,8 @@ class PricingManager implements PricingManagerInterface
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
+
+            $rules->getDao()->setRuleClass($this->options['rule_class']);
 
             $this->rules = $rules->getRules();
         }
@@ -323,7 +329,7 @@ class PricingManager implements PricingManagerInterface
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
 
-        if (method_exists($priceInfo->getProduct(), 'getCategories')) {
+        if ($priceInfo->getProduct() && method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }
 

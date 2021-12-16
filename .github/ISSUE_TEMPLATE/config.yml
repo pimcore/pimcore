@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+    - name: We are hiring!
+      url: https://pimcore.com/en/careers?utm_source=github&utm_medium=issue-template-pimcore-pimcore&utm_campaign=careers
+      about: Enjoy working with Pimcore? Join us on our mission!
+    - name: Community Support
+      url: https://github.com/pimcore/pimcore/discussions
+      about: Please ask and answer questions here.

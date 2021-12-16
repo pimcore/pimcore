@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -56,7 +54,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @param string $fieldname
      * @param array $columns
-     * @param null $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @throws \Exception
      */
@@ -88,7 +86,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function __call($name, $arguments)
     {
-        if (substr($name, 0, 3) == 'get') {
+        if (str_starts_with($name, 'get')) {
             $key = substr($name, 3, strlen($name) - 3);
             $idx = array_searchi($key, $this->columns);
 
@@ -101,8 +99,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (str_starts_with($name, 'set')) {
+            $key = substr($name, 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
@@ -122,7 +120,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      * @param string $position
      * @param int $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position, $index)
+    public function save($object, $ownertype, $ownername, $position, $index)
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);
@@ -143,7 +141,10 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
+        $this->markMeDirty(false);
+
+        return $return;
     }
 
     /**
@@ -181,7 +182,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             return $this;
         }
 
-        $elementType = Model\Element\Service::getType($element);
+        $elementType = Model\Element\Service::getElementType($element);
         $elementId = $element->getId();
         $this->setElementTypeAndId($elementType, $elementId);
 

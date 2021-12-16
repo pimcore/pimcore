@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -25,8 +23,15 @@ use Pimcore\Model\DataObject;
  *
  * @property \Pimcore\Model\DataObject\Objectbrick\Definition $model
  */
-class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
+class Dao extends Model\Dao\AbstractDao
 {
+    use DataObject\ClassDefinition\Helper\Dao;
+
+    /**
+     * @var array|null
+     */
+    protected $tableDefinitions = null;
+
     /**
      * @param DataObject\ClassDefinition $class
      * @param bool $query
@@ -39,6 +44,22 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
         } else {
             return 'object_brick_store_' . $this->model->getKey() . '_' . $class->getId();
+        }
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $class
+     * @param bool $query
+     * @param string $language
+     *
+     * @return string
+     */
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, $query = false, $language = 'en')
+    {
+        if ($query) {
+            return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;
+        } else {
+            return 'object_brick_localized_' . $this->model->getKey() . '_' . $class->getId();
         }
     }
 
@@ -63,20 +84,22 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
         $tableQuery = $this->getTableName($class, true);
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
-		  `o_id` int(11) NOT NULL default '0',
+		  `o_id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
-          INDEX `fieldname` (`fieldname`)
-		) DEFAULT CHARSET=utf8mb4;");
+          INDEX `fieldname` (`fieldname`),
+          CONSTRAINT `".self::getForeignKeyName($tableStore, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
-		  `o_id` int(11) NOT NULL default '0',
+		  `o_id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
-          INDEX `fieldname` (`fieldname`)
-		) DEFAULT CHARSET=utf8mb4;");
+          INDEX `fieldname` (`fieldname`),
+          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;');
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;

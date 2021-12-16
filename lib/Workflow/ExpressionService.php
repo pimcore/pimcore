@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -75,23 +77,31 @@ class ExpressionService
     {
         $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
-        $roles = $token ? $token->getRoleNames() : [];
+        $roleNames = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
-            $roles = $this->roleHierarchy->getReachableRoleNames($roles);
+            $roleNames = $this->roleHierarchy->getReachableRoleNames($roleNames);
         }
 
         $variables = [
             'token' => $token,
             'user' => $token->getUser(),
+            'object' => $subject,
             'subject' => $subject,
-            'roles' => $roles,
-            // needed for the is_granted expression function
-            'auth_checker' => $this->authenticationChecker,
+            'role_names' => $roleNames,
             // needed for the is_* expression function
             'trust_resolver' => $this->trustResolver,
+            // needed for the is_granted expression function
+            'auth_checker' => $this->authenticationChecker,
             // needed for the is_valid expression function
             'validator' => $this->validator,
         ];
+
+        // this is mainly to propose a better experience when the expression is used
+        // in an access control rule, as the developer does not know that it's going
+        // to be handled by this voter
+        if ($subject instanceof Request) {
+            $variables['request'] = $subject;
+        }
 
         return $variables;
     }

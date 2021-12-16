@@ -24,11 +24,11 @@ $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=passwor
 
 You can preconfigure the values used by the installer by adding a config file which sets values for the database
 credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
-instead of having direct access to them. To preconfigure the installer, add a config file in `app/config/installer.yml` 
+instead of having direct access to them. To preconfigure the installer, add a config file in `config/installer.yaml` 
 (note: the file can be of any format supported by Symfony's config, so you could also use xml or php as the format), then configure the `pimcore_installer` tree:
 
 ```yaml
-# app/config/installer.yml
+# config/installer.yaml
 
 pimcore_install:
     parameters:
@@ -49,5 +49,5 @@ pimcore_install:
 # We need bash since RANDOM is a bash builtin
 SHELL=/bin/bash
 
-*/5 * * * * sleep $[ ( $RANDOM % 120 ) + 1 ]s ; /your/project/bin/console maintenance
+*/5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
 ```

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.multiselect");
@@ -53,7 +53,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
@@ -64,9 +63,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-
-        var selectionModel;
-
         if (typeof datax.options != "object") {
             datax.options = [];
         }
@@ -75,7 +71,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             fields: ["key", {name: "value", allowBlank: false}],
             data: datax.options
         });
-        
+
         var valueGrid;
 
         valueGrid = Ext.create('Ext.grid.Panel', {
@@ -88,36 +84,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     }
                 ]
             },
-            plugins: [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1,
-                listeners: {
-                    edit: function(editor, e) {
-                        if(!e.record.get('value')) {
-                            e.record.set('value', e.record.get('key'));
-                        }
-                    },
-                    beforeedit: function(editor, e) {
-                        if(e.field === 'value') {
-                            return !!e.value;
-                        }
-                        return true;
-                    },
-                    validateedit: function(editor, e) {
-                        if(e.field !== 'value') {
-                            return true;
-                        }
-
-                        // Iterate to all store data
-                        for(var i=0; i < valueStore.data.length; i++) {
-                            var existingRecord = valueStore.getAt(i);
-                            if(i != e.rowIdx && existingRecord.get('value') === e.value) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                }
-            })],
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -130,15 +96,16 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                         value: ""
                     };
 
-                    var selectedRow = selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();
                     }
                     valueStore.insert(idx, u);
-                    selectionModel.select(idx);
+                    this.selectionModel.select(idx);
                 }.bind(this)
             },
                 {
@@ -146,12 +113,12 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     iconCls: "pimcore_icon_edit",
                     handler: this.showoptioneditor.bind(this, valueStore)
 
-                }
-            ],
+                }],
+            disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: valueStore,
-            disabled: this.isInCustomLayoutEditor(),
             selModel: Ext.create('Ext.selection.RowModel', {}),
+            clicksToEdit: 1,
             columnLines: true,
             columns: [
                 {
@@ -162,7 +129,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     renderer: function (value) {
                         return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
                     },
-                    width: 200
+                    flex: 1
                 },
                 {
                     text: t("value"),
@@ -171,12 +138,12 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     editor: new Ext.form.TextField({
                         allowBlank: false
                     }),
-                    width: 200
+                    flex: 1
                 },
                 {
                     xtype: 'actioncolumn',
                     menuText: t('up'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('up'),
@@ -186,7 +153,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    selectionModel.select(rowIndex);
+                                    this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -195,7 +162,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: 'actioncolumn',
                     menuText: t('down'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('down'),
@@ -205,7 +172,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(++rowIndex, [rec]);
-                                    selectionModel.select(rowIndex);
+                                    this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -214,7 +181,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: 'actioncolumn',
                     menuText: t('remove'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('remove'),
@@ -226,23 +193,65 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     ]
                 }
             ],
-            autoHeight: true
+            autoHeight: true,
+            plugins: [
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1,
+                    listeners: {
+                        edit: function(editor, e) {
+                            if(!e.record.get('value')) {
+                                e.record.set('value', e.record.get('key'));
+                            }
+                        },
+                        beforeedit: function(editor, e) {
+                            if(e.field === 'value') {
+                                return !!e.value;
+                            }
+                            return true;
+                        },
+                        validateedit: function(editor, e) {
+                            if(e.field !== 'value') {
+                                return true;
+                            }
+
+                            // Iterate to all store data
+                            for(var i=0; i < valueStore.data.length; i++) {
+                                var existingRecord = valueStore.getAt(i);
+                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                })
+            ]
         });
 
-        selectionModel = valueGrid.getSelectionModel();
+        this.selectionModel = valueGrid.getSelectionModel();
 
         var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
             },
             {
                 xtype: "numberfield",

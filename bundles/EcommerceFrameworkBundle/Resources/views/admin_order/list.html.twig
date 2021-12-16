@@ -1,9 +1,7 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% spaceless -%}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
-{%- endspaceless %}
+{% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+{% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
 
 {% set urlParams = app.request.query.all %}
 {% block content %}
@@ -85,27 +83,27 @@
         <tbody>
         {% set totalSum = 0 %}
 
-        {% for item in paginator %}
-            {% set totalSum = totalSum + item.getTotalPrice() %}
+        {% for item in paginator.items %}
+            {% set totalSum = totalSum + item['TotalPrice'] %}
 
         <tr>
             <td>
-                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), null, true) %}
-                <a href="{{ urlDetail }}">{{ item.getOrderNumber() }}</a>
+                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item['OrderId']}|merge(urlParams)) %}
+                <a href="{{ urlDetail }}">{{ item['OrderNumber'] }}</a>
             </td>
             <td>
-                {% set date = item.getOrderDate() %}
+                {% set date = item['OrderDate'] %}
 
                 {% if date.timestamp is defined %}
                     {% set date = date() %}
-                    {% do date.setTimestamp(item.getOrderDate()) %}
+                    {% do date.setTimestamp(item['OrderDate']) %}
                 {% endif %}
 
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
-            <td>{{ item.getItems() }}</td>
+            <td>{{ item['Items'] }}</td>
             </td>
-            <td class="text-right">{{ formatter.formatCurrency(item.getTotalPrice(), item.getCurrency()) }}</td>
+            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
         </tr>
         {% endfor %}
         </tbody>
@@ -119,8 +117,8 @@
         </tfoot>
     </table>
 
-    {% if paginator.getPages().pageCount > 1 %}
-        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+    {% if paginator.getPaginationData().pageCount > 1 %}
+        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}

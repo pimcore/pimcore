@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.helpers.gridConfigDialog");
@@ -108,6 +108,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                 this.settings.sharedRoleIds = this.settings.sharedRoleIds.join();
             }
             this.settings.shareGlobally = this.shareGlobally ? this.shareGlobally.getValue() : false;
+            this.settings.setAsFavourite = this.setAsFavourite ? this.setAsFavourite.getValue() : false;
         } else {
             delete this.settings.sharedUserIds;
             delete this.settings.sharedRoleIds;
@@ -359,25 +360,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                 }
 
                                 if (isOperator || this.parentIsOperator(realOverModel)) {
-                                    var attr = record.data;
-                                    if (record.data.configAttributes) {
-                                        attr = record.data.configAttributes;
-                                    }
-                                    var element = this.getConfigElement(attr);
-                                    var copy = element.getCopyNode(record);
+                                    let copy = this.handleOperator(record);
                                     data.records = [copy]; // assign the copy as the new dropNode
-                                    var configWindow = element.getConfigDialog(copy,
-                                        {
-                                            callback: this.updatePreview.bind(this)
-                                        });
-
-                                    if (configWindow) {
-                                        //this is needed because of new focus management of extjs6
-                                        setTimeout(function () {
-                                            configWindow.focus();
-                                        }, 250);
-                                    }
-
                                 } else {
                                     if (this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                                         dropHandlers.cancelDrop();
@@ -524,6 +508,27 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         return this.selectionPanel;
     },
 
+    handleOperator: function(record) {
+        var attr = record.data;
+        if (record.data.configAttributes) {
+            attr = record.data.configAttributes;
+        }
+        var element = this.getConfigElement(attr);
+        var copy = element.getCopyNode(record);
+        var configWindow = element.getConfigDialog(copy,
+            {
+                callback: this.updatePreview.bind(this)
+            });
+
+        if (configWindow) {
+            //this is needed because of new focus management of extjs6
+            setTimeout(function () {
+                configWindow.focus();
+            }, 250);
+        }
+        return copy;
+    },
+
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
             this.brickKeys = [];
@@ -599,7 +604,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         for (let i = 0; i < len; i++) {
             var operatorGroupName = operatorGroupKeys[i];
             var groupNodes = operatorGroups[operatorGroupName];
-            result.push(this.getOperatorTree(operatorGroupName, groupNodes));
+            let operatorTree = this.getOperatorTree(operatorGroupName, groupNodes);
+            operatorTree.addListener("itemdblclick", function (tree, record, item, index, e, eOpts) {
+                var copy = this.handleOperator(record);
+                this.selectionPanel.getRootNode().appendChild(copy);
+            }.bind(this));
+            result.push(operatorTree);
 
         }
         return result;

@@ -5,7 +5,7 @@
     {% set urlParams = app.request.query.all %}
     {% if paginator is defined %}
         {% do paginator.setPageRange(10) %}
-        {% set pagesCount = paginator.getItemCountPerPage() %}
+        {% set pagesCount = paginator.getPaginationData().pageCount %}
     {% endif %}
 
     <div class="container-fluid">
@@ -70,7 +70,7 @@
                                     <h4 style="float: left;"><i class="fa fa-list"></i> {{ 'bundle_ecommerce_voucherservice_token-overview-headline'|trans([],'admin') }}</h4>
                                 </div>
                                 <div class="col col-sm-7 text-right">
-                                    {% include "@PimcoreEcommerceFramework/voucher/parts/paginator.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+                                    {% include "@PimcoreEcommerceFramework/voucher/parts/paginator.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
                                 </div>
                             </div>
                             <div class="row">

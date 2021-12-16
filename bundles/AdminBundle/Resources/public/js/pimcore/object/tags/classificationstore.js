@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.classificationstore");
@@ -47,7 +47,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.fieldConfig = fieldConfig;
 
         if (this.fieldConfig.localized) {
-            if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
+            if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined || fieldConfig.permissionView === null) {
                 this.frontendLanguages = pimcore.settings.websiteLanguages.slice(0);
                 this.frontendLanguages.unshift("default");
             } else {
@@ -65,16 +65,18 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 var currentLanguage = this.frontendLanguages[i];
 
                 var metadataForLanguage = this.metaData[currentLanguage];
-                var dataKeys = Object.keys(metadataForLanguage);
+                if (metadataForLanguage) {
+                    var dataKeys = Object.keys(metadataForLanguage);
 
-                for (var k = 0; k < dataKeys.length; k++) {
-                    var dataKey = dataKeys[k];
-                    var metadataForKey = metadataForLanguage[dataKey];
-                    if (metadataForKey.inherited) {
-                        this.keysToWatch.push({
-                            lang: currentLanguage,
-                            key: dataKey
-                        });
+                    for (var k = 0; k < dataKeys.length; k++) {
+                        var dataKey = dataKeys[k];
+                        var metadataForKey = metadataForLanguage[dataKey];
+                        if (metadataForKey.inherited) {
+                            this.keysToWatch.push({
+                                lang: currentLanguage,
+                                key: dataKey
+                            });
+                        }
                     }
                 }
             }
@@ -383,6 +385,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var editable = !this.fieldConfig.noteditable &&
             (pimcore.currentuser.admin
                 || this.fieldConfig.permissionEdit === undefined
+                || this.fieldConfig.permissionEdit === null
                 || this.fieldConfig.permissionEdit.length == 0
                 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
@@ -577,11 +580,15 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var newGroupIds = [];
 
-        for (var groupId in data) {
+        var dataArray = Object.values(data);
+        dataArray.sort((a, b) => (a.sorter > b.sorter) ? 1 : -1);
+
+        dataArray.forEach(function(groupData) {
+            var groupId = groupData.id;
             if (!this.activeGroups[groupId]) {
                 newGroupIds.push(groupId);
             }
-        }
+        }, this);
 
         if (
             this.fieldConfig.maxItems > 0 &&

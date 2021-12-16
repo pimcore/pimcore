@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToOneRelation");
@@ -33,7 +33,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 return false;
             }
             return true;
-        });
+        }.bind(this));
     },
 
 
@@ -55,10 +55,22 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         return {
             text: t(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
+            getRelationFilter: this.getRelationFilter,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.type + "|" + editor.data.id : null;
+        return new Ext.util.Filter({
+            operator: "=",
+            type: "int",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
+    },
 
     getLayoutEdit: function () {
 
@@ -80,9 +92,10 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        href.enableKeyEvents = true;
-        href.fieldCls = "pimcore_droptarget_input";
-        this.component = new Ext.form.TextField(href);
+        href.cls = 'pimcore_droptarget_display_edit';
+
+        href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
+        this.component = new Ext.form.field.Display(href);
         if (this.data.published === false) {
             this.component.addCls("strikeThrough");
         }
@@ -104,7 +117,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 onNodeDrop: this.onNodeDrop.bind(this)
             });
 
-
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
             el.getEl().on('dblclick', function(){
@@ -115,11 +127,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
                 pimcore.helpers.openElement(this.data.id, this.data.type, subtype);
             }.bind(this));
-        }.bind(this));
-
-        // disable typing into the textfield
-        this.component.on("keyup", function (element, event) {
-            element.setValue(this.data.path);
         }.bind(this));
 
         var items = [this.component, {
@@ -155,7 +162,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             labelWidth: labelWidth,
             layout: 'hbox',
             items: items,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0
@@ -180,10 +187,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     getLayoutShow: function () {
 
         var href = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
+            name: this.fieldConfig.name
         };
+        var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
 
         if (this.data) {
             if (this.data.path) {
@@ -196,7 +202,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         } else {
             href.width = 300;
         }
-        href.width = href.labelWidth + href.width;
         href.disabled = true;
 
         this.component = new Ext.form.TextField(href);
@@ -205,14 +210,16 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.component.addCls("strikeThrough");
         }
 
-        this.composite = Ext.create('Ext.form.FieldContainer', {
+        var compositeCfg = {
+            fieldLabel: this.fieldConfig.title,
+            labelWidth: labelWidth,
             layout: 'hbox',
             items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_open",
                 handler: this.openElement.bind(this)
             }],
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0
@@ -222,7 +229,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.requestNicePathData();
                 }.bind(this)
             }
-        });
+        };
+
+        if (this.fieldConfig.labelAlign) {
+            compositeCfg.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        this.composite = Ext.create('Ext.form.FieldContainer', compositeCfg);
 
         return this.composite;
 
@@ -381,6 +394,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         this.data.id = data.id;
         this.data.type = data.type;
         this.data.subtype = data.subtype;
+        this.data.path = data.fullpath;
         this.dataChanged = true;
         this.component.removeCls("strikeThrough");
         if (data.published === false) {
@@ -523,6 +537,3 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         }
     }
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.tags.href = pimcore.object.tags.manyToOneRelation;

@@ -1,29 +1,31 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Console;
+use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @internal
+ */
 class Processor
 {
     /**
@@ -38,27 +40,32 @@ class Processor
     /**
      * @var \Pimcore\Video\Adapter[]
      */
-    public $queue = [];
+    protected $queue = [];
 
     /**
      * @var string
      */
-    public $processId;
+    protected $processId;
 
     /**
      * @var int
      */
-    public $assetId;
+    protected $assetId;
 
     /**
      * @var Config
      */
-    public $config;
+    protected $config;
 
     /**
      * @var int
      */
-    public $status;
+    protected $status;
+
+    /**
+     * @var null|string
+     */
+    protected $deleteSourceAfterFinished;
 
     /**
      * @param Model\Asset\Video $asset
@@ -75,11 +82,19 @@ class Processor
             throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
         }
 
+        $storage = Storage::get('thumbnail');
+
         $instance = new self();
         $formats = empty($onlyFormats) ? ['mp4'] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
+
+        //create dash file(.mpd), if medias exists
+        $medias = $config->getMedias();
+        if (count($medias) > 0) {
+            $formats[] = 'mpd';
+        }
 
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting('thumbnails');
@@ -93,7 +108,8 @@ class Processor
                 // check if the files are there
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
-                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
+                    $format = $customSetting[$config->getName()]['formats'][$f] ?? null;
+                    if (!$storage->fileExists($asset->getRealPath() . $format)) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -110,54 +126,38 @@ class Processor
             }
         }
 
+        //generate tmp file only for new jobs
+        $sourceFile = $asset->getTemporaryFile(true);
+        $instance->setDeleteSourceAfterFinished($sourceFile);
+
         foreach ($formats as $format) {
-            $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
+            $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
-            $fsPath = $thumbDir . '/' . $filename;
-            $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
-
-            if (!is_dir(dirname($fsPath))) {
-                File::mkdir(dirname($fsPath));
-            }
-
-            if (is_file($fsPath)) {
-                @unlink($fsPath);
-            }
+            $storagePath = $thumbDir . '/' . $filename;
+            $tmpPath = File::getLocalTempFilePath($format);
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($asset->getFileSystemPath(), ['asset' => $asset]);
+            $converter->load($sourceFile, ['asset' => $asset]);
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
             $converter->setDestinationFile($tmpPath);
-            $converter->setStorageFile($fsPath);
+            $converter->setStorageFile($storagePath);
+
+            //add media queries for mpd file generation
+            if ($format == 'mpd') {
+                $medias = $config->getMedias();
+                foreach ($medias as $media => $transformations) {
+                    //used just to generate arguments for medias
+                    $subConverter = \Pimcore\Video::getInstance();
+                    self::applyTransformations($subConverter, $transformations);
+                    $medias[$media]['converter'] = $subConverter;
+                }
+                $converter->setMedias($medias);
+            }
 
             $transformations = $config->getItems();
-            if (is_array($transformations) && count($transformations) > 0) {
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        $arguments = [];
-                        $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (is_array($transformation['arguments'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                $position = array_search($key, $mapping);
-                                if ($position !== false) {
-                                    $arguments[$position] = $value;
-                                }
-                            }
-                        }
-
-                        ksort($arguments);
-                        if (count($mapping) == count($arguments)) {
-                            call_user_func_array([$converter, $transformation['method']], $arguments);
-                        } else {
-                            $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                            Logger::error($message);
-                        }
-                    }
-                }
-            }
+            self::applyTransformations($converter, $transformations);
 
             $instance->queue[] = $converter;
         }
@@ -170,11 +170,47 @@ class Processor
             'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
-        $asset->save();
 
-        $instance->convert();
+        Model\Version::disable();
+        $asset->save();
+        Model\Version::enable();
+
+        $instance->save();
+
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            new VideoConvertMessage($instance->getProcessId())
+        );
 
         return $instance;
+    }
+
+    private static function applyTransformations($converter, $transformations)
+    {
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    $arguments = [];
+                    $mapping = self::$argumentMapping[$transformation['method']];
+
+                    if (is_array($transformation['arguments'])) {
+                        foreach ($transformation['arguments'] as $key => $value) {
+                            $position = array_search($key, $mapping);
+                            if ($position !== false) {
+                                $arguments[$position] = $value;
+                            }
+                        }
+                    }
+
+                    ksort($arguments);
+                    if (count($mapping) == count($arguments)) {
+                        call_user_func_array([$converter, $transformation['method']], $arguments);
+                    } else {
+                        $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
+                        Logger::error($message);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -207,14 +243,30 @@ class Processor
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
-                File::mkdir(dirname($converter->getStorageFile()));
-                File::rename($converter->getDestinationFile(), $converter->getStorageFile());
+                $source = fopen($converter->getDestinationFile(), 'rb');
+                Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
+                fclose($source);
+                unlink($converter->getDestinationFile());
 
-                // set proper permissions
-                @chmod($converter->getStorageFile(), File::getDefaultMode());
+                if ($converter->getFormat() === 'mpd') {
+                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
+                    $streams = glob($streamFilesPath);
+                    $parentPath = dirname($converter->getStorageFile());
+
+                    foreach ($streams as $steam) {
+                        $storagePath = $parentPath . '/' . basename($steam);
+                        $source = fopen($steam, 'rb');
+                        Storage::get('thumbnail')->writeStream($storagePath, $source);
+                        fclose($source);
+                        unlink($steam);
+
+                        // set proper permissions
+                        @chmod($storagePath, File::getDefaultMode());
+                    }
+                }
 
                 if ($success) {
-                    $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
                 } else {
                     $conversionStatus = 'error';
                 }
@@ -242,16 +294,33 @@ class Processor
                 'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
+
+            Model\Version::disable();
             $asset->save();
+            Model\Version::enable();
+        }
+
+        if ($instance->getDeleteSourceAfterFinished()) {
+            @unlink($instance->getDeleteSourceAfterFinished());
         }
 
         TmpStore::delete($instance->getJobStoreId());
     }
 
-    public function convert()
+    /**
+     * @return string|null
+     */
+    public function getDeleteSourceAfterFinished(): ?string
     {
-        $this->save();
-        Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'internal:video-converter ' . $this->getProcessId());
+        return $this->deleteSourceAfterFinished;
+    }
+
+    /**
+     * @param string|null $deleteSourceAfterFinished
+     */
+    public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
+    {
+        $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
     }
 
     /**

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -25,6 +26,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * @internal
+ */
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -32,29 +36,17 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
 
     /**
-     * @var PimcoreContextResolver
-     */
-    protected $resolver;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @param PimcoreContextResolver $resolver
      * @param RequestStack $requestStack
      */
     public function __construct(
-        PimcoreContextResolver $resolver,
-        RequestStack $requestStack
+        protected PimcoreContextResolver $resolver,
+        protected RequestStack $requestStack
     ) {
-        $this->resolver = $resolver;
-        $this->requestStack = $requestStack;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -69,7 +61,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     {
         $request = $event->getRequest();
 
-        if ($event->isMasterRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
+        if ($event->isMainRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
             $context = $this->resolver->getPimcoreContext($request);
 
             if ($context) {
@@ -98,13 +90,13 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
-            DataObject\AbstractObject::setHideUnpublished(false);
+            DataObject::setHideUnpublished(false);
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            DataObject\AbstractObject::setHideUnpublished(true);
-            DataObject\AbstractObject::setGetInheritedValues(true);
+            DataObject::setHideUnpublished(true);
+            DataObject::setGetInheritedValues(true);
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
     }

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.select");
@@ -49,13 +49,11 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
         this.specificPanel.add(specificItems);
-
 
         return this.layout;
     },
@@ -82,7 +80,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     {
                         ptype: 'gridviewdragdrop',
                         dragroup: 'objectclassselect'
-                    },
+                    }
                 ]
             },
             tbar: [{
@@ -97,9 +95,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                         value: ""
                     };
 
-                    var selectedRow = this.selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();
@@ -129,11 +128,16 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     renderer: function (value) {
                         return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
                     },
-                    width: 200
+                    flex: 1
                 },
                 {
-                    text: t("value"), sortable: true, dataIndex: 'value', editor: { xtype : 'textfield', allowBlank : false },
-                    width: 200
+                    text: t("value"),
+                    sortable: true,
+                    dataIndex: 'value',
+                    editor: new Ext.form.TextField({
+                        allowBlank: false
+                    }),
+                    flex: 1
                 },
                 {
                     xtype: 'actioncolumn',
@@ -219,20 +223,25 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                             return true;
                         }
                     }
-                })]
+                })
+            ]
         });
-
 
         this.selectionModel = valueGrid.getSelectionModel();
 
-        var items = [];
-
-        items.push({
-            xtype: "numberfield",
-            fieldLabel: t("width"),
-            name: "width",
-            value: datax.width
-        });
+        var items = [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            }
+        ];
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
             items.push({

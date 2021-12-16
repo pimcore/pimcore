@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -45,18 +47,16 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
-     *
      * @param  string $key
      * @param  int $cartId
      *
-     * @return void
+     * @throws NotFoundException
      */
     public function getByKeyCartId($key, $cartId)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE `key`=' . $this->db->quote($key). ' AND cartId = ' . $this->db->quote($cartId));
         if (empty($classRaw)) {
-            throw new \Exception('CartItem for cartid ' . $cartId . ' and key ' . $key . ' not found.');
+            throw new NotFoundException('CartItem for cartid ' . $cartId . ' and key ' . $key . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }
@@ -103,7 +103,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'productId=' . $this->db->quote($this->model->getProductId()). ' AND cartId = ' . $this->db->quote($this->model->cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, '`key`=' . $this->db->quote($this->model->getKey()). ' AND cartId = ' . $this->db->quote($this->model->getCartId()));
     }
 
     public function removeAllFromCart($cartId)

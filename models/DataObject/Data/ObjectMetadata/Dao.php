@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data\ObjectMetadata;
@@ -119,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
         $table = 'object_metadata_' . $classId;
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
-              `o_id` int(11) NOT NULL default '0',
+              `o_id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',
               `fieldname` varchar(71) NOT NULL,
@@ -136,8 +134,9 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownertype` (`ownertype`),
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
-              INDEX `index` (`index`)
-		) DEFAULT CHARSET=utf8mb4;");
+              INDEX `index` (`index`),
+              CONSTRAINT `".self::getForeignKeyName($table, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($class, [$table]);
     }

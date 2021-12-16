@@ -50,7 +50,7 @@ Code of one grid item within the product overview page.
     >
         <figure>
             <img class="img-responsive" alt="DREAMBRAND Toptrike Dreirad blue"
-                 src="/website/var/tmp/image-thumbnails/10000/19603/thumb__shop-product-griditem/191001841_00.png" />
+                 src="/var/tmp/image-thumbnails/10000/19603/thumb__shop-product-griditem/191001841_00.png" />
         </figure>    
         ...
     </a>

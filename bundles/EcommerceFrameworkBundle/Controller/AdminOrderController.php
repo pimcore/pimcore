@@ -1,36 +1,39 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use GuzzleHttp\ClientInterface;
-use Laminas\Paginator\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -46,6 +49,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class AdminOrderController
  *
  * @Route("/admin-order")
+ *
+ * @internal
  */
 class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
@@ -54,8 +59,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      */
     protected $orderManager;
 
+    protected $paymentManager;
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
@@ -68,10 +75,11 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         }
 
         // enable inherited values
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
+        $this->paymentManager = Factory::getInstance()->getPaymentManager();
     }
 
     /**
@@ -79,12 +87,14 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @param Request $request
      * @param IntlFormatter $formatter
+     * @param PaginatorInterface $paginator
      *
      * @return Response
      */
-    public function listAction(Request $request, IntlFormatter $formatter)
+    public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator)
     {
         // create new order list
+        /** @var Listing $list */
         $list = $this->orderManager->createOrderList();
 
         // set list type
@@ -95,13 +105,13 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         // add select fields
         $list->addSelectField('order.OrderDate');
-        $list->addSelectField(['OrderNumber' => 'order.orderNumber']);
+        $list->addSelectField('order.orderNumber AS OrderNumber');
         if ($list->getListType() == $list::LIST_TYPE_ORDER) {
-            $list->addSelectField(['TotalPrice' => 'order.totalPrice']);
+            $list->addSelectField('order.totalPrice AS TotalPrice');
         } elseif ($list->getListType() == $list::LIST_TYPE_ORDER_ITEM) {
-            $list->addSelectField(['TotalPrice' => 'orderItem.totalPrice']);
+            $list->addSelectField('orderItem.totalPrice AS TotalPrice');
         }
-        $list->addSelectField(['Items' => 'count(orderItem.o_id)']);
+        $list->addSelectField('count(orderItem.o_id) AS Items');
 
         // Search
         if ($request->get('q')) {
@@ -112,6 +122,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                     $filterProductType = new ProductType();
                     $filterProductType->setTypes([$q]);
                     $list->addFilter($filterProductType);
+
                     break;
 
                 case 'order':
@@ -119,6 +130,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                     $filterOrder = new OrderSearch();
                     $filterOrder->setKeyword($q);
                     $list->addFilter($filterOrder);
+
                     break;
             }
         }
@@ -152,20 +164,21 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
             //apply filter on PricingRule(OrderItem)
             $list->joinPricingRule();
-            $list->getQuery()->where('pricingRule.ruleId = ?', $pricingRuleId);
 
             //apply filter on PriceModifications
             $list->joinPriceModifications();
-            $list->getQuery()->orWhere('OrderPriceModifications.pricingRuleId = ?', $pricingRuleId);
+            $list->getQueryBuilder()->andWhere('pricingRule.ruleId = :pricingRuleId OR OrderPriceModifications.pricingRuleId = :pricingRuleId')->setParameter(':pricingRuleId', $pricingRuleId);
         }
 
         // set default order
         $list->setOrder('order.orderDate desc');
 
-        // create paging
-        $paginator = new Paginator($list);
-        $paginator->setItemCountPerPage(10);
-        $paginator->setCurrentPageNumber($request->get('page', 1));
+        // Paginate the results of the query
+        $paginator = $paginator->paginate(
+            $list,
+            $request->get('page', 1),
+            10
+        );
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/list.html.twig', [
             'paginator' => $paginator,
@@ -196,7 +209,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
-        /* @var AbstractOrder $order */
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -218,6 +230,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             );
 
             $json = null;
+
             try {
                 $response = $client->request('GET', $url);
                 if ($response->getStatusCode() < 300) {
@@ -279,13 +292,13 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                 if ($field instanceof ManyToOneRelation) {
                     $classes = $field->getClasses();
                     if (count($classes) === 1) {
+                        /** @var \Pimcore\Model\DataObject\Concrete $class */
                         $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
-                        /* @var \Pimcore\Model\DataObject\Concrete $class */
 
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
 
-                        $orderList->getQuery()->where('customer.o_id = ?', $customer->getId());
+                        $orderList->getQueryBuilder()->andWhere('customer.o_id = :customer_oid')->setParameter(':customer_oid', $customer->getId());
 
                         $arrCustomerAccount['orderCount'] = $orderList->count();
                     }
@@ -306,13 +319,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $arrTimeline = [];
         $date = new \DateTime();
         foreach ($orderAgent->getFullChangeLog() as $note) {
-            /* @var \Pimcore\Model\Element\Note $note */
-
             $quantity = null;
 
             // get avatar
             $user = User::getById($note->getUser());
-            /* @var \Pimcore\Model\User $user */
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
             // group events
@@ -321,7 +331,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
             // load reference
             $reference = Concrete::getById($note->getCid());
-            $title = $reference instanceof AbstractOrderItem
+            $title = $reference instanceof AbstractOrderItem && $reference->getProduct() instanceof CheckoutableInterface
                 ? $reference->getProduct()->getOSName()
                 : null
             ;
@@ -334,17 +344,19 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
             // add
             $arrTimeline[$group][] = [
-                'icon' => $arrIcons[$note->getTitle()],
-                'context' => $arrContext[$note->getTitle()] ?: 'default',
+                'icon' => $arrIcons[$note->getTitle()] ?? '',
+                'context' => $arrContext[$note->getTitle()] ?? 'default',
                 'type' => $note->getTitle(),
                 'date' => $formatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
                 'avatar' => $avatar,
                 'user' => $user ? $user->getName() : null,
-                'message' => $note->getData()['message']['data'],
+                'message' => $note->getData()['message']['data'] ?? '',
                 'title' => $title ?: $note->getTitle(),
                 'quantity' => $quantity,
             ];
         }
+
+        $paymentProviders = $this->paymentManager->getProviderTypes();
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/detail.html.twig', [
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
@@ -356,6 +368,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
             'formatter' => $formatter,
             'locale' => $localeService,
+            'paymentProviders' => $paymentProviders,
         ]);
     }
 
@@ -371,7 +384,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -405,8 +417,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -439,8 +450,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

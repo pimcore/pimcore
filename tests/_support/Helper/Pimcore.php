@@ -1,10 +1,24 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Helper;
 
 use Codeception\Exception\ModuleException;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
@@ -21,7 +35,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
@@ -72,10 +86,8 @@ class Pimcore extends Module\Symfony
         return $this->kernel->getContainer();
     }
 
-    public function _initialize()
+    public function _initialize(): void
     {
-        Config::setEnvironment($this->config['environment']);
-
         // don't initialize the kernel multiple times if running multiple suites
         // TODO can this lead to side-effects?
         if (null !== $kernel = \Pimcore::getKernel()) {
@@ -119,7 +131,7 @@ class Pimcore extends Module\Symfony
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY,
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -267,19 +279,26 @@ class Pimcore extends Module\Symfony
      */
     protected function purgeClassDirectory()
     {
-        $filesystem = new Filesystem();
-        if (file_exists(PIMCORE_CLASS_DIRECTORY)) {
-            $this->debug('[INIT] Purging class directory ' . PIMCORE_CLASS_DIRECTORY);
+        $directories = [
+            PIMCORE_CLASS_DIRECTORY,
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
+        ];
 
-            $filesystem->remove(PIMCORE_CLASS_DIRECTORY);
-            $filesystem->mkdir(PIMCORE_CLASS_DIRECTORY, 0755);
+        $filesystem = new Filesystem();
+        foreach ($directories as $directory) {
+            if (file_exists($directory)) {
+                $this->debug('[INIT] Purging class directory ' . $directory);
+
+                $filesystem->remove($directory);
+                $filesystem->mkdir($directory, 0755);
+            }
         }
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function _before(\Codeception\TestInterface $test)
+    public function _before(TestInterface $test): void
     {
         parent::_before($test);
 
@@ -294,8 +313,8 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        DataObject\AbstractObject::setHideUnpublished(false);
-        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject::setHideUnpublished(false);
+        DataObject::setGetInheritedValues(false);
         DataObject\Localizedfield::setGetFallbackValues(false);
     }
 
@@ -306,8 +325,13 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
+    }
+
+    public function makeHtmlSnapshot($name = null)
+    {
+        // TODO: Implement makeHtmlSnapshot() method.
     }
 }

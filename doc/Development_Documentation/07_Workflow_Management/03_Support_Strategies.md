@@ -45,14 +45,14 @@ If a very specific logic is needed it's possible to add a service which implemen
 
 ```yaml
    support_strategy:
-       service: AppBundle\Workflow\SupportStrategy
+       service: App\Workflow\SupportStrategy
 ```
 
 ##### Example Implementation (needs to be registered in the service container)
 
 ```php
 <?php
-namespace AppBundle\Workflow;
+namespace App\Workflow;
 
 use Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface;
 use Symfony\Component\Workflow\Workflow;

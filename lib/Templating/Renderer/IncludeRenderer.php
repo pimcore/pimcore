@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Templating\Renderer;
@@ -21,8 +22,12 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 
+/**
+ * @internal
+ */
 class IncludeRenderer
 {
     /**
@@ -89,39 +94,29 @@ class IncludeRenderer
         $cacheKey = null;
         $cacheConfig = false;
 
-        if ($cacheEnabled) {
-            if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
-                // cleanup params to avoid serializing Element\ElementInterface objects
-                $cacheParams = $params;
-                $cacheParams['~~include-document'] = $originalInclude;
+        if ($cacheEnabled && !$editmode && $cacheConfig = Frontend::isOutputCacheEnabled()) {
+            // cleanup params to avoid serializing Element\ElementInterface objects
+            $cacheParams = $params;
+            $cacheParams['~~include-document'] = $originalInclude;
 
-                array_walk($cacheParams, function (&$value, $key) {
-                    if ($value instanceof Element\ElementInterface) {
-                        $value = $value->getId();
-                    } elseif (is_object($value) && method_exists($value, '__toString')) {
-                        $value = (string)$value;
-                    }
-                });
-
-                // TODO is this enough for cache or should we disable caching completely?
-                if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
-                    $cacheParams['target_group'] = $include->getUseTargetGroup();
+            array_walk($cacheParams, function (&$value, $key) {
+                if ($value instanceof Element\ElementInterface) {
+                    $value = $value->getId();
+                } elseif (is_object($value) && method_exists($value, '__toString')) {
+                    $value = (string)$value;
                 }
+            });
 
-                $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
-                if ($content = Cache::load($cacheKey)) {
-                    return $content;
-                }
+            // TODO is this enough for cache or should we disable caching completely?
+            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+                $cacheParams['target_group'] = $include->getUseTargetGroup();
+            }
+
+            $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
+            if ($content = Cache::load($cacheKey)) {
+                return $content;
             }
         }
-
-        // TODO remove dependency on registry setting
-        $editmodeBackup = false;
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_editmode')) {
-            $editmodeBackup = \Pimcore\Cache\Runtime::get('pimcore_editmode');
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
 
         $params = array_merge($params, ['document' => $include]);
         $content = '';
@@ -134,11 +129,11 @@ class IncludeRenderer
             }
         }
 
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
-
-        // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+        // write contents to the cache, if output-cache is enabled & not in editmode
+        if ($cacheConfig && !$editmode && !DeviceDetector::getInstance()->wasUsed()) {
+            $cacheTags = ['output_inline'];
+            $cacheTags[] = $cacheConfig['lifetime'] ? 'output_lifetime' : 'output';
+            Cache::save($content, $cacheKey, $cacheTags, $cacheConfig['lifetime']);
         }
 
         return $content;
@@ -171,20 +166,20 @@ class IncludeRenderer
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
-        if ($html = str_get_html($content)) {
-            $childs = $html->find('*');
-            if (is_array($childs)) {
-                foreach ($childs as $child) {
-                    $child->class = $child->class . $editmodeClass;
-                    $child->pimcore_type = $include->getType();
-                    $child->pimcore_id = $include->getId();
-                }
+        try {
+            $html = new DomCrawler($content);
+            $childs = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
+            /** @var \DOMElement $child */
+            foreach ($childs as $child) {
+                $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
+                $child->setAttribute('pimcore_type', $include->getType());
+                $child->setAttribute('pimcore_id', $include->getId());
             }
-            $content = $html->save();
+            $content = $html->html();
 
             $html->clear();
             unset($html);
-        } else {
+        } catch (\Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

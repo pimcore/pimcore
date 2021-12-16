@@ -65,7 +65,7 @@ Create a Block:
  * 
  * BlockElement( name, type, data )
  */
- $object = AbstractObject::getById(4);
+ $object = DataObject::getById(4);
  
  $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
@@ -79,7 +79,7 @@ Create a Block:
 
 Create a Block with localized fields:
 ```php
-$object = AbstractObject::getById(4);
+$object = DataObject::getById(4);
 
 $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),

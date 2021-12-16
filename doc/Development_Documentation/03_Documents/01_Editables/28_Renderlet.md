@@ -11,7 +11,7 @@ A typical use-case would be to render product objects within a document.
 
 | Name           | Type      | Description                                                                        | Mandatory   |
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
-| `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction`  | X           |
+| `controller`   | string    | Specify controller reference, e.g. `App\Controller\FooController::myAction`  | X           |
 | `template`     | string    | Specify template                                                                   |             |
 | `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
 | `height`       | integer or string   | Height of the renderlet in pixel or 'auto'                               |             |
@@ -52,7 +52,7 @@ The code below shows how to use renderlet to create gallery based on it.
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
-            "controller" : "AppBundle\\Controller\\ContentController::myGallery",
+            "controller" : "App\\Controller\\ContentController::myGalleryAction",
             "title" : "Drag an asset folder here to get a gallery",
             "height" : 400
         })
@@ -90,7 +90,7 @@ Of course, to limit access to the renderlet, you can use the `type` configuratio
 
 ### Create View
 
-Now you have to create the template file at: `website/views/scripts/content/my-gallery.php`
+Now you have to create the template file at: `templates/content/my_gallery.html.twig`
 
 ```twig
 {% if assets %}
@@ -98,7 +98,7 @@ Now you have to create the template file at: `website/views/scripts/content/my-g
 		{% for asset in assets %}
 			{% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
 				<div class="gallery-row">
-				{{ asset.getThumbnail('galleryThumbnail').getHTML() }}
+                    {{ asset.getThumbnail('myThumbnailName').getHTML()|raw }}
 				</div>
 			{% endif %}
 		{% endfor %}
@@ -125,6 +125,6 @@ And the final view is like, below:
 
 Within the renderlet, you can access the editmode parameter as follows:
 
-```php
-$request->get("editmode");
+```twig
+{% if editmode %}
 ```

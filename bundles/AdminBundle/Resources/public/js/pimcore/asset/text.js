@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.text");
@@ -91,23 +91,58 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
         if (!this.editPanel) {
             if(this.data.data !== false) {
-                this.editArea = new Ext.form.TextArea({
-                    xtype: "textarea",
-                    name: "data",
-                    value: this.data.data,
-                    style: "font-family: 'Courier New', Courier, monospace;"
-                });
+                let editorId = "asset_editor_" + this.id;
 
                 this.editPanel = new Ext.Panel({
                     title: t("edit"),
                     iconCls: "pimcore_icon_edit",
                     bodyStyle: "padding: 10px;",
-                    items: [this.editArea]
+                    layout: 'fit',
+                    items: [{
+                        xtype: 'component',
+                        html: '<div id="' + editorId + '" style="height:100%;width:100%"></div>',
+                        listeners: {
+                            afterrender: function (cmp) {
+                                var me = this;
+                                var editor = ace.edit(editorId);
+                                editor.setTheme('ace/theme/chrome');
+
+                                //set editor file mode
+                                let modelist = ace.require('ace/ext/modelist');
+                                let mode = modelist.getModeForPath(this.data.url).mode;
+                                editor.getSession().setMode(mode);
+
+                                //set data
+                                if (this.data.data) {
+                                    editor.setValue(this.data.data);
+                                    editor.clearSelection();
+                                }
+
+                                editor.setOptions({
+                                    showLineNumbers: true,
+                                    showPrintMargin: false,
+                                    fontFamily: 'Courier New, Courier, monospace;'
+                                });
+
+                                editor.on("change", function(obj) {
+                                    me.detectedChange();
+                                });
+
+                                this.editor = editor;
+                            }.bind(this)
+                        }
+                    }]
                 });
 
+
                 this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                    this.editArea.setWidth(width-20);
-                    this.editArea.setHeight(height-20);
+                    this.editor.resize();
+                }.bind(this));
+
+                this.editPanel.on("destroy", function (el) {
+                    if (this.editor) {
+                        this.editor.destroy();
+                    }
                 }.bind(this));
             } else {
                 this.editPanel = new Ext.Panel({
@@ -127,7 +162,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
         var parameters = $super(only);
         
         if(!Ext.isString(only) && this.data.data !== false) {
-            parameters.data = this.editArea.getValue();
+            parameters.data = this.editor.getValue();
         }
         
         return parameters;

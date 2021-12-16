@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.document.doctypes");
@@ -82,6 +82,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoLoad: true,
                         proxy: {
                             type: 'ajax',
+                            batchActions: false,
                             url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
@@ -156,6 +157,31 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
+                xtype: 'checkcolumn',
+                text: t("static"),
+                dataIndex: 'staticGeneratorEnabled',
+                width: 50,
+                renderer: function (value, metaData, record) {
+                    return (record.get('type') !== "page") ? '' : this.defaultRenderer(value, metaData);
+                },
+                listeners: {
+                    beforecheckchange: function (el, rowIndex, checked, record, eOpts) {
+                        if(!record.data.writeable) {
+                            pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
+                            return false;
+                        }
+                        if (this.store.getAt(rowIndex).get("type") !== "page") {
+                            record.set('staticGeneratorEnabled', false);
+                            return false;
+                        }
+                    }.bind(this),
+                    checkChange: function (column, rowIndex, checked, eOpts) {
+                        var record = this.store.getAt(rowIndex);
+                        record.set('staticGeneratorEnabled', checked);
+                    }.bind(this)
+                }
+            },
+            {
                 text: t("creationDate"),
                 sortable: true,
                 dataIndex: 'creationDate',
@@ -165,7 +191,7 @@ pimcore.settings.document.doctypes = Class.create({
                 renderer: function (d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
-                        return Ext.date.format(date, "Y-m-d H:i:s");
+                        return Ext.Date.format(date, "Y-m-d H:i:s");
                     } else {
                         return "";
                     }
@@ -181,7 +207,7 @@ pimcore.settings.document.doctypes = Class.create({
                 renderer: function (d) {
                     if (d !== undefined) {
                         var date = new Date(d * 1000);
-                        return Ext.date.format(date, "Y-m-d H:i:s");
+                        return Ext.Date.format(date, "Y-m-d H:i:s");
                     } else {
                         return "";
                     }
@@ -192,8 +218,14 @@ pimcore.settings.document.doctypes = Class.create({
                 menuText: t('delete'),
                 width: 30,
                 items: [{
+                    getClass: function (v, meta, rec) {
+                        var klass = "pimcore_action_column ";
+                        if (rec.data.writeable) {
+                            klass += "pimcore_icon_minus";
+                        }
+                        return klass;
+                    },
                     tooltip: t('delete'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)
@@ -220,8 +252,16 @@ pimcore.settings.document.doctypes = Class.create({
         ];
 
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
+            listeners: {
+                beforeedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        return false;
+                    }
+                }
+            }
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -240,7 +280,7 @@ pimcore.settings.document.doctypes = Class.create({
             stripeRows: true,
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -248,14 +288,20 @@ pimcore.settings.document.doctypes = Class.create({
                     {
                         text: t('add'),
                         handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
+                        iconCls: "pimcore_icon_add",
+                        disabled: !pimcore.settings['document-types-writeable']
                     }
                 ]
             },
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             }
         });
+
+        pimcore.plugin.broker.fireEvent("prepareDocumentTypesGrid", this.grid, this);
 
         return this.grid;
     },

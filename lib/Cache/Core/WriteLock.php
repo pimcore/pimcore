@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Core;
@@ -18,6 +19,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
+/**
+ * @internal
+ */
 class WriteLock implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -50,7 +54,7 @@ class WriteLock implements LoggerAwareInterface
      *
      * @var int|null
      */
-    protected $timestamp = 0;
+    protected $timestamp;
 
     /**
      * @var bool
@@ -66,7 +70,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -74,7 +78,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -82,7 +86,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEnabled()
     {
@@ -172,7 +176,7 @@ class WriteLock implements LoggerAwareInterface
         }
 
         // normalize timestamp
-        $this->timestamp = 0;
+        $this->timestamp = null;
 
         return false;
     }
@@ -214,7 +218,7 @@ class WriteLock implements LoggerAwareInterface
 
                     $this->itemPool->deleteItem($this->cacheKey);
 
-                    $this->timestamp = 0;
+                    $this->timestamp = null;
 
                     return true;
                 } else {

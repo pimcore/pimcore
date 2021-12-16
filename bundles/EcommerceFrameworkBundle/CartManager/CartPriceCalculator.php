@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -159,7 +159,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         $subTotalNet = Decimal::zero();
         $subTotalGross = Decimal::zero();
 
-        /** @var Currency $currency */
+        /** @var Currency|null $currency */
         $currency = null;
 
         /** @var TaxEntry[] $subTotalTaxes */
@@ -261,7 +261,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
             // apply pricing rules
             $this->appliedPricingRules = $this->getPricingManager()->applyCartRules($this->cart);
 
-            //check if some pricing rule needs recalculation of sums
+            // @phpstan-ignore-next-line check if some pricing rule needs recalculation of sums
             if (!$this->isCalculated) {
                 $this->calculate(true);
             }
@@ -406,7 +406,15 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
             }
         }
 
-        $itemRules = array_merge($this->appliedPricingRules, $itemRules);
+        $itemRules = array_filter($itemRules, function (RuleInterface $rule) {
+            return $rule->hasProductActions();
+        });
+
+        $cartRules = array_filter($this->appliedPricingRules, function (RuleInterface $rule) {
+            return $rule->hasCartActions();
+        });
+
+        $itemRules = array_merge($cartRules, $itemRules);
         $uniqueItemRules = [];
         foreach ($itemRules as $rule) {
             $uniqueItemRules[$rule->getId()] = $rule;

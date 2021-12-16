@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Staticroute
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Staticroute\Listing;
@@ -24,31 +22,27 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Staticroute\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Staticroute\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('staticroutes');
-    }
-
     /**
-     * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
-     *
      * @return array
      */
-    public function load()
+    public function loadList()
     {
-        $routesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-
-        $routes = [];
-        foreach ($routesData as $routeData) {
-            $routes[] = Model\Staticroute::getById($routeData['id']);
+        $staticRoutes = [];
+        foreach ($this->loadIdList() as $id) {
+            $staticRoutes[] = Model\Staticroute::getById($id);
         }
 
-        $this->model->setRoutes($routes);
+        if ($this->model->getFilter()) {
+            $staticRoutes = array_filter($staticRoutes, $this->model->getFilter());
+        }
+        if ($this->model->getOrder()) {
+            usort($staticRoutes, $this->model->getOrder());
+        }
+        $this->model->setRoutes($staticRoutes);
 
-        return $routes;
+        return $staticRoutes;
     }
 
     /**
@@ -56,8 +50,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
+        $amount = count($this->loadIdList());
 
         return $amount;
     }

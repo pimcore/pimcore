@@ -1,0 +1,30 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Analytics\SiteId\SiteIdProvider: ~
+
+
+    #
+    # GOOGLE
+    #
+
+    Pimcore\Analytics\Google\Config\ConfigProvider: ~
+    Pimcore\Analytics\Google\Config\Config:
+        factory: ['@Pimcore\Analytics\Google\Config\ConfigProvider', 'getConfig']
+
+    Pimcore\Analytics\Google\Config\SiteConfigProvider: ~
+
+    Pimcore\Analytics\Google\Tracker:
+        calls:
+            - [setLogger, ['@logger']]
+
+    # fallback locator which is used from the deprecated Pimcore\Google\Analytics class
+    pimcore.analytics.google.fallback_service_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
+        tags:
+            - { name: container.service_locator }
+

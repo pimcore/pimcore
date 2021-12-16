@@ -1,56 +1,58 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Version
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method \Pimcore\Model\GridConfigFavourite\Dao getDao()
+ *
+ * @internal
  */
 class GridConfigFavourite extends AbstractModel
 {
     /**
      * @var int
      */
-    public $ownerId;
+    protected $ownerId;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var int
      */
-    public $objectId;
+    protected $objectId;
 
     /**
      * @var int
      */
-    public $gridConfigId;
+    protected $gridConfigId;
 
     /**
      * @var string
      */
-    public $searchType;
+    protected $searchType;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @param int $ownerId
@@ -58,14 +60,18 @@ class GridConfigFavourite extends AbstractModel
      * @param int|null $objectId
      * @param string|null $searchType
      *
-     * @return GridConfigFavourite
+     * @return GridConfigFavourite|null
      */
     public static function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = '')
     {
-        $favourite = new self();
-        $favourite->getDao()->getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId, $searchType);
+        try {
+            $favourite = new self();
+            $favourite->getDao()->getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId, $searchType);
 
-        return $favourite;
+            return $favourite;
+        } catch (NotFoundException $e) {
+            return null;
+        }
     }
 
     /**

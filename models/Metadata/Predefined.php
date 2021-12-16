@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Metadata
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Metadata;
@@ -22,74 +20,83 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
  * @method void save()
  * @method void delete()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  */
-class Predefined extends Model\AbstractModel
+final class Predefined extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $targetSubtype;
+    protected $targetSubtype;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var string
      */
-    public $config;
+    protected $config;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var string
      */
-    public $language;
+    protected $language;
 
     /**
-     * @var int
+     * @var string
      */
-    public $creationDate;
+    protected $group;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $modificationDate;
+    protected $creationDate;
 
     /**
-     * @param int $id
+     * @var int|null
+     */
+    protected $modificationDate;
+
+    /**
+     * @param string $id
      *
      * @return self|null
      */
@@ -100,7 +107,7 @@ class Predefined extends Model\AbstractModel
             $metadata->getDao()->getById($id);
 
             return $metadata;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -198,7 +205,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -206,13 +213,13 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -250,7 +257,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -270,7 +277,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -291,6 +298,22 @@ class Predefined extends Model\AbstractModel
     public function getLanguage()
     {
         return $this->language;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**
@@ -346,6 +369,14 @@ class Predefined extends Model\AbstractModel
             $this->data = $instance->unmarshal($this->data);
         } catch (UnsupportedException $e) {
             Logger::error('could not resolve asset metadata implementation for ' . $this->type);
+        }
+    }
+
+    public function __clone()
+    {
+        if ($this->dao) {
+            $this->dao = clone $this->dao;
+            $this->dao->setModel($this);
         }
     }
 }

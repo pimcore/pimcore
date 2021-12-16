@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS('pimcore.settings.email.log');
@@ -308,6 +308,33 @@ pimcore.settings.email.log = Class.create({
                 }]
             },
             {
+                xtype: 'actioncolumn',
+                sortable: false,
+                width: 50,
+                dataIndex: 'error',
+                menuText: t('error'),
+                text: t('error'),
+                items: [{
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg',
+                    handler: function (grid, rowIndex) {
+                        var rec = grid.getStore().getAt(rowIndex);
+                        var iframe = new Ext.Window({
+                            title: t('text'),
+                            width: iFrameSettings.width,
+                            height: iFrameSettings.height,
+                            layout: 'fit',
+                            html: rec.get('error')
+                        });
+                        iframe.show();
+                    }.bind(this),
+                    getClass: function (v, meta, rec) {
+                        if (!rec.get('error')) {
+                            return 'pimcore_hidden';
+                        }
+                    }
+                }]
+            },
+            {
                 xtype:'actioncolumn',
                 width: 30,
                 menuText: t('email_log_resend'),
@@ -415,7 +442,7 @@ pimcore.settings.email.log = Class.create({
 
         var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params",
             "modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml",
-            "emailLogExistsText"];
+            "emailLogExistsText", 'error'];
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             Routing.generate('pimcore_admin_email_emaillogs'),
@@ -452,7 +479,11 @@ pimcore.settings.email.log = Class.create({
             trackMouseOver: true,
             loadMask: true,
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                enableTextSelection: true,
+                getRowClass: function (record) {
+                    return (record.get('error')) ? 'log-type-ERR' : '';
+                }
             },
             tbar: toolbar,
             bbar: this.pagingtoolbar

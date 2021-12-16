@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.table");
@@ -21,9 +21,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         this.fieldConfig = fieldConfig;
 
-        if (!data) {
+        if (!data || data.length < 1) {
             data = this.getInitialData();
-
         }
 
         this.data = data;
@@ -100,16 +99,18 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
         var options = {};
         options.name = this.fieldConfig.name;
         options.border = true;
         options.layout = "fit";
         options.style = "margin-bottom: 10px";
         options.title = this.fieldConfig.title;
-        options.componentCls = "object_field object_field_type_" + this.type;
+        options.componentCls = this.getWrapperClassNames();
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
+        }
+        if (this.fieldConfig.height) {
+            options.height = this.fieldConfig.height;
         }
 
         if (!this.component) {
@@ -184,6 +185,11 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 handler: this.addRow.bind(this)
             });
         }
+
+        tbar.push({
+            iconCls: 'pimcore_icon_copy',
+            handler: this.copyFromTable.bind(this)
+        });
 
         tbar.push({
             iconCls: "pimcore_icon_paste",
@@ -331,6 +337,72 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     getCellEditValue: function () {
         return this.getValue();
+    },
+
+    getCopyData: function() {
+        var data = this.getValue();
+        var copyData;
+        if (data.length > 0) {
+            try {
+                var temp = [];
+                for (var i = 0; i < data.length; i++) {
+                    temp.push(data[i].join("\t"))
+                }
+                copyData = temp.join('\n');
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        return copyData;
+    },
+
+    copyFromTable: function() {
+        this.copyField = new Ext.form.TextArea({
+            width: "100%",
+            validateOnChange: false,
+            value: this.getCopyData()
+        });
+
+        this.copyWindow = new Ext.Window({
+            width: 500,
+            modal: true,
+            title: t("copy"),
+            layout: "fit"
+        });
+
+        var panel = new Ext.Panel({
+            bodyStyle: "padding: 10px;",
+            items: [
+                this.copyField,
+            ],
+            buttons: [
+                {
+                    text: t("copy"),
+                    iconCls: "pimcore_icon_white_copy",
+                    handler: function () {
+                        this.copyField.focus();
+                        this.copyField.selectText();
+                        try {
+                            document.execCommand("copy");
+                        } catch (e) {
+                            console.log(e);
+                        };
+                        this.copyWindow.close();
+                    }.bind(this)
+                }, {
+                    text: t("cancel"),
+                    iconCls: "pimcore_icon_cancel",
+                    handler: function () {
+                        this.copyWindow.close();
+                    }.bind(this)
+                }
+            ]
+        });
+
+        this.copyWindow.add(panel);
+        this.copyWindow.show();
+        this.copyField.focus();
     },
 
     pasteFromClipboard: function() {

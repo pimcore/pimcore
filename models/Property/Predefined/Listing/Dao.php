@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Property\Predefined\Listing;
@@ -25,26 +23,19 @@ use Pimcore\Model\Property;
  *
  * @property \Pimcore\Model\Property\Predefined\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Property\Predefined\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('predefined-properties');
-    }
-
     /**
      * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
      *
-     * @return array
+     * @return Model\Property\Predefined[]
      */
-    public function load()
+    public function loadList()
     {
         $properties = [];
-        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        foreach ($propertiesData as $propertyData) {
-            $properties[] = Property\Predefined::getById($propertyData['id']);
+        foreach ($this->loadIdList() as $id) {
+            $properties[] = Model\Property\Predefined::getById($id);
         }
 
         $this->model->setProperties($properties);
@@ -57,9 +48,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return count($this->loadList());
     }
 }

@@ -1,7 +1,7 @@
 # Develop for Pimcore
 
 Start contributing to Pimcore and become an official Community Developer - we are thankful for your support. 
-For details on how to contribute have a look at your [Contributing Guide](https://github.com/pimcore/pimcore/blob/master/CONTRIBUTING.md). 
+For details on how to contribute have a look at your [Contributing Guide](https://github.com/pimcore/pimcore/blob/10.x/CONTRIBUTING.md). 
 
 #### TL;DR
 Fork us on [GitHub](https://github.com/pimcore/pimcore) and contribute code with pull requests ;-). 

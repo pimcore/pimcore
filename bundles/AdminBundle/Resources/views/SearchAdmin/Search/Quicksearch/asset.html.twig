@@ -1,6 +1,6 @@
 {# @var $element \Pimcore\Model\Asset\Image|\Pimcore\Model\Asset\Document|\Pimcore\Model\Asset\Video #}
 {% set previewImage = null %}
-{% set params = { 'id': element.id, 'treepreview': true, 'hdpi': true } %}
+{% set params = { 'id': element.id, 'treepreview': true } %}
 
 {% if element is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
     {% set previewImage = path('pimcore_admin_asset_getimagethumbnail', params) %}

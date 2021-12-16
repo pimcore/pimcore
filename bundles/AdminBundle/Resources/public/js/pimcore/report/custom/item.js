@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.report.custom.item");
@@ -27,11 +27,19 @@ pimcore.report.custom.item = Class.create({
     addLayout: function () {
 
         var panelButtons = [];
-        panelButtons.push({
+
+        let buttonConfig = {
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
-        });
+            handler: this.save.bind(this),
+            disabled: !this.data.writeable
+        };
+
+        if (!this.data.writeable) {
+            buttonConfig.tooltip = t("config_not_writeable");
+        }
+
+        panelButtons.push(buttonConfig);
 
         this.columnStore = Ext.create('Ext.data.Store', {
             autoDestroy: false,

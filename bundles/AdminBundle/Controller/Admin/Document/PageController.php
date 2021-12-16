@@ -1,31 +1,43 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
+use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
 /**
  * @Route("/page")
+ *
+ * @internal
  */
 class PageController extends DocumentControllerBase
 {
@@ -65,10 +77,11 @@ class PageController extends DocumentControllerBase
      * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -85,12 +98,11 @@ class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $isLatestVersion = true;
-        $page = $this->getLatestVersion($page, $isLatestVersion);
+        $draftVersion = null;
+        $page = $this->getLatestVersion($page, $draftVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->getScheduledTasks();
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
@@ -107,10 +119,19 @@ class PageController extends DocumentControllerBase
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
 
-        $data['url'] = $page->getUrl();
-        $data['documentFromVersion'] = !$isLatestVersion;
+        if ($page->getStaticGeneratorEnabled()) {
+            $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+        }
 
-        $this->preSendDataActions($data, $page);
+        $data['url'] = $page->getUrl();
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $page->getScheduledTasks()
+        );
+
+        $this->preSendDataActions($data, $page, $draftVersion);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);
@@ -123,12 +144,13 @@ class PageController extends DocumentControllerBase
      * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
         $page = Document\Page::getById($request->get('id'));
 
@@ -186,23 +208,38 @@ class PageController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'), $page);
+
+            $data = [
+                'versionDate' => $page->getModificationDate(),
+                'versionCount' => $page->getVersionCount(),
+            ];
+
+            if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
+                $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
+                $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+            }
+
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
-                'data' => [
-                    'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount(),
-                ],
+                'data' => $data,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
 
-            $page->saveVersion();
+            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
             $this->saveToSession($page);
 
-            $treeData = $this->getTreeNodeConfig($page);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate(),
+            ];
 
-            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+            $treeData = $this->getTreeNodeConfig($page);
+            $this->handleTask($request->get('task'), $page);
+
+            return $this->adminJson(['success' => true, 'treeData' => $treeData, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }
@@ -259,7 +296,9 @@ class PageController extends DocumentControllerBase
     {
         $document = Document\Page::getById($request->get('id'));
         if ($document instanceof Document\Page) {
-            return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
+            return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
+                'Content-Type' => 'image/jpg',
+            ]);
         }
 
         throw $this->createNotFoundException('Page not found');
@@ -377,25 +416,70 @@ class PageController extends DocumentControllerBase
 
         $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
 
-        $code = new \Endroid\QrCode\QrCode;
-        $code->setWriterByName('png');
-        $code->setText($url);
-        $code->setSize(500);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size($request->query->get('download') ? 4000 : 500)
+            ->build();
 
-        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->writeFile($tmpFile);
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
+        $result->saveToFile($tmpFile);
 
         $response = new BinaryFileResponse($tmpFile);
         $response->headers->set('Content-Type', 'image/png');
 
         if ($request->query->get('download')) {
-            $code->setSize(4000);
             $response->setContentDisposition('attachment', 'qrcode-preview.png');
         }
 
         $response->deleteFileAfterSend(true);
 
         return $response;
+    }
+
+    /**
+     * @Route("/areabrick-render-index-editmode", name="pimcore_admin_document_page_areabrick-render-index-editmode", methods={"POST"})
+     *
+     * @param Request $request
+     * @param BlockStateStack $blockStateStack
+     * @param EditmodeEditableDefinitionCollector $definitionCollector
+     * @param Environment $twig
+     * @param EditableRenderer $editableRenderer
+     *
+     * @return JsonResponse
+     */
+    public function areabrickRenderIndexEditmode(
+        Request $request,
+        BlockStateStack $blockStateStack,
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        Environment $twig,
+        EditableRenderer $editableRenderer
+    ) {
+        $blockStateStackData = json_decode($request->get('blockStateStack'), true);
+        $blockStateStack->loadArray($blockStateStackData);
+
+        $document = Document\PageSnippet::getById($request->get('documentId'));
+
+        $twig->addGlobal('document', $document);
+        $twig->addGlobal('editmode', true);
+
+        // we can't use EditmodeResolver::setForceEditmode() here, because it would also render included documents in editmode
+        // so we use the attribute as a workaround
+        $request->attributes->set(EditmodeResolver::ATTRIBUTE_EDITMODE, true);
+
+        $areaBlockConfig = json_decode($request->get('areablockConfig'), true);
+        /** @var Document\Editable\Areablock $areablock */
+        $areablock = $editableRenderer->getEditable($document, 'areablock', $request->get('realName'), $areaBlockConfig, true);
+        $areablock->setRealName($request->get('realName'));
+        $areablock->setEditmode(true);
+        $areaBrickData = json_decode($request->get('areablockData'), true);
+        $areablock->setDataFromEditmode($areaBrickData);
+        $htmlCode = trim($areablock->renderIndex($request->get('index'), true));
+
+        return new JsonResponse([
+            'editableDefinitions' => $definitionCollector->getDefinitions(),
+            'htmlCode' => $htmlCode,
+        ]);
     }
 
     /**

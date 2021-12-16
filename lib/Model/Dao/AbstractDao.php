@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Dao;
@@ -28,6 +29,9 @@ abstract class AbstractDao implements DaoInterface
      */
     public $db;
 
+    /**
+     * {@inheritdoc}
+     */
     public function configure()
     {
         $this->db = Db::get();
@@ -86,7 +90,19 @@ abstract class AbstractDao implements DaoInterface
     public function resetValidTableColumnsCache($table)
     {
         $cacheKey = self::CACHEKEY . $table;
-        \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        }
         Cache::clearTags(['system', 'resource']);
+    }
+
+    public static function getForeignKeyName($table, $column)
+    {
+        $fkName = 'fk_'.$table.'__'.$column;
+        if (strlen($fkName) > 64) {
+            $fkName = substr($fkName, 0, 55) . '_' . hash('crc32', $fkName);
+        }
+
+        return $fkName;
     }
 }

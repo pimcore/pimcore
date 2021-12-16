@@ -1,11 +1,23 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Model\Element;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Property;
@@ -83,7 +95,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source object
-        $source = AbstractObject::getById($source->getId(), true);
+        $source = DataObject::getById($source->getId(), true);
 
         //get dependencies
         $dependencies = $source->getDependencies();

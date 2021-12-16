@@ -1,6 +1,6 @@
 # Bundle Developer's Guide
 
-Since Pimcore utilizes the powerful Symfony Bundle system, let us refer to the [Symfony Bundle Documentation](http://symfony.com/doc/3.4/bundles.html) on how
+Since Pimcore utilizes the powerful Symfony Bundle system, let us refer to the [Symfony Bundle Documentation](https://symfony.com/doc/5.2/bundles.html) on how
 to get started with your custom bundles. A bundle can do anything - in fact, core Pimcore functionalities like the admin
 interface are implemented as bundle. From within your bundle, you have all possibilities to extend the system, from
 defining new services or routes to hook into the event system or provide controllers and views.
@@ -8,7 +8,7 @@ defining new services or routes to hook into the event system or provide control
 
 ## Bundle Directory Structure
 
-See [Bundle Directory Structure](http://symfony.com/doc/3.4/bundles.html#bundle-directory-structure) for a standard
+See [Bundle Directory Structure](https://symfony.com/doc/5.2/bundles.html#bundle-directory-structure) for a standard
 bundle directory layout.
 
 
@@ -18,12 +18,29 @@ There is a special kind of bundle implementing `Pimcore\Extension\Bundle\Pimcore
 possibilities. These bundles provide a similar API as plugins did in previous versions:
 
 * The bundle shows up in the extension manager and can be enabled/disabled from there. Normal bundles need to be registered
-  via code in your `AppKernel.php`.
+  via code in your `Kernel.php`.
 * In the extension manager, you're able to trigger installation/uninstallation of bundles, for example to install/update 
   database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
 See the [Pimcore Bundles](./05_Pimcore_Bundles) documentation to getting started with Pimcore bundles.
+
+### Generating Pimcore Bundles
+
+With the [Pimcore Bundle Generator](https://github.com/pimcore/bundle-generator) we provide a tool for generating bundle
+skeletons. You can install and activate this bundle in your development instance and so simplify starting Pimcore bundle 
+development.  
+
+```
+# generate bundle interactively
+$ bin/console pimcore:generate:bundle
+
+# generate bundle with a given name and don't ask questions
+$ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
+
+# activate bundle
+$ bin/console pimcore:bundle:enable FooBundle
+```
 
 ## Common tasks
 
@@ -32,7 +49,7 @@ Below is a list of common tasks and how to achieve them inside your bundles.
 ### Service configuration
 
 If you want to provide custom services from within your bundle, you need to create an `Extension` which is able to load
-your service definitions. This is covered in detail in the [Extensions Documentation](http://symfony.com/doc/3.4/bundles/extension.html).
+your service definitions. This is covered in detail in the [Extensions Documentation](https://symfony.com/doc/5.2/bundles/extension.html).
 
 An example how to create an extension for your bundles can be found in
 [Loading Service Definitions](./01_Loading_Service_Definitions.md).
@@ -47,7 +64,7 @@ more information.
 
 ### i18n / Translations
 
-See the [Symfony Translation Component Documentation](http://symfony.com/doc/3.4/translation.html#translation-resource-file-names-and-locations)
+See the [Symfony Translation Component Documentation](https://symfony.com/doc/5.2/translation.html#translation-resource-file-names-and-locations)
 for locations which will be automatically searched for translation files.
 
 For bundles, translations should be stored in the `Resources/translations/` directory of the bundle in the format `locale.loader`
@@ -57,9 +74,9 @@ like `Resources/translations/en.yml`, which resolves to the default `messages` t
 
 ### Security / Authentication
 
-You can make full use of the [Symfony Security Component](http://symfony.com/doc/3.4/security.html) by auto loading
+You can make full use of the [Symfony Security Component](https://symfony.com/doc/5.2/security.html) by auto loading
 the security configuration as documented above. Best practice is to define the security configuration in a dedicated
-`security.yml` which can be imported from your bundle's `config.yml`.
+`security.yaml` which can be imported from your bundle's `config.yaml`.
 
 For further details on security please refer to [Security](../../19_Development_Tools_and_Details/10_Security_Authentication/README.md).
 
@@ -69,7 +86,7 @@ For further details on security please refer to [Security](../../19_Development_
 To hook into core functions you can attach to any event provided by the [Pimcore event manager](../11_Event_API_and_Event_Manager.md).
 Custom listeners can be registered from your bundle by defining an event listener service. Further reading:
  
-* [Symfony Event Dispatcher](http://symfony.com/doc/3.4/event_dispatcher.html) for documentation how to create event
+* [Symfony Event Dispatcher](https://symfony.com/doc/5.2/event_dispatcher.html) for documentation how to create event
    listeners and how to register them as a service
 * [Pimcore Event Manager](../11_Event_API_and_Event_Manager.md) for a list of available events
 

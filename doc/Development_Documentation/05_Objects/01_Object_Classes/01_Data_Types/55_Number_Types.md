@@ -53,7 +53,7 @@ The following code snippet shows how to set a value.
 ```php
 use Pimcore\Model\DataObject;
 
-$parent = DataObject\AbstractObject::getByPath("/");
+$parent = DataObject::getByPath("/");
 
 $object = new DataObject\Test();
 $unit = DataObject\QuantityValue\Unit::getByAbbreviation("km");
@@ -106,7 +106,7 @@ When conversion factors / offsets change over time (e.g. money currencies) or yo
 1. You could periodically update the factors / offsets in quantity value unit configuration
 2. You can create a converter service class
 
-If you prefer the latter you have to create a class which implements  `\Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface` and define a service for this class in your `services.yml`. The service name can then be entered in quantity value unit configuration's column "Converter service" for the base unit.
+If you prefer the latter you have to create a class which implements  `\Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface` and define a service for this class in your `services.yaml`. The service name can then be entered in quantity value unit configuration's column "Converter service" for the base unit.
 
 ## Input Quantity Value
 

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.link");
@@ -41,6 +41,14 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
     render: function() {
         this.setupWrapper();
+
+        this.element = Ext.get(this.id);
+
+        if (this.config["required"]) {
+            this.required = this.config["required"];
+        }
+
+        this.checkValue();
 
         Ext.get(this.id).setStyle({
             display:"inline"
@@ -109,6 +117,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
         var values = this.window.getComponent("form").getForm().getFieldValues();
         this.data = values;
+        this.checkValue(true);
 
         // close window
         this.window.close();
@@ -122,6 +131,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
     reload : function () {
         if (this.config.reload) {
             this.reloadDocument();
+            this.checkValue(true);
         }
     },
 
@@ -134,6 +144,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         this.window.close();
 
         this.data = this.defaultData;
+        this.checkValue(true);
 
         // set text
         Ext.get(this.id).query(".pimcore_editable_link_text")[0].innerHTML = this.getLinkContent();
@@ -145,6 +156,25 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         window.dndManager.enable();
 
         this.window.close();
+    },
+
+    checkValue: function (mark) {
+        var data = this.getValue();
+        var text = '';
+
+        if (this.required) {
+            if (this.required === "linkonly") {
+                if (this.data.path) {
+                    text = this.data.path;
+                }
+            } else {
+                if (this.data.text && this.data.path) {
+                    text = this.data.text + this.data.path;
+                }
+            }
+
+            this.validateRequiredValue(text, this.element, this, mark);
+        }
     },
 
     getValue: function () {

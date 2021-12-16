@@ -1,27 +1,30 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Google;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
+use Google\Service\CustomSearchAPI;
+use Google\Service\CustomSearchAPI\Result;
+use Google\Service\CustomSearchAPI\Search;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
-class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Cse implements PaginateListingInterface
 {
     /**
      * @param string $query
@@ -56,7 +59,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $query = $this->getQuery();
 
         if ($client) {
-            $search = new \Google_Service_Customsearch($client);
+            $search = new CustomSearchAPI($client);
 
             // determine language
             $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
@@ -159,9 +162,9 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param \Google_Service_Customsearch_Search $googleResponse
+     * @param Search $googleResponse
      */
-    public function readGoogleResponse(\Google_Service_Customsearch_Search $googleResponse)
+    public function readGoogleResponse(Search $googleResponse)
     {
         $items = [];
 
@@ -174,6 +177,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         }
         $this->setTotal($total);
 
+        /** @var Result[] $results */
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {
@@ -209,9 +213,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                                 }
                             }
 
-                            if (!array_key_exists('image', $item)) {
-                                $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
-                            }
+                            $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
                         }
                     }
                 }
@@ -397,7 +399,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * Methods for AdapterInterface
+     * Methods for PaginateListingInterface
      */
 
     /**
@@ -424,14 +426,6 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $items = $this->load();
 
         return $items;
-    }
-
-    /**
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

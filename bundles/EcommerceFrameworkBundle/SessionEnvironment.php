@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
@@ -25,13 +25,22 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionEnvironment extends Environment implements EnvironmentInterface
 {
     const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
+
     const SESSION_KEY_USERID = 'userid';
+
     const SESSION_KEY_USE_GUEST_CART = 'useguestcart';
+
     const SESSION_KEY_ASSORTMENT_TENANT = 'currentassortmenttenant';
+
     const SESSION_KEY_ASSORTMENT_SUB_TENANT = 'currentassortmentsubtenant';
+
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
     /**
+     * TODO: use RequestStack to get session
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var SessionInterface
      */
     protected $session;

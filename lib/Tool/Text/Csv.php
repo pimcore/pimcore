@@ -1,21 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 // this is a port / excerpt of: CSV Reader By Luke Visinoni which isn't maintained anymore
 
 namespace Pimcore\Tool\Text;
 
+/**
+ * @internal
+ */
 class Csv
 {
     /**
@@ -203,6 +207,7 @@ class Csv
             $dev = $this->deviation($array);
             if ($dev > 0.5) { // threshold not scientifically determined or something
                 unset($tmp[$char]);
+
                 continue;
             }
 

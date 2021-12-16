@@ -1,0 +1,40 @@
+pimcore:
+    general:
+        domain: 'pimcore-test.dev'
+        redirect_to_maindomain: false
+        language: en
+        valid_languages: 'en,de,fr'
+        fallback_languages:
+            en: ''
+            de: ''
+        default_language: ''
+        debug_admin_translations: false
+    documents:
+        versions:
+            days: null
+            steps: 10
+        error_pages:
+            default: /error
+    objects:
+        versions:
+            days: null
+            steps: 10
+    assets:
+        versions:
+            days: null
+            steps: 10
+        hide_edit_image: false
+        disable_tree_preview: false
+    email:
+        sender:
+            name: pimcore
+            email: pimcore@example.com
+        return:
+            name: pimcore
+            email: pimcore@example.com
+pimcore_admin:
+    branding:
+        login_screen_invert_colors: false
+        color_login_screen: ''
+        color_admin_interface: ''
+        login_screen_custom_image: ''

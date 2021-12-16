@@ -19,13 +19,22 @@ Open the glossary editor ![Tools](../img/Icon_tools.png) **Tools -> Glossary** a
 
 Then you have to define one or more regions in your views, telling the glossary where you want it to replace your terms.
 
-
+old way (Deprecated):
 ```twig
 {% pimcoreglossary %}
 <div>
     {{ pimcore_wysiwyg('content', { height: 200 }) }}
 </div>
 {% endpimcoreglossary %}
+```
+
+or use glossary Twig filter:
+```twig
+{% apply pimcore_glossary %}
+<div>
+    {{ pimcore_wysiwyg('content', { height: 200 }) }}
+</div>
+{% endapply %}
 ```
 
 Now the output of the WYSIWYG field will look like this.

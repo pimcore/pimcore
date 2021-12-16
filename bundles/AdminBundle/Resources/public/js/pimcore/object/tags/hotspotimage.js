@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.hotspotimage");
@@ -54,6 +54,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return {
             text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
+            getRelationFilter: this.getRelationFilter,
             renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -71,7 +72,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                         params['height'] = 20;
                         params['frame'] = true;
 
-                        return '<img src="' + Routing.generate('pimcore_admin_asset_getimagethumbnail', params)  + '" />';
+                        return '<img src="' + Routing.generate('pimcore_admin_asset_getimagethumbnail', params)  + '" loading="lazy" />';
                     } else {
                         params['width'] = 88;
                         params['height'] = 88;
@@ -84,12 +85,24 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                             url = Ext.String.urlAppend(url, cropParams);
                         }
 
-                        url = '<img src="' + url + '" style="width:88px; height:88px;" />';
+                        url = '<img src="' + url + '" style="width:88px; height:88px;" loading="lazy" />';
                         return url;
                     }
                 }
             }.bind(this, field.key)
         };
+    },
+
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValue = editor.data && editor.data.id !== undefined ? editor.data.id : null;
+        return new Ext.util.Filter({
+            operator: "=",
+            type: "int",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValue
+        });
     },
 
     getLayoutEdit: function () {
@@ -236,7 +249,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             tbar: toolbar
         };
 

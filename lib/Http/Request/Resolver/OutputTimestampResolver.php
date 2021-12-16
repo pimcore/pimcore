@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Http\Request\Resolver;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * @internal
+ *
  * Gets/sets the timestamp for which output should be delivered. Default is current timestamp, but timestamp
  * might be set to a date in future for preview purposes
  */
@@ -31,7 +34,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
     protected $timestampWasQueried = false;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(RequestStack $requestStack)
     {
@@ -45,7 +48,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      */
     public function getOutputTimestamp()
     {
-        $request = $this->getMasterRequest();
+        $request = $this->getMainRequest();
         $timestamp = $request->attributes->get(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP);
 
         if (!$timestamp) {
@@ -66,7 +69,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      */
     public function setOutputTimestamp(int $timestamp)
     {
-        $this->getMasterRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
+        $this->getMainRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
     }
 
     /**

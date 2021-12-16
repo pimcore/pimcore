@@ -109,7 +109,6 @@
   "piwik_site_id": "site_id",
   "substring_operator_settings": "settings",
   "operator_substring_settings": "settings",
-  "delete_importconfig_dblcheck": "delete_message",
   "delete_gridconfig_dblcheck": "delete_message",
   "piwik_widget_date": "end_date",
   "log_refresh_seconds": "seconds",
@@ -131,10 +130,5 @@
   "extensions": "bundles",
   "log_search_message": "message",
   "rgbaColor": "color",
-  "multihref": "many_to_many_relation",
-  "multihrefMetadata": "advanced_many_to_many_relation",
-  "objectsMetadata": "advanced_many_to_many_object_relation",
-  "nonownerobjects": "reverse_many_to_many_object_relation",
-  "href": "many_to_one_relation",
   "bool": "boolean"
 }

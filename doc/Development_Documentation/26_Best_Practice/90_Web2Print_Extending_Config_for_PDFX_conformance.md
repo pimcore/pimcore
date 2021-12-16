@@ -11,11 +11,11 @@ creating the file.
 **Solution**
 
 To do so, Pimcore provides two events:
-- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/master/lib/Event/DocumentEvents.php#L126):
+- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DocumentEvents.php#L126):
   Event to modify the processing options displayed in the Pimcore backend UI. For example add additional options like `AppendLog` and `My Additional ...` 
   in the screenshot above. 
   
-- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/master/lib/Event/DocumentEvents.php#L148)
+- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DocumentEvents.php#L148)
   Event to modify the configuration for the PDF processor when the PDF gets created. For example read values for additional
   options and apply these values to the configuration of the PDF processor accordingly or do some other stuff. 
   
@@ -25,7 +25,7 @@ To do so, Pimcore provides two events:
 Services in Container:
 ```yml
  app.event_listener.test:
-        class: AppBundle\EventListener\PDFConfigListener
+        class: App\EventListener\PDFConfigListener
         tags:
             - { name: kernel.event_listener, event: pimcore.document.print.processor.modifyProcessingOptions, method: modifyProcessingOptions }
             - { name: kernel.event_listener, event: pimcore.document.print.processor.modifyConfig, method: modifyConfig }
@@ -34,7 +34,7 @@ Services in Container:
 Implementation of Listener
 ```php
 <?php 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class PDFConfigListener
 {
@@ -44,7 +44,7 @@ class PDFConfigListener
         $options = $arguments['options'];
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //add option to append log into generated PDF (pdf reactor functionality) 
             $options[] = ['name' => 'appendLog', 'type' => 'bool', 'default' => false];
@@ -59,7 +59,7 @@ class PDFConfigListener
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //check if option for appending log to PDF is set in configuration and apply it to reactor config accordingly  
             if($arguments['config']->appendLog == 'true'){
@@ -81,7 +81,7 @@ Services in Container see above.
 Implementation of Listener
 ```php
 <?php 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class PDFConfigListener
 {
@@ -94,7 +94,7 @@ class PDFConfigListener
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //Set pdf reactor config for generating PDF/X conform PDF  
             $arguments['reactorConfig']['conformance'] = \Conformance::PDFX4;

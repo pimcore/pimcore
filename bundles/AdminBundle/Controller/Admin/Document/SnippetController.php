@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -17,12 +18,15 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/snippet")
+ *
+ * @internal
  */
 class SnippetController extends DocumentControllerBase
 {
@@ -82,12 +86,11 @@ class SnippetController extends DocumentControllerBase
         }
 
         $snippet = clone $snippet;
-        $isLatestVersion = true;
-        $snippet = $this->getLatestVersion($snippet, $isLatestVersion);
+        $draftVersion = null;
+        $snippet = $this->getLatestVersion($snippet, $draftVersion);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
-        $snippet->getScheduledTasks();
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
@@ -100,13 +103,18 @@ class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
-        // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = !$isLatestVersion;
+        $data['scheduledTasks'] = array_map(
+            static function (Task $task) {
+                return $task->getObjectVars();
+            },
+            $snippet->getScheduledTasks()
+        );
+
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $snippet);
+        $this->preSendDataActions($data, $snippet, $draftVersion);
 
         if ($snippet->isAllowed('view')) {
             return $this->adminJson($data);
@@ -150,6 +158,10 @@ class SnippetController extends DocumentControllerBase
             $snippet->setPublished(true);
         }
 
+        if ($request->get('missingRequiredEditable') !== null) {
+            $snippet->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
+        }
+
         if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $snippet);
 
@@ -157,6 +169,8 @@ class SnippetController extends DocumentControllerBase
             $this->saveToSession($snippet);
 
             $treeData = $this->getTreeNodeConfig($snippet);
+
+            $this->handleTask($request->get('task'), $snippet);
 
             return $this->adminJson([
                 'success' => true,
@@ -169,10 +183,17 @@ class SnippetController extends DocumentControllerBase
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);
 
-            $snippet->saveVersion();
+            $version = $snippet->saveVersion(true, true, null, $request->get('task') == 'autoSave');
             $this->saveToSession($snippet);
 
-            return $this->adminJson(['success' => true]);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate(),
+            ];
+
+            $this->handleTask($request->get('task'), $snippet);
+
+            return $this->adminJson(['success' => true, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }

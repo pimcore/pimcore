@@ -1,0 +1,61 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # RENDERERS
+
+    Pimcore\Templating\Renderer\ActionRenderer:
+        arguments:
+            $httpKernelRuntime: '@twig.runtime.httpkernel'
+
+    Pimcore\Templating\Renderer\IncludeRenderer: ~
+
+    Pimcore\Templating\Renderer\EditableRenderer:
+        public: true
+        arguments:
+            $editableLoader: '@Pimcore\Model\Document\Editable\Loader\EditableLoader'
+        calls:
+            - [setLogger, ['@logger']]
+
+    Pimcore\Templating\Renderer\TagRenderer:
+        alias: Pimcore\Templating\Renderer\EditableRenderer
+        deprecated:
+            message: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
+            package: pimcore/pimcore
+            version: 6.8
+
+    # NAVIGATION
+
+    # renderer locator collecting all registered renderers
+    pimcore.templating.navigation.renderer_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+        arguments: [[]]
+
+    Pimcore\Navigation\Builder: ~
+
+    Pimcore\Navigation\Renderer\Menu:
+        arguments:
+            $templatingEngine: '@pimcore.templating.engine.delegating'
+        tags:
+            - { name: pimcore.navigation.renderer, alias: menu }
+
+    Pimcore\Navigation\Renderer\Breadcrumbs:
+        arguments:
+            $templatingEngine: '@pimcore.templating.engine.delegating'
+        tags:
+            - { name: pimcore.navigation.renderer, alias: breadcrumbs }
+
+
+    # GLOSSARY
+
+    Pimcore\Tool\Glossary\Processor:
+        public: false
+
+    Symfony\Component\Templating\EngineInterface: '@pimcore.templating.engine.delegating'
+
+    pimcore.templating.engine.delegating:
+        public: true
+        class: Pimcore\Templating\TwigDefaultDelegatingEngine

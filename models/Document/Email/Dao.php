@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Email;
@@ -31,27 +29,23 @@ class Dao extends Model\Document\PageSnippet\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
-        try {
-            if ($id != null) {
-                $this->model->setId($id);
-            }
+        if ($id != null) {
+            $this->model->setId($id);
+        }
 
-            $data = $this->db->fetchRow("SELECT documents.*, documents_email.*, tree_locks.locked FROM documents
-                LEFT JOIN documents_email ON documents.id = documents_email.id
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT documents.*, documents_email.*, tree_locks.locked FROM documents
+            LEFT JOIN documents_email ON documents.id = documents_email.id
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $this->model->getId());
 
-            if ($data['id'] > 0) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception('Email Document with the ID ' . $this->model->getId() . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if (!empty($data['id'])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException('Email Document with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 

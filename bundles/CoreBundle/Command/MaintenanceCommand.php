@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -17,31 +18,22 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Maintenance\ExecutorInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class MaintenanceCommand extends AbstractCommand
 {
     /**
-     * @var ExecutorInterface
-     */
-    private $maintenanceExecutor;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param ExecutorInterface $maintenanceExecutor
-     * @param LoggerInterface $logger
+     * @param LoggerInterface   $logger
      */
-    public function __construct(ExecutorInterface $maintenanceExecutor, LoggerInterface $logger)
+    public function __construct(private ExecutorInterface $maintenanceExecutor, private LoggerInterface $logger)
     {
-        $this->maintenanceExecutor = $maintenanceExecutor;
-        $this->logger = $logger;
-
         parent::__construct();
     }
 
@@ -49,11 +41,11 @@ class MaintenanceCommand extends AbstractCommand
     {
         $description = 'Asynchronous maintenance jobs of pimcore (needs to be set up as cron job)';
 
-        $help = $description . '. Valid jobs are: ' . "\n\n";
-        $help .= '  <comment>*</comment> any bundle class name handling maintenance (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>)' . "\n";
+        $help = $description.'. Valid jobs are: '."\n\n";
+        $help .= '  <comment>*</comment> any bundle class name handling maintenance (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>)'."\n";
 
         foreach ($this->maintenanceExecutor->getTaskNames() as $taskName) {
-            $help .= '  <comment>*</comment> ' . $taskName . "\n";
+            $help .= '  <comment>*</comment> '.$taskName."\n";
         }
 
         $this
@@ -79,18 +71,58 @@ class MaintenanceCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Run the jobs, regardless if they\'re locked or not'
             )
-        ;
+            ->addOption(
+                'async',
+                'a',
+                InputOption::VALUE_NONE,
+                'Run the Jobs async using Symfony Messenger'
+            );
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
+        $async = (bool)$input->getOption('async');
 
-        $this->maintenanceExecutor->executeMaintenance($validJobs, $excludedJobs, (bool) $input->getOption('force'));
+        $this->maintenanceExecutor->executeMaintenance(
+            $validJobs,
+            $excludedJobs,
+            (bool)$input->getOption('force')
+        );
+
+        if (!$async) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.2',
+                'Running Maintenance Command without --async and not having the messenger consume message yourself is deprecated and will be removed from Pimcore in 11.',
+                __CLASS__
+            );
+
+            $command = $this->getApplication()->find('messenger:consume');
+
+            $arguments = [
+                'receivers' => ['pimcore_core', 'pimcore_maintenance'],
+                '--time-limit' => 5 * 60,
+            ];
+
+            if ($this->output->isVerbose()) {
+                // delegate verbosity to messenger:consume
+                $verbosityMapping = [
+                    OutputInterface::VERBOSITY_DEBUG => 3,
+                    OutputInterface::VERBOSITY_VERY_VERBOSE => 2,
+                    OutputInterface::VERBOSITY_VERBOSE => 1,
+                ];
+
+                $arguments['--verbose'] = $verbosityMapping[$output->getVerbosity()];
+            }
+
+            $input = new ArrayInput($arguments);
+            $command->run($input, $output);
+        }
 
         $this->logger->info('All maintenance-jobs finished!');
 
@@ -101,7 +133,7 @@ class MaintenanceCommand extends AbstractCommand
      * Get an array option value, but still support the value being comma-separated for backwards compatibility
      *
      * @param InputInterface $input
-     * @param string $name
+     * @param string         $name
      *
      * @return array
      */

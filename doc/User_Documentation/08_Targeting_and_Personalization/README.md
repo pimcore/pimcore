@@ -6,9 +6,9 @@ these target groups. This makes it possible to show contextual, relevant, and pe
 
 Before starting with Personalization you should know about following Pimcore concepts: 
 
-* [Target Group](./01_Concepts.md)
-* [Global Targeting Rule](./01_Concepts.md)
-* [Personalized Document Content](./01_Concepts.md)
+* [Target Group](./01_Concepts.md#page_Target-Group)
+* [Global Targeting Rule](./01_Concepts.md#page_Global-Targeting-Rule)
+* [Personalized Document Content](./01_Concepts.md#page_Personalized-Document-Content)
 
 
 After reading everything about the base concepts, you are 

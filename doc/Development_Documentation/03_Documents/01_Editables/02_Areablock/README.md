@@ -71,7 +71,7 @@ And you can see the effect, below:
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
-| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. {"iframe": 1, "teasers": 2} (since v6.7.0)                                                                      |
+| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. {"iframe": 1, "teasers": 2}                                                                     |
 | `areablock_toolbar` | array  | Array with option that allows you to configure the toolbar. Possible options are `width`, `buttonWidth` and `buttonMaxCharacters`                                                            |
 | `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
 | `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                              |
@@ -80,13 +80,7 @@ And you can see the effect, below:
 ##### Example
 
 ```twig
-{{ pimcore_areablock("myArea", {
-    "params": {
-        "my_brick": {
-            "forceEditInView": true
-        }
-    }
-}) }}
+{{ pimcore_areablock("myArea") }}
 ```
 
 ## Methods
@@ -103,7 +97,7 @@ And you can see the effect, below:
 
 You can read about **bricks** in the [Bricks](./02_Bricks.md) section.
 
-## Limit certain Bricks for the Areablock (since v6.7.0)
+## Limit certain Bricks for the Areablock
 
 You can limit certain bricks for the Areablock by using `limits` configurations.
 ##### Example
@@ -125,16 +119,17 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
 The manual mode offers you the possibility to use areablocks with custom HTML, this is for example useful when using tables: 
 
 ```twig
-{% set areaBlock = pimcore_areablock("myArea", {"manual":"true"}) %}
+{% set areaBlock = pimcore_areablock("myArea", {"manual":true}) %}
 
 {% do areaBlock.start() %}
 <table>
     {% for i in areaBlock.iterator %}
+        {% set info = areaBlock.buildInfoObject() %}
         {% do areaBlock.blockConstruct() %}
             <tr>
                 <td>
-                    {% do areaBlock.blockStart() %}
-                    {% do areaBlock.content() %}
+                    {% set templateParams = areaBlock.blockStart(info) %}
+                    {% do areaBlock.content(info, templateParams) %}
                     {% do areaBlock.blockEnd() %}
                 </td>
             </tr>

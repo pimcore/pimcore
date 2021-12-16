@@ -18,12 +18,12 @@ bin/console pimcore:maintenance-mode --disable
 
 ## Customize Maintenance Page
 
-Overwrite the service `Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener` in your `app/config/services.yml`. 
+Overwrite the service `Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener` in your `config/services.yaml`. 
 
 ```yaml
 Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     calls:
-        - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/maintenance.html']]
+        - [loadTemplateFromResource, ['@@App/Resources/misc/maintenance.html']]
     tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```

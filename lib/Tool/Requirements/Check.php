@@ -1,23 +1,29 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool\Requirements;
 
-class Check implements \ArrayAccess
+/**
+ * @internal
+ */
+final class Check implements \ArrayAccess
 {
     const STATE_OK = 1;
+
     const STATE_WARNING = 2;
+
     const STATE_ERROR = 3;
 
     /**
@@ -125,6 +131,7 @@ class Check implements \ArrayAccess
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->$offset);
@@ -135,6 +142,7 @@ class Check implements \ArrayAccess
      *
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->{'get'.$offset}();
@@ -144,6 +152,7 @@ class Check implements \ArrayAccess
      * @param string $offset
      * @param string $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->{'set'.$offset}($value);
@@ -152,6 +161,7 @@ class Check implements \ArrayAccess
     /**
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->$offset);

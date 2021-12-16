@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -17,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
-use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -40,7 +40,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
+/**
+ * @internal
+ */
+final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     /**
      * @return string
@@ -71,7 +74,9 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
-        $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
+        if (!$container->hasParameter('pimcore.encryption.secret')) {
+            $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
+        }
 
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
@@ -80,14 +85,15 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
+        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
-
-        $container->setParameter('pimcore.mime.extensions', $config['mime']['extensions']);
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
+        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -105,27 +111,29 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.yml');
-        $loader->load('services_routing.yml');
-        $loader->load('services_workflow.yml');
-        $loader->load('extensions.yml');
-        $loader->load('logging.yml');
-        $loader->load('request_response.yml');
-        $loader->load('l10n.yml');
-        $loader->load('argument_resolvers.yml');
-        $loader->load('implementation_factories.yml');
-        $loader->load('documents.yml');
-        $loader->load('event_listeners.yml');
-        $loader->load('templating.yml');
-        $loader->load('profiler.yml');
-        $loader->load('migrations.yml');
-        $loader->load('analytics.yml');
-        $loader->load('sitemaps.yml');
-        $loader->load('aliases.yml');
-        $loader->load('image_optimizers.yml');
-        $loader->load('maintenance.yml');
-        $loader->load('commands.yml');
-        $loader->load('cache.yml');
+        $loader->load('services.yaml');
+        $loader->load('services_routing.yaml');
+        $loader->load('services_workflow.yaml');
+        $loader->load('extensions.yaml');
+        $loader->load('logging.yaml');
+        $loader->load('request_response.yaml');
+        $loader->load('l10n.yaml');
+        $loader->load('argument_resolvers.yaml');
+        $loader->load('implementation_factories.yaml');
+        $loader->load('documents.yaml');
+        $loader->load('event_listeners.yaml');
+        $loader->load('templating.yaml');
+        $loader->load('profiler.yaml');
+        $loader->load('migrations.yaml');
+        $loader->load('analytics.yaml');
+        $loader->load('sitemaps.yaml');
+        $loader->load('aliases.yaml');
+        $loader->load('image_optimizers.yaml');
+        $loader->load('maintenance.yaml');
+        $loader->load('commands.yaml');
+        $loader->load('cache.yaml');
+        $loader->load('marshaller.yaml');
+        $loader->load('message_handler.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -133,6 +141,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
+        $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
@@ -141,7 +150,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $loader->load('templating_twig.yml');
+        $loader->load('templating_twig.yaml');
 
         $this->addContextRoutes($container, $config['context']);
     }
@@ -251,22 +260,22 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
         if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', null);
+            $container->setParameter('pimcore.geoip.db_file', '');
         }
 
-        $loader->load('targeting.yml');
+        $loader->load('targeting.yaml');
 
         // set TargetingStorageInterface type hint to the configured service ID
         $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
 
         if ($config['enabled']) {
             // enable targeting by registering listeners
-            $loader->load('targeting/services.yml');
-            $loader->load('targeting/listeners.yml');
+            $loader->load('targeting/services.yaml');
+            $loader->load('targeting/listeners.yaml');
 
             // add session support by registering the session configurator and session storage
             if ($config['session']['enabled']) {
-                $loader->load('targeting/session.yml');
+                $loader->load('targeting/session.yaml');
             }
         }
 
@@ -330,6 +339,24 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $factoryMapping = [];
         foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
+            $factoryMapping[$className] = new Reference($factoryConfig['id']);
+        }
+
+        $definition->replaceArgument(1, $factoryMapping);
+    }
+
+    /**
+     * Handle pimcore.security.password_hasher_factories mapping
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    private function configurePasswordHashers(ContainerBuilder $container, array $config)
+    {
+        $definition = $container->findDefinition('pimcore.security.password_hasher_factory');
+
+        $factoryMapping = [];
+        foreach ($config['security']['password_hasher_factories'] as $className => $factoryConfig) {
             $factoryMapping[$className] = new Reference($factoryConfig['id']);
         }
 
@@ -411,57 +438,17 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     }
 
     /**
-     * The security component disallows definition of firewalls and access_control entries from different files to enforce
-     * security. However this limits our possibilities how to provide a security config for the admin area while making
-     * the security component usable for applications built on Pimcore. This merges multiple security configs together
-     * to create one single security config array which is passed to the security component.
+     * Allows us to prepend/modify configurations of different extensions
      *
-     * @see OroPlatformExtension in Oro Platform/CRM which does the same and provides the array merge method used below.
-     *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
-            $configMerger = new ConfigMerger();
-
-            $securityConfig = [];
-            foreach ($securityConfigs as $sec) {
-                if (!is_array($sec)) {
-                    continue;
-                }
-
-                $securityConfig = $configMerger->merge($securityConfig, $sec);
-            }
-
-            $securityConfigs = [$securityConfig];
-
             $this->setExtensionConfig($container, 'security', $securityConfigs);
-        }
-    }
-
-    /**
-     * TODO check if we can decorate ContainerBuilder and handle the flattening in getExtensionConfig instead of overwriting
-     * the property via reflection
-     *
-     * @param ContainerBuilder $container
-     * @param string $name
-     * @param array $config
-     */
-    private function setExtensionConfig(ContainerBuilder $container, $name, array $config = [])
-    {
-        $reflector = new \ReflectionClass($container);
-        $property = $reflector->getProperty('extensionConfigs');
-        $property->setAccessible(true);
-
-        $extensionConfigs = $property->getValue($container);
-        $extensionConfigs[$name] = $config;
-
-        $property->setValue($container, $extensionConfigs);
-        $property->setAccessible(false);
+        }*/
     }
 
     /**

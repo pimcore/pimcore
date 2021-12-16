@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -25,19 +23,19 @@ use Pimcore\Model\Document;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Link extends Model\Document\Editable
+class Link extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * Contains the data for the link
      *
-     * @var array
+     * @internal
+     *
+     * @var array|null
      */
     protected $data;
 
     /**
-     * @see Pimcore\Model\Document\Editable;::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -45,9 +43,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -58,11 +54,9 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getDataEditmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -71,7 +65,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getEditmodeElementClasses($options = []): array
     {
@@ -86,9 +80,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -194,7 +186,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -208,8 +200,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent document with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             } elseif ($this->data['internalType'] == 'asset') {
                 $asset = Asset::getById($this->data['internalId']);
@@ -219,8 +210,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent asset with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             } elseif ($this->data['internalType'] == 'object') {
                 $object = Model\DataObject\Concrete::getById($this->data['internalId']);
@@ -230,8 +220,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent object with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             }
         }
@@ -249,7 +238,7 @@ class Link extends Model\Document\Editable
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= '?'.str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
@@ -265,7 +254,7 @@ class Link extends Model\Document\Editable
      * @param bool $realPath
      * @param bool $editmode
      */
-    protected function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal($realPath = false, $editmode = false)
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -406,11 +395,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -423,11 +408,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -480,7 +461,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -488,7 +469,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -523,19 +504,9 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

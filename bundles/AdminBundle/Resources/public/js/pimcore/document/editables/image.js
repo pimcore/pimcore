@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.image");
@@ -35,6 +35,12 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.setupWrapper();
 
         this.element = Ext.get(this.id);
+
+        if(this.config["required"]) {
+            this.required = this.config["required"];
+        }
+
+        this.checkValue();
 
         if (this.config["width"]) {
             this.element.setStyle("width", this.config["width"] + "px");
@@ -115,6 +121,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     this.datax.id = e['asset']['id'];
 
                     this.updateImage();
+                    this.checkValue();
                     this.reload();
 
                     return true;
@@ -130,6 +137,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         // insert image
         if (this.datax) {
             this.updateImage();
+            this.checkValue();
         }
     },
 
@@ -234,6 +242,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     this.datax.id = data["id"];
 
                     this.updateImage();
+                    this.checkValue(true);
                     this.reload();
                 }
             } catch (e) {
@@ -264,6 +273,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.id = data.id;
 
             this.updateImage();
+            this.checkValue(true);
             this.reload();
 
             return true;
@@ -300,6 +310,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.id = item.id;
 
             this.updateImage();
+            this.checkValue();
             this.reload();
 
             return true;
@@ -321,6 +332,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.altBar.setStyle({
             display: "none"
         });
+        this.checkValue(true);
         this.reload();
     },
 
@@ -406,11 +418,6 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         if (width > 1 && height > 1) {
 
-            if(Ext.isIE && width==28 && height==30){
-                //IE missing image placeholder
-                return;
-            }
-
             var dimensionError = false;
             if(typeof this.config.minWidth != "undefined") {
                 if(width < this.config.minWidth) {
@@ -478,6 +485,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.datax.cropPercent = (undefined !== data.cropPercent) ? data.cropPercent : true;
 
             this.updateImage();
+            this.checkValue();
         }.bind(this), config);
         editor.open(true);
     },
@@ -503,6 +511,20 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         );
         editor.open(false);
+    },
+
+    checkValue: function (mark) {
+        var datax = this.datax;
+
+        if(typeof datax.id == 'undefined' || datax.id === null) {
+            value = null;
+        } else {
+            value = 'ok';
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
+        }
     },
 
     getValue: function () {

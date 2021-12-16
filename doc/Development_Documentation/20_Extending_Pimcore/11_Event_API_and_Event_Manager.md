@@ -7,70 +7,71 @@ used to hook into many Pimcore functions such as saving an object, asset or docu
 the default behavior of Pimcore.
 
 The most common use-case for events is using them in a [bundle/extension](13_Bundle_Developers_Guide/06_Plugin_Backend_UI.md), but 
-of course you can use them also anywhere in your code or in your dependency injection configuration (`app/config/services.yml`). 
+of course you can use them also anywhere in your code or in your dependency injection configuration (`config/services.yaml`). 
 
 Pimcore implements the standard Symfony framework event dispatcher and just adds some pimcore specific events, 
 so you can also subscribe to all Symfony core eventsand events triggered by arbitrary Symfony bundles. 
 
-For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](http://symfony.com/doc/3.4/event_dispatcher.html)
+For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](https://symfony.com/doc/5.2/event_dispatcher.html)
 first, which covers all basics in that matter. 
 
 ## Available Events
 
 All Pimcore events are defined and documented as a constant on component specific classes: 
-- [Assets](https://github.com/pimcore/pimcore/blob/master/lib/Event/AssetEvents.php)
-- [Documents](https://github.com/pimcore/pimcore/blob/master/lib/Event/DocumentEvents.php)
-- [Data Objects](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectEvents.php)
-- [Versions](https://github.com/pimcore/pimcore/blob/master/lib/Event/VersionEvents.php)
-- [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectClassDefinitionEvents.php)
-- [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectClassificationStoreEvents.php)
-- [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectCustomLayoutEvents.php)
-- [Data Object Import](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectImportEvents.php)
-- [Users / Roles](https://github.com/pimcore/pimcore/blob/master/lib/Event/UserRoleEvents.php)
-- [Workflows](https://github.com/pimcore/pimcore/blob/master/lib/Event/WorkflowEvents.php)
-- [Elements](https://github.com/pimcore/pimcore/blob/master/lib/Event/ElementEvents.php)
-- [Mail](https://github.com/pimcore/pimcore/blob/master/lib/Event/MailEvents.php)
-- [Notifications](https://github.com/pimcore/pimcore/blob/master/lib/Event/NotificationEvents.php)
-- [Redirect](https://github.com/pimcore/pimcore/blob/master/lib/Event/RedirectEvents.php)
-- [Admin](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php)
-- [Frontend](https://github.com/pimcore/pimcore/blob/master/lib/Event/FrontendEvents.php)
-- [Cache](https://github.com/pimcore/pimcore/blob/master/lib/Event/CoreCacheEvents.php)
-- [Full-Page Cache](https://github.com/pimcore/pimcore/blob/master/lib/Event/FullPageCacheEvents.php)
-- [Search](https://github.com/pimcore/pimcore/blob/master/lib/Event/SearchBackendEvents.php)
-- [System](https://github.com/pimcore/pimcore/blob/master/lib/Event/SystemEvents.php)
-- [Tags](https://github.com/pimcore/pimcore/blob/master/lib/Event/TagEvents.php)
-- [Target Group](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetGroupEvents.php)
-- [Targeting](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetingEvents.php)
-- [Tests](https://github.com/pimcore/pimcore/blob/master/lib/Event/TestEvents.php)
-- [Translation](https://github.com/pimcore/pimcore/blob/master/lib/Event/TranslationEvents.php)
-- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/master/lib/Event/BundleManagerEvents.php)
-- [Ecommerce::Index Service](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/IndexServiceEvents.php)
-- [Ecommerce::Checkout Manager](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/CheckoutManagerEvents.php)
-- [Ecommerce::Commit Order Processor](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/CommitOrderProcessorEvents.php)
-- [Ecommerce::Order Agent](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/OrderAgentEvents.php)
-- [Ecommerce::Order Manager](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/OrderManagerEvents.php)
-- [Ecommerce::Order Manager Item](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/CheckoutManagerItemEvents.php)
-- [Ecommerce::Send Confirmation Mail](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/SendConfirmationMailEvents.php)
+- [Assets](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AssetEvents.php)
+- [Documents](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DocumentEvents.php)
+- [Data Objects](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectEvents.php)
+- [Versions](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/VersionEvents.php)
+- [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectClassDefinitionEvents.php)
+- [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectClassificationStoreEvents.php)
+- [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectCustomLayoutEvents.php)
+- [Data Object Import](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectImportEvents.php)
+- [Data Object Quantity Value Unit](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectQuantityValueEvents.php)
+- [Users / Roles](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/UserRoleEvents.php)
+- [Workflows](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/WorkflowEvents.php)
+- [Elements](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/ElementEvents.php)
+- [Mail](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/MailEvents.php)
+- [Notifications](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/NotificationEvents.php)
+- [Redirect](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/RedirectEvents.php)
+- [Admin](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php)
+- [Frontend](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/FrontendEvents.php)
+- [Cache](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/CoreCacheEvents.php)
+- [Full-Page Cache](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/FullPageCacheEvents.php)
+- [Search](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/SearchBackendEvents.php)
+- [System](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/SystemEvents.php)
+- [Tags](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/TagEvents.php)
+- [Target Group](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/TargetGroupEvents.php)
+- [Targeting](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/TargetingEvents.php)
+- [Tests](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/TestEvents.php)
+- [Translation](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/TranslationEvents.php)
+- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/BundleManagerEvents.php)
+- [Ecommerce::Index Service](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/IndexServiceEvents.php)
+- [Ecommerce::Checkout Manager](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/CheckoutManagerEvents.php)
+- [Ecommerce::Commit Order Processor](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/CommitOrderProcessorEvents.php)
+- [Ecommerce::Order Agent](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/OrderAgentEvents.php)
+- [Ecommerce::Order Manager](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/OrderManagerEvents.php)
+- [Ecommerce::Order Manager Item](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/CheckoutManagerItemEvents.php)
+- [Ecommerce::Send Confirmation Mail](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/SendConfirmationMailEvents.php)
 
 ## Examples
 
 ### Hook into the pre-update event of assets, documents and objects
 The following example shows how to register events for assets, documents and objects 
 
-in your `app/config/services.yml`: 
+in your `config/services.yaml`: 
 ```yaml
 services:
-    AppBundle\EventListener\TestListener:
+    App\EventListener\TestListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.asset.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.document.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onPreUpdate }
 ```
 
-in your listener class `src/AppBundle/EventListener/TestListener`
+in your listener class `src/EventListener/TestListener`
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
   
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -109,7 +110,7 @@ To ensure maximum security, it is advisable to combine this with an object DI to
 ### Hook into the Open Document|Asset|Data Object dialog
 
 By the default, Pimcore tries to a resolve an element by its ID or path.
-You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php) event
+You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php) event
 and implement your own logic.
 
 ```php
@@ -137,7 +138,7 @@ and implement your own logic.
 Certain data types (like image, relations, etc ...) allow you to specify a dedicated upload path which defaults 
 to '/_default_upload_bucket' if not otherwise specified in the config yml file or in the class definition.
 
-The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/master/lib/Event/AssetEvents.php) event
+The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AssetEvents.php) event
 allows you to dynamically modify the target path depending on the object it will be assigned to. 
 Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
 support the decision.

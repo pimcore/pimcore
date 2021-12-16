@@ -1,9 +1,23 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Util;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
@@ -18,6 +32,8 @@ use Symfony\Component\Finder\Finder;
 
 class TestHelper
 {
+    public static $thumbnail_configs = [];
+
     /**
      * Constant will be defined upon suite initialization and will result to true
      * if we have a valid DB configuration.
@@ -114,14 +130,14 @@ class TestHelper
             $a = array_merge($a, self::createPropertiesComparisonString($properties));
 
             return implode(',', $a);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * @param  Asset $asset1
-     * @param  Asset $asset2
+     * @param Asset $asset1
+     * @param Asset $asset2
      * @param bool $ignoreCopyDifferences
      * @param bool $id
      *
@@ -254,7 +270,7 @@ class TestHelper
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -295,7 +311,7 @@ class TestHelper
             return serialize($lData);
         } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
             return $fd->getForCsvExport($object);
         }
     }
@@ -401,7 +417,7 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
+     * @param bool $save
      *
      * @return ObjectModel\Folder
      */
@@ -444,10 +460,10 @@ class TestHelper
 
     /**
      * @param TestDataHelper $testDataHelper
-     * @param string         $keyPrefix
-     * @param bool           $save
-     * @param bool           $publish
-     * @param int            $seed
+     * @param string $keyPrefix
+     * @param bool $save
+     * @param bool $publish
+     * @param int $seed
      *
      * @return Unittest
      */
@@ -491,7 +507,7 @@ class TestHelper
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
         $testDataHelper->fillMultiSelect($object, 'languages', $seed);
-        $testDataHelper->fillGeopoint($object, 'point', $seed);
+        $testDataHelper->fillGeoCoordinates($object, 'point', $seed);
         $testDataHelper->fillGeobounds($object, 'bounds', $seed);
         $testDataHelper->fillGeopolygon($object, 'poly', $seed);
         $testDataHelper->fillTable($object, 'table', $seed);
@@ -518,19 +534,18 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
-     * @param bool   $publish
+     * @param bool $save
+     * @param bool $publish
      *
-     * @return Document\Page
+     * @return Document
      */
-    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
+    public static function createEmptyDocument($keyPrefix = '', $save = true, $publish = true, $type = '\\Pimcore\\Model\\Document\\Page')
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }
 
-        $document = new Document\Page();
-        $document->setType('page');
+        $document = new $type();
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
@@ -546,6 +561,18 @@ class TestHelper
         }
 
         return $document;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     * @param bool   $publish
+     *
+     * @return Document\Page
+     */
+    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
+    {
+        return self::createEmptyDocument($keyPrefix, $save, $publish);
     }
 
     /**
@@ -578,13 +605,14 @@ class TestHelper
      * @param string $keyPrefix
      * @param string|null $data
      * @param bool $save
+     * @param string $filePath
      *
      * @return Asset\Image
      */
-    public static function createImageAsset($keyPrefix = '', $data = null, $save = true)
+    public static function createImageAsset($keyPrefix = '', $data = null, $save = true, $filePath = 'assets/images/image5.jpg')
     {
         if (!$data) {
-            $path = static::resolveFilePath('assets/images/image5.jpg');
+            $path = static::resolveFilePath($filePath);
             if (!file_exists($path)) {
                 throw new \RuntimeException(sprintf('Path %s was not found', $path));
             }
@@ -765,7 +793,7 @@ class TestHelper
         }
 
         if ($cleanObjects) {
-            static::cleanUpTree(AbstractObject::getById(1), 'object');
+            static::cleanUpTree(DataObject::getById(1), 'object');
             codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
         }
 
@@ -875,5 +903,65 @@ class TestHelper
         }
 
         return $randomString;
+    }
+
+    public static function clearThumbnailConfiguration($name)
+    {
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if ($pipe) {
+            $pipe->delete(true);
+        }
+    }
+
+    public static function clearThumbnailConfigurations()
+    {
+        foreach (self::$thumbnail_configs as $name) {
+            static::clearThumbnailConfiguration($name);
+        }
+    }
+
+    /**
+     * @param int $angle
+     *
+     * @return Asset\Image\Thumbnail\Config
+     *
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationRotate($angle = 90)
+    {
+        $name = 'assettest_rotate_' . $angle;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config();
+            $pipe->setName($name);
+            $pipe->addItem('rotate', ['angle' => $angle], 'default');
+            $pipe->save(true);
+            self::$thumbnail_configs[] = $name;
+        }
+
+        return $pipe;
+    }
+
+    /**
+     * @param int $width
+     * @param false $forceResize
+     *
+     * @return Asset\Image\Thumbnail\Config
+     *
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationScaleByWidth($width = 256, $forceResize = false)
+    {
+        $name = 'assettest_scaleByWidth_' . $width . '_' . $forceResize;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config($name);
+            $pipe->setName($name);
+            $pipe->addItem('scaleByWidth', ['width' => $width, 'forceResize' => $forceResize], 'default');
+            $pipe->save(true);
+            self::$thumbnail_configs[] = $name;
+        }
+
+        return $pipe;
     }
 }

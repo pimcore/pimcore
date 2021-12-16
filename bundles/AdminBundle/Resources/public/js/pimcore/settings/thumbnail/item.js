@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.thumbnail.item");
@@ -38,12 +38,18 @@ pimcore.settings.thumbnail.item = Class.create({
 
     addLayout: function () {
         var panelButtons = [];
-        panelButtons.push({
+        let buttonConfig = {
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
-        });
+            handler: this.save.bind(this),
+            disabled: !this.data.writeable
+        };
 
+        if (!this.data.writeable) {
+            buttonConfig.tooltip = t("config_not_writeable");
+        }
+
+        panelButtons.push(buttonConfig);
 
         this.mediaPanel = new Ext.TabPanel({
             autoHeight: true,
@@ -141,11 +147,6 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("high_resolution_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
-                    }, {
-                        xtype: "checkbox",
-                        name: "forcePictureTag",
-                        boxLabel: t("force_picture_html_tag"),
-                        checked: this.data.forcePictureTag
                     }, {
                         xtype: "checkbox",
                         name: "preserveColor",
@@ -308,17 +309,10 @@ pimcore.settings.thumbnail.item = Class.create({
     },
 
     save: function () {
-        var reload = false;
-        var newGroup = this.groupField.getValue();
-        if (newGroup != this.data.group) {
-            this.data.group = newGroup;
-            reload = true;
-        }
-
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_thumbnailupdate'),
             method: "PUT", params: this.getData(),
-            success: this.saveOnComplete.bind(this, reload)
+            success: this.saveOnComplete.bind(this)
 
         });
     },

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -27,12 +25,12 @@ use Pimcore\Model\Version;
 interface ElementInterface extends ModelInterface
 {
     /**
-     * @return int
+     * @return int|null
      */
     public function getId();
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey();
 
@@ -44,7 +42,7 @@ interface ElementInterface extends ModelInterface
     public function setKey($key);
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPath();
 
@@ -76,7 +74,7 @@ interface ElementInterface extends ModelInterface
     public function getType();
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate();
 
@@ -88,7 +86,7 @@ interface ElementInterface extends ModelInterface
     public function setCreationDate($creationDate);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate();
 
@@ -100,7 +98,7 @@ interface ElementInterface extends ModelInterface
     public function setModificationDate($modificationDate);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner();
 
@@ -127,7 +125,7 @@ interface ElementInterface extends ModelInterface
      *
      * @param int $id
      *
-     * @return ElementInterface $resource
+     * @return static|null
      */
     public static function getById($id);
 
@@ -144,11 +142,11 @@ interface ElementInterface extends ModelInterface
     public function getProperties();
 
     /**
-     * @param Property[] $properties
+     * @param Property[]|null $properties
      *
      * @return $this
      */
-    public function setProperties(array $properties);
+    public function setProperties(?array $properties);
 
     /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
@@ -203,9 +201,14 @@ interface ElementInterface extends ModelInterface
     public function getLocked();
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId();
+
+    /**
+     * @return self|null
+     */
+    public function getParent();
 
     /**
      * @return string
@@ -217,7 +220,7 @@ interface ElementInterface extends ModelInterface
      *
      * @return array
      */
-    public function getCacheTags($tags = []);
+    public function getCacheTags(array $tags = []): array;
 
     /**
      * @return bool

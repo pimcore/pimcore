@@ -9,7 +9,7 @@ It builds a navigation container based on the existing document structure. The p
 2. Render the navigation: `pimcore_render_nav(nav)` or `pimcore_nav_renderer('menu').render(nav)`
 
 > The building step does not necessarily need to happen in the view script. In fact the view helper just forwards the
- `build()` or `buildNavigation()` call to the `Pimcore\Navigation\Builder` service. You can also build the navigation in your controller
+ `build()` call to the `Pimcore\Navigation\Builder` service. You can also build the navigation in your controller
  or a service and pass the navigation object to the view.
 
 **Only documents are included** in this structure, Folders are ignored, regardless of their navigation properties.
@@ -184,7 +184,7 @@ For example, inside your view:
 {{ menuRenderer.render(mainNavigation) | raw }}
 ```
 
-`app/Resources/views/includes/navigation.html.twig`
+`templates/includes/navigation.html.twig`
 
 ```twig
 {% for page in pages %}
@@ -249,15 +249,15 @@ For example, generate bootstrap 4.0 style navigation:
                     {% set hasChildren = page.hasPages() %}
                     {% if not hasChildren %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ page.getHref() }}">{{ page.getLabel()|trans }}</a>
+                            <a class="nav-link" href="{{ page.getHref() }}">{{ page.getLabel() }}</a>
                         </li>
                     {% else %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="{{ page.getHref() }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.getLabel()|trans }}</a>
+                            <a class="nav-link dropdown-toggle" href="{{ page.getHref() }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.getLabel() }}</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 {% for child in page.getPages() %}
                                     {% if child.isVisible() and menuRenderer.accept(child) %}
-                                            <a class="dropdown-item" href="{{ child.getHref() }}">{{ child.getLabel()|trans }}</a>
+                                            <a class="dropdown-item" href="{{ child.getHref() }}">{{ child.getLabel() }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -276,10 +276,10 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-namespace AppBundle\Twig\Extension;
+namespace App\Twig\Extension;
 
 
-use AppBundle\Website\LinkGenerator\NewsLinkGenerator;
+use App\Website\LinkGenerator\NewsLinkGenerator;
 use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\Templating\Navigation;
 use Twig\Extension\AbstractExtension;
@@ -383,7 +383,7 @@ But sometimes it's necessary to get some properties or other data out of the doc
 For that we've introduced a new parameter for the navigation extension, which acts as a callback and allows to map custom data onto the navigation page item.
 ```php
 <?php
-namespace AppBundle\Twig\Extension;
+namespace App\Twig\Extension;
 
 use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\Templating\Navigation;

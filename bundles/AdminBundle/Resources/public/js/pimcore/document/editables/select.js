@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.select");
@@ -37,7 +37,7 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
         config.name = id + "_editable";
         config.triggerAction = 'all';
-        config.editable = false;
+        config.editable = config.editable ? config.editable : false;
         config.value = data;
 
         this.config = config;
@@ -45,8 +45,24 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
     render: function() {
         this.setupWrapper();
+
+        if (this.config["required"]) {
+            this.required = this.config["required"];
+        }
+
         this.element = new Ext.form.ComboBox(this.config);
         this.element.render(this.id);
+
+        this.element.on("select", this.checkValue.bind(this, true));
+        this.checkValue();
+    },
+
+    checkValue: function (mark) {
+        var value = this.getValue();
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
+        }
     },
 
     getValue: function () {

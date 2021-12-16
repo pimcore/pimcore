@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.link");
@@ -30,7 +30,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         var user = pimcore.globalmanager.get("user");
 
         if (this.isAllowed("properties")) {
-            this.properties = new pimcore.document.properties(this, "document");
+            this.properties = new pimcore.document.properties(this, "document", true);
         }
 
         if (this.isAllowed("settings")) {
@@ -347,7 +347,11 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        if (data.records.length === 1 && data.records[0].data.elementType === "document" && data.records[0].data.type !== "folder") {
+                        if (data.records.length === 1 && (
+                            data.records[0].data.elementType === "document" ||
+                            data.records[0].data.elementType === "asset" ||
+                            data.records[0].data.elementType === "object")
+                            && data.records[0].data.type !== "folder") {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         }
                     },
@@ -359,7 +363,11 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         }
 
                         data = data.records[0].data;
-                        if (data.type !== "folder" && data.elementType === "document") {
+                        if (data.type !== "folder" && (
+                            data.elementType === "document" ||
+                            data.elementType === "asset" ||
+                            data.elementType === "object")
+                            ) {
                             internalTypeField.setValue(data.elementType);
                             linkTypeField.setValue('internal');
                             pathField.setValue(data.path);

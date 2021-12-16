@@ -1,20 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 abstract class AbstractOrderList implements OrderListInterface
@@ -45,7 +45,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     protected $list;
 
@@ -126,34 +126,22 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return OrderListItemInterface[]
-     */
+    /** @inheritDoc */
     public function load()
     {
         if ($this->list === null) {
             // load
             $conn = \Pimcore\Db::getConnection();
-
-            $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
-            $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
+            $queryBuilder = $this->getQueryBuilder();
+            $this->list = new \ArrayIterator($conn->fetchAll((string) $queryBuilder, $queryBuilder->getParameters(), $queryBuilder->getParameterTypes()));
+            $this->rowCount = $this->list->count();
         }
 
         return $this;
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
-     * Returns an collection of items for a page.
+     * Returns a collection of items for a page.
      *
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
@@ -163,9 +151,9 @@ abstract class AbstractOrderList implements OrderListInterface
     public function getItems($offset, $itemCountPerPage)
     {
         // load
-        return $this
-            ->setLimit($itemCountPerPage, $offset)
-            ->load();
+        $this->setLimit($itemCountPerPage, $offset)->load();
+
+        return $this->list->getArrayCopy();
     }
 
     /**
@@ -207,6 +195,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed Can return any type.
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->load();
@@ -223,6 +212,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->load();
@@ -237,6 +227,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed scalar on success, or null on failure.
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $this->load();
@@ -253,6 +244,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return bool The return value will be casted to boolean and then evaluated.
      *       Returns true on success or false on failure.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $this->load();
@@ -268,6 +260,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void Any returned value is ignored.
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->load();
@@ -286,6 +279,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function seek($position)
     {
         $this->load();
@@ -303,6 +297,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *       <p>
      *       The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $this->load();
@@ -325,6 +320,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $this->load();
@@ -344,6 +340,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->load();
@@ -366,6 +363,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         // not allowed, read only
@@ -383,6 +381,7 @@ abstract class AbstractOrderList implements OrderListInterface
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         // not allowed, read only

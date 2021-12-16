@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\DocType\Listing;
@@ -24,26 +22,16 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\Document\DocType\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Document\DocType\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('document-types');
-    }
-
     /**
-     * Loads a list of document-types for the specicifies parameters, returns an array of Document\DocType elements
-     *
      * @return array
      */
-    public function load()
+    public function loadList()
     {
-        $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-
         $docTypes = [];
-        foreach ($docTypesData as $docTypeData) {
-            $docTypes[] = Model\Document\DocType::getById($docTypeData['id']);
+        foreach ($this->loadIdList() as $id) {
+            $docTypes[] = Model\Document\DocType::getById($id);
         }
 
         $this->model->setDocTypes($docTypes);
@@ -56,8 +44,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
+        $amount = count($this->loadIdList());
 
         return $amount;
     }

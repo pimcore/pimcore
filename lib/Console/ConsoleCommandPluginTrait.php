@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Console;
@@ -20,8 +21,6 @@ use Symfony\Component\Console\Command\Command;
 
 trait ConsoleCommandPluginTrait
 {
-    use CliTrait;
-
     /**
      * Handle system.console.init event and register console commands to the console application
      */
@@ -39,6 +38,14 @@ trait ConsoleCommandPluginTrait
     {
         $application = $e->getApplication();
         $application->addCommands($this->getConsoleCommands());
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isCli()
+    {
+        return php_sapi_name() === 'cli';
     }
 
     /**

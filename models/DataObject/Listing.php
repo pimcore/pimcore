@@ -1,47 +1,43 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
- * @method Model\DataObject current()
+ * @method Model\DataObject|false current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\DataObject\Listing\Dao getDao()
- * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @var bool
      */
-    public $unpublished = false;
+    protected $unpublished = false;
 
     /**
      * @var array
      */
-    public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
+    protected $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_FOLDER];
 
     /**
      * @return array
@@ -127,7 +123,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     /**
      * @param string $condition
-     * @param array|null $conditionVariables
+     * @param array|scalar $conditionVariables
      *
      * @return $this
      */
@@ -137,44 +133,21 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if (!$qoute) {
-                $this->groupBy = new Expression($groupBy);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      *
      * Methods for AdapterInterface
      */
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->getDao()->getTotalCount();
     }
 
     /**
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return Model\DataObject[]
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -185,14 +158,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
+     * @internal
+     *
      * @return bool
      */
     public function addDistinct()

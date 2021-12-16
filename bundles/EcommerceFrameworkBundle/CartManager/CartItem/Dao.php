@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -52,13 +54,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      * @param string $itemKey
      * @param string $parentKey
      *
-     * @return void
+     * @throws NotFoundException
      */
     public function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
         if (empty($classRaw)) {
-            throw new \Exception('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
+            throw new NotFoundException('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
         }
 
         $this->model->setIsLoading(true);

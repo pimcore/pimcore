@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Http\Request\Resolver;
@@ -17,6 +18,9 @@ namespace Pimcore\Http\Request\Resolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @internal
+ */
 abstract class AbstractRequestResolver
 {
     /**
@@ -45,14 +49,24 @@ abstract class AbstractRequestResolver
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @return Request
      */
     protected function getMasterRequest()
     {
-        if (!$this->requestStack->getMasterRequest()) {
-            throw new \LogicException('A master request must be available.');
+        return $this->getMainRequest();
+    }
+
+    /**
+     * @return Request
+     */
+    protected function getMainRequest(): Request
+    {
+        if (!$this->requestStack->getMainRequest()) {
+            throw new \LogicException('A main request must be available.');
         }
 
-        return $this->requestStack->getMasterRequest();
+        return $this->requestStack->getMainRequest();
     }
 }

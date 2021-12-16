@@ -11,7 +11,7 @@ All things where Documents are not practical. Here Custom Routes come into actio
 Custom Routes come fourth in the route processing priority.
 
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
-still use [Symfony's routing capabilities](http://symfony.com/doc/3.4/routing.html) (eg. @Route() annotation,
+still use [Symfony's routing capabilities](https://symfony.com/doc/5.2/routing.html) (eg. @Route() annotation,
  `routing.yml`, ...) in parallel to Pimcore Custom Routes.
  
 ## Configuring Custom Routes
@@ -24,8 +24,7 @@ Following options are relevant:
 * *Name* - name of the Custom Route for identifying it
 * *Pattern* - URL pattern configured with a regex
 * *Reverse* - reverse pattern that is used to build URLs for this route, see also [Building URLs](#building-urls-based-on-custom-routes).
-* *Bundle* - When this column is filled, Pimcore routes the request to a different bundle than the standard bundle (AppBundle). 
-* *Controller*, *Action* - configuration for which controller/action the request is delegated to. You can use a Service as Controller Name as well. In this case, the Bundle Setting will be ignored
+* *Controller* - Module/controller/action configuration for which the request is delegated to. You can use a Service as Controller Name as well.
 * *Variables* - comma-seperated list of names for the placeholders in the pattern regex. At least all variables used in the reverse pattern must be listed here.  
 * *Defaults* - defaults for variables separated by | - e.g. key=value|key2=value2 
 * *Site* - Site for which this route should be applied to. 
@@ -44,7 +43,7 @@ the custom route:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +56,7 @@ class NewsController extends FrontendController
         $text = $request->get('text');
         
         // ...
-        return $this->render('News/detail.html.twig');
+        return $this->render('news/detail.html.twig');
     }
 }
 ```
@@ -65,7 +64,7 @@ class NewsController extends FrontendController
 The default variables can be accessed the same way.
 
 ## Using Param Converter to convert request ID to Data Object
-Pimcore has a built-in [param converter](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
+Pimcore has a built-in [param converter](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
 for converting data object IDs in the request parameters to actual objects. 
 
 To use the param converter, simply type hint the argument (Symfony routing example): 
@@ -83,9 +82,17 @@ To use the param converter, simply type hint the argument (Symfony routing examp
 ```
 
 Param converters work with Pimcore Custom Routes as well as with Symfony Routes. 
-Of course you can also configure the param converter using the `@ParamConverter`, for details please have a look at
-the official documentation for [param converters](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
+Of course, you can also configure the param converter using the `@ParamConverter`, for details please have a look at
+the official documentation for [param converters](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
 
+By taking advantage of the options that we can pass further on to the object, we can also work with unpublished objects.
+````php
+/**
+
+@route("/blog/{post}")
+@ParamConverter( "post", options={ "unpublished" = true } )
+*/
+````
 
 ## Building URLs based on Custom Routes
 
@@ -95,9 +102,9 @@ You can define a placeholder in the reverse pattern with %NAME and it is also po
 to do so just embrace the part with curly brackets { } (see example below).
 
 
-| Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
-|---------------|----------------------------------------------------------|--------------------------------------------------|------------|----------------|------------|--------------------------|--------------|----------|--------------|
-| news category | /\\/news-category\\/([^_]+)_([0-9]+)(_category_)?([0-9]+)?/ | /news-category/%text_%id{_category_%categoryId} |            | news           | list       | text,id,text2,categoryId |              |          | 1            |
+| Name     | Pattern                | Reverse          | Controller                                    | Variables | Defaults     | Site IDs | Priority     | Methods     |
+|----------|------------------------|------------------|-----------------------------------------------|-----------|--------------|----------|--------------|-------------|
+| news category  | /\\/news-category\\/([^_]+)_([0-9]+)(_category_)?([0-9]+)?/ |  /news-category/%text_%id{_category_%categoryId}    | App\Controller\NewsController::listingAction  | text,id,text2,categoryId   |              |        | 1              |       |
   
 ![Grid with the new route](../../img/Routing_grid2.png)
 
@@ -149,12 +156,12 @@ Output will be: `/news-category/random+text_5_category_776`
 ### Setting locale from a route
 
 Symfony supports a special `_locale` parameter which is automatically used as current locale if set via route 
-parameters (see [https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url)).
+parameters (see [https://symfony.com/doc/5.2/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/5.2/translation/locale.html#the-locale-and-the-url)).
 As an example a simple route matching `/{_locale}/test`:
 
-| Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
-|---------------|----------------------------------------------------------|--------------------------------------------------|------------|----------------|------------|--------------------------|--------------|----------|--------------|
-| myroute | /^\\/([a-z]{2}\\/test/ | /%_locale/test |            | content           | test       | _locale |              |          | 1            |
+| Name     | Pattern                | Reverse          | Controller                                    | Variables | Defaults     | Site     | Priority     | Methods     |
+|----------|------------------------|------------------|-----------------------------------------------|-----------|--------------|----------|--------------|-------------|
+| myroute  | /^\\/([a-z]{2}\\/test/ | /%_locale/test   | App\Controller\ContentController::testAction  | _locale   |              | 1        |              |             |
 
 Whatever is matched in `_locale` will be automatically used as site-wide locale for the request.
 
@@ -183,10 +190,10 @@ In the example below you can see when exactly you **need** to set the priorities
 In example below you can see how both routes are regulated by priorities.
 
 
-| ... | Pattern              | Reverse          | ... | Controller | Action | Variables | ... | Priority |
-|-----|----------------------|------------------|-----|------------|--------|-----------|-----|----------|
-| ... | /\/blog\/(.+)/       | /blog/%month     | ... | blog       | list   | month     | ... | 1        |
-| ... | /\/blog\/(.+)\/(.+)/ | /blog/%month/%id | ... | blog       | detail | month,id  | ... | 2        |
+| ... | Pattern              | Reverse          | Controller                                    | Variables | ... | Priority | Methods     |
+|-----|----------------------|------------------|-----------------------------------------------|-----------|-----|----------|-------------|
+| ... | /\/blog\/(.+)/       | /blog/%month     | App\Controller\BlogController::listAction     | month     | ... | 1        |             |
+| ... | /\/blog\/(.+)\/(.+)/ | /blog/%month/%id | App\Controller\BlogController::detailAction   | month,id  | ... | 2        |             |
 
 
 ### Site Support
@@ -228,24 +235,6 @@ It's possible to generate URL's pointing to a different Site inside Pimcore. To 
 }) }}
 ```
 
-## Dynamic controller / action / module out of the Route Pattern
-
-Pimcore supports dynamic values for the controller, action and the module. 
-
-It works similar to the reverse route, you can place your placeholders directly into the controller.
-The following configuration should explain the way how it works:
-
-| Name                          | Pattern                                    | Reverse                    | Module             | Controller             | Action             | Variables             | Defaults             | Site             | Priority             |
-|-------------------------------|--------------------------------------------|----------------------------|--------------------|------------------------|--------------------|-----------------------|----------------------|------------------|----------------------|
-| articles-dynamic-prefix       | /\\/(events\|news)\\/(list\|detail)/       | /%con/%act                 |                    | %con                   | %act               | con,act               |                      |                  | 10                   |
-| articles-dynamic-simple       | /\\/dyn_([a-z]+)\\/([a-z]+)/               | /dyn_%controller/%action   |                    | %controller            | %action            | controller,action     |                      |                  | 1                    |
-
-![Advanced routes grid](../../img/Routing_grid_advanced_routes.png)
-
-In that case, you have few valid URL's:
-* `/news/list` - `NewsController::listAction`
-* `/events/detail` - `EventsController::detailAction`
-
 ## Using Controller as Service in Custom Routes
 
 Pimcore supports Controller as Services in Custom Routes. To add them, set the Controller Setting to your Service name.
@@ -255,7 +244,7 @@ Service Definition:
 ```yml
 services:
   app.controller.default:
-    class: AppBundle\Controller\DefaultController
+    class: App\Controller\DefaultController
     calls:
       - [setContainer, ['@service_container']]
 
@@ -264,9 +253,9 @@ services:
 It works similar to the reverse route, you can place your placeholders directly into the controller.
 The following configuration should explain the way how it works:
 
-| Name          | Pattern     | Reverse  | Bundle | Controller              | Action        | Variables             | Defaults             | Site             | Priority             |
-|---------------|-------------|----------|--------|-------------------------|---------------|-----------------------|----------------------|------------------|----------------------|
-| service_route | /\/default/ | /default |        | @app.controller.default | default       |                       |                      |                  | 10                   |
+| ... | Pattern              | Reverse          | Controller                                    | Variables | ... | Priority | Methods     |
+|-----|----------------------|------------------|-----------------------------------------------|-----------|-----|----------|-------------|
+| ... | /\/default/          | /default         | @app.controller.default                       | month     | ... | 10       |             |
 
 
 ## Responding 404 Status Code
@@ -282,7 +271,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 // ...
 
 public function testAction(Request $request) {
-    $object = AbstractObject::getById($request->get("id")); 
+    $object = DataObject::getById($request->get("id")); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }

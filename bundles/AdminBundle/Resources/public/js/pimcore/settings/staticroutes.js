@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.staticroutes");
@@ -59,7 +59,7 @@ pimcore.settings.staticroutes = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
             [
-                {name:'id', type: 'int'},
+                {name:'id'},
                 {name:'name'},
                 {name:'pattern', allowBlank:false},
                 {name:'reverse', allowBlank:true},
@@ -171,20 +171,36 @@ pimcore.settings.staticroutes = Class.create({
                 xtype:'actioncolumn',
                 menuText: t('delete'),
                 width: 40,
-                items:[
-                    {
-                        tooltip:t('delete'),
-                        icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                        handler:function (grid, rowIndex) {
-                            grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }
-                ]
+                items: [{
+                    getClass: function (v, meta, rec) {
+                        var klass = "pimcore_action_column ";
+                        if (rec.data.writeable) {
+                            klass += "pimcore_icon_minus";
+                        }
+                        return klass;
+                    },
+                    tooltip: t('delete'),
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        if (!data.data.writeable) {
+                            return;
+                        }
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }]
             }
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+            clicksToEdit: 1,
+            clicksToMoveEditor: 1,
+            listeners: {
+                beforeedit: function (editor, context, eOpts) {
+                    if (!context.record.data.writeable) {
+                        return false;
+                    }
+                }
+            }
         });
 
 
@@ -204,7 +220,7 @@ pimcore.settings.staticroutes = Class.create({
             },
             sm: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
@@ -212,7 +228,8 @@ pimcore.settings.staticroutes = Class.create({
                     {
                         text:t('add'),
                         handler:this.onAdd.bind(this),
-                        iconCls:"pimcore_icon_add"
+                        iconCls:"pimcore_icon_add",
+                        disabled: !pimcore.settings['staticroutes-writeable']
                     },
                     "->",
                     {
@@ -224,7 +241,10 @@ pimcore.settings.staticroutes = Class.create({
                 ]
             },
             viewConfig:{
-                forceFit:true
+                forceFit:true,
+                getRowClass: function (record, rowIndex) {
+                    return record.data.writeable ? '' : 'pimcore_grid_row_disabled';
+                }
             }
         });
 

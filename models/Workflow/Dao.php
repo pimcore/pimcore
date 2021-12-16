@@ -1,23 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Staticroute
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Workflow;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -35,7 +34,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * @param int|null $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id = null)
     {
@@ -48,7 +47,7 @@ class Dao extends Model\Dao\PhpArrayTable
         if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Workflow with id: ' . $this->model->getId() . ' does not exist');
+            throw new NotFoundException('Workflow with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 

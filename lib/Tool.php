@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -17,9 +18,10 @@ namespace Pimcore;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
 
-class Tool
+final class Tool
 {
     /**
      * Sets the current request to use when resolving request at early
@@ -48,34 +50,12 @@ class Tool
      * Sets the current request to operate on
      *
      * @param Request|null $request
+     *
+     * @internal
      */
     public static function setCurrentRequest(Request $request = null)
     {
         self::$currentRequest = $request;
-    }
-
-    /**
-     * returns a valid cache key/tag string
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    public static function getValidCacheKey($key)
-    {
-        return preg_replace('/[^a-zA-Z0-9]/', '_', $key);
-    }
-
-    /**
-     * @static
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    public static function isValidPath($path)
-    {
-        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/ ]+$/", $path, $matches);
     }
 
     /**
@@ -139,6 +119,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param string $language
      *
      * @return array
@@ -221,6 +203,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param string $language
      * @param bool $absolutePath
      *
@@ -267,7 +251,7 @@ class Tool
             'uk' => 'ua', 'uz' => 'uz', 'vi' => 'vn', 'zh' => 'cn', 'gd' => 'gb-sct', 'gd-gb' => 'gb-sct',
             'cy' => 'gb-wls', 'cy-gb' => 'gb-wls', 'fy' => 'nl', 'xh' => 'za', 'yo' => 'bj', 'zu' => 'za',
             'ta' => 'lk', 'te' => 'in', 'ss' => 'za', 'sw' => 'ke', 'so' => 'so', 'si' => 'lk', 'ii' => 'cn',
-            'zh-hans' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
+            'zh-hans' => 'cn',  'zh-hant' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
             'fil' => 'ph',
         ];
 
@@ -289,12 +273,12 @@ class Tool
      *
      * @return null|Request
      */
-    public static function resolveRequest(Request $request = null)
+    private static function resolveRequest(Request $request = null)
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
             if (\Pimcore::hasContainer()) {
-                $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+                $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
             } else {
                 if (null !== self::$currentRequest) {
                     return self::$currentRequest;
@@ -306,8 +290,6 @@ class Tool
     }
 
     /**
-     * @static
-     *
      * @param Request|null $request
      *
      * @return bool
@@ -315,7 +297,7 @@ class Tool
     public static function isFrontend(Request $request = null): bool
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            $request = \Pimcore::getContainer()->get('request_stack')->getMainRequest();
         }
 
         if (null === $request) {
@@ -348,7 +330,26 @@ class Tool
     }
 
     /**
-     * @static
+     * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
+     *
+     * @param Request $request
+     * @param Element\ElementInterface $element
+     *
+     * @return bool
+     */
+    public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element)
+    {
+        if (!self::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        $user = Tool\Authentication::authenticateSession($request);
+
+        return $user && $element->isAllowed('view', $user);
+    }
+
+    /**
+     * @internal
      *
      * @param Request|null $request
      *
@@ -376,7 +377,7 @@ class Tool
         );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
+        if (in_array('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
             return false;
         }
 
@@ -384,7 +385,7 @@ class Tool
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Request|null $request
      *
@@ -402,6 +403,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     public static function getRequestScheme(Request $request = null)
@@ -418,7 +421,7 @@ class Tool
     /**
      * Returns the host URL
      *
-     * @param string $useProtocol use a specific protocol
+     * @param string|null $useProtocol use a specific protocol
      * @param Request|null $request
      *
      * @return string
@@ -460,7 +463,7 @@ class Tool
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Request|null $request
      *
@@ -491,6 +494,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param Request|null $request
      *
      * @return null|string
@@ -509,49 +514,16 @@ class Tool
     }
 
     /**
-     * @static
-     *
-     * @return array|bool
-     */
-    public static function getCustomViewConfig()
-    {
-        $configFile = \Pimcore\Config::locateConfigFile('customviews.php');
-
-        if (!is_file($configFile)) {
-            $cvData = false;
-        } else {
-            $confArray = include($configFile);
-            $cvData = [];
-
-            foreach ($confArray['views'] as $tmp) {
-                if (isset($tmp['name'])) {
-                    $tmp['showroot'] = !empty($tmp['showroot']);
-
-                    if (!empty($tmp['hidden'])) {
-                        continue;
-                    }
-
-                    $cvData[] = $tmp;
-                }
-            }
-        }
-
-        return $cvData;
-    }
-
-    /**
      * @param array|string|null $recipients
      * @param string|null $subject
-     * @param string|null $charset
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public static function getMail($recipients = null, $subject = null, $charset = null)
+    public static function getMail($recipients = null, $subject = null)
     {
         $mail = new Mail();
-        $mail->setCharset($charset);
 
         if ($recipients) {
             if (is_string($recipients)) {
@@ -571,8 +543,6 @@ class Tool
     }
 
     /**
-     * @static
-     *
      * @param string $url
      * @param array $paramsGet
      * @param array $paramsPost
@@ -621,6 +591,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -631,6 +603,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -641,6 +615,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -656,7 +632,7 @@ class Tool
      *
      * @return bool
      */
-    protected static function classInterfaceExists($class, $type)
+    private static function classInterfaceExists($class, $type)
     {
         $functionName = $type . '_exists';
 
@@ -693,6 +669,8 @@ class Tool
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public static function getCachedSymfonyEnvironments(): array
@@ -702,11 +680,17 @@ class Tool
             unset($dirs[$key]);
         }
         $dirs = array_map('basename', $dirs);
+        $dirs = array_filter($dirs, function ($value) {
+            // this filters out "old" build directories, which end with a ~
+            return !(bool) \preg_match('/~$/', $value);
+        });
 
         return array_values($dirs);
     }
 
     /**
+     * @internal
+     *
      * @param string $message
      */
     public static function exitWithError($message)

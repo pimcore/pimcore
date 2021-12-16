@@ -92,38 +92,53 @@ public static function setTagsForElement($cType, $cId, array $tags)
 
 To get all tags from the element below, 
 
-![Api get tags for the introduction document.](../img/tags_api_get_tags.png)
+![API for gettings tags for the shown demo asset.](../img/tags_api_get_tags.png)
 
-we can use `getTagsForElement` method, in `$cType` parameter we have to specify the type of the element. 
-In the case above, it's `document`. 
+We can use `getTagsForElement` method, in `$cType` parameter we have to specify the type of the element. 
+In the case above, it's `asset`. 
 
 ```php
-$tags = \Pimcore\Model\Element\Tag::getTagsForElement('document', 4);
+$tags = \Pimcore\Model\Element\Tag::getTagsForElement('asset', 30);
 dump($tags);
 ```
 
-And as an output there is an the array with `Pimcore\Model\Element\Tag` as a row.
+The output will be an array with `Pimcore\Model\Element\Tag` elements.
 
 ```
-array(3) {
-  [0] => object(Pimcore\Model\Element\Tag)#272 (7) {
-  
-  ...  
+array:3 [▼
+  0 => Pimcore\Model\Element\Tag {#7351 ▼
+    #id: 9
+    #name: "Italy"
+    #parentId: 7
+    #idPath: "/7/"
+    #children: null
+    #parent: Pimcore\Model\Element\Tag {#7354 ▶}
+    #dao: Pimcore\Model\Element\Tag\Dao {#7349 ▶}
+    id: 9
+    name: "Italy"
+    parentId: 7
+    idPath: "/7/"
+    children: null
+    parent: Pimcore\Model\Element\Tag {#7354 ▶}
+  }
+  1 => Pimcore\Model\Element\Tag {#7357 ▶}
+  2 => Pimcore\Model\Element\Tag {#7345 ▶}
+]  
 ```
 
-#### Assign a New Tag to a Element
+#### Assign a New Tag to an Element
 
-To add a new tag an element, first create the new tag and after that just use the `\Pimcore\Model\Element\Tag::addTagToElement` 
+To add a new tag to an element, first create the new tag and after that just use the `\Pimcore\Model\Element\Tag::addTagToElement` 
 method to assign the tag to the chosen element (by element id).
 
 ```php
 $tag =  new \Pimcore\Model\Element\Tag();
 try {
-    $tag->setName('newcontent')->save();
-    \Pimcore\Model\Element\Tag::addTagToElement('document', 4, $tag);
+    $tag->setName('newtag')->save();
+    \Pimcore\Model\Element\Tag::addTagToElement('asset', 30, $tag);
 } catch (Exception $e) {
-
-...
+// ....
+}
 
 ```
 
@@ -132,6 +147,6 @@ The result:
 ![Assign new tag by API](../img/tags_api_assign_new_element.png)
 
 In the same way you can use the rest of available methods. 
-The type properties list is a standard. You can use: document, asset or object.
+The type properties list is a standard. You can use one of `document`, `asset` or `object`.
  
  

@@ -7,27 +7,31 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Db;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class GeneratePagePreviews extends AbstractCommand
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -40,11 +44,63 @@ class GeneratePagePreviews extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 'Prefix for the document path, eg. https://example.com, if not specified, Pimcore will try use the main domain from system settings.',
                 null
+            )
+            ->addOption(
+                'parent',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                'Only create preview of documents in parent hierarchy (ID|path).'
+            )
+            ->addOption(
+                'exclude-patterns',
+                'x',
+                InputOption::VALUE_OPTIONAL,
+                'Excludes all documents whose path property matches the regex pattern.'
             );
     }
 
     /**
-     * @inheritDoc
+     * @param InputInterface $input
+     *
+     * @return Document\Listing|void
+     */
+    protected function fetchItems(InputInterface $input)
+    {
+        $docs = new \Pimcore\Model\Document\Listing();
+        $db = Db::get();
+
+        $parentIdOrPath = $input->getOption('parent');
+        if ($parentIdOrPath) {
+            if (is_numeric(($parentIdOrPath))) {
+                $parent = Document::getById($parentIdOrPath);
+            } else {
+                $parent = Document::getByPath($parentIdOrPath);
+            }
+            if ($parent instanceof Document) {
+                $conditions[] = 'path LIKE ' . $db->quote($parent->getRealFullPath() . '%');
+            } else {
+                $this->writeError($parentIdOrPath . ' is not a valid id or path!');
+                exit(1);
+            }
+        }
+
+        $regex = $input->getOption('exclude-patterns');
+        if ($regex) {
+            $conditions[] = 'path NOT REGEXP ' . $db->quote($regex);
+        }
+
+        $filter = "type = 'page'";
+        if (isset($conditions)) {
+            $filter = $filter . ' AND ' . implode(' AND ', $conditions);
+        }
+        $docs->setCondition($filter);
+        $docs->load();
+
+        return $docs;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -59,10 +115,7 @@ class GeneratePagePreviews extends AbstractCommand
             return 1;
         }
 
-        $docs = new \Pimcore\Model\Document\Listing();
-        $docs->setCondition("type = 'page'");
-        $docs->load();
-
+        $docs = $this->fetchItems($input);
         foreach ($docs as $doc) {
             /**
              * @var Document\Page $doc

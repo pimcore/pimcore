@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -32,54 +30,54 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
+
+    /**
+     * @var int|null
+     */
+    protected $creationDate;
+
+    /**
+     * @var int|null
+     */
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $userOwner;
 
     /**
      * @var int
      */
-    public $modificationDate;
-
-    /**
-     * @var int
-     */
-    public $userOwner;
-
-    /**
-     * @var int
-     */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var Layout|null
      */
-    public $layoutDefinitions;
+    protected $layoutDefinitions;
 
     /**
      * @var int
      */
-    public $default;
+    protected $default;
 
     /**
      * @param string $id
@@ -99,9 +97,8 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                DataObject\Service::synchronizeCustomLayout($customLayout);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -189,12 +186,16 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @todo: $isUpdate is not needed
-     *
      * @param bool $saveDefinitionFile
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
@@ -252,22 +253,60 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @internal
+     *
+     * @return bool
      */
-    public function getDefinitionFile()
+    public function isWritable(): bool
     {
-        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->getId() .'.php';
+        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
+            return true;
+        }
 
-        return $file;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
-     * @param Data|Layout $data
+     * @internal
+     *
+     * @param string|null $id
+     *
+     * @return string
      */
-    public static function cleanupForExport(&$data)
+    public function getDefinitionFile($id = null)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (!$id) {
+            $id = $this->getId();
+        }
+
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $id .'.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            return PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
+        }
+    }
+
+    /**
+     * @param Data|Layout|null $data
+     */
+    private static function cleanupForExport(&$data)
+    {
+        if (is_null($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -281,14 +320,13 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
+        $cd = '/**' . "\n";
 
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
@@ -296,12 +334,14 @@ class CustomLayout extends Model\AbstractModel
 
             $cd .= '* '.$description."\n";
         }
-        $cd .= '*/ ';
+        $cd .= '*/';
 
         return $cd;
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return int|null
@@ -351,7 +391,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -367,7 +407,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -375,7 +415,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

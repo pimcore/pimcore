@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -28,11 +29,14 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ElementControllerBase extends AdminController
+/**
+ * @internal
+ */
+abstract class ElementControllerBase extends AdminController
 {
     /**
      * @param ElementInterface $element
@@ -103,6 +107,7 @@ class ElementControllerBase extends AdminController
                 }
             } catch (\Exception $e) {
                 Logger::err('failed to access element with id: ' . $id);
+
                 continue;
             }
 
@@ -134,6 +139,7 @@ class ElementControllerBase extends AdminController
                             'allowed' => false,
                         ];
                         $errors |= true;
+
                         continue;
                     }
                 }
@@ -154,12 +160,12 @@ class ElementControllerBase extends AdminController
                     ],
                 ]];
 
-                $hasChilds = $element->hasChildren();
+                $hasChildren = $element->hasChildren();
                 if (!$hasDependency) {
-                    $hasDependency = $hasChilds;
+                    $hasDependency = $hasChildren;
                 }
 
-                if ($hasChilds) {
+                if ($hasChildren) {
                     // get amount of childs
                     $list = $element::getList(['unpublished' => true]);
                     $pathColumn = ($type === 'object') ? 'o_path' : 'path';

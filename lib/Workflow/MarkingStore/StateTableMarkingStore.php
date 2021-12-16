@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\MarkingStore;
@@ -36,13 +37,13 @@ class StateTableMarkingStore implements MarkingStoreInterface
     /**
      * {@inheritdoc}
      */
-    public function getMarking($subject)
+    public function getMarking($subject)// : Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
         $placeName = '';
 
-        if ($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getType($subject), $this->workflowName)) {
+        if ($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getElementType($subject), $this->workflowName)) {
             $placeName = $workflowState->getPlace();
         }
 
@@ -67,7 +68,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
     public function setMarking($subject, Marking $marking, array $context = [])
     {
         $subject = $this->checkIfSubjectIsValid($subject);
-        $type = Service::getType($subject);
+        $type = Service::getElementType($subject);
 
         if (!$workflowState = WorkflowState::getByPrimary($subject->getId(), $type, $this->workflowName)) {
             $workflowState = new WorkflowState();

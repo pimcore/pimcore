@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -20,6 +21,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Psr\Log\LoggerAwareTrait;
@@ -30,46 +32,32 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * @internal
+ */
 class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
     /**
-     * @var DocumentRenderer
-     */
-    protected $documentRenderer;
-
-    /**
-     * @var bool
-     */
-    protected $renderErrorPage = true;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var ConnectionInterface
-     */
-    protected $db;
-
-    /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
-     * @param bool $renderErrorPage
+     * @param Config $config
+     * @param Document\Service $documentService
+     * @param SiteResolver $siteResolver
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
-    {
-        $this->documentRenderer = $documentRenderer;
-        $this->renderErrorPage = (bool)$renderErrorPage;
-        $this->db = $db;
-        $this->config = $config;
+    public function __construct(
+        protected DocumentRenderer $documentRenderer,
+        protected ConnectionInterface $db,
+        protected Config $config,
+        protected Document\Service $documentService,
+        protected SiteResolver $siteResolver
+    ) {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -93,9 +81,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         // further checks are only valid for default context
         $request = $event->getRequest();
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            if ($this->renderErrorPage) {
-                $this->handleErrorPage($event);
-            }
+            $this->handleErrorPage($event);
         }
     }
 
@@ -105,6 +91,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             return;
         }
 
+        $request = $event->getRequest();
         $exception = $event->getThrowable();
 
         $statusCode = 500;
@@ -118,18 +105,14 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $this->logger->error($exception);
         }
 
-        $errorPath = $this->config['documents']['error_pages']['default'];
-
-        if (Site::isSiteRequest()) {
-            $site = Site::getCurrentSite();
-            $errorPath = $site->getErrorDocument();
-        }
+        $errorPath = $this->determineErrorPath($request);
 
         $this->logToHttpErrorLog($event->getRequest(), $statusCode);
 
         // Error page rendering
         if (empty($errorPath)) {
-            $errorPath = '/';
+            // if not set, use Symfony error handling
+            return;
         }
 
         $document = Document::getByPath($errorPath);
@@ -172,5 +155,64 @@ class ResponseExceptionListener implements EventSubscriberInterface
                 'count' => 1,
             ]);
         }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    private function determineErrorPath(Request $request): string
+    {
+        $errorPath = '';
+
+        if ($this->siteResolver->isSiteRequest($request)) {
+            $path = $this->siteResolver->getSitePath($request);
+        } else {
+            $path = urldecode($request->getPathInfo());
+        }
+
+        // Find nearest document by path
+        $document = $this->documentService->getNearestDocumentByPath(
+            $path,
+            false,
+            ['page', 'snippet', 'hardlink', 'link', 'folder']
+        );
+
+        if ($document && $document->getFullPath() !== '/') {
+            if ($document->getProperty('language')) {
+                $locale = $document->getProperty('language');
+            }
+        }
+
+        if (Site::isSiteRequest()) {
+            $site = Site::getCurrentSite();
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $defaultErrorDocumentPath = $site->getErrorDocument();
+        } else {
+            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?: [];
+            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+        }
+
+        if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
+            $errorPath = $localizedErrorDocumentsPaths[$locale];
+        } else {
+            // If locale can't be determined check if error page is defined for any of user-agent preferences
+            foreach ($request->getLanguages() as $requestLocale) {
+                if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
+                    $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+
+                    break;
+                }
+            }
+        }
+
+        if (empty($errorPath)) {
+            $errorPath = $defaultErrorDocumentPath;
+        }
+
+        return $errorPath;
     }
 }

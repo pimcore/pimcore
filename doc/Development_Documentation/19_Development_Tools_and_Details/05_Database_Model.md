@@ -53,7 +53,6 @@ These tables are created during Pimcore install and are always the same.
 | quantityvalue_units | Available quantities for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
-| sanitycheck | Working table for Pimcore's sanity check |
 | schedule_tasks | Stores scheduled tasks |
 | search_backend_data | Stores the index for the backend search - is a InnoDb Table with fulltext capabilities |
 | sites | Stores [sites](../02_MVC/04_Routing_and_URLs/08_Working_with_Sites.md) |
@@ -62,7 +61,7 @@ These tables are created during Pimcore install and are always the same.
 | tmp_store | Pimcore internal tmp store | 
 | tracking_events | |
 | translations_admin | Backend translations |
-| translations_website | Frontend translations |
+| translations_messages | Frontend translations |
 | tree_locks | Locks in the tree of Pimcore backend interface | 
 | users | Backend users |
 | users_permission_definitions | List of globally assignable user permissions |

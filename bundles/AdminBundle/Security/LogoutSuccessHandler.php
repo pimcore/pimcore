@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security;
@@ -21,15 +22,14 @@ use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handle logout. This was originally implemented as LogoutHandler, but wasn't triggered as the token was empty at call
@@ -37,13 +37,15 @@ use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
  * success handler.
  *
  * TODO: investigate why the token is empty and change to LogoutHandler
+ *
+ * @internal
  */
 class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     protected $tokenStorage;
 
@@ -73,7 +75,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onLogoutSuccess(Request $request)
     {
@@ -84,7 +86,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         // clear open edit locks for this session
         Editlock::clearSession(Session::getSessionId());
 
-        /** @var LogoutEvent $event */
+        /** @var LogoutEvent|null $event */
         $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
             $event = null;
 

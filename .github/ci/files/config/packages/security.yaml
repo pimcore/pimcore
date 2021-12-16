@@ -1,0 +1,54 @@
+security:
+    providers:
+        pimcore_admin:
+            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Pimcore WebDAV HTTP basic // DO NOT CHANGE!
+        pimcore_admin_webdav:
+            pattern: ^/admin/asset/webdav
+            provider: pimcore_admin
+            http_basic: ~
+
+        # Pimcore admin form login // DO NOT CHANGE!
+        pimcore_admin:
+            anonymous: ~
+            pattern: ^/admin(/.*)?$
+            # admin firewall is stateless as we open the admin
+            # session on demand for non-blocking parallel requests
+            stateless: true
+            provider: pimcore_admin
+            logout:
+                path:   /admin/logout
+                target: /admin/login
+                success_handler: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
+            guard:
+                entry_point: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
+                authenticators:
+                    - Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
+            two_factor:
+                auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
+                check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check
+                default_target_path: /admin            # Where to redirect by default after successful authentication
+                always_use_default_target_path: false  # If it should always redirect to default_target_path
+                auth_code_parameter_name: _auth_code   # Name of the parameter for the two-factor authentication code
+                trusted_parameter_name: _trusted       # Name of the parameter for the trusted device option
+                multi_factor: false                    # If ALL active two-factor methods need to be fulfilled (multi-factor authentication)
+
+
+    access_control:
+        # Pimcore admin ACl  // DO NOT CHANGE!
+        - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login/2fa-verify, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
+        - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
+        - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login/(login|lostpassword|deeplink|csrf-token)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_PIMCORE_USER }
+
+    role_hierarchy:
+        # Pimcore admin  // DO NOT CHANGE!
+        ROLE_PIMCORE_ADMIN: [ROLE_PIMCORE_USER]

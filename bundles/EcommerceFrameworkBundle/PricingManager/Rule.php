@@ -1,26 +1,29 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscountInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\BracketInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
@@ -30,21 +33,23 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param int $id
      *
-     * @return RuleInterface
+     * @return RuleInterface|null
      */
     public static function getById($id)
     {
         $cacheKey = Dao::TABLE_NAME . '_' . $id;
+
         try {
             $rule = Runtime::get($cacheKey);
         } catch (\Exception $e) {
             try {
                 $ruleClass = get_called_class();
+                /** @var Rule $rule */
                 $rule = new $ruleClass;
                 $rule->getDao()->getById($id);
 
                 Runtime::set($cacheKey, $rule);
-            } catch (\Exception $ex) {
+            } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 
                 return null;
@@ -75,12 +80,12 @@ class Rule extends AbstractModel implements RuleInterface
     protected $description = [];
 
     /**
-     * @var BracketInterface
+     * @var ConditionInterface|null
      */
-    protected $condition;
+    protected ?ConditionInterface $condition = null;
 
     /**
-     * @var array|ActionInterface
+     * @var ActionInterface[]
      */
     protected $action = [];
 
@@ -106,6 +111,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param mixed $value
      *
      * @return AbstractModel
+     *
+     * @internal
      */
     public function setValue($key, $value)
     {
@@ -278,15 +285,15 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return ConditionInterface
+     * @return ConditionInterface|null
      */
-    public function getCondition()
+    public function getCondition(): ?ConditionInterface
     {
         return $this->condition;
     }
 
     /**
-     * @param array $action
+     * @param ActionInterface[] $action
      *
      * @return RuleInterface
      */
@@ -298,7 +305,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return array|ActionInterface
+     * @return ActionInterface[]
      */
     public function getActions()
     {
@@ -368,7 +375,23 @@ class Rule extends AbstractModel implements RuleInterface
     public function hasProductActions()
     {
         foreach ($this->getActions() as $action) {
-            if ($action instanceof ProductDiscountInterface) {
+            if ($action instanceof ProductActionInterface) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * checks if rule has at least one action that changes cart price
+     *
+     * @return bool
+     */
+    public function hasCartActions()
+    {
+        foreach ($this->getActions() as $action) {
+            if ($action instanceof CartActionInterface) {
                 return true;
             }
         }
@@ -384,8 +407,9 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnProduct(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
-            $action->executeOnProduct($environment);
+            if ($action instanceof ProductActionInterface) {
+                $action->executeOnProduct($environment);
+            }
         }
 
         return $this;
@@ -399,8 +423,9 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnCart(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
-            $action->executeOnCart($environment);
+            if ($action instanceof CartActionInterface) {
+                $action->executeOnCart($environment);
+            }
         }
 
         return $this;
@@ -412,6 +437,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string|null $language
      *
      * @return string
+     *
+     *
      */
     protected function getLanguage($language = null)
     {

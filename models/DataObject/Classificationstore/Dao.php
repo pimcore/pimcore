@@ -1,25 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Normalizer\NormalizerInterface;
 
 /**
  * @internal
@@ -56,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
         }
         $object = $this->model->getObject();
@@ -91,20 +91,28 @@ class Dao extends Model\Dao\AbstractDao
                         'type' => $keyConfig->getType(),
                     ];
 
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
-                        $value = $fd->getDataForResource($value, null, []);
-                        $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-                        $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
-                        $delegate = $fd->getDelegate();
-                        $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                        $value = $fd->getDataForResource($value, $this->model->getObject());
-                    }
-                    $value = $fd->marshal($value, $object);
+                    $encodedData = [];
 
-                    $data['value'] = isset($value['value']) ? $value['value'] : '';
-                    $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($value, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd,
+                        ]);
+
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
+                            $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
+                        } else {
+                            $encodedData['value'] = $normalizedData;
+                        }
+                    }
+
+                    $data['value'] = $encodedData['value'] ?? null;
+                    $data['value2'] = $encodedData['value2'] ?? null;
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -186,14 +194,28 @@ class Dao extends Model\Dao\AbstractDao
             $keyConfig = DefinitionCache::get($keyId);
             if (!$keyConfig) {
                 Logger::error('Could not resolve key with ID: ' . $keyId);
+
                 continue;
             }
 
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
-            $value = $fd->unmarshal($value, $object);
 
-            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof NormalizerInterface) {
+                /** @var MarshallerService $marshallerService */
+                $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
+                    $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
+                    // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                    $value = $unmarshaller->unmarshal($value, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
+                } else {
+                    $value = $value['value'];
+                }
+
+                $value = $fd->denormalize($value, [
+                    'object' => $object,
+                    'fieldDefinition' => $fd,
+                ]);
             }
 
             $language = $item['language'];
@@ -211,14 +233,15 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
-            `o_id` BIGINT(20) NOT NULL,
+            `o_id` INT(11) UNSIGNED NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`o_id`, `fieldname`, `groupId`)
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`),
+            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
-            `o_id` BIGINT(20) NOT NULL,
+            `o_id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
@@ -229,7 +252,8 @@ class Dao extends Model\Dao\AbstractDao
             `type` VARCHAR(50) NULL,
             PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
-            INDEX `language` (`language`)
+            INDEX `language` (`language`),
+            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->tableDefinitions = null;

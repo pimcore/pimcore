@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -21,7 +19,9 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
+use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
@@ -29,58 +29,72 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
  */
-class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
+class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+    use Model\Element\Traits\ScheduledTasksTrait;
 
-    /** @var array|null */
+    /**
+     * @internal
+     *
+     * @var array|null
+     */
     protected $__rawRelationData = null;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    public static $systemColumnNames = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+    public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $o_published;
 
     /**
+     * @internal
+     *
      * @var ClassDefinition|null
      */
-    protected $o_class;
+    protected ?ClassDefinition $o_class = null;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_classId;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $o_className;
 
     /**
+     * @internal
+     *
      * @var array|null
      */
     protected $o_versions = null;
 
     /**
-     * Contains all scheduled tasks
+     * @internal
      *
-     * @var array|null
-     */
-    protected $scheduledTasks = null;
-
-    /**
      * @var bool|null
      */
     protected $omitMandatoryCheck;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $allLazyKeysMarkedAsLoaded = false;
@@ -88,7 +102,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * returns the class ID of the current object class
      *
-     * @return int
+     * @return string
      */
     public static function classId()
     {
@@ -97,24 +111,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         return $v['o_classId'];
     }
 
-    public function __construct()
-    {
-        // nothing to do here
-    }
-
     /**
-     * @param bool|null $isUpdate
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($isUpdate = null, $params = [])
     {
-        $fieldDefintions = $this->getClass()->getFieldDefinitions();
+        $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
         $validationExceptions = [];
 
-        foreach ($fieldDefintions as $fd) {
+        foreach ($fieldDefinitions as $fd) {
             try {
                 $getter = 'get' . ucfirst($fd->getName());
 
@@ -124,30 +130,34 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                     //check throws Exception
                     try {
-                        $fd->checkValidity($value, $omitMandatoryCheck);
+                        $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
-                        if ($this->getClass()->getAllowInherit()) {
+                        if ($this->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($value)) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                AbstractObject::setGetInheritedValues(true);
+                                $getInheritedValues = DataObject::doGetInheritedValues();
+                                DataObject::setGetInheritedValues(true);
 
                                 $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck);
+                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
 
-                                AbstractObject::setGetInheritedValues($getInheritedValues);
+                                DataObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
-                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException->setSubItems($e->getSubItems());
+
+                                throw $newException;
                             }
                         } else {
                             if ($e instanceof Model\Element\ValidationException) {
                                 throw $e;
                             }
                             $exceptionClass = get_class($e);
+
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
                     }
@@ -160,36 +170,18 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($validationExceptions) {
             $message = 'Validation failed: ';
             $errors = [];
-            /** @var \Exception $e */
-            foreach ($validationExceptions as $e) {
-                $msg = $e->getMessage();
 
-                if ($e instanceof Model\Element\ValidationException) {
-                    $subItems = $e->getSubItems();
-                    if (is_array($subItems) && count($subItems)) {
-                        $msg .= ' (';
-                        $subItemParts = [];
-                        /** @var \Exception $subItem */
-                        foreach ($subItems as $subItem) {
-                            $subItemMessage = $subItem->getMessage();
-                            if ($subItem instanceof Model\Element\ValidationException) {
-                                $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
-                            }
-                            $subItemParts[] = $subItemMessage;
-                        }
-                        $msg .= implode(', ', $subItemParts);
-                        $msg .= ')';
-                    }
-                }
-                $errors[] = $msg;
+            /** @var Model\Element\ValidationException $e */
+            foreach ($validationExceptions as $e) {
+                $errors[] = $e->getAggregatedMessage();
             }
             $message .= implode(' / ', $errors);
-            $aggregatedExceptions = new Model\Element\ValidationException($message);
-            $aggregatedExceptions->setSubItems($validationExceptions);
-            throw $aggregatedExceptions;
+
+            throw new Model\Element\ValidationException($message);
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+
         try {
             $oldVersionCount = $this->getVersionCount();
 
@@ -212,39 +204,22 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         }
     }
 
-    protected function saveChildData()
+    private function saveChildData(): void
     {
         if ($this->getClass()->getAllowInherit()) {
             $this->getDao()->saveChildData();
         }
     }
 
-    public function saveScheduledTasks()
-    {
-        // update scheduled tasks
-        $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($this->getScheduledTasks()) && count($this->getScheduledTasks()) > 0) {
-            foreach ($this->getScheduledTasks() as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('object');
-                $task->save();
-            }
-        }
-    }
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
-        // delete all versions
-        foreach ($this->getVersions() as $v) {
-            $v->delete();
-        }
+        // Dispatch Symfony Message Bus to delete versions
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            new VersionDeleteMessage(Model\Element\Service::getElementType($this), $this->getId())
+        );
 
         $this->getDao()->deleteAllTasks();
 
@@ -258,10 +233,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote version note
+     * @param bool $isAutoSave
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
     {
         try {
             if ($setModificationDate) {
@@ -272,6 +248,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
             }
@@ -284,17 +261,19 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
             $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
-            if (!empty($objectsConfig['versions']['steps'])
+            if ((is_null($objectsConfig['versions']['days'] ?? null) && is_null($objectsConfig['versions']['steps'] ?? null))
+                || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
@@ -304,6 +283,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $postUpdateFailureEvent = new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
+                'isAutoSave' => $isAutoSave,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 
@@ -361,10 +341,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         $tags['class_' . $this->getClassId()] = 'class_' . $this->getClassId();
@@ -379,9 +357,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -397,11 +375,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param ClassDefinition $o_class
+     * @param ClassDefinition|null $o_class
      *
      * @return self
      */
-    public function setClass($o_class)
+    public function setClass(?ClassDefinition $o_class)
     {
         $this->o_class = $o_class;
 
@@ -409,9 +387,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return ClassDefinition
+     * @return ClassDefinition|null
      */
-    public function getClass()
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->o_class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));
@@ -513,32 +491,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return Model\Schedule\Task[]
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Model\Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='object'", $this->getId());
-            $this->scheduledTasks = $taskList->load();
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param array $scheduledTasks
-     *
-     * @return self
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
-    }
-
-    /**
      * @param string $key
      * @param mixed $params
      *
@@ -548,7 +500,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getValueFromParent($key, $params = null)
     {
-        $parent = $this->getNextParentForInheritance();
+        $parent = $this->getNextParentForInheritance($key);
         if ($parent) {
             $method = 'get' . $key;
             if (method_exists($parent, $method)) {
@@ -562,9 +514,13 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
+     *
+     * @param string $fieldName allows to disable inheritance for single field by overriding the corresponding data object class
+     *
      * @return AbstractObject|null
      */
-    public function getNextParentForInheritance()
+    public function getNextParentForInheritance($fieldName = null)
     {
         return $this->getClosestParentOfClass($this->getClassId());
     }
@@ -572,9 +528,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @param string $classId
      *
-     * @return Concrete|null
+     * @return self|null
      */
-    public function getClosestParentOfClass(string $classId)
+    private function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();
         if ($parent instanceof AbstractObject) {
@@ -595,6 +551,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * get object relation data as array for a specific field
+     *
+     * @internal
      *
      * @param string $fieldName
      * @param bool $forOwner
@@ -654,14 +612,15 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                $arguments = array_pad($arguments, 5, 0);
+                $arguments = array_pad($arguments, 6, 0);
 
-                [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
+                [$localizedPropertyName, $value, $locale, $limit, $offset, $objectTypes] = $arguments;
 
                 $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
+
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
@@ -678,8 +637,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     $listConfig['locale'] = $locale;
                 }
             } else {
-                $arguments = array_pad($arguments, 3, 0);
-                [$value, $limit, $offset] = $arguments;
+                $arguments = array_pad($arguments, 4, 0);
+                [$value, $limit, $offset, $objectTypes] = $arguments;
 
                 if (!$field instanceof AbstractRelations) {
                     $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
@@ -702,7 +661,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $listConfig['condition'] = $defaultCondition . $limitCondition;
             }
 
-            $list = static::getList($listConfig);
+            $list = static::makeList($listConfig, $objectTypes);
 
             if ($field instanceof AbstractRelations && $field->isFilterable()) {
                 $list = $field->addListingFilter($list, $value);
@@ -717,9 +676,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             return $list;
         }
 
-        // there is no property for the called method, so throw an exception
-        Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
-        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
+        try {
+            return call_user_func_array([parent::class, $method], $arguments);
+        } catch (\Exception $e) {
+            // there is no property for the called method, so throw an exception
+            Logger::error('Class: DataObject\\Concrete => call to undefined static method '.$method);
+
+            throw new \Exception('Call to undefined static method '.$method.' in class DataObject\\Concrete');
+        }
     }
 
     /**
@@ -729,13 +693,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function save()
     {
-        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
         // the inheritance enabled flag has been changed in the meantime
         if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
-            AbstractObject::disableDirtyDetection();
+            DataObject::disableDirtyDetection();
         }
+
         try {
             $params = [];
             if (func_num_args() && is_array(func_get_arg(0))) {
@@ -747,7 +712,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $this->resetDirtyMap();
             }
         } finally {
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
 
         return $this;
@@ -755,7 +720,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * @inheritdoc
+     *
+     * @return array
      */
     public function getLazyLoadedFieldNames(): array
     {
@@ -771,7 +737,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
@@ -837,30 +803,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param int $objectId
-     * @param int $modificationDate
-     * @param int $versionCount
-     * @param bool $force
-     *
-     * @return Model\Version|void
-     */
-    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $versionCount, $force = false)
-    {
-        $db = Db::get();
-        $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
-
-        if (!empty($versionData['id']) && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
-            $version = Model\Version::getById($versionData['id']);
-
-            return $version;
-        }
-
-        return;
-    }
-
-    /**
-     * @internal
-     *
      * @param array $descriptor
      * @param string $table
      *
@@ -888,7 +830,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         $descriptor['objectId'] = $this->getId();
 
-        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+        return $this->doRetrieveData($descriptor, DataObject\Data\UrlSlug::TABLE_NAME);
     }
 
     /**

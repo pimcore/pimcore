@@ -1,30 +1,30 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Token[] load()
- * @method Token current()
+ * @method Token|false current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @param string $key
@@ -67,11 +67,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if (isset($filter['creation_from'])) {
+            if (!empty($filter['creation_from'])) {
                 $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
             }
 
-            if (isset($filter['creation_to'])) {
+            if (!empty($filter['creation_to'])) {
                 $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
@@ -176,6 +176,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -189,6 +190,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         $params[] = $seriesId;
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -208,6 +210,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -299,6 +302,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $db->beginTransaction();
+
         try {
             $db->executeQuery($reservationsQuery, $params);
             $db->executeQuery($tokensQuery, $params);
@@ -355,14 +359,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @return \Pimcore\Model\DataObject\Listing|AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * Returns an collection of items for a page.
      *
      * @param  int $offset Page offset
@@ -389,6 +385,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
      * <p>
      * The return value is cast to an integer.
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->getTotalCount();

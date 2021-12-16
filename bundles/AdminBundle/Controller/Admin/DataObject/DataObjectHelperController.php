@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -19,36 +20,31 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\DataObject\Import\Resolver\ImportErrorException;
-use Pimcore\DataObject\Import\Resolver\ImportWarningException;
-use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
-use Pimcore\Event\DataObjectImportEvents;
-use Pimcore\Event\Model\DataObjectImportEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
-use Pimcore\Model\ImportConfig;
-use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/object-helper")
+ *
+ * @internal
  */
 class DataObjectHelperController extends AdminController
 {
@@ -63,7 +59,7 @@ class DataObjectHelperController extends AdminController
      */
     public function loadObjectDataAction(Request $request)
     {
-        $object = DataObject\AbstractObject::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
         $result = [];
         if ($object) {
             $result['success'] = true;
@@ -81,7 +77,7 @@ class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -99,8 +95,16 @@ class DataObjectHelperController extends AdminController
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
+        $configListing = $configListing->load();
 
-        return $configListing->load();
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
+            }
+        }
+
+        return $configData;
     }
 
     /**
@@ -108,7 +112,7 @@ class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
@@ -135,108 +139,14 @@ class DataObjectHelperController extends AdminController
             $configListing = $configListing->load();
         }
 
-        return $configListing;
-    }
-
-    /**
-     * @Route("/import-export-config", name="pimcore_admin_dataobject_dataobjecthelper_importexportconfig", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function importExportConfigAction(Request $request, ImportService $importService)
-    {
-        $gridConfigId = $request->get('gridConfigId');
-
-        if ($gridConfigId == -1) {
-            $gridConfig = new GridConfig();
-            $classId = $request->get('classId');
-            $class = DataObject\ClassDefinition::getById($classId);
-            // getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId)
-
-            $fields = $class->getFieldDefinitions();
-            $context = ['purpose' => 'gridconfig', 'class' => $class];
-
-            $availableColumns = $this->getDefaultGridFields(false, $class, 'grid', false, $fields, $context, null, []);
-            $availableColumns = json_decode(json_encode($availableColumns), true);
-
-            foreach ($availableColumns as &$column) {
-                $fieldConfig = [
-                    'key' => $column['key'],
-                    'label' => $column['label'],
-                    'type' => $column['type'],
-                ];
-
-                $column['fieldConfig'] = $fieldConfig;
-            }
-
-            $config = [];
-            $config['classId'] = $classId;
-            $config['columns'] = $availableColumns;
-            $gridConfig->setClassId($classId);
-            $gridConfig->setConfig(json_encode($config));
-        } else {
-            $gridConfig = GridConfig::getById($gridConfigId);
-            $user = $this->getAdminUser();
-            $found = false;
-            if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
-                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $gridConfig->getClassId());
-
-                if ($sharedGridConfigs) {
-                    /** @var GridConfigShare $sharedConfig */
-                    foreach ($sharedGridConfigs as $sharedConfig) {
-                        if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
-                            $found = true;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                $found = true;
-            }
-
-            if (!$found) {
-                throw new \Exception('not allowed to import somebody elses config');
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
             }
         }
 
-        $importConfigData = $importService->createFromExportConfig($gridConfig);
-        $selectedGridColumns = $importConfigData->selectedGridColumns;
-
-        return $this->adminJson(['success' => true, 'selectedGridColumns' => $selectedGridColumns]);
-    }
-
-    /**
-     * @param ImportService $importService
-     * @param User $user
-     * @param string $classId
-     *
-     * @return array
-     */
-    private function getImportConfigs(ImportService $importService, $user, $classId)
-    {
-        $list = $importService->getMyOwnImportConfigs($user, $classId);
-
-        if (!is_array($list)) {
-            $list = [];
-        }
-        $list = array_merge($list, $importService->getSharedImportConfigs($user, $classId));
-        $result = [];
-        if ($list) {
-            /** @var ImportConfig $config */
-            foreach ($list as $config) {
-                $result[] = [
-                    'id' => $config->getId(),
-                    'name' => $config->getName(),
-                ];
-            }
-        }
-
-        return $result;
+        return $configData;
     }
 
     /**
@@ -265,41 +175,13 @@ class DataObjectHelperController extends AdminController
             /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
-                    'id' => $config->getId(),
-                    'name' => $config->getName(),
+                    'id' => $config['id'],
+                    'name' => $config['name'],
                 ];
             }
         }
 
         return $this->adminJson(['success' => true, 'data' => $result]);
-    }
-
-    /**
-     * @Route("/delete-import-config", name="pimcore_admin_dataobject_dataobjecthelper_deleteimportconfig", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteImportConfigAction(Request $request)
-    {
-        $configId = $request->get('importConfigId');
-        $config = null;
-        try {
-            $config = ImportConfig::getById($configId);
-        } catch (\Exception $e) {
-        }
-        $success = false;
-        if ($config) {
-            if ($config->getOwnerId() != $this->getAdminUser()->getId()) {
-                throw new \Exception("don't mess with someone elses grid config");
-            }
-
-            $config->delete();
-            $success = true;
-        }
-
-        return $this->adminJson(['deleteSuccess' => $success]);
     }
 
     /**
@@ -313,14 +195,10 @@ class DataObjectHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
-        $gridConfig = null;
-        try {
-            $gridConfig = GridConfig::getById($gridConfigId);
-        } catch (\Exception $e) {
-        }
+        $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
-            if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+            if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                 throw new \Exception("don't mess with someone elses grid config");
             }
 
@@ -385,7 +263,7 @@ class DataObjectHelperController extends AdminController
         }
 
         if ($objectId) {
-            $object = DataObject\AbstractObject::getById($objectId);
+            $object = DataObject::getById($objectId);
             $context['object'] = $object;
         }
 
@@ -408,62 +286,49 @@ class DataObjectHelperController extends AdminController
 
         if (strlen($requestedGridConfigId) == 0 && $class) {
             // check if there is a favourite view
-            $favourite = null;
-            try {
-                try {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
-                } catch (\Exception $e) {
-                }
-                if (!$favourite && $objectId) {
-                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
-                }
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ?: 0, $searchType);
+            if (!$favourite && $objectId) {
+                $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
+            }
 
-                if ($favourite) {
-                    $requestedGridConfigId = $favourite->getGridConfigId();
-                }
-            } catch (\Exception $e) {
+            if ($favourite) {
+                $requestedGridConfigId = $favourite->getGridConfigId();
             }
         }
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $configListingConditionParts = [];
-            $configListingConditionParts[] = 'ownerId = ' . $userId;
-            $configListingConditionParts[] = 'classId = ' . $db->quote($class->getId());
-
-            if ($searchType) {
-                $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-            }
-
-            $savedGridConfig = null;
-            try {
-                $savedGridConfig = GridConfig::getById($requestedGridConfigId);
-            } catch (\Exception $e) {
-            }
+            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
 
             if ($savedGridConfig) {
-                $shared = null;
-                try {
+                $shared = false;
+                if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
                         $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     }
                     $userIds = implode(',', $userIds);
-                    $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+                    $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
+//                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
 
-//                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
-                } catch (\Exception $e) {
+                    if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+                        throw new \Exception('You are neither the owner of this config nor it is shared with you');
+                    }
                 }
 
-                if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
-                }
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
                 $gridConfig = json_decode($gridConfig, true);
                 $gridConfigName = $savedGridConfig->getName();
+                $owner = $savedGridConfig->getOwnerId();
+                $ownerObject = User::getById($owner);
+                if ($ownerObject instanceof User) {
+                    $owner = $ownerObject->getName();
+                }
+                $modificationDate = $savedGridConfig->getModificationDate();
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
+                $setAsFavourite = $savedGridConfig->isSetAsFavourite();
             }
         }
 
@@ -646,7 +511,10 @@ class DataObjectHelperController extends AdminController
         $settings['gridConfigId'] = (int)$gridConfigId;
         $settings['gridConfigName'] = $gridConfigName ?? null;
         $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['owner'] = $owner ?? null;
+        $settings['modificationDate'] = $modificationDate ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['setAsFavourite'] = $setAsFavourite ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         $context = $gridConfig['context'] ?? null;
@@ -671,7 +539,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition $class
+     * @param DataObject\ClassDefinition|null $class
      * @param string $gridType
      * @param bool $noBrickColumns
      * @param DataObject\ClassDefinition\Data[] $fields
@@ -888,11 +756,10 @@ class DataObjectHelperController extends AdminController
     public function gridConfigApplyToAllAction(Request $request)
     {
         $objectId = $request->get('objectId');
-        $object = DataObject\AbstractObject::getById($objectId);
+        $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
             $classId = $request->get('classId');
-            $gridConfigId = $request->get('gridConfigId');
             $searchType = $request->get('searchType');
             $user = $this->getAdminUser();
             $db = Db::get();
@@ -918,7 +785,7 @@ class DataObjectHelperController extends AdminController
     public function gridMarkFavouriteColumnConfigAction(Request $request)
     {
         $objectId = $request->get('objectId');
-        $object = DataObject\AbstractObject::getById($objectId);
+        $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
             $classId = $request->get('classId');
@@ -1002,68 +869,6 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-save-config", name="pimcore_admin_dataobject_dataobjecthelper_importsaveconfig", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     *
-     * @return JsonResponse
-     */
-    public function importSaveConfigAction(Request $request, ImportService $importService)
-    {
-        try {
-            $classId = $request->get('classId');
-            $configData = $request->get('config');
-            $configData = json_decode($configData, true);
-
-            $configData['pimcore_version'] = Version::getVersion();
-            $configData['pimcore_revision'] = Version::getRevision();
-
-            $importConfigId = $request->get('importConfigId');
-            $importConfig = null;
-            if ($importConfigId) {
-                try {
-                    $importConfig = ImportConfig::getById($importConfigId);
-                } catch (\Exception $e) {
-                }
-            }
-            if ($importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-                throw new \Exception("don't mess around with somebody elses configuration");
-            }
-
-            if (!$importConfig) {
-                $importConfig = new ImportConfig();
-                $importConfig->setName(date('c'));
-                $importConfig->setClassId($classId);
-                $importConfig->setOwnerId($this->getAdminUser()->getId());
-            }
-
-            if ($configData) {
-                unset($configData['importConfigId']);
-                $name = $configData['shareSettings']['configName'];
-                $description = $configData['shareSettings']['configDescription'];
-                $importConfig->setName($name);
-                $importConfig->setDescription($description);
-                $importConfig->setShareGlobally($configData['shareSettings']['shareGlobally'] && $this->getAdminUser()->isAdmin());
-            }
-
-            $configDataEncoded = json_encode($configData);
-            $importConfig->setConfig($configDataEncoded);
-            $importConfig->save();
-
-            $this->updateImportConfigShares($importConfig, $configData);
-
-            return $this->adminJson(['success' => true,
-                    'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId),
-                ]
-            );
-        } catch (\Exception $e) {
-            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
      * @Route("/grid-save-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridsavecolumnconfig", methods={"POST"})
      *
      * @param Request $request
@@ -1072,7 +877,8 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $objectId = $request->get('id');
+        $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
             try {
@@ -1094,18 +900,17 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = null;
-                if ($gridConfigId) {
-                    try {
-                        $gridConfig = GridConfig::getById($gridConfigId);
-                    } catch (\Exception $e) {
-                    }
-                }
-                if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+                $gridConfig = GridConfig::getById($gridConfigId);
+
+                if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
                 }
 
                 $this->updateGridConfigShares($gridConfig, $metadata);
+
+                if ($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin()) {
+                    $this->updateGridConfigFavourites($gridConfig, $metadata, $objectId);
+                }
 
                 if (!$gridConfig) {
                     $gridConfig = new GridConfig();
@@ -1120,6 +925,7 @@ class DataObjectHelperController extends AdminController
                     $gridConfig->setName($metadata['gridConfigName']);
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -1136,14 +942,15 @@ class DataObjectHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
-                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId());
+                $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
+                $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin();
 
-                return $this->adminJson(['success' => true,
-                        'settings' => $settings,
-                        'availableConfigs' => $availableConfigs,
-                        'sharedConfigs' => $sharedConfigs,
-                    ]
-                );
+                return $this->adminJson([
+                    'success' => true,
+                    'settings' => $settings,
+                    'availableConfigs' => $availableConfigs,
+                    'sharedConfigs' => $sharedConfigs,
+                ]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -1153,48 +960,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param ImportConfig $importConfig
-     * @param array $configData
-     *
-     * @throws \Exception
-     */
-    protected function updateImportConfigShares($importConfig, $configData)
-    {
-        $user = $this->getAdminUser();
-        if (!$importConfig || !$user->isAllowed('share_configurations')) {
-            // nothing to do
-            return;
-        }
-
-        if ($importConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-            throw new \Exception("don't mess with someone elses grid config");
-        }
-        $combinedShares = [];
-        $sharedUserIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedUserIds'] : [];
-        $sharedRoleIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedRoleIds'] : [];
-
-        if ($sharedUserIds) {
-            $combinedShares = explode(',', $sharedUserIds);
-        }
-
-        if ($sharedRoleIds) {
-            $sharedRoleIds = explode(',', $sharedRoleIds);
-            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
-        }
-
-        $db = Db::get();
-        $db->delete('importconfig_shares', ['importConfigId' => $importConfig->getId()]);
-
-        foreach ($combinedShares as $id) {
-            $share = new ImportConfigShare();
-            $share->setImportConfigId($importConfig->getId());
-            $share->setSharedWithUserId($id);
-            $share->save();
-        }
-    }
-
-    /**
-     * @param GridConfig $gridConfig
+     * @param GridConfig|null $gridConfig
      * @param array $metadata
      *
      * @throws \Exception
@@ -1207,7 +973,7 @@ class DataObjectHelperController extends AdminController
             return;
         }
 
-        if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+        if ($gridConfig->getOwnerId() != $user->getId() && !$user->isAdmin()) {
             throw new \Exception("don't mess with someone elses grid config");
         }
         $combinedShares = [];
@@ -1231,6 +997,111 @@ class DataObjectHelperController extends AdminController
             $share->setGridConfigId($gridConfig->getId());
             $share->setSharedWithUserId($id);
             $share->save();
+        }
+    }
+
+    /**
+     * @param GridConfig|null $gridConfig
+     * @param array $metadata
+     * @param int $objectId
+     *
+     * @throws \Exception
+     */
+    protected function updateGridConfigFavourites($gridConfig, $metadata, $objectId)
+    {
+        $currentUser = $this->getAdminUser();
+
+        if (!$gridConfig || $currentUser === null || !$currentUser->isAllowed('share_configurations')) {
+            // nothing to do
+            return;
+        }
+
+        if (!$currentUser->isAdmin() && (int) $gridConfig->getOwnerId() !== $currentUser->getId()) {
+            throw new \Exception("don't mess with someone elses grid config");
+        }
+
+        $sharedUsers = [];
+
+        if ($metadata['shareGlobally'] === false) {
+            $sharedUserIds = $metadata['sharedUserIds'];
+
+            if ($sharedUserIds) {
+                $sharedUsers = explode(',', $sharedUserIds);
+            }
+        }
+
+        if ($metadata['shareGlobally'] === true) {
+            $users = new User\Listing();
+            $users->setCondition('id = ?', $currentUser->getId());
+
+            foreach ($users as $user) {
+                $sharedUsers[] = $user->getId();
+            }
+        }
+
+        foreach ($sharedUsers as $id) {
+            $global    = true;
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
+                (int) $id,
+                $gridConfig->getClassId(),
+                (int) $objectId,
+                $gridConfig->getSearchType()
+            );
+
+            // If the user has already a favourite for that object we check the current favourite and decide if we update
+            if ($favourite instanceof GridConfigFavourite) {
+                $favouriteGridConfig = GridConfig::getById($favourite->getGridConfigId());
+
+                if ($favouriteGridConfig instanceof GridConfig) {
+                    // Check if the grid config was shared globally if that is *not* the case we also not update
+                    if ((bool) $favouriteGridConfig->isShareGlobally() === false) {
+                        continue;
+                    }
+
+                    // Check if the user is the owner. If that is the case we do not update the favourite
+                    if ((int) $favouriteGridConfig->getOwnerId() === (int) $id) {
+                        continue;
+                    }
+                }
+            }
+
+            // Check if the user has already a global favourite then we do not save the favourite as global
+            $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId(
+                (int) $id,
+                $gridConfig->getClassId(),
+                0,
+                $gridConfig->getSearchType()
+            );
+
+            if ($favourite instanceof GridConfigFavourite) {
+                $favouriteGridConfig = GridConfig::getById($favourite->getGridConfigId());
+
+                if ($favouriteGridConfig instanceof GridConfig) {
+                    // Check if the grid config was shared globally if that is *not* the case we also not update
+                    if ($favouriteGridConfig->isShareGlobally() === false) {
+                        $global = false;
+                    }
+
+                    // Check if the user is the owner. If that is the case we do not update the global favourite
+                    if ($favouriteGridConfig->getOwnerId() === (int) $id) {
+                        $global = false;
+                    }
+                }
+            }
+
+            $favourite = new GridConfigFavourite();
+            $favourite->setGridConfigId($gridConfig->getId());
+            $favourite->setClassId($gridConfig->getClassId());
+            $favourite->setObjectId($objectId);
+            $favourite->setOwnerId($id);
+            $favourite->setType($gridConfig->getType());
+            $favourite->setSearchType($gridConfig->getSearchType());
+            $favourite->save();
+
+            if ($global === true) {
+                $favourite->setObjectId(0);
+                $favourite->save();
+            }
         }
     }
 
@@ -1285,7 +1156,7 @@ class DataObjectHelperController extends AdminController
             }
 
             if ($objectId) {
-                $object = DataObject\AbstractObject::getById($objectId);
+                $object = DataObject::getById($objectId);
                 $context['object'] = $object;
             }
             DataObject\Service::enrichLayoutDefinition($field, null, $context);
@@ -1307,177 +1178,6 @@ class DataObjectHelperController extends AdminController
         } else {
             return null;
         }
-    }
-
-    /**
-     * @Route("/prepare-import-preview", name="pimcore_admin_dataobject_dataobjecthelper_prepareimportpreview", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function prepareImportPreviewAction(Request $request)
-    {
-        $data = $request->get('data');
-        $data = json_decode($data, false);
-        $importId = $data->importId;
-
-        try {
-            Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $data) {
-                $session->set('importconfig_' . $importId, $data);
-            }, 'pimcore_gridconfig');
-        } catch (\Exception $e) {
-            Logger::error($e);
-        }
-
-        $response = $this->adminJson([
-            'success' => true,
-        ]);
-
-        return $response;
-    }
-
-    /**
-     * @Route("/import-preview", name="pimcore_admin_dataobject_dataobjecthelper_importpreview", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     * @param LocaleServiceInterface $localeService
-     * @param FactoryInterface $modelFactory
-     * @param EventDispatcherInterface $eventDispatcher
-     *
-     * @return Response
-     */
-    public function importPreviewAction(
-        Request $request,
-        ImportService $importService,
-        LocaleServiceInterface $localeService,
-        FactoryInterface $modelFactory,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        try {
-            $importId = $request->get('importId');
-
-            $configData = $request->get('config');
-            $configData = json_decode($configData, false);
-
-            $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $configData) {
-                return $session->get('importconfig_' . $importId, $configData);
-            }, 'pimcore_gridconfig');
-
-            $configData = $data->config;
-            $additionalData = json_decode($data->additionalData, true);
-            $rowIndex = $data->rowIndex;
-
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
-            $originalFile = $file . '_original';
-
-            // determine type
-            $dialect = Tool\Admin::determineCsvDialect($originalFile);
-
-            $count = 0;
-            $haveData = false;
-
-            $rowData = [];
-            if (($handle = fopen($originalFile, 'r')) !== false) {
-                while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                    if ($count == $rowIndex) {
-                        $haveData = true;
-                        break;
-                    }
-                    $count++;
-                }
-                fclose($handle);
-            }
-
-            if (!$haveData) {
-                throw new \Exception("don't have data");
-            }
-
-            $paramsBag = [];
-
-            $resolver = $importService->getResolver($configData->resolverSettings->strategy);
-
-            $classId = $data->classId;
-            $class = DataObject\ClassDefinition::getById($classId);
-
-            $object1 = $resolver->resolve($configData, $data->parentId, $rowData);
-
-            if ($object1 == null) {
-                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
-                $object1 = $modelFactory->build($className);
-                $paramsBag['isNew'] = true;
-            }
-
-            $deepCopy = new \DeepCopy\DeepCopy();
-            $object2 = $deepCopy->copy($object1);
-
-            $context = [];
-            $eventData = new DataObjectImportEvent($configData, $originalFile);
-            $eventData->setAdditionalData($additionalData);
-            $eventData->setContext($context);
-
-            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PREVIEW);
-
-            $context = $eventData->getContext();
-
-            $object2 = $this->populateObject($importService, $localeService, $object2, $configData, $rowData, $context);
-
-            $paramsBag['object1'] = $object1;
-            $paramsBag['object2'] = $object2;
-            $paramsBag['isImportPreview'] = true;
-            $paramsBag['validLanguages'] = Tool::getValidLanguages();
-
-            $response = $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig', $paramsBag);
-
-            return $response;
-        } catch (\Exception $e) {
-            $response = new Response($e);
-
-            return $response;
-        }
-    }
-
-    protected function populateObject(
-        ImportService $importService,
-        LocaleServiceInterface $localeService,
-        $object,
-        $configData,
-        $rowData,
-        $context
-    ) {
-        $selectedGridColumns = $configData->selectedGridColumns;
-
-        $colIndex = -1;
-
-        $locale = null;
-        if ($configData->resolverSettings) {
-            if ($configData->resolverSettings && $configData->resolverSettings->language != 'default') {
-                $locale = $configData->resolverSettings->language;
-            }
-        }
-
-        foreach ($selectedGridColumns as $selectedGridColumn) {
-            $colIndex++;
-
-            $attributes = $selectedGridColumn->attributes;
-
-            $config = $importService->buildInputDataConfig([$attributes]);
-            if (!$config) {
-                continue;
-            }
-
-            $config = $config[0];
-            $target = $object;
-
-            if ($locale) {
-                $localeService->setLocale($locale);
-            }
-
-            $config->process($object, $target, $rowData, $colIndex, $context);
-        }
-
-        return $object;
     }
 
     /**
@@ -1515,118 +1215,6 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    /**
-     * @Route("/import-get-file-info", name="pimcore_admin_dataobject_dataobjecthelper_importgetfileinfo", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     *
-     * @return JsonResponse
-     */
-    public function importGetFileInfoAction(Request $request, ImportService $importService)
-    {
-        $importConfigId = $request->get('importConfigId');
-        $dialect = $request->get('dialect');
-        $dialect = json_decode($request->get('dialect'));
-        $success = true;
-        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geopolyline', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
-
-        $classId = $request->get('classId');
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
-
-        $originalFile = $file . '_original';
-        // determine type
-        if (empty($dialect)) {
-            $dialect = Tool\Admin::determineCsvDialect($file . '_original');
-        }
-
-        $data = $this->getDataPreview($originalFile, $dialect);
-
-        //Count CSV Columns
-        $cols = isset($data[0]) ? count($data[0]) - 1 : 0;
-
-        // get class data
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-        $fields = $class->getFieldDefinitions();
-
-        $availableFields = [];
-
-        foreach ($fields as $key => $field) {
-            $config = null;
-            $title = $field->getName();
-            if (method_exists($field, 'getTitle')) {
-                if ($field->getTitle()) {
-                    $title = $field->getTitle();
-                }
-            }
-
-            if (in_array($field->getFieldType(), $supportedFieldTypes)) {
-                $availableFields[] = [$field->getName(), $title . '(' . $field->getFieldType() . ')'];
-            }
-        }
-
-        $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY | \SplFileObject::READ_AHEAD | \SplFileObject::DROP_NEW_LINE);
-        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-        $rows = 0;
-        $nbFields = 0;
-        foreach ($csv as $fields) {
-            if (0 === $rows) {
-                $nbFields = count($fields);
-                $rows++;
-            } elseif ($nbFields === count($fields)) {
-                $rows++;
-            } else {
-                return $this->adminJson([
-                    'success' => false,
-                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
-                ]);
-            }
-        }
-
-        $importConfig = null;
-        try {
-            $importConfig = ImportConfig::getById($importConfigId);
-        } catch (\Exception $e) {
-        }
-
-        //ignore if lineterminator is already hex otherwise generate hex for string
-        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
-            $dialect->lineterminator = bin2hex($dialect->lineterminator);
-        }
-
-        $selectedGridColumns = [];
-        if ($importConfig) {
-            $configData = $importConfig->getConfig();
-            $configData = json_decode($configData, true);
-            $selectedGridColumns = $configData['selectedGridColumns'];
-            $resolverSettings = $configData['resolverSettings'];
-            $shareSettings = $configData['shareSettings'];
-            $dialect = json_decode(json_encode($configData['csvSettings']), false);
-        }
-
-        $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
-
-        return $this->adminJson([
-            'success' => $success,
-            'config' => [
-                'importConfigId' => $importConfigId,
-                'dataPreview' => $data,
-                'dataFields' => array_keys($data[0]),
-                'targetFields' => $availableFields,
-                'selectedGridColumns' => $selectedGridColumns,
-                'resolverSettings' => $resolverSettings ?? null,
-                'shareSettings' => $shareSettings ?? null,
-                'csvSettings' => $dialect,
-                'rows' => $rows,
-                'cols' => $cols ?? null,
-                'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId(),
-            ],
-            'availableConfigs' => $availableConfigs,
-        ]);
-    }
-
     private function getDataPreview($originalFile, $dialect)
     {
         $count = 0;
@@ -1655,117 +1243,6 @@ class DataObjectHelperController extends AdminController
         }
 
         return $data;
-    }
-
-    /**
-     * @Route("/import-process", name="pimcore_admin_dataobject_dataobjecthelper_importprocess", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     * @param LocaleServiceInterface $localeService
-     * @param EventDispatcherInterface $eventDispatcher
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function importProcessAction(
-        Request $request,
-        ImportService $importService,
-        LocaleServiceInterface $localeService,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $parentId = $request->get('parentId');
-        $additionalData = json_decode($request->get('additionalData'), true);
-        $job = $request->get('job');
-        $importId = $request->get('importId');
-        $importJobTotal = $request->get('importJobTotal');
-
-        $configData = $request->get('config');
-        $configData = json_decode($configData, false);
-
-        $skipFirstRow = $configData->resolverSettings->skipHeadRow;
-
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
-        $originalFile = $file . '_original';
-
-        $context = [];
-        $eventData = new DataObjectImportEvent($configData, $originalFile);
-        $eventData->setAdditionalData($additionalData);
-        $eventData->setContext($context);
-
-        if ($job == 1) {
-            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
-
-            if (!copy($originalFile, $file)) {
-                throw new \Exception('failed to copy file');
-            }
-        }
-
-        // currently only csv supported
-        $dialect = $configData->csvSettings;
-
-        $rowData = [];
-        if (($handle = fopen($file, 'r')) !== false) {
-            $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-        }
-
-        if ($skipFirstRow && $job == 1) {
-            //read the next row, we need to skip the head row
-            $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-        }
-
-        $tmpFile = $file . '_tmp';
-        $tmpHandle = fopen($tmpFile, 'w+');
-        while (!feof($handle)) {
-            $buffer = fgets($handle);
-            fwrite($tmpHandle, $buffer);
-        }
-
-        fclose($handle);
-        fclose($tmpHandle);
-
-        unlink($file);
-        rename($tmpFile, $file);
-
-        $rowId = $skipFirstRow ? $job + 1 : $job;
-
-        try {
-            if ($rowData !== false) {
-                $configData->classId = $request->get('classId');
-                $resolver = $importService->getResolver($configData->resolverSettings->strategy);
-
-                $object = $resolver->resolve($configData, $parentId, $rowData);
-
-                $context = $eventData->getContext();
-
-                $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
-
-                $eventData->setObject($object);
-                $eventData->setRowData($rowData);
-
-                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PRE_SAVE);
-
-                $object->setUserModification($this->getAdminUser()->getId());
-                $object->save();
-
-                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::POST_SAVE);
-
-                if ($job >= $importJobTotal) {
-                    $eventDispatcher->dispatch($eventData, DataObjectImportEvents::DONE);
-                }
-
-                return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
-            } else {
-                throw new \Exception('empty row');
-            }
-        } catch (ImportWarningException $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'warning']);
-        } catch (ImportErrorException $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
-        } catch (\Exception $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
-        }
     }
 
     /**
@@ -1802,15 +1279,24 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService)
+    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService, EventDispatcherInterface $eventDispatcher)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
+
+        $beforeListPrepareEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams,
+        ]);
+        $eventDispatcher->dispatch($beforeListPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT_PREPARE);
+
+        $list = $beforeListPrepareEvent->getArgument('list');
 
         $ids = $list->loadIdList();
 
@@ -1827,18 +1313,21 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function doExportAction(Request $request, LocaleServiceInterface $localeService)
+    public function doExportAction(Request $request, LocaleServiceInterface $localeService, EventDispatcherInterface $eventDispatcher)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ?? ';';
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
 
         $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
@@ -1860,9 +1349,17 @@ class DataObjectHelperController extends AdminController
             $quotedIds[] = $list->quote($id);
         }
 
-        $list->setObjectTypes(['object', 'folder', 'variant']);
+        $list->setObjectTypes(DataObject::$types);
         $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
         $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+
+        $beforeListExportEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams,
+        ]);
+        $eventDispatcher->dispatch($beforeListExportEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT);
+
+        $list = $beforeListExportEvent->getArgument('list');
 
         $fields = $request->get('fields');
 
@@ -1890,7 +1387,7 @@ class DataObjectHelperController extends AdminController
         $firstLine = true;
         $lineCount = count($csv);
 
-        if (!$addTitles) {
+        if (!$addTitles && $lineCount > 0) {
             fwrite($fp, "\r\n");
         }
 
@@ -1957,7 +1454,6 @@ class DataObjectHelperController extends AdminController
         if (file_exists($csvFile)) {
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
-            $csvReader->setEnclosure('""');
             $csvReader->setSheetIndex(0);
 
             $spreadsheet = $csvReader->load($csvFile);
@@ -1989,7 +1485,7 @@ class DataObjectHelperController extends AdminController
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }
@@ -2297,7 +1793,7 @@ class DataObjectHelperController extends AdminController
         foreach ($fds as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks
                 || $fd instanceof DataObject\ClassDefinition\Data\Block) {
-                return;
+                continue;
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -2307,97 +1803,5 @@ class DataObjectHelperController extends AdminController
                 $commonFields[$fd->getName()] = $fd;
             }
         }
-    }
-
-    /**
-     * @Route("/export-csv-import-config-as-json", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportCsvImportConfigAsJsonAction(Request $request)
-    {
-        $classId = $request->get('classId');
-        $configData = json_decode($request->get('config'), true);
-
-        try {
-            $configName = $configData['shareSettings']['configName'];
-
-            if (empty($configName)) {
-                $configName = date('YmdHis').'_'.$classId.'_configuration';
-            }
-
-            $jsonResponse = new JsonResponse(json_encode($configData), 200, [
-                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"',
-            ], true);
-
-            return $jsonResponse;
-        } catch (\Exception $e) {
-            throw new \Exception('Error retrieving import configuration - '.$e->getMessage());
-        }
-    }
-
-    /**
-     * @Route("/import-csv-import-config-from-json", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportService $importService
-     *
-     * @return JsonResponse
-     */
-    public function importCSVImportConfigFromJsonAction(Request $request, ImportService $importService)
-    {
-        $importConfigId = $request->get('importConfigId');
-
-        $tmpName = $_FILES['Filedata']['tmp_name'];
-        $json = file_get_contents($tmpName);
-
-        $configData = json_decode($json, true);
-
-        $dataFields = $configData['dataFields'];
-        $targetFields = $configData['targetFields'];
-        $selectedGridColumns = $configData['selectedGridColumns'];
-        $resolverSettings = $configData['resolverSettings'];
-        $shareSettings = $configData['shareSettings'];
-        $dialect = json_decode(json_encode($configData['csvSettings']), false);
-
-        $success = true;
-        $classId = $request->get('classId');
-
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
-
-        $originalFile = $file . '_original';
-        // determine type
-        if (empty($dialect)) {
-            $dialect = Tool\Admin::determineCsvDialect($originalFile);
-        }
-
-        /**
-         * Reload data form original CSV to properly refresh
-         * the data preview on the import interface
-         */
-        $data = $this->getDataPreview($originalFile, $dialect);
-
-        $availableConfigs = $this->getImportConfigs($importService, Tool\Admin::getCurrentUser(), $classId);
-
-        return $this->adminJson([
-            'success' => $success,
-            'config' => [
-                'importConfigId' => $importConfigId,
-                'dataPreview' => $data,
-                'dataFields' => $dataFields,
-                'targetFields' => $targetFields,
-                'selectedGridColumns' => $selectedGridColumns,
-                'resolverSettings' => $resolverSettings ?? null,
-                'shareSettings' => $shareSettings ?? null,
-                'csvSettings' => $dialect,
-                'rows' => $configData['rows'],
-                'cols' => $configData['cols'] ?? null,
-                'classId' => $classId,
-                'isShared' => $configData['isShared'],
-            ],
-            'availableConfigs' => $availableConfigs,
-        ]);
     }
 }

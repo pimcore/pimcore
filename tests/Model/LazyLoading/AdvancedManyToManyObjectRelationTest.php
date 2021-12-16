@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore\Cache;
@@ -42,6 +55,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object = $this->createDataObject();
         $object->setAdvancedObjects($this->loadMetadataRelations('advancedObjects', 'metadataUpper'));
         $object->save();
+
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
@@ -68,6 +82,24 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
         }
+    }
+
+    public function testDirtyFlag()
+    {
+        $object = $this->createDataObject();
+
+        $relatedObjects = $this->loadMetadataRelations('advancedObjects', 'metadataUpper');
+
+        $object->setAdvancedObjects($relatedObjects);
+        $object->save();
+        $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty after saving');
+
+        Cache\Runtime::clear();
+        $object = LazyLoading::getByPath('/lazy1');
+        $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
+
+        $object->getAdvancedObjects()[0]->setMetadataUpper('some-other-metadata');
+        $this->assertTrue($object->isFieldDirty('advancedObjects'), 'Advanced relation must be dirty after changing a metadata field');
     }
 
     public function testLocalizedClassAttributes()

@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToManyRelation");
@@ -33,7 +33,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 return false;
             }
             return true;
-        });
+        }.bind(this));
 
         if (data) {
             this.data = data;
@@ -76,6 +76,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         return {
             text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
+            getRelationFilter: this.getRelationFilter,
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -100,13 +101,31 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         };
     },
 
-    getLayoutEdit: function () {
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValues = editor.store.getData().items;
+        if (!filterValues || !Array.isArray(filterValues) || !filterValues.length) {
+            filterValues = null;
+        } else {
+            filterValues = filterValues.map(function (item) {
+                return item.data.type + "|" + item.data.id;
+            }).join(',');
+        }
 
+        return new Ext.util.Filter({
+            operator: "like",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValues
+        });
+    },
+
+    getLayoutEdit: function () {
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
-        var cls = 'object_field object_field_type_' + this.type;
 
         var toolbarItems = this.getEditToolbarItems();
 
@@ -188,12 +207,15 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             multiSelect: true,
             viewConfig: {
                 markDirty: false,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -211,7 +233,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 items: columns
             },
-            componentCls: cls,
+            componentCls: this.getWrapperClassNames(),
             tbar: {
                 items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
@@ -413,7 +435,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
-            enableTextSelection: true,
+                enableTextSelection: this.fieldConfig.enableTextSelection,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
@@ -739,6 +761,3 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     }
 
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.tags.multihref = pimcore.object.tags.manyToManyRelation;

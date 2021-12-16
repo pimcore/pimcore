@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.select");
@@ -232,20 +232,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             storeData.push({'value': '', 'key': "(" + t("empty") + ")"});
         }
 
-        var restrictTo = null;
-        if (this.fieldConfig.restrictTo && this.fieldConfig.restrictTo.length > 0) {
-            restrictTo = this.fieldConfig.restrictTo.split(",");
-        }
-
         if (this.fieldConfig.options) {
             for (var i = 0; i < this.fieldConfig.options.length; i++) {
                 var value = this.fieldConfig.options[i].value;
-                if (restrictTo) {
-                    if (!in_array(value, restrictTo)) {
-                        continue;
-                    }
-                }
-
                 var label = t(this.fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     hasHTMLContent = true;
@@ -275,20 +264,21 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             width: 250,
-            displayField: 'key',
-            valueField: 'value',
-            labelWidth: 100
-        };
-
-        if(hasHTMLContent) {
-            options.displayTpl = Ext.create('Ext.XTemplate',
+            tpl: Ext.create('Ext.XTemplate',
+                '<ul class="x-list-plain"><tpl for=".">',
+                '<li role="option" class="x-boundlist-item">{key}</li>',
+                '</tpl></ul>'
+            ),
+            displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                 '{[Ext.util.Format.stripTags(values.key)]}',
                 '</tpl>'
-            );
-        }
+            ),
+            valueField: 'value',
+            labelWidth: 100
+        };
 
         if (this.fieldConfig.labelWidth) {
             options.labelWidth = this.fieldConfig.labelWidth;
@@ -303,7 +293,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            options.width += options.labelWidth;
+            options.width = this.sumWidths(options.width, options.labelWidth);
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {

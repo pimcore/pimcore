@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\EventListener;
@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\EventListener;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
@@ -45,6 +46,7 @@ class TargetingListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
     use EnabledTrait;
     use ResponseInjectionTrait;
+    use StaticPageContextAwareTrait;
 
     /**
      * @var VisitorInfoResolver
@@ -108,11 +110,11 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$event->isMasterRequest()) {
+        $request = $event->getRequest();
+
+        if (!$event->isMainRequest() && !$this->matchesStaticPageContext($request)) {
             return;
         }
-
-        $request = $event->getRequest();
 
         // only apply targeting for GET requests
         // this may revised in later versions
@@ -120,11 +122,12 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)
+            && !$this->matchesStaticPageContext($request)) {
             return;
         }
 
-        if (!$this->requestHelper->isFrontendRequest($request) || $this->requestHelper->isFrontendRequestByAdmin($request)) {
+        if ((!$this->requestHelper->isFrontendRequest($request) && !$this->matchesStaticPageContext($request)) || $this->requestHelper->isFrontendRequestByAdmin($request)) {
             return;
         }
 
@@ -148,9 +151,12 @@ class TargetingListener implements EventSubscriberInterface
     {
         $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
 
-        /** @var AssignTargetGroup $assignTargetGroupHandler */
-        $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
-        $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+        if (method_exists($this->actionHandler, 'getActionHandler')) {
+            /** @var AssignTargetGroup $assignTargetGroupHandler */
+            $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
+
+            $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+        }
 
         $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
@@ -168,7 +174,7 @@ class TargetingListener implements EventSubscriberInterface
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
         $response = $event->getResponse();
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest() || $this->matchesStaticPageContext($event->getRequest())) {
             $this->startStopwatch('Targeting:responseActions', 'targeting');
 
             // handle recorded actions on response
@@ -210,7 +216,11 @@ class TargetingListener implements EventSubscriberInterface
         }
 
         foreach ($actions as $type => $typeActions) {
-            $handler = $this->actionHandler->getActionHandler($type);
+            $handler = null;
+            if (method_exists($this->actionHandler, 'getActionHandler')) {
+                $handler = $this->actionHandler->getActionHandler($type);
+            }
+
             if (!$handler instanceof ResponseTransformingActionHandlerInterface) {
                 throw new \RuntimeException(sprintf(
                     'The "%s" action handler does not implement ResponseTransformingActionHandlerInterface',

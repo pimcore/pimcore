@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Laminas\Paginator\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -30,12 +31,13 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
- * Class Pattern
+ * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
-
+    /**
+     * Max probability to hit a duplicate entry on insertion e.g. to guess a code
+     */
     const MAX_PROBABILITY = 0.005;
 
     protected $template;
@@ -111,13 +113,14 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      */
     public function reserveToken($code, CartInterface $cart)
     {
-        if ($token = Token::getByCode($code)) {
+        if (Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
                 return true;
-            } else {
-                throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
             }
+
+            throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
         }
+
         throw new VoucherServiceException('No Token for this code exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
@@ -228,6 +231,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $codeSets = $this->generateCodes();
 
@@ -245,7 +249,6 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             return $codeSets;
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;
@@ -264,10 +267,10 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $prefix = $this->configuration->getPrefix();
         if (!empty($separator)) {
             if (!empty($prefix)) {
-                return strlen($this->configuration->getPrefix()) + 1 + floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
+                return strlen($this->configuration->getPrefix()) + 1 + (int) floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
             }
 
-            return floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
+            return (int) floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
         }
 
         return strlen($this->configuration->getPrefix()) + $this->configuration->getLength();
@@ -539,22 +542,16 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
-        if ($tokens) {
-            $paginator = new Paginator($tokens);
+        /** @var PaginatorInterface $paginator */
+        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+        $paginator = $paginator->paginate(
+            $tokens,
+            $params['page'] ?? 1,
+            isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+        );
 
-            if ($params['tokensPerPage'] ?? false) {
-                $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
-            } else {
-                $paginator->setItemCountPerPage(25);
-            }
-
-            $paginator->setCurrentPageNumber($params['page'] ?? 1);
-
-            $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = count($tokens);
-        } else {
-            $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
-        }
+        $viewParamsBag['paginator'] = $paginator;
+        $viewParamsBag['count'] = count($tokens);
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? '';
         $viewParamsBag['msg']['success'] = $params['success'] ?? '';
@@ -594,13 +591,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
 
-        $paginator = new Paginator($tokens);
-        $paginator->setItemCountPerPage(-1);
-
         $data = [];
 
-        /** @var Token $token */
-        foreach ($paginator as $token) {
+        foreach ($tokens as $token) {
             $data[] = [
                 'token' => $token->getToken(),
                 'usages' => $token->getUsages(),
@@ -613,11 +606,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * Removes reservations
-     *
-     * @param int $duration
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function cleanUpReservations($duration = 0)
     {

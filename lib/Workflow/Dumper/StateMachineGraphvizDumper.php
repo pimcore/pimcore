@@ -1,12 +1,16 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
+/**
+ * Pimcore
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\Dumper;
@@ -15,6 +19,9 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Marking;
 
+/**
+ * @internal
+ */
 class StateMachineGraphvizDumper extends GraphvizDumper
 {
     /**
@@ -28,7 +35,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
      *  * node: The default options for nodes (places)
      *  * edge: The default options for edges
      */
-    public function dump(Definition $definition, Marking $marking = null, array $options = [])
+    public function dump(Definition $definition, Marking $marking = null, array $options = []): string
     {
         $places = $this->findPlaces($definition, $marking, $options['workflowName']);
         $edges = $this->findEdges($definition);

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Email\Blacklist;
@@ -29,22 +27,20 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $address
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException(
      */
     public function getByAddress($address)
     {
         $data = $this->db->fetchRow('SELECT * FROM email_blacklist WHERE address = ?', $address);
 
-        if (!$data['address']) {
-            throw new \Exception('blacklist item with address ' . $address . ' not found');
+        if (empty($data['address'])) {
+            throw new Model\Exception\NotFoundException('blacklist item with address ' . $address . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
 
     /**
      * Save object to database
-     *
-     * @todo: $data could be undefined
      */
     public function save()
     {

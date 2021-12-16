@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -66,7 +67,7 @@ interface RuleInterface
     /**
      * @param string|null $locale
      *
-     * @return string mixed
+     * @return string|null
      */
     public function getDescription($locale = null);
 
@@ -78,7 +79,7 @@ interface RuleInterface
     public function setCondition(ConditionInterface $condition);
 
     /**
-     * @return ConditionInterface
+     * @return ConditionInterface|null
      */
     public function getCondition();
 
@@ -90,7 +91,7 @@ interface RuleInterface
     public function setActions(array $action);
 
     /**
-     * @return array|ActionInterface
+     * @return ActionInterface[]
      */
     public function getActions();
 
@@ -133,6 +134,13 @@ interface RuleInterface
      * @return bool
      */
     public function hasProductActions();
+
+    /**
+     * checks if rule has at least one action that changes cart price
+     *
+     * @return bool
+     */
+    public function hasCartActions();
 
     /**
      * execute rule actions based on current product

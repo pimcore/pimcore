@@ -7,22 +7,24 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
-use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ListCommand extends AbstractBundleCommand
 {
     protected function configure()
@@ -56,7 +58,6 @@ class ListCommand extends AbstractBundleCommand
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
             $enabled = $this->bundleManager->isEnabled($bundleClass);
 
-            /** @var PimcoreBundleInterface $bundle */
             $bundle = null;
             if ($enabled) {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
@@ -80,7 +81,6 @@ class ListCommand extends AbstractBundleCommand
                 $bundleState = $this->bundleManager->getState($bundle);
                 $row[] = $bundleState['priority'];
             } else {
-                $row[] = false;
                 $row[] = false;
                 $row[] = false;
                 $row[] = false;

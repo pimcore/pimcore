@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tree");
@@ -138,8 +138,9 @@ pimcore.object.tree = Class.create({
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
-            }],
-            root: rootNodeConfig
+            }]
+            // ,
+            // root: rootNodeConfig
         });
 
         store.on("nodebeforeexpand", function (node) {
@@ -181,6 +182,11 @@ pimcore.object.tree = Class.create({
             },
             "itemmouseleave": function () {
                 pimcore.helpers.treeToolTipHide();
+            },
+            "beforeload": function (store, operation, options) {
+                // add the parent path as an additional diagnostic parameter
+                // can be used by bundles that work with dynamic children nodes
+                store.proxy.setExtraParam('parentPath', operation.node.data.path)
             }
         };
 
@@ -190,6 +196,13 @@ pimcore.object.tree = Class.create({
     onTreeNodeClick: function (tree, record, item, index, event, eOpts ) {
         if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
             try {
+
+                var eventData =  {record: record, preventDefault: false};
+                pimcore.plugin.broker.fireEvent("prepareOnObjectTreeNodeClick", eventData);
+                if (eventData.preventDefault) {
+                    return;
+                }
+
                 if (record.data.permissions.view) {
                     pimcore.helpers.openObject(record.data.id, record.data.type);
                 }
@@ -247,13 +260,21 @@ pimcore.object.tree = Class.create({
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
-                    pimcore.elementservice.refreshNode(oldParent);
+                    // we have to delay refresh between two nodes,
+                    // as there could be parent child relationship leading to race condition
+                    window.setTimeout(function () {
+                        pimcore.elementservice.refreshNode(oldParent);
+                    }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
             } catch(e){
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
-                pimcore.elementservice.refreshNode(oldParent);
+                // we have to delay refresh between two nodes,
+                // as there could be parent child relationship leading to race condition
+                window.setTimeout(function () {
+                    pimcore.elementservice.refreshNode(oldParent);
+                }, 500);
                 pimcore.elementservice.refreshNode(newParent);
             }
             tree.loadMask.hide();
@@ -344,13 +365,22 @@ pimcore.object.tree = Class.create({
             var tmpMenuEntryImport;
             var $this = this;
 
-            object_types.sort([{property: 'translatedText', direction: 'ASC'}]);
+            object_types.sort([
+                {property: 'translatedGroup', direction: 'ASC'},
+                {property: 'translatedText', direction: 'ASC'}
+            ]);
 
             object_types.each(function (classRecord) {
 
-                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
+                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), Object.keys($this.config.allowedClasses))) {
                     return;
                 }
+                
+                if ($this.config.allowedClasses && $this.config.allowedClasses[classRecord.get("id")] !== null) {
+                    if(record.data.depth >= $this.config.allowedClasses[classRecord.get("id")]) {
+                        return;
+                    }
+                };
 
                 tmpMenuEntry = {
                     text: classRecord.get("translatedText"),
@@ -380,7 +410,7 @@ pimcore.object.tree = Class.create({
                 if (classRecord.get("group")) {
                     if (!groups["objects"][classRecord.get("group")]) {
                         groups["objects"][classRecord.get("group")] = {
-                            text: classRecord.get("group"),
+                            text: classRecord.get("translatedGroup"),
                             iconCls: "pimcore_icon_folder",
                             hideOnClick: false,
                             menu: {
@@ -388,7 +418,7 @@ pimcore.object.tree = Class.create({
                             }
                         };
                         groups["importer"][classRecord.get("group")] = {
-                            text: classRecord.get("group"),
+                            text: classRecord.get("translatedGroup"),
                             iconCls: "pimcore_icon_folder",
                             hideOnClick: false,
                             menu: {
@@ -438,15 +468,6 @@ pimcore.object.tree = Class.create({
                             iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                             handler: this.addFolder.bind(this, tree, record)
                         }));
-                    }
-
-                    if (perspectiveCfg.inTreeContextMenu("object.importCsv")) {
-                        menu.add({
-                            text: t('import_csv'),
-                            hideOnClick: false,
-                            iconCls: "pimcore_icon_object pimcore_icon_overlay_upload",
-                            menu: objectMenu.importer
-                        });
                     }
 
                     menu.add("-");
@@ -635,12 +656,33 @@ pimcore.object.tree = Class.create({
                     }
                 }
 
-                if (lockMenu.length > 0) {
+                if (lockMenu.length > 0 && perspectiveCfg.inTreeContextMenu("object.unlock")) {
                     advancedMenuItems.push({
                         text: t('lock'),
                         iconCls: "pimcore_icon_lock",
                         hideOnClick: false,
                         menu: lockMenu
+                    });
+                }
+            }
+
+            // expand and collapse complete tree
+            if (!record.data.leaf) {
+                if (record.data.expanded) {
+                    advancedMenuItems.push({
+                        text: t('collapse_children'),
+                        iconCls: "pimcore_icon_collapse_children",
+                        handler: function () {
+                            record.collapse(true);
+                        }.bind(this, record)
+                    });
+                } else {
+                    advancedMenuItems.push({
+                        text: t('expand_children'),
+                        iconCls: "pimcore_icon_expand_children",
+                        handler: function () {
+                            record.expand(true);
+                        }.bind(this, record)
                     });
                 }
             }
@@ -659,22 +701,35 @@ pimcore.object.tree = Class.create({
             // Sort Children By
             var sortByItems = [];
 
-            if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
-                sortByItems.push({
-                    text: t('by_key'),
-                    iconCls: "pimcore_icon_alphabetical_sorting_az",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
-                });
-                sortByItems.push({
-                    text: t('by_key_reverse'),
-                    iconCls: "pimcore_icon_alphabetical_sorting_za",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
-                });
-                sortByItems.push({
-                    text: t('by_index'),
-                    iconCls: "pimcore_icon_index_sorting",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', 'ASC')
-                });
+            if (user.admin || !record.data.locked) {
+
+                if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
+                    // only the admin is allowed to change the sort method.
+                    // See https://github.com/pimcore/pimcore/issues/8476
+
+                    let currentSortMethod = record.data.sortBy;
+
+                    if (currentSortMethod == "key" || user.admin) {
+                        sortByItems.push({
+                            text: t('by_key'),
+                            iconCls: "pimcore_icon_alphabetical_sorting_az",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
+                        });
+                        sortByItems.push({
+                            text: t('by_key_reverse'),
+                            iconCls: "pimcore_icon_alphabetical_sorting_za",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
+                        });
+                    }
+
+                    if (currentSortMethod == "index" || user.admin) {
+                        sortByItems.push({
+                            text: t('by_index'),
+                            iconCls: "pimcore_icon_index_sorting",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', record.data.sortOrder)
+                        });
+                    }
+                }
             }
 
             if (sortByItems.length) {
@@ -1024,8 +1079,8 @@ pimcore.object.tree = Class.create({
 
     },
 
-    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
 
+    doChangeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
         var parameters = {
             id: record.data.id,
             sortBy: sortBy,
@@ -1066,7 +1121,22 @@ pimcore.object.tree = Class.create({
 
             }.bind(this, tree, record, sortBy)
         });
+    },
 
+    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
+
+        let currentSortMethod = record.data.sortBy;
+
+        if (currentSortMethod != sortBy && sortBy == "index") {
+            Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
+                function (tree, record, sortBy, childrenSortOrder, buttonValue) {
+                    if (buttonValue == "yes") {
+                        this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+                    }
+                }.bind(this, tree, record, sortBy, childrenSortOrder));
+        } else {
+            this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+        }
     },
 
     searchAndMove: function(tree, record) {

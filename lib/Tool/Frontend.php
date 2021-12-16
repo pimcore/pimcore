@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -18,49 +19,10 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
-class Frontend
+final class Frontend
 {
     /**
-     * Returns the Website-Config
-     *
-     * @return \Pimcore\Config\Config
-     *
-     * @deprecated
-     */
-    public static function getWebsiteConfig()
-    {
-        return \Pimcore\Config::getWebsiteConfig();
-    }
-
-    /**
-     * @param Site $site
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public static function getSiteKey(Site $site = null)
-    {
-        // check for site
-        if (!$site) {
-            if (Site::isSiteRequest()) {
-                $site = Site::getCurrentSite();
-            } else {
-                $site = false;
-            }
-        }
-
-        if ($site) {
-            $siteKey = 'site_' . $site->getId();
-        } else {
-            $siteKey = 'default';
-        }
-
-        return $siteKey;
-    }
-
-    /**
-     * @param Site $site
+     * @param Site|null $site
      * @param Document $document
      *
      * @return bool
@@ -126,13 +88,9 @@ class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $container = \Pimcore::getContainer();
-        if (!$container->has(FullPageCacheListener::class)) {
-            return false;
-        }
+        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
-        $cacheService = $container->get(FullPageCacheListener::class);
-        if ($cacheService && $cacheService->isEnabled()) {
+        if ($cacheService->isEnabled()) {
             return [
                 'enabled' => true,
                 'lifetime' => $cacheService->getLifetime(),

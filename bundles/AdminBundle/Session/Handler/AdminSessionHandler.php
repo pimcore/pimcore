@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Session\Handler;
@@ -18,10 +19,14 @@ use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ */
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
     use LoggerAwareTrait;
@@ -34,42 +39,43 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     private $openedSessions = 0;
 
     /**
-     * @var SessionInterface
+     * @var RequestStack
      */
-    protected $session;
+    protected RequestStack $requestStack;
 
     protected $readOnlySessionBagsCache = [];
 
-    public function __construct(SessionInterface $session)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionId()
     {
-        if (!$this->session->isStarted()) {
+        $session = $this->requestStack->getSession();
+        if (!$session->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
             });
         }
 
-        return $this->session->getId();
+        return $session->getId();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionName()
     {
-        return $this->session->getName();
+        return $this->requestStack->getSession()->getName();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function useSession(callable $callable)
     {
@@ -85,7 +91,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
     {
@@ -100,7 +106,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getReadOnlyAttributeBag(string $name = 'pimcore_admin'): AttributeBagInterface
     {
@@ -120,15 +126,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function invalidate(int $lifetime = null): bool
     {
-        return $this->session->invalidate($lifetime);
+        return $this->requestStack->getSession()->invalidate($lifetime);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function regenerateId(): bool
     {
@@ -138,7 +144,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadAttributeBag(string $name, SessionInterface $session = null): SessionBagInterface
     {
@@ -157,7 +163,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
@@ -183,7 +189,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false): string
     {
@@ -209,16 +215,17 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
+        $session = $this->requestStack->getSession();
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
-        if (!$this->session->isStarted()) {
-            $this->session->start();
+        if (!$session->isStarted()) {
+            $session->start();
         }
 
         $this->openedSessions++;
@@ -228,18 +235,18 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             'count' => $this->openedSessions,
         ]);
 
-        return $this->session;
+        return $session;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function writeClose()
     {
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
-            $this->session->save();
+            $this->requestStack->getSession()->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
                 'name' => $this->getSessionName(),

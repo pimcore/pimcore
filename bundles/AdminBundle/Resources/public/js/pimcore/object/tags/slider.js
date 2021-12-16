@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.slider");
@@ -41,7 +41,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function (disabled) {
         var sliderConfig = {
             name: this.fieldConfig.name,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             plugins: new Ext.slider.Tip()
         };
 
@@ -119,7 +119,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             items: items,
-            componentCls: "object_field object_field_type_" + this.type,
+            componentCls: this.getWrapperClassNames(),
             border: false,
             style: {
                 padding: 0

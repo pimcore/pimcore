@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -24,41 +22,41 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Dao getDao()
  */
-class CollectionConfig extends Model\AbstractModel
+final class CollectionConfig extends Model\AbstractModel
 {
-    /** Group id.
-     * @var int
-     */
-    public $id;
-
     /**
-     * Store ID
+     * Group id.
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $id;
 
-    /** The collection name.
+    /**
+     * @var int
+     */
+    protected $storeId = 1;
+
+    /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The collection description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -72,7 +70,7 @@ class CollectionConfig extends Model\AbstractModel
             $config->getDao()->getById((int)$id);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -222,7 +220,7 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -242,7 +240,7 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

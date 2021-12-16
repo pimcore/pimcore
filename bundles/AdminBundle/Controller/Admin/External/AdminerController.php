@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
@@ -23,6 +24,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     use Symfony\Component\HttpKernel\Profiler\Profiler;
     use Symfony\Component\Routing\Annotation\Route;
 
+    /**
+     * @internal
+     */
     class AdminerController extends AdminController implements KernelControllerEventInterface
     {
         /**
@@ -33,12 +37,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         /**
          * @Route("/external_adminer/adminer", name="pimcore_admin_external_adminer_adminer")
          *
-         * @param Request $request
-         * @param Profiler $profiler
+         * @param Profiler|null $profiler
          *
          * @return Response
          */
-        public function adminerAction(Request $request, ?Profiler $profiler)
+        public function adminerAction(?Profiler $profiler)
         {
             if ($profiler) {
                 $profiler->disable();
@@ -115,12 +118,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function onKernelControllerEvent(ControllerEvent $event)
         {
-            $isMasterRequest = $event->isMasterRequest();
-            if (!$isMasterRequest) {
+            if (!$event->isMainRequest()) {
                 return;
             }
-
-            $request = $event->getRequest();
 
             // PHP 7.0 compatibility of adminer (throws some warnings)
             ini_set('display_errors', 0);
@@ -195,6 +195,17 @@ namespace {
                 new \AdminerDumpXml,
                 new \AdminerDumpAlter,
             ];
+
+            // support for SSL (at least for PDO)
+            $driverOptions = \Pimcore\Db::get()->getParams()['driverOptions'] ?? [];
+            $ssl = [
+                'key' => $driverOptions[\PDO::MYSQL_ATTR_SSL_KEY] ?? null,
+                'cert' => $driverOptions[\PDO::MYSQL_ATTR_SSL_CERT] ?? null,
+                'ca' => $driverOptions[\PDO::MYSQL_ATTR_SSL_CA] ?? null,
+            ];
+            if ($ssl['key'] !== null || $ssl['cert'] !== null || $ssl['ca'] !== null) {
+                $plugins[] = new \AdminerLoginSsl($ssl);
+            }
 
             class AdminerPimcore extends \AdminerPlugin
             {

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -25,26 +26,22 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
  * value and set it on the Template annotation. This handles custom template files being configured on documents.
+ *
+ * @internal
  */
 class ContentTemplateListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
     /**
-     * @var TemplateResolver
-     */
-    protected $templateResolver;
-
-    /**
      * @param TemplateResolver $templateResolver
      */
-    public function __construct(TemplateResolver $templateResolver)
+    public function __construct(protected TemplateResolver $templateResolver)
     {
-        $this->templateResolver = $templateResolver;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

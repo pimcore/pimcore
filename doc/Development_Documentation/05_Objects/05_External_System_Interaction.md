@@ -16,7 +16,7 @@ Put the following script into the file `/bin/example.php` (or any other PHP file
 ```php
 <?php
 
-namespace AppBundle\Command;
+namespace App\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -20,14 +18,24 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Db;
 use Pimcore\Model\Element\Service;
 
-class RequiredBy extends AbstractOperator
+/**
+ * @internal
+ */
+final class RequiredBy extends AbstractOperator
 {
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     private $elementType;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $onlyCount;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -36,6 +44,9 @@ class RequiredBy extends AbstractOperator
         $this->onlyCount = $config->onlyCount ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -46,21 +57,24 @@ class RequiredBy extends AbstractOperator
         $typeCondition = '';
         switch ($this->getElementType()) {
             case 'document': $typeCondition = " AND sourcetype = 'document'";
+
                 break;
             case 'asset': $typeCondition = " AND sourcetype = 'asset'";
+
                 break;
             case 'object': $typeCondition = " AND sourcetype = 'object'";
+
                 break;
         }
 
         if ($this->getOnlyCount()) {
-            $query = 'select count(*) from dependencies where targetid = ' . $element->getId() . $typeCondition;
-            $count = $db->fetchOne($query);
+            $query = 'select count(*) from dependencies where targettype = ? AND targetid = ?'. $typeCondition;
+            $count = $db->fetchOne($query, [Service::getElementType($element), $element->getId()]);
             $result->value = $count;
         } else {
             $resultList = [];
-            $query = 'select * from dependencies where targetid = ' . $element->getId() . $typeCondition;
-            $dependencies = $db->fetchAll($query);
+            $query = 'select * from dependencies where targettype = ? AND targetid = ' . $element->getId() . $typeCondition;
+            $dependencies = $db->fetchAll($query, [Service::getElementType($element), $element->getId()]);
             foreach ($dependencies as $dependency) {
                 $sourceType = $dependency['sourcetype'];
                 $sourceId = $dependency['sourceid'];

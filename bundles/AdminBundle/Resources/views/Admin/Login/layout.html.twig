@@ -14,11 +14,21 @@
             <link rel="stylesheet" type="text/css" href="{{ pluginCssPath }}?_dc={{ 'now'|date('U') }}"/>
         {% endfor %}
     </head>
-    <body class="pimcore_version_6 {{ config['branding']['login_screen_invert_colors'] ? 'inverted' : '' }}">
-        {% set backgroundImageUrl = config['branding']['login_screen_custom_image'] %}
-        {% if backgroundImageUrl is empty %}
-            {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}
-            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}
+    <body class="pimcore_version_10 {{ config['branding']['login_screen_invert_colors'] ? 'inverted' : '' }}">
+        {% set backgroundImageUrl = "" %}
+        {% set customImage = config['branding']['login_screen_custom_image'] %}
+        {# https://github.com/pimcore/pimcore/issues/8016 #}
+        {# https://github.com/pimcore/pimcore/issues/8129 #}
+        {% if customImage matches '@^https?://@' %}
+            {% set backgroundImageUrl = customImage %}
+        {% elseif pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/var/assets' ~ customImage) %}
+            {% set backgroundImageUrl = customImage %}
+        {% elseif pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ customImage) %}
+            {% set backgroundImageUrl = customImage %}
+        {% else %}
+{#            {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}#}
+{#            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}#}
+            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/pcx.svg' %}
         {% endif %}
 
         <style type="text/css">
@@ -48,6 +58,13 @@
             {{ block('content') }}
         </div>
 
+        {% if debug is defined and debug %}
+            <div id="github">
+                <a class="github-button" href="https://github.com/pimcore/pimcore" data-color-scheme="no-preference: dark; light: dark; dark: dark;" data-size="large" aria-label="Star pimcore/pimcore on GitHub">Star</a>
+            </div>
+            <script async defer src="https://buttons.github.io/buttons.js"></script>
+        {% endif %}
+
         {#
             <div id="news">
                 <h2>News</h2>
@@ -69,8 +86,6 @@
             BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR COPYRIGHT NOTICE!
             KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
         </div>
-
-        <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
         {% if block('below_footer') is defined %}
             {{ block('below_footer') }}

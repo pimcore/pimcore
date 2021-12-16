@@ -1,18 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
+
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Statistic\Dao getDao()
@@ -23,10 +26,12 @@ class Statistic extends \Pimcore\Model\AbstractModel
      * @var int
      */
     public $id;
+
     /**
      * @var string
      */
     public $tokenSeriesId;
+
     /**
      * @var int
      */
@@ -44,7 +49,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
             $config->getDao()->getById($id);
 
             return $config;
-        } catch (\Exception $ex) {
+        } catch (NotFoundException $ex) {
             //            Logger::debug($ex->getMessageN());
             return false;
         }
@@ -56,7 +61,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
      *
      * @throws \Exception
      *
-     * @return bool
+     * @return bool|array
      */
     public static function getBySeriesId($seriesId, $usagePeriod = null)
     {
@@ -89,6 +94,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     public static function increaseUsageStatistic($seriesId)
     {
         $db = $db = \Pimcore\Db::get();
+
         try {
             $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', [(int)$seriesId]);
 
@@ -116,6 +122,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             $db->query($query, $params);
 

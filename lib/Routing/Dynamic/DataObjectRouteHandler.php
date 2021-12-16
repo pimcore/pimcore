@@ -7,16 +7,18 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Dynamic;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -25,7 +27,10 @@ use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DataObjectRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service
@@ -43,6 +48,11 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $requestHelper;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
@@ -50,15 +60,17 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
-        RequestHelper $requestHelper
+        RequestHelper $requestHelper,
+        Config $config
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
+        $this->config = $config;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteByName(string $name)
     {
@@ -77,7 +89,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
@@ -110,6 +122,11 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
+
+        $route->setDefault(
+            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
+            $this->config['routing']['allow_processing_unpublished_fallback_document']
+        );
 
         return $route;
     }

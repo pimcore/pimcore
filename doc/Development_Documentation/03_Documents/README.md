@@ -26,14 +26,12 @@ They are directly specified in the document settings in the admin interface:
 
 Not all of them are necessary, the table below shows which configurations are possible:
 
-| Type | Controller | Action | Template | Description                                                                                                                                        |
-|------|------------|--------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | X          | X      |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.|
-| 2    | X          | X      | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
-| 3    |            |        | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
+| Type | Controller  | Template | Description                                                                                                                                        |
+|------|------------ |----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1    | X           |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.|
+| 2    | X           | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
+| 3    |             | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
 
-Optionally you can specify a module to each of the above combinations, this is useful if you want to use controllers/actions or templates out of plugins which are simply another Symfony bundle. 
-The default module (when empty) is AppBundle.
 
 Pimcore is shipped with a default controller containing a default action, which is called when only a template is given to the document.
 
@@ -41,11 +39,8 @@ You can set a default module/bundle, controller and action in the symfony config
 
 ```yaml
 pimcore:
-    routing:
-        defaults:
-            bundle: AppBundle
-            controller: Default
-            action: default 
+    documents:
+        default_controller:App\Controller\DefaultController::defaultAction
 ```  
 
 ## Properties
@@ -68,8 +63,8 @@ As you can see there are really useful cases for properties, feel free to use th
 * Documents follow the MVC pattern; therefore, Pimcore requires that there is at least one controller with an action and a template file.
 * Pimcore comes with a DefaultController containing a defaultAction and a template file.
 * Because of the MVC architecture, there is a clear separation between your data, the functionality and the templates.
-* The normal way to create templates for Pimcore is to use pure PHP. There's no new template syntax to learn - just code what you want - feel free!
-* Although the templates are written in PHP, there is a clear separation as mentioned before.
+* Templates for Pimcore are created with [Twig](https://twig.symfony.com/).
+* As the templates are written in Twig, there is a clear separation of logic (controllers) and design (view / template).
 
 ## Create Your First Document 
 Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_a_First_Project.md) manual. 

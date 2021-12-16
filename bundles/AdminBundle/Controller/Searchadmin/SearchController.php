@@ -1,40 +1,46 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/search")
+ *
+ * @internal
  */
 class SearchController extends AdminController
 {
+    use AdminStyleTrait;
+
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
      *
@@ -150,10 +156,15 @@ class SearchController extends AdminController
                 : null;
 
             $join = '';
+            $localizedJoin = '';
             foreach ($bricks as $ob) {
                 $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
-
                 $join .= ' `' . $ob . '`';
+
+                if ($localizedConditionFilters) {
+                    $localizedJoin = $join . ' ON `' . $ob . '`.o_id = `object_localized_data_' . $class->getId() . '`.ooo_id';
+                }
+
                 $join .= ' ON `' . $ob . '`.o_id = `object_' . $class->getId() . '`.o_id';
             }
 
@@ -166,12 +177,12 @@ class SearchController extends AdminController
             if (null !== $localizedConditionFilters) {
                 //add condition query for localised fields
                 $conditionParts[] = '( id IN (SELECT `object_localized_data_' . $class->getId()
-                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $join . ' WHERE '
+                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $localizedJoin . ' WHERE '
                     . $localizedConditionFilters . ' GROUP BY ooo_id ' . ') )';
             }
         }
 
-        if (is_array($types) and !empty($types[0])) {
+        if (is_array($types) && !empty($types[0])) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -182,7 +193,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) and !empty($subtypes[0])) {
+        if (is_array($subtypes) && !empty($subtypes[0])) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -190,7 +201,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
+        if (is_array($classnames) && !empty($classnames[0])) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -473,16 +484,12 @@ class SearchController extends AdminController
                     'type' => $hit->getId()->getType(),
                     'subtype' => $element->getType(),
                     'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpath' => htmlspecialchars($element->getFullPath()),
-                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
+                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                     'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
-                if ($element instanceof Asset) {
-                    $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
-                } else {
-                    $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
-                }
+                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
@@ -522,14 +529,14 @@ class SearchController extends AdminController
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i === 0) {
+            if (strlen($shortPath) <= 50 || $i == 0) {
                 break;
             }
-            array_splice($parts, $i - 1, 1, '...');
+            array_splice($parts, $i - 1, 1, '…');
         }
 
-        if (strlen($shortPath) > 50) {
-            $shortPath = substr($shortPath, 0, 47) . '...';
+        if (mb_strlen($shortPath) > 50) {
+            $shortPath = mb_substr($shortPath, 0, 49) . '…';
         }
 
         return $shortPath;

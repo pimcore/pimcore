@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
@@ -18,18 +19,22 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;
+
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
@@ -45,7 +50,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -64,7 +69,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -73,7 +78,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -98,7 +103,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             /** @var Listing\Concrete $products */
             $products = new $objectListClass();
             $products->setUnpublished(true);
-            $products->setObjectTypes(['object', 'folder', 'variant']);
+            $products->setObjectTypes(DataObject::$types);
             $products->setIgnoreLocalizedFields(true);
             $products->setCondition($listCondition);
 
@@ -109,7 +114,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $productId, InputInterface $input, OutputInterface $output): void
     {
@@ -124,7 +129,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             );
         }
 
-        if ($object = AbstractObject::getById($productId)) {
+        if ($object = DataObject::getById($productId)) {
             if ($object instanceof IndexableInterface) {
                 $indexService->updateIndex($object);
             } else {
@@ -136,7 +141,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -168,7 +173,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {

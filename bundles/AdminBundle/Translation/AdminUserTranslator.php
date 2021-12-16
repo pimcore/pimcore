@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Translation;
@@ -21,6 +21,9 @@ use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
 {
     /**
@@ -52,9 +55,9 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
@@ -63,7 +66,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setLocale($locale)
     {
@@ -73,9 +76,9 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             return $this->translator->getLocale();

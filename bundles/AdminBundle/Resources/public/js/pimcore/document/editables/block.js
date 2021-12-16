@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.block");
@@ -20,12 +20,13 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         this.name = name;
         this.elements = [];
         this.config = this.parseConfig(config);
+    },
 
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
-        this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
+    refresh: function() {
+        this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
 
         var limitReached = false;
-        if(typeof config.limit != "undefined" && this.elements.length >= config.limit) {
+        if(this.config['limit'] && this.elements.length >= this.config.limit) {
             limitReached = true;
         }
 
@@ -33,77 +34,119 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.createInitalControls();
         }
         else {
+            Ext.get(this.id).removeCls("pimcore_block_buttons");
+
             for (var i = 0; i < this.elements.length; i++) {
-                this.elements[i].key = this.elements[i].getAttribute("key");
-
-                if(!limitReached) {
-                    // amount selection
-                    amountDiv = Ext.get(this.elements[i]).query('.pimcore_block_amount[data-name="' + this.name + '"]')[0];
-                    amountBox = new Ext.form.ComboBox({
-                        cls: "pimcore_block_amount_select",
-                        store: this.getAmountValues(),
-                        value: 1,
-                        mode: "local",
-                        editable: false,
-                        triggerAction: "all",
-                        width: 45
-                    });
-                    amountBox.render(amountDiv);
-
-                    // plus button
-                    plusDiv = Ext.get(this.elements[i]).query('.pimcore_block_plus[data-name="' + this.name + '"]')[0];
-                    plusButton = new Ext.Button({
-                        cls: "pimcore_block_button_plus",
-                        iconCls: "pimcore_icon_plus",
-                        listeners: {
-                            "click": this.addBlock.bind(this, this.elements[i], amountBox)
-                        }
-                    });
-                    plusButton.render(plusDiv);
+                if(!this.elements[i].key) {
+                    this.elements[i].key = this.elements[i].getAttribute("key");
                 }
 
-                // minus button
-                minusDiv = Ext.get(this.elements[i]).query('.pimcore_block_minus[data-name="' + this.name + '"]')[0];
+                this.refreshControls(this.elements[i], limitReached);
+            }
+        }
+    },
+
+    refreshControls: function (element, limitReached) {
+        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
+
+        // re-initialize amount boxes on every refresh
+        amountBox = Ext.get(element).query('.pimcore_block_amount[data-name="' + this.name + '"] .pimcore_block_amount_select', false)[0];
+        if (typeof amountBox !== 'undefined') {
+            amountBox.remove();
+        }
+
+        plusButton = Ext.get(element).query('.pimcore_block_plus[data-name="' + this.name + '"] .pimcore_block_button_plus', false)[0];
+        if (typeof plusButton !== 'undefined') {
+            plusButton.remove();
+        }
+
+        if (!limitReached) {
+            amountDiv = Ext.get(element).query('.pimcore_block_amount[data-name="' + this.name + '"]')[0];
+            if (amountDiv) {
+                amountBox = new Ext.form.ComboBox({
+                    cls: "pimcore_block_amount_select",
+                    store: this.getAmountValues(),
+                    value: 1,
+                    mode: "local",
+                    editable: false,
+                    triggerAction: "all",
+                    width: 45
+                });
+                amountBox.render(amountDiv);
+            }
+
+            plusDiv = Ext.get(element).query('.pimcore_block_plus[data-name="' + this.name + '"]')[0];
+            if (plusDiv) {
+                plusButton = new Ext.Button({
+                    cls: "pimcore_block_button_plus",
+                    hidden: true,
+                    iconCls: "pimcore_icon_plus",
+                    listeners: {
+                        "click": this.addBlock.bind(this, element, amountBox)
+                    }
+                });
+                plusButton.render(plusDiv);
+            }
+        }
+
+        // minus button
+        minusButton = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"] .pimcore_block_button_minus')[0];
+        if (typeof minusButton === 'undefined') {
+            minusDiv = Ext.get(element).query('.pimcore_block_minus[data-name="' + this.name + '"]')[0];
+            if (minusDiv) {
                 minusButton = new Ext.Button({
                     cls: "pimcore_block_button_minus",
                     iconCls: "pimcore_icon_minus",
                     listeners: {
-                        "click": this.removeBlock.bind(this, this.elements[i])
+                        "click": this.removeBlock.bind(this, element)
                     }
                 });
                 minusButton.render(minusDiv);
+            }
+        }
 
-                // up button
-                upDiv = Ext.get(this.elements[i]).query('.pimcore_block_up[data-name="' + this.name + '"]')[0];
+        // up button
+        upButton = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"] .pimcore_block_button_up')[0];
+        if (typeof upButton === 'undefined') {
+            upDiv = Ext.get(element).query('.pimcore_block_up[data-name="' + this.name + '"]')[0];
+            if (upDiv) {
                 upButton = new Ext.Button({
                     cls: "pimcore_block_button_up",
                     iconCls: "pimcore_icon_up",
                     listeners: {
-                        "click": this.moveBlockUp.bind(this, this.elements[i])
+                        "click": this.moveBlockUp.bind(this, element)
                     }
                 });
                 upButton.render(upDiv);
+            }
+        }
 
-                // up button
-                downDiv = Ext.get(this.elements[i]).query('.pimcore_block_down[data-name="' + this.name + '"]')[0];
+        // down button
+        downButton = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"] .pimcore_block_button_down')[0];
+        if (typeof downButton === 'undefined') {
+            downDiv = Ext.get(element).query('.pimcore_block_down[data-name="' + this.name + '"]')[0];
+            if (downDiv) {
                 downButton = new Ext.Button({
                     cls: "pimcore_block_button_down",
                     iconCls: "pimcore_icon_down",
                     listeners: {
-                        "click": this.moveBlockDown.bind(this, this.elements[i])
+                        "click": this.moveBlockDown.bind(this, element)
                     }
                 });
                 downButton.render(downDiv);
             }
         }
+    },
 
+    render: function () {
+        this.refresh();
 
-        Ext.get(id).on('mouseenter', function (event) {
-            Ext.get(id).addCls('pimcore_block_entry_over');
+        Ext.get(this.id).on('mouseenter', function (event) {
+            Ext.get(this.id).addCls('pimcore_block_entry_over');
         });
 
-        Ext.get(id).on('mouseleave', function (event) {
-            Ext.get(id).removeCls('pimcore_block_entry_over');
+        Ext.get(this.id).on('mouseleave', function (event) {
+            Ext.get(this.id).removeCls('pimcore_block_entry_over');
         });
     },
 
@@ -127,9 +170,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             for (var a=1; a<=maxAddValues; a++) {
                 amountValues.push(a);
             }
-        }
-
-        if(amountValues.length < 1) {
+        } else {
             amountValues = [1,2,3,4,5,6,7,8,9,10];
         }
 
@@ -205,19 +246,51 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             }
         }
 
-        var args = [index, 0];
-        var firstNewKey = nextKey+1;
+        if(this.config['reload'] === true) {
+            var args = [index, 0];
+            var firstNewKey = nextKey+1;
 
-        for (var p = 0; p < amount; p++) {
-            nextKey++;
-            args.push({key: nextKey});
+            for (var p = 0; p < amount; p++) {
+                nextKey++;
+                args.push({key: nextKey});
+            }
+
+            this.elements.splice.apply(this.elements, args);
+
+            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
+            this.reloadDocument();
+        } else {
+            let template = this.config['template']['html'];
+            let elements;
+            for (let p = 0; p < amount; p++) {
+                elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
+                nextKey++;
+                let blockHtml = template;
+                blockHtml = blockHtml.replaceAll(new RegExp('"([^"]+):1000000.' + this.getRealName() + '("|:)', 'g'), '"' + this.getName() + '$2');
+                blockHtml = blockHtml.replaceAll(new RegExp('"pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_', 'g'), '"pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                blockHtml = blockHtml.replaceAll(':1000000.', ':' + nextKey + '.');
+                blockHtml = blockHtml.replaceAll('_1000000_', '_' + nextKey + '_');
+                blockHtml = blockHtml.replaceAll('="1000000"', '="' + nextKey + '"');
+                blockHtml = blockHtml.replaceAll(', 1000000"', ', ' + nextKey + '"');
+
+                if(!elements.length) {
+                    Ext.get(this.id).setHtml(blockHtml);
+                } else if (elements[index-1]) {
+                    Ext.get(elements[index-1]).insertHtml('afterEnd', blockHtml, true);
+                }
+
+                this.config['template']['editables'].forEach(editableDef => {
+                    let editable = Ext.clone(editableDef);
+                    editable['id'] = editable['id'].replace(new RegExp('pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_'), 'pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                    editable['id'] = editable['id'].replaceAll('_1000000_', '_' + nextKey + '_');
+                    editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName() + ':'), this.getName() + ':');
+                    editable['name'] = editable['name'].replaceAll(':1000000.', ':' + nextKey + '.');
+                    editableManager.addByDefinition(editable);
+                });
+            }
+
+            this.refresh();
         }
-
-       this.elements.splice.apply(this.elements, args);
-
-        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
-
-        this.reloadDocument();
     },
 
     removeBlock: function (element) {
@@ -227,45 +300,46 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         this.elements.splice(index, 1);
         Ext.get(element).remove();
 
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
+        if(this.config['reload'] === true) {
+            this.reloadDocument();
+        } else {
+            this.refresh();
         }
-
-        // this is necessary because of the limit which is only applied when initializing
-        //Even though reload is not necessary after remove, some sites change their appearance
-        //according to the amount of block elements they contain and this arose the need for reload anyway
-        this.reloadDocument();
     },
 
     moveBlockDown: function (element) {
-
         var index = this.getElementIndex(element);
-
         if (index < (this.elements.length-1)) {
-            var x = this.elements[index];
-            var y = this.elements[index + 1];
+            if(this.config['reload'] === true) {
+                var x = this.elements[index];
+                var y = this.elements[index + 1];
 
-            this.elements[index + 1] = x;
-            this.elements[index] = y;
+                this.elements[index + 1] = x;
+                this.elements[index] = y;
 
-            this.reloadDocument();
-
+                this.reloadDocument();
+            } else {
+                Ext.get(element).insertAfter(this.elements[index+1]);
+                this.refresh();
+            }
         }
     },
 
     moveBlockUp: function (element) {
-
         var index = this.getElementIndex(element);
-
         if (index > 0) {
-            var x = this.elements[index];
-            var y = this.elements[index - 1];
+            if(this.config['reload'] === true) {
+                var x = this.elements[index];
+                var y = this.elements[index - 1];
 
-            this.elements[index - 1] = x;
-            this.elements[index] = y;
+                this.elements[index - 1] = x;
+                this.elements[index] = y;
 
-            this.reloadDocument();
+                this.reloadDocument();
+            } else {
+                Ext.get(element).insertBefore(this.elements[index-1]);
+                this.refresh();
+            }
         }
     },
 

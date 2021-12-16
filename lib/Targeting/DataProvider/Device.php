@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\DataProvider;
@@ -68,7 +68,7 @@ class Device implements DataProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function load(VisitorInfo $visitorInfo)
     {
@@ -177,14 +177,14 @@ class Device implements DataProviderInterface
             'bot' => $dd->getBot(),
             'is_bot' => $dd->isBot(),
             'os' => $dd->getOs(),
-            'os_family' => $osFamily !== false ? $osFamily : 'Unknown',
+            'os_family' => $osFamily ?: 'Unknown',
             'client' => $dd->getClient(),
             'device' => [
                 'type' => $dd->getDeviceName(),
-                'brand' => $dd->getBrand(),
+                'brand' => $dd->getBrandName(),
                 'model' => $dd->getModel(),
             ],
-            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
+            'browser_family' => $browserFamily ?: 'Unknown',
         ];
 
         return $processed;

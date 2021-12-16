@@ -13,7 +13,7 @@ in the desired format.
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +53,7 @@ which implements the `\JsonSerializable` interface and implementing `jsonSeriali
  ```php
  <?php
  
- namespace AppBundle\Model\DataObject;
+ namespace App\Model\DataObject;
  
  class BlogArticle extends \Pimcore\Model\DataObject\BlogArticle implements \JsonSerializable {
  

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\CustomReport\Config\Listing;
@@ -25,29 +23,21 @@ use Pimcore\Model\Tool\CustomReport\Config;
  *
  * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('custom-reports');
-    }
-
     /**
      * @return Config[]
      */
-    public function load()
+    public function loadList()
     {
-        $properties = [];
-        $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $configs = [];
 
-        foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData['id']);
+        $idList = $this->loadIdList();
+        foreach ($idList as $name) {
+            $configs[] = Config::getByName($name);
         }
 
-        $this->model->setReports($properties);
-
-        return $properties;
+        return $configs;
     }
 
     /**
@@ -57,7 +47,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function loadForGivenUser(Model\User $user)
     {
-        $allConfigs = $this->load();
+        $allConfigs = $this->loadList();
 
         if ($user->isAdmin()) {
             return $allConfigs;
@@ -82,9 +72,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return count($this->loadIdList());
     }
 }

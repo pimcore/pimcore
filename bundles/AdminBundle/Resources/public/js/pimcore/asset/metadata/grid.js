@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.asset.metadata.grid");
@@ -66,23 +66,23 @@ pimcore.asset.metadata.grid = Class.create({
             if (this.dataProvider.getItemCount() < 1) {
                 // default fields
                 if (this.asset.data.type == "image") {
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "title",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "alt",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
-                    this.dataProvider.getData().push({
+                    this.dataProvider.update({
                         name: "copyright",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
                 }
             }
@@ -278,12 +278,25 @@ pimcore.asset.metadata.grid = Class.create({
                     xtype: "tbspacer",
                     width: 20
                 });
-                tbarItems.push({
-                    xtype: "button",
-                    text: t('add_predefined_metadata_definitions'),
-                    handler: this.handleAddPredefinedDefinitions.bind(this),
-                    iconCls: "pimcore_icon_add"
-                });
+                let predefinedMetadataGroups = Ext.Array.map (this.asset.data.predefinedMetaDataGroups, function(predefinedMetadataGroup){
+                    return {text: t(predefinedMetadataGroup), handler: function(){ this.handleAddPredefinedDefinitions(predefinedMetadataGroup); }.bind(this)};
+                }.bind(this));
+
+                if(predefinedMetadataGroups.length > 0) {
+                    predefinedMetadataGroups.unshift('-');
+                    predefinedMetadataGroups.unshift({ text: t('ungrouped'), handler: function () { this.handleAddPredefinedDefinitions(''); }.bind(this) });
+                }
+
+                tbarItems.push(
+                    new Ext.SplitButton({
+                        text: t('add_predefined_metadata_definitions'),
+                        handler: this.handleAddPredefinedDefinitions.bind(this, "default"),
+                        menu: new Ext.menu.Menu({
+                            items: predefinedMetadataGroups
+                        }),
+                        iconCls: "pimcore_icon_add"
+                    })
+                );
             }
 
             let nameConfig = {
@@ -507,13 +520,13 @@ pimcore.asset.metadata.grid = Class.create({
         store.commitChanges();
     },
 
-    handleAddPredefinedDefinitions: function() {
-
+    handleAddPredefinedDefinitions: function(group) {
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_getpredefinedmetadata'),
             params: {
                 type: "asset",
-                subType: this.asset.type
+                subType: this.asset.type,
+                group: group
             },
             success: this.doAddPredefinedDefinitions.bind(this)
         });

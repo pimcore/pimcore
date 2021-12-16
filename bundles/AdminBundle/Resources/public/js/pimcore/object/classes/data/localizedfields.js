@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.classes.data.localizedfields");
@@ -61,6 +61,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         this.specificPanel.removeAll();
 
         this.layout = new Ext.Panel({
+            autoScroll: true,
             items: [
                 {
                     xtype: "form",
@@ -110,21 +111,33 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             checked: this.datax.border,
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "textfield",
                             fieldLabel: t("width"),
                             name: "width",
                             value: this.datax.width
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('width_explanation')
+                        },
+                        {
+                            xtype: "textfield",
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
-                        }, {
+                        },
+                        {
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('height_explanation')
+                        },
+                        {
                             xtype: 'combo',
                             fieldLabel: t('tab_position'),
                             name: 'tabPosition',
                             value: this.datax.tabPosition,
+                            editable: false,
                             store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                         },
                         {

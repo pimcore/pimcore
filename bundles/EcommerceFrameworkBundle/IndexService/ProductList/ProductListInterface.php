@@ -1,32 +1,33 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * Interface for product list which works based on the product index of the online shop framework
  */
-interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggregateInterface
+interface ProductListInterface extends PaginateListingInterface
 {
     const ORDERKEY_PRICE = 'orderkey_price';
 
     const PRODUCT_TYPE_OBJECT = 'object';
+
     const PRODUCT_TYPE_VARIANT = 'variant';
 
     /**
@@ -151,7 +152,7 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
     public function setOrderKey($orderKey);
 
     /**
-     * @return string | array
+     * @return string|array
      */
     public function getOrderKey();
 
@@ -181,7 +182,7 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
     public function setCategory(AbstractCategory $category);
 
     /**
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public function getCategory();
 

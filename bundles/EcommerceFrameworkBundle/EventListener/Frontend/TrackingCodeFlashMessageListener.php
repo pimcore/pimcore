@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend;
@@ -20,12 +21,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * @internal
+ */
 class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
@@ -33,18 +37,18 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     const FLASH_MESSAGE_BAG_KEY = 'ecommerceframework_trackingcode_flashmessagelistener';
 
     /**
-     * @var SessionInterface
+     * @var RequestStack
      */
-    protected $session;
+    protected RequestStack $requestStack;
 
     /**
      * @var TrackingManager
      */
     protected $trackingManger;
 
-    public function __construct(SessionInterface $session, TrackingManager $trackingManager)
+    public function __construct(RequestStack $requestStack, TrackingManager $trackingManager)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->trackingManger = $trackingManager;
     }
 
@@ -64,14 +68,15 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
         // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
         $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY, false);
-        if ($flashBagCookie && $this->session instanceof Session) {
-            $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
+        $session = $this->requestStack->getSession();
+        if ($flashBagCookie && $session instanceof Session) {
+            $trackedCodes = $session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
             if (is_array($trackedCodes) && count($trackedCodes)) {
                 foreach ($this->trackingManger->getTrackers() as $tracker) {
@@ -92,15 +97,16 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
+        $session = $this->requestStack->getSession();
 
         /**
          * If tracking codes are forwarded as FlashMessage, then set a cookie which is checked in subsequent request for successful handshake
          * else clear cookie, if set and FlashBag is already processed.
          */
         if (
-            $this->session instanceof Session &&
-            $this->session->isStarted() &&
-            $this->session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)
+            $session instanceof Session &&
+            $session->isStarted() &&
+            $session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)
         ) {
             $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, true));
             $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed', true);

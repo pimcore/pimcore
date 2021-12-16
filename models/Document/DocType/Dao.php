@@ -1,55 +1,70 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Document\DocType $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        parent::configure();
-        $this->setFile('document-types');
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        parent::configure([
+            'containerConfig' => $config['documents']['doc_types']['definitions'] ?? [],
+            'settingsStoreScope' => 'pimcore_document_types',
+            'storageDirectory' => PIMCORE_CONFIGURATION_DIRECTORY . '/document-types',
+            'legacyConfigFile' => 'document-types.php',
+            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_DOCUMENT_TYPES',
+        ]);
     }
 
     /**
      * Get the data for the object from database for the given id
      *
-     * @param int|null $id
+     * @param string|null $id
      *
      * @throws \Exception
      */
     public function getById($id = null)
     {
-        if ($id != null) {
-            $this->model->setId($id);
+        if (empty($id)) {
+            return null;
         }
 
-        $data = $this->db->getById($this->model->getId());
-        if (isset($data['id'])) {
+        $this->model->setId($id);
+        $data = $this->getDataByName($this->model->getId());
+
+        if ($data && $id != null) {
+            $data['id'] = $id;
+        }
+
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Doc-type with id ' . $this->model->getId() . " doesn't exist");
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Document Type with ID "%s" does not exist.',
+                $this->model->getId()
+            ));
         }
     }
 
@@ -58,6 +73,9 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function save()
     {
+        if (!$this->model->getId()) {
+            $this->model->setId(Uid::v4());
+        }
         $ts = time();
         if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate($ts);
@@ -66,19 +84,15 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', ];
+        $allowedProperties = ['name', 'group', 'module', 'controller',
+            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
                 $data[$key] = $value;
             }
         }
-        $this->db->insertOrUpdate($data, $this->model->getId());
-
-        if (!$this->model->getId()) {
-            $this->model->setId($this->db->getLastInsertId());
-        }
+        $this->saveData($this->model->getId(), $data);
     }
 
     /**
@@ -86,6 +100,24 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function delete()
     {
-        $this->db->delete($this->model->getId());
+        $this->deleteData($this->model->getId());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareDataStructureForYaml(string $id, $data)
+    {
+        return [
+            'pimcore' => [
+                'documents' => [
+                    'doc_types' => [
+                        'definitions' => [
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

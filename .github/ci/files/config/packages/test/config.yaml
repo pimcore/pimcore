@@ -1,0 +1,32 @@
+imports:
+    - { resource: ../../config.yaml }
+
+# this cache is used during tests when setting up pimcore
+framework:
+    cache:
+        pools:
+            pimcore.cache.pool:
+                public: true
+                tags: true
+                default_lifetime: 31536000  # 1 year
+                adapter: cache.adapter.array
+
+
+doctrine:
+    dbal:
+        connections:
+            default:
+                url: '%pimcore_test.db.dsn%'
+                host: ~
+                port: ~
+                dbname: ~
+                user: ~
+                password: ~
+                mapping_types:
+                    enum: string
+                    bit: boolean
+
+parameters:
+    pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'
+    env(PIMCORE_TEST_DB_DSN): ~
+    pimcore.encryption.secret: 'def00000fc1e34a17a03e2ef85329325b0736a5941633f8062f6b0a1a20f416751af119256bea0abf83ac33ef656b3fff087e1ce71fa6b8810d7f854fe2781f3fe4507f6'

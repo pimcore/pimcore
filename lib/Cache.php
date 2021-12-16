@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -31,6 +32,8 @@ class Cache
     /**
      * Get the cache handler implementation
      *
+     * @internal
+     *
      * @return CoreCacheHandler
      */
     public static function getHandler()
@@ -44,6 +47,8 @@ class Cache
 
     /**
      * Initialize the cache. This acts mainly as integration point with legacy caches.
+     *
+     * @internal
      */
     public static function init()
     {
@@ -128,12 +133,8 @@ class Cache
      *
      * @return bool
      */
-    public static function clearTags($tags = [])
+    public static function clearTags(array $tags = []): bool
     {
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
         return static::getHandler()->clearTags($tags);
     }
 
@@ -189,6 +190,8 @@ class Cache
 
     /**
      * Write and clean up cache
+     *
+     * @internal
      *
      * @param bool $forceWrite
      */

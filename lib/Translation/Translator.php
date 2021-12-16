@@ -1,25 +1,27 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
-use Pimcore\Model\Translation\AbstractTranslation;
+use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -84,12 +86,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         if (null === $domain) {
-            $domain = 'messages';
+            $domain = Translation::DOMAIN_DEFAULT;
         }
 
         $id = (string) $id;
 
-        if ($domain === 'admin' && !empty($this->adminTranslationMapping)) {
+        if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
             if (null === $locale) {
                 $locale = $this->getLocale();
             }
@@ -146,12 +148,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function getCatalogue(string $locale = null)
+    public function getCatalogue(string $locale = null)// : MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }
 
     /**
+     * @internal
+     *
      * @param string $domain
      * @param string $locale
      */
@@ -164,13 +168,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $this->initializedCatalogues[$cacheKey] = true;
-        $backend = $this->getBackendForDomain($domain);
 
-        if ($backend) {
+        if (Translation::isAValidDomain($domain)) {
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
+                $dataIntl = ['__pimcore_dummy' => 'only_a_dummy'];
 
                 if ($domain == 'admin') {
                     $jsonFiles = [
@@ -198,9 +202,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend) . '\\Listing';
-                $list = new $listClass();
+                $list = new Translation\Listing();
+                $list->setDomain($domain);
 
+                $debugAdminTranslations = \Pimcore\Config::getSystemConfiguration('general')['debug_admin_translations'] ?? false;
                 $list->setCondition('language = ?', [$locale]);
                 $translations = $list->loadRaw();
 
@@ -211,11 +216,16 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         !empty($translationTerm)) {
                         $translationKey = $translation['key'];
 
-                        if (empty($translationTerm)) {
-                            $translationTerm = $translationKey;
+                        if (empty($translationTerm) && $debugAdminTranslations) {
+                            //wrap non-translated keys with "+", if debug admin translations is enabled
+                            $translationTerm = '+' . $translationKey. '+';
                         }
 
-                        $data[$translationKey] = $translationTerm;
+                        if (empty($translation['type']) || $translation['type'] === 'simple') {
+                            $data[$translationKey] = $translationTerm;
+                        } else {
+                            $dataIntl[$translationKey] = $translationTerm;
+                        }
                     }
                 }
 
@@ -230,7 +240,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                $data = [$domain => $data];
+                $data = [
+                    $domain => $data,
+                    $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl,
+                ];
                 $catalogue = new MessageCatalogue($locale, $data);
 
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
@@ -253,38 +266,37 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @throws \Exception
      */
-    protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
+    private function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
         if (empty($id)) {
             return $translated;
         }
 
         $normalizedId = $id;
-        if (isset($parameters['%count%'])) {
+
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
+            $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
-            } elseif ($backend = $this->getBackendForDomain($domain)) {
+            } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
-                $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
-
                 // no translation found create key
-                if ($class::isValidLanguage($locale)) {
-
-                    /** @var AbstractTranslation|null $t */
-                    $t = $class::getByKey($id);
+                if (Translation::IsAValidLanguage($domain, $locale)) {
+                    $t = Translation::getByKey($id, $domain);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
@@ -293,12 +305,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             return $id;
                         }
                     } else {
-                        /** @var AbstractTranslation $t */
-                        $t = new $class();
+                        $t = new Translation();
+                        $t->setDomain($domain);
                         $t->setKey($id);
 
                         // add all available languages
-                        $availableLanguages = (array)$class::getLanguages();
+                        $availableLanguages = (array)Translation::getValidLanguages();
                         foreach ($availableLanguages as $language) {
                             $t->addTranslation($language, '');
                         }
@@ -334,29 +346,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**
-     * @param string $domain
+     * @internal
      *
-     * @return string|null
-     */
-    protected function getBackendForDomain($domain)
-    {
-        $backends = [
-            'messages' => 'website',
-            'admin' => 'admin',
-        ];
-
-        if (isset($backends[$domain])) {
-            return $backends[$domain];
-        }
-
-        return null;
-    }
-
-    /**
      * @return string
      */
     public function getAdminPath()
@@ -365,6 +360,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @param string $adminPath
      */
     public function setAdminPath($adminPath)
@@ -373,6 +370,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public function getAdminTranslationMapping(): array
@@ -381,6 +380,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @param array $adminTranslationMapping
      */
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
@@ -389,6 +390,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @return Kernel
      */
     public function getKernel()
@@ -397,6 +400,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @param Kernel $kernel
      */
     public function setKernel($kernel)
@@ -414,7 +419,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->disableTranslations = $disableTranslations;
     }
 
-    public function updateLinks(string $text)
+    /**
+     * @param string $text
+     *
+     * @return string
+     */
+    private function updateLinks(string $text): string
     {
         if (strpos($text, 'pimcore_id')) {
             $text = Tool\Text::wysiwygText($text);

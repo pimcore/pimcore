@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Log;
@@ -96,8 +97,6 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @deprecated
-     *
      * @param string $component
      */
     public function setComponent($component)
@@ -136,13 +135,11 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function log($level, $message, array $context = [])
     {
-        if (!isset($context['component'])) {
+        if (!isset($context['component']) || is_null($context['component'])) {
             $context['component'] = $this->component;
         }
 
@@ -253,8 +250,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function emergency($message, array $context = [])
     {
@@ -262,8 +258,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function critical($message, array $context = [])
     {
@@ -271,8 +266,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function error($message, array $context = [])
     {
@@ -280,8 +274,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function alert($message, array $context = [])
     {
@@ -289,8 +282,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function warning($message, array $context = [])
     {
@@ -298,8 +290,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function notice($message, array $context = [])
     {
@@ -307,8 +298,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function info($message, array $context = [])
     {
@@ -316,8 +306,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function debug($message, array $context = [])
     {
@@ -360,7 +349,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @param string $message
      * @param \Throwable $exceptionObject
-     * @param string $priority
+     * @param string|null $priority
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param string|null $component
      */
@@ -410,17 +399,30 @@ class ApplicationLogger implements LoggerInterface
         ], $context));
     }
 
-    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    private static function exceptionToString(\Throwable $exceptionObject, bool $includeStackTrace, bool $includePrevious = false): string
     {
-        //workaround to prevent "nesting level to deep" errors when used var_export()
-        ob_start();
-        var_dump($exceptionObject);
-        $dataDump = ob_get_clean();
+        $data = [
+            $exceptionObject->getMessage(),
+            'File: ' . $exceptionObject->getFile(),
+            'Line: ' . $exceptionObject->getLine(),
+            'Code: ' . $exceptionObject->getCode(),
+        ];
 
-        if (!$dataDump) {
-            $dataDump = $exceptionObject->getMessage();
+        if ($includeStackTrace) {
+            $data[] = "Trace:\n" . $exceptionObject->getTraceAsString();
         }
 
-        return new FileObject($dataDump);
+        if ($includePrevious && $exceptionObject->getPrevious()) {
+            $data[] = "\nPrevious:\n" . self::exceptionToString($exceptionObject->getPrevious(), $includeStackTrace);
+        }
+
+        return implode("\n", $data);
+    }
+
+    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    {
+        $data = self::exceptionToString($exceptionObject, true, true);
+
+        return new FileObject($data);
     }
 }

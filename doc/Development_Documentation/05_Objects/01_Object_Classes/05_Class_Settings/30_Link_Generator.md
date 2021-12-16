@@ -18,10 +18,10 @@ services:
     # ---------------------------------------------------------
     # Link Generators for DataObjects
     # ---------------------------------------------------------
-    AppBundle\Website\LinkGenerator\CategoryLinkGenerator:
+    App\Website\LinkGenerator\CategoryLinkGenerator:
         public: true
 
-    AppBundle\Website\LinkGenerator\ProductLinkGenerator:
+    App\Website\LinkGenerator\ProductLinkGenerator:
         public: true
 
     ...
@@ -32,12 +32,12 @@ services:
 ```php
 <?php
 
-namespace AppBundle\Website\LinkGenerator;
+namespace App\Website\LinkGenerator;
 
-use AppBundle\Model\Product\AccessoryPart;
-use AppBundle\Model\Product\Car;
-use AppBundle\Website\Tool\ForceInheritance;
-use AppBundle\Website\Tool\Text;
+use App\Model\Product\AccessoryPart;
+use App\Model\Product\Car;
+use App\Website\Tool\ForceInheritance;
+use App\Website\Tool\Text;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 use Pimcore\Model\DataObject\Concrete;

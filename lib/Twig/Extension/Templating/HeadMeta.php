@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -69,8 +70,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * @var array
      */
     protected $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
+
     protected $_requiredKeys = ['content'];
+
     protected $_modifierKeys = ['lang', 'scheme'];
+
     protected $rawItems = [];
 
     /**
@@ -112,9 +116,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
                 case 'prepend':
                 case 'set':
                     $this->$action($item);
+
                     break;
                 default:
                     $this->append($item);
+
                     break;
             }
         }
@@ -378,6 +384,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
 
         $items = [];
         $this->getContainer()->ksort();
+
         try {
             foreach ($this as $item) {
                 $items[] = $this->itemToString($item);

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Templating;
@@ -19,6 +20,9 @@ use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 
+/**
+ * @internal
+ */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
     /**
@@ -43,9 +47,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function exists($name)
+    public function exists($name): bool
     {
         if (!$this->delegate) {
             return $this->twig->getLoader()->exists($name);
@@ -55,11 +59,11 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \Exception
      */
-    public function render($name, array $parameters = [])
+    public function render($name, array $parameters = []): string
     {
         if (!$this->delegate) {
             return $this->twig->render($name, $parameters);
@@ -69,9 +73,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function supports($name)
+    public function supports($name): bool
     {
         if (!$this->delegate) {
             return true;

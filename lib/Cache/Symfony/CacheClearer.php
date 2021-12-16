@@ -7,22 +7,24 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Symfony;
 
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class CacheClearer
 {
     /**
@@ -70,7 +72,7 @@ class CacheClearer
             $resolver->setAllowedTypes($option, 'bool');
         }
 
-        return $this->runCommand('cache:clear', [], $resolver->resolve($options));
+        return $this->runCommand('cache:clear', $resolver->resolve($options));
     }
 
     public function warmup(string $environment, array $options = []): Process
@@ -87,7 +89,7 @@ class CacheClearer
             $resolver->setAllowedTypes($option, 'bool');
         }
 
-        return $this->runCommand('cache:warmup', [], $resolver->resolve($options));
+        return $this->runCommand('cache:warmup', $resolver->resolve($options));
     }
 
     /**
@@ -98,9 +100,9 @@ class CacheClearer
         $this->runCallback = $runCallback;
     }
 
-    private function runCommand(string $command, array $arguments = [], array $options = [])
+    private function runCommand(string $command, array $arguments = [])
     {
-        $process = $this->buildProcess($command, $arguments, $options);
+        $process = $this->buildProcess($command, $arguments);
         $process->run($this->runCallback);
 
         if (!$process->isSuccessful()) {
@@ -110,18 +112,24 @@ class CacheClearer
         return $process;
     }
 
-    private function buildProcess(string $command, array $arguments = [], array $options = []): Process
+    private function buildProcess(string $command, array $arguments = []): Process
     {
-        $arguments = array_merge([
+        $preparedOptions = [];
+        foreach ($arguments as $optionKey => $optionValue) {
+            if ($optionValue === false || $optionValue === null) {
+                continue;
+            }
+
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
+
+        $cmd = array_merge([
             Console::getPhpCli(),
             'bin/console',
             $command,
-        ], $arguments);
+        ], $preparedOptions);
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
-
-        $process = new Process($parts);
+        $process = new Process($cmd);
         $process
             ->setTimeout($this->processTimeout)
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);

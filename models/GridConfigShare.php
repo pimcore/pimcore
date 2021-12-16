@@ -1,49 +1,55 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Version
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Exception\NotFoundException;
+
 /**
  * @method \Pimcore\Model\GridConfigShare\Dao getDao()
+ *
+ * @internal
  */
 class GridConfigShare extends AbstractModel
 {
     /**
      * @var int
      */
-    public $gridConfigId;
+    protected $gridConfigId;
 
     /**
      * @var int
      */
-    public $sharedWithUserId;
+    protected $sharedWithUserId;
 
     /**
      * @param int $gridConfigId
      * @param int $sharedWithUserId
      *
-     * @return GridConfigShare
+     * @return GridConfigShare|null
      */
     public static function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
     {
-        $share = new self();
-        $share->getDao()->getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId);
+        try {
+            $share = new self();
+            $share->getDao()->getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId);
 
-        return $share;
+            return $share;
+        } catch (NotFoundException $e) {
+            return null;
+        }
     }
 
     /**

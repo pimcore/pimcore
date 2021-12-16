@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -17,14 +18,16 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/tags")
+ *
+ * @internal
  */
 class TagsController extends AdminController
 {
@@ -135,7 +138,7 @@ class TagsController extends AdminController
             $filterTagList = new Tag\Listing();
             $filterTagList->setCondition('LOWER(`name`) LIKE ?', ['%' . $filterTagList->escapeLike(mb_strtolower($request->get('filter'))) . '%']);
             foreach ($filterTagList->load() as $filterTag) {
-                if ($filterTag->getParentId() == 0) {
+                if ($filterTag->getParentId() === 0) {
                     $filterIds[] = $filterTag->getId();
                 } else {
                     $ids = explode('/', $filterTag->getIdPath());
@@ -282,22 +285,25 @@ class TagsController extends AdminController
         $idList = [];
         switch ($elementType) {
             case 'object':
-                $object = \Pimcore\Model\DataObject\AbstractObject::getById($elementId);
+                $object = \Pimcore\Model\DataObject::getById($elementId);
                 if ($object) {
                     $idList = $this->getSubObjectIds($object, $eventDispatcher);
                 }
+
                 break;
             case 'asset':
                 $asset = \Pimcore\Model\Asset::getById($elementId);
                 if ($asset) {
                     $idList = $this->getSubAssetIds($asset, $eventDispatcher);
                 }
+
                 break;
             case 'document':
                 $document = \Pimcore\Model\Document::getById($elementId);
                 if ($document) {
                     $idList = $this->getSubDocumentIds($document, $eventDispatcher);
                 }
+
                 break;
         }
 

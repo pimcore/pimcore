@@ -3,20 +3,20 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.fieldcollections.field");
 pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'fieldcollection',
-    disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
-        "objectsMetadata"],
+    disallowedDataTypes: ["reverseObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
+        "advancedManyToManyObjectRelation"],
 
     uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',
     exportRoute: 'pimcore_admin_dataobject_class_exportfieldcollection',
@@ -71,6 +71,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         this.rootPanel = new Ext.form.FormPanel({
             title: '<b>' + t("general_settings") + '</b>',
             bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+            autoScroll: true,
             defaults: {
                 labelWidth: 200
             },

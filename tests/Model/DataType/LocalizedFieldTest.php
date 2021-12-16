@@ -1,8 +1,21 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -62,7 +75,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
 
         //save data for language "de" on same index
@@ -70,7 +83,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedItem = $object->getFieldcollection()->get(0);
 
         //initial value (en): index 0

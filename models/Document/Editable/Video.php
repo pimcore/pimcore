@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -26,10 +24,12 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable
+class Video extends Model\Document\Editable implements IdRewriterInterface
 {
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
+     *
+     * @internal
      *
      * @var int|string|null
      */
@@ -38,6 +38,8 @@ class Video extends Model\Document\Editable
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
+     * @internal
+     *
      * @var string|null
      */
     protected $type = 'asset';
@@ -45,16 +47,22 @@ class Video extends Model\Document\Editable
     /**
      * asset ID of poster image
      *
+     * @internal
+     *
      * @var int|null
      */
     protected $poster;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $title = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $description = '';
@@ -110,6 +118,18 @@ class Video extends Model\Document\Editable
     }
 
     /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setPoster($id)
+    {
+        $this->poster = $id;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getPoster()
@@ -118,9 +138,19 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getType
+     * @param string $type
      *
-     * @return string
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -128,9 +158,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -152,7 +180,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -166,9 +194,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -196,7 +222,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -225,7 +251,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -250,9 +276,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::admin
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function admin()
     {
@@ -266,11 +290,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -288,23 +308,19 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
-        if ($data['type']) {
+        if (isset($data['type'])) {
             $this->type = $data['type'];
         }
 
-        if ($data['title']) {
+        if (isset($data['title'])) {
             $this->title = $data['title'];
         }
 
-        if ($data['description']) {
+        if (isset($data['description'])) {
             $this->description = $data['description'];
         }
 
@@ -350,7 +366,7 @@ class Video extends Model\Document\Editable
      *
      * @return string
      */
-    public function getAssetCode($inAdmin = false)
+    private function getAssetCode($inAdmin = false)
     {
         $asset = Asset::getById($this->id);
         $config = $this->getConfig();
@@ -367,7 +383,7 @@ class Video extends Model\Document\Editable
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $thumbnailConfig) {
+        if ($asset instanceof Asset\Video) {
             $thumbnail = $asset->getThumbnail($thumbnailConfig);
             if ($thumbnail) {
                 $image = $this->getPosterThumbnailImage($asset);
@@ -404,7 +420,7 @@ class Video extends Model\Document\Editable
     /**
      * @param Asset\Video $asset
      *
-     * @return Asset\Image\Thumbnail|null
+     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
      */
     private function getPosterThumbnailImage(Asset\Video $asset)
     {
@@ -426,25 +442,23 @@ class Video extends Model\Document\Editable
             $imageThumbnailConf['format'] = 'JPEG';
         }
 
-        $image = null;
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
-            $image = $poster->getThumbnail($imageThumbnailConf);
-        } else {
-            if ($asset->getCustomSetting('image_thumbnail_asset')
-                && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
-                $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
-            } else {
-                $image = $asset->getImageThumbnail($imageThumbnailConf);
-            }
+            return $poster->getThumbnail($imageThumbnailConf);
+        }
+        if (
+            $asset->getCustomSetting('image_thumbnail_asset') &&
+            ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))
+        ) {
+            return $customPreviewAsset->getThumbnail($imageThumbnailConf);
         }
 
-        return $image;
+        return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
     /**
      * @return string
      */
-    public function getUrlCode()
+    private function getUrlCode()
     {
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
@@ -454,7 +468,7 @@ class Video extends Model\Document\Editable
      *
      * @return string
      */
-    public function getErrorCode($message = '')
+    private function getErrorCode($message = '')
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
@@ -486,10 +500,12 @@ class Video extends Model\Document\Editable
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
-                    parse_str($parts['query'], $vars);
+                    if (array_key_exists('query', $parts)) {
+                        parse_str($parts['query'], $vars);
 
-                    if ($vars['v']) {
-                        $youtubeId = $vars['v'];
+                        if ($vars['v']) {
+                            $youtubeId = $vars['v'];
+                        }
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
@@ -498,7 +514,7 @@ class Video extends Model\Document\Editable
                         $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
                     }
 
-                    if ($parts['host'] == 'youtu.be') {
+                    if (isset($parts['host']) && $parts['host'] === 'youtu.be') {
                         $youtubeId = trim($parts['path'], ' /');
                     }
                 }
@@ -511,25 +527,7 @@ class Video extends Model\Document\Editable
     /**
      * @return string
      */
-    public function getYoutubeUrlEmbedded()
-    {
-        if ($this->type == 'youtube') {
-            if ($youtubeId = $this->parseYoutubeId()) {
-                if (strpos($youtubeId, 'PL') === 0) {
-                    $youtubeId .= sprintf('videoseries?list=%s', $youtubeId);
-                }
-
-                return 'https://www.youtube-nocookie.com/embed/'.$youtubeId;
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * @return string
-     */
-    public function getYoutubeCode()
+    private function getYoutubeCode()
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -615,7 +613,7 @@ class Video extends Model\Document\Editable
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen data-type="pimcore_video_editable"></iframe>
         </div>';
 
         return $code;
@@ -624,7 +622,7 @@ class Video extends Model\Document\Editable
     /**
      * @return string
      */
-    public function getVimeoCode()
+    private function getVimeoCode()
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -663,13 +661,13 @@ class Video extends Model\Document\Editable
             $additional_params = '';
 
             $clipConfig = [];
-            if (is_array($config['config']['clip'])) {
+            if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
                 $clipConfig = $config['config']['clip'];
             }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['vimeo'])) {
+            if (isset($config['vimeo']) && is_array($config['vimeo'])) {
                 $configurations = array_merge($clipConfig, $config['vimeo']);
             }
 
@@ -703,7 +701,7 @@ class Video extends Model\Document\Editable
     /**
      * @return string
      */
-    public function getDailymotionCode()
+    private function getDailymotionCode()
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -733,11 +731,11 @@ class Video extends Model\Document\Editable
 
             $additional_params = '';
 
-            $clipConfig = is_array($config['config']['clip']) ? $config['config']['clip'] : [];
+            $clipConfig = isset($config['config']['clip']) && is_array($config['config']['clip']) ? $config['config']['clip'] : [];
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($config['dailymotion'])) {
+            if (isset($config['dailymotion']) && is_array($config['dailymotion'])) {
                 $configurations = array_merge($clipConfig, $config['dailymotion']);
             }
 
@@ -774,7 +772,7 @@ class Video extends Model\Document\Editable
      *
      * @return string
      */
-    public function getHtml5Code($urls = [], $thumbnail = null)
+    private function getHtml5Code($urls = [], $thumbnail = null)
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -806,11 +804,11 @@ class Video extends Model\Document\Editable
             $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [
-                '@context' => 'http://schema.org',
+                '@context' => 'https://schema.org',
                 '@type' => 'VideoObject',
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
-                'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
+                'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
                 'duration' => $durationString,
                 //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
@@ -860,6 +858,10 @@ class Video extends Model\Document\Editable
                 unset($attributes['controls']);
             }
 
+            if (isset($urls['mpd'])) {
+                $attributes['data-dashjs-player'] = null;
+            }
+
             foreach ($attributes as $key => $value) {
                 $attributesString .= ' ' . $key;
                 if (!empty($value)) {
@@ -874,7 +876,15 @@ class Video extends Model\Document\Editable
             $code .= '<video' . $attributesString . '>' . "\n";
 
             foreach ($urls as $type => $url) {
-                $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                if ($type == 'medias') {
+                    foreach ($url as $format => $medias) {
+                        foreach ($medias as $media => $mediaUrl) {
+                            $code .= '<source type="video/' . $format . '" src="' . $mediaUrl . '" media="' . $media . '"  />' . "\n";
+                        }
+                    }
+                } else {
+                    $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                }
             }
 
             $code .= '</video>' . "\n";
@@ -889,7 +899,7 @@ class Video extends Model\Document\Editable
      *
      * @return string
      */
-    public function getProgressCode($thumbnail = null)
+    private function getProgressCode($thumbnail = null)
     {
         $uid = 'video_' . uniqid();
         $code = '
@@ -923,7 +933,7 @@ class Video extends Model\Document\Editable
     /**
      * @return string
      */
-    public function getEmptyCode()
+    private function getEmptyCode()
     {
         $uid = 'video_' . uniqid();
 
@@ -931,7 +941,7 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -1023,21 +1033,11 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
-        if ($this->type == 'asset' && array_key_exists('asset', $idMapping) and array_key_exists($this->getId(), $idMapping['asset'])) {
+        if ($this->type == 'asset' && array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);
         }
     }

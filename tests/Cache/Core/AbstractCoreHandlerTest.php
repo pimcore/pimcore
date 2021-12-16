@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Cache\Core;
 
 use Monolog\Handler\BufferHandler;
@@ -55,7 +68,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     protected static $logHandlers = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -156,7 +169,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function setUpBeforeClass(): void
     {
@@ -164,7 +177,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function tearDownAfterClass(): void
     {
@@ -349,6 +362,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         for ($i = 1; $i <= $maxItems; $i++) {
             $this->assertTrue($this->handler->save('item_' . $i, $i));
+            $this->handler->cleanupQueue();
 
             $this->assertCount(
                 $i,
@@ -361,7 +375,8 @@ abstract class AbstractCoreHandlerTest extends TestCase
             $this->getHandlerPropertyValue('saveQueue')
         );
 
-        $this->assertFalse($this->handler->save('additional_item', 'foo'));
+        $this->handler->save('additional_item', 'foo');
+        $this->handler->cleanupQueue();
 
         $queue = $this->getHandlerPropertyValue('saveQueue');
         for ($i = 1; $i <= $maxItems; $i++) {
@@ -388,6 +403,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         for ($i = 1; $i <= $maxItems; $i++) {
             $this->assertTrue($this->handler->save('item_' . $i, $i));
+            $this->handler->cleanupQueue();
 
             $this->assertCount(
                 $i,
@@ -401,6 +417,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
         );
 
         $this->assertTrue($this->handler->save('additional_item', 'foo', [], null, 10));
+        $this->handler->cleanupQueue();
 
         $queue = $this->getHandlerPropertyValue('saveQueue');
 

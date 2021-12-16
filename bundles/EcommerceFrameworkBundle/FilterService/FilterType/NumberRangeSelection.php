@@ -1,21 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends AbstractFilterType
@@ -51,6 +54,7 @@ class NumberRangeSelection extends AbstractFilterType
                 foreach ($ranges->getData() as $row) {
                     if ((empty($row['from']) || ((float)$row['from'] <= $value)) && (empty($row['to']) || (float)$row['to'] > $value)) {
                         $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
+
                         break;
                     }
                 }
@@ -110,6 +114,9 @@ class NumberRangeSelection extends AbstractFilterType
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
+        if (!$filterDefinition instanceof FilterNumberRangeSelection) {
+            throw new InvalidConfigException('excpected a FilterNumberRangeSelection filter');
+        }
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;
 
@@ -120,25 +127,27 @@ class NumberRangeSelection extends AbstractFilterType
         } elseif ($rawValue == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
-            $value['from'] = $filterDefinition->getPreSelectFrom();
-            $value['to'] = $filterDefinition->getPreSelectTo();
+            $value['from'] = method_exists($filterDefinition, 'getPreSelectFrom') ? $filterDefinition->getPreSelectFrom() : null;
+            $value['to'] = method_exists($filterDefinition, 'getPreSelectTo') ? $filterDefinition->getPreSelectTo() : null;
         }
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
+
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), $field);
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' < ' . $productList->quote($value['to']), $field);
+                    $productList->addCondition($field . ' < ' . $db->quote($value['to']), $field);
                 }
             }
         }

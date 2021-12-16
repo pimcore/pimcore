@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
@@ -17,9 +18,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method Dao getDao()
+ * @method bool isReserved()
  */
 class Token extends AbstractModel
 {
@@ -27,26 +30,32 @@ class Token extends AbstractModel
      * @var int
      */
     public $id;
+
     /**
      * @var int
      */
     public $voucherSeriesId;
+
     /**
      * @var string
      */
     public $token;
+
     /**
      * @var int
      */
     public $length;
+
     /**
      * @var string
      */
     public $type;
+
     /**
      * @var int
      */
     public $usages;
+
     /**
      * @var int
      */
@@ -55,7 +64,7 @@ class Token extends AbstractModel
     /**
      * @param string $code
      *
-     * @return bool|Token
+     * @return Token|null
      */
     public static function getByCode($code)
     {
@@ -64,8 +73,8 @@ class Token extends AbstractModel
             $config->getDao()->getByCode($code);
 
             return $config;
-        } catch (\Exception $ex) {
-            return false;
+        } catch (NotFoundException $ex) {
+            return null;
         }
     }
 
@@ -116,14 +125,6 @@ class Token extends AbstractModel
         } else {
             return !$this->isUsed() && !$this->isReserved();
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isReserved()
-    {
-        return $this->getDao()->isReserved();
     }
 
     /**

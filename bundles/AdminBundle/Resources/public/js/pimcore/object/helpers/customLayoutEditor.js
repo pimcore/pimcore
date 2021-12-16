@@ -3,12 +3,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.helpers.customLayoutEditor");
@@ -776,7 +776,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     params: {
                         configuration: m,
                         values: n,
-                        id: this.data.id
+                        id: this.currentLayoutId
                     },
                     success: this.saveOnComplete.bind(this),
                     failure: this.saveOnError.bind(this)
@@ -906,6 +906,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     this.setCurrentNode("root");
                     this.editPanel.removeAll();
                     this.classDefinitionPanel.enable();
+                    this.data = data.data;
                     this.enableButtons();
                     this.layoutComboStore.reload();
                     this.currentLayoutId = data.id;
@@ -979,8 +980,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     enableButtons: function() {
-        this.saveButton.enable();
-        this.importButton.enable();
+
+        this.saveButton.setDisabled(!this.data.isWriteable);
+        this.importButton.setDisabled(!this.data.isWriteable);
         this.exportButton.enable();
     }
 

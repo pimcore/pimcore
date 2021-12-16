@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -20,7 +21,9 @@ use Pimcore\Model\DataObject\ClassDefinition;
 class ClassDefinitionManager
 {
     public const SAVED = 'saved';
+
     public const CREATED = 'created';
+
     public const DELETED = 'deleted';
 
     /**
@@ -38,10 +41,11 @@ class ClassDefinitionManager
 
             $cls = new ClassDefinition();
             $cls->setId($id);
-            $definitionFile = $cls->getDefinitionFile($name);
+            $cls->setName($name);
+            $definitionFile = $cls->getDefinitionFile();
 
             if (!file_exists($definitionFile)) {
-                $deleted[] = [$name, $id];
+                $deleted[] = [$name, $id, self::DELETED];
 
                 //ClassDefinition doesn't exist anymore, therefore we delete it
                 $cls->delete();
@@ -52,11 +56,11 @@ class ClassDefinitionManager
     }
 
     /**
-     * Updates all classes from PIMCORE_CLASS_DIRECTORY
+     * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      */
     public function createOrUpdateClassDefinitions(): array
     {
-        $objectClassesFolder = PIMCORE_CLASS_DIRECTORY;
+        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
         $files = glob($objectClassesFolder.'/*.php');
 
         $changes = [];

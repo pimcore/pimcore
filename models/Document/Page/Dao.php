@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Page;
@@ -34,7 +32,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id = null)
     {
@@ -47,14 +45,14 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$this->model->getId()]);
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $data['metaData'] = @unserialize($data['metaData']);
             if (!is_array($data['metaData'])) {
                 $data['metaData'] = [];
             }
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Page with the ID ' . $this->model->getId() . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Page with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 
