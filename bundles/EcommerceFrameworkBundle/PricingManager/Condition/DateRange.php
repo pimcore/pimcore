@@ -105,10 +105,10 @@ class DateRange implements DateRangeInterface
     {
         $json = json_decode($string);
 
-        $starting = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->starting);
+        $starting = \DateTime::createFromFormat('Y-m-d\TH:i:s.v\Z', $json->starting);
         $starting->setTime(0, 0, 0);
 
-        $ending = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->ending);
+        $ending = \DateTime::createFromFormat('Y-m-d\TH:i:s.v\Z', $json->ending);
         $ending->setTime(23, 59, 59);
 
         $this->setStarting($starting);
