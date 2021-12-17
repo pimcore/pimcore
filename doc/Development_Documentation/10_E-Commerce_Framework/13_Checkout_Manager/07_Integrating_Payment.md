@@ -59,7 +59,7 @@ A client side handling could look like as follows:
 /**
  * @Route("/checkout-payment-response", name="shop-checkout-payment-response")
  */
-public function paymentResponseAction(Request $request, Factory $factory, RequestStack $requestStack) {
+public function paymentResponseAction(Request $request, Factory $factory, SessionInterface $session) {
      
     // ... do some stuff, and get $cart
      
@@ -77,7 +77,7 @@ public function paymentResponseAction(Request $request, Factory $factory, Reques
         // $paymentStatus = $payment->executeDebit();
         // $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent($order);
         // $orderAgent->updatePayment($paymentStatus);
-        $session = $requestStack->getSession();
+ 
         $session->set("last_order_id", $order->getId());
         $goto = $this->generateUrl('shop-checkout-completed');
          

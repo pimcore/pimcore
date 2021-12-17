@@ -39,15 +39,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     private $openedSessions = 0;
 
     /**
-     * @var RequestStack
+     * @var SessionInterface
      */
-    protected RequestStack $requestStack;
+    protected $session;
 
     protected $readOnlySessionBagsCache = [];
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(SessionInterface $session)
     {
-        $this->requestStack = $requestStack;
+        $this->session = $session;
     }
 
     /**
@@ -55,15 +55,14 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        $session = $this->requestStack->getSession();
-        if (!$session->isStarted()) {
+        if (!$this->session->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
             });
         }
 
-        return $session->getId();
+        return $this->session->getId();
     }
 
     /**
@@ -71,7 +70,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionName()
     {
-        return $this->requestStack->getSession()->getName();
+        return $this->session->getName();
     }
 
     /**
@@ -130,7 +129,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function invalidate(int $lifetime = null): bool
     {
-        return $this->requestStack->getSession()->invalidate($lifetime);
+        return $this->session->invalidate($lifetime);
     }
 
     /**
@@ -220,12 +219,11 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
-        $session = $this->requestStack->getSession();
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
-        if (!$session->isStarted()) {
-            $session->start();
+        if (!$this->session->isStarted()) {
+            $this->session->start();
         }
 
         $this->openedSessions++;
@@ -235,7 +233,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             'count' => $this->openedSessions,
         ]);
 
-        return $session;
+        return $this->session;
     }
 
     /**
@@ -246,7 +244,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
-            $this->requestStack->getSession()->save();
+            $this->session->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
                 'name' => $this->getSessionName(),
