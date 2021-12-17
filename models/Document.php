@@ -232,7 +232,10 @@ class Document extends Element\AbstractElement
         $cacheKey = self::getPathCacheKey($path);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            return \Pimcore\Cache\Runtime::get($cacheKey);
+            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+            if ($document && static::typeMatch($document)) {
+                return $document;
+            }
         }
 
         try {
