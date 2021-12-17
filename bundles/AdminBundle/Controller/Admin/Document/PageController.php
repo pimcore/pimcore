@@ -22,7 +22,6 @@ use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Logger;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -263,6 +262,7 @@ class PageController extends DocumentControllerBase
             $messengerBusPimcoreCore->dispatch(
                 new GeneratePagePreviewMessage($docId, \Pimcore\Tool::getHostUrl())
             );
+
             break;
         }
 

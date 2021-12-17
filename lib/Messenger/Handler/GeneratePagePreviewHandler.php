@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Messenger\Handler;
@@ -32,7 +32,7 @@ class GeneratePagePreviewHandler
     public function __invoke(GeneratePagePreviewMessage $message)
     {
         try {
-            Service::generatePagePreview($message->getPageId(),null,  $message->getHostUrl());
+            Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());
         } catch (\Exception $e) {
             Logger::err(sprintf('Unable to generate preview of document: %s, reason: %s ', $message->getPageId(), $e->getMessage()));
         }
