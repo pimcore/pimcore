@@ -1380,50 +1380,15 @@ pimcore.layout.toolbar = Class.create({
 
     generatePagePreviews: function ()  {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_page_getlist'),
+            url: Routing.generate('pimcore_admin_document_page_generatepreviews'),
             success: function (res) {
                 var data = Ext.decode(res.responseText);
                 if(data && data.success) {
-                    var items = data.data;
-                    var totalItems = items.length;
-
-                    var progressBar = new Ext.ProgressBar({
-                        text: t('initializing')
-                    });
-
-                    var progressWin = new Ext.Window({
-                        title: t("generate_page_previews"),
-                        layout:'fit',
-                        width:200,
-                        bodyStyle: "padding: 10px;",
-                        closable:false,
-                        plain: true,
-                        items: [progressBar],
-                        listeners: pimcore.helpers.getProgressWindowListeners()
-                    });
-
-                    progressWin.show();
-
-                    var generate = function () {
-                        if(items.length > 1) {
-                            var next = items.shift();
-
-                            var date = new Date();
-                            var path = next.path + "?pimcore_preview=true&time=" + date.getTime();
-
-                            pimcore.helpers.generatePagePreview(next.id, path, function () {
-                                generate();
-                            });
-
-                            var status = (totalItems-items.length) / totalItems;
-                            progressBar.updateProgress(status, (Math.ceil(status*100) + "%"));
-                        } else {
-                            progressWin.close();
-                        }
-                    };
-
-                    generate();
+                    pimcore.helpers.showNotification(t("success"), t("success_generating_previews"), "success");
                 }
+            },
+            failure: function (message) {
+                pimcore.helpers.showNotification(t("error"), t("error_generating_previews"), "error", t(message));
             }
         });
     },
