@@ -16,8 +16,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Logger;
+use Pimcore\Model\DataObject;
 
-class DefaultMockup implements ProductInterface
+class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
 {
     /** @var int */
     protected $id;
@@ -27,6 +28,12 @@ class DefaultMockup implements ProductInterface
 
     /** @var array */
     protected $relations;
+
+    /**
+     * contains link generators by class type (just for caching)
+     * @var array
+     */
+    protected static array $linkGenerators = [];
 
     public function __construct($id, $params, $relations)
     {
@@ -39,6 +46,13 @@ class DefaultMockup implements ProductInterface
                 $this->relations[$relation['fieldname']][] = ['id' => $relation['dest'], 'type' => $relation['type']];
             }
         }
+    }
+
+    public function getLinkGenerator(): ?DataObject\ClassDefinition\LinkGeneratorInterface {
+        if($classId = $this->params['o_classId'] ?? null){
+            return static::$linkGenerators[$classId] ??= DataObject\ClassDefinition::getById($classId)->getLinkGenerator();
+        }
+        return null;
     }
 
     /**
