@@ -21,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -37,18 +37,18 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     const FLASH_MESSAGE_BAG_KEY = 'ecommerceframework_trackingcode_flashmessagelistener';
 
     /**
-     * @var RequestStack
+     * @var SessionInterface
      */
-    protected RequestStack $requestStack;
+    protected $session;
 
     /**
      * @var TrackingManager
      */
     protected $trackingManger;
 
-    public function __construct(RequestStack $requestStack, TrackingManager $trackingManager)
+    public function __construct(SessionInterface $session, TrackingManager $trackingManager)
     {
-        $this->requestStack = $requestStack;
+        $this->session = $session;
         $this->trackingManger = $trackingManager;
     }
 
@@ -74,9 +74,8 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
         // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
         $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY, false);
-        $session = $this->requestStack->getSession();
-        if ($flashBagCookie && $session instanceof Session) {
-            $trackedCodes = $session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
+        if ($flashBagCookie && $this->session instanceof Session) {
+            $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
             if (is_array($trackedCodes) && count($trackedCodes)) {
                 foreach ($this->trackingManger->getTrackers() as $tracker) {
@@ -97,16 +96,15 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
-        $session = $this->requestStack->getSession();
 
         /**
          * If tracking codes are forwarded as FlashMessage, then set a cookie which is checked in subsequent request for successful handshake
          * else clear cookie, if set and FlashBag is already processed.
          */
         if (
-            $session instanceof Session &&
-            $session->isStarted() &&
-            $session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)
+            $this->session instanceof Session &&
+            $this->session->isStarted() &&
+            $this->session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)
         ) {
             $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, true));
             $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed', true);
