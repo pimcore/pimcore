@@ -591,11 +591,25 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($result) {
             $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
         } else {
+            
+             $itemData = $item->get();
+            if (!is_string($itemData)) {
+                try {
+                    $itemData = serialize($itemData);
+                } catch (\Throwable) {
+                    $itemSizeText = "unknown";
+                }
+            }
+
+            if (!$itemSizeText) {
+                $itemSizeText = formatBytes(mb_strlen((string)$itemData));
+            }
+            
             $this->logger->error(
                 'Failed to add entry {key} to cache. Item size was {itemSize}',
                 [
                     'key' => $item->getKey(),
-                    'itemSize' => formatBytes(mb_strlen(!is_string($item->get()) ? serialize($item->get()) : $item->get())),
+                    'itemSize' => $itemSizeText,
                 ]
             );
         }
