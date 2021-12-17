@@ -595,7 +595,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 'Failed to add entry {key} to cache. Item size was {itemSize}',
                 [
                     'key' => $item->getKey(),
-                    'itemSize' => formatBytes(strlen($item->get())),
+                    'itemSize' => formatBytes(mb_strlen(!is_string($item->get()) ? serialize($item->get()) : $item->get())),
                 ]
             );
         }
