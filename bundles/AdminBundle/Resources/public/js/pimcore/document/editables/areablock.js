@@ -848,12 +848,15 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 },
                 success: function (response) {
                     let res = Ext.decode(response.responseText);
+                    let element;
+
                     if(!this.elements.length) {
-                        Ext.get(this.id).setHtml(res['htmlCode']);
+                        element = Ext.get(this.id).setHtml(res['htmlCode']);
+                        element = element.down('.pimcore_block_entry');
                     } else if (this.elements[index-1]) {
-                        Ext.get(this.elements[index-1]).insertHtml('afterEnd', res['htmlCode'], true);
+                        element = Ext.get(this.elements[index-1]).insertHtml('afterEnd', res['htmlCode'], true);
                     } else if (this.elements[index]) {
-                        Ext.get(this.elements[index]).insertHtml('beforeBegin', res['htmlCode'], true);
+                        element = Ext.get(this.elements[index]).insertHtml('beforeBegin', res['htmlCode'], true);
                     }
 
                     res['editableDefinitions'].forEach(editableDef => {
@@ -862,6 +865,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
                     this.refresh();
 
+                    if (element && element.dom) {
+                        element.dom.dispatchEvent(new Event('pimcoreEditableAdded', { bubbles: true }));
+                    }
                 }.bind(this)
             });
         }
