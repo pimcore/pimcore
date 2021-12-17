@@ -99,18 +99,18 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $name = $this->getCurrentRoute();
         }
 
-        $object = $parameters["object"] ?? null;
+        $object = $parameters['object'] ?? null;
         $linkGenerator = null;
 
-        if($object instanceof LinkGeneratorAwareInterface){ //e.g. Mockup
+        if ($object instanceof LinkGeneratorAwareInterface) { //e.g. Mockup
             $linkGenerator = $object->getLinkGenerator();
-        }elseif($object instanceof Concrete){
+        } elseif ($object instanceof Concrete) {
             $linkGenerator = $object->getClass()->getLinkGenerator();
         }
 
-        if($linkGenerator){
-            if(array_key_exists("object",$parameters)){
-                unset($parameters["object"]);
+        if ($linkGenerator) {
+            if (array_key_exists('object', $parameters)) {
+                unset($parameters['object']);
             }
             $path = $linkGenerator->generate($object, [
                 'route' => $name,
