@@ -354,7 +354,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
-        if ($data === null || $unserializedData === null) {
+        if ($data === null || $unserializedData === null || $unserializedData === "") {
             return [];
         }
 
