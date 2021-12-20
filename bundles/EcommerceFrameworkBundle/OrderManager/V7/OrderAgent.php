@@ -618,7 +618,10 @@ class OrderAgent implements OrderAgentInterface
         $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
         $currentPaymentInformation->setPaymentState($status->getStatus());
         $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' ' . $status->getMessage());
-        $currentPaymentInformation->setProviderData(json_encode($status->getData()));
+
+        if (method_exists($currentPaymentInformation, 'setProviderData')) {
+            $currentPaymentInformation->setProviderData(json_encode($status->getData()));
+        }
 
         // opt. save additional payment data separately
         foreach ($status->getData() as $field => $value) {

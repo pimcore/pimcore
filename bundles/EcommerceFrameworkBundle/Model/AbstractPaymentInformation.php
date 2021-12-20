@@ -98,11 +98,4 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
      * @return $this
      */
     abstract public function setInternalPaymentId(?string $internalPaymentId);
-
-    /**
-     * @param string|null $providerData
-     *
-     * @return $this
-     */
-    abstract public function setProviderData(?string $providerData);
 }
