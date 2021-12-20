@@ -368,6 +368,10 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
                     {
                         condition[ item.name ] = item.getForm().getFieldValues();
                     }
+                    else if(item.xtype === 'datefield')
+                    {
+                        condition[ item.name ] = item.getSubmitValue();
+                    }
                     else
                     {
                         condition[ item.getName() ] = item.getValue();
