@@ -72,6 +72,11 @@ class ThumbnailsImageCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'if target image format is set to auto in config, do not generate WEBP images for them'
             )->addOption(
+                'skip-avif',
+                null,
+                InputOption::VALUE_NONE,
+                'if target image format is set to auto in config, do not generate AVIF images for them'
+            )->addOption(
                 'skip-medias',
                 null,
                 InputOption::VALUE_NONE,
@@ -213,6 +218,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                     $webpConfig = clone $resConfig;
                     $webpConfig->setFormat('webp');
                     $thumbnailsToGenerate[] = $webpConfig;
+                }
+
+                if (!$input->getOption('skip-avif') && $resConfig->getFormat() === 'SOURCE') {
+                    $avifConfig = clone $resConfig;
+                    $avifConfig->setFormat('avif');
+                    $thumbnailsToGenerate[] = $avifConfig;
                 }
             }
         }
