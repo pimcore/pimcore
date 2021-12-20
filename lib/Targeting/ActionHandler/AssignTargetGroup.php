@@ -19,6 +19,7 @@ namespace Pimcore\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Targeting\ConditionMatcherInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
@@ -31,7 +32,9 @@ class AssignTargetGroup implements ActionHandlerInterface
      */
     private $storage;
 
+    // @phpstan-ignore-next-line
     public function __construct(
+        ConditionMatcherInterface $conditionMatcher, // TODO: Remove in Pimcore 11
         TargetingStorageInterface $storage
     ) {
         $this->storage = $storage;
