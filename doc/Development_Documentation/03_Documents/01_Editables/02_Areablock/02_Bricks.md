@@ -507,6 +507,27 @@ class Iframe extends AbstractTemplateAreabrick
 }
 ```
 
+## JavaScript editmode handling
+
+To run your own JavaScript code when a brick gets added to a document in editmode, you can listen to the `pimcoreEditableAdded` event:
+
+```js
+const initializeBricks = (bricks) => {
+  // Put your custom JS code here
+  console.log(bricks);
+};
+
+const brickClass = '.example-brick';
+
+// Runs on DOM ready
+initializeBricks(document.querySelectorAll(brickClass));
+
+// Runs on editable added
+document.addEventListener('pimcoreEditableAdded', (event) => {
+  initializeBricks(event.target.querySelectorAll(brickClass));
+});
+```
+
 ## Examples
 
 You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/10.x/src/Document/Areabrick).
