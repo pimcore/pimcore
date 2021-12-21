@@ -98,7 +98,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                 if(label.indexOf('<') >= 0) {
                     label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
                 }
-                storeData.push({id: value, text: label});
+                storeData.push({id: value.toString(), text: label});
             }
         }
 
