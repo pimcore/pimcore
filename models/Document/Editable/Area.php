@@ -149,7 +149,7 @@ class Area extends Model\Document\Editable
             $dialogConfig->setId('dialogBox-' . $this->getName());
         }
 
-        if ($dialogConfig) {
+        if ($dialogConfig && !$dialogConfig->isEmpty()) {
             $attributes = $this->getEditmodeElementAttributes();
             $dialogAttributes = [
                 'data-dialog-id' => $dialogConfig->getId(),

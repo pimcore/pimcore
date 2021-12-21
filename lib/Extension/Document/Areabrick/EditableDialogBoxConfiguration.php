@@ -154,6 +154,14 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->items);
+    }
+
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
