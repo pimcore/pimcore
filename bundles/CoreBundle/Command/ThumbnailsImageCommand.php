@@ -228,8 +228,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                 }
 
                 $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getGridConfig();
             } elseif (!$input->getOption('thumbnails')) {
                 $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getGridConfig();
             }
         }
 

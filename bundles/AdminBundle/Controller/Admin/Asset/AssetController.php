@@ -1308,6 +1308,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
+        if ($request->get('frame')) {
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getGridConfig((bool)$request->get('hdpi'));
+        }
+
         $cropPercent = $request->get('cropPercent');
         if ($cropPercent && filter_var($cropPercent, FILTER_VALIDATE_BOOLEAN)) {
             $thumbnailConfig->addItemAt(0, 'cropPercent', [

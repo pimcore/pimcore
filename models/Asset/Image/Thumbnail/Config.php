@@ -35,6 +35,11 @@ final class Config extends Model\AbstractModel
     protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
 
     /**
+     * @internal
+     */
+    protected const GRID_THUMBNAIL_NAME = 'pimcore-system-grid';
+
+    /**
      * format of array:
      * array(
      array(
@@ -292,6 +297,43 @@ final class Config extends Model\AbstractModel
         }
 
         $thumbnail->setHighResolution(2);
+
+        return $thumbnail;
+    }
+
+    /**
+     * @internal
+     *
+     * @param bool $hdpi
+     *
+     * @return Config
+     */
+    public static function getGridConfig($hdpi = false)
+    {
+        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $thumbnail = null;
+
+        if ($customPreviewImageThumbnail) {
+            $thumbnail = self::getByName($customPreviewImageThumbnail);
+        }
+
+        if (!$thumbnail) {
+            $thumbnail = new self();
+            $thumbnail->setName(self::GRID_THUMBNAIL_NAME);
+            $thumbnail->addItem('scaleByWidth', [
+                'width' => 88,
+            ]);
+            $thumbnail->addItem('setBackgroundImage', [
+                'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
+                'mode' => 'asTexture',
+            ]);
+            $thumbnail->setQuality(60);
+            $thumbnail->setFormat('PJPEG');
+        }
+
+        if ($hdpi) {
+            $thumbnail->setHighResolution(2);
+        }
 
         return $thumbnail;
     }
