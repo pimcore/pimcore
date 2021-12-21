@@ -1073,9 +1073,6 @@ class Asset extends Element\AbstractElement
             // remove all properties
             $this->getDao()->deleteAllProperties();
 
-            // remove all metadata
-            $this->getDao()->deleteAllMetadata();
-
             // remove all tasks
             $this->getDao()->deleteAllTasks();
 
