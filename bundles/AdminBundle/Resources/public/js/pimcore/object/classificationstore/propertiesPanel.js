@@ -125,13 +125,16 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 sortable: true,
                 dataIndex: 'name',
                 filter: 'string',
-                editor: new Ext.form.TextField({})
+                editor: new Ext.form.TextField({}),
+                renderer: Ext.util.Format.htmlEncode
             }
 
         );
 
-        gridColumns.push({text: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({text: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({text: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string',
+            renderer: Ext.util.Format.htmlEncode});
+        gridColumns.push({text: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string',
+            renderer: Ext.util.Format.htmlEncode});
         gridColumns.push({text: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
         gridColumns.push({text: t("type"), width: 150, sortable: true, dataIndex: 'type', filter: 'string',
             editor: new Ext.form.ComboBox({
@@ -285,7 +288,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         var definition = data.data.definition;
         if (definition) {
             definition = Ext.util.JSON.decode(definition);
-            definition.name = data.data.name;
+            definition.name = Ext.util.Format.htmlEncode(data.data.name);
         } else {
             definition = {
                 name: data.data.name

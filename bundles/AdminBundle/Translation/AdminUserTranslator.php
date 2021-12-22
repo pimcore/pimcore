@@ -57,7 +57,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
@@ -78,7 +78,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             return $this->translator->getLocale();

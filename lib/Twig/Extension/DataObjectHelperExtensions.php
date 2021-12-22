@@ -30,7 +30,7 @@ class DataObjectHelperExtensions extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getTests()
+    public function getTests(): array
     {
         return [
             new TwigTest('pimcore_data_object', static function ($object) {

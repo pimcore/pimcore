@@ -29,7 +29,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @internal
      *
-     * @var array
+     * @var Element\ElementInterface[]
      */
     protected $elements = [];
 
@@ -266,19 +266,20 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      */
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind()// : void
     {
         $this->setElements();
         reset($this->elements);
     }
 
     /**
-     * {@inheritdoc}
+     * @return Element\ElementInterface|false
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : Element\ElementInterface|false
     {
         $this->setElements();
 
@@ -286,9 +287,10 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     }
 
     /**
-     * {@inheritdoc}
+     * @return int|null
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : int|null
     {
         $this->setElements();
 
@@ -296,20 +298,20 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()
+    public function next()// : void
     {
         $this->setElements();
         next($this->elements);
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid()// : bool
     {
         $this->setElements();
 

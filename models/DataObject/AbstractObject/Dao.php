@@ -293,18 +293,29 @@ class Dao extends Model\Element\Dao
      *
      * @param array $objectTypes
      * @param bool|null $includingUnpublished
+     * @param Model\User $user
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null, $user = null)
     {
-        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ?';
+        $sql = 'SELECT 1 FROM objects o WHERE o_parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
         }
 
-        $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+        if (!empty($objectTypes)) {
+            $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "')";
+        }
+
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $sql .= ' AND (select `list` as locate from `users_workspaces_object` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
+        }
+        $sql .= ' LIMIT 1';
 
         $c = $this->db->fetchOne($sql, $this->model->getId());
 

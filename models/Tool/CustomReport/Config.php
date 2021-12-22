@@ -601,8 +601,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->sharedRoleNames = $sharedRoleNames;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = $this->getObjectVars();
         $data['sharedUserIds'] = $this->getSharedUserIds();

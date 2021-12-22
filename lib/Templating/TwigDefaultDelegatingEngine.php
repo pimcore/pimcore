@@ -49,7 +49,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * {@inheritdoc}
      */
-    public function exists($name)
+    public function exists($name): bool
     {
         if (!$this->delegate) {
             return $this->twig->getLoader()->exists($name);
@@ -63,7 +63,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function render($name, array $parameters = [])
+    public function render($name, array $parameters = []): string
     {
         if (!$this->delegate) {
             return $this->twig->render($name, $parameters);
@@ -75,7 +75,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * {@inheritdoc}
      */
-    public function supports($name)
+    public function supports($name): bool
     {
         if (!$this->delegate) {
             return true;

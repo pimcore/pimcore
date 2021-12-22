@@ -406,7 +406,7 @@ class Cse implements PaginateListingInterface
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count()// : int
     {
         $this->getResults();
 
@@ -430,16 +430,21 @@ class Cse implements PaginateListingInterface
     /**
      * Methods for Iterator
      */
+
+    /**
+     * @return void
+     */
     #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind()// : void
     {
         reset($this->results);
     }
 
     /**
-     * @return mixed
+     * @return Item|false
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : Item|false
     {
         $this->getResults();
 
@@ -447,9 +452,10 @@ class Cse implements PaginateListingInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : int|null
     {
         $this->getResults();
 
@@ -460,7 +466,7 @@ class Cse implements PaginateListingInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()
+    public function next()// : void
     {
         $this->getResults();
         next($this->results);
@@ -469,7 +475,8 @@ class Cse implements PaginateListingInterface
     /**
      * @return bool
      */
-    public function valid(): bool
+    #[\ReturnTypeWillChange]
+    public function valid()// : bool
     {
         $this->getResults();
 

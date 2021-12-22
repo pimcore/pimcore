@@ -509,9 +509,12 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return Page
+     *
+     * @throws \Exception
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : Page
     {
         $this->_sort();
         $hash = key($this->_index);
@@ -524,9 +527,10 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : mixed
     {
         $this->_sort();
 
@@ -534,30 +538,30 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()
+    public function next()// : void
     {
         $this->_sort();
         next($this->_index);
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind()// : void
     {
         $this->_sort();
         reset($this->_index);
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid()// : bool
     {
         $this->_sort();
 
@@ -565,19 +569,19 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function hasChildren()
+    public function hasChildren()// : bool
     {
         return $this->hasPages();
     }
 
     /**
-     * @return Page|\RecursiveIterator|null
+     * @return Page|null
      */
     #[\ReturnTypeWillChange]
-    public function getChildren()
+    public function getChildren()// : Page|null
     {
         $hash = key($this->_index);
 
@@ -589,10 +593,10 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count()// : int
     {
         return count($this->_index);
     }

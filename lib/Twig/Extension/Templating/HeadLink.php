@@ -253,7 +253,7 @@ class HeadLink extends CacheBusterAware
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value)// : void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
