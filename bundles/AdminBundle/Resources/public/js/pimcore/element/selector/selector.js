@@ -36,9 +36,9 @@ pimcore.element.selector.selector = Class.create({
         var restrictionDefaults = {
             type: ["document","asset","object"],
             subtype: {
-                document: ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"],
-                asset: ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"],
-                object: ["object", "folder", "variant"]
+                document: pimcore.globalmanager.get('document_search_types'),
+                asset: pimcore.globalmanager.get('asset_search_types'),
+                object: pimcore.globalmanager.get('object_search_types')
             },
             specific: {
                 classes: possibleClassRestrictions // put here all classes from global class store ...
