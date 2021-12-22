@@ -24,7 +24,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
- * @method Model\Asset\Listing\Dao getDao()
+ * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQueryBuilder(?callable $callback)
  */
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
