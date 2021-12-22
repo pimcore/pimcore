@@ -53,8 +53,8 @@ CREATE TABLE `assets_metadata` (
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
+  INDEX `name` (`name`),
   CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
