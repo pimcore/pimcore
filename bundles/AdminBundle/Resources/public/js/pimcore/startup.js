@@ -329,6 +329,11 @@ Ext.onReady(function () {
         pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"]);
     }
 
+    //search element types
+    pimcore.globalmanager.add("document_search_types", ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"]);
+    pimcore.globalmanager.add("asset_search_types", ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"]);
+    pimcore.globalmanager.add("object_search_types", ["object", "folder", "variant"]);
+
     //translation admin keys
     pimcore.globalmanager.add("translations_admin_missing", []);
     pimcore.globalmanager.add("translations_admin_added", []);
