@@ -375,18 +375,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     *
-     * @link http://php.net/manual/en/countable.count.php
-     *
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count()/* : int */
     {
         return $this->getTotalCount();
     }

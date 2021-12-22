@@ -188,47 +188,34 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     *
-     * @link http://php.net/manual/en/iterator.current.php
-     *
-     * @return mixed Can return any type.
+     * @return OrderListItemInterface|false
      */
     #[\ReturnTypeWillChange]
-    public function current()
+    public function current()/* : OrderListItemInterface|false */
     {
         $this->load();
         if ($this->count() > 0) {
             return $this->createResultItem($this->list->current());
         }
+
+        return false;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()
+    public function next()/* : void */
     {
         $this->load();
         $this->list->next();
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     *
-     * @link http://php.net/manual/en/iterator.key.php
-     *
-     * @return mixed scalar on success, or null on failure.
+     * @return string|int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()
+    public function key()/* : string|int|null */
     {
         $this->load();
 
@@ -236,16 +223,10 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     *
-     * @link http://php.net/manual/en/iterator.valid.php
-     *
-     * @return bool The return value will be casted to boolean and then evaluated.
-     *       Returns true on success or false on failure.
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid()/* : bool */
     {
         $this->load();
 
@@ -253,52 +234,32 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind()/* : void */
     {
         $this->load();
         $this->list->rewind();
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Seeks to a position
-     *
-     * @link http://php.net/manual/en/seekableiterator.seek.php
-     *
-     * @param int $position <p>
-     *                      The position to seek to.
-     *                      </p>
+     * @param int $position
      *
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function seek($position)
+    public function seek($position)/* : void */
     {
         $this->load();
         $this->list->seek($position);
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     *
-     * @link http://php.net/manual/en/countable.count.php
-     *
-     * @return int The custom count as an integer.
-     *       </p>
-     *       <p>
-     *       The return value is cast to an integer.
+     * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count()/* : int */
     {
         $this->load();
 
@@ -306,22 +267,12 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Whether a offset exists
+     * @param mixed $offset
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param mixed $offset <p>
-     *                      An offset to check for.
-     *                      </p>
-     *
-     * @return bool true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset)/* : bool */
     {
         $this->load();
 
@@ -329,19 +280,12 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to retrieve
+     * @param mixed $offset
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to retrieve.
-     *                      </p>
-     *
-     * @return mixed Can return all value types.
+     * @return OrderListItemInterface
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset)/* : OrderListItemInterface */
     {
         $this->load();
 
@@ -349,40 +293,24 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to set
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to assign the value to.
-     *                      </p>
-     * @param mixed $value  <p>
-     *                      The value to set.
-     *                      </p>
+     * @param mixed $offset
+     * @param mixed $value
      *
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value)/* : void */
     {
         // not allowed, read only
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to unset
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to unset.
-     *                      </p>
+     * @param mixed $offset
      *
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset)/* : void */
     {
         // not allowed, read only
     }

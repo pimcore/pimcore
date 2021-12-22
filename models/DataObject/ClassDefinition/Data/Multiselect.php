@@ -585,7 +585,7 @@ class Multiselect extends Data implements
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize()/* : static */
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;

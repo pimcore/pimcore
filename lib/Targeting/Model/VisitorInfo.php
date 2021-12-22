@@ -316,8 +316,11 @@ class VisitorInfo implements \IteratorAggregate
         $this->data = $data;
     }
 
+    /**
+     * @return \ArrayIterator
+     */
     #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator()/* : \ArrayIterator */
     {
         return new \ArrayIterator($this->data);
     }

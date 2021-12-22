@@ -263,7 +263,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return int
      */
-    public function count()
+    #[\ReturnTypeWillChange]
+    public function count()/* : int */
     {
         $container = $this->getContainer();
 
@@ -277,7 +278,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)/* : bool */
     {
         return $this->getContainer()->offsetExists($offset);
     }
@@ -289,7 +291,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return mixed
      */
-    public function offsetGet($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)/* : mixed */
     {
         return $this->getContainer()->offsetGet($offset);
     }
@@ -302,7 +305,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)/* : void */
     {
         $this->getContainer()->offsetSet($offset, $value);
     }
@@ -314,7 +318,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)/* : void */
     {
         $this->getContainer()->offsetUnset($offset);
     }
@@ -322,9 +327,10 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * IteratorAggregate: get Iterator
      *
-     * @return \Iterator
+     * @return \Traversable
      */
-    public function getIterator()
+    #[\ReturnTypeWillChange]
+    public function getIterator()/* : \Traversable */
     {
         return $this->getContainer()->getIterator();
     }
