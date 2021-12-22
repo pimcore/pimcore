@@ -40,7 +40,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return Hotspotimage|false
      */
     #[\ReturnTypeWillChange]
-    public function current()/* : Hotspotimage|false */
+    public function current()// : Hotspotimage|false
     {
         return current($this->items);
     }
@@ -49,7 +49,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()/* : void */
+    public function next()// : void
     {
         next($this->items);
     }
@@ -58,7 +58,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function key()/* : mixed */
+    public function key()// : mixed
     {
         return key($this->items);
     }
@@ -67,7 +67,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()/* : bool */
+    public function valid()// : bool
     {
         return $this->current() !== false;
     }
@@ -76,7 +76,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()/* : void */
+    public function rewind()// : void
     {
         reset($this->items);
     }

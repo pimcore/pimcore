@@ -278,7 +278,7 @@ class Relations extends Model\Document\Editable implements \Iterator
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()/* : void */
+    public function rewind()// : void
     {
         $this->setElements();
         reset($this->elements);
@@ -288,7 +288,7 @@ class Relations extends Model\Document\Editable implements \Iterator
      * @return Element\ElementInterface|false
      */
     #[\ReturnTypeWillChange]
-    public function current()/* : Element\ElementInterface|false */
+    public function current()// : Element\ElementInterface|false
     {
         $this->setElements();
 
@@ -299,7 +299,7 @@ class Relations extends Model\Document\Editable implements \Iterator
      * @return int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()/* : int|null */
+    public function key()// : int|null
     {
         $this->setElements();
 
@@ -310,7 +310,7 @@ class Relations extends Model\Document\Editable implements \Iterator
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()/* : void */
+    public function next()// : void
     {
         $this->setElements();
         next($this->elements);
@@ -320,7 +320,7 @@ class Relations extends Model\Document\Editable implements \Iterator
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()/* : bool */
+    public function valid()// : bool
     {
         $this->setElements();
 

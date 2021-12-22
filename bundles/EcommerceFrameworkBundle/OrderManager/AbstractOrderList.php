@@ -191,7 +191,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return OrderListItemInterface|false
      */
     #[\ReturnTypeWillChange]
-    public function current()/* : OrderListItemInterface|false */
+    public function current()// : OrderListItemInterface|false
     {
         $this->load();
         if ($this->count() > 0) {
@@ -205,7 +205,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()/* : void */
+    public function next()// : void
     {
         $this->load();
         $this->list->next();
@@ -215,7 +215,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return string|int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()/* : string|int|null */
+    public function key()// : string|int|null
     {
         $this->load();
 
@@ -226,7 +226,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()/* : bool */
+    public function valid()// : bool
     {
         $this->load();
 
@@ -237,7 +237,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()/* : void */
+    public function rewind()// : void
     {
         $this->load();
         $this->list->rewind();
@@ -249,7 +249,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function seek($position)/* : void */
+    public function seek($position)// : void
     {
         $this->load();
         $this->list->seek($position);
@@ -259,7 +259,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()/* : int */
+    public function count()// : int
     {
         $this->load();
 
@@ -272,7 +272,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)/* : bool */
+    public function offsetExists($offset)// : bool
     {
         $this->load();
 
@@ -285,7 +285,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return OrderListItemInterface
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)/* : OrderListItemInterface */
+    public function offsetGet($offset)// : OrderListItemInterface
     {
         $this->load();
 
@@ -299,7 +299,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)/* : void */
+    public function offsetSet($offset, $value)// : void
     {
         // not allowed, read only
     }
@@ -310,7 +310,7 @@ abstract class AbstractOrderList implements OrderListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)/* : void */
+    public function offsetUnset($offset)// : void
     {
         // not allowed, read only
     }

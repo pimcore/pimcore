@@ -116,7 +116,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()/* : int */
+    public function count()// : int
     {
         return $this->getTotalCount();
     }

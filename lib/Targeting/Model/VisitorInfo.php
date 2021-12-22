@@ -320,7 +320,7 @@ class VisitorInfo implements \IteratorAggregate
      * @return \ArrayIterator
      */
     #[\ReturnTypeWillChange]
-    public function getIterator()/* : \ArrayIterator */
+    public function getIterator()// : \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }

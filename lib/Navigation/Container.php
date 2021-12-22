@@ -514,7 +514,7 @@ class Container implements \RecursiveIterator, \Countable
      * @throws \Exception
      */
     #[\ReturnTypeWillChange]
-    public function current()/* : Page */
+    public function current()// : Page
     {
         $this->_sort();
         $hash = key($this->_index);
@@ -530,7 +530,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function key()/* : mixed */
+    public function key()// : mixed
     {
         $this->_sort();
 
@@ -541,7 +541,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()/* : void */
+    public function next()// : void
     {
         $this->_sort();
         next($this->_index);
@@ -551,7 +551,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()/* : void */
+    public function rewind()// : void
     {
         $this->_sort();
         reset($this->_index);
@@ -561,7 +561,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()/* : bool */
+    public function valid()// : bool
     {
         $this->_sort();
 
@@ -572,7 +572,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function hasChildren()/* : bool */
+    public function hasChildren()// : bool
     {
         return $this->hasPages();
     }
@@ -581,7 +581,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return Page|null
      */
     #[\ReturnTypeWillChange]
-    public function getChildren()/* : Page|null */
+    public function getChildren()// : Page|null
     {
         $hash = key($this->_index);
 
@@ -596,7 +596,7 @@ class Container implements \RecursiveIterator, \Countable
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()/* : int */
+    public function count()// : int
     {
         return count($this->_index);
     }

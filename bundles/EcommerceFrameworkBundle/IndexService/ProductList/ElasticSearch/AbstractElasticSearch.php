@@ -1354,7 +1354,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()/* : int */
+    public function count()// : int
     {
         $this->getProducts();
 
@@ -1365,7 +1365,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return IndexableInterface|false
      */
     #[\ReturnTypeWillChange]
-    public function current()/* : IndexableInterface|false */
+    public function current()// : IndexableInterface|false
     {
         $this->getProducts();
 
@@ -1392,7 +1392,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()/* : int|null */
+    public function key()// : int|null
     {
         $this->getProducts();
 
@@ -1403,7 +1403,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()/* : void */
+    public function next()// : void
     {
         $this->getProducts();
         next($this->products);
@@ -1413,7 +1413,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()/* : void */
+    public function rewind()// : void
     {
         $this->getProducts();
         reset($this->products);
@@ -1423,7 +1423,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()/* : bool */
+    public function valid()// : bool
     {
         return $this->current() !== false;
     }
