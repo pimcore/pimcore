@@ -138,5 +138,5 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
 };
 
 pimcore.helpers.grid.getTranslationColumnRenderer = function (value, metaData, record, rowIndex, colIndex, store) {
-    return t(value);
+    return Ext.util.Format.htmlEncode(t(value));
 };

@@ -741,17 +741,10 @@ class DefaultMysql implements ProductListInterface
      */
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     *
-     * @link http://php.net/manual/en/countable.count.php
-     *
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * @return int
      */
-    public function count()
+    #[\ReturnTypeWillChange]
+    public function count()// : int
     {
         if ($this->totalCount === null) {
             $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
@@ -761,19 +754,14 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Return the current element
-     *
-     * @link http://php.net/manual/en/iterator.current.php
-     *
-     * @return mixed Can return any type.
+     * @return IndexableInterface|false
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : IndexableInterface|false
     {
         $this->getProducts();
-        $var = current($this->products);
 
-        return $var;
+        return current($this->products);
     }
 
     /**
@@ -793,57 +781,43 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Return the key of the current element
-     *
-     * @link http://php.net/manual/en/iterator.key.php
-     *
-     * @return scalar scalar on success, integer
-     * 0 on failure.
+     * @return int|null
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : int|null
     {
         $this->getProducts();
-        $var = key($this->products);
 
-        return $var;
-    }
-
-    /** @inheritDoc */
-    public function next()
-    {
-        $this->getProducts();
-        $var = next($this->products);
+        return key($this->products);
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
+     * @return void
      */
-    public function rewind()
+    #[\ReturnTypeWillChange]
+    public function next()// : void
+    {
+        $this->getProducts();
+        next($this->products);
+    }
+
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
+    public function rewind()// : void
     {
         $this->getProducts();
         reset($this->products);
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Checks if current position is valid
-     *
-     * @link http://php.net/manual/en/iterator.valid.php
-     *
-     * @return bool The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     * @return bool
      */
-    public function valid()
+    #[\ReturnTypeWillChange]
+    public function valid()// : bool
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**

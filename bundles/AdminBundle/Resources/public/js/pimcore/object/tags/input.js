@@ -96,7 +96,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         }
 
         if(this.fieldConfig["regex"]) {
-            input.regex = new RegExp(this.fieldConfig.regex);
+            input.regex = new RegExp(this.fieldConfig.regex, 'u');
         }
 
         this.component = new Ext.form.TextField(input);

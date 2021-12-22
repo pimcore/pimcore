@@ -123,7 +123,12 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list->setCondition(implode(' AND ', $conditions));
 
         $assetIdsList = $list->loadIdList();
-        $thumbnailList = new Asset\Image\Thumbnail\Config\Listing();
+        $thumbnailList = [];
+        $thumbnailList[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+        if (!$input->getOption('system')) {
+            $thumbnailList = new Asset\Image\Thumbnail\Config\Listing();
+            $thumbnailList = $thumbnailList->getThumbnails();
+        }
 
         $allowedThumbs = [];
         if ($input->getOption('thumbnails')) {
@@ -132,7 +137,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         $items = [];
         foreach ($assetIdsList as $assetId) {
-            foreach ($thumbnailList->getThumbnails() as $thumbnailConfig) {
+            foreach ($thumbnailList as $thumbnailConfig) {
                 $thumbName = $thumbnailConfig->getName();
                 if (empty($allowedThumbs) || in_array($thumbName, $allowedThumbs)) {
                     $items[] = $assetId . '~~~' . $thumbName;
@@ -220,16 +225,6 @@ class ThumbnailsImageCommand extends AbstractCommand
                     $avifConfig->setFormat('avif');
                     $thumbnailsToGenerate[] = $avifConfig;
                 }
-            }
-
-            if ($input->getOption('system')) {
-                if (!$input->getOption('thumbnails')) {
-                    $thumbnailsToGenerate = [];
-                }
-
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
-            } elseif (!$input->getOption('thumbnails')) {
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
             }
         }
 

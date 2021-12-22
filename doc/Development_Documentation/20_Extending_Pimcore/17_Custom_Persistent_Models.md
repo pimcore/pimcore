@@ -267,9 +267,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * get total count.
      *
-     * @return mixed
+     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->getTotalCount();
     }
@@ -303,9 +303,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Set Locale.
      *
-     * @param mixed $locale
+     * @param string $locale
      */
-    public function setLocale($locale)
+    public function setLocale($locale): void
     {
         $this->locale = $locale;
     }
@@ -315,7 +315,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -327,7 +327,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * Rewind.
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->getData();
         reset($this->data);
@@ -338,12 +338,11 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         $this->getData();
-        $var = current($this->data);
 
-        return $var;
+        return current($this->data);
     }
 
     /**
@@ -351,25 +350,22 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         $this->getData();
-        $var = key($this->data);
 
-        return $var;
+        return key($this->data);
     }
 
     /**
      * next.
      *
-     * @return mixed
+     * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->getData();
-        $var = next($this->data);
-
-        return $var;
+        next($this->data);
     }
 
     /**
@@ -377,12 +373,11 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         $this->getData();
-        $var = $this->current() !== false;
 
-        return $var;
+        return $this->current() !== false;
     }
 }
 ```

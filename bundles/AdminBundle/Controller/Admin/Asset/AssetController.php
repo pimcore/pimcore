@@ -697,7 +697,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             ],
         ];
 
-        $hasChildren = (bool)$asset->getChildAmount($this->getAdminUser());
+        $hasChildren = $asset->getDao()->hasChildren($this->getAdminUser());
 
         // set type specific settings
         if ($asset instanceof Asset\Folder) {
