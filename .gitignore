@@ -1,3 +1,14 @@
+/bin/console
+/config/
+!/config/dao-classmap.php
+/public
+/src
+/templates
+/var
+/vendor
+/.env
+/composer.lock
+
 # PHP-CS-Fixer
 /.php_cs
 /.php-cs-fixer.cache
