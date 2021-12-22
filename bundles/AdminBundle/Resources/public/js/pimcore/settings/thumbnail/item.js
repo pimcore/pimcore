@@ -380,7 +380,7 @@ pimcore.settings.thumbnail.items = {
                 }.bind(el),
 
                 onNodeOver: function (target, dd, e, data) {
-                    if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
+                    if (data.records.length === 1 && data.records[0].data.type === "image") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                 },
@@ -390,7 +390,7 @@ pimcore.settings.thumbnail.items = {
                         var record = data.records[0];
                         var data = record.data;
 
-                        if (data.elementType === "asset") {
+                        if (data.type === "image") {
                             this.setValue(data.path);
                             if (this.previousSibling()) {
                                 this.previousSibling().setValue(data.id);
