@@ -16,8 +16,8 @@ pimcore.settings.translation.domain = Class.create({
     filterField: null,
     preconfiguredFilter: "",
 
-    initialize: function (filter) {
-        this.domain = 'messages';
+    initialize: function (domain, filter) {
+        this.domain = domain ?? 'messages';
         this.dataUrl = Routing.generate('pimcore_admin_translation_translations');
         this.exportUrl = Routing.generate('pimcore_admin_translation_export');
         this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile');
@@ -297,7 +297,7 @@ pimcore.settings.translation.domain = Class.create({
         })
         ;
 
-        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length || this.domain === 'admin') {
+        if (this.domain === 'admin' || pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
             typesColumns.push({
                 xtype: 'actioncolumn',
                 menuText: t('delete'),
