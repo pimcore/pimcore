@@ -248,7 +248,7 @@ class TargetingListener implements EventSubscriberInterface
                 continue;
             }
 
-            if (array_key_exists($type,$actions) && !is_array($actions[$type])) {
+            if (!isset($actions[$type])) {
                 $actions[$type] = [$action];
             } else {
                 $actions[$type][] = $action;
