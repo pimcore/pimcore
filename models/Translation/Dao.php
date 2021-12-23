@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Translation;
 
-use mysql_xdevapi\Exception;
 use Pimcore\Model;
 
 /**
