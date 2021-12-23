@@ -1262,7 +1262,6 @@ class TranslationController extends AdminController
         );
     }
 
-
     /**
      * @Route("/get-translation-domains", name="pimcore_admin_translation_gettranslationdomains", methods={"GET"})
      *
@@ -1275,11 +1274,10 @@ class TranslationController extends AdminController
         $translation = new Translation();
 
         $domains = array_map(
-            fn($domain) => ['name' => $domain],
+            fn ($domain) => ['name' => $domain],
             $translation->getDao()->getAvailableDomains(),
         );
 
-        return $this->adminJson( ['domains' => $domains]);
+        return $this->adminJson(['domains' => $domains]);
     }
-
 }

@@ -155,7 +155,7 @@ class Dao extends Model\Dao\AbstractDao
         $table = $this->getDatabaseTableName();
 
         if ($table == self::TABLE_PREFIX) {
-            throw new \Exception("Domain is missing to create new translation domain");
+            throw new \Exception('Domain is missing to create new translation domain');
         }
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
