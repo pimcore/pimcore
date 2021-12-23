@@ -116,6 +116,23 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * Returns a array containing all available domains
+     *
+     * @return array
+     */
+    public function getAvailableDomains()
+    {
+        $domainTables = $this->db->fetchAll("SHOW TABLES LIKE 'translations_%'");
+        $domains = [];
+
+        foreach ($domainTables as $domainTable) {
+            $domains[] = str_replace('translations_', '', $domainTable[array_key_first($domainTable)]);
+        }
+
+        return $domains;
+    }
+
+    /**
      * Returns boolean, if the domain table exists
      *
      * @param string $domain
@@ -136,6 +153,10 @@ class Dao extends Model\Dao\AbstractDao
     public function createOrUpdateTable()
     {
         $table = $this->getDatabaseTableName();
+
+        if ($table == self::TABLE_PREFIX) {
+            throw new \Exception("Domain is missing to create new translation domain");
+        }
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
