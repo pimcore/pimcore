@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use mysql_xdevapi\Exception;
 use Pimcore\Model;
 
 /**
@@ -153,6 +154,10 @@ class Dao extends Model\Dao\AbstractDao
     public function createOrUpdateTable()
     {
         $table = $this->getDatabaseTableName();
+
+        if ($table == self::TABLE_PREFIX) {
+            throw new \Exception("Domain is missing to create new translation domain");
+        }
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
