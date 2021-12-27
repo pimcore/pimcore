@@ -461,7 +461,9 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
             } elseif ($element instanceof Asset\Image) {
                 try {
-                    $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
+                    $elementLocalPath = $element->getLocalFile();
+                    $metaData = array_merge($element->getEXIFData($elementLocalPath), $element->getIPTCData($elementLocalPath));
+                    unlink($elementLocalPath);
                     foreach ($metaData as $key => $value) {
                         if (is_array($value)) {
                             $this->data .= ' ' . $key . ' : ' . implode(' - ', $value);
