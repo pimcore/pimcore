@@ -60,14 +60,14 @@ class NavigationExtension extends AbstractExtension
      * with a callback, build the navigation externally, pass it to the
      * view and just call render through the extension.
      *
-     * @param mixed $params config array or active document (legacy mode)
+     * @param array $params config array
      *
      * @return Container
      *
      * @throws \Exception
      */
     public function buildNavigation(
-        $params = null
+        $params = []
     ): Container {
         return $this->navigationExtension->build($params);
     }
