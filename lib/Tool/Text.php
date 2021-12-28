@@ -282,9 +282,7 @@ class Text
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
                 $tag = Element\Service::getElementCacheTag($element['type'], $element['id']);
-                if (!isset($tags[$tag])) {
-                    $tags[$tag] = $tag;
-                }
+                $tags[$tag] = $tag;
             }
         }
 

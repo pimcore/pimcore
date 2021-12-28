@@ -288,9 +288,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
                 $tag = Element\Service::getElementCacheTag($data->getInternalType(), $data->getInternal());
-                if (!isset($tags[$tag])) {
-                    $tags[$tag] = $tag;
-                }
+                $tags[$tag] = $tag;
             }
         }
 
