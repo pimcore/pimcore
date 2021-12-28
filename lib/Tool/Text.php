@@ -231,13 +231,10 @@ class Text
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
 
-                $element = Element\Service::getElementById($type, $id);
-
-                if ($id && $type && $element instanceof Element\ElementInterface) {
+                if ($id && $type) {
                     $elements[] = [
                         'id' => $id,
                         'type' => $type,
-                        'element' => $element,
                     ];
                 }
             }
@@ -284,9 +281,9 @@ class Text
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
-                $el = $element['element'];
-                if (!array_key_exists($el->getCacheTag(), $tags)) {
-                    $tags = $el->getCacheTags($tags);
+                $tag = Element\Service::getElementCacheTag($element['type'], $element['id']);
+                if (!isset($tags[$tag])) {
+                    $tags[$tag] = $tag;
                 }
             }
         }

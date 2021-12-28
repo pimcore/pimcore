@@ -287,18 +287,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
-                if ($data->getInternalType() == 'document') {
-                    if ($doc = Document::getById($data->getInternal())) {
-                        if (!array_key_exists($doc->getCacheTag(), $tags)) {
-                            $tags = $doc->getCacheTags($tags);
-                        }
-                    }
-                } elseif ($data->getInternalType() == 'asset') {
-                    if ($asset = Asset::getById($data->getInternal())) {
-                        if (!array_key_exists($asset->getCacheTag(), $tags)) {
-                            $tags = $asset->getCacheTags($tags);
-                        }
-                    }
+                $tag = Element\Service::getElementCacheTag($data->getInternalType(), $data->getInternal());
+                if (!isset($tags[$tag])) {
+                    $tags[$tag] = $tag;
                 }
             }
         }
