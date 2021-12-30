@@ -598,7 +598,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 }
                 $itemSizeText = formatBytes(mb_strlen((string) $itemData));
             } catch (\Throwable $e) {
-                $itemSizeText = "unknown";
+                $itemSizeText = 'unknown';
             }
 
             $this->logger->error(
