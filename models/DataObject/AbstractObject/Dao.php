@@ -299,6 +299,10 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null, $user = null)
     {
+        if (!$this->model->getId()) {
+            return false;
+        }
+        
         $sql = 'SELECT 1 FROM objects o WHERE o_parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
@@ -332,7 +336,17 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
-        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ?';
+        if (!$this->model->getParentId()) {
+            return false;
+        }
+
+        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ?';
+        $params = [$this->model->getParentId()];
+
+        if ($this->model->getId()) {
+            $sql .= ' AND o_id != ?';
+            $params[] = $this->model->getId();
+        }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
@@ -340,7 +354,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
 
-        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
+        $c = $this->db->fetchOne($sql, $params);
 
         return (bool)$c;
     }
