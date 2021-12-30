@@ -126,6 +126,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function getCacheTag()
     {
         $elementType = Service::getElementType($this);
+
         return Service::getElementCacheTag($elementType, $this->getId());
     }
 
@@ -139,6 +140,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected static function getCacheKey($id): string
     {
         $elementType = Service::getElementTypeByClassName(static::class);
+
         return Service::getElementCacheTag($elementType, $id);
     }
 
