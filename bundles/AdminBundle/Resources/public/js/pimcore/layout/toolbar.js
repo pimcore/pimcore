@@ -321,10 +321,10 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("shared_translations"),
+                            text: t("domain_translations"),
                             iconCls: "pimcore_nav_icon_translations",
                             itemId: 'pimcore_menu_extras_translations_shared_translations',
-                            handler: this.editTranslations
+                            handler: this.editTranslations.bind(this, 'messages')
                         }, {
                             text: "XLIFF " + t("export") + "/" + t("import"),
                             iconCls: "pimcore_nav_icon_translations",
@@ -1003,7 +1003,7 @@ pimcore.layout.toolbar = Class.create({
                         text: t("admin_translations"),
                         iconCls: "pimcore_nav_icon_translations",
                         itemId: 'pimcore_menu_settings_admin_translations',
-                        handler: this.editTranslationsSpecific
+                        handler: this.editTranslations.bind(this, 'admin')
                     });
                 }
             }
@@ -1333,23 +1333,13 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    editTranslations: function () {
-        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "website");
+    editTranslations: function (domain) {
+        pimcore.plugin.broker.fireEvent("preEditTranslations", this, domain ?? "website");
         try {
-            pimcore.globalmanager.get("translationwebsitemanager").activate();
+            pimcore.globalmanager.get("translationdomainmanager").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("translationwebsitemanager", new pimcore.settings.translation.website());
-        }
-    },
-
-    editTranslationsSpecific: function () {
-        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "admin");
-        try {
-            pimcore.globalmanager.get("translationadminmanager").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("translationadminmanager", new pimcore.settings.translation.admin());
+            pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
         }
     },
 

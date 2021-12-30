@@ -125,7 +125,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $allTranslations = $this->getAllTranslations();
+        //$allTranslations = $this->getAllTranslations();
         $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
@@ -133,7 +133,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
-            $translations[] = $allTranslations[$t['key']] ?? '';
+            $transObj = Model\Translation::getByKey($t['key'], $this->model->getDomain());
+            if ($transObj) {
+                $translations[] = $transObj;
+            }
         }
 
         $this->model->setTranslations($translations);

@@ -191,7 +191,7 @@ final class Translation extends AbstractModel
      */
     public function setDomain(string $domain): void
     {
-        $this->domain = $domain;
+        $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
     /**
