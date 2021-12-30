@@ -352,8 +352,7 @@ class Imagick extends Adapter
 
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
-
+        if (isset($profiles['icc'])) {
             if (strpos($profiles['icc'], 'RGB') !== false) {
                 // no need to process (s)RGB images
                 return $this;
