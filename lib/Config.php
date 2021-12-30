@@ -279,7 +279,8 @@ final class Config implements \ArrayAccess
                     }
 
                     if ($s instanceof Model\Element\ElementInterface) {
-                        $cacheTags = $s->getCacheTags($cacheTags);
+                        $elementCacheKey = $s->getCacheTag();
+                        $cacheTags[$elementCacheKey] = $elementCacheKey;
                     }
 
                     if (isset($s)) {
