@@ -163,7 +163,7 @@ class Folder extends Model\Asset
                 if ($tileThumb) {
                     if (!$tileThumb->exists()) {
                         // only generate if all necessary thumbs are available
-                        return null;
+                        continue;
                     }
 
                     $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
