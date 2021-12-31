@@ -332,6 +332,10 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($includingUnpublished = null, $user = null)
     {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
         $sql = 'SELECT id FROM documents d WHERE parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
@@ -383,7 +387,17 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings($includingUnpublished = null)
     {
-        $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
+        if (!$this->model->getParentId()) {
+            return false;
+        }
+
+        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+        $params = [$this->model->getParentId()];
+
+        if ($this->model->getId()) {
+            $sql .= ' AND id != ?';
+            $params[] = $this->model->getId();
+        }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
@@ -391,7 +405,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
+        $c = $this->db->fetchOne($sql, $params);
 
         return (bool)$c;
     }

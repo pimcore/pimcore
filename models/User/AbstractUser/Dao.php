@@ -80,6 +80,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function hasChildren()
     {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
         $c = $this->db->fetchOne('SELECT id FROM users WHERE parentId = ?', $this->model->getId());
 
         return (bool) $c;

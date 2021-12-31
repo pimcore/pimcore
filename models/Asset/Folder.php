@@ -69,12 +69,16 @@ class Folder extends Model\Asset
     public function getChildren()
     {
         if ($this->children === null) {
-            $list = new Asset\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
+            if ($this->getId()) {
+                $list = new Asset\Listing();
+                $list->setCondition('parentId = ?', $this->getId());
+                $list->setOrderKey('filename');
+                $list->setOrder('asc');
 
-            $this->children = $list->getAssets();
+                $this->children = $list->getAssets();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;

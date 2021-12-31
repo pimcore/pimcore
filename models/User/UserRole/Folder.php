@@ -28,14 +28,14 @@ class Folder extends Model\User\AbstractUser
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected $children = [];
+    protected $children;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var bool|null
      */
     protected $hasChildren;
 
@@ -58,11 +58,15 @@ class Folder extends Model\User\AbstractUser
      */
     public function getChildren()
     {
-        if (empty($this->children)) {
-            $list = new Role\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
+        if ($this->children === null) {
+            if ($this->getId()) {
+                $list = new Role\Listing();
+                $list->setCondition('parentId = ?', $this->getId());
 
-            $this->children = $list->getRoles();
+                $this->children = $list->getRoles();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;
@@ -75,11 +79,13 @@ class Folder extends Model\User\AbstractUser
      */
     public function setChildren($children)
     {
-        $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChildren = true;
-        } else {
-            $this->hasChildren = false;
+        if (is_array($children)) {
+            $this->children = $children;
+            if (count($children) > 0) {
+                $this->hasChildren = true;
+            } else {
+                $this->hasChildren = false;
+            }
         }
 
         return $this;

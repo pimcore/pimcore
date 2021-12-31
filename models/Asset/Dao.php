@@ -326,6 +326,10 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($user = null)
     {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
         $query = 'SELECT `a`.`id` FROM `assets` a WHERE `parentId` = ?';
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
@@ -346,7 +350,21 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings()
     {
-        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
+        if (!$this->model->getParentId()) {
+            return false;
+        }
+
+        $sql = 'SELECT 1 FROM assets WHERE parentId = ?';
+        $params = [$this->model->getParentId()];
+
+        if ($this->model->getId()) {
+            $sql .= ' AND id != ?';
+            $params[] = $this->model->getId();
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, $params);
 
         return (bool)$c;
     }

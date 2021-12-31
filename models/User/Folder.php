@@ -30,11 +30,15 @@ class Folder extends UserRole\Folder
      */
     public function getChildren()
     {
-        if (empty($this->children)) {
-            $list = new Listing();
-            $list->setCondition('parentId = ?', $this->getId());
+        if ($this->children === null) {
+            if ($this->getId()) {
+                $list = new Listing();
+                $list->setCondition('parentId = ?', $this->getId());
 
-            $this->children = $list->getUsers();
+                $this->children = $list->getUsers();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;
