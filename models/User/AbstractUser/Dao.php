@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
             return false;
         }
 
-        $c = $this->db->fetchOne('SELECT id FROM users WHERE parentId = ?', $this->model->getId());
+        $c = $this->db->fetchOne('SELECT id FROM users WHERE parentId = ?', [$this->model->getId()]);
 
         return (bool) $c;
     }
