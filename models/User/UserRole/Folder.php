@@ -81,11 +81,7 @@ class Folder extends Model\User\AbstractUser
     {
         if (is_array($children)) {
             $this->children = $children;
-            if (count($children) > 0) {
-                $this->hasChildren = true;
-            } else {
-                $this->hasChildren = false;
-            }
+            $this->hasChildren = count($children) > 0;
         }
 
         return $this;
