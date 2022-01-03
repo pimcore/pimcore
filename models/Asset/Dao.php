@@ -382,6 +382,10 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
@@ -392,9 +396,7 @@ class Dao extends Model\Element\Dao
             $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
         }
 
-        $c = $this->db->fetchOne($query, $this->model->getId());
-
-        return $c;
+        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
     /**

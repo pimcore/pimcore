@@ -306,7 +306,7 @@ class Dao extends Model\Element\Dao
         if (!$this->model->getId()) {
             return false;
         }
-        
+
         $sql = 'SELECT 1 FROM objects o WHERE o_parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
@@ -373,6 +373,10 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $user = null)
     {
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
         $query = 'SELECT COUNT(*) AS count FROM objects o WHERE o_parentId = ?';
 
         if (!empty($objectTypes)) {
@@ -386,9 +390,7 @@ class Dao extends Model\Element\Dao
             $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
         }
 
-        $c = $this->db->fetchOne($query, $this->model->getId());
-
-        return $c;
+        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
     /**
