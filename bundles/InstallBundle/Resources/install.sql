@@ -19,7 +19,8 @@ CREATE TABLE `application_logs` (
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
   KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`)
+  KEY `priority` (`priority`),
+  KEY `maintenanceChecked` (`maintenanceChecked`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
@@ -46,13 +47,14 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
-  `cid` int(11) NOT NULL,
+  `cid` int(11) unsigned NOT NULL,
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
-	INDEX `name` (`name`)
+  INDEX `name` (`name`),
+  CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
@@ -940,8 +942,8 @@ DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `object_url_slugs`;
 CREATE TABLE `object_url_slugs` (
-      `objectId` INT(11) NOT NULL DEFAULT '0',
-	    `classId` VARCHAR(50) NOT NULL DEFAULT '0',
+      `objectId` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+      `classId` VARCHAR(50) NOT NULL DEFAULT '0',
       `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
       `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
       `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
@@ -958,7 +960,8 @@ CREATE TABLE `object_url_slugs` (
       INDEX `ownertype` (`ownertype`),
       INDEX `ownername` (`ownername`),
       INDEX `slug` (`slug`),
-      INDEX `siteId` (`siteId`)
+      INDEX `siteId` (`siteId`),
+      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;

@@ -28,17 +28,17 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     /**
      * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object;
 
     /**
      * @var UrlSlug|null
      */
-    protected $slug;
+    protected ?UrlSlug $slug;
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject(): Concrete
+    public function getObject(): ?Concrete
     {
         return $this->object;
     }
@@ -56,9 +56,9 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @return UrlSlug
+     * @return UrlSlug|null
      */
-    public function getSlug(): UrlSlug
+    public function getSlug(): ?UrlSlug
     {
         return $this->slug;
     }
@@ -78,7 +78,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getContent()
+    public function getContent(): ?object
     {
         return null;
     }
@@ -86,7 +86,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteKey()
+    public function getRouteKey(): ?string
     {
         if ($this->object) {
             return sprintf('data_object_%d_%s', $this->object->getId(), $this->getPath());

@@ -23,7 +23,7 @@ use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionConfigurator implements SessionConfiguratorInterface, EventSubscriberInterface
@@ -42,10 +42,10 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
 
     public function configure(SessionInterface $session)
     {
-        $sessionBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_SESSION);
+        $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
         $sessionBag->setName(self::TARGETING_BAG_SESSION);
 
-        $visitorBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_VISITOR);
+        $visitorBag = new AttributeBag('_' . self::TARGETING_BAG_VISITOR);
         $visitorBag->setName(self::TARGETING_BAG_VISITOR);
 
         $session->registerBag($sessionBag);

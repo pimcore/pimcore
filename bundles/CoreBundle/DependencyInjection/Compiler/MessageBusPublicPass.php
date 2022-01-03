@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -28,6 +27,6 @@ final class MessageBusPublicPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $container->getAlias(MessageBusInterface::class)->setPublic(true);
+        $container->getDefinition('messenger.bus.pimcore-core')->setPublic(true);
     }
 }

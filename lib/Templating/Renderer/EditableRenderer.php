@@ -18,6 +18,7 @@ namespace Pimcore\Templating\Renderer;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Document\Editable\LazyLoadingInterface;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Psr\Log\LoggerAwareInterface;
@@ -90,7 +91,13 @@ class EditableRenderer implements LoggerAwareInterface
         $editable = $document->getEditable($name);
         if ($editable instanceof Editable\EditableInterface && $editable->getType() === $type) {
             // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-            if (method_exists($editable, 'load')) {
+            //TODO Pimcore 11: remove method_exists BC layer
+            if ($editable instanceof LazyLoadingInterface || method_exists($editable, 'load')) {
+                if (!$editable instanceof LazyLoadingInterface) {
+                    trigger_deprecation('pimcore/pimcore', '10.3',
+                        sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
+                            'Implement the %s interface instead.', LazyLoadingInterface::class));
+                }
                 $editable->load();
             }
         } else {

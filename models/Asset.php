@@ -40,7 +40,6 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -1064,7 +1063,7 @@ class Asset extends Element\AbstractElement
             }
 
             // Dispatch Symfony Message Bus to delete versions
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
@@ -1073,9 +1072,6 @@ class Asset extends Element\AbstractElement
 
             // remove all properties
             $this->getDao()->deleteAllProperties();
-
-            // remove all metadata
-            $this->getDao()->deleteAllMetadata();
 
             // remove all tasks
             $this->getDao()->deleteAllTasks();
@@ -2097,7 +2093,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }

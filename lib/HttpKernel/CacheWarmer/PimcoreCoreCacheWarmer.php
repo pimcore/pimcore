@@ -29,7 +29,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return true;
     }
@@ -37,7 +37,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): array
     {
         $classes = [];
 

@@ -443,7 +443,7 @@ class Service extends Model\Element\Service
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
-                            $parent = self::hasInheritableParentObject($object);
+                            $parent = self::hasInheritableParentObject($object, $key);
 
                             if (!empty($parent)) {
                                 $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
@@ -720,7 +720,7 @@ class Service extends Model\Element\Service
         }
 
         if ($fieldDefinition->isEmpty($value)) {
-            $parent = self::hasInheritableParentObject($object);
+            $parent = self::hasInheritableParentObject($object, $key);
             if (!empty($parent)) {
                 return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
             }
@@ -794,10 +794,10 @@ class Service extends Model\Element\Service
      *
      * @return AbstractObject|null
      */
-    public static function hasInheritableParentObject(Concrete $object)
+    public static function hasInheritableParentObject(Concrete $object, $fieldName = null)
     {
         if ($object->getClass()->getAllowInherit()) {
-            return $object->getNextParentForInheritance();
+            return $object->getNextParentForInheritance($fieldName);
         }
 
         return null;

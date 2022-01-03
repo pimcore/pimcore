@@ -400,11 +400,12 @@ final class ClassDefinition extends Model\AbstractModel
      * @param bool $saveDefinitionFile
      *
      * @throws \Exception
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function save($saveDefinitionFile = true)
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
-            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $fieldDefinitions = $this->getFieldDefinitions();
@@ -502,7 +503,7 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
         $cd .= "/**\n";
-        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).'\Listing getList()'."\n";
+        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).'\Listing getList(array $config = [])'."\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -818,7 +819,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function getDefinitionFile($name = null)
     {
-        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+        return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
 
     private function getPhpClassFile(): string

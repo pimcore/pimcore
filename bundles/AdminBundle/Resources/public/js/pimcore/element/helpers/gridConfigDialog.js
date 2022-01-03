@@ -259,7 +259,17 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 }
             );
 
+            this.setAsFavourite = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: t("set_as_favourite"),
+                    inputValue: true,
+                    name: "setAsFavourite",
+                    value: this.settings.setAsFavourite
+                }
+            )
+
             items.push(this.shareGlobally);
+            items.push(this.setAsFavourite);
         }
 
         if (user.isAllowed("share_configurations")) {

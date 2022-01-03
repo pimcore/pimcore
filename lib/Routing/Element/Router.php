@@ -64,16 +64,20 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
+     *
+     * @return RequestContext
      */
-    public function getContext()
+    public function getContext()// : RequestContext
     {
         return $this->context;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-    public function supports($name)
+    public function supports($name)// : bool
     {
         return $name === 'pimcore_element';
     }
@@ -81,7 +85,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = [])
+    public function getRouteDebugMessage($name, array $parameters = [])// : string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
@@ -94,7 +98,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof Document || $element instanceof Asset) {
@@ -195,8 +199,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
+     *
+     * @return RouteCollection
      */
-    public function getRouteCollection()
+    public function getRouteCollection()// : RouteCollection
     {
         return new RouteCollection();
     }

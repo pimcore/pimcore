@@ -74,7 +74,7 @@ as registered on the areabrick manager (see below).
 
 | Location | Path                                           |
 |----------|------------------------------------------------|
-| global   | `templates/Areas/<brickId>`          |
+| global   | `templates/areas/<brickId>`          |
 | bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
 
 
@@ -98,7 +98,7 @@ Given our `iframe` brick defined before, the following paths will be used.
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `templates/Areas/iframe/view.html.twig` |
+| view template | `templates/areas/iframe/view.html.twig` |
 | icon path     | `public/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
@@ -108,7 +108,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `templates/Areas/iframe/view.html.twig` |
+| view template | `templates/areas/iframe/view.html.twig` |
 
 ## How to Create a Brick
  

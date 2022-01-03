@@ -21,6 +21,7 @@ use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -64,7 +65,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteCollectionForRequest(Request $request)
+    public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
         $path = $originalPath = urldecode($request->getPathInfo());
@@ -84,7 +85,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name)
+    public function getRouteByName($name): Route
     {
         foreach ($this->handlers as $handler) {
             try {
@@ -100,7 +101,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoutesByNames($names)
+    public function getRoutesByNames($names): array
     {
         // TODO needs performance optimizations
         // TODO really return all routes here as documentation states? where is this used?

@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 
 class Imagick extends Adapter
 {
@@ -345,17 +346,23 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
+        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+            // no need to process (s)RGB images
+            return $this;
+        }
+
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
-        // different from the colorspace of the embedded icc color profile
-        // If that is the case we just ignore the color profiles
-        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
-            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+        if (isset($profiles['icc'])) {
+            if (strpos($profiles['icc'], 'RGB') !== false) {
+                // no need to process (s)RGB images
                 return $this;
             }
 
-            if (strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+            // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+            // different from the colorspace of the embedded icc color profile
+            // If that is the case we just ignore the color profiles
+            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
                 return $this;
             }
         }
@@ -377,11 +384,12 @@ class Imagick extends Adapter
         } elseif (!in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else {
-            // this is to handle embedded icc profiles in the RGB/sRGB colorspace
+            // this is to handle all other embedded icc profiles
             if (isset($profiles['icc'])) {
                 try {
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
+                    $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
                 } catch (\Exception $e) {
                     Logger::warn($e);
                 }
@@ -773,8 +781,19 @@ class Imagick extends Adapter
         $newImage = null;
 
         if (is_string($image)) {
-            $image = ltrim($image, '/');
-            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            $asset = Asset\Image::getByPath($image);
+            if ($asset instanceof Asset\Image) {
+                $image = $asset->getTemporaryFile();
+            } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.3',
+                    'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
+                );
+
+                $image = ltrim($image, '/');
+                $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            }
 
             $newImage = new \Imagick();
             $newImage->readimage($image);
@@ -809,8 +828,19 @@ class Imagick extends Adapter
      */
     public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
     {
-        $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $asset = Asset\Image::getByPath($image);
+        if ($asset instanceof Asset\Image) {
+            $image = $asset->getTemporaryFile();
+        } else {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.3',
+                'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
+            );
+
+            $image = ltrim($image, '/');
+            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        }
 
         $newImage = new \Imagick();
         $newImage->readimage($image);

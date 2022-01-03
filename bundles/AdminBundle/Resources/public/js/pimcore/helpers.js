@@ -2538,7 +2538,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (context && context['containerType'] == "batch") {
+    if (context && (context['containerType'] == "batch" || context['containerType'] == "filterByRelationWindow")) {
         return;
     }
 

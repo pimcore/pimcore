@@ -90,17 +90,10 @@ pimcore.settings.properties.predefined = Class.create({
         var inheritableCheck = new Ext.grid.column.Check({
             text: t("inheritable"),
             dataIndex: "inheritable",
-            width: 50,
-            listeners: {
-                beforecheckchange: function (el, rowIndex, checked, record) {
-                    if(!record.data.writeable) {
-                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
-                        return false;
-                    }
-
-                    return true;
-                }
-            }
+            editor: {
+                xtype: 'checkbox',
+            },
+            width: 50
         });
 
         var contentTypesStore = Ext.create('Ext.data.ArrayStore', {
@@ -125,26 +118,37 @@ pimcore.settings.properties.predefined = Class.create({
                }
             },
             {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
-                triggerAction: 'all',
-                editable: false,
-                store: ["text","document","asset","object","bool","select"]
+            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type',
+                editor: new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    store: ["text","document","asset","object","bool","select"]
 
             })},
             {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
-            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
-                                                                editor: new Ext.form.TextField({})},
-            {
-                text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
-                getEditor: function (fieldInfo) {
-                    return new pimcore.object.helpers.metadataMultiselectEditor({
-                        fieldInfo: fieldInfo
-                    });
-                }.bind(this, {value: "document;asset;object" })
-            }
-
-
-            ,
+            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
+            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                editor: new Ext.ux.form.MultiSelect({
+                    store: new Ext.data.ArrayStore({
+                        fields: ['key', {
+                            name: 'value',
+                            convert: function (v, r) {
+                                if (Array.isArray(v)) {
+                                    return v.join(";");
+                                }
+                                return v;
+                            }
+                        }],
+                        data: [
+                            ['document', 'document'],
+                            ['object', ['object']],
+                            ['asset', ['asset']]
+                        ],
+                    }),
+                    displayField: 'key',
+                    valueField: 'value',
+                }),
+            },
             inheritableCheck,
             {
                 xtype: 'actioncolumn',
@@ -207,13 +211,12 @@ pimcore.settings.properties.predefined = Class.create({
 
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                validateedit: function (editor, context, eOpts) {
+                beforeedit: function (editor, context, eOpts) {
                     if (!context.record.data.writeable) {
-                        editor.cancelEdit();
-                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
                         return false;
                     }
                 }
@@ -236,7 +239,7 @@ pimcore.settings.properties.predefined = Class.create({
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',
