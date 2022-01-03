@@ -47,7 +47,7 @@ pimcore:
             to_published:
                 to: local_400_published
                 from: [local_700_locked]
-                guard: is_fully_authenticated() and (has_role('ROLE_PIMCORE_ADMIN') or has_role('ROLE_RECIPE_WORKFLOW_FINISH_DEVELOPMENT'))
+                guard: is_fully_authenticated() and ('ROLE_PIMCORE_ADMIN' in role_names or 'ROLE_RECIPE_WORKFLOW_FINISH_DEVELOPMENT' in role_names)
                 options:
                   label: 'Set to local_400_published'
 

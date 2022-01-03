@@ -4,6 +4,11 @@
   required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
   the messages on default queue gets consumed.
 - [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
+- **Important**: In preparation of upgrade to Symfony 6, return types must be added to methods which are extended from Symfony. In Pimcore, following changes are applied:
+  - Return type added to safe methods, which are `final` & marked as `internal`.
+  - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return
+    types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes.
+    Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
 
 ## 10.2.0
 - [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production). 

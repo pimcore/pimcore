@@ -1476,11 +1476,11 @@ class ClassificationstoreController extends AdminController implements KernelCon
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),
-                'text' => $item->getName(),
+                'text' => htmlspecialchars($item->getName(), ENT_QUOTES),
                 'expandable' => false,
                 'leaf' => true,
                 'expanded' => true,
-                'description' => $item->getDescription(),
+                'description' => htmlspecialchars($item->getDescription(), ENT_QUOTES),
                 'iconCls' => 'pimcore_icon_classificationstore',
             ];
 
@@ -1488,7 +1488,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             if ($item->getDescription()) {
             }
-            $resultItem['qtip'] = $item->getDescription() ? $item->getDescription() : ' ';
+            $resultItem['qtip'] = $item->getDescription() ? htmlspecialchars($item->getDescription(), ENT_QUOTES) : ' ';
             $result[] = $resultItem;
         }
 

@@ -89,9 +89,9 @@ final class BlockName implements \JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'name' => $this->name,

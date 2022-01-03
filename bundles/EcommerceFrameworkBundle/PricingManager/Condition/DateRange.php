@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
+use DateTimeZone;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
@@ -91,8 +92,8 @@ class DateRange implements DateRangeInterface
     {
         return json_encode([
             'type' => 'DateRange',
-            'starting' => $this->getStarting()->getTimestamp(),
-            'ending' => $this->getEnding()->getTimestamp(),
+            'starting' => $this->getStarting()->format('d.m.Y'),
+            'ending' => $this->getEnding()->format('d.m.Y'),
         ]);
     }
 
@@ -105,10 +106,10 @@ class DateRange implements DateRangeInterface
     {
         $json = json_decode($string);
 
-        $starting = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->starting);
+        $starting = \DateTime::createFromFormat('d.m.Y', $json->starting, new DateTimeZone('UTC'));
         $starting->setTime(0, 0, 0);
 
-        $ending = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->ending);
+        $ending = \DateTime::createFromFormat('d.m.Y', $json->ending, new DateTimeZone('UTC'));
         $ending->setTime(23, 59, 59);
 
         $this->setStarting($starting);

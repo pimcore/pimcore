@@ -398,7 +398,7 @@ class Service
     {
         $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
-            $colDefinition = $tableDefinition[$colName];
+            $colDefinition = $tableDefinition[$colName] ?? false;
             if ($colDefinition) {
                 if (!strlen($default) && strtolower($null) === 'null') {
                     $default = null;

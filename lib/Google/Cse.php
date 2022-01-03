@@ -405,7 +405,8 @@ class Cse implements PaginateListingInterface
     /**
      * @return int
      */
-    public function count()
+    #[\ReturnTypeWillChange]
+    public function count()// : int
     {
         $this->getResults();
 
@@ -423,60 +424,62 @@ class Cse implements PaginateListingInterface
         $this->setOffset($offset);
         $this->setPerPage($itemCountPerPage);
 
-        $items = $this->load();
-
-        return $items;
+        return $this->load();
     }
 
     /**
      * Methods for Iterator
      */
-    public function rewind()
+
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
+    public function rewind()// : void
     {
         reset($this->results);
     }
 
     /**
-     * @return mixed
+     * @return Item|false
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : Item|false
     {
         $this->getResults();
-        $var = current($this->results);
 
-        return $var;
+        return current($this->results);
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : int|null
     {
         $this->getResults();
-        $var = key($this->results);
 
-        return $var;
+        return key($this->results);
     }
 
     /**
-     * @return mixed
+     * @return void
      */
-    public function next()
+    #[\ReturnTypeWillChange]
+    public function next()// : void
     {
         $this->getResults();
-        $var = next($this->results);
-
-        return $var;
+        next($this->results);
     }
 
     /**
      * @return bool
      */
-    public function valid()
+    #[\ReturnTypeWillChange]
+    public function valid()// : bool
     {
         $this->getResults();
-        $var = $this->current() !== false;
 
-        return $var;
+        return $this->current() !== false;
     }
 }

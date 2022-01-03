@@ -41,6 +41,7 @@ use App\Website\Tool\Text;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 
 class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkGeneratorInterface
 {
@@ -90,6 +91,23 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
     }
 }
 ```
+
+Note: If you want to support mockups or arbitrary objects you can change the typehint to:
+```php
+    /**
+     * @param object $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function generate(object $object, array $params = []): string
+    {
+        //...
+    }
+```
+
+
+
 
 The link generator will receive the referenced object and additional data depending on the context.
 This would be the document (if embedded in a document), the object if embedded in an object including the tag or field definition as context.

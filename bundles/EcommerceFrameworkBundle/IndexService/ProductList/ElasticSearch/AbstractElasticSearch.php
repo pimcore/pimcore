@@ -1351,17 +1351,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     *
-     * @link http://php.net/manual/en/countable.count.php
-     *
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * @return int
      */
-    public function count()
+    #[\ReturnTypeWillChange]
+    public function count()// : int
     {
         $this->getProducts();
 
@@ -1369,19 +1362,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Return the current element
-     *
-     * @link http://php.net/manual/en/iterator.current.php
-     *
-     * @return mixed Can return any type.
+     * @return IndexableInterface|false
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : IndexableInterface|false
     {
         $this->getProducts();
-        $var = current($this->products);
 
-        return $var;
+        return current($this->products);
     }
 
     /**
@@ -1401,50 +1389,43 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Return the key of the current element
-     *
-     * @link http://php.net/manual/en/iterator.key.php
-     *
-     * @return scalar scalar on success, integer
-     * 0 on failure.
+     * @return int|null
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : int|null
     {
         $this->getProducts();
-        $var = key($this->products);
 
-        return $var;
+        return key($this->products);
     }
 
-    /** @inheritDoc */
-    public function next()
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
+    public function next()// : void
     {
         $this->getProducts();
-        $var = next($this->products);
+        next($this->products);
     }
 
-    /** @inheritDoc */
-    public function rewind()
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
+    public function rewind()// : void
     {
         $this->getProducts();
         reset($this->products);
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Checks if current position is valid
-     *
-     * @link http://php.net/manual/en/iterator.valid.php
-     *
-     * @return bool The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     * @return bool
      */
-    public function valid()
+    #[\ReturnTypeWillChange]
+    public function valid()// : bool
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**

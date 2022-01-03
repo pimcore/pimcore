@@ -24,6 +24,9 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Model\Element\ValidationException;
 
+/**
+ * @method \Doctrine\DBAL\Schema\AbstractSchemaManager getSchemaManager()
+ */
 interface ConnectionInterface extends Connection
 {
     /**

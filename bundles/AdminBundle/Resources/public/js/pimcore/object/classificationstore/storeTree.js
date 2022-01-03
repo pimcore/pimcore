@@ -166,8 +166,8 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 "click": function() {
                     var data = {
                         id: record.data.id,
-                        name: record.data.text,
-                        description: record.data.description
+                        name: Ext.util.Format.htmlDecode(record.data.text),
+                        description: Ext.util.Format.htmlDecode(record.data.description)
                     }
                     var panel = new pimcore.object.classificationstore.storeConfiguration(data, this.applyConfig.bind(this));
                     panel.show();
