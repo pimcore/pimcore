@@ -42,7 +42,7 @@ class AdminExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('pimcore_inline_svg', [$this, 'inlineSvg']),
+            new TwigFilter('pimcore_inline_icon', [$this, 'inlineIcon']),
         ];
     }
 
@@ -80,16 +80,8 @@ class AdminExtension extends AbstractExtension
     }
 
 
-    public function inlineSvg(string $icon) {
-
-        $pathInfo = pathinfo($icon);
-        if($pathInfo['extension'] === 'svg') {
-            $content = file_get_contents($icon);
-            return sprintf('<div class="container">%s</div>', $content);
-        } else {
-            $path = str_replace(PIMCORE_WEB_ROOT, '', $icon);
-            return sprintf('<img src="%s" title="%s">', $path, basename($path));
-        }
-
+    public function inlineIcon(string $icon) {
+        $content = file_get_contents($icon);
+        return sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type($icon), base64_encode($content), basename($icon));
     }
 }

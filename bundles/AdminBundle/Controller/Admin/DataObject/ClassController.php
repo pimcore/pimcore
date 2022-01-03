@@ -1838,7 +1838,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         foreach ($icons as $icon) {
             $content = file_get_contents(PIMCORE_WEB_ROOT . $icon);
             $result[] = [
-                'text' => sprintf('<div class="container">%s</div>', $content),
+                'text' => sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type(PIMCORE_WEB_ROOT . $icon), base64_encode($content), basename($icon)),
                 'value' => $icon,
             ];
         }

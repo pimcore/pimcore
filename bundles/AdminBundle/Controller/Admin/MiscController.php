@@ -751,7 +751,7 @@ class MiscController extends AdminController
             'colorIcons' => $colorIcons,
             'whiteIcons' => $whiteIcons,
             'twemoji' => $twemoji,
-            'languageOptions' => [], //$languageOptions,
+            'languageOptions' => $languageOptions,
             'iconsCss' => $iconsCss,
         ]);
     }

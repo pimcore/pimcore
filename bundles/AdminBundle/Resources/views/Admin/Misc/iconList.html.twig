@@ -47,23 +47,8 @@
             font-size: 16px;
         }
 
-        .icon .container {
-            width:50px;
-            display:inline-block
-        }
-
-        .icon .container svg, .language-icon .container svg {
-            width: 100%;
-            height: auto;
-        }
-
         .icon img {
             width: 50px;
-        }
-
-        .language-icon img, .language-icon .container {
-            width: 16px;
-            display:inline-block
         }
 
     </style>
@@ -80,7 +65,7 @@
     {% for icon in colorIcons %}
         {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
-            {{ icon | pimcore_inline_svg | raw }}
+            {{ icon | pimcore_inline_icon | raw }}
             <div class="label">
                 {{ iconPath in iconsCss  ? '*' : '' }}
                 {{ iconPath|basename }}
@@ -99,7 +84,7 @@
     {% for icon in whiteIcons %}
         {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon black">
-            {{ icon | pimcore_inline_svg | raw }}
+            {{ icon | pimcore_inline_icon | raw }}
             <div class="label">
                 {{ iconPath in iconsCss  ? '*' : '' }}
                 {{ iconPath|basename }}
@@ -116,7 +101,7 @@
     {% for icon in twemoji %}
         {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
-            {{ icon | pimcore_inline_svg | raw }}
+            {{ icon | pimcore_inline_icon | raw }}
             <div class="label">{{ iconPath|basename }}</div>
         </div>
     {% endfor %}
@@ -134,7 +119,7 @@
     </tr>
     {% for langOpt in languageOptions %}
         <tr>
-            <td class="language-icon">{{ langOpt['flag'] | pimcore_inline_svg | raw }}</td>
+            <td class="language-icon">{{ langOpt['flag'] | pimcore_inline_icon | raw }}</td>
             <td>{{ langOpt['language'] }}</td>
             <td>{{ langOpt['display'] }}</td>
         </tr>
