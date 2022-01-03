@@ -1549,4 +1549,17 @@ class Service extends Model\AbstractModel
 
         return $rowData;
     }
+
+    /**
+     * @internal
+     *
+     * @param string $type
+     * @param int|string $id
+     *
+     * @return string
+     */
+    public static function getElementCacheTag(string $type, $id): string
+    {
+        return $type . '_' . $id;
+    }
 }
