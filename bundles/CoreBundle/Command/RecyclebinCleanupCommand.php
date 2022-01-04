@@ -36,7 +36,7 @@ class RecyclebinCleanupCommand extends AbstractCommand
                 'older-than-days',
                 'days',
                 InputOption::VALUE_REQUIRED,
-                'Older than X Days to delete email logs'
+                'Older than X Days to delete recyclebin entries'
             );
     }
 
