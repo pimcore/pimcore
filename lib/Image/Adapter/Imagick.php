@@ -143,7 +143,9 @@ class Imagick extends Adapter
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                     // if there's a clipping path embedded, apply the first one
                     try {
-                        $clipped = $i->clipImage();
+                        $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                        $i->clipImage();
+                        $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
                     } catch (\Exception $e) {
                         Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                     }
