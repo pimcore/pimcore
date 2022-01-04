@@ -98,6 +98,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     protected function saveData(string $id, $data)
     {
         $dao = $this;
+        unset(self::$cache[$this->settingsStoreScope][$id]);
         $this->locationAwareConfigRepository->saveConfig($id, $data, function ($id, $data) use ($dao) {
             return $dao->prepareDataStructureForYaml($id, $data);
         });
@@ -141,6 +142,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      */
     protected function deleteData(string $id): void
     {
+        unset(self::$cache[$this->settingsStoreScope][$id]);
         $this->locationAwareConfigRepository->deleteData($id, $this->dataSource);
     }
 }
