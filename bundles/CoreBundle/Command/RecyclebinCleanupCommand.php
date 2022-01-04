@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Element\Recyclebin;
-use Pimcore\Model\Tool\Email;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,7 +58,12 @@ class RecyclebinCleanupCommand extends AbstractCommand
         $recyclebinItems->setCondition("date < $dateTimestamp");
 
         foreach ($recyclebinItems->load() as $recyclebinItem) {
-            $recyclebinItem->delete();
+            try {
+                $recyclebinItem->delete();
+            }
+            catch(\Exception $e) {
+                $this->output->writeln("Could not delete {$recyclebinItem->getPath()} ({$recyclebinItem->getId()}) because of: {$e->getMessage()}");
+            }
         }
 
         $this->output->writeln('Recyclebin cleanup done!');
