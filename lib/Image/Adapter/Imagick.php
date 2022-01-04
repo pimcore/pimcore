@@ -141,14 +141,14 @@ class Imagick extends Adapter
                 // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
-                    // if there's a clipping path embedded, apply the first one
-                    try {
-                        $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
-                        $i->clipImage();
-                        $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
-                    } catch (\Exception $e) {
-                        Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
-                    }
+                // if there's a clipping path embedded, apply the first one
+                try {
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                    $i->clipImage();
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                } catch (\Exception $e) {
+                    Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                }
                 //}
             }
         } catch (\Exception $e) {
@@ -170,8 +170,7 @@ class Imagick extends Adapter
         $handle = fopen($this->imagePath, 'rb');
         $overlapString = '';
         while ($chunk = fread($handle, $chunkSize)) {
-
-            if($count > 100) {
+            if ($count > 100) {
                 // only read first 100kB, this should be sufficient
                 break;
             }
@@ -180,7 +179,7 @@ class Imagick extends Adapter
 
             // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
             // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-            if(preg_match('/8BIM\x0b\xb7/', $chunk)) {
+            if (preg_match('/8BIM\x0b\xb7/', $chunk)) {
                 return true;
             }
 
