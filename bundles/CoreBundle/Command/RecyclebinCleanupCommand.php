@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Logger;
 use Pimcore\Model\Element\Recyclebin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -62,7 +63,9 @@ class RecyclebinCleanupCommand extends AbstractCommand
                 $recyclebinItem->delete();
             }
             catch(\Exception $e) {
-                $this->output->writeln("Could not delete {$recyclebinItem->getPath()} ({$recyclebinItem->getId()}) because of: {$e->getMessage()}");
+                $msg = "Could not delete {$recyclebinItem->getPath()} ({$recyclebinItem->getId()}) because of: {$e->getMessage()}";
+                Logger::error($msg);
+                $this->output->writeln($msg);
             }
         }
 
