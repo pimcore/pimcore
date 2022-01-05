@@ -472,14 +472,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            $list->setCondition('o_parentId = ?', $this->getId());
-            $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder($this->getChildrenSortOrder());
-            $list->setObjectTypes($objectTypes);
-            $this->o_children[$cacheKey] = $list->load();
-            $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            if ($this->getId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->setCondition('o_parentId = ?', $this->getId());
+                $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
+                $list->setOrder($this->getChildrenSortOrder());
+                $list->setObjectTypes($objectTypes);
+                $this->o_children[$cacheKey] = $list->load();
+                $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            } else {
+                $this->o_children[$cacheKey] = [];
+                $this->o_hasChildren[$cacheKey] = false;
+            }
         }
 
         return $this->o_children[$cacheKey];
@@ -517,16 +522,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_siblings[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            // string conversion because parentId could be 0
-            $list->addConditionParam('o_parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('o_id != ?', $this->getId());
-            $list->setOrderKey('o_key');
-            $list->setObjectTypes($objectTypes);
-            $list->setOrder('asc');
-            $this->o_siblings[$cacheKey] = $list->load();
-            $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            if ($this->getParentId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->addConditionParam('o_parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('o_id != ?', $this->getId());
+                }
+                $list->setOrderKey('o_key');
+                $list->setObjectTypes($objectTypes);
+                $list->setOrder('asc');
+                $this->o_siblings[$cacheKey] = $list->load();
+                $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            } else {
+                $this->o_siblings[$cacheKey] = [];
+                $this->o_hasSiblings[$cacheKey] = false;
+            }
         }
 
         return $this->o_siblings[$cacheKey];

@@ -27,7 +27,7 @@ use Pimcore\Model;
 final class GroupConfig extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -41,7 +41,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Parent id
      *
-     * @var int
+     * @var int|null
      */
     protected $parentId;
 
@@ -145,7 +145,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -153,7 +153,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
