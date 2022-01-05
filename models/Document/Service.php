@@ -641,7 +641,7 @@ class Service extends Model\Element\Service
         $doc = Document::getById($id);
         if (!$hostUrl) {
             $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
-            if(empty($hostUrl)) {
+            if (empty($hostUrl)) {
                 $hostUrl = Tool::getHostUrl(null, $request);
             }
         }

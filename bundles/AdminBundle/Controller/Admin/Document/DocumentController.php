@@ -1122,7 +1122,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $docFrom = $versionFrom->loadData();
 
         $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
-        if(empty($prefix)) {
+        if (empty($prefix)) {
             $prefix = $request->getSchemeAndHttpHost();
         }
 
