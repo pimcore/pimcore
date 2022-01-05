@@ -165,7 +165,6 @@ class Imagick extends Adapter
 
     private function has8BIMClippingPath(): bool
     {
-
         $handle = fopen($this->imagePath, 'rb');
         $chunk = fread($handle, 1024*1000); // read the first 1MB
         fclose($handle);
