@@ -97,7 +97,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      */
     protected function invalidateCache(string $id): void
     {
-         unset(self::$cache[$this->settingsStoreScope][$id]);
+        unset(self::$cache[$this->settingsStoreScope][$id]);
     }
 
     /**
