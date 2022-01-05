@@ -34,7 +34,7 @@ class RecyclebinCleanupCommand extends AbstractCommand
             ->setDescription('Cleanup recyclebin entries')
             ->addOption(
                 'older-than-days',
-                'days',
+                'd',
                 InputOption::VALUE_REQUIRED,
                 'Older than X Days to delete recyclebin entries'
             );
