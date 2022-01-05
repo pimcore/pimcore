@@ -758,7 +758,7 @@ class Asset extends Element\AbstractElement
 
                 $storage->move($tempFilePath, $path);
 
-                $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 $mimeType = $storage->mimeType($path);
                 $this->setMimeType($mimeType);
