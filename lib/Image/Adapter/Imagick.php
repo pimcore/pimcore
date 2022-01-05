@@ -96,7 +96,7 @@ class Imagick extends Adapter
 
             $this->resource = $i;
 
-            if (!$this->isPreserveColor()) {
+            if (!$this->reinitializing && !$this->isPreserveColor()) {
                 if (method_exists($i, 'setColorspace')) {
                     $i->setColorspace(\Imagick::COLORSPACE_SRGB);
                 }
@@ -135,7 +135,7 @@ class Imagick extends Adapter
             }
 
             $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
-            if ($isClipAutoSupport && $this->has8BIMClippingPath()) {
+            if ($isClipAutoSupport && !$this->reinitializing && $this->has8BIMClippingPath()) {
                 // the following way of determining a clipping path is very resource intensive (using Imagick),
                 // so we try with the approach in has8BIMClippingPath() instead
                 // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
@@ -165,26 +165,15 @@ class Imagick extends Adapter
 
     private function has8BIMClippingPath(): bool
     {
-        $count = 0;
-        $chunkSize = 1024;
+
         $handle = fopen($this->imagePath, 'rb');
-        $overlapString = '';
-        while ($chunk = fread($handle, $chunkSize)) {
-            if ($count > 100) {
-                // only read first 100kB, this should be sufficient
-                break;
-            }
+        $chunk = fread($handle, 1024*1000); // read the first 1MB
+        fclose($handle);
 
-            $chunk = $overlapString . $chunk;
-
-            // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
-            // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-            if (preg_match('/8BIM\x0b\xb7/', $chunk)) {
-                return true;
-            }
-
-            $overlapString = substr($chunk, -10);
-            $count++;
+        // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
+        if (preg_match('/8BIM\x0b\xb7/', $chunk)) {
+            return true;
         }
 
         return false;
