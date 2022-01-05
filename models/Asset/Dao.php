@@ -307,10 +307,14 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
-        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
+        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
 
         if (!$this->model instanceof Folder) {
-            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'asset'", $this->model->getId());
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'asset'", [$this->model->getId()]);
             $versionCount = max($versionCount, $versionCount2);
         }
 
@@ -326,6 +330,10 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($user = null)
     {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
         $query = 'SELECT `a`.`id` FROM `assets` a WHERE `parentId` = ?';
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
@@ -346,7 +354,21 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings()
     {
-        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
+        if (!$this->model->getParentId()) {
+            return false;
+        }
+
+        $sql = 'SELECT 1 FROM assets WHERE parentId = ?';
+        $params = [$this->model->getParentId()];
+
+        if ($this->model->getId()) {
+            $sql .= ' AND id != ?';
+            $params[] = $this->model->getId();
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, $params);
 
         return (bool)$c;
     }
@@ -360,6 +382,10 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
@@ -370,9 +396,7 @@ class Dao extends Model\Element\Dao
             $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
         }
 
-        $c = $this->db->fetchOne($query, $this->model->getId());
-
-        return $c;
+        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
     /**
