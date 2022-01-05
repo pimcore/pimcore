@@ -747,6 +747,7 @@ class MiscController extends AdminController
         }
 
         $iconsCss = file_get_contents($publicDir . '/css/icons.css');
+
         return $this->render('@PimcoreAdmin/Admin/Misc/iconList.html.twig', [
             'colorIcons' => $colorIcons,
             'whiteIcons' => $whiteIcons,

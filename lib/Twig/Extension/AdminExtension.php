@@ -79,9 +79,10 @@ class AdminExtension extends AbstractExtension
         return '<script src="' . $url . '"></script>' . "\n";
     }
 
-
-    public function inlineIcon(string $icon) {
+    public function inlineIcon(string $icon)
+    {
         $content = file_get_contents($icon);
+
         return sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type($icon), base64_encode($content), basename($icon));
     }
 }
