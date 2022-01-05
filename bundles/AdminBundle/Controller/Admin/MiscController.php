@@ -741,13 +741,12 @@ class MiscController extends AdminController
                 $languageOptions[] = [
                     'language' => $short,
                     'display' => $translation . " ($short)",
-                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, false),
+                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, true),
                 ];
             }
         }
 
         $iconsCss = file_get_contents($publicDir . '/css/icons.css');
-
         return $this->render('@PimcoreAdmin/Admin/Misc/iconList.html.twig', [
             'colorIcons' => $colorIcons,
             'whiteIcons' => $whiteIcons,
