@@ -155,6 +155,7 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function addPages($pages)
     {
+        // @phpstan-ignore-next-line this should be checked via parameter type in Pimcore 11
         if (!$pages instanceof self && !is_array($pages)) {
             throw new \Exception('Invalid argument: $pages must be an array or an instance of ' . self::class);
         }
