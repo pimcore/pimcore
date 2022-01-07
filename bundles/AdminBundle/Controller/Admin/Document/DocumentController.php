@@ -40,6 +40,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -742,12 +743,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @param Request $request
      *
+     * @throws BadRequestHttpException If type is invalid
+     *
      * @return JsonResponse
      */
     public function getDocTypesAction(Request $request)
     {
         $list = new Document\DocType\Listing();
-        if (($type = $request->get('type')) && Document\Service::isValidType($type)) {
+        if ($type = $request->get('type')) {
+            if (!Document\Service::isValidType($type)) {
+                throw new BadRequestHttpException('Invalid type: ' . $type);
+            }
             $list->setFilter(function (Document\DocType $docType) use ($type) {
                 return $docType->getType() === $type;
             });
