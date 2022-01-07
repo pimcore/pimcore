@@ -395,11 +395,13 @@ class Container implements \RecursiveIterator, \Countable
                             foreach ($item as $item2) {
                                 if (preg_match($value, $item2)) {
                                     $found[] = $page;
+                                    break 2;
                                 }
                             }
                         } else {
                             if (in_array($value, $item)) {
                                 $found[] = $page;
+                                break;
                             }
                         }
                     } else {
@@ -407,10 +409,12 @@ class Container implements \RecursiveIterator, \Countable
                         if (true === $useRegex) {
                             if (preg_match($value, $item)) {
                                 $found[] = $page;
+                                break;
                             }
                         } else {
                             if ($item == $value) {
                                 $found[] = $page;
+                                break;
                             }
                         }
                     }
