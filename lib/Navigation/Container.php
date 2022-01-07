@@ -155,12 +155,8 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function addPages($pages)
     {
-        if ($pages instanceof self) {
-            $pages = iterator_to_array($pages);
-        }
-
-        if (!is_array($pages)) {
-            throw new \Exception('Invalid argument: $pages must be an array  or an instance of Container');
+        if (!$pages instanceof self && !is_array($pages)) {
+            throw new \Exception('Invalid argument: $pages must be an array or an instance of ' . self::class);
         }
 
         foreach ($pages as $page) {
