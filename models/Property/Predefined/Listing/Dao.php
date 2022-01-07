@@ -38,6 +38,21 @@ class Dao extends Model\Property\Predefined\Dao
             $properties[] = Model\Property\Predefined::getById($id);
         }
 
+        if (is_callable($filter = $this->model->getFilter())) {
+            $filteredData = [];
+            foreach ($properties as $row) {
+                if ($filter($row)) {
+                    $filteredData[] = $row;
+                }
+            }
+
+            $properties = $filteredData;
+        }
+
+        if (is_callable($order = $this->model->getOrder())) {
+            usort($properties, $order);
+        }
+
         $this->model->setProperties($properties);
 
         return $properties;
