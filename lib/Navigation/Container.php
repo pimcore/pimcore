@@ -318,17 +318,11 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function findAllStartingWith(string $property, string $value): array
     {
-        $filter = new ContainerRecursiveFilterIterator($this, $property, $value);
-        $iterator = new \RecursiveIteratorIterator($filter, \RecursiveIteratorIterator::SELF_FIRST);
+        $preFilter = new ContainerRecursiveFilterIterator($this, $property, $value);
+        $iterator = new \RecursiveIteratorIterator($preFilter, \RecursiveIteratorIterator::SELF_FIRST);
+        $postFilter = new \CallbackFilterIterator($iterator, static fn(Page $page): bool => $page->get($property) === $value);
 
-        $found = [];
-        foreach ($iterator as $page) {
-            if ($page->get($property) === $value) {
-                $found[] = $page;
-            }
-        }
-
-        return $found;
+        return iterator_to_array($postFilter, false);
     }
 
     /**
