@@ -747,19 +747,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function getDocTypesAction(Request $request)
     {
         $list = new Document\DocType\Listing();
-        if ($request->get('type')) {
-            $type = $request->get('type');
-            if (Document\Service::isValidType($type)) {
-                $list->setFilter(function ($row) use ($type) {
-                    if ($row['type'] == $type) {
-                        return true;
-                    }
-
-                    return false;
-                });
-            }
+        if (($type = $request->get('type')) && Document\Service::isValidType($type)) {
+            $list->setFilter(function (Document\DocType $docType) use ($type) {
+                return $docType->getType() === $type;
+            });
         }
-        $list->load();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {

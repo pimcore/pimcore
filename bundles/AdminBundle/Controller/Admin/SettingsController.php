@@ -215,9 +215,9 @@ class SettingsController extends AdminController
 
             if ($request->get('filter')) {
                 $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
-                        if (strpos($value, $filter) !== false) {
+                $list->setFilter(function (Metadata\Predefined $predefined) use ($filter) {
+                    foreach ($predefined->getObjectVars() as $value) {
+                        if (stripos($value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -335,13 +335,13 @@ class SettingsController extends AdminController
 
             if ($request->get('filter')) {
                 $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
+                $list->setFilter(function (Property\Predefined $predefined) use ($filter) {
+                    foreach ($predefined->getObjectVars() as $value) {
                         if ($value) {
                             $cellValues = is_array($value) ? $value : [$value];
 
                             foreach ($cellValues as $cellValue) {
-                                if (strpos($cellValue, $filter) !== false) {
+                                if (stripos($cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
@@ -887,13 +887,12 @@ class SettingsController extends AdminController
 
             if ($request->get('filter')) {
                 $filter = $request->get('filter');
-                $list->setFilter(function ($staticRoute) use ($filter) {
-                    $vars = $staticRoute->getObjectVars();
-                    foreach ($vars as $value) {
-                        if (! is_scalar($value)) {
+                $list->setFilter(function (Staticroute $staticRoute) use ($filter) {
+                    foreach ($staticRoute->getObjectVars() as $value) {
+                        if (!is_scalar($value)) {
                             continue;
                         }
-                        if (strpos((string)$value, $filter) !== false) {
+                        if (stripos((string)$value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -1217,21 +1216,18 @@ class SettingsController extends AdminController
     /**
      * @Route("/thumbnail-downloadable", name="pimcore_admin_settings_thumbnaildownloadable", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function thumbnailDownloadableAction(Request $request)
+    public function thumbnailDownloadableAction()
     {
         $thumbnails = [];
 
         $list = new Asset\Image\Thumbnail\Config\Listing();
-        $list->setFilter(function (array $config) {
-            return array_key_exists('downloadable', $config) ? $config['downloadable'] : false;
+        $list->setFilter(function (Asset\Image\Thumbnail\Config $config) {
+            return $config->isDownloadable();
         });
         $items = $list->getThumbnails();
 
-        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             $thumbnails[] = [
                 'id' => $item->getName(),
