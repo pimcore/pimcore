@@ -222,20 +222,18 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Document|Asset|DataObject\AbstractObject $element
+     * @param ElementInterface $element
      *
      * @return array
      */
     private static function getDependencyForFrontend($element)
     {
-        if ($element instanceof ElementInterface) {
-            return [
-                'id' => $element->getId(),
-                'path' => $element->getRealFullPath(),
-                'type' => self::getElementType($element),
-                'subtype' => $element->getType(),
-            ];
-        }
+        return [
+            'id' => $element->getId(),
+            'path' => $element->getRealFullPath(),
+            'type' => self::getElementType($element),
+            'subtype' => $element->getType(),
+        ];
     }
 
     /**
