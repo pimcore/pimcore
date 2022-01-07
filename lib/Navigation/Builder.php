@@ -137,23 +137,23 @@ class Builder
             $request = $this->requestHelper->getMainRequest();
 
             // try to find a page matching exactly the request uri
-            $activePages = $navigation->findAllByUri($request->getRequestUri());
+            $activePages = $navigation->findAllStartingWith('uri', $request->getRequestUri());
 
             if (empty($activePages)) {
                 // try to find a page matching the path info
-                $activePages = $navigation->findAllByUri($request->getPathInfo());
+                $activePages = $navigation->findAllStartingWith('uri', $request->getPathInfo());
             }
         }
 
         if ($activeDocument instanceof Document) {
             if (empty($activePages)) {
                 // use the provided pimcore document
-                $activePages = $navigation->findAllByRealFullPath($activeDocument->getRealFullPath());
+                $activePages = $navigation->findAllStartingWith('realFullPath', $activeDocument->getRealFullPath());
             }
 
             if (empty($activePages)) {
                 // find by link target
-                $activePages = $navigation->findAllByUri($activeDocument->getFullPath());
+                $activePages = $navigation->findAllStartingWith('uri', $activeDocument->getFullPath());
             }
         }
 
@@ -176,18 +176,16 @@ class Builder
             }
         } elseif ($activeDocument instanceof Document) {
             // we didn't find the active document, so we try to build the trail on our own
-            $allPages = $navigation->findAll();
-
-            foreach ($allPages as $page) {
+            foreach ($navigation->findAll() as $page) {
                 $activeTrail = false;
 
                 if ($page instanceof Url && $page->getUri()) {
-                    if (strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
+                    if (str_starts_with($activeDocument->getRealFullPath(), $page->getUri() . '/')) {
                         $activeTrail = true;
                     } elseif (
                         $page instanceof DocumentPage &&
                         $page->getDocumentType() === 'link' &&
-                        strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0
+                        str_starts_with($activeDocument->getFullPath(), $page->getUri() . '/')
                     ) {
                         $activeTrail = true;
                     }
