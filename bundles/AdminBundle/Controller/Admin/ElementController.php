@@ -796,8 +796,6 @@ class ElementController extends AdminController
                 return true;
             });
 
-            $list->load();
-
             foreach ($list->getProperties() as $type) {
                 $properties[] = $type->getObjectVars();
             }
