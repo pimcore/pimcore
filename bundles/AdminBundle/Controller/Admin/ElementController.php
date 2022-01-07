@@ -784,12 +784,16 @@ class ElementController extends AdminController
     {
         $properties = [];
         $type = $request->get('elementType');
+        $query = $request->get('query');
         $allowedTypes = ['asset', 'document', 'object'];
 
         if (in_array($type, $allowedTypes, true)) {
             $list = new Model\Property\Predefined\Listing();
-            $list->setFilter(function (Model\Property\Predefined $predefined) use ($type) {
+            $list->setFilter(function (Model\Property\Predefined $predefined) use ($type, $query) {
                 if (!str_contains($predefined->getCtype(), $type)) {
+                    return false;
+                }
+                if ($query && stripos($this->trans($predefined->getName()), $query) === false) {
                     return false;
                 }
 
