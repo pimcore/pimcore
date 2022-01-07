@@ -301,31 +301,6 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return Page[] iterable containing only Page instances
-     */
-    public function findAll(): iterable
-    {
-        return new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
-    }
-
-    /**
-     * Returns all child pages where $property starts with $value, or an empty array if no pages are found
-     *
-     * @param  string $property  name of property to match against
-     * @param  string $value     value to match property against
-     *
-     * @return Page[] array containing only Page instances
-     */
-    public function findAllStartingWith(string $property, string $value): array
-    {
-        $preFilter = new ContainerRecursiveFilterIterator($this, $property, $value);
-        $iterator = new \RecursiveIteratorIterator($preFilter, \RecursiveIteratorIterator::SELF_FIRST);
-        $postFilter = new \CallbackFilterIterator($iterator, static fn(Page $page): bool => $page->get($property) === $value);
-
-        return iterator_to_array($postFilter, false);
-    }
-
-    /**
      * Returns a child page matching $property == $value or
      * preg_match($value, $property), or null if not found
      *
@@ -338,7 +313,9 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function findOneBy($property, $value, $useRegex = false)
     {
-        foreach ($this->findAll() as $page) {
+        $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
 
             // Rel and rev
@@ -404,7 +381,9 @@ class Container implements \RecursiveIterator, \Countable
     {
         $found = [];
 
-        foreach ($this->findAll() as $page) {
+        $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
 
             // Rel and rev
