@@ -967,7 +967,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
-            if(!\in_array($sortOrder, ['ASC', 'DESC'])) {
+            if (!\in_array($sortOrder, ['ASC', 'DESC'])) {
                 $sortOrder = 'ASC';
             }
 
