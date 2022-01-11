@@ -352,13 +352,28 @@ trait PimcoreExtensionsTrait
             $i++;
         }
 
+        // get the field name of the primary key
+        $schemaManager = $this->getSchemaManager();
+        $indexes = $schemaManager->listTableIndexes($table);
+        $fieldsPrimaryKeyRaw = [];
+        foreach ($indexes as $index) {
+            if ($index->isPrimary()) {
+                $fieldsPrimaryKeyRaw = (array)$index->getColumns();
+                break;
+            }
+        }
+
+        // format fieldnames for primary key to check in the following block
+        $fieldsPrimaryKey = [];
+        foreach ($fieldsPrimaryKeyRaw as $item) {
+            $fieldsPrimaryKey[] = $this->quoteIdentifier($item);
+        }
+
         // build the statement
         $set = [];
         foreach ($cols as $i => $col) {
-            // this is to avoid setting existing ids to 0 if multiple processes try to add the same row simultaneously
-            // see also: https://github.com/pimcore/pimcore/issues/11109
             if (
-                $col === $this->quoteIdentifier('id')
+                in_array($col, $fieldsPrimaryKey)
                 &&
                 $data[trim($col, $this->getDatabasePlatform()->getIdentifierQuoteCharacter())] === null
             ) {
