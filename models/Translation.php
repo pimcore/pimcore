@@ -33,22 +33,22 @@ final class Translation extends AbstractModel
     const DOMAIN_ADMIN = 'admin';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $key;
 
     /**
      * @var string[]
      */
-    protected $translations;
+    protected $translations = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -87,7 +87,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -139,7 +139,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -159,7 +159,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -191,7 +191,7 @@ final class Translation extends AbstractModel
      */
     public function setDomain(string $domain): void
     {
-        $this->domain = $domain;
+        $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
     /**

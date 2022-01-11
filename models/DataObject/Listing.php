@@ -20,7 +20,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
- * @method Model\DataObject current()
+ * @method Model\DataObject|false current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
@@ -138,10 +138,10 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      */
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     #[\ReturnTypeWillChange]
-    public function count()
+    public function count()// : int
     {
         return $this->getDao()->getTotalCount();
     }

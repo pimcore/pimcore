@@ -50,7 +50,7 @@ pimcore:
                 type:                expression
                 arguments:
                     - \Pimcore\Model\DataObject\Product
-                    - subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles
+                    - subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in role_names
 
                 # Type "expression": a symfony expression to define a criteria.
                 type:                 ~ # One of "expression"
@@ -70,7 +70,7 @@ pimcore:
                         label:               close product
                         permissions:
                             -
-                                condition:           is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles
+                                condition:           is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names
                                 modify:
                             -
                                 modify:
@@ -172,7 +172,7 @@ pimcore:
                     name:                 ~ # Required
 
                     # An expression to block the transition
-                    guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
+                    guard:                ~ # Example: is_fully_authenticated() and 'ROLE_JOURNALIST' in role_names and subject.getTitle() == 'My first article'
                     from:                 []
                     to:                   []
                     options:

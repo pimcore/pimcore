@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Textarea extends Model\Document\Editable
+class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 {
     /**
      * Contains the text
@@ -74,7 +74,10 @@ class Textarea extends Model\Document\Editable
         return $text;
     }
 
-    public function getDataEditmode()
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataEditmode() /** : mixed */
     {
         return htmlentities($this->text);
     }

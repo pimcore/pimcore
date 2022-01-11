@@ -17,12 +17,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Test;
 
-/**
- * @internal
- */
+use Symfony\Component\HttpKernel\KernelInterface;
+
 abstract class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
-    protected static function createKernel(array $options = [])
+    /**
+     * @param array $options
+     *
+     * @return KernelInterface
+     */
+    protected static function createKernel(array $options = [])// : KernelInterface
     {
         $kernel = parent::createKernel($options);
 

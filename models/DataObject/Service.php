@@ -443,7 +443,7 @@ class Service extends Model\Element\Service
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
-                            $parent = self::hasInheritableParentObject($object);
+                            $parent = self::hasInheritableParentObject($object, $key);
 
                             if (!empty($parent)) {
                                 $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
@@ -720,7 +720,7 @@ class Service extends Model\Element\Service
         }
 
         if ($fieldDefinition->isEmpty($value)) {
-            $parent = self::hasInheritableParentObject($object);
+            $parent = self::hasInheritableParentObject($object, $key);
             if (!empty($parent)) {
                 return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
             }
@@ -794,10 +794,10 @@ class Service extends Model\Element\Service
      *
      * @return AbstractObject|null
      */
-    public static function hasInheritableParentObject(Concrete $object)
+    public static function hasInheritableParentObject(Concrete $object, $fieldName = null)
     {
         if ($object->getClass()->getAllowInherit()) {
-            return $object->getNextParentForInheritance();
+            return $object->getNextParentForInheritance($fieldName);
         }
 
         return null;
@@ -1228,7 +1228,7 @@ class Service extends Model\Element\Service
                         $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
                         $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(false);
                     $mergedFieldDefinition[$key]->setNotEditable(false);
@@ -1259,7 +1259,7 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
                 }
@@ -1435,7 +1435,7 @@ class Service extends Model\Element\Service
     /**
      * Enriches the layout definition before it is returned to the admin interface.
      *
-     * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
+     * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
      * @param Concrete|null $object
      * @param array $context additional contextual data
      *
@@ -1443,6 +1443,10 @@ class Service extends Model\Element\Service
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
+        if (is_null($layout)) {
+            return;
+        }
+
         $context['object'] = $object;
 
         //TODO Pimcore 11: remove method_exists BC layer

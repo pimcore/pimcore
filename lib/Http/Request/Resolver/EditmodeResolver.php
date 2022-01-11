@@ -69,7 +69,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
     }
 
     /**
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return bool
      */

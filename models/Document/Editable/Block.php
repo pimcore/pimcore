@@ -25,6 +25,11 @@ use Pimcore\Tool\HtmlUtils;
 class Block extends Model\Document\Editable implements BlockInterface
 {
     /**
+     * @internal
+     */
+    const ATTRIBUTE_IGNORE_EDITMODE_INDICES = '_block_ignore_extra_editmode_indices';
+
+    /**
      * Contains an array of indices, which represent the order of the elements in the block
      *
      * @internal
@@ -121,7 +126,7 @@ class Block extends Model\Document\Editable implements BlockInterface
             yield $this->getCurrentIndex();
         }
 
-        if ($this->getEditmode()) {
+        if ($this->getEditmode() && !$this->isIgnoreEditmodeIndices()) {
 
             // yeah, I know the following is f******* crazy :D
             $this->current = 0;
@@ -436,5 +441,19 @@ EOT;
         ];
 
         return HtmlUtils::assembleAttributeString($attributes);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isIgnoreEditmodeIndices(): bool
+    {
+        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $request = $requestStack->getCurrentRequest();
+        if ($request === null) {
+            return false;
+        }
+
+        return $request->get(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES, false);
     }
 }

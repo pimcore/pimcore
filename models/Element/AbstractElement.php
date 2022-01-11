@@ -49,7 +49,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function updateModificationInfos()
     {
-        $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        if (Model\Version::isEnabled() === true) {
+            $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+        }
 
         if ($this->getVersionCount() > 4200000000) {
             $this->setVersionCount(1);
@@ -125,7 +127,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementType($this);
 
-        return $elementType . '_' . $this->getId();
+        return Service::getElementCacheTag($elementType, $this->getId());
     }
 
     /**
@@ -139,7 +141,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementTypeByClassName(static::class);
 
-        return $elementType . '_' . $id;
+        return Service::getElementCacheTag($elementType, $id);
     }
 
     /**

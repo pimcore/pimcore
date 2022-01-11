@@ -1,11 +1,31 @@
 # Upgrade Notes
+## 10.3.0
+- **Important notice**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
+  required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
+  the messages on default queue gets consumed.
+- [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
+- **Important**: In preparation of upgrade to Symfony 6, return types must be added to methods which are extended from Symfony. In Pimcore, following changes are applied:
+  - Return type added to safe methods, which are `final` & marked as `internal`.
+  - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return
+    types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes.
+    Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
 
 ## 10.2.0
-- [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production). 
+- [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production).
+- [Maintenance] Image Optimizer maintenance task moved to Messages which are consumed by Symfony Messenger. If you want to disable the image optimization, please add config to avoid dispatching the messages on messenger bus:
+```yaml
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                image_optimizers:
+                    enabled: false
+```
 - [Configs] The default storage for configurations is now `yaml` files in the `var/config` directory and are loaded as Symfony Config. The old `php` config-files continue to work, however, changes on existing configurations as well as new configurations are written to `yaml`.  
 **Important notice**: writing configs to `yaml` is only supported if the kernel is in debug mode, because changes of the config need a rebuild of the container configuration.  
 If you require to change the config on production environments we recommend to change the storage to `settings-store` as described [here](../../21_Deployment/03_Configuration_Environments.md). 
 - [Asset] Pimcore now automatically supports AVIF image format for thumbnails using `auto` format (only `Imagick`). To disable AVIF please [follow this instructions](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).  
+- [DataObject API] There is change in behavior when validating the inherited dataobjects & variants. As before, the inherited object gets saved with invalid attribute value, if the parent object has a valid value for the same attribute. Now, the API will throw validation exception, if the inherited object has an invalid value. please see https://github.com/pimcore/pimcore/pull/10529 
 
 ## 10.1.0
 - [Core] Additional interfaces for data-types introduced. Existing `method_exists` calls are deprecated and will

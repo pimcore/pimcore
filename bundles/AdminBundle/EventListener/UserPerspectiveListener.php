@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\User;
 use Psr\Log\LoggerAwareInterface;
@@ -86,7 +85,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
         if ($requestedPerspective) {
             if ($requestedPerspective !== $user->getActivePerspective()) {
-                $existingPerspectives = array_keys(Config::getPerspectivesConfig()->toArray());
+                $existingPerspectives = array_keys(\Pimcore\Perspective\Config::get()->toArray());
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $this->logger->warning('Requested perspective {perspective} for {user} is not does not exist.', [
                         'user' => $user->getName(),

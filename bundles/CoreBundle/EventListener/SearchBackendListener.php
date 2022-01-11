@@ -20,6 +20,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,7 +31,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class SearchBackendListener implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messengerBusPimcoreCore
     ) {
     }
 
@@ -60,8 +61,8 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPostAddElement(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        $this->messageBus->dispatch(
-            new SearchBackendMessage($element->getType(), $element->getId())
+        $this->messengerBusPimcoreCore->dispatch(
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
     }
 
@@ -82,8 +83,8 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPostUpdateElement(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        $this->messageBus->dispatch(
-            new SearchBackendMessage($element->getType(), $element->getId())
+        $this->messengerBusPimcoreCore->dispatch(
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
     }
 }

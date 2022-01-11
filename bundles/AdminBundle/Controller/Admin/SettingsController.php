@@ -43,6 +43,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -434,8 +435,15 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function setSystemAction(Request $request, LocaleServiceInterface $localeService)
-    {
+    public function setSystemAction(
+        LocaleServiceInterface $localeService,
+        Request $request,
+        KernelInterface $kernel,
+        EventDispatcherInterface $eventDispatcher,
+        CoreCacheHandler $cache,
+        Filesystem $filesystem,
+        CacheClearer $symfonyCacheClearer
+    ) {
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
@@ -521,6 +529,7 @@ class SettingsController extends AdminController
                     'login_screen_invert_colors' => $values['branding.login_screen_invert_colors'],
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
+                    'color_admin_interface_background' => $values['branding.color_admin_interface_background'],
                     'login_screen_custom_image' => $values['branding.login_screen_custom_image'],
                 ],
         ];
@@ -534,13 +543,17 @@ class SettingsController extends AdminController
         File::put($configFile, $settingsYml);
 
         // clear all caches
-        $this->forward(self::class . '::clearCacheAction', [
-            'only_symfony_cache' => false,
-            'only_pimcore_cache' => false,
-            'env' => [\Pimcore::getKernel()->getEnvironment()],
-        ]);
-
+        $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
         $this->stopMessengerWorkers();
+
+        $eventDispatcher->addListener(KernelEvents::TERMINATE, function (TerminateEvent $event) use (
+            $cache, $eventDispatcher, $filesystem
+        ) {
+            // we need to clear the cache with a delay, because the cache is used by messenger:stop-workers
+            // to send the stop signal to all worker processes
+            sleep(2);
+            $this->clearPimcoreCache($cache, $eventDispatcher, $filesystem);
+        });
 
         return $this->adminJson(['success' => true]);
     }
@@ -671,65 +684,11 @@ class SettingsController extends AdminController
         $clearSymfonyCache = !(bool)$request->get('only_pimcore_cache');
 
         if ($clearPimcoreCache) {
-            // empty document cache
-            $cache->clearAll();
-
-            if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
-                $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
-            }
-
-            // PIMCORE-1854 - recreate .dummy file => should remain
-            File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
-
-            $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
+            $this->clearPimcoreCache($cache, $eventDispatcher, $filesystem);
         }
 
         if ($clearSymfonyCache) {
-            // pass one or move env parameters to clear multiple envs
-            // if no env is passed it will use the current one
-            $environments = $request->get('env', $kernel->getEnvironment());
-
-            if (!is_array($environments)) {
-                $environments = trim((string)$environments);
-
-                if (empty($environments)) {
-                    $environments = [];
-                } else {
-                    $environments = [$environments];
-                }
-            }
-
-            if (empty($environments)) {
-                $environments = [$kernel->getEnvironment()];
-            }
-
-            $result['environments'] = $environments;
-
-            if (in_array($kernel->getEnvironment(), $environments)) {
-                // remove terminate and exception event listeners for the current env as they break with a
-                // cleared container - see #2434
-                foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
-                    $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
-                }
-
-                foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
-                    $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
-                }
-            }
-
-            foreach ($environments as $environment) {
-                try {
-                    $symfonyCacheClearer->clear($environment);
-                } catch (\Throwable $e) {
-                    $errors = $result['errors'] ?? [];
-                    $errors[] = $e->getMessage();
-
-                    $result = array_merge($result, [
-                        'success' => false,
-                        'errors' => $errors,
-                    ]);
-                }
-            }
+            $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
         }
 
         $response = new JsonResponse($result);
@@ -743,6 +702,77 @@ class SettingsController extends AdminController
         }
 
         return $response;
+    }
+
+    private function clearPimcoreCache(
+        CoreCacheHandler $cache,
+        EventDispatcherInterface $eventDispatcher,
+        Filesystem $filesystem,
+    ): void {
+        // empty document cache
+        $cache->clearAll();
+
+        if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
+            $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
+        }
+
+        // PIMCORE-1854 - recreate .dummy file => should remain
+        File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
+    }
+
+    private function clearSymfonyCache(
+        Request $request,
+        KernelInterface $kernel,
+        EventDispatcherInterface $eventDispatcher,
+        CacheClearer $symfonyCacheClearer,
+    ): void {
+        // pass one or move env parameters to clear multiple envs
+        // if no env is passed it will use the current one
+        $environments = $request->get('env', $kernel->getEnvironment());
+
+        if (!is_array($environments)) {
+            $environments = trim((string)$environments);
+
+            if (empty($environments)) {
+                $environments = [];
+            } else {
+                $environments = [$environments];
+            }
+        }
+
+        if (empty($environments)) {
+            $environments = [$kernel->getEnvironment()];
+        }
+
+        $result['environments'] = $environments;
+
+        if (in_array($kernel->getEnvironment(), $environments)) {
+            // remove terminate and exception event listeners for the current env as they break with a
+            // cleared container - see #2434
+            foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
+                $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
+            }
+
+            foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
+                $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
+            }
+        }
+
+        foreach ($environments as $environment) {
+            try {
+                $symfonyCacheClearer->clear($environment);
+            } catch (\Throwable $e) {
+                $errors = $result['errors'] ?? [];
+                $errors[] = $e->getMessage();
+
+                $result = array_merge($result, [
+                    'success' => false,
+                    'errors' => $errors,
+                ]);
+            }
+        }
     }
 
     /**
@@ -858,8 +888,9 @@ class SettingsController extends AdminController
 
             if ($request->get('filter')) {
                 $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
+                $list->setFilter(function ($staticRoute) use ($filter) {
+                    $vars = $staticRoute->getObjectVars();
+                    foreach ($vars as $value) {
                         if (! is_scalar($value)) {
                             continue;
                         }
@@ -878,7 +909,7 @@ class SettingsController extends AdminController
             /** @var Staticroute $routeFromList */
             foreach ($list->getRoutes() as $routeFromList) {
                 $route = $routeFromList->getObjectVars();
-                $route['isWriteable'] = $routeFromList->isWriteable();
+                $route['writeable'] = $routeFromList->isWriteable();
                 if (is_array($routeFromList->getSiteId())) {
                     $route['siteId'] = implode(',', $routeFromList->getSiteId());
                 }

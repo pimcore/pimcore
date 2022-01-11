@@ -64,10 +64,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         };
 
         // check for restrictions
-        var possibleRestrictions = ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"];
-        var filterStore = [];
-        var selectedStore = [];
-        for (var i=0; i<possibleRestrictions.length; i++) {
+        let possibleRestrictions = pimcore.globalmanager.get('document_search_types');
+        let filterStore = [];
+        let selectedStore = [];
+        for (let i=0; i<possibleRestrictions.length; i++) {
             if(this.parent.restrictions.subtype.document && in_array(possibleRestrictions[i],
                 this.parent.restrictions.subtype.document )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
@@ -77,13 +77,13 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
 
         // add all to store if empty
         if(filterStore.length < 1) {
-            for (var i=0; i<possibleRestrictions.length; i++) {
+            for (let i=0; i<possibleRestrictions.length; i++) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
             }
         }
 
-        var selectedValue = selectedStore.join(",");
+        let selectedValue = selectedStore.join(",");
         if(filterStore.length > 1) {
             filterStore.splice(0,0,[selectedValue, t("all_types")]);
         }
@@ -243,11 +243,12 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
     },
 
     search: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("type", "document");
-        proxy.setExtraParam("query", formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {
@@ -255,6 +256,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         }
 
         this.pagingtoolbar.moveFirst();
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     }
 });

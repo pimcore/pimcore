@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Session\SessionConfiguratorInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionConfigurator implements SessionConfiguratorInterface
@@ -50,7 +50,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
         $bagNames = $this->getBagNames();
 
         foreach ($bagNames as $bagName) {
-            $bag = new NamespacedAttributeBag('_' . $bagName);
+            $bag = new AttributeBag('_' . $bagName);
             $bag->setName($bagName);
 
             $session->registerBag($bag);

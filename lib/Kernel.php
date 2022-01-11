@@ -69,10 +69,16 @@ abstract class Kernel extends SymfonyKernel
     private $bundleCollection;
 
     /**
-     * {@inheritdoc}
+     * @deprecated
      */
     public function getRootDir()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.3',
+            'Kernel::getRootDir() is deprecated and will be removed in Pimcore 11. Use Kernel::getProjectDir() instead.',
+        );
+
         return PIMCORE_PROJECT_ROOT;
     }
 
@@ -161,7 +167,7 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata', 'staticroutes'] as $configDir) {
+        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata', 'staticroutes', 'perspectives', 'custom-views'] as $configDir) {
             $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
             if (is_dir($configDir)) {
                 // @phpstan-ignore-next-line
@@ -415,9 +421,6 @@ abstract class Kernel extends SymfonyKernel
 
         // set internal character encoding to UTF-8
         mb_internal_encoding('UTF-8');
-
-        // this is for simple_dom_html
-        ini_set('pcre.recursion-limit', 100000);
 
         // zlib.output_compression conflicts with while (@ob_end_flush()) ;
         // see also: https://github.com/pimcore/pimcore/issues/291

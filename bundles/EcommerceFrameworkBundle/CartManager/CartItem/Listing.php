@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
 /**
  * @method CartItemInterface[] load()
- * @method CartItemInterface current()
+ * @method CartItemInterface|false current()
  * @method int getTotalCount()
  * @method int getTotalAmount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing\Dao getDao()

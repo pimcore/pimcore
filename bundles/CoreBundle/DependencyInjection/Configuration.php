@@ -34,9 +34,12 @@ final class Configuration implements ConfigurationInterface
     /**
      * @var PlaceholderProcessor
      */
-    private $placeholderProcessor;
+    private PlaceholderProcessor $placeholderProcessor;
 
-    private $placeholders = [];
+    /**
+     * @var array
+     */
+    private array $placeholders = [];
 
     public function __construct()
     {
@@ -45,11 +48,9 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Generates the configuration tree builder.
-     *
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
+     * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
@@ -176,6 +177,8 @@ final class Configuration implements ConfigurationInterface
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addStaticRoutesNode($rootNode);
+        $this->addPerspectivesNode($rootNode);
+        $this->addCustomViewsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -448,6 +451,9 @@ final class Configuration implements ConfigurationInterface
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
                         ->children()
+                            ->integerNode('max_pixels')
+                                ->defaultValue(40000000)
+                            ->end()
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
@@ -511,6 +517,10 @@ final class Configuration implements ConfigurationInterface
                                             })
                                         ->end()
                                         ->defaultTrue()
+                                    ->end()
+                                    ->arrayNode('image_optimizers')
+                                        ->addDefaultsIfNotSet()
+                                        ->canBeDisabled()
                                     ->end()
                                     ->arrayNode('auto_formats')
                                         ->prototype('array')
@@ -850,6 +860,9 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
+                ->end()
+                ->scalarNode('preview_url_prefix')
+                    ->defaultValue('')
                 ->end()
                 ->integerNode('tree_paging_limit')
                     ->defaultValue(50)
@@ -2122,5 +2135,101 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ->end();
+    }
+
+    /**
+     * Add perspectives specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPerspectivesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('perspectives')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('iconCls')->end()
+                                    ->scalarNode('icon')->end()
+                                    ->variableNode('toolbar')->end()
+                                    ->arrayNode('dashboards')
+                                        ->children()
+                                            ->variableNode('predefined')->end()
+                                        ->end()
+                                    ->end()
+                                    ->arrayNode('elementTree')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('type')->end()
+                                                ->scalarNode('position')->end()
+                                                ->scalarNode('name')->end()
+                                                ->booleanNode('expanded')->end()
+                                                ->scalarNode('hidden')->end()
+                                                ->integerNode('sort')->end()
+                                                ->scalarNode('id')->end()
+                                                ->variableNode('treeContextMenu')->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Add custom views specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCustomViewsNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('custom_views')
+                    ->ignoreExtraKeys()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('definitions')
+                        ->normalizeKeys(false)
+                            ->prototype('array')
+                            ->children()
+                                ->scalarNode('id')->end()
+                                ->scalarNode('treetype')->end()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('condition')->end()
+                                ->scalarNode('icon')->end()
+                                ->scalarNode('rootfolder')->end()
+                                ->scalarNode('showroot')->end()
+                                ->variableNode('classes')->end()
+                                ->scalarNode('position')->end()
+                                ->scalarNode('sort')->end()
+                                ->booleanNode('expanded')->end()
+                                ->scalarNode('having')->end()
+                                ->scalarNode('where')->end()
+                                ->variableNode('treeContextMenu')->end()
+                                ->arrayNode('joins')
+                                    ->protoType('array')
+                                        ->children()
+                                            ->scalarNode('type')->end()
+                                            ->scalarNode('condition')->end()
+                                            ->variableNode('name')->end()
+                                            ->variableNode('columns')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }

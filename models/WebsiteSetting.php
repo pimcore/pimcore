@@ -26,7 +26,7 @@ use Pimcore\Model\Exception\NotFoundException;
 final class WebsiteSetting extends AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -51,17 +51,17 @@ final class WebsiteSetting extends AbstractModel
     protected $data;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $siteId;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -157,7 +157,7 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -209,7 +209,7 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -259,7 +259,7 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -279,11 +279,11 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSiteId()
     {
-        return (int) $this->siteId;
+        return $this->siteId;
     }
 
     /**
@@ -332,7 +332,7 @@ final class WebsiteSetting extends AbstractModel
 
     public function delete(): void
     {
-        $nameCacheKey = static::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());
+        $nameCacheKey = self::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());
 
         // Remove cached element to avoid returning it with e.g. getByName() after if it is deleted
         if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {

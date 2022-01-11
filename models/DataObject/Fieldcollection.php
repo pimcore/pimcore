@@ -140,7 +140,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
                         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
                         $collection->setObject($object);
-                        $collection->save($object, $params, $saveRelationalData);
+                        $collection->getDao()->save($object, $params, $saveRelationalData);
                     } else {
                         throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                     }
@@ -224,54 +224,48 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind()// : void
     {
         reset($this->items);
     }
 
     /**
-     * {@inheritdoc}
+     * @return Model\DataObject\Fieldcollection\Data\AbstractData|false
      */
     #[\ReturnTypeWillChange]
-    public function current()
+    public function current()// : Model\DataObject\Fieldcollection\Data\AbstractData|false
     {
-        $var = current($this->items);
-
-        return $var;
+        return current($this->items);
     }
 
     /**
-     * {@inheritdoc}
+     * @return int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()
+    public function key()// : int|null
     {
-        $var = key($this->items);
-
-        return $var;
+        return key($this->items);
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()
+    public function next()// : void
     {
         next($this->items);
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid()// : bool
     {
-        $var = $this->current() !== false;
-
-        return $var;
+        return $this->current() !== false;
     }
 
     /**

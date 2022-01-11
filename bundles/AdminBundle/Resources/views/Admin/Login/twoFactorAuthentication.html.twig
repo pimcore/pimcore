@@ -18,7 +18,12 @@
         <button type="submit">{{ 'Login'|trans([],'admin') }}</button>
     </form>
 
-    <a href="{{ path('pimcore_admin_logout') }}">{{ 'Back to Login'|trans([],'admin') }}</a>
+    <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <a href="#" onclick="document.getElementById('pimcore_logout_form').submit();">{{ 'Back to Login'|trans([],'admin') }}</a>
+    </form>
+
+
 
     {{ pimcore_breach_attack_random_content() }}
 {% endblock %}

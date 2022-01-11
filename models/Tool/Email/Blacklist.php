@@ -27,17 +27,17 @@ use Pimcore\Model;
 class Blacklist extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $address;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -67,7 +67,7 @@ class Blacklist extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAddress()
     {

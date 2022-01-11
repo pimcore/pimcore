@@ -34,7 +34,7 @@ pimcore.layout.toolbar = Class.create({
                         var itemCfg = {
                             text: t(perspective.name),
                             disabled: perspective.active,
-                            itemId: 'pimcore_menu_file_perspective_' + perspective.name,
+                            itemId: 'pimcore_menu_file_perspective_' + perspective.name.replace(/[^a-z0-9\-_]+/ig, '-'),
                             handler: this.openPerspective.bind(this, perspective.name)
                         };
 
@@ -321,10 +321,10 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("shared_translations"),
+                            text: t("domain_translations"),
                             iconCls: "pimcore_nav_icon_translations",
                             itemId: 'pimcore_menu_extras_translations_shared_translations',
-                            handler: this.editTranslations
+                            handler: this.editTranslations.bind(this, 'messages')
                         }, {
                             text: "XLIFF " + t("export") + "/" + t("import"),
                             iconCls: "pimcore_nav_icon_translations",
@@ -1003,7 +1003,7 @@ pimcore.layout.toolbar = Class.create({
                         text: t("admin_translations"),
                         iconCls: "pimcore_nav_icon_translations",
                         itemId: 'pimcore_menu_settings_admin_translations',
-                        handler: this.editTranslationsSpecific
+                        handler: this.editTranslations.bind(this, 'admin')
                     });
                 }
             }
@@ -1333,23 +1333,13 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    editTranslations: function () {
-        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "website");
+    editTranslations: function (domain) {
+        pimcore.plugin.broker.fireEvent("preEditTranslations", this, domain ?? "website");
         try {
-            pimcore.globalmanager.get("translationwebsitemanager").activate();
+            pimcore.globalmanager.get("translationdomainmanager").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("translationwebsitemanager", new pimcore.settings.translation.website());
-        }
-    },
-
-    editTranslationsSpecific: function () {
-        pimcore.plugin.broker.fireEvent("preEditTranslations", this, "admin");
-        try {
-            pimcore.globalmanager.get("translationadminmanager").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("translationadminmanager", new pimcore.settings.translation.admin());
+            pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
         }
     },
 
@@ -1380,50 +1370,15 @@ pimcore.layout.toolbar = Class.create({
 
     generatePagePreviews: function ()  {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_page_getlist'),
+            url: Routing.generate('pimcore_admin_document_page_generatepreviews'),
             success: function (res) {
                 var data = Ext.decode(res.responseText);
                 if(data && data.success) {
-                    var items = data.data;
-                    var totalItems = items.length;
-
-                    var progressBar = new Ext.ProgressBar({
-                        text: t('initializing')
-                    });
-
-                    var progressWin = new Ext.Window({
-                        title: t("generate_page_previews"),
-                        layout:'fit',
-                        width:200,
-                        bodyStyle: "padding: 10px;",
-                        closable:false,
-                        plain: true,
-                        items: [progressBar],
-                        listeners: pimcore.helpers.getProgressWindowListeners()
-                    });
-
-                    progressWin.show();
-
-                    var generate = function () {
-                        if(items.length > 1) {
-                            var next = items.shift();
-
-                            var date = new Date();
-                            var path = next.path + "?pimcore_preview=true&time=" + date.getTime();
-
-                            pimcore.helpers.generatePagePreview(next.id, path, function () {
-                                generate();
-                            });
-
-                            var status = (totalItems-items.length) / totalItems;
-                            progressBar.updateProgress(status, (Math.ceil(status*100) + "%"));
-                        } else {
-                            progressWin.close();
-                        }
-                    };
-
-                    generate();
+                    pimcore.helpers.showNotification(t("success"), t("success_generating_previews"), "success");
                 }
+            },
+            failure: function (message) {
+                pimcore.helpers.showNotification(t("error"), t("error_generating_previews"), "error", t(message));
             }
         });
     },

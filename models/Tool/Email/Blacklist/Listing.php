@@ -23,7 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Tool\Email\Blacklist\Listing\Dao getDao()
  * @method void delete()*
  * @method Model\Tool\Email\Blacklist[] load()
- * @method Model\Tool\Email\Blacklist current()
+ * @method Model\Tool\Email\Blacklist|false current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing

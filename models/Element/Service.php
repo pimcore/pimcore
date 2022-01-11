@@ -40,7 +40,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -1010,7 +1009,7 @@ class Service extends Model\AbstractModel
      */
     public static function getCustomViewById($id)
     {
-        $customViews = Tool::getCustomViewConfig();
+        $customViews = \Pimcore\CustomView\Config::get();
         if ($customViews) {
             foreach ($customViews as $customView) {
                 if ($customView['id'] == $id) {
@@ -1564,5 +1563,18 @@ class Service extends Model\AbstractModel
         $rowData = self::$formatter->escapeRecord($rowData);
 
         return $rowData;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $type
+     * @param int|string $id
+     *
+     * @return string
+     */
+    public static function getElementCacheTag(string $type, $id): string
+    {
+        return $type . '_' . $id;
     }
 }

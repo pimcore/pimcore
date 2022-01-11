@@ -28,7 +28,7 @@ jobs:
                 include:
                     - { php-version: "8.0", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.0", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "", composer-options: "--ignore-platform-req=php" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "", composer-options: "" }
                     - { php-version: "8.0", dependencies: "highest", experimental: true, symfony: "5.4.x-dev", composer-options: "" }
 
         steps:
@@ -55,10 +55,6 @@ jobs:
                   if [ ! -z "$SYMFONY_VERSION" ]; then
                     .github/ci/scripts/symfony-require-dev.sh
                   fi
-
-            - name: "Require league/csv:9.x-dev if PHP 8.1 (temporary until fix was released)"
-              if: ${{ matrix.php-version == '8.1' }}
-              run: "composer require --no-update league/csv:9.x-dev"
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"

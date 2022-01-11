@@ -287,17 +287,32 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         //visibility buttons
         visibilityButtons = this.visibilityButtons[element.key];
         if (typeof visibilityButtons === 'undefined') {
+            var elementIcon = "pimcore_material_icon_preview";
+            if (element.dataset.hidden == "true") {
+                elementIcon = "pimcore_icon_white_hide";
+            }
             visibilityDiv = Ext.get(element).query('.pimcore_block_visibility[data-name="' + this.name + '"]')[0];
             this.visibilityButtons[element.key] = new Ext.Button({
                 cls: "pimcore_block_button_visibility",
-                iconCls: "pimcore_icon_white_hide",
+                iconCls: elementIcon,
                 enableToggle: true,
                 pressed: (element.dataset.hidden == "true"),
                 toggleHandler: function (element, el) {
                     Ext.get(element).toggleCls('pimcore_area_hidden');
+                    if (el.btnIconEl.dom.classList.contains('pimcore_icon_white_hide')) {
+                        Ext.get(el.btnIconEl.dom).removeCls('pimcore_icon_white_hide');
+                        Ext.get(el.btnIconEl.dom).addCls('pimcore_material_icon_preview');
+                    } else {
+                        Ext.get(el.btnIconEl.dom).removeCls('pimcore_material_icon_preview');
+                        Ext.get(el.btnIconEl.dom).addCls('pimcore_icon_white_hide');
+                    }
                 }.bind(this, element)
             });
             this.visibilityButtons[element.key].render(visibilityDiv);
+            new Ext.tip.ToolTip({
+                target: this.visibilityButtons[element.key],
+                html: t("show_hide_areablock")
+            });
             if(element.dataset.hidden == "true") {
                 Ext.get(element).addCls('pimcore_area_hidden');
             }
@@ -688,6 +703,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 if(groups[g].length > 0) {
                     groupMenu = {
                         text: t(groups[g]),
+                        iconCls: "pimcore_icon_area",
                         hideOnClick: false,
                         menu: []
                     };
@@ -701,7 +717,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             }
                         }
                     }
-                    menu.push(groupMenu);
+                    if(groupMenu.menu.length) {
+                        menu.push(groupMenu);
+                    }
                 }
             }
         } else {
@@ -1015,10 +1033,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             var toolbar = new Ext.Window({
                 title: areaBlockToolbarSettings.title,
                 width: areaBlockToolbarSettings.width,
+                height: Ext.getBody().getViewSize().height - 15,
                 border:false,
                 shadow: false,
                 resizable: false,
-                autoHeight: true,
+                scrollable: 'y',
                 draggable: false,
                 header: false,
                 style: "position:fixed;",

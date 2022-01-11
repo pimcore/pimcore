@@ -98,7 +98,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var float
+     * @var float|null
      */
     protected $highResolution;
 
@@ -133,21 +133,21 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $filenameSuffix;
 
@@ -208,10 +208,11 @@ final class Config extends Model\AbstractModel
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
-            $thumbnail->setName($name);
             if (!$thumbnail) {
                 throw new \Exception('Thumbnail in registry is null');
             }
+
+            $thumbnail->setName($name);
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
@@ -505,7 +506,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getHighResolution()
     {
@@ -545,7 +546,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilenameSuffix()
     {
@@ -768,7 +769,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -784,7 +785,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -915,6 +916,18 @@ final class Config extends Model\AbstractModel
         if ($this->dao) {
             $this->dao = clone $this->dao;
             $this->dao->setModel($this);
+        }
+
+        //rebuild asset path for overlays
+        foreach ($this->items as &$item) {
+            if (in_array($item['method'], ['addOverlay', 'addOverlayFit'])) {
+                if (isset($item['arguments']['id'])) {
+                    $img = Model\Asset\Image::getById($item['arguments']['id']);
+                    if ($img) {
+                        $item['arguments']['path'] = $img->getFullPath();
+                    }
+                }
+            }
         }
     }
 }

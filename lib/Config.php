@@ -20,7 +20,6 @@ use Pimcore\Config\Config as PimcoreConfig;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
-use Pimcore\Model\User\UserRole;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
@@ -46,8 +45,7 @@ final class Config implements \ArrayAccess
      *
      * @return bool
      */
-    #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return self::getSystemConfiguration($offset) !== null;
     }
@@ -58,8 +56,7 @@ final class Config implements \ArrayAccess
      *
      * @throws \Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \Exception("modifying the config isn't allowed");
     }
@@ -69,8 +66,7 @@ final class Config implements \ArrayAccess
      *
      * @throws \Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \Exception("modifying the config isn't allowed");
     }
@@ -80,8 +76,7 @@ final class Config implements \ArrayAccess
      *
      * @return array|null
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): ?array
     {
         return self::getSystemConfiguration($offset);
     }
@@ -242,7 +237,7 @@ final class Config implements \ArrayAccess
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
-                    if ($itemSiteId !== 0 && $itemSiteId !== $siteId) {
+                    if ($itemSiteId && $itemSiteId !== $siteId) {
                         continue;
                     }
 
@@ -280,7 +275,8 @@ final class Config implements \ArrayAccess
                     }
 
                     if ($s instanceof Model\Element\ElementInterface) {
-                        $cacheTags = $s->getCacheTags($cacheTags);
+                        $elementCacheKey = $s->getCacheTag();
+                        $cacheTags[$elementCacheKey] = $elementCacheKey;
                     }
 
                     if (isset($s)) {
@@ -487,350 +483,6 @@ final class Config implements \ArrayAccess
     public static function setModelClassMappingConfig($config)
     {
         \Pimcore\Cache\Runtime::set('pimcore_config_model_classmapping', $config);
-    }
-
-    /**
-     * @internal
-     * @static
-     *
-     * @return mixed|\Pimcore\Config\Config
-     */
-    public static function getPerspectivesConfig()
-    {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_perspectives')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
-        } else {
-            $file = self::locateConfigFile('perspectives.php');
-
-            try {
-                $config = static::getConfigInstance($file);
-                self::setPerspectivesConfig($config);
-            } catch (\Exception $e) {
-                Logger::info('Cannot find perspectives configuration, should be located at: ' . $file);
-                if (is_file($file)) {
-                    $m = 'Your perspectives.php located at ' . $file . ' is invalid, please check and correct it manually!';
-                    Tool::exitWithError($m);
-                }
-                $config = new \Pimcore\Config\Config(self::getStandardPerspective());
-                self::setPerspectivesConfig($config);
-            }
-        }
-
-        return $config;
-    }
-
-    /**
-     * @internal
-     *
-     * @return array
-     */
-    public static function getStandardPerspective()
-    {
-        $elementTree = [
-            [
-                'type' => 'documents',
-                'position' => 'left',
-                'expanded' => false,
-                'hidden' => false,
-                'sort' => -3,
-                'treeContextMenu' => [
-                    'document' => [
-                        'items' => [
-                            'addPrintPage' => self::getWeb2PrintConfig()->get('enableInDefaultView') ? true : false, // hide add print documents by default
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'type' => 'assets',
-                'position' => 'left',
-                'expanded' => false,
-                'hidden' => false,
-                'sort' => -2,
-            ],
-            [
-                'type' => 'objects',
-                'position' => 'left',
-                'expanded' => false,
-                'hidden' => false,
-                'sort' => -1,
-            ],
-        ];
-
-        $cvConfigs = Tool::getCustomViewConfig();
-        if ($cvConfigs) {
-            foreach ($cvConfigs as $cvConfig) {
-                $cvConfig['type'] = 'customview';
-                $elementTree[] = $cvConfig;
-            }
-        }
-
-        return [
-            'default' => [
-                'iconCls' => 'pimcore_nav_icon_perspective',
-                'elementTree' => $elementTree,
-                'dashboards' => [
-                    'predefined' => [
-                        'welcome' => [
-                            'positions' => [
-                                [
-                                    [
-                                        'id' => 1,
-                                        'type' => 'pimcore.layout.portlets.modificationStatistic',
-                                        'config' => null,
-                                    ],
-                                    [
-                                        'id' => 2,
-                                        'type' => 'pimcore.layout.portlets.modifiedAssets',
-                                        'config' => null,
-                                    ],
-                                ],
-                                [
-                                    [
-                                        'id' => 3,
-                                        'type' => 'pimcore.layout.portlets.modifiedObjects',
-                                        'config' => null,
-                                    ],
-                                    [
-                                        'id' => 4,
-                                        'type' => 'pimcore.layout.portlets.modifiedDocuments',
-                                        'config' => null,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @internal
-     *
-     * @param Model\User $currentUser
-     *
-     * @return array
-     */
-    public static function getRuntimePerspective(Model\User $currentUser = null)
-    {
-        if (null === $currentUser) {
-            $currentUser = Tool\Admin::getCurrentUser();
-        }
-
-        $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : $currentUser->getFirstAllowedPerspective();
-
-        $config = self::getPerspectivesConfig()->toArray();
-        $result = [];
-
-        if (isset($config[$currentConfigName])) {
-            $result = $config[$currentConfigName];
-        } else {
-            $availablePerspectives = self::getAvailablePerspectives($currentUser);
-            if ($availablePerspectives) {
-                $currentPerspective = reset($availablePerspectives);
-                $currentConfigName = $currentPerspective['name'];
-                if ($currentConfigName && $config[$currentConfigName]) {
-                    $result = $config[$currentConfigName];
-                }
-            }
-        }
-
-        if ($result && $currentConfigName != $currentUser->getActivePerspective()) {
-            $currentUser->setActivePerspective($currentConfigName);
-            $currentUser->save();
-        }
-
-        $result['elementTree'] = self::getRuntimeElementTreeConfig($currentConfigName);
-
-        return $result;
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $name
-     *
-     * @return array
-     */
-    protected static function getRuntimeElementTreeConfig($name)
-    {
-        $masterConfig = self::getPerspectivesConfig()->toArray();
-
-        $config = $masterConfig[$name];
-        if (!$config) {
-            $config = [];
-        }
-
-        $tmpResult = $config['elementTree'];
-        if (is_null($tmpResult)) {
-            $tmpResult = [];
-        }
-        $result = [];
-
-        $cfConfigMapping = [];
-
-        $cvConfigs = Tool::getCustomViewConfig();
-
-        if ($cvConfigs) {
-            foreach ($cvConfigs as $node) {
-                $tmpData = $node;
-                if (!isset($tmpData['id'])) {
-                    Logger::error('custom view ID is missing ' . var_export($tmpData, true));
-
-                    continue;
-                }
-
-                if (!empty($tmpData['hidden'])) {
-                    continue;
-                }
-
-                // backwards compatibility
-                $treeType = $tmpData['treetype'] ? $tmpData['treetype'] : 'object';
-                $rootNode = Model\Element\Service::getElementByPath($treeType, $tmpData['rootfolder']);
-
-                if ($rootNode) {
-                    $tmpData['type'] = 'customview';
-                    $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
-                    $tmpData['showroot'] = (bool)$tmpData['showroot'];
-                    $customViewId = $tmpData['id'];
-                    $cfConfigMapping[$customViewId] = $tmpData;
-                }
-            }
-        }
-
-        foreach ($tmpResult as $resultItem) {
-            if (!empty($resultItem['hidden'])) {
-                continue;
-            }
-
-            if ($resultItem['type'] == 'customview') {
-                $customViewId = $resultItem['id'];
-                if (!$customViewId) {
-                    Logger::error('custom view id missing ' . var_export($resultItem, true));
-
-                    continue;
-                }
-                $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
-                if (!$customViewCfg) {
-                    Logger::error('no custom view config for id  ' . $customViewId);
-
-                    continue;
-                }
-
-                foreach ($resultItem as $specificConfigKey => $specificConfigValue) {
-                    $customViewCfg[$specificConfigKey] = $specificConfigValue;
-                }
-                $result[] = $customViewCfg;
-            } else {
-                $result[] = $resultItem;
-            }
-        }
-
-        usort($result, static function ($treeA, $treeB) {
-            $a = $treeA['sort'] ?: 0;
-            $b = $treeB['sort'] ?: 0;
-
-            return $a <=> $b;
-        });
-
-        return $result;
-    }
-
-    /**
-     * @internal
-     * @static
-     *
-     * @param \Pimcore\Config\Config $config
-     */
-    public static function setPerspectivesConfig(\Pimcore\Config\Config $config)
-    {
-        \Pimcore\Cache\Runtime::set('pimcore_config_perspectives', $config);
-    }
-
-    /**
-     * @internal
-     *
-     * @param Model\User|null $user
-     *
-     * @return array
-     */
-    public static function getAvailablePerspectives($user)
-    {
-        $currentConfigName = null;
-        $masterConfig = self::getPerspectivesConfig()->toArray();
-
-        if ($user instanceof  Model\User) {
-            if ($user->isAdmin()) {
-                $config = self::getPerspectivesConfig()->toArray();
-            } else {
-                $config = [];
-                $roleIds = $user->getRoles();
-                $userIds = [$user->getId()];
-                $userIds = array_merge($userIds, $roleIds);
-
-                foreach ($userIds as $userId) {
-                    if (in_array($userId, $roleIds)) {
-                        $userOrRoleToCheck = Model\User\Role::getById($userId);
-                    } else {
-                        $userOrRoleToCheck = Model\User::getById($userId);
-                    }
-                    if ($userOrRoleToCheck instanceof UserRole) {
-                        $perspectives = $userOrRoleToCheck->getPerspectives();
-                        if ($perspectives) {
-                            foreach ($perspectives as $perspectiveName) {
-                                $masterDef = $masterConfig[$perspectiveName] ?? null;
-                                if ($masterDef) {
-                                    $config[$perspectiveName] = $masterDef;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!$config) {
-                    $config = self::getPerspectivesConfig()->toArray();
-                }
-            }
-
-            if ($config) {
-                $tmpConfig = [];
-                $validPerspectiveNames = array_keys($config);
-
-                // sort the stuff
-                foreach ($masterConfig as $masterConfigName => $masterConfiguration) {
-                    if (in_array($masterConfigName, $validPerspectiveNames)) {
-                        $tmpConfig[$masterConfigName] = $masterConfiguration;
-                    }
-                }
-                $config = $tmpConfig;
-            }
-
-            $currentConfigName = $user->getActivePerspective();
-            if ($config && !in_array($currentConfigName, array_keys($config))) {
-                $configNames = array_keys($config);
-                $currentConfigName = reset($configNames);
-            }
-        } else {
-            $config = self::getPerspectivesConfig()->toArray();
-        }
-
-        $result = [];
-
-        foreach ($config as $configName => $configItem) {
-            $item = [
-                'name' => $configName,
-                'icon' => isset($configItem['icon']) ? $configItem['icon'] : null,
-                'iconCls' => isset($configItem['iconCls']) ? $configItem['iconCls'] : null,
-            ];
-            if ($user) {
-                $item['active'] = $configName == $currentConfigName;
-            }
-
-            $result[] = $item;
-        }
-
-        return $result;
     }
 
     /**

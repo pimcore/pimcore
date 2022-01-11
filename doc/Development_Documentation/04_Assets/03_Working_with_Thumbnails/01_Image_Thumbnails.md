@@ -274,11 +274,11 @@ $asset = Asset\Image::getById(123);
 $asset->getThumbnail("myConfig", false); // set the 2nd parameter to false
 ```
 
-The processing is also forced when calling the method `getFileSystemPath()` or `getPath(false)` on 
+The processing is also forced when calling the method `getPathReference()` or `getPath(false)` on 
 the returning thumbnail object: 
 
 ```php
-$asset->getThumbnail("myConfig")->getFileSystemPath(); 
+$asset->getThumbnail("myConfig")->getPathReference(); 
 // or 
 $asset->getThumbnail("myConfig")->getPath(false); 
 ```
@@ -416,7 +416,7 @@ $thumbnailConfig->addItemAt(0, function (Imagick $imagick) {
 $asset = Asset::getById(39);
 $asset->clearThumbnails(true);
 $thumb = $asset->getThumbnail($thumbnailConfig);
-$file = $thumb->getFileSystemPath();
+$file = $thumb->getPath();
 ```
 
 ## Downloading Asset Thumbnails

@@ -38,9 +38,11 @@ trait PimcoreExtensionsTrait
     protected $autoQuoteIdentifiers = true;
 
     /**
-     * @see \Doctrine\DBAL\Connection::connect
+     *@return bool
+     *
+     *@see \Doctrine\DBAL\Connection::connect
      */
-    public function connect()
+    public function connect()// : bool
     {
         $returnValue = parent::connect();
 

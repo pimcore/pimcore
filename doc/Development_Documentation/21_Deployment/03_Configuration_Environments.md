@@ -33,6 +33,8 @@ This feature is currently supported by the following configurations:
 - Predefined properties
 - Predefined asset metadata
 - Static Routes
+- Perspectives
+- Custom views
 
 
 You can change the write target individually for each type by using environment variables.
@@ -51,4 +53,16 @@ PIMCORE_WRITE_TARGET_WEB_TO_PRINT=settings-store
 PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES=settings-store
 PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA=settings-store
 PIMCORE_WRITE_TARGET_STATICROUTES=settings-store
+PIMCORE_WRITE_TARGET_PERSPECTIVES=settings-store
+PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
+```
+
+#### Production environment with `symfony-config`
+When using `symfony-config` write target, configs are written to Symfony Config files (`yaml`), which are only getting revalidated in debug mode. So if you're
+changing configs in production you won't see any update, because these configs are read only.
+
+If you'd like to allow changes in production, switch to the alternate `settings-store` config storage. 
+You can do so by adding the following to your `.env` or just set the env variable accordingly, e.g.:
+```
+PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 ```

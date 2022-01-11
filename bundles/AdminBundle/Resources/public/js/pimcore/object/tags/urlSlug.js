@@ -49,9 +49,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-        this.component = new Ext.Panel({
-            layout: "fit"
-        });
+        this.component = new Ext.Panel();
 
         this.addFallbackSlug();
         if (this.data.length > 0) {
@@ -59,6 +57,8 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                 this.addSiteElement(this.data[i]);
             }
         }
+
+        this.updateSiteFilter();
 
         return this.component;
     },
@@ -83,6 +83,10 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateSiteFilter: function () {
+        if (typeof this.siteCombo === 'undefined') {
+            return;
+        }
+
         var showCombo = false;
         this.siteCombo.setFilters([
             function (item) {
@@ -259,7 +263,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         this.elements[siteData['siteId']] = text;
         fieldContainer.add(containerItems);
-        this.component.insert(1, fieldContainer);
+        this.component.add(fieldContainer);
         Ext.resumeLayouts();
     },
 

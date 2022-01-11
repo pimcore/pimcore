@@ -109,7 +109,9 @@ class Image extends Model\Asset
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $process = new Process(Console::addLowProcessPriority([$facedetectBin, $image]));
+            $command = [$facedetectBin, $image];
+            Console::addLowProcessPriority($command);
+            $process = new Process($command);
             $process->run();
             $result = $process->getOutput();
             if (strpos($result, "\n")) {
@@ -403,7 +405,11 @@ EOT;
     {
         $dimensions = $this->getDimensions();
 
-        return $dimensions['width'];
+        if ($dimensions) {
+            return $dimensions['width'];
+        }
+
+        return 0;
     }
 
     /**
@@ -413,7 +419,11 @@ EOT;
     {
         $dimensions = $this->getDimensions();
 
-        return $dimensions['height'];
+        if ($dimensions) {
+            return $dimensions['height'];
+        }
+
+        return 0;
     }
 
     /**

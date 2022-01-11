@@ -47,12 +47,12 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var bool
      */
-    protected bool $doDelete = false;
+    protected $doDelete = false;
 
     /**
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * @var int|null
@@ -113,7 +113,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function setDoDelete($doDelete)
     {
         $this->flushContainer();
-        $this->doDelete = $doDelete;
+        $this->doDelete = (bool)$doDelete;
 
         return $this;
     }
@@ -172,7 +172,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $object = $this->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
+            $parent = DataObject\Service::hasInheritableParentObject($object, $key);
 
             if (!empty($parent)) {
                 $containerGetter = 'get' . ucfirst($this->fieldname);

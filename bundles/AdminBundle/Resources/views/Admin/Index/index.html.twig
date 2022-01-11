@@ -77,6 +77,9 @@
 
         #pimcore_panel_tabs-body {
             background-image: url({{ path('pimcore_settings_display_custom_logo') }});
+            {% if config['branding']['color_admin_interface_background']|default(null) is not null %}
+                background-color: {{ config['branding']['color_admin_interface_background'] }};
+            {% endif %}
             background-repeat: no-repeat;
             background-position: center center;
             background-size: 500px auto;
@@ -108,7 +111,7 @@
         <div class="bounce3"></div>
     </div>
 </div>
-{% set runtimePerspective = config.getRuntimePerspective(user) %}
+{% set runtimePerspective = perspectiveConfig.getRuntimePerspective(user) %}
 
 <div id="pimcore_sidebar">
     <div id="pimcore_navigation" style="display:none;">
@@ -145,9 +148,15 @@
     <div id="pimcore_avatar" style="display:none;">
         <img src="{{ path('pimcore_admin_user_getimage') }}" data-menu-tooltip="{{ user.name }} | {{ 'my_profile'|trans([],'admin') }}"/>
     </div>
-    <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="{{ path('pimcore_admin_logout') }}" style="display: none">
-        <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
-    </a>
+
+    <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+
+        <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}"
+           href="#" onclick="document.getElementById('pimcore_logout_form').submit();" style="display: none">
+            <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
+        </a>
+    </form>
     <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform ({{ settings.version }}|{{ settings.build }})" style="text-indent: -10000px">
         BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
         WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
@@ -158,15 +167,6 @@
 <div id="pimcore_quicksearch"></div>
 
 {# define stylesheets #}
-
-{% set debugSuffix = '' %}
-
-{# SCRIPT LIBRARIES #}
-{% set debugSuffix = '' %}
-
-{% if settings.disableMinifyJs %}
-    {% set debugSuffix = "-debug" %}
-{% endif %}
 
 {% set styles = [
         path('pimcore_admin_misc_admincss'),
@@ -193,6 +193,13 @@
 
 {# define scripts #}
 
+{% set debugSuffix = '' %}
+{% if settings.disableMinifyJs %}
+    {% set debugSuffix = "-debug" %}
+{% endif %}
+
+{# SCRIPT LIBRARIES #}
+
 {% set scriptLibs = [
     "lib/class.js",
     "../extjs/js/ext-all" ~ debugSuffix ~ ".js",
@@ -207,6 +214,9 @@
     "lib/ace/src-min-noconflict/ace.js",
     "lib/ace/src-min-noconflict/ext-modelist.js"
 ] %}
+{% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
+    {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
+{% endif %}
 
 {# PIMCORE SCRIPTS #}
 
@@ -257,10 +267,8 @@
     "pimcore/settings/thumbnail/panel.js",
     "pimcore/settings/videothumbnail/item.js",
     "pimcore/settings/videothumbnail/panel.js",
-    "pimcore/settings/translations.js",
+    "pimcore/settings/translation.js",
     "pimcore/settings/translationEditor.js",
-    "pimcore/settings/translation/website.js",
-    "pimcore/settings/translation/admin.js",
     "pimcore/settings/translation/translationmerger.js",
     "pimcore/settings/translation/xliff.js",
     "pimcore/settings/translation/word.js",
@@ -398,6 +406,7 @@
     "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
+    "pimcore/asset/archive.js",
     "pimcore/asset/video.js",
     "pimcore/asset/audio.js",
     "pimcore/asset/text.js",
@@ -705,11 +714,10 @@
 <!-- internal scripts -->
 {% if settings.disableMinifyJs %}
     {% for scriptUrl in scripts %}
-    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
+        <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
 {% else %}
-    {% set minimizedScriptParams = pimcore_minimize_scripts(scripts) %}
-    <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
+    {{ pimcore_minimize_scripts(scripts)|raw }}
 {% endif %}
 
 {# load plugin scripts #}
@@ -723,9 +731,14 @@
     {% set pluginDcValue = 1 %}
 {% endif %}
 
-{% for pluginJsPath in pluginJsPaths %}
-    <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
-{% endfor %}
+<!-- bundle scripts -->
+{% if settings.disableMinifyJs %}
+    {% for pluginJsPath in pluginJsPaths %}
+        <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
+    {% endfor %}
+{% else %}
+    {{ pimcore_minimize_scripts(pluginJsPaths)|raw }}
+{% endif %}
 
 {% for pluginCssPath in pluginCssPaths %}
     <link rel="stylesheet" type="text/css" href="{{ pluginCssPath }}?_dc={{ pluginDcValue }}"/>

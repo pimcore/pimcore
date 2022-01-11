@@ -26,6 +26,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Extension\ColumnType;
     use ImageTrait;
     use Extension\QueryColumnType;
+    use Data\Extension\RelationFilterConditionParser;
 
     /**
      * Static type of this element
@@ -154,6 +155,23 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Element\ValidationException
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    {
+        if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+        }
+        if ($data !== null && !$data instanceof Asset\Image) {
+            throw new Element\ValidationException('Invalid data in field `'.$this->getName().'`');
+        }
     }
 
     /**
@@ -373,5 +391,21 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (isset($value['id'])) {
             return Asset\Image::getById($value['id']);
         }
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $name = $params['name'] ?: $this->name;
+
+        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

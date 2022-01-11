@@ -30,7 +30,7 @@ class DocumentResolver extends AbstractRequestResolver
     /**
      * @param Request|null $request
      *
-     * @return null|Document|Document\PageSnippet
+     * @return null|Document
      */
     public function getDocument(Request $request = null)
     {
@@ -38,7 +38,7 @@ class DocumentResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        $content = $request->get(DynamicRouter::CONTENT_KEY, null);
+        $content = $request->get(DynamicRouter::CONTENT_KEY);
         if ($content instanceof Document) {
             return $content;
         }

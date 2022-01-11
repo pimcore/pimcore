@@ -29,6 +29,7 @@ use Pimcore\Logger;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -487,9 +488,8 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
-            /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
             $output = $installer->getOutput();
-            if (!empty($output)) {
+            if ($output instanceof BufferedOutput) {
                 $converter = new AnsiToHtmlConverter(null);
 
                 $converted = Encoding::fixUTF8($output->fetch());

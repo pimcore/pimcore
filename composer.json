@@ -24,7 +24,7 @@
     "issues": "https://github.com/pimcore/pimcore/issues",
     "wiki": "https://pimcore.com/docs/latest/",
     "source": "https://github.com/pimcore/pimcore",
-    "forum": "https://talk.pimcore.org/",
+    "forum": "https://github.com/pimcore/pimcore/discussions",
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
@@ -98,7 +98,7 @@
     "symfony/filesystem": "^5.2.0",
     "symfony/finder": "^5.2.0",
     "symfony/form": "^5.2.0",
-    "symfony/framework-bundle": "^5.2.0",
+    "symfony/framework-bundle": "^5.3.0",
     "symfony/http-client": "^5.2.0",
     "symfony/http-foundation": "^5.3.0",
     "symfony/http-kernel": "^5.2.0",
@@ -163,7 +163,8 @@
     "symfony/monolog-bundle": "3.6.0",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
     "webmozarts/console-parallelization": "1.2.2",
-    "thecodingmachine/safe": "<1.2.0"
+    "thecodingmachine/safe": "<1.2.0",
+    "sabre/dav": "4.2.2"
   },
   "require-dev": {
     "cache/integration-tests": "dev-master",

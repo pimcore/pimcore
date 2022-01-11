@@ -657,9 +657,13 @@
     "json_converter_link": "Formateur JSON",
     "preview_generator_reference": "Aperçu de la classe du générateur ou du nom du service",
     "max_characters": "Nombre maximal de caractères",
-    "min_length": "Min Length",
-    "calculatedValue_calculatortype": "Calculator type",
-    "calculatedValue_calculatortype_class": "Class",
+    "min_length": "Longueur min",
+    "calculatedValue_calculatortype": "Type de calcul",
+    "calculatedValue_calculatortype_class": "Classe",
     "calculatedValue_calculatortype_expression": "Expression",
-    "calculatedValue_calculatorexpression": "Calculator expression"
+    "calculatedValue_calculatorexpression": "Expression de calcul",
+    "enable_text_selection": "Activer la sélection du texte",
+    "static": "Statique",
+    "frontend_languages": "Frontend Languages",
+    "drag_object_preview": "Drag Object for Preview"
 }

@@ -149,8 +149,7 @@ final class Runtime extends \ArrayObject
     /**
      * {@inheritdoc}
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value): void
     {
         parent::offsetSet($index, $value);
     }

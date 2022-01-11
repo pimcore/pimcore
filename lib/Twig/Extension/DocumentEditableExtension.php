@@ -42,7 +42,7 @@ class DocumentEditableExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_*', [$this, 'renderEditable'], [
@@ -71,6 +71,7 @@ class DocumentEditableExtension extends AbstractExtension
         new TwigFunction('pimcore_scheduledblock');
         new TwigFunction('pimcore_select');
         new TwigFunction('pimcore_snippet');
+        new TwigFunction('pimcore_table');
         new TwigFunction('pimcore_textarea');
         new TwigFunction('pimcore_video');
         new TwigFunction('pimcore_wysiwyg');

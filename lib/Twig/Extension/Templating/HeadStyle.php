@@ -242,7 +242,8 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function offsetSet($index, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet($index, $value)// : void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');

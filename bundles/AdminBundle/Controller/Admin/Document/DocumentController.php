@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -256,7 +257,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById((int)$request->get('docTypeId'));
+                $docType = Document\DocType::getById($request->get('docTypeId'));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
@@ -1119,7 +1120,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
-        $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
+
+        $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
+        if (empty($prefix)) {
+            $prefix = $request->getSchemeAndHttpHost();
+        }
+
+        $prefix .= $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from;
         $toUrl = $prefix . $to;

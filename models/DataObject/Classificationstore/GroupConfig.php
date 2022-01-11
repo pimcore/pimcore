@@ -27,7 +27,7 @@ use Pimcore\Model;
 final class GroupConfig extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -41,7 +41,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Parent id
      *
-     * @var int
+     * @var int|null
      */
     protected $parentId;
 
@@ -60,12 +60,12 @@ final class GroupConfig extends Model\AbstractModel
     protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -145,7 +145,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -153,7 +153,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -268,7 +268,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -288,7 +288,7 @@ final class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

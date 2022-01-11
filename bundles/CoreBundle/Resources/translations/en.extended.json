@@ -12,6 +12,7 @@
   "url_slug_datatype_info": "Enter the controller & action in the following format:<br>App\\Controller\\ProductController:slugAction",
   "controller_action": "Controller & Action",
   "admin_interface": "Admin Interface",
+  "admin_interface_background": "Admin Interface Background",
   "icon_library": "Icon Library",
   "system_performance_stability_warning": "Please do not perform this action unless you are sure what you are doing.<br /><b style='color:red'>This action can have a major impact onto the stability and performance of the entire system, and may causes an overload or complete crash of the server!</b><br /><br />Are you sure?",
   "login_screen": "Login Screen",
@@ -482,6 +483,7 @@
   "language_permissions": "Language Permissions (no view permission means all)",
   "rendering_class": "Custom Renderer class",
   "rendering_data": "Data passed to renderer",
+  "drag_object_preview": "Drag Object for Preview",
   "web2print_protocol": "Protocol",
   "rows_fixed": "Rows fixed",
   "cols_fixed": "Cols fixed",
@@ -550,6 +552,8 @@
   "order": "Order",
   "filter_type": "Filter Type",
   "generate_page_previews": "Generate Page Previews",
+  "success_generating_previews": "Generating page previews in the background. Please reload the admin interface after some time to take effect.",
+  "error_generating_previews": "Error generating page previews.",
   "custom_report_chart_settings": "Chart Settings",
   "custom_report_charttype": "Chart Type",
   "custom_report_charttype_none": "None",
@@ -664,5 +668,10 @@
   "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
   "json_converter": "Formatting the Options",
   "json_converter_link": "JSON Formatter",
-  "max_characters": "Maximum Characters"
+  "max_characters": "Maximum Characters",
+  "sites": "Sites",
+  "show_hide_areablock": "Show or Hide on frontend",
+  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
+  "translation_domain": "Domain",
+  "domain_translations": "Domain Translations"
 }
