@@ -340,47 +340,25 @@ trait PimcoreExtensionsTrait
      */
     public function insertOrUpdate($table, array $data)
     {
+        // get the field name of the primary key
+        $tableDetails = $this->getSchemaManager()->listTableDetails($table);
+        $fieldsPrimaryKey = (array)$tableDetails->getPrimaryKeyColumns();
+
         // extract and quote col names from the array keys
         $i = 0;
         $bind = [];
         $cols = [];
         $vals = [];
+        $set = [];
         foreach ($data as $col => $val) {
             $cols[] = $this->quoteIdentifier($col);
             $bind[':col' . $i] = $val;
             $vals[] = ':col' . $i;
+
+            if (!(in_array($col, $fieldsPrimaryKey) && $val === null)) {
+                $set[] = sprintf('%s = %s', $this->quoteIdentifier($col), ':col' . $i);
+            }
             $i++;
-        }
-
-        // get the field name of the primary key
-        $schemaManager = $this->getSchemaManager();
-        $indexes = $schemaManager->listTableIndexes($table);
-        $fieldsPrimaryKeyRaw = [];
-        foreach ($indexes as $index) {
-            if ($index->isPrimary()) {
-                $fieldsPrimaryKeyRaw = (array)$index->getColumns();
-                break;
-            }
-        }
-
-        // format fieldnames for primary key to check in the following block
-        $fieldsPrimaryKey = [];
-        foreach ($fieldsPrimaryKeyRaw as $item) {
-            $fieldsPrimaryKey[] = $this->quoteIdentifier($item);
-        }
-
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            if (
-                in_array($col, $fieldsPrimaryKey)
-                &&
-                $data[trim($col, $this->getDatabasePlatform()->getIdentifierQuoteCharacter())] === null
-            ) {
-                continue;
-            }
-
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
         }
 
         $sql = sprintf(
