@@ -355,6 +355,12 @@ trait PimcoreExtensionsTrait
         // build the statement
         $set = [];
         foreach ($cols as $i => $col) {
+            // this is to avoid setting existing ids to 0 if multiple processes try to add the same row simultaneously
+            // see also: https://github.com/pimcore/pimcore/issues/11109
+            if ($col === 'id' && $vals[$i] === null) {
+                continue;
+            }
+
             $set[] = sprintf('%s = %s', $col, $vals[$i]);
         }
 
