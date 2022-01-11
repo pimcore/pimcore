@@ -270,6 +270,9 @@ final class KeyConfig extends Model\AbstractModel
             unset(self::$cache[$this->getId()]);
             $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
+
+            $cacheKey = 'cs_keyconfig_' . $this->getStoreId() . '_' . md5($this->getName());
+            Cache::remove($cacheKey);
         }
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE);
@@ -294,6 +297,9 @@ final class KeyConfig extends Model\AbstractModel
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $cacheKey = 'cs_keyconfig_' . $this->getId();
+            Cache::remove($cacheKey);
+
+            $cacheKey = 'cs_keyconfig_' . $this->getStoreId() . '_' . md5($this->getName());
             Cache::remove($cacheKey);
 
             $isUpdate = true;
