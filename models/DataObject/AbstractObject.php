@@ -377,6 +377,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Model\Element\Service::correctPath($path);
 
         try {

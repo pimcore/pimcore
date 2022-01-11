@@ -348,6 +348,10 @@ class Service extends Model\Element\Service
      */
     public static function pathExists($path, $type = null)
     {
+        if (!$path) {
+            return false;
+        }
+
         $path = Element\Service::correctPath($path);
 
         try {

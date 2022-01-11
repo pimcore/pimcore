@@ -227,6 +227,10 @@ class Document extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
