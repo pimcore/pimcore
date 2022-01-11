@@ -53,7 +53,7 @@ pimcore.settings.translation.domain = Class.create({
         });
 
         this.filterDomainField = new Ext.form.ComboBox({
-            emptyText: t('translation_domain'),
+            emptyText: t('translations'),
             name: "domain",
             valueField: "name",
             displayField: 'name',
@@ -78,7 +78,7 @@ pimcore.settings.translation.domain = Class.create({
                 render: function (c) {
                     new Ext.ToolTip({
                         target: c.getEl(),
-                        html: t('translation_domain')
+                        html: t('translations')
                     });
                 }
             },
