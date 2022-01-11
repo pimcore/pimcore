@@ -112,6 +112,8 @@ pimcore.settings.translation.domain = Class.create({
                         languages.push('translation_column_' + this.domain + '_' + rec.toLowerCase());
                     }.bind(this));
 
+                    console.log('locale change');
+
                     let cm = this.grid.getColumnManager().getColumns();
                     for (let i = 0; i < cm.length; i++) {
                         let columnId = cm[i].id;
@@ -178,7 +180,7 @@ pimcore.settings.translation.domain = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_translations_domain",
                 iconCls: "pimcore_icon_translations",
-                title: t("domain_translations"),
+                title: t("translations"),
                 border: false,
                 layout: "fit",
                 closable: true,
