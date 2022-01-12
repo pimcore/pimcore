@@ -355,7 +355,7 @@ trait PimcoreExtensionsTrait
             $bind[':col' . $i] = $val;
             $vals[] = ':col' . $i;
 
-            if (!(in_array($col, $fieldsPrimaryKey) && $val === null)) {
+            if (!($val === null && in_array($col, $fieldsPrimaryKey))) {
                 $set[] = sprintf('%s = %s', $this->quoteIdentifier($col), ':col' . $i);
             }
             $i++;
