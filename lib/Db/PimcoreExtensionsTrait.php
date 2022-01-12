@@ -370,8 +370,6 @@ trait PimcoreExtensionsTrait
             implode(', ', $set)
         );
 
-        $bind = array_merge($bind, $bind);
-
         return $this->executeUpdate($sql, $bind);
     }
 
