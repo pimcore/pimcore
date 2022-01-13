@@ -170,5 +170,5 @@ Working with migrations is the same as described in the Migration section above.
 For further details please see
 
 * [Migrations](../../../19_Development_Tools_and_Details/37_Migrations.md)
-* [Doctrine Migrations](http://docs.doctrine-project.org/projects/doctrine-migrations/en/latest/index.html)
+* [Doctrine Migrations](https://www.doctrine-project.org/projects/doctrine1/en/latest/manual/migrations.html)
 * [Doctrine Migrations Bundle](https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)
