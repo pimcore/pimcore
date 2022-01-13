@@ -340,22 +340,25 @@ trait PimcoreExtensionsTrait
      */
     public function insertOrUpdate($table, array $data)
     {
+        // get the field name of the primary key
+        $tableDetails = $this->getSchemaManager()->listTableDetails($table);
+        $fieldsPrimaryKey = (array)$tableDetails->getPrimaryKeyColumns();
+
         // extract and quote col names from the array keys
         $i = 0;
         $bind = [];
         $cols = [];
         $vals = [];
+        $set = [];
         foreach ($data as $col => $val) {
             $cols[] = $this->quoteIdentifier($col);
             $bind[':col' . $i] = $val;
             $vals[] = ':col' . $i;
-            $i++;
-        }
 
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
+            if (!($val === null && in_array($col, $fieldsPrimaryKey))) {
+                $set[] = sprintf('%s = %s', $this->quoteIdentifier($col), ':col' . $i);
+            }
+            $i++;
         }
 
         $sql = sprintf(
