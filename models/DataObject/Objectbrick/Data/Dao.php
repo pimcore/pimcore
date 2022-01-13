@@ -145,7 +145,6 @@ class Dao extends Model\Dao\AbstractDao
                     $data = array_merge($data, $insertDataArray);
                     $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
                 } else {
-
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data[$fieldName] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
