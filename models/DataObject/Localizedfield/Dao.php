@@ -181,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
                 $insertData['index'] = $context['index'];
             }
 
-            foreach ($fieldDefinitions as $fd) {
+            foreach ($fieldDefinitions as $fieldName => $fd) {
                 if ($fd instanceof CustomResourcePersistingInterface) {
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
@@ -190,7 +190,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
+                    $childParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         $saveLocalizedRelations = $forceUpdate || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false);
@@ -209,18 +209,22 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
                     if (is_array($fd->getColumnType())) {
+                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $this->model->getLocalizedValue($fieldName, $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false) ])
+                            $fieldDefinitionParams
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
+                        $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
                     } else {
+                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertData[$fd->getName()] = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $this->model->getLocalizedValue($fieldName, $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false)])
+                            $fieldDefinitionParams
                         );
+                        $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertData[$fd->getName()], $object, $fieldDefinitionParams), $language, false);
                     }
                 }
             }

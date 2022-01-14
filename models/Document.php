@@ -227,6 +227,10 @@ class Document extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
@@ -674,12 +678,16 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->children[$cacheKey])) {
-            $list = new Document\Listing();
-            $list->setUnpublished($includingUnpublished);
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-            $this->children[$cacheKey] = $list->load();
+            if ($this->getId()) {
+                $list = new Document\Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->setCondition('parentId = ?', $this->getId());
+                $list->setOrderKey('index');
+                $list->setOrder('asc');
+                $this->children[$cacheKey] = $list->load();
+            } else {
+                $this->children[$cacheKey] = [];
+            }
         }
 
         return $this->children[$cacheKey];
@@ -715,15 +723,21 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
-            $list = new Document\Listing();
-            $list->setUnpublished($includingUnpublished);
-            // string conversion because parentId could be 0
-            $list->addConditionParam('parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('id != ?', $this->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-            $this->siblings[$cacheKey] = $list->load();
-            $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+            if ($this->getParentId()) {
+                $list = new Document\Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->addConditionParam('parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('id != ?', $this->getId());
+                }
+                $list->setOrderKey('index');
+                $list->setOrder('asc');
+                $this->siblings[$cacheKey] = $list->load();
+                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+            } else {
+                $this->siblings[$cacheKey] = [];
+                $this->hasSiblings[$cacheKey] = false;
+            }
         }
 
         return $this->siblings[$cacheKey];
@@ -979,9 +993,9 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
@@ -356,6 +357,10 @@ class Service extends Model\Element\Service
      */
     public static function pathExists($path, $type = null)
     {
+        if (!$path) {
+            return false;
+        }
+
         $path = Element\Service::correctPath($path);
 
         try {
@@ -637,7 +642,10 @@ class Service extends Model\Element\Service
         /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
-            $hostUrl = Tool::getHostUrl(null, $request);
+            $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
+            if (empty($hostUrl)) {
+                $hostUrl = Tool::getHostUrl(null, $request);
+            }
         }
 
         $url = $hostUrl . $doc->getRealFullPath();

@@ -325,7 +325,7 @@ class Container implements \RecursiveIterator, \Countable
                         // Use regex?
                         if (true === $useRegex) {
                             foreach ($item as $item2) {
-                                if (0 !== preg_match($value, $item2)) {
+                                if (preg_match($value, $item2)) {
                                     return $page;
                                 }
                             }
@@ -337,7 +337,7 @@ class Container implements \RecursiveIterator, \Countable
                     } else {
                         // Use regex?
                         if (true === $useRegex) {
-                            if (0 !== preg_match($value, $item)) {
+                            if (preg_match($value, $item)) {
                                 return $page;
                             }
                         } else {
@@ -393,7 +393,7 @@ class Container implements \RecursiveIterator, \Countable
                         // Use regex?
                         if (true === $useRegex) {
                             foreach ($item as $item2) {
-                                if (0 !== preg_match($value, $item2)) {
+                                if (preg_match($value, $item2)) {
                                     $found[] = $page;
                                 }
                             }
@@ -405,7 +405,7 @@ class Container implements \RecursiveIterator, \Countable
                     } else {
                         // Use regex?
                         if (true === $useRegex) {
-                            if (0 !== preg_match($value, $item)) {
+                            if (preg_match($value, $item)) {
                                 $found[] = $page;
                             }
                         } else {
@@ -421,7 +421,7 @@ class Container implements \RecursiveIterator, \Countable
 
             // Use regex?
             if (true === $useRegex) {
-                if (0 !== preg_match($value, $pageProperty)) {
+                if (preg_match($value, $pageProperty)) {
                     $found[] = $page;
                 }
             } else {
