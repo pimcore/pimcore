@@ -251,7 +251,7 @@ abstract class Kernel extends SymfonyKernel
             // be cleared (e.g. when running tests which boot multiple containers)
             try {
                 $container = $this->getContainer();
-            } catch (\LogicException) {
+            } catch (\LogicException $e) {
                 // Container is cleared. Allow tests to finish.
             }
             if (isset($container) && $container instanceof ContainerInterface) {
