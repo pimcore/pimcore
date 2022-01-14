@@ -37,6 +37,8 @@ trait PimcoreExtensionsTrait
      */
     protected $autoQuoteIdentifiers = true;
 
+    private static array $tablePrimaryKeyCache = [];
+
     /**
      * @see \Doctrine\DBAL\Connection::connect
      */
@@ -341,8 +343,7 @@ trait PimcoreExtensionsTrait
     public function insertOrUpdate($table, array $data)
     {
         // get the field name of the primary key
-        $tableDetails = $this->getSchemaManager()->listTableDetails($table);
-        $fieldsPrimaryKey = (array)$tableDetails->getPrimaryKeyColumns();
+        $fieldsPrimaryKey = self::$tablePrimaryKeyCache[$table] ??= (array) $this->getSchemaManager()->listTableDetails($table)->getPrimaryKeyColumns();
 
         // extract and quote col names from the array keys
         $i = 0;
