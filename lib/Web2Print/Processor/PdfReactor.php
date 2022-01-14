@@ -138,6 +138,7 @@ class PdfReactor extends Processor
         $pdfreactor = $this->getClient();
 
         $reactorConfig = $this->getConfig($config);
+        $params['hostUrl'] = $reactorConfig['baseURL'] ?? null;
         $reactorConfig['document'] = $this->processHtml($html, $params);
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
