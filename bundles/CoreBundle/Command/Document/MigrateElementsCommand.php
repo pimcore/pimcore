@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
 use Pimcore\Model\Version;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -68,6 +69,7 @@ class MigrateElementsCommand extends AbstractCommand
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $this->output->writeln('<error>WARNING:</error> This command is potentially dangerous. Please use with caution and make sure you have a proper backup! '
