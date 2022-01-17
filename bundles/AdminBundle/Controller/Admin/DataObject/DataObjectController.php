@@ -2369,13 +2369,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             unset($return['children']);
             if (!$childrenName || $childrenName === 'childs') {
                 $return['childs'] = [];
-                foreach($children as $child) {
+                foreach ($children as $child) {
                     $return['childs'][] = self::getLayoutDefinitionArray($child, 'childs');
                 }
             }
             if (!$childrenName || $childrenName === 'children') {
                 $return['children'] = [];
-                foreach($children as $child) {
+                foreach ($children as $child) {
                     $return['children'][] = self::getLayoutDefinitionArray($child, 'children');
                 }
             }
