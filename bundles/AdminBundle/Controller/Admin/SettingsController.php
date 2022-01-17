@@ -1331,6 +1331,11 @@ class SettingsController extends AdminController
         });
 
         foreach ($mediaData as $mediaName => $items) {
+
+            if(preg_match('/["<>]/', $mediaName)) {
+                throw new \Exception('Invalid media query name');
+            }
+
             foreach ($items as $item) {
                 $type = $item['type'];
                 unset($item['type']);

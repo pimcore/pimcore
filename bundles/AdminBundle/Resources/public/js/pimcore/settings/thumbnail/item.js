@@ -216,6 +216,10 @@ pimcore.settings.thumbnail.item = Class.create({
             name = '(max-width: ' + name.replace("w", "") + 'px)';
         }
 
+        if(name.match(/["<>]/)) {
+            return;
+        }
+
         if (this.medias[name]) {
             return;
         }
