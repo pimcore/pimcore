@@ -289,13 +289,13 @@ class CustomReportController extends ReportsControllerBase
 
         foreach ($items as $report) {
             $reports[] = [
-                'name' => $report->getName(),
-                'niceName' => $report->getNiceName(),
-                'iconClass' => $report->getIconClass(),
-                'group' => $report->getGroup(),
-                'groupIconClass' => $report->getGroupIconClass(),
+                'name' => htmlspecialchars($report->getName()),
+                'niceName' => htmlspecialchars($report->getNiceName()),
+                'iconClass' => htmlspecialchars($report->getIconClass()),
+                'group' => htmlspecialchars($report->getGroup()),
+                'groupIconClass' => htmlspecialchars($report->getGroupIconClass()),
                 'menuShortcut' => $report->getMenuShortcut(),
-                'reportClass' => $report->getReportClass(),
+                'reportClass' => htmlspecialchars($report->getReportClass()),
             ];
         }
 
