@@ -894,7 +894,25 @@ pimcore.report.custom.item = Class.create({
 
     save: function () {
 
-        var m = this.getValues();
+        let m = this.getValues();
+        let error = false;
+
+        ['group', 'groupIconClass', 'iconClass', 'niceName', 'reportClass'].forEach(function (name) {
+            if(m[name].length && !m[name].match(/^[_a-zA-Z]+[_a-zA-Z0-9-\s]*$/)) {
+                error = name;
+            }
+        });
+
+        if(error !== false) {
+            Ext.Msg.show({
+                title: t("error"),
+                msg: t('class_field_name_error') + ': ' + error,
+                buttons: Ext.Msg.OK,
+                icon: Ext.MessageBox.ERROR
+            });
+
+            return;
+        }
 
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_reports_customreport_update'),
