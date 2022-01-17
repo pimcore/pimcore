@@ -39,7 +39,7 @@ class TargetingController extends AdminController implements KernelControllerEve
 
     private function correctName(string $name): string
     {
-        return preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $name);
+        return preg_replace('/[#?*:\\\\<>|"%&@=;+]/', '-', $name);
     }
 
     /**
