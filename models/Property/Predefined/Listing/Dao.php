@@ -37,6 +37,12 @@ class Dao extends Model\Property\Predefined\Dao
         foreach ($this->loadIdList() as $id) {
             $properties[] = Model\Property\Predefined::getById($id);
         }
+        if ($this->model->getFilter()) {
+            $properties = array_filter($properties, $this->model->getFilter());
+        }
+        if ($this->model->getOrder()) {
+            usort($properties, $this->model->getOrder());
+        }
 
         $this->model->setProperties($properties);
 

@@ -58,7 +58,23 @@ class Dao extends Model\Dao\AbstractDao
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) AND  (language IS NULL OR language = '' OR language = ?) ORDER BY siteId,language DESC", [$this->model->getName(), $siteId, $language]);
+        $data = $this->db->fetchRow(
+            "SELECT *
+            FROM website_settings 
+            WHERE name = ? 
+                AND (
+                    siteId IS NULL 
+                    OR siteId = 0 
+                    OR siteId = ?
+                )
+                AND (
+                    language IS NULL 
+                    OR language = '' 
+                    OR language = ?
+                )
+            ORDER BY CONCAT(siteId, language) DESC, siteId DESC, language DESC",
+            [$this->model->getName(), $siteId, $language]
+        );
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
