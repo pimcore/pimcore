@@ -549,12 +549,12 @@ class TestDataHelper extends AbstractTestDataHelper
         /** @var DataObject\Data\Hotspotimage[] $items */
         $items = $value->getItems();
 
-        $this->assertNull($items[1]);
+        $this->assertCount(2, $items);
 
         $item0 = $items[0];
         $this->assertEquals($item0->getImage()->getFilename(), 'gal0.jpg');
 
-        $item2 = $items[2];
+        $item2 = $items[1];
         $this->assertEquals($item2->getImage()->getFilename(), 'gal2.jpg');
         $hotspots = $item2->getHotspots();
         $this->assertEquals('hotspot_2_' . $seed, $hotspots[0]['name']);

@@ -135,7 +135,7 @@ Add dependencies:
 composer require "phpstan/phpstan:^0.12" "phpstan/phpstan-symfony:^0.12"
 
 # required if you want to do a full analysis
-composer require "elasticsearch/elasticsearch:^7.11" "composer/composer:*" "spiritix/php-chrome-html2pdf:^1.5"
+composer require "elasticsearch/elasticsearch:^7.11" "composer/composer:*" "spiritix/php-chrome-html2pdf:^1.6"
 cp -rv vendor/pimcore/pimcore/.github/ci/files/var .
 ```
 

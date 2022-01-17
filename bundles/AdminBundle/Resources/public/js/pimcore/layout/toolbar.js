@@ -321,7 +321,7 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("domain_translations"),
+                            text: t("translations"),
                             iconCls: "pimcore_nav_icon_translations",
                             itemId: 'pimcore_menu_extras_translations_shared_translations',
                             handler: this.editTranslations.bind(this, 'messages')

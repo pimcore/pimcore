@@ -53,7 +53,7 @@ pimcore.settings.translation.domain = Class.create({
         });
 
         this.filterDomainField = new Ext.form.ComboBox({
-            emptyText: t('translation_domain'),
+            emptyText: t('translations'),
             name: "domain",
             valueField: "name",
             displayField: 'name',
@@ -78,7 +78,7 @@ pimcore.settings.translation.domain = Class.create({
                 render: function (c) {
                     new Ext.ToolTip({
                         target: c.getEl(),
-                        html: t('translation_domain')
+                        html: t('translations')
                     });
                 }
             },
@@ -111,6 +111,8 @@ pimcore.settings.translation.domain = Class.create({
                     Ext.each(records, function (rec) {
                         languages.push('translation_column_' + this.domain + '_' + rec.toLowerCase());
                     }.bind(this));
+
+                    console.log('locale change');
 
                     let cm = this.grid.getColumnManager().getColumns();
                     for (let i = 0; i < cm.length; i++) {
@@ -178,7 +180,7 @@ pimcore.settings.translation.domain = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_translations_domain",
                 iconCls: "pimcore_icon_translations",
-                title: t("domain_translations"),
+                title: t("translations"),
                 border: false,
                 layout: "fit",
                 closable: true,
