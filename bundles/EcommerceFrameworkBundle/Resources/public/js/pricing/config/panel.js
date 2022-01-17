@@ -351,26 +351,30 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
 
         if (button == 'ok') {
 
-            let tree = options.tree;
+            if(value.match(/^[a-zA-Z0-9_\-]+$/)) {
+                let tree = options.tree;
 
-            Ext.Ajax.request({
-                url: Routing.generate('pimcore_ecommerceframework_pricing_rename'),
-                method: 'PUT',
-                params: {
-                    id: options.id,
-                    name: value
-                },
-                success: function (response, opts) {
+                Ext.Ajax.request({
+                    url: Routing.generate('pimcore_ecommerceframework_pricing_rename'),
+                    method: 'PUT',
+                    params: {
+                        id: options.id,
+                        name: value
+                    },
+                    success: function (response, opts) {
 
-                    let responseData = Ext.decode(response.responseText);
+                        let responseData = Ext.decode(response.responseText);
 
-                    if (responseData.success) {
-                        this.refresh(this.tree.getRootNode());
-                    } else {
-                        Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
-                    }
-                }.bind(this)
-            });
+                        if (responseData.success) {
+                            this.refresh(this.tree.getRootNode());
+                        } else {
+                            Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
+                        }
+                    }.bind(this)
+                });
+            } else {
+                Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+            }
         }
     },
 
