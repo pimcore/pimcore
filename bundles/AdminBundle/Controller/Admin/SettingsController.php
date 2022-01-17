@@ -109,6 +109,12 @@ class SettingsController extends AdminController
             throw new \Exception('Unsupported file format');
         }
 
+        if($fileExt === 'svg') {
+            if(strpos(file_get_contents($_FILES['Filedata']['tmp_name']), '<script')) {
+                throw new \Exception('Scripts in SVG files are not supported');
+            }
+        }
+
         $storage = Tool\Storage::get('admin');
         $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
 
