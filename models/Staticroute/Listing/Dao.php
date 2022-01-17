@@ -50,8 +50,6 @@ class Dao extends Model\Staticroute\Dao
      */
     public function getTotalCount()
     {
-        $amount = count($this->loadIdList());
-
-        return $amount;
+        return count($this->loadList());
     }
 }
