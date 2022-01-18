@@ -956,5 +956,4 @@
     "ungrouped": "ungrouped",
     "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?",
     "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
-    "add_rule": "Add Pricing Rule"
 }
