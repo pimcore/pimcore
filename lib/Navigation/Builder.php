@@ -215,7 +215,7 @@ class Builder
     {
         $filterByPrefix = new PrefixRecursiveFilterIterator($navigation, $property, $value);
         $flatten = new \RecursiveIteratorIterator($filterByPrefix, \RecursiveIteratorIterator::SELF_FIRST);
-        $filterMatches = new \CallbackFilterIterator($flatten, static fn(Page $page): bool => $page->get($property) === $value);
+        $filterMatches = new \CallbackFilterIterator($flatten, static fn (Page $page): bool => $page->get($property) === $value);
 
         return iterator_to_array($filterMatches, false);
     }

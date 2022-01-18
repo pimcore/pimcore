@@ -26,6 +26,7 @@ use Pimcore\Navigation\Page;
 final class PrefixRecursiveFilterIterator extends \RecursiveFilterIterator
 {
     private string $property;
+
     private string $value;
 
     /**
