@@ -282,6 +282,13 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
     {
         if (is_array($array) && count($array) > 0) {
+            if ($array["name"] ?? null === "name") {
+                $name = $array["name"];
+                $sanitizedName = htmlentities($name);
+                if ($sanitizedName !== $name) {
+                    throw new \Exception('not a valid name:' . htmlentities($name));
+                }
+            }
             /** @var LoaderInterface $loader */
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
