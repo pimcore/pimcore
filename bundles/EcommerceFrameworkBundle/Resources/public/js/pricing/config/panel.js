@@ -241,7 +241,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
      * add item popup
      */
     addRule: function () {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(t('bundle_ecommerce_pricing_rule_add'), t('enter_the_name_of_the_new_item'),
             this.addRuleComplete.bind(this), null, null, "");
     },
 
@@ -270,7 +270,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
                     this.refresh(this.tree.getRootNode());
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+                        Ext.Msg.alert(t('bundle_ecommerce_pricing_rule_add'), t('bundle_ecommerce_pricing_rule_error'));
                     } else {
                         this.openRule(null, intval(data.id));
                     }
@@ -280,7 +280,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+            Ext.Msg.alert(t('bundle_ecommerce_pricing_rule_add'), t('invalid_name'));
         }
     },
 
@@ -373,7 +373,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
                     }.bind(this)
                 });
             } else {
-                Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+                Ext.Msg.alert(t('rename'), t('invalid_name'));
             }
         }
     },

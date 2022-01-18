@@ -775,6 +775,8 @@
     "bundle_ecommerce_pricing_config_action_product_discount_percent": "Discount in %",
     "bundle_ecommerce_pricing_config_action_product_discount_amount": "Absolute Discount",
     "bundle_ecommerce_pricing_config_action_free_shipping": "Free shipping",
+    "bundle_ecommerce_pricing_rule_add": "Add Pricing Rule",
+    "bundle_ecommerce_pricing_rule_error": "Error creating Pricing Rule",
     "ecommerce": "E-Commerce",
     "preSelectMode": "Pre Select Mode",
     "remote_single": "Single Select from Remote",
@@ -953,5 +955,6 @@
     "selected_grid_columns": "Selected grid columns",
     "ungrouped": "ungrouped",
     "reindex_warning": "Changing it from alphabetical sort order to index will reindex all items. Do you want to continue?",
-    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs."
+    "config_not_writeable": "Not writable, this can have several reasons. For details please have a look into the docs.",
+    "add_rule": "Add Pricing Rule"
 }
