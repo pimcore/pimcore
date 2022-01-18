@@ -406,10 +406,15 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
         // get defined actions
         var actionData = [];
         var actions = this.actionsContainer.items.getRange();
-        for (var i=0; i<actions.length; i++) {
-            var action = {};
+        for (let i=0; i<actions.length; i++) {
+            let action = {};
             action = actions[i].getForm().getFieldValues();
             action['type'] = actions[i].type;
+
+            if (!actions[i].getForm().isValid()) {
+                console.error('Price action invalid');
+                return;
+            }
 
             actionData.push(action);
         }
