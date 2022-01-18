@@ -11,76 +11,26 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-Ext.define('pimcore.settings.translationEditor', {
-    extend: 'Ext.grid.CellEditor',
-
-    constructor: function (config) {
-        this.callParent(arguments);
-    },
-
-    initComponent: function () {
-        this.callParent();
-    },
-
-    getValue: function () {
-        return Math.random();
-    },
-
-    startEdit: function (el, value, /* private: false means don't focus*/
-                         doFocus) {
+pimcore.registerNS("pimcore.settings.translation.editor");
+pimcore.settings.translation.editor = Class.create({
+    
+    initialize: function (context, field, translationType, editorType) {
 
         Ext.WindowManager.each(function(window, idx, length) {
             window.destroy();
-
         });
 
-        this.oldValue = Ext.clone(value);
-        this.setValue(value);
+        this.field = field;
+        this.context = context;
+        let value = field.getValue();
 
-        var outerTitle = this.config.__outerTitle;
-        var innerTitle = this.config.__innerTitle;
-        var editorType = this.config.__editorType;
+        let bbar = [];
 
-        if (editorType == "custom") {
-            this.textarea = new Ext.form.TextArea({
-                width: '100%',
-                height: '100%',
-                value: value,
-                grow: true
-            });
-
-            this.component = new Ext.Panel({
-                title: innerTitle,
-                items: [this.textarea],
-                bbar: [
-                    {
-                        xtype: "displayfield",
-                        value: t('symfony_translation_link')
-                    }
-                ],
-                autoScroll: true,
-                layout: 'fit'
-            });
-        } else if (editorType == "plain" ) {
-            this.textarea = new Ext.form.TextArea({
-                width: '100%',
-                height: '100%',
-                value: value,
-                grow: true
-            });
-
-            this.component = new Ext.Panel({
-                title: innerTitle,
-                items: [this.textarea],
-                autoScroll: true,
-                layout: 'fit'
-            });
-        } else {
+        if (editorType === 'wysiwyg') {
             this.editableDivId = "translationeditor_" + uniqid();
 
-            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.oldValue + '</div>';
+            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + value + '</div>';
             var pConf = {
-                title: innerTitle,
                 html: html,
                 border: true,
                 style: "margin-bottom: 10px",
@@ -99,75 +49,67 @@ Ext.define('pimcore.settings.translationEditor', {
             );
 
             this.component.on("afterlayout", this.initCkEditor.bind(this));
+        } else {
+            this.component = new Ext.form.TextArea({
+                width: '100%',
+                height: '100%',
+                value: value,
+            });
+
+            if(translationType === 'custom') {
+                bbar.push({
+                    xtype: "displayfield",
+                    value: t('symfony_translation_link')
+                });
+            }
         }
 
-        this.context = this.editingPlugin.context;
+        bbar.push({
+            text: t("save"),
+            iconCls: 'pimcore_icon_save',
+            handler: function () {
+                let newValue = '';
+                if (editorType == "wysiwyg") {
+                    try {
+                        if (this.ckeditor) {
+                            newValue = this.ckeditor.getData();
+                        }
+                    }
+                    catch (e) {
+                    }
+                } else {
+                    newValue = this.component.getValue();
+                }
 
-        // arguments[2]= true;
-        // this.callParent(arguments);
+                this.field.setValue(newValue);
+                this.context.setValueStatus(this.field, newValue);
 
+                this.editWin.close();
+            }.bind(this)
+        });
 
-        var fConfig = {
-            border: false,
-            items: [this.component]
-            ,
-            bodyStyle: "padding: 10px;"
-        };
-
-
-
-        var formPanel = Ext.create('Ext.form.Panel', fConfig);
+        bbar.push({
+            text: t("cancel"),
+            iconCls: 'pimcore_icon_cancel',
+            handler: function () {
+                this.editWin.close();
+            }.bind(this)
+        });
 
         this.editWin = new Ext.Window({
             modal: false,
-            title: outerTitle,
-            items: [formPanel],
-            bodyStyle: "background: #fff;",
+            items: [this.component],
+            bodyStyle: "background: #fff; padding: 10px",
             width: 700,
-            maxHeight: 600,
+            height: 400,
             layout: 'fit',
+            closeAction: 'method-destroy',
             autoScroll: true,
             preventRefocus: true,      // nasty hack because this is an internal property
                                        // for html grid cell values with hrefs this prevents that the cell
                                        // gets refocused which would then trigger another editor window
                                        // upon close of this instance
-            listeners: {
-                close: function () {
-                    this.cancelEdit(false);
-                }.bind(this)
-            },
-            buttons: [
-                {
-                    text: t("save"),
-                    iconCls: 'pimcore_icon_save',
-                    handler: function () {
-                        if (editorType == "plain" || editorType == "custom") {
-                            newValue = this.textarea.getValue();
-                        } else {
-                            var newValue = this.oldValue;
-                            try {
-                                if (this.ckeditor) {
-                                    newValue = this.ckeditor.getData();
-                                }
-                            }
-                            catch (e) {
-                            }
-                        }
-
-                        this.setValue(newValue);
-                        this.completeEdit(false);
-                        this.editWin.close();
-                    }.bind(this)
-                },
-                {
-                    text: t("cancel"),
-                    iconCls: 'pimcore_icon_cancel',
-                    handler: function () {
-                        this.cancelEdit(false);
-                        this.editWin.close();
-                    }.bind(this)
-                }
-            ]
+            bbar: bbar
         });
 
 
@@ -175,37 +117,10 @@ Ext.define('pimcore.settings.translationEditor', {
         this.editWin.updateLayout();
     },
 
-    getValue: function () {
-        return this.value;
-    },
-
-    setValue: function (value) {
-        this.value = value;
-    },
-
-    completeEdit: function (remainVisible) {
-        var me = this,
-            startValue = me.startValue,
-            value;
-
-        value = me.getValue();
-
-        if (me.fireEvent('beforecomplete', me, value, startValue) !== false) {
-            // Grab the value again, may have changed in beforecomplete
-            value = me.getValue();
-            if (me.updateEl && me.boundEl) {
-                me.boundEl.setHtml(value);
-            }
-            me.onEditComplete(remainVisible);
-            me.fireEvent('complete', me, value, startValue);
-        }
-    },
-
     destroy: function () {
         if (this.editWin) {
             this.editWin.destroy();
         }
-        this.callParent(arguments);
     },
 
     initCkEditor: function () {
@@ -406,6 +321,4 @@ Ext.define('pimcore.settings.translationEditor', {
 
         return false;
     }
-
-
 });

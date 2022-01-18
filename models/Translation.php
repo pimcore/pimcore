@@ -60,14 +60,14 @@ final class Translation extends AbstractModel
     /**
      * @var string
      */
-    protected $type;
+    protected $type = 'simple';
 
     /**
      * @return string
      */
     public function getType()
     {
-        return $this->type;
+        return $this->type ?: 'simple';
     }
 
     /**

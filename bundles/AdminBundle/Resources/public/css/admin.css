@@ -2343,3 +2343,11 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 .x-panel-header .x-tool-tool-el {
     color: #484B4E;
 }
+
+.pimcore_translation_trigger:before {
+    content: '';
+}
+
+.pimcore_translation_cell_disabled textarea {
+    opacity: .5;
+}
