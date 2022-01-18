@@ -282,7 +282,7 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
     {
         if (is_array($array) && count($array) > 0) {
-            if ($array["name"] ?? null === "name") {
+            if ($array["name"] ?? null == "name") {
                 $name = $array["name"];
                 $sanitizedName = htmlentities($name);
                 if ($sanitizedName !== $name) {
