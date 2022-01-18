@@ -873,12 +873,13 @@ CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
 	`classId` VARCHAR(50) NOT NULL,
     `objectId` INT(11) NOT NULL DEFAULT '0',
-	`gridConfigId` INT(11) NULL,
+	`gridConfigId` INT(11) unsigned NOT NULL,
 	`searchType` VARCHAR(50) NOT NULL DEFAULT '',
 	`type` enum('asset','object') NOT NULL DEFAULT 'object',
-  PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
+    PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
 	INDEX `classId` (`classId`),
-	INDEX `searchType` (`searchType`)
+	INDEX `searchType` (`searchType`),
+    CONSTRAINT `fk_gridconfig_favourites_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
 ;
