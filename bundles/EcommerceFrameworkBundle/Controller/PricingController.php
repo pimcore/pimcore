@@ -264,7 +264,7 @@ class PricingController extends AdminController implements KernelControllerEvent
         $ruleNewName = $request->get('name');
 
         try {
-            if ($ruleId && $ruleNewName) {
+            if ($ruleId && $ruleNewName && preg_match('/^[a-zA-Z0-9_\-]+$/', $ruleNewName)) {
                 $renameRule = Rule::getById($ruleId);
 
                 if ($renameRule->getName() != $ruleNewName) {

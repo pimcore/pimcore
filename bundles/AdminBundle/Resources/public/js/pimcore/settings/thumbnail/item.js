@@ -82,6 +82,7 @@ pimcore.settings.thumbnail.item = Class.create({
             name: "group",
             value: this.data.group,
             fieldLabel: t("group"),
+            renderer: Ext.util.Format.htmlEncode,
             width: 450
         });
 
@@ -214,6 +215,10 @@ pimcore.settings.thumbnail.item = Class.create({
         if(name.match(/^\d+w$/)) {
             // convert legacy syntax to new syntax/name
             name = '(max-width: ' + name.replace("w", "") + 'px)';
+        }
+
+        if(name.match(/["<>]/)) {
+            return;
         }
 
         if (this.medias[name]) {

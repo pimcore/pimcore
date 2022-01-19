@@ -1242,7 +1242,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
 
         if ($storeId) {
-            $conditionParts[] = '(storeId = ' . $storeId . ')';
+            $conditionParts[] = '(storeId = '. $db->quote($storeId) . ')';
         }
 
         if ($request->get('filter')) {
