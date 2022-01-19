@@ -209,7 +209,9 @@ final class Thumbnail
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            if (!str_starts_with($path, 'http')) {
+                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            }
         }
 
         return $path;

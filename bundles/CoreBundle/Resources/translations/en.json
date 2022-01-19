@@ -353,6 +353,8 @@
     "active": "Active",
     "success": "Success",
     "translations": "Translations",
+    "translation_simple": "Simple Text",
+    "translation_custom": "ICU Format",
     "firstname": "Firstname",
     "lastname": "Lastname",
     "email": "Email",
