@@ -82,6 +82,7 @@ pimcore.settings.thumbnail.item = Class.create({
             name: "group",
             value: this.data.group,
             fieldLabel: t("group"),
+            renderer: Ext.util.Format.htmlEncode,
             width: 450
         });
 
