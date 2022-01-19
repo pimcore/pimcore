@@ -889,7 +889,8 @@ CREATE TABLE `gridconfig_shares` (
 	`gridConfigId` INT(11) NOT NULL,
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
-	INDEX `sharedWithUserId` (`sharedWithUserId`)
+	INDEX `sharedWithUserId` (`sharedWithUserId`),
+    CONSTRAINT `fk_gridconfig_shares_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
 ;
