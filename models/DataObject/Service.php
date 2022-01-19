@@ -215,9 +215,9 @@ class Service extends Model\Element\Service
             foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
                 if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
-                        if ($fieldDefinition->getUnique()) {
+                        if ($localizedFieldDefinition->getUnique()) {
                             foreach (Tool::getValidLanguages() as $language) {
-                                $new->set($fieldDefinition->getName(), null, $language);
+                                $new->set($localizedFieldDefinition->getName(), null, $language);
                             }
                             $new->setPublished(false);
                         }
