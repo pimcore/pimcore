@@ -17,7 +17,7 @@ final class Version20220119082511 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `gridconfig_favourites`
-        CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL,
+            CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL,
             ADD CONSTRAINT `fk_gridconfig_favourites_gridconfigs`
             FOREIGN KEY (`gridConfigId`)
             REFERENCES `gridconfigs` (`id`)
