@@ -232,8 +232,8 @@ CREATE TABLE `documents_printpage` (
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_printpage_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-  PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
 
