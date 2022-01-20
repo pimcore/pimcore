@@ -16,8 +16,9 @@ final class Version20220119082511 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL');
         $this->addSql('ALTER TABLE `gridconfig_favourites`
-            CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL,
+            ADD INDEX `grid_config_id` (`gridConfigId`),
             ADD CONSTRAINT `fk_gridconfig_favourites_gridconfigs`
             FOREIGN KEY (`gridConfigId`)
             REFERENCES `gridconfigs` (`id`)
@@ -25,6 +26,7 @@ final class Version20220119082511 extends AbstractMigration
             ON DELETE CASCADE;');
 
         $this->addSql('ALTER TABLE `gridconfig_shares`
+            ADD INDEX `grid_config_id` (`gridConfigId`),
             ADD CONSTRAINT `fk_gridconfig_shares_gridconfigs`
             FOREIGN KEY (`gridConfigId`)
             REFERENCES `gridconfigs` (`id`)
@@ -35,10 +37,12 @@ final class Version20220119082511 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `gridconfig_favourites`
-            DROP FOREIGN KEY `fk_gridconfig_favourites_gridconfigs`,
+            DROP INDEX IF EXISTS `grid_config_id`,
+            DROP FOREIGN KEY IF EXISTS `fk_gridconfig_favourites_gridconfigs`,
             CHANGE `gridConfigId` `gridConfigId` int(11) NULL;');
 
         $this->addSql('ALTER TABLE `gridconfig_shares`
-            DROP FOREIGN KEY `fk_gridconfig_shares_gridconfigs`;');
+            DROP INDEX IF EXISTS `grid_config_id`,
+            DROP FOREIGN KEY IF EXISTS `fk_gridconfig_shares_gridconfigs`;');
     }
 }

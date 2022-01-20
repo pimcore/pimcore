@@ -879,6 +879,7 @@ CREATE TABLE `gridconfig_favourites` (
     PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
 	INDEX `classId` (`classId`),
 	INDEX `searchType` (`searchType`),
+    INDEX `grid_config_id` (`gridConfigId`),
     CONSTRAINT `fk_gridconfig_favourites_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
@@ -890,6 +891,7 @@ CREATE TABLE `gridconfig_shares` (
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`),
+    INDEX `grid_config_id` (`gridConfigId`),
     CONSTRAINT `fk_gridconfig_shares_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
