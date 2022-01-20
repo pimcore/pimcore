@@ -167,15 +167,23 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
         }
 
+        $preUpdateEvent = new DataObjectEvent($this, [
+            'validationExceptions' => $validationExceptions,
+            'message' => 'Validation failed: ',
+            'separator' => ' / ',
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION);
+        $validationExceptions = $preUpdateEvent->getArgument('validationExceptions');
+
         if ($validationExceptions) {
-            $message = 'Validation failed: ';
+            $message = $preUpdateEvent->getArgument('message');
             $errors = [];
 
             /** @var Model\Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }
-            $message .= implode(' / ', $errors);
+            $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
             throw new Model\Element\ValidationException($message);
         }
