@@ -113,8 +113,7 @@ CREATE TABLE `documents` (
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `published` (`published`),
-  KEY `modificationDate` (`modificationDate`),
-  INDEX `fullpath` (`path`,`key`),
+  KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_editables`;
@@ -425,9 +424,7 @@ CREATE TABLE `redirects` (
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
-  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`),
-  INDEX `fk_target` (`target`),
-  CONSTRAINT `fk_redirects_documents` FOREIGN KEY (`target`) REFERENCES `documents` (`fullpath`) ON UPDATE NO ACTION ON DELETE CASCADE
+  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
