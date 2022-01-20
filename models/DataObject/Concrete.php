@@ -552,8 +552,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * get object relation data as array for a specific field
      *
-     * @internal
-     *
      * @param string $fieldName
      * @param bool $forOwner
      * @param string $remoteClassId
