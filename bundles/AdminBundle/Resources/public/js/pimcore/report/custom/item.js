@@ -442,7 +442,7 @@ pimcore.report.custom.item = Class.create({
             });
 
             var userSharingField = Ext.create('Ext.form.field.Tag', {
-                name: "sharedUserIds",
+                name: "sharedUserNames",
                 width: '100%',
                 height: 100,
                 fieldLabel: t("visible_to_users"),
@@ -455,7 +455,7 @@ pimcore.report.custom.item = Class.create({
                 valueField: 'id',
                 forceSelection: true,
                 filterPickList: true,
-                value: this.data.sharedUserIds ? this.data.sharedUserIds : ""
+                value: this.data.sharedUserNames ? this.data.sharedUserNames : ""
             });
             items.push(userSharingField);
 
@@ -477,7 +477,7 @@ pimcore.report.custom.item = Class.create({
             });
 
             var rolesSharingField = Ext.create('Ext.form.field.Tag', {
-                name: "sharedRoleIds",
+                name: "sharedRoleNames",
                 width: '100%',
                 height: 100,
                 fieldLabel: t("visible_to_roles"),
@@ -490,7 +490,7 @@ pimcore.report.custom.item = Class.create({
                 valueField: 'id',
                 forceSelection: true,
                 filterPickList: true,
-                value: this.data.sharedRoleIds ? this.data.sharedRoleIds : ""
+                value: this.data.sharedRoleNames ? this.data.sharedRoleNames : ""
             });
             items.push(rolesSharingField);
         }
