@@ -1072,9 +1072,6 @@ class Asset extends Element\AbstractElement
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
-            // remove permissions
-            $this->getDao()->deleteAllPermissions();
-
             // remove all properties
             $this->getDao()->deleteAllProperties();
 
