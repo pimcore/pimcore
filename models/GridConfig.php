@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Db;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
