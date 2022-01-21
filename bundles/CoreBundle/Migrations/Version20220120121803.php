@@ -76,9 +76,9 @@ final class Version20220120121803 extends AbstractMigration
             ON DELETE CASCADE;');
 
         $this->addSql('ALTER TABLE `documents_editables`
-            ADD CONSTRAINT `fk_documents_editables_document_page`
+            ADD CONSTRAINT `fk_documents_editables_documents`
             FOREIGN KEY (`documentId`)
-            REFERENCES `documents_page` (`id`)
+            REFERENCES `documents` (`id`)
             ON UPDATE NO ACTION
             ON DELETE CASCADE;');
 
@@ -116,9 +116,11 @@ final class Version20220120121803 extends AbstractMigration
 
         $this->addSql('ALTER TABLE `documents_email` DROP FOREIGN KEY IF EXISTS `fk_documents_email_documents`;');
 
+        $this->addSql('ALTER TABLE `email_log` DROP FOREIGN KEY IF EXISTS `fk_email_log_documents`;');
+
         $this->addSql('ALTER TABLE `documents_newsletter` DROP FOREIGN KEY IF EXISTS `fk_documents_newsletter_documents`;');
 
-        $this->addSql('ALTER TABLE `documents_editables` DROP FOREIGN KEY IF EXISTS `fk_documents_editables_document_page`;');
+        $this->addSql('ALTER TABLE `documents_editables` DROP FOREIGN KEY IF EXISTS `fk_documents_editables_documents`;');
 
         $this->addSql('ALTER TABLE `documents_translations` DROP FOREIGN KEY IF EXISTS `fk_documents_translations_documents`;');
 

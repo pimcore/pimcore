@@ -123,7 +123,7 @@ CREATE TABLE `documents_editables` (
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
-  CONSTRAINT `fk_documents_editables_document_page` FOREIGN KEY (`documentId`) REFERENCES `documents_page` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT `fk_documents_editables_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_email`;
