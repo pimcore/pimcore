@@ -191,7 +191,7 @@ class Tracker extends AbstractTracker
                 $config = $jsonConfig;
             } else {
                 $this->logger->warning('Failed to parse analytics tracker custom configuration: {error}', [
-                    'error' => json_last_error_msg() ?? 'not an array',
+                    'error' => json_last_error_msg(),
                 ]);
             }
         }

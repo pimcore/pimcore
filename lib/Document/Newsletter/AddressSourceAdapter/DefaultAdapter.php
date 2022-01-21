@@ -46,7 +46,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     protected $elementsTotal;
 
     /**
-     * @var Listing
+     * @var Listing|null
      */
     protected $list;
 

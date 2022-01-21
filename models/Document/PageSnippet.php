@@ -414,7 +414,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param int|null $contentMasterDocumentId
+     * @param int|string|null $contentMasterDocumentId
      *
      * @return $this
      *

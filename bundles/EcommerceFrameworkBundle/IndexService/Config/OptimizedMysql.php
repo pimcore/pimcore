@@ -46,21 +46,14 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @param int $objectId
      *
-     * @return mixed
+     * @return DefaultMockup
      */
     public function getObjectMockupById($objectId)
     {
         /** @var AbstractMockupCacheWorker $worker */
         $worker = $this->getTenantWorker();
-        $mockup = $worker->getMockupFromCache($objectId);
 
-        if (empty($mockup)) {
-            Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");
-
-            return $this->getObjectById($objectId);
-        } else {
-            return $mockup;
-        }
+        return $worker->getMockupFromCache($objectId);
     }
 
     /**

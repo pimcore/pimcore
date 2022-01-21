@@ -1547,7 +1547,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $compositeIndices
+     * @param array|null $compositeIndices
      *
      * @return $this
      */

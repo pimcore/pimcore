@@ -63,14 +63,12 @@ class WorkflowController extends AdminController implements KernelControllerEven
     {
         try {
             $workflow = $workflowManager->getWorkflowIfExists($this->element, (string) $request->get('workflowName'));
-            $workflowConfig = $workflowManager->getWorkflowConfig((string) $request->get('workflowName'));
 
-            if (empty($workflow) || empty($workflowConfig)) {
+            if (empty($workflow)) {
                 $wfConfig = [
                     'message' => 'workflow not found',
                 ];
             } else {
-
                 //this is the default returned workflow data
                 $wfConfig = [
                     'message' => '',

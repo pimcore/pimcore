@@ -526,11 +526,10 @@ class SearchController extends AdminController
     {
         $parts = explode('/', trim($path, '/'));
         $count = count($parts) - 1;
-        $shortPath = '';
 
-        for ($i = $count; $i >= 0; $i--) {
+        for ($i = $count;; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i == 0) {
+            if ($i === 0 || strlen($shortPath) <= 50) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');

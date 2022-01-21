@@ -162,14 +162,10 @@ class AssetsInstaller
             $contents = file_get_contents($file);
 
             if (!empty($contents)) {
-                try {
-                    $json = json_decode($contents, true);
+                $json = json_decode($contents, true);
 
-                    if (JSON_ERROR_NONE === json_last_error() && $json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
-                        $this->composerJsonSetting = $json['extra']['symfony-assets-install'];
-                    }
-                } catch (\Exception $e) {
-                    // noop
+                if (JSON_ERROR_NONE === json_last_error() && $json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
+                    $this->composerJsonSetting = $json['extra']['symfony-assets-install'];
                 }
             }
         }

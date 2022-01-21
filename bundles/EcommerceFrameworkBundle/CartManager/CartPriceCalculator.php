@@ -83,7 +83,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $appliedPricingRules = [];
 
     /**
-     * @var PricingManagerInterface
+     * @var PricingManagerInterface|null
      */
     protected $pricingManager;
 

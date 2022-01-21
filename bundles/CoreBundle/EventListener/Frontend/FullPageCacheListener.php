@@ -218,9 +218,7 @@ class FullPageCacheListener
 
                 if (!empty($conf['exclude_patterns'])) {
                     $confExcludePatterns = explode(',', $conf['exclude_patterns']);
-                    if (!empty($confExcludePatterns)) {
-                        $excludePatterns = $confExcludePatterns;
-                    }
+                    $excludePatterns = $confExcludePatterns;
                 }
 
                 if (!empty($conf['exclude_cookie'])) {

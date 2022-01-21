@@ -1,9 +1,24 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
+			count: 1
+			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
+
+		-
+			message: "#^Offset 'object' on array\\{\\} in empty\\(\\) does not exist\\.$#"
+			count: 1
+			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/Frontend/RoutingListener.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
@@ -81,6 +96,16 @@ parameters:
 			path: lib/HttpKernel/BundleCollection/BundleCollection.php
 
 		-
+			message: "#^Variable \\$bundle in empty\\(\\) always exists and is always falsy\\.$#"
+			count: 1
+			path: lib/HttpKernel/BundleCollection/BundleCollection.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: lib/Image/Adapter/Imagick.php
+
+		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Mail.php
@@ -89,4 +114,29 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
+			count: 1
+			path: lib/Tool/Serialize.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: models/Asset/Image/Thumbnail/Processor.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/ManyToManyRelation.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
 

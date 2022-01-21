@@ -125,7 +125,7 @@ class VersionsCleanupTask implements TaskInterface
 
             $this->logger->debug('versions to check: ' . count($versions));
 
-            if (is_array($versions) && !empty($versions)) {
+            if (is_array($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
                     if (!$version = Version::getById($id)) {
