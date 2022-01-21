@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCa
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
-use Pimcore\Logger;
 
 /**
  * Configuration for the optimized mysql product index implementation.
