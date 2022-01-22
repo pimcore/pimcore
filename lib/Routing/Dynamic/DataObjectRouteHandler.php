@@ -20,9 +20,7 @@ namespace Pimcore\Routing\Dynamic;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -33,19 +31,9 @@ use Symfony\Component\Routing\RouteCollection;
 final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
-     * @var Document\Service
-     */
-    private $documentService;
-
-    /**
      * @var SiteResolver
      */
     private $siteResolver;
-
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
 
     /**
      * @var Config
@@ -53,19 +41,14 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $config;
 
     /**
-     * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
-     * @param RequestHelper $requestHelper
+     * @param Config $config
      */
     public function __construct(
-        Document\Service $documentService,
         SiteResolver $siteResolver,
-        RequestHelper $requestHelper,
         Config $config
     ) {
-        $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
-        $this->requestHelper = $requestHelper;
         $this->config = $config;
     }
 

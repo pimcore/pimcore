@@ -853,7 +853,7 @@ QUERY;
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key . '__' . $fkey;
                             }
-                        } elseif ($value->getColumnType()) {
+                        } else {
                             $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
                             $protectedColumns[] = $key;
                         }

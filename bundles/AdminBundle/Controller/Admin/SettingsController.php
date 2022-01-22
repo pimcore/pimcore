@@ -109,6 +109,10 @@ class SettingsController extends AdminController
             throw new \Exception('Unsupported file format');
         }
 
+        if ($fileExt === 'svg' && stripos(file_get_contents($_FILES['Filedata']['tmp_name']), '<script')) {
+            throw new \Exception('Scripts in SVG files are not supported');
+        }
+
         $storage = Tool\Storage::get('admin');
         $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
 
@@ -1158,7 +1162,7 @@ class SettingsController extends AdminController
                 if (empty($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -1332,6 +1336,10 @@ class SettingsController extends AdminController
         });
 
         foreach ($mediaData as $mediaName => $items) {
+            if (preg_match('/["<>]/', $mediaName)) {
+                throw new \Exception('Invalid media query name');
+            }
+
             foreach ($items as $item) {
                 $type = $item['type'];
                 unset($item['type']);
@@ -1381,10 +1389,10 @@ class SettingsController extends AdminController
         $groups = [];
         foreach ($list->getThumbnails() as $item) {
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (empty($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,

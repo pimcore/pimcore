@@ -577,9 +577,7 @@ class Service extends Model\Element\Service
                 $tmpPaths[] = $pathPart;
 
                 $t = implode('/', $tmpPaths);
-                if (!empty($t)) {
-                    $paths[] = $t;
-                }
+                $paths[] = $t;
             }
 
             $paths = array_reverse($paths);

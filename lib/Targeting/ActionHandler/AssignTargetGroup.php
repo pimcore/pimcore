@@ -28,20 +28,15 @@ class AssignTargetGroup implements ActionHandlerInterface
     const STORAGE_KEY = 'tg';
 
     /**
-     * @var ConditionMatcherInterface
-     */
-    private $conditionMatcher;
-
-    /**
      * @var TargetingStorageInterface
      */
     private $storage;
 
+    // @phpstan-ignore-next-line
     public function __construct(
-        ConditionMatcherInterface $conditionMatcher,
+        ConditionMatcherInterface $conditionMatcher, // TODO: Remove in Pimcore 11
         TargetingStorageInterface $storage
     ) {
-        $this->conditionMatcher = $conditionMatcher;
         $this->storage = $storage;
     }
 

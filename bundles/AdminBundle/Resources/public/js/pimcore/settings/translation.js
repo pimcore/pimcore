@@ -112,8 +112,6 @@ pimcore.settings.translation.domain = Class.create({
                         languages.push('translation_column_' + this.domain + '_' + rec.toLowerCase());
                     }.bind(this));
 
-                    console.log('locale change');
-
                     let cm = this.grid.getColumnManager().getColumns();
                     for (let i = 0; i < cm.length; i++) {
                         let columnId = cm[i].id;
@@ -167,6 +165,7 @@ pimcore.settings.translation.domain = Class.create({
                     pimcore.layout.refresh();
 
                 } catch (e) {
+                    console.error(e);
                     Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
                         + '<br /><br /><a href="http://www.pimcore.org/docs/" target="_blank">'
                         + t("read_more_here") + '</a>');
@@ -213,8 +212,8 @@ pimcore.settings.translation.domain = Class.create({
         var state = Ext.state.Manager.getProvider().get(stateId, null);
         var languages = this.languages;
 
-        var maxCols = 7;   // include creation date / modification date / action column)
-        var maxLanguages = maxCols - 3;
+        var maxCols = 7;   // including action column)
+        var maxLanguages = maxCols - 1;
 
         if (state == null) {
             applyInitialSettings = true;
@@ -248,24 +247,29 @@ pimcore.settings.translation.domain = Class.create({
         ];
 
         var typesColumns = [
-            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'},
-            {text: t("type"), sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+            {text: t("key"), sortable: true, dataIndex: 'key', flex: 1, editable: false, filter: 'string'},
+            {text: t("type"), sortable: true, dataIndex: 'type', width: 100, editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
-                    store: ["simple","custom"]
-                })},
+                    store: [["simple", t('translation_simple')],["custom", t('translation_custom')]]
+                }),
+                renderer: function (value) {
+                    return t('translation_' + value);
+                }
+            },
         ];
 
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
-            var columnConfig = {
+            let columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
                 sortable: true,
+                flex: 1,
                 dataIndex: "_" + languages[i],
                 filter: 'string',
-                editor: new Ext.form.TextField({}),
+                editor: this.getCellEditor(),
                 renderer: function (text) {
                     if (text) {
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
@@ -291,11 +295,11 @@ pimcore.settings.translation.domain = Class.create({
         };
         typesColumns.push({
             text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
-            , renderer: dateRenderer, filter: 'date'
+            , renderer: dateRenderer, filter: 'date', hidden: true
         });
         typesColumns.push({
             text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
-            , renderer: dateRenderer, filter: 'date'
+            , renderer: dateRenderer, filter: 'date', hidden: true
         })
         ;
 
@@ -345,15 +349,16 @@ pimcore.settings.translation.domain = Class.create({
             clicksToEdit: 1,
             clicksToMoveEditor: 1,
             listeners: {
-                beforeedit: function(editor, e) {
+                beforeedit: function(editor, context) {
                     let cm = this.grid.getColumnManager().getColumns();
                     for (let i=0; i < cm.length; i++) {
                         let columnId = cm[i].id;
                         if (columnId.startsWith('translation_column_')) {
-                            let editor = this.getCellEditor(e.column.dataIndex.substring(1), e.record);
-                            if (editor) {
-                                e.grid.getColumnManager().columns[i].setEditor(editor);
-                            }
+                            let column = context.grid.getColumnManager().columns[i];
+                            let editor = column.getEditor();
+                            let value = context.record.get(column.dataIndex);
+                            editor.recordReference = context.record;
+                            this.setValueStatus(editor, value);
                         }
                     }
                 }.bind(this)
@@ -410,7 +415,6 @@ pimcore.settings.translation.domain = Class.create({
             columns: {
                 items: typesColumns,
                 defaults: {
-                    flex: 1,
                     renderer: Ext.util.Format.htmlEncode
                 }
             },
@@ -429,34 +433,6 @@ pimcore.settings.translation.domain = Class.create({
                 forceFit: true,
                 loadingText: t('please_wait'),
                 enableTextSelection: true
-            },
-            listeners: {
-                cellcontextmenu: this.createCellContextMenu.bind(this),
-                cellClick: function( grid, cell, cellIndex, record, row, recordIndex, e ) {
-                    var cm = grid.headerCt.getGridColumns()
-                    var dataIndex = cm[cellIndex].dataIndex;
-                    if (!in_array(trim(dataIndex, "_"), this.languages)) {
-                        return;
-                    }
-
-                    let data = record.get(dataIndex);
-                    let type = record.get('type');
-
-                    if (type == "custom") {
-                        record.set("editor", type);
-                    } else {
-                        var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
-                        if (htmlRegex.test(data)) {
-                            record.set("editor", "html");
-                        } else if (data && data.match(/\n/gm))  {
-                            record.set("editor", "plain");
-                        } else {
-                            record.set("editor", null);
-                        }
-                    }
-                    return true;
-
-                }.bind(this)
             }
         });
 
@@ -465,37 +441,6 @@ pimcore.settings.translation.domain = Class.create({
         this.panel.removeAll();
         this.panel.add(this.grid);
         this.panel.updateLayout();
-    },
-
-    createCellContextMenu: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
-        var cm = grid.headerCt.getGridColumns();
-        var dataIndex = trim(cm[cellIndex].dataIndex, "_");
-        if (!in_array(dataIndex, this.languages)) {
-            return;
-        }
-
-        e.stopEvent();
-
-        var handler = function(rowIndex, cellIndex, mode) {
-            record.set("editor", mode);
-            this.rowEditing.startEdit(rowIndex,cellIndex);
-        };
-
-        var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
-            text: t('edit_as_plain_text'),
-            iconCls: "pimcore_icon_edit",
-            handler: handler.bind(this, rowIndex, cellIndex, "plain")
-        }));
-
-
-        menu.add(new Ext.menu.Item({
-            text: t('edit_as_html'),
-            iconCls: "pimcore_icon_edit",
-            handler: handler.bind(this, rowIndex, cellIndex, "html")
-        }));
-
-        menu.showAt(e.pageX, e.pageY);
     },
 
     doMerge: function () {
@@ -648,29 +593,71 @@ pimcore.settings.translation.domain = Class.create({
         });
     },
 
-    getCellEditor: function(language, record) {
+    setValueStatus: function (field, value) {
 
-        var editor;
+        field.setEditable(true);
+        field.removeCls('pimcore_translation_cell_disabled');
+        field.getTrigger('plain').show();
+        field.getTrigger('html').show();
 
-        if (!record.data.editor) {
-            editor = this.editableLanguages.indexOf(language) >= 0 ? new Ext.form.TextField({}) : null;
-        } else {
-            let __innerTitle = record.data.key;
-            let __outerTitle = record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html");
-
-            if(record.data.editor == "custom") {
-                __outerTitle = t("edit_as_custom_text");
-            }
-
-            editor = new pimcore.settings.translationEditor({
-                __editorType: record.data.editor,
-                __outerTitle: __outerTitle,
-                __innerTitle: __innerTitle
-            });
-
+        if(!value || !Ext.isString(value)) {
+            return;
         }
 
-        return editor;
-    }
+        if(value) {
+            let html = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(value);
+            let plain = value.match(/\n/gm)
 
+            if (html || plain) {
+                field.setEditable(false);
+                field.addCls('pimcore_translation_cell_disabled');
+
+                if(html) {
+                    field.getTrigger('plain').hide();
+                } else {
+                    field.getTrigger('html').hide();
+                }
+            }
+        }
+    },
+
+    openEditorWindow: function (field, editorType) {
+        if(this.currentEditorWindow) {
+            //this.currentEditorWindow.destroy();
+            this.currentEditorWindow = null;
+        }
+
+        this.currentEditorWindow = new pimcore.settings.translation.editor(this, field, field.recordReference.get('type'), editorType)
+    },
+
+    getCellEditor: function() {
+
+        return new Ext.form.field.TextArea({
+            enableKeyEvents: true,
+            fieldStyle: 'min-height:30px',
+            listeners: {
+                keyup: function (field, key) {
+                    if (key.getKey() == key.ENTER) {
+                        return false;
+                    }
+                }
+            },
+            triggers: {
+                html: {
+                    cls: 'pimcore_translation_trigger pimcore_icon_html',
+                    tooltip: t('edit_as_html'),
+                    handler: function (field, trigger) {
+                        this.openEditorWindow(field, 'wysiwyg');
+                    }.bind(this)
+                },
+                plain: {
+                    cls: 'pimcore_translation_trigger pimcore_icon_text',
+                    tooltip: t('edit_as_plain_text'),
+                    handler: function (field, trigger) {
+                        this.openEditorWindow(field, 'plainText');
+                    }.bind(this)
+                }
+            }
+        });
+    }
 });
