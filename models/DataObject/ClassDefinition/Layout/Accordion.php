@@ -22,15 +22,11 @@ class Accordion extends Model\DataObject\ClassDefinition\Layout
     /**
      * Static type of this element
      *
-     * @internal
-     *
      * @var string
      */
     public $fieldtype = 'accordion';
 
     /**
-     * @internal
-     *
      * @var bool
      */
     public $border = false;

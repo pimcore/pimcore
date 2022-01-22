@@ -22,29 +22,21 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     /**
      * Static type of this element
      *
-     * @internal
-     *
      * @var string
      */
     public $fieldtype = 'button';
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $handler;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $text;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $icon;

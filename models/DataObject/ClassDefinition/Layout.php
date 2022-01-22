@@ -23,92 +23,66 @@ class Layout
     use Model\DataObject\ClassDefinition\Helper\VarExport, Element\ChildsCompatibilityTrait;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $name;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $type;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $region;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $title;
 
     /**
-     * @internal
-     *
      * @var string|int
      */
     public $width = 0;
 
     /**
-     * @internal
-     *
      * @var string|int
      */
     public $height = 0;
 
     /**
-     * @internal
-     *
      * @var bool
      */
     public $collapsible = false;
 
     /**
-     * @internal
-     *
      * @var bool
      */
     public $collapsed = false;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $bodyStyle;
 
     /**
-     * @internal
-     *
      * @var string
      */
     public $datatype = 'layout';
 
     /**
-     * @internal
-     *
      * @var array
      */
     public $permissions;
 
     /**
-     * @internal
-     *
      * @var array
      */
     public $children = [];
 
     /**
-     * @internal
-     *
      * @var bool
      */
     public $locked = false;
@@ -342,7 +316,7 @@ class Layout
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getDatatype()
     {
@@ -350,7 +324,7 @@ class Layout
     }
 
     /**
-     * @param string $datatype
+     * @param mixed $datatype
      *
      * @return $this
      */
