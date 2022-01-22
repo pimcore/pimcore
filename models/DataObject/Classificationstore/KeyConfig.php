@@ -102,7 +102,7 @@ final class KeyConfig extends Model\AbstractModel
                 return self::$cache[$id];
             }
 
-            $cacheKey = 'cs_keyconfig_' . $id;
+            $cacheKey = self::getCacheKey($id);
             $config = Cache::load($cacheKey);
             if ($config) {
                 return $config;
@@ -152,7 +152,7 @@ final class KeyConfig extends Model\AbstractModel
     public static function getByName($name, $storeId = 1)
     {
         try {
-            $cacheKey = 'cs_keyconfig_' . $storeId . '_' . md5($name);
+            $cacheKey = self::getCacheKey($storeId, $name);
 
             if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey)) {
                 $config = Cache\Runtime::get($cacheKey);
@@ -268,8 +268,8 @@ final class KeyConfig extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE);
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
-            $cacheKey = 'cs_keyconfig_' . $this->getId();
-            Cache::remove($cacheKey);
+            Cache::remove(self::getCacheKey($this->getId()));
+            Cache::remove(self::getCacheKey($this->getStoreId(), $this->getName()));
         }
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE);
@@ -293,8 +293,8 @@ final class KeyConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
-            $cacheKey = 'cs_keyconfig_' . $this->getId();
-            Cache::remove($cacheKey);
+            Cache::remove(self::getCacheKey($this->getId()));
+            Cache::remove(self::getCacheKey($this->getStoreId(), $this->getName()));
 
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE);
@@ -421,5 +421,21 @@ final class KeyConfig extends Model\AbstractModel
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * @param int $id
+     * @param string|null $name
+     *
+     * @return string
+     */
+    private static function getCacheKey(int $id, string $name = null): string
+    {
+        $cacheKey = 'cs_keyconfig_' . $id;
+        if ($name !== null) {
+            $cacheKey .=  '_' . md5($name);
+        }
+
+        return $cacheKey;
     }
 }

@@ -77,7 +77,7 @@ final class GroupConfig extends Model\AbstractModel
     public static function getById($id)
     {
         try {
-            $cacheKey = 'cs_groupconfig_' . $id;
+            $cacheKey = self::getCacheKey($id);
             if (Cache\Runtime::isRegistered($cacheKey)) {
                 $config = Cache\Runtime::get($cacheKey);
                 if ($config) {
@@ -218,7 +218,7 @@ final class GroupConfig extends Model\AbstractModel
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE);
-        $cacheKey = 'cs_groupconfig_' . $this->getId();
+        $cacheKey =  self::getCacheKey($this->getId());
         Cache\Runtime::set($cacheKey, null);
         Cache::remove($cacheKey);
 
@@ -234,7 +234,7 @@ final class GroupConfig extends Model\AbstractModel
         $isUpdate = false;
 
         if ($this->getId()) {
-            $cacheKey = 'cs_groupconfig_' . $this->getId();
+            $cacheKey =  self::getCacheKey($this->getId());
             Cache\Runtime::set($cacheKey, null);
             Cache::remove($cacheKey);
 
@@ -323,5 +323,15 @@ final class GroupConfig extends Model\AbstractModel
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return string
+     */
+    private static function getCacheKey(int $id): string
+    {
+        return 'cs_groupconfig_' . $id;
     }
 }
