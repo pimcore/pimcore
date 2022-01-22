@@ -86,7 +86,6 @@ trait ChildsCompatibilityTrait
         throw new \Exception('Method hasChildren was not found');
     }
 
-
     /**
      * @deprecated
      *
@@ -140,6 +139,7 @@ trait ChildsCompatibilityTrait
                 '10.3',
                 'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
             );
+
             return true;
         }
 
