@@ -140,7 +140,7 @@ trait ChildsCompatibilityTrait
                 '10.3',
                 'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
             );
-            return isset($this->children);
+            return true;
         }
 
         return false;
