@@ -70,7 +70,7 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                     enableTabScroll: true,
                     items: [
                         {
-                            id: 'settingsconfiguration',
+                            id: 'settingsconfiguration-' + this.layout.id,
                             xtype: "form",
                             title: 'Configuration',
                             region: 'center',
@@ -119,7 +119,7 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
                             ]
                         },
                         {
-                            id: 'settingspreview',
+                            id: 'settingspreview-' + this.layout.id,
                             title: 'Preview',
                             xtype: 'panel',
                             region: 'center',
