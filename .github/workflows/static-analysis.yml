@@ -62,21 +62,16 @@ jobs:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "${{ matrix.composer-options }}"
 
-            - name: "Secure original baseline"
-              run: "cp phpstan-baseline.neon phpstan-baseline-original.neon"
-
-
-            - name: "Generate baseline"
-              run: |
-                set +e
-                vendor/bin/phpstan analyse --memory-limit=-1 --generate-baseline
-                set -e
-
-            - name: "Dump generated baseline with phpstan/phpstan"
-              run: "cat phpstan-baseline.neon"
-
-            - name: "Restore original baseline"
-              run: "cp phpstan-baseline-original.neon phpstan-baseline.neon"
-
             - name: "Run a static analysis with phpstan/phpstan"
               run: "vendor/bin/phpstan analyse --memory-limit=-1"
+
+            - name: "Generate baseline file"
+              if: ${{ failure() }}
+              run: "vendor/bin/phpstan analyse --memory-limit=-1 --generate-baseline"
+
+            - name: "Upload baseline file"
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v2
+              with:
+                  name: phpstan-baseline.neon
+                  path: phpstan-baseline.neon
