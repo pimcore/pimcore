@@ -133,10 +133,27 @@ class Service
         }
         $class->setModificationDate(time());
         $class->setUserModification($userId);
+        $importPropertyNames = [
+            'description',
+            'icon',
+            'group',
+            'allowInherit',
+            'allowVariants',
+            'showVariants',
+            'parentClass',
+            'implementsInterfaces',
+            'listingParentClass',
+            'useTraits',
+            'listingUseTraits',
+            'previewUrl',
+            'propertyVisibility',
+            'linkGeneratorReference',
+            'previewGeneratorReference',
+            'compositeIndices',
+            'generateTypeDeclarations',
+        ];
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
-                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference', 'compositeIndices', 'generateTypeDeclarations', ] as $importPropertyName) {
+        foreach ($importPropertyNames as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
