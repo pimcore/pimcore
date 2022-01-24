@@ -84,7 +84,6 @@ class Page extends TargetingDocument
             $redirect->delete();
         }
 
-
         parent::doDelete();
     }
 

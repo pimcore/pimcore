@@ -60,5 +60,4 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             'id' => $this->model->getId(),
         ]);
     }
-
 }

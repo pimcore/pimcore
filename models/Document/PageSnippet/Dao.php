@@ -59,6 +59,4 @@ abstract class Dao extends Model\Document\Dao
 
         return $editables;
     }
-
-
 }
