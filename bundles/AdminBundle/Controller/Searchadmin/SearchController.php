@@ -355,9 +355,9 @@ class SearchController extends AdminController
         $forbiddenConditions = [];
 
         //exclude forbidden assets
-        if (in_array('asset', $types)) {
+        if (in_array('assets', $types)) {
             if (!$user->isAllowed('assets')) {
-                $forbiddenConditions[] = " `type` != 'asset' ";
+                $forbiddenConditions[] = " maintype != 'asset' ";
             } else {
                 $forbiddenAssetPaths = Element\Service::findForbiddenPaths('asset', $user);
                 if (count($forbiddenAssetPaths) > 0) {
@@ -370,9 +370,9 @@ class SearchController extends AdminController
         }
 
         //exclude forbidden documents
-        if (in_array('document', $types)) {
+        if (in_array('documents', $types)) {
             if (!$user->isAllowed('documents')) {
-                $forbiddenConditions[] = " `type` != 'document' ";
+                $forbiddenConditions[] = " maintype != 'document' ";
             } else {
                 $forbiddenDocumentPaths = Element\Service::findForbiddenPaths('document', $user);
                 if (count($forbiddenDocumentPaths) > 0) {
@@ -385,9 +385,9 @@ class SearchController extends AdminController
         }
 
         //exclude forbidden objects
-        if (in_array('object', $types)) {
+        if (in_array('objects', $types)) {
             if (!$user->isAllowed('objects')) {
-                $forbiddenConditions[] = " `type` != 'object' ";
+                $forbiddenConditions[] = " maintype != 'object' ";
             } else {
                 $forbiddenObjectPaths = Element\Service::findForbiddenPaths('object', $user);
                 if (count($forbiddenObjectPaths) > 0) {
