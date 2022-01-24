@@ -1113,28 +1113,6 @@ pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
     }
 };
 
-
-pimcore.helpers.generatePagePreview = function (id, path, callback) {
-
-    var cb = callback;
-
-    if (pimcore.settings.htmltoimage) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_page_generatescreenshot'),
-            method: "POST",
-            ignoreErrors: true,
-            params: {
-                id: id
-            },
-            success: function () {
-                if (typeof cb == "function") {
-                    cb();
-                }
-            }
-        });
-    }
-};
-
 pimcore.helpers.treeNodeThumbnailTimeout = null;
 pimcore.helpers.treeNodeThumbnailLastClose = 0;
 

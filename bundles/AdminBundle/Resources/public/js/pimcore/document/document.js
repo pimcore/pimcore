@@ -143,9 +143,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                 this.data['draft'] = rdata['draft'];
                             }
 
-                            if (typeof this["createScreenshot"] == "function") {
-                                this.createScreenshot();
-                            }
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
                             pimcore.helpers.updateTreeElementStyle('document', this.id, rdata.treeData);
                         }
