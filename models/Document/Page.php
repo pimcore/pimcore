@@ -277,6 +277,8 @@ class Page extends TargetingDocument
 
     public function save()
     {
+        $response = parent::save();
+
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
         if ($documentsConfig['generate_preview'] ?? false) {
@@ -286,6 +288,6 @@ class Page extends TargetingDocument
             );
         }
 
-        return parent::save();
+        return $response;
     }
 }
