@@ -90,7 +90,7 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
-            if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
+            if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
 
@@ -153,7 +153,7 @@ class Imagick extends Adapter
             }
         } catch (\Exception $e) {
             Logger::error('Unable to load image: ' . $imagePath);
-            Logger::error($e);
+            Logger::error($e->getMessage());
 
             return false;
         }
