@@ -117,7 +117,7 @@ final class ImageThumbnail
                 }
             } catch (\Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                Logger::error($e);
+                Logger::error($e->getMessage());
             }
 
             if (empty($this->pathReference)) {
