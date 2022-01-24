@@ -196,7 +196,15 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'generateTypeDeclarations'] as $importPropertyName) {
+        $importPropertyNames = [
+            'parentClass',
+            'implementsInterfaces',
+            'title',
+            'group',
+            'generateTypeDeclarations',
+        ];
+
+        foreach ($importPropertyNames as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -273,15 +281,20 @@ class Service
         }
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
-        $objectBrick->setParentClass($importData['parentClass']);
-        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
-        $objectBrick->setGenerateTypeDeclarations($importData['generateTypeDeclarations'] ?? null);
-        if (isset($importData['title'])) {
-            $objectBrick->setTitle($importData['title']);
+        $importPropertyNames = [
+            'parentClass',
+            'implementsInterfaces',
+            'title',
+            'group',
+            'generateTypeDeclarations',
+        ];
+
+        foreach ($importPropertyNames as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $objectBrick->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
+            }
         }
-        if (isset($importData['group'])) {
-            $objectBrick->setGroup($importData['group']);
-        }
+
         $objectBrick->save();
 
         return true;
