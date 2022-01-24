@@ -30,7 +30,7 @@ jobs:
             matrix:
                 include:
                     - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: true, storage: local, symfony: "5.4.x-dev", composer-options: "" }
-                    - { php-version: 8.1, database: "mariadb:10.5", dependencies: highest, experimental: true, storage: local, symfony: "", composer-options: "--ignore-platform-req=php" }
+                    - { php-version: 8.1, database: "mariadb:10.5", dependencies: highest, experimental: true, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.0, database: "mariadb:10.4", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.0, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }

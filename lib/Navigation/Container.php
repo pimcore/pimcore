@@ -325,7 +325,7 @@ class Container implements \RecursiveIterator, \Countable
                         // Use regex?
                         if (true === $useRegex) {
                             foreach ($item as $item2) {
-                                if (0 !== preg_match($value, $item2)) {
+                                if (preg_match($value, $item2)) {
                                     return $page;
                                 }
                             }
@@ -337,7 +337,7 @@ class Container implements \RecursiveIterator, \Countable
                     } else {
                         // Use regex?
                         if (true === $useRegex) {
-                            if (0 !== preg_match($value, $item)) {
+                            if (preg_match($value, $item)) {
                                 return $page;
                             }
                         } else {
@@ -393,7 +393,7 @@ class Container implements \RecursiveIterator, \Countable
                         // Use regex?
                         if (true === $useRegex) {
                             foreach ($item as $item2) {
-                                if (0 !== preg_match($value, $item2)) {
+                                if (preg_match($value, $item2)) {
                                     $found[] = $page;
                                 }
                             }
@@ -405,7 +405,7 @@ class Container implements \RecursiveIterator, \Countable
                     } else {
                         // Use regex?
                         if (true === $useRegex) {
-                            if (0 !== preg_match($value, $item)) {
+                            if (preg_match($value, $item)) {
                                 $found[] = $page;
                             }
                         } else {
@@ -421,7 +421,7 @@ class Container implements \RecursiveIterator, \Countable
 
             // Use regex?
             if (true === $useRegex) {
-                if (0 !== preg_match($value, $pageProperty)) {
+                if (preg_match($value, $pageProperty)) {
                     $found[] = $page;
                 }
             } else {
@@ -509,9 +509,12 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return Page
+     *
+     * @throws \Exception
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current()// : Page
     {
         $this->_sort();
         $hash = key($this->_index);
@@ -524,9 +527,10 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key()// : mixed
     {
         $this->_sort();
 
@@ -534,27 +538,30 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
-    public function next()
+    #[\ReturnTypeWillChange]
+    public function next()// : void
     {
         $this->_sort();
         next($this->_index);
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
-    public function rewind()
+    #[\ReturnTypeWillChange]
+    public function rewind()// : void
     {
         $this->_sort();
         reset($this->_index);
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
-    public function valid()
+    #[\ReturnTypeWillChange]
+    public function valid()// : bool
     {
         $this->_sort();
 
@@ -562,17 +569,19 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
-    public function hasChildren()
+    #[\ReturnTypeWillChange]
+    public function hasChildren()// : bool
     {
         return $this->hasPages();
     }
 
     /**
-     * @return Page|\RecursiveIterator|null
+     * @return Page|null
      */
-    public function getChildren()
+    #[\ReturnTypeWillChange]
+    public function getChildren()// : Page|null
     {
         $hash = key($this->_index);
 
@@ -584,9 +593,10 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
-    public function count()
+    #[\ReturnTypeWillChange]
+    public function count()// : int
     {
         return count($this->_index);
     }

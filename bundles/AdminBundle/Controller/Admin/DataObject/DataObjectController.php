@@ -278,7 +278,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
-        $hasChildren = (bool)$child->getChildAmount($allowedTypes, $this->getAdminUser());
+        $hasChildren = $child->getDao()->hasChildren($allowedTypes, null, $this->getAdminUser());
 
         $tmpObject['allowDrop'] = false;
         $tmpObject['leaf'] = !$hasChildren;
@@ -967,6 +967,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
+            if (!\in_array($sortOrder, ['ASC', 'DESC'])) {
+                $sortOrder = 'ASC';
+            }
 
             $currentSortBy = $object->getChildrenSortBy();
 

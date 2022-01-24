@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
@@ -152,7 +151,7 @@ class Installer extends AbstractInstaller
     protected $db;
 
     /**
-     * @var Schema
+     * @var Schema|null
      */
     protected $schema;
 
@@ -163,10 +162,6 @@ class Installer extends AbstractInstaller
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
-        if ($this->db instanceof Connection) {
-            $this->schema = $this->db->getSchemaManager()->createSchema();
-        }
-
         parent::__construct();
     }
 
@@ -348,7 +343,7 @@ class Installer extends AbstractInstaller
     private function installTables()
     {
         foreach ($this->tablesToInstall as $name => $statement) {
-            if ($this->schema->hasTable($name)) {
+            if ($this->getSchema()->hasTable($name)) {
                 $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping table "%s" as it already exists',
                     $name
@@ -364,7 +359,7 @@ class Installer extends AbstractInstaller
     private function uninstallTables()
     {
         foreach (array_keys($this->tablesToInstall) as $table) {
-            if (!$this->schema->hasTable($table)) {
+            if (!$this->getSchema()->hasTable($table)) {
                 $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Not dropping table "%s" as it doesn\'t exist',
                     $table
@@ -373,7 +368,7 @@ class Installer extends AbstractInstaller
                 continue;
             }
 
-            $this->schema->dropTable($table);
+            $this->getSchema()->dropTable($table);
         }
     }
 
@@ -413,5 +408,13 @@ class Installer extends AbstractInstaller
     public function needsReloadAfterInstall()
     {
         return true;
+    }
+
+    /**
+     * @return Schema
+     */
+    protected function getSchema(): Schema
+    {
+        return $this->schema ??= $this->db->getSchemaManager()->createSchema();
     }
 }
