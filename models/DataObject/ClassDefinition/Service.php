@@ -151,6 +151,8 @@ class Service
             'previewGeneratorReference',
             'compositeIndices',
             'generateTypeDeclarations',
+            'showFieldLookup',
+            'enableGridLocking',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {
