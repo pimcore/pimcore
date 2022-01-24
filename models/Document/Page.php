@@ -84,9 +84,6 @@ class Page extends TargetingDocument
             $redirect->delete();
         }
 
-        if ($site = Site::getByRootId($this->getId())) {
-            $site->delete();
-        }
 
         parent::doDelete();
     }
