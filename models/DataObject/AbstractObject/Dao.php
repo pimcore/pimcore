@@ -287,11 +287,6 @@ class Dao extends Model\Element\Dao
         return $properties;
     }
 
-    public function deleteAllPermissions()
-    {
-        $this->db->delete('users_workspaces_object', ['cid' => $this->model->getId()]);
-    }
-
     /**
      * Quick test if there are children
      *

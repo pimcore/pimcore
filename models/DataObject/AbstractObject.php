@@ -611,9 +611,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         // remove all properties
         $this->getDao()->deleteAllProperties();
-
-        // remove all permissions
-        $this->getDao()->deleteAllPermissions();
     }
 
     /**
