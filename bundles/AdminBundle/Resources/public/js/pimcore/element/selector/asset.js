@@ -225,6 +225,18 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
+            if (this.parent.multiselect) {
+                columns.unshift(
+                    {
+                        xtype: 'checkcolumn',
+                        fieldLabel: '',
+                        name: 'asset-select-checkbox',
+                        text: t("select"),
+                        dataIndex : 'asset-selected'
+                    }
+                );
+            }
+
             this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
@@ -235,12 +247,27 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 columnLines: true,
                 stripeRows: true,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
+                    markDirty: false
                 },
                 plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
+                    cellclick: {
+                        fn: function(view, cellEl, colIdx, store, rowEl, rowIdx, event) {
+
+                            var data = view.getStore().getAt(rowIdx);
+
+                            if (this.parent.multiselect && colIdx == 0) {
+                                if (data.get('asset-selected')) {
+                                    this.addToSelection(data.data);
+                                } else {
+                                    this.removeFromSelection(data.data);
+                                }
+                            }
+                        }.bind(this)
+                    },
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
 
                         var data = grid.getStore().getAt(rowIndex);
