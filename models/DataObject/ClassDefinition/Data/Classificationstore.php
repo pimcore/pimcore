@@ -1386,4 +1386,55 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return null;
     }
+
+
+    /**
+     * Creates getter code which is used for generation of php file for object classes using this data type
+     *
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
+     *
+     * @return string
+     */
+    public function getGetterCode($class)
+    {
+        $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        $code .= $this->getPreGetValueHookCode($key);
+
+        $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
+
+//        // insert this line if inheritance from parent objects is allowed
+//        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
+//            $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+//            $code .= "\t\t" . 'try {' . "\n";
+//            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+//            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+//            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
+//            $code .= "\t\t" . '}' . "\n";
+//            $code .= "\t" . '}' . "\n\n";
+//        }
+//        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+//        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
+//        $code .= "\t" . '}' . "\n\n";
+
+        $code .= "\t" . 'return $data;' . "\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+
 }
