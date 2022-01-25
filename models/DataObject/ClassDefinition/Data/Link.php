@@ -226,24 +226,22 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($data) {
-            if ($data instanceof DataObject\Data\Link) {
-                if ((int)$data->getInternal() > 0) {
-                    if ($data->getInternalType() == 'document') {
-                        $doc = Document::getById($data->getInternal());
-                        if (!$doc instanceof Document) {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
-                        }
-                    } elseif ($data->getInternalType() == 'asset') {
-                        $asset = Asset::getById($data->getInternal());
-                        if (!$asset instanceof Asset) {
-                            throw new Element\ValidationException('invalid internal link, referenced asset with id [' . $data->getInternal() . '] does not exist');
-                        }
+        if ($data instanceof DataObject\Data\Link) {
+            if ((int)$data->getInternal() > 0) {
+                if ($data->getInternalType() == 'document') {
+                    $doc = Document::getById($data->getInternal());
+                    if (!$doc instanceof Document) {
+                        throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                    }
+                } elseif ($data->getInternalType() == 'asset') {
+                    $asset = Asset::getById($data->getInternal());
+                    if (!$asset instanceof Asset) {
+                        throw new Element\ValidationException('invalid internal link, referenced asset with id [' . $data->getInternal() . '] does not exist');
                     }
                 }
-            } else {
-                throw new Element\ValidationException('Expected DataObject\\Data\\Link');
             }
+        } elseif ($data !== null) {
+            throw new Element\ValidationException('Expected DataObject\\Data\\Link or null');
         }
     }
 
