@@ -2340,6 +2340,6 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     color: #8e8e8e;
 }
 
-.x-panel-header .x-tool-tool-el {
+.x-panel-header-default .x-tool-tool-el{
     color: #484B4E;
 }
