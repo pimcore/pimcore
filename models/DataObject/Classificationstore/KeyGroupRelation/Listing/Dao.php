@@ -32,38 +32,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $condition = $this->getCondition();
-        if ($condition) {
-            $condition = $condition . ' AND ';
-        } else {
-            $condition = ' where ';
-        }
-        $condition .= DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . '.keyId = ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.id';
-
-        $resourceGroupName = $this->model->getResolveGroupName();
-
-        if ($resourceGroupName) {
-            $condition .= ' and ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.id = '
-                . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.groupId';
-        }
-
         $sql = 'SELECT ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.*,'
             . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.*';
+
+        $resourceGroupName = $this->model->getResolveGroupName();
 
         if ($resourceGroupName) {
             $sql .= ', ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.name as groupName';
         }
 
-        $sql .= ' FROM ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . ',' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
-
-        if ($resourceGroupName) {
-            $sql .= ', ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
-        }
-
-        $sql .= $condition;
-        $sql .= $this->getOrder() . $this->getOffsetLimit();
+        $sql .= $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit();
         $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
         $configData = [];
@@ -85,9 +63,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll('SELECT * FROM ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        return $configsData;
+        return $this->db->fetchAll('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
     /**
@@ -95,10 +71,40 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ' '. $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
-            return 0;
+        return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables());
+    }
+
+    private function getWhere(): string
+    {
+        $where = parent::getCondition();
+        if ($where) {
+            $where .= ' AND ';
+        } else {
+            $where = ' WHERE ';
         }
+        $where .= DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . '.keyId = ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.id';
+
+        $resourceGroupName = $this->model->getResolveGroupName();
+
+        if ($resourceGroupName) {
+            $where .= ' and ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.id = '
+                . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.groupId';
+        }
+
+        return $where;
+    }
+
+    private function getFrom(): string
+    {
+        $from = ' FROM ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . ',' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
+        $resourceGroupName = $this->model->getResolveGroupName();
+
+        if ($resourceGroupName) {
+            $from .= ', ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
+        }
+
+        return $from;
     }
 }

@@ -59,20 +59,18 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->model->setCartId($result['cart_id']);
     }
 
+    /**
+     * @param string $code
+     * @param CartInterface $cart
+     */
     public function create($code, $cart)
     {
-        if (Reservation::reservationExists($code, $cart)) {
-            return true;
-        }
-
-        try {
+        if (!Reservation::reservationExists($code, $cart)) {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!
             $this->db->query('INSERT INTO ' . self::TABLE_NAME . ' (token,cart_id,timestamp) VALUES (?,?,NOW())', [$code, $cart->getId()]);
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
         }
+
+        $this->get($code, $cart);
     }
 
     /**
@@ -80,13 +78,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function remove()
     {
-        try {
-            $this->db->deleteWhere(self::TABLE_NAME, ['token' => $this->model->getToken()]);
+        $this->db->deleteWhere(self::TABLE_NAME, ['token' => $this->model->getToken()]);
 
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return true;
     }
 
     /**

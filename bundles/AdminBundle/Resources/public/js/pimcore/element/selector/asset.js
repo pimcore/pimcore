@@ -64,10 +64,10 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         };
 
         // check for restrictions
-        var possibleRestrictions = ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"];
-        var filterStore = [];
-        var selectedStore = [];
-        for (var i=0; i<possibleRestrictions.length; i++) {
+        let possibleRestrictions = pimcore.globalmanager.get('asset_search_types');
+        let filterStore = [];
+        let selectedStore = [];
+        for (let i=0; i<possibleRestrictions.length; i++) {
             if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i],
                 this.parent.restrictions.subtype.asset )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
@@ -77,7 +77,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
         // add all to store if empty
         if(filterStore.length < 1) {
-            for (var i=0; i<possibleRestrictions.length; i++) {
+            for (let i=0; i<possibleRestrictions.length; i++) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
             }
@@ -269,11 +269,12 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     },
 
     search: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("type", "asset");
-        proxy.setExtraParam("query", formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {
@@ -281,6 +282,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         }
 
         this.pagingtoolbar.moveFirst();
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     }
 });

@@ -28,7 +28,7 @@ class TaxEntry
     const CALCULATION_MODE_FIXED = 'fixed';
 
     /**
-     * @var TaxEntryFieldcollection
+     * @var TaxEntryFieldcollection|null
      */
     protected $entry;
 
@@ -43,7 +43,7 @@ class TaxEntry
     protected $amount;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $taxId;
 
@@ -110,7 +110,7 @@ class TaxEntry
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTaxId()
     {
@@ -118,7 +118,7 @@ class TaxEntry
     }
 
     /**
-     * @param string $taxId
+     * @param string|null $taxId
      */
     public function setTaxId(string $taxId = null)
     {
@@ -136,9 +136,15 @@ class TaxEntry
     public static function convertTaxEntries(OnlineShopTaxClass $taxClass)
     {
         $convertedTaxEntries = [];
-        if ($taxClass->getTaxEntries()) {
-            foreach ($taxClass->getTaxEntries() as $index => $entry) {
-                $convertedTaxEntries[] = new static($entry->getPercent(), Decimal::create(0), $entry->getName() . '-' . $entry->getPercent(), $entry);
+        if ($taxEntries = $taxClass->getTaxEntries()) {
+            /** @var TaxEntryFieldcollection $entry */
+            foreach ($taxEntries as $entry) {
+                $convertedTaxEntries[] = new static(
+                    $entry->getPercent(),
+                    Decimal::create(0),
+                    $entry->getName() . '-' . $entry->getPercent(),
+                    $entry
+                );
             }
         }
 

@@ -787,7 +787,7 @@ pimcore.document.tree = Class.create({
                 });
             }
 
-            if (record.data.id != 1 && user.admin && record.data.type == "page") {
+            if (record.data.id != 1 && record.data.type == "page" && (user.admin || user.isAllowed("sites"))) {
                 if (!record.data.site) {
                     if (perspectiveCfg.inTreeContextMenu("document.useAsSite")) {
                         advancedMenuItems.push({

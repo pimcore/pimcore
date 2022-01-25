@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject;
@@ -117,6 +118,15 @@ final class Version20211018104331 extends AbstractMigration
         $fkName = AbstractDao::getForeignKeyName($tableSchema->getName(), $localForeignKeyColumn);
         if (!$tableSchema->hasForeignKey($fkName)) {
             $column = $tableSchema->getColumn($localForeignKeyColumn);
+
+            if ($column->getPrecision() !== 10 || !($column->getType() instanceof IntegerType)) {
+                $tableSchema->changeColumn($localForeignKeyColumn, [
+                    'type' => new IntegerType(),
+                    'precision' => 10,
+                    'unsigned' => true,
+                ]);
+            }
+
             if (!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
                 $tableSchema->changeColumn($localForeignKeyColumn, ['unsigned' => true]);
             }

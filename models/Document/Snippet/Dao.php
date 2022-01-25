@@ -60,13 +60,4 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             'id' => $this->model->getId(),
         ]);
     }
-
-    /**
-     * @throws \Exception
-     */
-    public function delete()
-    {
-        $this->db->delete('documents_snippet', ['id' => $this->model->getId()]);
-        parent::delete();
-    }
 }

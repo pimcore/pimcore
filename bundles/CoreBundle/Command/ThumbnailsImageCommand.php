@@ -72,6 +72,11 @@ class ThumbnailsImageCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'if target image format is set to auto in config, do not generate WEBP images for them'
             )->addOption(
+                'skip-avif',
+                null,
+                InputOption::VALUE_NONE,
+                'if target image format is set to auto in config, do not generate AVIF images for them'
+            )->addOption(
                 'skip-medias',
                 null,
                 InputOption::VALUE_NONE,
@@ -118,7 +123,12 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list->setCondition(implode(' AND ', $conditions));
 
         $assetIdsList = $list->loadIdList();
-        $thumbnailList = new Asset\Image\Thumbnail\Config\Listing();
+        $thumbnailList = [];
+        $thumbnailList[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+        if (!$input->getOption('system')) {
+            $thumbnailList = new Asset\Image\Thumbnail\Config\Listing();
+            $thumbnailList = $thumbnailList->getThumbnails();
+        }
 
         $allowedThumbs = [];
         if ($input->getOption('thumbnails')) {
@@ -127,7 +137,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         $items = [];
         foreach ($assetIdsList as $assetId) {
-            foreach ($thumbnailList->getThumbnails() as $thumbnailConfig) {
+            foreach ($thumbnailList as $thumbnailConfig) {
                 $thumbName = $thumbnailConfig->getName();
                 if (empty($allowedThumbs) || in_array($thumbName, $allowedThumbs)) {
                     $items[] = $assetId . '~~~' . $thumbName;
@@ -209,16 +219,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                     $webpConfig->setFormat('webp');
                     $thumbnailsToGenerate[] = $webpConfig;
                 }
-            }
 
-            if ($input->getOption('system')) {
-                if (!$input->getOption('thumbnails')) {
-                    $thumbnailsToGenerate = [];
+                if (!$input->getOption('skip-avif') && $resConfig->getFormat() === 'SOURCE') {
+                    $avifConfig = clone $resConfig;
+                    $avifConfig->setFormat('avif');
+                    $thumbnailsToGenerate[] = $avifConfig;
                 }
-
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
-            } elseif (!$input->getOption('thumbnails')) {
-                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
             }
         }
 

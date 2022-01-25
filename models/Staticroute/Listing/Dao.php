@@ -34,6 +34,12 @@ class Dao extends Model\Staticroute\Dao
             $staticRoutes[] = Model\Staticroute::getById($id);
         }
 
+        if ($this->model->getFilter()) {
+            $staticRoutes = array_filter($staticRoutes, $this->model->getFilter());
+        }
+        if ($this->model->getOrder()) {
+            usort($staticRoutes, $this->model->getOrder());
+        }
         $this->model->setRoutes($staticRoutes);
 
         return $staticRoutes;
@@ -44,8 +50,6 @@ class Dao extends Model\Staticroute\Dao
      */
     public function getTotalCount()
     {
-        $amount = count($this->loadIdList());
-
-        return $amount;
+        return count($this->loadList());
     }
 }

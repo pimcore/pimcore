@@ -29,7 +29,7 @@ final class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore_admin');
         /** @var ArrayNodeDefinition $rootNode */
@@ -73,6 +73,9 @@ final class Configuration implements ConfigurationInterface
                         ->defaultNull()
                     ->end()
                     ->scalarNode('color_admin_interface')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('color_admin_interface_background')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('login_screen_custom_image')

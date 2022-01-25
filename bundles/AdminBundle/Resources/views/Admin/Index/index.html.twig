@@ -77,6 +77,9 @@
 
         #pimcore_panel_tabs-body {
             background-image: url({{ path('pimcore_settings_display_custom_logo') }});
+            {% if config['branding']['color_admin_interface_background']|default(null) is not null %}
+                background-color: {{ config['branding']['color_admin_interface_background'] }};
+            {% endif %}
             background-repeat: no-repeat;
             background-position: center center;
             background-size: 500px auto;
@@ -145,9 +148,15 @@
     <div id="pimcore_avatar" style="display:none;">
         <img src="{{ path('pimcore_admin_user_getimage') }}" data-menu-tooltip="{{ user.name }} | {{ 'my_profile'|trans([],'admin') }}"/>
     </div>
-    <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="{{ path('pimcore_admin_logout') }}" style="display: none">
-        <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
-    </a>
+
+    <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+
+        <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}"
+           href="#" onclick="document.getElementById('pimcore_logout_form').submit();" style="display: none">
+            <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
+        </a>
+    </form>
     <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform ({{ settings.version }}|{{ settings.build }})" style="text-indent: -10000px">
         BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
         WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
@@ -205,6 +214,9 @@
     "lib/ace/src-min-noconflict/ace.js",
     "lib/ace/src-min-noconflict/ext-modelist.js"
 ] %}
+{% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
+    {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
+{% endif %}
 
 {# PIMCORE SCRIPTS #}
 
@@ -255,10 +267,8 @@
     "pimcore/settings/thumbnail/panel.js",
     "pimcore/settings/videothumbnail/item.js",
     "pimcore/settings/videothumbnail/panel.js",
-    "pimcore/settings/translations.js",
+    "pimcore/settings/translation.js",
     "pimcore/settings/translationEditor.js",
-    "pimcore/settings/translation/website.js",
-    "pimcore/settings/translation/admin.js",
     "pimcore/settings/translation/translationmerger.js",
     "pimcore/settings/translation/xliff.js",
     "pimcore/settings/translation/word.js",
@@ -396,6 +406,7 @@
     "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
+    "pimcore/asset/archive.js",
     "pimcore/asset/video.js",
     "pimcore/asset/audio.js",
     "pimcore/asset/text.js",

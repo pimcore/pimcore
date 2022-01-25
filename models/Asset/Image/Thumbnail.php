@@ -209,7 +209,9 @@ final class Thumbnail
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            if (!str_starts_with($path, 'http')) {
+                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            }
         }
 
         return $path;
@@ -371,8 +373,8 @@ final class Thumbnail
             }
         }
 
-        $altText = $attributes['alt'] ?? '';
-        $titleText = $attributes['title'] ?? '';
+        $altText = !empty($options['alt']) ? $options['alt'] : (!empty($attributes['alt']) ? $attributes['alt'] : '');
+        $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
             if ($image->getMetadata('title')) {

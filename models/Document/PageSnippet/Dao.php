@@ -57,19 +57,6 @@ abstract class Dao extends Model\Document\Dao
             $editables[$editableRaw['name']] = $editable;
         }
 
-        $this->model->setEditables($editables);
-
         return $editables;
-    }
-
-    /**
-     * Delete the object from database
-     *
-     * @throws \Exception
-     */
-    public function delete()
-    {
-        parent::delete();
-        $this->db->delete('documents_editables', ['documentId' => $this->model->getId()]);
     }
 }

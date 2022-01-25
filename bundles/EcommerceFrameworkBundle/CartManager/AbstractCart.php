@@ -30,11 +30,6 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     /**
-     * @var bool
-     */
-    private $ignoreReadonly = false;
-
-    /**
      * @var int
      */
     protected $userId;
@@ -75,7 +70,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $modificationDateTimestamp;
 
     /**
-     * @var mixed
+     * @var int|null
      */
     protected $id;
 
@@ -586,7 +581,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -637,7 +632,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getModificationDate()
     {
@@ -650,7 +645,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param \DateTime $modificationDate
+     * @param \DateTime|null $modificationDate
      */
     public function setModificationDate(\DateTime $modificationDate = null)
     {
@@ -672,7 +667,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getModificationDateTimestamp()
     {
@@ -935,7 +930,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
             //check for each voucher token if reservation is valid or it is already applied to order
             foreach ($this->getVoucherTokenCodes() as $code) {
                 $reservation = Reservation::get($code, $this);
-                if (!$reservation->check($this->getId()) && !array_key_exists($code, $appliedVoucherCodes)) {
+                if (!$reservation && !array_key_exists($code, $appliedVoucherCodes)) {
                     unset($this->checkoutData['voucher_'.$code]);
                 }
             }

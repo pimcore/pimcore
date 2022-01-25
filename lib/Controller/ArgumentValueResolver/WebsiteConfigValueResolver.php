@@ -25,12 +25,24 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  */
 final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
 {
-    public function supports(Request $request, ArgumentMetadata $argument)
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return bool
+     */
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $argument->getType() === Config\Config::class && $argument->getName() === 'websiteConfig';
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return iterable
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield Config::getWebsiteConfig();
     }

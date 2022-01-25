@@ -61,27 +61,27 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         $this->output->setVerbosity($level);
     }
 
-    public function getVerbosity()
+    public function getVerbosity(): int
     {
         return $this->output->getVerbosity();
     }
 
-    public function isQuiet()
+    public function isQuiet(): bool
     {
         return $this->output->isQuiet();
     }
 
-    public function isVerbose()
+    public function isVerbose(): bool
     {
         return $this->output->isVerbose();
     }
 
-    public function isVeryVerbose()
+    public function isVeryVerbose(): bool
     {
         return $this->output->isVeryVerbose();
     }
 
-    public function isDebug()
+    public function isDebug(): bool
     {
         return $this->output->isDebug();
     }
@@ -91,7 +91,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         $this->output->setDecorated($decorated);
     }
 
-    public function isDecorated()
+    public function isDecorated(): bool
     {
         return $this->output->isDecorated();
     }
@@ -101,7 +101,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         $this->output->setFormatter($formatter);
     }
 
-    public function getFormatter()
+    public function getFormatter(): OutputFormatterInterface
     {
         return $this->output->getFormatter();
     }
@@ -111,7 +111,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         return $this->output;
     }
 
-    public function getErrorOutput()
+    public function getErrorOutput(): OutputInterface
     {
         return $this->errorOutput;
     }

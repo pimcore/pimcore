@@ -7,7 +7,7 @@ Therefore it is crucial to know the fundamentals about the pattern in general an
  MVC is a software design pattern for web applications and separates the code into the following components:  
  * Model - defines basic functionality like data access routines, business, etc. 
  * View - defines what is presented to the user (the "template")
- * Controller - Controllers brings all the patterns together, they manipulate models, decide which view to display, etc. 
+ * Controller - Controllers bring all the patterns together, they manipulate models, decide which view to display, etc. 
 
 If you don't know the MVC pattern please read [this article](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) first.
 

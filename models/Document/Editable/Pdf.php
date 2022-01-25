@@ -220,7 +220,7 @@ HTML;
     }
 
     /**
-     * @return Asset
+     * @return Asset|null
      */
     public function getElement()
     {
@@ -230,7 +230,7 @@ HTML;
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      */
     public function setId($id)
     {
@@ -238,10 +238,10 @@ HTML;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
-        return (int)  $this->id;
+        return $this->id;
     }
 }

@@ -28,16 +28,16 @@ class Folder extends Model\User\AbstractUser
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected $children = [];
+    protected $children;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var bool|null
      */
-    protected $hasChilds;
+    protected $hasChildren;
 
     /**
      * Returns true if the document has at least one child
@@ -46,11 +46,11 @@ class Folder extends Model\User\AbstractUser
      */
     public function hasChildren()
     {
-        if ($this->hasChilds !== null) {
-            return $this->hasChilds;
+        if ($this->hasChildren === null) {
+            $this->hasChildren = $this->getDao()->hasChildren();
         }
 
-        return $this->getDao()->hasChildren();
+        return $this->hasChildren;
     }
 
     /**
@@ -58,11 +58,15 @@ class Folder extends Model\User\AbstractUser
      */
     public function getChildren()
     {
-        if (empty($this->children)) {
-            $list = new Role\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
+        if ($this->children === null) {
+            if ($this->getId()) {
+                $list = new Role\Listing();
+                $list->setCondition('parentId = ?', $this->getId());
 
-            $this->children = $list->getRoles();
+                $this->children = $list->getRoles();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;
@@ -75,11 +79,9 @@ class Folder extends Model\User\AbstractUser
      */
     public function setChildren($children)
     {
-        $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChilds = true;
-        } else {
-            $this->hasChilds = false;
+        if (is_array($children)) {
+            $this->children = $children;
+            $this->hasChildren = count($children) > 0;
         }
 
         return $this;

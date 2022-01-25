@@ -72,7 +72,6 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
     {
         $this->deleteAllProperties();
 
-        $this->db->delete('documents_page', ['id' => $this->model->getId()]);
         parent::delete();
     }
 }

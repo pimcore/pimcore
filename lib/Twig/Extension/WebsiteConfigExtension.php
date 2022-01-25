@@ -26,7 +26,7 @@ use Twig\TwigFunction;
  */
 class WebsiteConfigExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_website_config', [$this, 'getWebsiteConfig']),
@@ -42,7 +42,7 @@ class WebsiteConfigExtension extends AbstractExtension
      *
      * @return Config\Config|mixed
      */
-    public function getWebsiteConfig($key = null, $default = null, $language = null)
+    public function getWebsiteConfig($key = null, $default = null, $language = null): mixed
     {
         return Config::getWebsiteConfigValue($key, $default, $language);
     }

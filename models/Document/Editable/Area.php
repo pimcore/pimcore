@@ -146,7 +146,11 @@ class Area extends Model\Document\Editable
         $info = $this->buildInfoObject();
         if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
             $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
-            $dialogConfig->setId('dialogBox-' . $this->getName());
+            if ($dialogConfig->getItems()) {
+                $dialogConfig->setId('dialogBox-' . $this->getName());
+            } else {
+                $dialogConfig = null;
+            }
         }
 
         if ($dialogConfig) {

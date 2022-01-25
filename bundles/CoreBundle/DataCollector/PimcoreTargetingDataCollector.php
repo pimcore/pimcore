@@ -37,7 +37,7 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
     ) {
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'pimcore_targeting';
     }

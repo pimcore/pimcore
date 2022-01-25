@@ -82,6 +82,7 @@ pimcore.settings.thumbnail.item = Class.create({
             name: "group",
             value: this.data.group,
             fieldLabel: t("group"),
+            renderer: Ext.util.Format.htmlEncode,
             width: 450
         });
 
@@ -214,6 +215,10 @@ pimcore.settings.thumbnail.item = Class.create({
         if(name.match(/^\d+w$/)) {
             // convert legacy syntax to new syntax/name
             name = '(max-width: ' + name.replace("w", "") + 'px)';
+        }
+
+        if(name.match(/["<>]/)) {
+            return;
         }
 
         if (this.medias[name]) {
@@ -367,6 +372,44 @@ pimcore.settings.thumbnail.items = {
                 parent.remove(Ext.getCmp(index));
             }.bind(window, index, parent)
         }];
+    },
+
+    dragdropRenderer: function (el) {
+        try {
+            // add dnd support
+            let dd = new Ext.dd.DropZone(el.getEl(), {
+                reference: this,
+                ddGroup: "element",
+                getTargetFromEvent: function (e) {
+                    return this.getEl();
+                }.bind(el),
+
+                onNodeOver: function (target, dd, e, data) {
+                    if (data.records.length === 1 && data.records[0].data.type === "image") {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                },
+
+                onNodeDrop: function (target, dd, e, data) {
+                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        var record = data.records[0];
+                        var data = record.data;
+
+                        if (data.type === "image") {
+                            this.setValue(data.path);
+                            if (this.previousSibling()) {
+                                this.previousSibling().setValue(data.id);
+                            }
+
+                            return true;
+                        }
+                    }
+                    return false;
+                }.bind(el)
+            });
+        } catch (e) {
+            console.log(e);
+        }
     },
 
     itemResize: function (panel, data, getName) {
@@ -968,11 +1011,19 @@ pimcore.settings.thumbnail.items = {
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
+                xtype: "hidden",
+                name: "id",
+                value: data.id,
+            }, {
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to project-root)",
+                fieldLabel: t("asset") + "<br />or " + t("path") + " <br />(rel. to project-root ~deprecated)",
+                fieldCls: "input_drop_target",
                 name: "path",
                 value: data.path,
-                width: 450
+                width: 450,
+                listeners: {
+                    "afterrender": this.dragdropRenderer.bind(this)
+                }
             }, {
                 xtype: 'fieldset',
                 layout: 'hbox',
@@ -1053,11 +1104,19 @@ pimcore.settings.thumbnail.items = {
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
+                    xtype: "hidden",
+                    name: "id",
+                    value: data.id,
+            }, {
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to project-root)",
+                fieldLabel: t("asset") + "<br />or " + t("path") + " <br />(rel. to project-root ~deprecated)",
                 name: "path",
+                fieldCls: "input_drop_target",
                 value: data.path,
-                width: 450
+                width: 450,
+                listeners: {
+                    "afterrender": this.dragdropRenderer.bind(this)
+                }
             }, {
                 xtype: "combo",
                 name: "composite",

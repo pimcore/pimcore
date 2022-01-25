@@ -20,17 +20,17 @@ use Pimcore\Model\AbstractModel;
 abstract class JsonListing extends AbstractModel
 {
     /**
-     * @var mixed
+     * @var callable|null
      */
     protected $filter;
 
     /**
-     * @var mixed
+     * @var callable|null
      */
     protected $order;
 
     /**
-     * @return mixed
+     * @return callable|null
      */
     public function getFilter()
     {
@@ -38,7 +38,7 @@ abstract class JsonListing extends AbstractModel
     }
 
     /**
-     * @param mixed $filter
+     * @param callable|null $filter
      */
     public function setFilter($filter)
     {
@@ -46,7 +46,7 @@ abstract class JsonListing extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return callable|null
      */
     public function getOrder()
     {
@@ -54,7 +54,7 @@ abstract class JsonListing extends AbstractModel
     }
 
     /**
-     * @param mixed $order
+     * @param callable|null $order
      */
     public function setOrder($order)
     {

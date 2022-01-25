@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Db;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -26,12 +25,12 @@ use Pimcore\Model\Exception\NotFoundException;
 class GridConfig extends AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $ownerId;
 
@@ -61,12 +60,12 @@ class GridConfig extends AbstractModel
     protected $description;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -74,6 +73,11 @@ class GridConfig extends AbstractModel
      * @var bool
      */
     protected $shareGlobally;
+
+    /**
+     * @var bool
+     */
+    protected $setAsFavourite;
 
     /**
      * @var string
@@ -121,15 +125,10 @@ class GridConfig extends AbstractModel
     public function delete()
     {
         $this->getDao()->delete();
-
-        // also delete the favourite
-        $db = Db::get();
-        $db->query('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
-        $db->query('DELETE from gridconfig_shares where gridConfigId = ' . $db->quote($this->getId()));
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -145,7 +144,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOwnerId()
     {
@@ -241,7 +240,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -257,7 +256,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -286,6 +285,22 @@ class GridConfig extends AbstractModel
     public function setShareGlobally($shareGlobally)
     {
         $this->shareGlobally = $shareGlobally;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSetAsFavourite()
+    {
+        return $this->setAsFavourite;
+    }
+
+    /**
+     * @param bool $setAsFavourite
+     */
+    public function setSetAsFavourite($setAsFavourite)
+    {
+        $this->setAsFavourite = $setAsFavourite;
     }
 
     /**

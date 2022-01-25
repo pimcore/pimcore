@@ -29,6 +29,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     use ImageTrait;
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
     /**
      * Static type of this element
@@ -684,5 +685,22 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return $image;
         }
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $name = $params['name'] ?: $this->name;
+        $name .= '__image';
+
+        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

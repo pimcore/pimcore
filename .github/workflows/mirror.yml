@@ -9,6 +9,7 @@ on:
 jobs:
     to_github:
         runs-on: ubuntu-18.04
+        if: ${{ github.repository == 'pimcore/pimcore' }}
         steps:
             - uses: actions/checkout@v1
             - uses: pixta-dev/repository-mirroring-action@v1

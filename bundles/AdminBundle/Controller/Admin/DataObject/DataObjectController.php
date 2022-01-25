@@ -191,7 +191,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $childsList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
-                        $object->getChildrenSortBy(), $object->getChildrenSortOrder() ?? 'ASC'
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder()
                     ),
                     false
                 );
@@ -278,12 +278,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
-        $hasChildren = $child->hasChildren($allowedTypes);
+        $hasChildren = $child->getDao()->hasChildren($allowedTypes, null, $this->getAdminUser());
 
-        $tmpObject['isTarget'] = false;
         $tmpObject['allowDrop'] = false;
-        $tmpObject['allowChildren'] = false;
-
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
@@ -593,7 +590,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($object);
+        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
         $getter = 'get' . ucfirst($key);
 
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
@@ -724,6 +721,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
+            $objectData['type'] = $object->getType();
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
@@ -969,6 +967,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
+            if (!\in_array($sortOrder, ['ASC', 'DESC'])) {
+                $sortOrder = 'ASC';
+            }
 
             $currentSortBy = $object->getChildrenSortBy();
 

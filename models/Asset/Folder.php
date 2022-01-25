@@ -69,12 +69,16 @@ class Folder extends Model\Asset
     public function getChildren()
     {
         if ($this->children === null) {
-            $list = new Asset\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
+            if ($this->getId()) {
+                $list = new Asset\Listing();
+                $list->setCondition('parentId = ?', $this->getId());
+                $list->setOrderKey('filename');
+                $list->setOrder('asc');
 
-            $this->children = $list->getAssets();
+                $this->children = $list->getAssets();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;
@@ -163,7 +167,7 @@ class Folder extends Model\Asset
                 if ($tileThumb) {
                     if (!$tileThumb->exists()) {
                         // only generate if all necessary thumbs are available
-                        return null;
+                        continue;
                     }
 
                     $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));

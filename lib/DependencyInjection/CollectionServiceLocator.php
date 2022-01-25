@@ -51,8 +51,7 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
     /**
      * {@inheritdoc}
      */
-    #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         foreach ($this->ids as $id) {
             yield $this->get($id);

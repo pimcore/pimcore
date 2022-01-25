@@ -228,7 +228,7 @@ class Mail extends Email
      */
     public function doRedirectMailsToDebugMailAddresses()
     {
-        if (static::$forceDebugMode) {
+        if (self::$forceDebugMode) {
             return true;
         }
 

@@ -1715,11 +1715,11 @@
 }
 
 .x-grid-tree-loading .x-tree-icon {
-    background-image: url(../images/tree/loading.gif);
+    background-image: url(../img/tree/loading.gif);
 }
 
 .x-grid-tree-loading .x-rtl.x-tree-icon {
-    background-image: url(../images/tree/loading.gif);
+    background-image: url(../img/tree/loading.gif);
 }
 
 .x-tree-node-text {
@@ -1784,12 +1784,10 @@
 }
 
 .x-toast-window .x-window-body {
-    
     padding: 15px 5px 15px 5px;
 }
 
 .x-toast-light .x-window-header {
-    
     background-color: #3c3f41;
 }
 
@@ -5390,11 +5388,10 @@
 }
 
 @keyframes fa-spin {
-    
     0% {
         transform: rotate(0deg);
     }
-    
+
     100% {
         transform: rotate(360deg);
     }
@@ -12048,7 +12045,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(../images/tree/loading.gif);
+    background-image: url(../img/tree/loading.gif);
     color: transparent;
 }
 

@@ -47,6 +47,10 @@
             font-size: 16px;
         }
 
+        .icon img {
+            width: 50px;
+        }
+
     </style>
 </head>
 <body>
@@ -59,12 +63,12 @@
 
 <div id="color_icons" class="icons">
     {% for icon in colorIcons %}
-        {% set icon = icon|replace({(webRoot): ''}) %}
+        {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
-            <img style="width:50px;" src="{{ icon }}" title="{{ icon|basename }}">
+            {{ icon | pimcore_inline_icon | raw }}
             <div class="label">
-                {{ icon in iconsCss  ? '*' : '' }}
-                {{ icon|basename }}
+                {{ iconPath in iconsCss  ? '*' : '' }}
+                {{ iconPath|basename }}
             </div>
         </div>
     {% endfor %}
@@ -78,12 +82,12 @@
 
 <div id="white_icons" class="icons">
     {% for icon in whiteIcons %}
-        {% set icon = icon|replace({(webRoot): ''}) %}
+        {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon black">
-            <img style="width:50px;" src="{{ icon }}" title="{{ icon|basename }}">
+            {{ icon | pimcore_inline_icon | raw }}
             <div class="label">
-                {{ icon in iconsCss  ? '*' : '' }}
-                {{ icon|basename }}
+                {{ iconPath in iconsCss  ? '*' : '' }}
+                {{ iconPath|basename }}
             </div>
         </div>
     {% endfor %}
@@ -95,10 +99,10 @@
 
 <div id="twemoji" class="icons">
     {% for icon in twemoji %}
-        {% set icon = icon|replace({(webRoot): ''}) %}
+        {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
-            <img style="width:50px;" src="{{ icon }}" title="{{ icon|basename }}">
-            <div class="label">{{ icon|basename }}</div>
+            {{ icon | pimcore_inline_icon | raw }}
+            <div class="label">{{ iconPath|basename }}</div>
         </div>
     {% endfor %}
 </div>
@@ -115,7 +119,7 @@
     </tr>
     {% for langOpt in languageOptions %}
         <tr>
-            <td><img style="width:16px" src="{{ langOpt['flag'] }}"></td>
+            <td class="language-icon">{{ langOpt['flag'] | pimcore_inline_icon | raw }}</td>
             <td>{{ langOpt['language'] }}</td>
             <td>{{ langOpt['display'] }}</td>
         </tr>

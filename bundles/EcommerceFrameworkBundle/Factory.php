@@ -50,11 +50,6 @@ class Factory
     private $container;
 
     /**
-     * @var EnvironmentInterface
-     */
-    private $environment;
-
-    /**
      * Tenant specific cart managers
      *
      * @var CartManagerLocatorInterface
@@ -313,6 +308,6 @@ class Factory
     public function saveState()
     {
         $this->getCartManager()->save();
-        $this->environment->save();
+        $this->getEnvironment()->save();
     }
 }

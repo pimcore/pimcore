@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -82,14 +83,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var string[]
      */
-    protected $o_id = 0;
+    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname', 'o_path'];
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
+     */
+    protected $o_id;
+
+    /**
+     * @internal
+     *
+     * @var int|null
      */
     protected $o_parentId;
 
@@ -110,14 +118,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_key;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_path;
 
@@ -126,19 +134,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int
      */
-    protected $o_index;
+    protected $o_index = 0;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $o_modificationDate;
 
@@ -205,14 +213,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortBy;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortOrder;
 
@@ -377,6 +385,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Model\Element\Service::correctPath($path);
 
         try {
@@ -464,14 +476,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            $list->setCondition('o_parentId = ?', $this->getId());
-            $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder($this->getChildrenSortOrder());
-            $list->setObjectTypes($objectTypes);
-            $this->o_children[$cacheKey] = $list->load();
-            $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            if ($this->getId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->setCondition('o_parentId = ?', $this->getId());
+                $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
+                $list->setOrder($this->getChildrenSortOrder());
+                $list->setObjectTypes($objectTypes);
+                $this->o_children[$cacheKey] = $list->load();
+                $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            } else {
+                $this->o_children[$cacheKey] = [];
+                $this->o_hasChildren[$cacheKey] = false;
+            }
         }
 
         return $this->o_children[$cacheKey];
@@ -509,16 +526,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_siblings[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            // string conversion because parentId could be 0
-            $list->addConditionParam('o_parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('o_id != ?', $this->getId());
-            $list->setOrderKey('o_key');
-            $list->setObjectTypes($objectTypes);
-            $list->setOrder('asc');
-            $this->o_siblings[$cacheKey] = $list->load();
-            $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            if ($this->getParentId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->addConditionParam('o_parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('o_id != ?', $this->getId());
+                }
+                $list->setOrderKey('o_key');
+                $list->setObjectTypes($objectTypes);
+                $list->setOrder('asc');
+                $this->o_siblings[$cacheKey] = $list->load();
+                $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            } else {
+                $this->o_siblings[$cacheKey] = [];
+                $this->o_hasSiblings[$cacheKey] = false;
+            }
         }
 
         return $this->o_siblings[$cacheKey];
@@ -588,9 +611,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         // remove all properties
         $this->getDao()->deleteAllProperties();
-
-        // remove all permissions
-        $this->getDao()->deleteAllPermissions();
     }
 
     /**
@@ -951,7 +971,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -959,7 +979,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -980,7 +1000,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -988,7 +1008,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string path
+     * @return string|null
      */
     public function getPath()
     {
@@ -1004,7 +1024,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -1012,7 +1032,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -1085,7 +1105,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setKey($o_key)
     {
-        $this->o_key = $o_key;
+        $this->o_key = (string)$o_key;
 
         return $this;
     }
@@ -1512,5 +1532,87 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return mixed|Listing|null
+     *
+     * @throws \Exception
+     */
+    public static function __callStatic($method, $arguments)
+    {
+        $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
+
+        $realPropertyName = 'o_'.$propertyName;
+
+        $db = \Pimcore\Db::get();
+
+        if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
+            $arguments = array_pad($arguments, 4, 0);
+            [$value, $limit, $offset, $objectTypes] = $arguments;
+
+            $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
+
+            $listConfig = [
+                'condition' => $defaultCondition,
+            ];
+
+            if (!is_array($limit)) {
+                if ($limit) {
+                    $listConfig['limit'] = $limit;
+                }
+                if ($offset) {
+                    $listConfig['offset'] = $offset;
+                }
+            } else {
+                $listConfig = array_merge($listConfig, $limit);
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition.$limitCondition;
+            }
+
+            $list = static::makeList($listConfig, $objectTypes);
+
+            if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
+                $elements = $list->getObjects();
+
+                return isset($elements[0]) ? $elements[0] : null;
+            }
+
+            return $list;
+        }
+
+        // there is no property for the called method, so throw an exception
+        Logger::error('Class: DataObject\\AbstractObject => call to undefined static method ' . $method);
+
+        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\AbstractObject');
+    }
+
+    /**
+     * @param  array  $listConfig
+     * @param  mixed $objectTypes
+     *
+     * @return Listing
+     *
+     * @throws \Exception
+     */
+    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    {
+        $list = static::getList($listConfig);
+
+        // Check if variants, in addition to objects, to be fetched
+        if (!empty($objectTypes)) {
+            if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+                Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
+
+                throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
+            }
+
+            $list->setObjectTypes($objectTypes);
+        }
+
+        return $list;
     }
 }

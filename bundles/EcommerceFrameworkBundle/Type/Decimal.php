@@ -64,7 +64,7 @@ class Decimal
      */
     public static function setDefaultScale(int $scale)
     {
-        static::validateScale($scale);
+        self::validateScale($scale);
         static::$defaultScale = $scale;
     }
 
@@ -162,7 +162,7 @@ class Decimal
     public static function fromRawValue(int $amount, int $scale = null): self
     {
         $scale = $scale ?? static::$defaultScale;
-        static::validateScale($scale);
+        self::validateScale($scale);
 
         return new static($amount, $scale);
     }
@@ -180,7 +180,7 @@ class Decimal
     public static function fromString(string $amount, int $scale = null, int $roundingMode = null): self
     {
         $scale = $scale ?? static::$defaultScale;
-        static::validateScale($scale);
+        self::validateScale($scale);
 
         $result = null;
 
@@ -207,13 +207,13 @@ class Decimal
                 } else {
                     // if scale is smaller than decimal part, apply rounding
                     $result = (float)($sign . $part . '.' . $fractionalPart) * pow(10, $scale);
-                    $result = static::toIntValue($result, $roundingMode);
+                    $result = self::toIntValue($result, $roundingMode);
                 }
             }
         }
 
         if (null !== $result) {
-            static::validateIntegerBounds($result);
+            self::validateIntegerBounds($result);
 
             return new static($result, $scale);
         }
@@ -241,12 +241,12 @@ class Decimal
         }
 
         $scale = $scale ?? static::$defaultScale;
-        static::validateScale($scale);
+        self::validateScale($scale);
 
         $result = $amount * pow(10, $scale);
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
-        $result = static::toIntValue($result, $roundingMode);
+        $result = self::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
     }
@@ -265,7 +265,7 @@ class Decimal
     public static function fromDecimal(Decimal $amount, int $scale = null): self
     {
         $scale = $scale ?? static::$defaultScale;
-        static::validateScale($scale);
+        self::validateScale($scale);
 
         // object is identical - creating a new object is not necessary
         if ($amount->scale === $scale) {
@@ -406,7 +406,7 @@ class Decimal
      */
     public function withScale(int $scale, int $roundingMode = null): self
     {
-        static::validateScale($scale);
+        self::validateScale($scale);
 
         // no need to create a new object as output would be identical
         if ($scale === $this->scale) {
@@ -416,9 +416,9 @@ class Decimal
         $diff = $scale - $this->scale;
 
         $result = $this->amount * pow(10, $diff);
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
-        $result = static::toIntValue($result, $roundingMode);
+        $result = self::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
     }
@@ -575,7 +575,7 @@ class Decimal
         $this->assertSameScale($other);
 
         $result = $this->amount + $other->amount;
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
         return new static($result, $this->scale);
     }
@@ -596,7 +596,7 @@ class Decimal
         $this->assertSameScale($other);
 
         $result = $this->amount - $other->amount;
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
         return new static($result, $this->scale);
     }
@@ -616,9 +616,9 @@ class Decimal
         $operand = $this->getScalarOperand($other);
 
         $result = $this->amount * $operand;
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
-        $result = static::toIntValue($result, $roundingMode);
+        $result = self::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
     }
@@ -645,9 +645,9 @@ class Decimal
         }
 
         $result = $this->amount / $operand;
-        static::validateIntegerBounds($result);
+        self::validateIntegerBounds($result);
 
-        $result = static::toIntValue($result, $roundingMode);
+        $result = self::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
     }

@@ -53,6 +53,18 @@ final class DataObjectEvents
 
     /**
      * Arguments:
+     *  - validationExceptions | ValidationException[] | Validation exceptions from field definition validation.
+     *  - message | string | Prefix before validation messages. Defaults to 'Validation failed: '.
+     *  - separator | string | Separator between validation messages. Defaults to ' / '.
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const PRE_UPDATE_VALIDATION_EXCEPTION = 'pimcore.dataobject.preUpdateValidationException';
+
+    /**
+     * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *  - oldPath | the old full path in case the path has changed
      *
