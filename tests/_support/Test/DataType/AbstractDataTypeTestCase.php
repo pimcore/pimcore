@@ -718,7 +718,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('objects');
 
         $this->refreshObject();
-        $this->assertCount(1, $testObjects[0]->getReverseObjectRelation());
+        $this->assertCount(1, $testObjects[0]->getNonowner());
         $this->testDataHelper->assertObjectsEqual($testObjects[0]->getNonowner()[0], $this->testObject);
     }
 
