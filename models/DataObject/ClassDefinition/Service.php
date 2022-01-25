@@ -315,11 +315,11 @@ class Service
     {
         if (is_array($array) && count($array) > 0) {
             if ($name = $array['name'] ?? false) {
-                $sanitizedName = htmlentities($name);
-                if ($sanitizedName !== $name) {
+                if (preg_match('/<.+?>/', $name)) {
                     throw new \Exception('not a valid name:' . htmlentities($name));
                 }
             }
+
             /** @var LoaderInterface $loader */
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
