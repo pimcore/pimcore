@@ -85,13 +85,16 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnerClassName()
     {
         //fallback for legacy data
         if (empty($this->ownerClassName)) {
             try {
+                if(!$this->ownerClassId) {
+                    return null;
+                }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
                 $this->ownerClassName = $class->getName();
             } catch (\Exception $e) {

@@ -545,7 +545,7 @@ class Model extends AbstractDefinitionHelper
             );
             $panel->addChild($this->createDataChild('fieldcollections', 'fieldcollection')
                 ->setAllowedTypes(['unittestfieldcollection']));
-            $panel->addChild($this->createDataChild('reverseObjectRelation', 'nonowner'));
+            $panel->addChild($this->createDataChild('reverseObjectRelation', 'nonowner')->setOwnerClass($name)->setOwnerField('objects'));
             $panel->addChild($this->createDataChild('fieldcollections', 'myfieldcollection')
                 ->setAllowedTypes(['unittestfieldcollection']));
 
