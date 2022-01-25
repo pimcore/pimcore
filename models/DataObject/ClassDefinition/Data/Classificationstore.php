@@ -1165,8 +1165,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             }
 
             usort($this->activeGroupDefinitions, static function ($a, $b) use ($sorting) {
-                $s1 = $sorting[$a['id']] ?: 0;
-                $s2 = $sorting[$b['id']] ?: 0;
+                $s1 = $sorting[$a['id']] ?? 0;
+                $s2 = $sorting[$b['id']] ?? 0;
 
                 return $s1 <=> $s2;
             });
