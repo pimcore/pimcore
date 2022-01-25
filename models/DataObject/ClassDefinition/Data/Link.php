@@ -74,7 +74,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $data->_setOwnerFieldname('');
             $data->_setOwnerLanguage(null);
 
-            if ($data->getLinktype() == 'internal' && !$data->getPath()) {
+            if ($data->getLinktype() === 'internal' && !$data->getPath()) {
                 $data->setLinktype(null);
                 $data->setInternalType(null);
                 if ($data->isEmpty()) {
@@ -88,13 +88,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 $data->setInternalType(null);
                 $data->setInternal(null);
             }
+
+            return Serialize::serialize($data);
         }
 
-        if (is_null($data)) {
-            return null;
-        }
-
-        return Serialize::serialize($data);
+        return null;
     }
 
     /**
@@ -104,7 +102,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Link
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -119,13 +117,15 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             try {
                 $this->checkValidity($link, true, $params);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $link->setInternalType(null);
                 $link->setInternal(null);
             }
+
+            return $link;
         }
 
-        return $link;
+        return null;
     }
 
     /**
@@ -218,7 +218,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string) $data;
     }
 
     /**
@@ -241,6 +241,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                         }
                     }
                 }
+            } else {
+                throw new Element\ValidationException('Expected DataObject\\Data\\Link');
             }
         }
     }

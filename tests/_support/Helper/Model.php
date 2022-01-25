@@ -383,6 +383,47 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Set up a class used for Link Test.
+     *
+     * @param string $name
+     * @param string $filename
+     *
+     * @return ClassDefinition|null
+     *
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Link($name = 'unittestLink', $filename = 'link-import.json')
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new ClassDefinition\Layout\Panel();
+            $panel = (new ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $link = new ClassDefinition\Data\Link();
+            $link->setName('testlink');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $llink = new ClassDefinition\Data\Link();
+            $llink->setName('ltestlink');
+
+            $lFields->addChild($llink);
+
+            $panel->addChild($link);
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
      * Set up a class which (hopefully) contains all data types
      *
      * @param string $name
