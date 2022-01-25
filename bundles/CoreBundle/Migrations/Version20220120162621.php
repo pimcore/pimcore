@@ -29,6 +29,11 @@ final class Version20220120162621 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $schema->hasExplicitForeignKeyIndexes();
+
+        //disable foreign key checks
+        $this->addSql('SET foreign_key_checks = 0');
+
         $this->addSql('ALTER TABLE `users_workspaces_asset`
             ADD CONSTRAINT `fk_users_workspaces_asset_assets`
             FOREIGN KEY (`cid`)
@@ -67,6 +72,9 @@ final class Version20220120162621 extends AbstractMigration
             REFERENCES `users` (`id`)
             ON UPDATE NO ACTION
             ON DELETE CASCADE;;');
+
+        //enable foreign key checks
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void
