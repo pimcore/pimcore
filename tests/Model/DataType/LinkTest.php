@@ -18,6 +18,7 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -78,5 +79,22 @@ class LinkTest extends ModelTestCase
 
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
+    }
+
+    /**
+     * Verifies that Link data throws correct exceptions if invalid data is given
+     *
+     * @throws \Exception
+     */
+    public function testCheckValidity()
+    {
+        $linkObject = $this->createLinkObject();
+        $linkObject->setTestlink('https://pimcore.com/');
+        $linkObject->setLtestlink('https://pimcore.com/');
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('Expected DataObject\\Data\\Link');
+
+        $linkObject->save();
     }
 }

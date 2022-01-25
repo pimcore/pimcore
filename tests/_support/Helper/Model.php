@@ -417,7 +417,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($link);
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
-            $class = $this->createClass($name, $root, $filename, true);
+            $class = $this->createClass($name, $root, $filename, true, null, false);
         }
 
         return $class;
@@ -686,10 +686,11 @@ class Model extends AbstractDefinitionHelper
      * @param string $filename
      * @param bool $inheritanceAllowed
      * @param string|null $id
+     * @param bool $generateTypeDeclarations
      *
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null)
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null, $generateTypeDeclarations = true)
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -700,7 +701,7 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
-        $def->setGenerateTypeDeclarations(true);
+        $def->setGenerateTypeDeclarations($generateTypeDeclarations);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
