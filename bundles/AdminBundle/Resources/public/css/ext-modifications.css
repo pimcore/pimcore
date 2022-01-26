@@ -38,12 +38,16 @@
 }
 
 .x-tab-over.x-tab-default.x-tab-over {
-    background-color: #444547;
+    background-color: #eaeaea;
     border-color: transparent;
 }
 
 .x-tab-over.x-tab-default.x-tab-over.x-tab-active {
     box-shadow: none;
+}
+
+.x-tab-inner-default {
+    color: #404040;
 }
 
 .x-tab-bar-default {

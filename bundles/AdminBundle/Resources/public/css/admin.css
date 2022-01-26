@@ -1434,6 +1434,22 @@ span.warning {
     background: #393C3F;
 }
 
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-inner-default  {
+    color: #fff;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-active .x-tab-inner-default {
+    color: #404040;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-active.x-tab-over .x-tab-inner-default {
+    color: #fff;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-over {
+    background-color: #444547;
+}
+
 #pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-close-btn {
     width: 20px;
     height: 20px;
