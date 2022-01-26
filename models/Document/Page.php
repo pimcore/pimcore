@@ -282,7 +282,6 @@ class Page extends TargetingDocument
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
         if ($documentsConfig['generate_preview'] ?? false) {
-
             \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new GeneratePagePreviewMessage($this->getId(), \Pimcore\Tool::getHostUrl())
             );
