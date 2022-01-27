@@ -771,7 +771,7 @@ body > .x-mask {
 .x-keyboard-mode .x-tab-focus.x-tab-over.x-tab-default {
     border-color: #d0d0d0;
     background-image: none;
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: #F0F0F0;
 }
 
 .x-keyboard-mode .x-grid-item-focused .x-grid-cell-inner:before {
