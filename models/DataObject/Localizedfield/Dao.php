@@ -237,7 +237,13 @@ class Dao extends Model\Dao\AbstractDao
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 if (strpos($e->getMessage(), 'exist')) {
-                    $this->db->rollBack();
+                    try {
+                        $this->db->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::info($er);
+                    }
+
                     $this->createUpdateTable();
 
                     // throw exception which gets caught in AbstractObject::save() -> retry saving
@@ -276,7 +282,12 @@ class Dao extends Model\Dao\AbstractDao
 
                         // first we need to roll back all modifications, because otherwise they would be implicitly committed
                         // by the following DDL
-                        $this->db->rollBack();
+                        try {
+                            $this->db->rollBack();
+                        } catch (\Exception $er) {
+                            // PDO adapter throws exceptions if rollback fails
+                            Logger::info($er);
+                        }
 
                         // this creates the missing table
                         $this->createUpdateTable();
@@ -508,7 +519,13 @@ class Dao extends Model\Dao\AbstractDao
             Logger::error($e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
-                $this->db->rollBack();
+                try {
+                    $this->db->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::info($er);
+                }
+
                 $this->createUpdateTable();
 
                 // throw exception which gets caught in AbstractObject::save() -> retry saving
