@@ -1529,7 +1529,7 @@ span.warning {
     border:0;
 }
 
-.pimcore_main_toolbar .x-toolbar-text {
+.pimcore_main_toolbar .x-toolbar-text, .pimcore_main_toolbar .x-form-cb-label {
     color: #e3e4e5;
 }
 
