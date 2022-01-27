@@ -35,6 +35,9 @@ final class Version20211018104331 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        //disable foreign key checks
+        $this->addSql('SET foreign_key_checks = 0');
+
         $list = new DataObject\ClassDefinition\Listing();
 
         foreach ($list as $class) {
@@ -52,6 +55,9 @@ final class Version20211018104331 extends AbstractMigration
         }
 
         $this->createForeignKey($schema->getTable('object_url_slugs'), 'objectId');
+
+        //enable foreign key checks
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void
