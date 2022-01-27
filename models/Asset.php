@@ -1105,7 +1105,13 @@ class Asset extends Element\AbstractElement
 
             $this->clearThumbnails(true);
         } catch (\Exception $e) {
-            $this->rollBack();
+            try {
+                $this->rollBack();
+            } catch (\Exception $er) {
+                // PDO adapter throws exceptions if rollback fails
+                Logger::info($er);
+            }
+
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
