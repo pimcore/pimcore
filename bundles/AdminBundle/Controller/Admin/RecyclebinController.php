@@ -40,7 +40,10 @@ class RecyclebinController extends AdminController implements KernelControllerEv
     {
         if ($request->get('xaction') == 'destroy') {
             $item = Recyclebin\Item::getById(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::getRecordIdForGridRequest($request->get('data')));
-            $item->delete();
+
+            if ($item) {
+                $item->delete();
+            }
 
             return $this->adminJson(['success' => true, 'data' => []]);
         } else {
