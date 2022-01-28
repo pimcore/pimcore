@@ -418,7 +418,7 @@ class Link extends Model\Document\Editable
             $data = [];
         }
 
-        $path = $data['path'];
+        $path = $data['path'] ?? null;
 
         if (!empty($path)) {
             $target = null;
