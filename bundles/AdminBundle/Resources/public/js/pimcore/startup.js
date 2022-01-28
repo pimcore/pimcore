@@ -928,7 +928,7 @@ Ext.onReady(function () {
                             success: function (response) {
                                 var result = Ext.decode(response.responseText);
 
-                                record.set('preview', result.preview);
+                                record.preview = result.preview;
                                 Ext.get('pimcore_quicksearch_preview').setHtml(result.preview);
                             },
                             failure: function () {
