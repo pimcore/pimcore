@@ -25,6 +25,9 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    'type': 'asset'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename"]
@@ -273,7 +276,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
-        proxy.setExtraParam("type", "asset");
         proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
