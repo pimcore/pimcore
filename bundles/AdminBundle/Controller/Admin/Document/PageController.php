@@ -270,26 +270,6 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function generateScreenshotAction(Request $request, MessageBusInterface $messengerBusPimcoreCore)
-    {
-        $success = false;
-        if ($docId = $request->get('id')) {
-            $messengerBusPimcoreCore->dispatch(
-                new GeneratePagePreviewMessage($docId, \Pimcore\Tool::getHostUrl())
-            );
-            $success = true;
-        }
-
-        return $this->adminJson(['success' => $success]);
-    }
-
-    /**
      * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image", methods={"GET"})
      *
      * @param Request $request

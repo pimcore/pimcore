@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\IdRewriterInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Pimcore\Tool;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -138,28 +139,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        /** @var Concrete $new */
-        $new = Element\Service::cloneMe($source);
-        $new->setId(null);
-        $new->setChildren(null);
-        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
-        $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
-        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $new->setDao(null);
-        $new->setLocked(false);
-        $new->setCreationDate(time());
-
-        if ($new instanceof Concrete) {
-            foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
-                if ($fieldDefinition->getUnique()) {
-                    $new->set($fieldDefinition->getName(), null);
-                    $new->setPublished(false);
-                }
-            }
-        }
-
-        $new->save();
+        $new = $this->copy($source, $target);
 
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
@@ -202,10 +182,26 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        /** @var Concrete $new */
+        $new = $this->copy($source, $target);
+
+        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+
+        $this->updateChildren($target, $new);
+
+        // triggers actions after the complete object cloning
+        $event = new DataObjectEvent($new, [
+            'base_element' => $source, // the element used to make a copy
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
+
+        return $new;
+    }
+
+    private function copy(AbstractObject $source, AbstractObject $target): AbstractObject
+    {
+        /** @var AbstractObject $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-
         $new->setChildren(null);
         $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
@@ -217,7 +213,16 @@ class Service extends Model\Element\Service
 
         if ($new instanceof Concrete) {
             foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
-                if ($fieldDefinition->getUnique()) {
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
+                        if ($localizedFieldDefinition->getUnique()) {
+                            foreach (Tool::getValidLanguages() as $language) {
+                                $new->set($localizedFieldDefinition->getName(), null, $language);
+                            }
+                            $new->setPublished(false);
+                        }
+                    }
+                } elseif ($fieldDefinition->getUnique()) {
                     $new->set($fieldDefinition->getName(), null);
                     $new->setPublished(false);
                 }
@@ -225,16 +230,6 @@ class Service extends Model\Element\Service
         }
 
         $new->save();
-
-        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-
-        $this->updateChildren($target, $new);
-
-        // triggers actions after the complete object cloning
-        $event = new DataObjectEvent($new, [
-            'base_element' => $source, // the element used to make a copy
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
 
         return $new;
     }

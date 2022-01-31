@@ -170,7 +170,7 @@ final class Thumbnail
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
                     Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    Logger::error($e);
+                    Logger::error($e->getMessage());
                 }
             }
         }

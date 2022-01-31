@@ -56,7 +56,8 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
                 'values' => [
                     'English' => 'en',
                     'German' => 'de'
-                ]
+                ],
+                'defaultValue' => 'en'
             ],
             [
                 'name' => 'otherParam',
@@ -65,7 +66,8 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
                     'Label Text' => 'value',
                     'Option #2' => 2,
                     'Custom Option' => 'custom'
-                ]
+                ],
+                'defaultValue' => 'value'
             ]
         ];
     }

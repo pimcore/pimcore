@@ -917,12 +917,34 @@ Ext.onReady(function () {
             listeners: {
                 "highlightitem": function (view, node, opts) {
                     var record = quicksearchStore.getAt(node.dataset.recordindex);
-                    var previewHtml = record.get('preview');
-                    if(!previewHtml) {
-                        previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
-                    }
+                    if (!record.get('preview')) {
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_searchadmin_search_quicksearch_by_id'),
+                            method: 'GET',
+                            params: {
+                                "id": record.get('id'),
+                                "type": record.get('type')
+                            },
+                            success: function (response) {
+                                var result = Ext.decode(response.responseText);
 
-                    Ext.get('pimcore_quicksearch_preview').setHtml(previewHtml);
+                                record.preview = result.preview;
+                                Ext.get('pimcore_quicksearch_preview').setHtml(result.preview);
+                            },
+                            failure: function () {
+                                var previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
+
+                                Ext.get('pimcore_quicksearch_preview').setHtml(previewHtml);
+                            }
+                        });
+                    } else {
+                        var previewHtml = record.get('preview');
+                        if(!previewHtml) {
+                            previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
+                        }
+
+                        Ext.get('pimcore_quicksearch_preview').setHtml(previewHtml);
+                    }
                 }
             }
         },
