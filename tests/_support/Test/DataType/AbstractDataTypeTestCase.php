@@ -713,7 +713,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     public function testReverseRelation()
     {
         // // this will create a couple of objects which can be used for references
-        $testObjects = TestHelper::createEmptyObjects();
+        TestHelper::createEmptyObjects();
 
         $this->createTestObject('objects');
 
