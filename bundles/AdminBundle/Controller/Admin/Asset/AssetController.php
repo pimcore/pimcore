@@ -405,8 +405,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function existsAction(Request $request)
     {
         $parentAsset = \Pimcore\Model\Asset::getById((int)$request->get('parentId'));
+
         return new JsonResponse([
-            'exists' => Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$request->get('filename'))
+            'exists' => Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$request->get('filename')),
         ]);
     }
 
@@ -496,7 +497,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $parentAsset = Asset::getById((int)$parentId);
 
-        if(!$request->get('allowOverwrite')) {
+        if (!$request->get('allowOverwrite')) {
             // check for duplicate filename
             $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
         }
