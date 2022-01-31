@@ -27,7 +27,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     rootProperty: 'data'
                 },
                 extraParams: {
-                    'type': 'asset'
+                    type: 'asset'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename"]
@@ -208,7 +208,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         };
 
                         if (record.data.subtype in routes) {
-                            
                             var route = routes[record.data.subtype];
 
                             var params = {

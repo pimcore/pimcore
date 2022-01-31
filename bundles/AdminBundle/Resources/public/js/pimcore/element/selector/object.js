@@ -370,7 +370,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     rootProperty: 'data'
                 },
                 extraParams: {
-                    'type': 'object'
+                    type: 'object'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){

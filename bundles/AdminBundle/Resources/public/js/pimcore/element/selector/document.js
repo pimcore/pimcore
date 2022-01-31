@@ -27,7 +27,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                     rootProperty: 'data'
                 },
                 extraParams: {
-                    'type': 'document'
+                    type: 'document'
                 }
             },
             fields: ["id", "fullpath", "type", "subtype", "published", "title", "description", "name", "filename"]
