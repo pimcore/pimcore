@@ -713,16 +713,16 @@ abstract class AbstractDataTypeTestCase extends TestCase
     public function testReverseRelation()
     {
         // // this will create a couple of objects which can be used for references
-        TestHelper::createEmptyObjects();
+        $testObjects = TestHelper::createEmptyObjects();
 
         $this->createTestObject('objects');
 
-        $this->assertCount(1, $this->testObject->getNonowner());
-        $this->testDataHelper->assertObjectsEqual($this->testObject->getNonowner()[0], $this->testObject);
+        $this->assertCount(1, $testObjects[0]->getNonowner());
+        $this->testDataHelper->assertObjectsEqual($testObjects[0]->getNonowner()[0], $this->testObject);
 
         $this->refreshObject();
-        $this->assertCount(1, $this->testObject->getNonowner());
-        $this->testDataHelper->assertObjectsEqual($this->testObject->getNonowner()[0], $this->testObject);
+        $this->assertCount(1, $testObjects[0]->getNonowner());
+        $this->testDataHelper->assertObjectsEqual($testObjects[0]->getNonowner()[0], $this->testObject);
     }
 
     public function testObjectsWithMetadata()
