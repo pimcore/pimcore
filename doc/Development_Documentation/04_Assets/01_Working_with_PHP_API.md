@@ -6,10 +6,10 @@ Pimcore provides an object orientated PHP API to work with Assets.
 Following lines of code show simple CRUD operations for Assets.
  ```php
 //creating and saving new asset
-$newAsset = new Pimcore\Model\Asset();
+$newAsset = new \Pimcore\Model\Asset();
 $newAsset->setFilename("myAsset.png");
 $newAsset->setData(file_get_contents("some-file.png"));
-$newAsset->setParent(Pimcore\Model\Asset::getByPath("/"));
+$newAsset->setParent(\Pimcore\Model\Asset::getByPath("/"));
 
 // the optional parameter allows you to provide additional info
 // currently supported:
@@ -17,8 +17,8 @@ $newAsset->setParent(Pimcore\Model\Asset::getByPath("/"));
 $newAsset->save(["versionNote" => "my new version"]);
 
 //getting assets
-$asset1 = Pimcore\Model\Asset::getById(3456);
-$asset2 = Pimcore\Model\Asset::getByPath("/my-assets/sample.png");
+$asset1 = \Pimcore\Model\Asset::getById(3456);
+$asset2 = \Pimcore\Model\Asset::getByPath("/my-assets/sample.png");
 
 //updating assets
 $asset1->setData(file_get_contents("some-updated-file.png"));
