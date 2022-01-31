@@ -718,8 +718,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('objects');
 
         $this->refreshObject();
-        $this->assertCount(1, $testObjects[0]->getNonowner());
-        $this->testDataHelper->assertObjectsEqual($testObjects[0]->getNonowner()[0], $this->testObject);
+        $this->assertCount(1, $this->testObject->getNonowner());
+        $this->testDataHelper->assertObjectsEqual($this->testObject->getNonowner()[0], $this->testObject);
     }
 
     public function testObjectsWithMetadata()
