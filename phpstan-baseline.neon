@@ -88,12 +88,7 @@ parameters:
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
-			path: lib/Db/Connection.php
-
-		-
-			message: "#^Variable \\$bundle in empty\\(\\) always exists and is always falsy\\.$#"
-			count: 1
-			path: lib/HttpKernel/BundleCollection/BundleCollection.php
+			path: lib/Db/Connection.phps
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
