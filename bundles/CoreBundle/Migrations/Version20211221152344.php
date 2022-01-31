@@ -29,6 +29,9 @@ final class Version20211221152344 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        //disable foreign key checks
+        $this->addSql('SET foreign_key_checks = 0');
+
         $this->addSql('ALTER TABLE `assets_metadata`
             CHANGE `cid` `cid` int(11) unsigned NOT NULL,
             ADD CONSTRAINT `fk_assets_metadata_assets`
@@ -36,6 +39,9 @@ final class Version20211221152344 extends AbstractMigration
             REFERENCES `assets` (`id`)
             ON UPDATE NO ACTION
             ON DELETE CASCADE;');
+
+        //enable foreign key checks
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void
