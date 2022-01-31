@@ -258,6 +258,14 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             $classId = $this->getOwnerClassId();
         }
     }
+
+    public function preGetData($container, $params = [])
+    {
+        if($container instanceof DataObject\LazyLoadedFieldsInterface) {
+            $container->unmarkLazyKeyAsLoaded($this->getName());
+        }
+        return parent::preGetData($container, $params);
+    }
 }
 
 //TODO remove in Pimcore 11
