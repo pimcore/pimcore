@@ -632,6 +632,10 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($otherPanel);
             $panel->addChild($this->createDataChild('objectbricks', 'mybricks'));
 
+            $csField = $this->createDataChild('classificationstore', 'teststore');
+            $csField->setStoreId(1);
+            $panel->addChild($csField);
+
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
         }
