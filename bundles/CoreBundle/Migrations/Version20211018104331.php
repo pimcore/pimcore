@@ -33,6 +33,18 @@ final class Version20211018104331 extends AbstractMigration
         return '';
     }
 
+    public function preUp(Schema $schema): void
+    {
+        //disable foreign key checks
+        $this->connection->executeQuery('SET foreign_key_checks = 0');
+    }
+
+    public function postUp(Schema $schema): void
+    {
+        //enable foreign key checks
+        $this->connection->executeQuery('SET foreign_key_checks = 1');
+    }
+
     public function up(Schema $schema): void
     {
         $list = new DataObject\ClassDefinition\Listing();
