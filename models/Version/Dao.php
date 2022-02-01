@@ -138,6 +138,10 @@ class Dao extends Model\Dao\AbstractDao
 
         Logger::debug("ignore ID's: " . $ignoreIdsList);
 
+        $this->db->executeQuery("CREATE TEMPORARY TABLE IF NOT EXISTS versions_ignore_id_tmp (id INT UNIQUE NOT NULL)");
+        $this->db->executeQuery("TRUNCATE TABLE versions_ignore_id_tmp");
+        $this->db->executeQuery("INSERT IGNORE INTO versions_ignore_id_tmp VALUES(?)", [$ignoreIdsList]);
+
         if (!empty($elementTypes)) {
             $count = 0;
             $stop = false;
@@ -145,11 +149,11 @@ class Dao extends Model\Dao\AbstractDao
                 if (isset($elementType['days']) && !is_null($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (SELECT id FROM versions_ignore_id_tmp)', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
+                    $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (SELECT id FROM versions_ignore_id_tmp) GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
                     while ($versionInfo = $versionData->fetch()) {
                         $count++;
                         Logger::info($versionInfo['cid'] . '(object ' . $count . ') Vcount ' . count($versionIds));
