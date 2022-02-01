@@ -341,7 +341,7 @@ class Dao extends Model\Element\Dao
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
+            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY list DESC LIMIT 1)=1';
         }
 
         $sql .= ' LIMIT 1';
