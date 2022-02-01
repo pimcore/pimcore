@@ -368,6 +368,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    type: 'object'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
@@ -578,7 +581,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
-        proxy.setExtraParam("type", "object");
         proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);

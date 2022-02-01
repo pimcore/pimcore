@@ -638,7 +638,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            $this->rollBack();
+            try {
+                $this->rollBack();
+            } catch (\Exception $er) {
+                // PDO adapter throws exceptions if rollback fails
+                Logger::info($er);
+            }
+
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);

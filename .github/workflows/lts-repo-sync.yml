@@ -4,6 +4,8 @@ name: "LTS repository sync"
 on:
     workflow_dispatch:
     push:
+        branches:
+            - 10.x
 
 jobs:
     lts-repo-sync:

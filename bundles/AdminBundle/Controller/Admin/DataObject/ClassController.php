@@ -128,7 +128,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 'id' => $class->getId(),
                 'text' => $text,
                 'leaf' => true,
-                'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
+                'icon' => $class->getIcon() ? htmlspecialchars($class->getIcon()) : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'enableGridLocking' => $class->isEnableGridLocking(),
