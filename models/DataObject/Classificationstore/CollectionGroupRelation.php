@@ -54,10 +54,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
      */
     public static function create()
     {
-        $config = new self();
-        $config->save();
-
-        return $config;
+        return new self();
     }
 
     /**
