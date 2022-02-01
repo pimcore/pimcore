@@ -152,7 +152,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($request->get('view')) {
                 $cv = Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv['classes']) {
+                if (!empty($cv['classes'])) {
                     $cvConditions = [];
                     $cvClasses = $cv['classes'];
                     foreach ($cvClasses as $key => $cvClass) {
