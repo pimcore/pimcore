@@ -37,7 +37,7 @@ final class Version20220201075121 extends AbstractMigration
         try {
             //remove source parent folder thumbnails
             $thumbnailFiles = $storage->listContents('/', true)->filter(function(StorageAttributes $attributes) {
-                return $attributes->isFile() && preg_match('/^image-thumb__\d+__/', basename($attributes->path()));
+                return $attributes->isFile() && preg_match('/^image-thumb__\d+__/', $attributes->path());
             });
             /** @var StorageAttributes $thumbnailFile */
             foreach ($thumbnailFiles as $thumbnailFile) {
