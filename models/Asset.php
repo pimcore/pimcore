@@ -1989,7 +1989,7 @@ class Asset extends Element\AbstractElement
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                $storage->deleteDirectory($this->getRealPath().'/image-thumb__'.$this->getId());
+                $storage->deleteDirectory($this->getRealPath().'image-thumb__'.$this->getId());
             }
         }
     }
