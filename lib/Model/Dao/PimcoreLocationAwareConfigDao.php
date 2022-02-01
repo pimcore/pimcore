@@ -50,7 +50,9 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             $params['storageDirectory'] ?? null,
             $params['writeTargetEnvVariableName'] ?? null,
             $params['defaultWriteLocation'] ?? null,
-            $params['legacyConfigFile'] ?? null
+            $params['legacyConfigFile'] ?? null,
+            $params['legacyConfigCallback'] ?? null,
+            $params['storageDirectoryEnvVariableName'] ?? null
         );
     }
 
@@ -155,5 +157,12 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     {
         $this->invalidateCache($id);
         $this->locationAwareConfigRepository->deleteData($id, $this->dataSource);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStorageDirectory() : string {
+        return $this->locationAwareConfigRepository->getStorageDirectory();
     }
 }
