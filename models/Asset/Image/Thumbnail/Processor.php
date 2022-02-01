@@ -95,6 +95,8 @@ class Processor
      * @param bool $generated
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, &$generated = false)
     {

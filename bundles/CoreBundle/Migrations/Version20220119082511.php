@@ -29,6 +29,9 @@ final class Version20220119082511 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        //disable foreign key checks
+        $this->addSql('SET foreign_key_checks = 0');
+
         $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL');
         $this->addSql('ALTER TABLE `gridconfig_favourites`
             ADD INDEX `grid_config_id` (`gridConfigId`),
@@ -45,6 +48,9 @@ final class Version20220119082511 extends AbstractMigration
             REFERENCES `gridconfigs` (`id`)
             ON UPDATE NO ACTION
             ON DELETE CASCADE;');
+
+        //enable foreign key checks
+        $this->addSql('SET foreign_key_checks = 1');
     }
 
     public function down(Schema $schema): void

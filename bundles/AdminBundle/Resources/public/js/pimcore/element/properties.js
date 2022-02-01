@@ -58,7 +58,6 @@ pimcore.element.properties = Class.create({
                 displayField:'translatedName',
                 valueField: "id",
                 store: predefinedPropertiesStore,
-                editable: false,
                 triggerAction: 'all',
                 listWidth: 300,
                 width: 250,

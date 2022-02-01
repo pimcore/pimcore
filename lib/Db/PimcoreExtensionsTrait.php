@@ -345,7 +345,7 @@ trait PimcoreExtensionsTrait
     public function insertOrUpdate($table, array $data)
     {
         // get the field name of the primary key
-        $fieldsPrimaryKey = self::$tablePrimaryKeyCache[$table] ??= (array) $this->getSchemaManager()->listTableDetails($table)->getPrimaryKeyColumns();
+        $fieldsPrimaryKey = self::$tablePrimaryKeyCache[$table] ??= $this->getPrimaryKeyColumns($table);
 
         // extract and quote col names from the array keys
         $i = 0;
@@ -612,5 +612,19 @@ trait PimcoreExtensionsTrait
     public function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
+    }
+
+    /**
+     * @param string $table
+     *
+     * @return string[]
+     */
+    private function getPrimaryKeyColumns(string $table): array
+    {
+        try {
+            return $this->getSchemaManager()->listTableDetails($table)->getPrimaryKeyColumns();
+        } catch (DBALException) {
+            return [];
+        }
     }
 }

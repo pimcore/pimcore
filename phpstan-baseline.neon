@@ -91,16 +91,6 @@ parameters:
 			path: lib/Db/Connection.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: lib/HttpKernel/BundleCollection/BundleCollection.php
-
-		-
-			message: "#^Variable \\$bundle in empty\\(\\) always exists and is always falsy\\.$#"
-			count: 1
-			path: lib/HttpKernel/BundleCollection/BundleCollection.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php

@@ -279,11 +279,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
     }
 
-    public function deleteAllPermissions()
-    {
-        $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
-    }
-
     /**
      * @return string|null retrieves the current full set path from DB
      */

@@ -124,6 +124,7 @@ pimcore.object.preview = Class.create({
 
             let paramSelect = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: params[i].label ? params[i].label : params[i].name,
+                value: params[i].defaultValue ? params[i].defaultValue : '',
                 name: params[i].name,
                 store: selectOptions,
                 queryMode: 'local',

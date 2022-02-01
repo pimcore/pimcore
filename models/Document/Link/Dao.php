@@ -58,13 +58,4 @@ class Dao extends Model\Document\Dao
             'id' => $this->model->getId(),
         ]);
     }
-
-    /**
-     * @throws \Exception
-     */
-    public function delete()
-    {
-        $this->db->delete('documents_link', ['id' => $this->model->getId()]);
-        parent::delete();
-    }
 }

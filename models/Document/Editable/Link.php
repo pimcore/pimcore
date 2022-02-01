@@ -416,7 +416,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $data = [];
         }
 
-        $path = $data['path'];
+        $path = $data['path'] ?? null;
 
         if (!empty($path)) {
             $target = null;
