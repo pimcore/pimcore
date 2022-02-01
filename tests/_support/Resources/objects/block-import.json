@@ -25,7 +25,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "children": [
+        "childs": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -41,7 +41,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "children": [
+                "childs": [
                     {
                         "fieldtype": "panel",
                         "layout": null,
@@ -57,7 +57,7 @@
                         "bodyStyle": null,
                         "datatype": "layout",
                         "permissions": null,
-                        "children": [
+                        "childs": [
                             {
                                 "fieldtype": "block",
                                 "lazyLoading": null,
@@ -68,7 +68,7 @@
                                 "maxItems": null,
                                 "columnType": "longtext",
                                 "styleElement": "",
-                                "children": [
+                                "childs": [
                                     {
                                         "fieldtype": "input",
                                         "width": null,
@@ -213,7 +213,7 @@
                             },
                             {
                                 "fieldtype": "localizedfields",
-                                "children": [
+                                "childs": [
                                     {
                                         "fieldtype": "block",
                                         "lazyLoading": null,
@@ -224,7 +224,7 @@
                                         "maxItems": null,
                                         "columnType": "longtext",
                                         "styleElement": "",
-                                        "children": [
+                                        "childs": [
                                             {
                                                 "fieldtype": "input",
                                                 "width": null,

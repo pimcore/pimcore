@@ -26,7 +26,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "children": [
+        "childs": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -42,7 +42,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "children": [
+                "childs": [
                     {
                         "fieldtype": "panel",
                         "labelWidth": 100,
@@ -59,7 +59,7 @@
                         "bodyStyle": null,
                         "datatype": "layout",
                         "permissions": null,
-                        "children": [
+                        "childs": [
                             {
                                 "fieldtype": "manyToManyObjectRelation",
                                 "width": null,

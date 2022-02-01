@@ -29,7 +29,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "children": [
+        "childs": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -45,7 +45,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "children": [
+                "childs": [
                     {
                         "fieldtype": "panel",
                         "layout": null,
@@ -61,7 +61,7 @@
                         "bodyStyle": null,
                         "datatype": "layout",
                         "permissions": null,
-                        "children": [
+                        "childs": [
                             {
                                 "fieldtype": "input",
                                 "width": null,
