@@ -66,3 +66,10 @@ You can do so by adding the following to your `.env` or just set the env variabl
 ```
 PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
 ```
+
+#### Revalidate existing configuration on production
+With `settings-store` target, one can update/change configurations in production environment, which in turn revalidates the generated files e.g. Image Thumbnails, Video thumbnails for subsequent requests.
+
+This is not the case with `symfony-config` write target, as configurations are read-only and deployed from different environment. So we need to explicitly revalidate the generated files either through command or custom script. 
+
+For example, to revalidate image or video thumbnails either run command `pimcore:thumbnails:clear` or call `Asset\Image\Thumbnail\Config::clearTempFiles()` after deploying changes on thumbnail configurations.
