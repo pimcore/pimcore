@@ -83,8 +83,8 @@ This will add the configured prefix to the path of assets and thumbnails in the 
 (e.g. your templates). 
 So basically the path to `/Sample/Tavi.jpg` will change to
 `https://tavi-12345678990.cloudfront.net/asset/Sample/Tavi.jpg` 
-and `/Sample/image-thumb__362__galleryThumbnail/Tavi.jpg` changes to
-`https://tavi-12345678990.cloudfront.net/thumbnail/Sample/image-thumb__362__galleryThumbnail/Tavi.jpg`
+and `/Sample/image-thumb__362/galleryThumbnail/Tavi.jpg` changes to
+`https://tavi-12345678990.cloudfront.net/thumbnail/Sample/image-thumb__362/galleryThumbnail/Tavi.jpg`
 
 This is especially useful if using an object storage that is publicly accessible or if using a CDN 
 like CloudFront for your resources. 

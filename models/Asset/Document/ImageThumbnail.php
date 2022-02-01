@@ -89,7 +89,7 @@ final class ImageThumbnail
             try {
                 if (!$deferred) {
                     $storage = Storage::get('asset_cache');
-                    $cacheFilePath = sprintf('%s/image-thumb__%s__document_original_image/page_%s.png',
+                    $cacheFilePath = sprintf('%s/image-thumb__%s/document_original_image/page_%s.png',
                         rtrim($this->asset->getRealPath(), '/'),
                         $this->asset->getId(),
                         $this->page

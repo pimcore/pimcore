@@ -192,7 +192,7 @@ class Cse implements PaginateListingInterface
                             // try to get the asset id
                             $id = false;
                             $regexes = [
-                                '/image-thumb__([0-9]+)__/',
+                                '/image-thumb__([0-9]+)\//',
                                 '/([0-9]+)\/thumb__/',
                                 '/thumb_([0-9]+)__/',
                             ];

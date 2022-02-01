@@ -153,7 +153,7 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
-        $thumbDir = rtrim($asset->getRealPath(), '/') . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
+        $thumbDir = rtrim($asset->getRealPath(), '/') . '/image-thumb__' . $asset->getId() . '/' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
         // add custom suffix if available
