@@ -175,10 +175,21 @@ abstract class Kernel extends SymfonyKernel
             }
         }
 
-        $configArray = ['\Pimcore\Model\Asset\Image\Thumbnail\Config'];
-        foreach($configArray as $class) {
-            $config = new $class;
-            $configDir = $config->getDao()->getStorageDirectory();
+        $configArray = [
+            ['storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
+                'defaultStorageDirectoryName' => 'image-thumbnails']
+        ];
+
+        foreach($configArray as $config) {
+            $configDir = $config['storageDirectoryEnvVariableName'];
+            $configDir = $_ENV[$configDir] ?? null;
+            if(empty($configDir) === false) {
+                $configDir = "$configDir/";
+            }
+            else {
+                $configDir = $config['defaultStorageDirectoryName'];
+                $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
+            }
             if(is_dir($configDir)) {
                 // @phpstan-ignore-next-line
                 $loader->import($configDir);
