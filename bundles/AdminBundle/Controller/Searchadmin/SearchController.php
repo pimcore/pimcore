@@ -71,7 +71,7 @@ class SearchController extends AdminController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $query = $this->filterQueryParam($allParams['query']);
+        $query = $this->filterQueryParam($allParams['query'] ?? '');
 
         $types = explode(',', $allParams['type'] ?? '');
         $subtypes = explode(',', $allParams['subtype'] ?? '');
@@ -440,7 +440,7 @@ class SearchController extends AdminController
      */
     public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
-        $query = $this->filterQueryParam($request->get('query'));
+        $query = $this->filterQueryParam($request->get('query', ''));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query

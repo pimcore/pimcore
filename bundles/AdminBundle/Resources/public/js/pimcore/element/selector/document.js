@@ -25,6 +25,9 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    type: 'document'
                 }
             },
             fields: ["id", "fullpath", "type", "subtype", "published", "title", "description", "name", "filename"]
@@ -247,7 +250,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
 
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
-        proxy.setExtraParam("type", "document");
         proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
