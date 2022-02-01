@@ -24,7 +24,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
-
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;

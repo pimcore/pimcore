@@ -26,7 +26,6 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
-
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 

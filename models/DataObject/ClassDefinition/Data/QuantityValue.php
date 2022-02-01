@@ -28,7 +28,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 

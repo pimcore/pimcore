@@ -419,7 +419,7 @@ class Mail extends \Swift_Message
     /**
      * Returns a parameter which was set with "setParams" or "setParam"
      *
-     * @param string | integer $key
+     * @param string|int $key
      *
      * @return mixed
      */
@@ -457,7 +457,7 @@ class Mail extends \Swift_Message
     /**
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
-     * @param string | integer $key
+     * @param string|int $key
      *
      * @return \Pimcore\Mail Provides fluent interface
      */

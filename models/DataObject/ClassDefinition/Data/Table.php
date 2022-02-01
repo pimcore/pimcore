@@ -26,7 +26,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**

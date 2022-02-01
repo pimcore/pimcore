@@ -26,7 +26,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 {
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 

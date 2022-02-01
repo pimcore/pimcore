@@ -28,7 +28,6 @@ use Pimcore\Model\DataObject;
 class Definition extends Model\AbstractModel
 {
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
-
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])

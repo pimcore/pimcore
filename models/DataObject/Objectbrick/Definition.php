@@ -30,7 +30,6 @@ use Pimcore\Tool;
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
-
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**

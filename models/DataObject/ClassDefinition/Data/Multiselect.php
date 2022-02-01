@@ -26,7 +26,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**

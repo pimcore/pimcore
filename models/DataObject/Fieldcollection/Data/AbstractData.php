@@ -26,9 +26,7 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\Element\ElementDumpStateTrait;
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
