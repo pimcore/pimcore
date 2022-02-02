@@ -391,3 +391,6 @@ framework:
 - Removed deprecated `marshal()` and `unmarshal()` methods from object data-types.
 - `DynamicTextLabelInterface::renderLayoutText()` must handle nullable object param.
 - [AdminBundle] Marked classes and controllers as @internal/final - please see all changes here: https://github.com/pimcore/pimcore/pull/8453/files & https://github.com/pimcore/pimcore/pull/8988/files
+
+## 10.3.0
+- Method `create()` from `Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation` and `Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` no longer saves the new object, but just returns the instance. Related changes can be found here: https://github.com/pimcore/pimcore/pull/11326/files 
