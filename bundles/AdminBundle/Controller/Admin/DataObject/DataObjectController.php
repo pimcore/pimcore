@@ -152,7 +152,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($request->get('view')) {
                 $cv = Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv['classes']) {
+                if (!empty($cv['classes'])) {
                     $cvConditions = [];
                     $cvClasses = $cv['classes'];
                     foreach ($cvClasses as $key => $cvClass) {
@@ -1392,7 +1392,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => true]);
             }
-        } elseif ($object->isAllowed('save')) {
+        } elseif ($object->isAllowed('save') || $object->isAllowed('publish')) {
             $isAutoSave = $request->get('task') == 'autoSave';
             $draftData = [];
 
