@@ -161,6 +161,14 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                             text: t('remove'),
                             iconCls: "pimcore_icon_delete",
                             handler: function (index, item) {
+
+                                if(this.parent.multiselect) {
+                                    var resultPanelStore = this.resultPanel.getStore();
+                                    var elementId = this.selectionStore.getAt(index).id;
+    
+                                    resultPanelStore.findRecord("id", elementId).set('asset-selected', false);
+                                }
+
                                 this.selectionStore.removeAt(index);
                                 item.parentMenu.destroy();
                             }.bind(this, rowIndex)
@@ -274,6 +282,11 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
                         if(this.parent.multiselect) {
                             this.addToSelection(data.data);
+
+                            if (!record.get('asset-selected')) {
+                                record.set('asset-selected', true);
+                            }
+
                         } else {
                             // select and close
                             this.parent.commitData(this.getData());

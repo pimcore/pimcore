@@ -54,7 +54,7 @@ pimcore.element.selector.abstract = Class.create({
     removeFromSelection: function(data) {
 
         // check if element exists in store
-        let existingItem = this.selectionStore.find("id", data.id);
+        var existingItem = this.selectionStore.find("id", data.id);
 
         if (existingItem >= 0) {
             this.selectionStore.removeAt(existingItem);
