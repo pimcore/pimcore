@@ -210,18 +210,21 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         topBar.push("->");
 
-        topBar.push({
+        var exportButton = {
             xtype: 'splitbutton',
             text: t("export_csv"),
             iconCls: "pimcore_icon_export",
             handler: exportBtnHandler.bind(this),
-            menu:[{
+            menu: [{
                 text: t("export_csv_include_headers"),
                 itemId: 'exportWithHeaders',
                 iconCls: "pimcore_icon_export",
                 handler: exportBtnHandler.bind(this)
             }]
-        });
+        };
+        pimcore.plugin.broker.fireEvent("reportExportMenu", topBar);
+
+        topBar.push(exportButton);
 
         this.grid = new Ext.grid.GridPanel({
             region: "center",
