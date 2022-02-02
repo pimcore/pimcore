@@ -26,10 +26,7 @@ use Pimcore\Model;
  */
 final class GroupConfig extends Model\AbstractModel
 {
-    /**
-     * @var bool
-     */
-    public static $cacheEnabled = false;
+    use Cache\RuntimeCacheTrait;
 
     /**
      * @var int|null
@@ -139,22 +136,6 @@ final class GroupConfig extends Model\AbstractModel
         $config->save();
 
         return $config;
-    }
-
-    /**
-     * @param bool $cacheEnabled
-     */
-    public static function setCacheEnabled($cacheEnabled)
-    {
-        self::$cacheEnabled = $cacheEnabled;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function getCacheEnabled()
-    {
-        return self::$cacheEnabled;
     }
 
     /**
@@ -348,48 +329,6 @@ final class GroupConfig extends Model\AbstractModel
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
-    }
-
-    /**
-     * Set cache item for a given cache key
-     *
-     * @param GroupConfig $config
-     * @param string $cacheKey
-     */
-    private static function setCache(GroupConfig $config, string $cacheKey): void
-    {
-        if (self::$cacheEnabled) {
-            Cache\Runtime::set($cacheKey, $config);
-        }
-
-        Cache::save($config, $cacheKey, [], null, 0, true);
-    }
-
-    /**
-     * Remove a cache item for a given cache key
-     *
-     * @param string $cacheKey
-     */
-    private static function removeCache(string $cacheKey): void
-    {
-        Cache::remove($cacheKey);
-        Cache\Runtime::set($cacheKey, null);
-    }
-
-    /**
-     * Get a cache item for a given cache key
-     *
-     * @param string $cacheKey
-     *
-     * @return GroupConfig|bool
-     */
-    private static function getCache(string $cacheKey): GroupConfig|bool
-    {
-        if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey) && $config = Cache\Runtime::get($cacheKey)) {
-            return $config;
-        }
-
-        return Cache::load($cacheKey);
     }
 
     /**
