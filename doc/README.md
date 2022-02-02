@@ -8,7 +8,7 @@ get started working with Pimcore.
 
 
 Additional resources for getting started with Pimcore are also our
-- [Pimcore Demo Application](https://demo.pimcore.fun): See Pimcore in action and also use it as a blue print application 
+- [Pimcore Demo Application](https://demo.pimcore.fun): See Pimcore in action and also use it as a blueprint application 
 for your own implementations.  
 - [Pimcore Academy](https://pimcore.com/academy): The training platform Pimcore Academy offers on-demand video courses 
 about many Pimcore topics. 
