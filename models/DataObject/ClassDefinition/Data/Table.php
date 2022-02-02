@@ -372,7 +372,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $index = 0;
 
             foreach ($row as $col) {
-                $indexedRow[$columnConfig[$index]['key']] = $col;
+                if (isset($columnConfig[$index])) {
+                    $indexedRow[$columnConfig[$index]['key']] = $col;
+                }
                 $index++;
             }
 
