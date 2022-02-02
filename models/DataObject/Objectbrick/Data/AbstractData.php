@@ -172,7 +172,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $object = $this->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+            $parent = DataObject\Service::hasInheritableParentObject($object);
 
             if (!empty($parent)) {
                 $containerGetter = 'get' . ucfirst($this->fieldname);

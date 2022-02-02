@@ -284,47 +284,49 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         // TODO
         if ($inheritanceAllowed) {
-            // same type, iterate over all language and all fields and check if there is something missing
-            if ($this->localized) {
-                $validLanguages = Tool::getValidLanguages();
-            } else {
-                $validLanguages = [];
-            }
-            array_unshift($validLanguages, 'default');
+            // check if there is a parent with the same type
+            $parent = DataObject\Service::hasInheritableParentObject($object);
+            if ($parent) {
+                // same type, iterate over all language and all fields and check if there is something missing
+                if ($this->localized) {
+                    $validLanguages = Tool::getValidLanguages();
+                } else {
+                    $validLanguages = [];
+                }
+                array_unshift($validLanguages, 'default');
 
-            $foundEmptyValue = false;
+                $foundEmptyValue = false;
 
-            $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
+                $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-            foreach ($validLanguages as $language) {
-                foreach ($activeGroupIds as $groupId => $enabled) {
-                    if (!$enabled) {
-                        continue;
-                    }
+                foreach ($validLanguages as $language) {
+                    foreach ($activeGroupIds as $groupId => $enabled) {
+                        if (!$enabled) {
+                            continue;
+                        }
 
-                    $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                    $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                    $relation = $relation->load();
-                    foreach ($relation as $key) {
-                        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
-                        $keyId = $key->getKeyId();
-                        $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                        $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
+                        $relation->setCondition('groupId = ' . $relation->quote($groupId));
+                        $relation = $relation->load();
+                        foreach ($relation as $key) {
+                            $keyId = $key->getKeyId();
+                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
-                        if ($parent !== null && $fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
-                            $foundEmptyValue = true;
-                            $inherited = true;
-                            $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
+                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
+                                $foundEmptyValue = true;
+                                $inherited = true;
+                                $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
+                            }
                         }
                     }
                 }
-            }
 
-            if ($foundEmptyValue) {
-                // still some values are missing, ask the parent
-                $getter = 'get' . ucfirst($this->getName());
-                $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
-                $parentData = $parent->$getter();
-                $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                if ($foundEmptyValue) {
+                    // still some values are missing, ask the parent
+                    $getter = 'get' . ucfirst($this->getName());
+                    $parentData = $parent->$getter();
+                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                }
             }
         }
 
@@ -1023,7 +1025,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
+            $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
                 $mergedMapping = $this->recursiveGetActiveGroupCollectionMapping($parent, $mergedMapping);
             }
@@ -1059,7 +1061,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
+            $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
                 $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
@@ -1383,5 +1385,37 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         return null;
+    }
+
+    /**
+     * Creates getter code which is used for generation of php file for object classes using this data type
+     *
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
+     *
+     * @return string
+     */
+    public function getGetterCode($class)
+    {
+        $key = $this->getName();
+
+        $typeDeclaration = '';
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        }
+
+        $code = '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= '{' . "\n";
+
+        $code .= $this->getPreGetValueHookCode($key);
+
+        $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
+        $code .= "\t" . 'return $data;' . "\n";
+        $code .= "}\n\n";
+
+        return $code;
     }
 }

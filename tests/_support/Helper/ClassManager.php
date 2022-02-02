@@ -226,6 +226,11 @@ class ClassManager extends Module
         $this->assertNotEmpty($json);
 
         $path = $this->resolveFilePath($filename, false);
+        $dir = dirname($path);
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
 
         file_put_contents($path, $json);
 
@@ -233,7 +238,7 @@ class ClassManager extends Module
     }
 
     /**
-     * Resolve filename to reource path
+     * Resolve filename to resource path
      *
      * @param string $filename
      * @param bool $assert

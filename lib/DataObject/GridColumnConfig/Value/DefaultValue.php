@@ -92,7 +92,7 @@ final class DefaultValue extends AbstractValue
         }
 
         if ($fieldDefinition->isEmpty($value)) {
-            $parent = Service::hasInheritableParentObject($object, $key);
+            $parent = Service::hasInheritableParentObject($object);
 
             if (!empty($parent)) {
                 return $this->getValueForObject($parent, $key, $brickType, $brickKey);

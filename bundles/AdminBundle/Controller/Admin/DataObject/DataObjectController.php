@@ -152,7 +152,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($request->get('view')) {
                 $cv = Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv['classes']) {
+                if (!empty($cv['classes'])) {
                     $cvConditions = [];
                     $cvClasses = $cv['classes'];
                     foreach ($cvClasses as $key => $cvClass) {
@@ -591,7 +591,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+        $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
@@ -1404,7 +1404,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => true]);
             }
-        } elseif ($object->isAllowed('save')) {
+        } elseif ($object->isAllowed('save') || $object->isAllowed('publish')) {
             $isAutoSave = $request->get('task') == 'autoSave';
             $draftData = [];
 

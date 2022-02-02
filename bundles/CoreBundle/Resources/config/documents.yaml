@@ -64,9 +64,6 @@ services:
     Pimcore\Document\Editable\EditableUsageResolver:
         public: true
 
-    Pimcore\Document\DocumentStack:
-        public: true
-
     Pimcore\Document\StaticPageGenerator:
         public: true
         arguments:

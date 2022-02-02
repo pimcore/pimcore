@@ -64,7 +64,7 @@ final class Config
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
-                PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
+                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
                 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
                 null,
                 self::LEGACY_FILE,

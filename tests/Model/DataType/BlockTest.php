@@ -16,13 +16,14 @@
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Cache;
+use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\DataObject\unittestBlock;
+use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -51,13 +52,12 @@ class BlockTest extends ModelTestCase
     }
 
     /**
-     * @return Unittest
+     * @return unittestBlock
      *
      * @throws \Exception
      */
     protected function createBlockObject()
     {
-        /** @var Unittest $object */
         $object = new unittestBlock();
         $object->setParent(Service::createFolderByPath('/blocks'));
         $object->setKey('block1');
@@ -67,20 +67,20 @@ class BlockTest extends ModelTestCase
     }
 
     /**
-     * @param $document
+     * @param Page $document
      *
      * @return Link
      */
     protected function createLinkData($document)
     {
         $link = new Link();
-        $link->setPath($document);
+        $link->setPath($document->getFullPath());
 
         return $link;
     }
 
     /**
-     * @param $image
+     * @param Image $image
      *
      * @return Hotspotimage
      */
@@ -104,9 +104,8 @@ class BlockTest extends ModelTestCase
         ];
 
         $hotspots[] = $hotspot2;
-        $hotspotImage = new Hotspotimage($image, $hotspots);
 
-        return $hotspotImage;
+        return new Hotspotimage($image, $hotspots);
     }
 
     /**
