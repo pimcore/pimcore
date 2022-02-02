@@ -222,7 +222,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 handler: exportBtnHandler.bind(this)
             }]
         };
-        pimcore.plugin.broker.fireEvent("reportExportMenu", exportButton);
+        pimcore.plugin.broker.fireEvent("reportExportMenu", exportButton, this.store);
 
         topBar.push(exportButton);
 
