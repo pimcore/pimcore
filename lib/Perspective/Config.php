@@ -53,7 +53,7 @@ final class Config
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_perspectives',
-                PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
+                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PERSPECTIVES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
                 'PIMCORE_WRITE_TARGET_PERSPECTIVES',
                 null,
                 self::LEGACY_FILE,

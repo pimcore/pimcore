@@ -58,7 +58,7 @@ final class Config
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_custom_views',
-                PIMCORE_CONFIGURATION_DIRECTORY . '/custom-views',
+                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/custom-views',
                 'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS',
                 null,
                 self::LEGACY_FILE,
