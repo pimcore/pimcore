@@ -1399,10 +1399,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $key = $this->getName();
 
+        $typeDeclaration = '';
         if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
-        } else {
-            $typeDeclaration = '';
         }
 
         $code = '/**' . "\n";
@@ -1415,26 +1414,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $code .= $this->getPreGetValueHookCode($key);
 
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
-
-//        // insert this line if inheritance from parent objects is allowed
-//        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
-//            $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-//            $code .= "\t\t" . 'try {' . "\n";
-//            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-//            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
-//            $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
-//            $code .= "\t\t" . '}' . "\n";
-//            $code .= "\t" . '}' . "\n\n";
-//        }
-//        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-//        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
-//        $code .= "\t" . '}' . "\n\n";
-
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
 
         return $code;
     }
-
-
 }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -34,12 +35,6 @@ class ClassificationstoreTest extends ModelTestCase
         parent::setUp();
         TestHelper::cleanUp();
         \Pimcore::setAdminMode();
-    }
-
-    public function tearDown(): void
-    {
-        TestHelper::cleanUp();
-        parent::tearDown();
     }
 
     /**
@@ -93,7 +88,7 @@ class ClassificationstoreTest extends ModelTestCase
         if (!$key2) {
             //create field2
             $key2 = new Classificationstore\KeyConfig();
-            $key1->setDefinition(json_encode(new ClassDefinition\Data\Input()));
+            $key2->setDefinition(json_encode(new ClassDefinition\Data\Input()));
             $key2->setStoreId($store->getId());
             $key2->setName('field2');
             $key2->setDescription('Input Field 2');
@@ -130,14 +125,19 @@ class ClassificationstoreTest extends ModelTestCase
      * root
      *    |-one
      *        |-two
+     *           |-three
      *
      * add classification store to one(parent) and change value of 2 fields in the store,
-     * then add store to two(child) and change value of 1 field in the store,
+     * add store to two(child) and change value of 1 field in the store,
+     * create three(child) with empty store to inherit values from two & one
      * asserts inherited and non-inherited values on child & parent.
      *
      */
     public function testInheritance()
     {
+        $inheritanceEnabled = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(true);
+
         $group = Classificationstore\GroupConfig::getByName('group1');
         $key1 = Classificationstore\KeyConfig::getByName('field1');
         $key2 = Classificationstore\KeyConfig::getByName('field2');
@@ -149,24 +149,30 @@ class ClassificationstoreTest extends ModelTestCase
 
         /** @var Classificationstore $oneStore */
         $oneStore = $one->getTeststore();
-
         $oneStore->setLocalizedKeyValue($group->getId(), $key1->getId(), 'oneinput1');
         $oneStore->setLocalizedKeyValue($group->getId(), $key2->getId(), 'oneinput2');
-
         $one->save();
 
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
         $two->setPublished(true);
+        $two->save();
 
         /** @var Classificationstore $twoStore */
         $twoStore = $two->getTeststore();
         $twoStore->setLocalizedKeyValue($group->getId(), $key1->getId(), 'twoinput1');
-        $twoStore->setActiveGroups($twoStore->getActiveGroups() + [1 => true]);
         $twoStore->save();
 
+        //check inherited & overriden value from child
         $this->assertEquals('twoinput1', $twoStore->getLocalizedKeyValue($group->getId(), $key1->getId()));
+        $this->assertEquals('oneinput2', $twoStore->getLocalizedKeyValue($group->getId(), $key2->getId()));
+
+        //check inherited & overriden value from parent
+        $this->assertEquals('oneinput1', $oneStore->getLocalizedKeyValue($group->getId(), $key1->getId()));
+        $this->assertEquals('oneinput2', $oneStore->getLocalizedKeyValue($group->getId(), $key2->getId()));
+
+        DataObject::setGetInheritedValues($inheritanceEnabled);
     }
 
 }
