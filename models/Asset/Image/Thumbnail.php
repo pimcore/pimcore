@@ -421,6 +421,7 @@ final class Thumbnail
             $attributes = $callback($attributes);
         }
 
+        $attributes['srcset'] = $this->getSrcset($options);
         $htmlImgTag = '';
         if (!empty($attributes)) {
             $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
@@ -475,5 +476,29 @@ final class Thumbnail
         }
 
         return $thumbnailConfig;
+    }
+
+    /**
+     * Get paths to thumbnail at 1x and 2x resolution.
+     * Paths can be used in srcset attribute of img element.
+     * @return string Two relative public paths followed by 1x / 2x and separated by comma.
+     */
+    public function getSrcset($options = []): string
+    {
+        /** @var Image $asset */
+        $image = $this->getAsset();
+        $path = $this->getPath(true);
+        $thumbConfig = $this->getConfig();
+        $srcSetValues = [];
+        if ($this->getConfig() && !$this->getConfig()->hasMedias() && !$this->useOriginalFile($path)) {
+            // generate the srcset
+            foreach ([1, 2] as $highRes) {
+                $thumbConfigRes = clone $thumbConfig;
+                $thumbConfigRes->setHighResolution($highRes);
+                $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
+                $srcSetValues[] = $this->addCacheBuster($srcsetEntry, $options, $image);
+            }
+        }
+        return implode(', ', $srcSetValues);
     }
 }
