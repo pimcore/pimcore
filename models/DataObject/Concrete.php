@@ -508,7 +508,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getValueFromParent($key, $params = null)
     {
-        $parent = $this->getNextParentForInheritance($key);
+        $parent = $this->getNextParentForInheritance();
         if ($parent) {
             $method = 'get' . $key;
             if (method_exists($parent, $method)) {
@@ -524,11 +524,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param string $fieldName allows to disable inheritance for single field by overriding the corresponding data object class
-     *
      * @return AbstractObject|null
      */
-    public function getNextParentForInheritance($fieldName = null)
+    public function getNextParentForInheritance()
     {
         return $this->getClosestParentOfClass($this->getClassId());
     }

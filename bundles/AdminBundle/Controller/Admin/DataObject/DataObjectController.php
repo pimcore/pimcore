@@ -590,7 +590,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+        $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
