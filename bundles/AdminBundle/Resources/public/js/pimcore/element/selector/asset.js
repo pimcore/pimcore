@@ -166,7 +166,11 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                                     var resultPanelStore = this.resultPanel.getStore();
                                     var elementId = this.selectionStore.getAt(index).id;
     
-                                    resultPanelStore.findRecord("id", elementId).set('asset-selected', false);
+                                    record = resultPanelStore.findRecord("id", elementId)
+                                    if(record) {
+                                        resultPanelStore.findRecord("id", elementId).set('asset-selected', false);
+                                    }
+                                    
                                 }
 
                                 this.selectionStore.removeAt(index);
