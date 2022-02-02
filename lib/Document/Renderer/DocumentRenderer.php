@@ -28,7 +28,6 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Pimcore\Http\Request\Resolver\EditmodeResolver;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
