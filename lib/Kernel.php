@@ -183,7 +183,7 @@ abstract class Kernel extends SymfonyKernel
         ];
 
         foreach($configArray as $config) {
-            $configDir = rtrim($_ENV[$config['storageDirectoryEnvVariableName']] ?: PIMCORE_CONFIGURATION_DIRECTORY . "/" . $config['defaultStorageDirectoryName'], '/\\');
+            $configDir = rtrim($_ENV[$config['storageDirectoryEnvVariableName']] ?? PIMCORE_CONFIGURATION_DIRECTORY . "/" . $config['defaultStorageDirectoryName'], '/\\');
             if(is_dir($configDir)) {
                 // @phpstan-ignore-next-line
                 $loader->import($configDir);
