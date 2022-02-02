@@ -665,5 +665,11 @@
     "enable_text_selection": "Enable Text Selection",
     "static": "Static",
     "frontend_languages": "Frontend Languages",
-    "drag_object_preview": "Drag Object for Preview"
+    "drag_object_preview": "Drag Object for Preview",
+    "sites": "Sites",
+    "admin_interface_background": "Admin Interface Background",
+    "show_hide_areablock": "Show or Hide on frontend",
+    "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
+    "success_generating_previews": "Generating page previews in the background. Please reload the admin interface after some time to take effect.",
+    "error_generating_previews": "Error generating page previews."
 }
