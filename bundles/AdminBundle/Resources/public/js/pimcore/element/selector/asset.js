@@ -165,10 +165,10 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                                 if(this.parent.multiselect) {
                                     var resultPanelStore = this.resultPanel.getStore();
                                     var elementId = this.selectionStore.getAt(index).id;
-    
-                                    record = resultPanelStore.findRecord("id", elementId)
+                                    var record = resultPanelStore.findRecord("id", elementId);
+
                                     if(record) {
-                                        resultPanelStore.findRecord("id", elementId).set('asset-selected', false);
+                                        record.set('asset-selected', false);
                                     }
                                     
                                 }
@@ -244,7 +244,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         fieldLabel: '',
                         name: 'asset-select-checkbox',
                         text: t("select"),
-                        dataIndex : 'asset-selected'
+                        dataIndex : 'asset-selected',
+                        sortable: false
                     }
                 );
             }
