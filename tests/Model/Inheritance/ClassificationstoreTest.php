@@ -9,18 +9,18 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Pimcore\Model\DataObject\Classificationstore;
 
 /**
  * Class ClassificationstoreTest
@@ -70,7 +70,6 @@ class ClassificationstoreTest extends ModelTestCase
             $group->save();
         }
 
-
         $key1 = Classificationstore\KeyConfig::getByName('field1', $store->getId());
         if (!$key1) {
             //create field1
@@ -97,7 +96,6 @@ class ClassificationstoreTest extends ModelTestCase
             $key2->save();
         }
 
-
         $keygroup1 = Classificationstore\KeyGroupRelation::getByGroupAndKeyId($group->getId(), $key1->getId());
         if (!$keygroup1) {
             //create key group relation
@@ -107,7 +105,6 @@ class ClassificationstoreTest extends ModelTestCase
             $keygroup1->setSorter(1);
             $keygroup1->save();
         }
-
 
         $keygroup2 = Classificationstore\KeyGroupRelation::getByGroupAndKeyId($group->getId(), $key2->getId());
         if (!$keygroup2) {
@@ -174,5 +171,4 @@ class ClassificationstoreTest extends ModelTestCase
 
         DataObject::setGetInheritedValues($inheritanceEnabled);
     }
-
 }

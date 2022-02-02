@@ -1387,7 +1387,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return null;
     }
 
-
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
