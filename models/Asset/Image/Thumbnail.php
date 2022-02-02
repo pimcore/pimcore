@@ -485,13 +485,12 @@ final class Thumbnail
      */
     public function getSrcset($options = []): string
     {
-        /** @var Image $asset */
+        /** @var Image $image */
         $image = $this->getAsset();
         $path = $this->getPath(true);
         $thumbConfig = $this->getConfig();
         $srcSetValues = [];
         if ($this->getConfig() && !$this->getConfig()->hasMedias() && !$this->useOriginalFile($path)) {
-            // generate the srcset
             foreach ([1, 2] as $highRes) {
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
