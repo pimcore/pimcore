@@ -112,7 +112,7 @@ class DocumentRenderer implements DocumentRendererInterface
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
-            new DocumentEvent($document),
+            new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
         );
 
@@ -147,7 +147,7 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService->setLocale($tempLocale);
 
         $this->eventDispatcher->dispatch(
-            new DocumentEvent($document),
+            new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_POST_RENDER
         );
 
