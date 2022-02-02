@@ -25,7 +25,7 @@ use Pimcore\Tests\Util\TestHelper;
 /**
  * Class LinkTest
  *
- * @group model.datatype.block
+ * @group model.datatype.link
  */
 class LinkTest extends ModelTestCase
 {
