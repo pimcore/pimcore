@@ -383,6 +383,47 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Set up a class used for Link Test.
+     *
+     * @param string $name
+     * @param string $filename
+     *
+     * @return ClassDefinition|null
+     *
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Link($name = 'unittestLink', $filename = 'link-import.json')
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new ClassDefinition\Layout\Panel();
+            $panel = (new ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $link = new ClassDefinition\Data\Link();
+            $link->setName('testlink');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $llink = new ClassDefinition\Data\Link();
+            $llink->setName('ltestlink');
+
+            $lFields->addChild($llink);
+
+            $panel->addChild($link);
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true, null, false);
+        }
+
+        return $class;
+    }
+
+    /**
      * Set up a class which (hopefully) contains all data types
      *
      * @param string $name
@@ -649,10 +690,11 @@ class Model extends AbstractDefinitionHelper
      * @param string $filename
      * @param bool $inheritanceAllowed
      * @param string|null $id
+     * @param bool $generateTypeDeclarations
      *
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null)
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null, $generateTypeDeclarations = true)
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -663,7 +705,7 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
-        $def->setGenerateTypeDeclarations(true);
+        $def->setGenerateTypeDeclarations($generateTypeDeclarations);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
