@@ -47,8 +47,6 @@ class LocationAwareConfigRepository
 
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
-    protected ?string $storageDirectoryEnvVariableName = null;
-
     /**
      * @deprecated Will be removed in Pimcore 11
      */
@@ -74,7 +72,6 @@ class LocationAwareConfigRepository
      * @param string|null $defaultWriteLocation
      * @param string|null $legacyConfigFile
      * @param mixed $loadLegacyConfigCallback
-     * @param string|null $storageDirectoryEnvVariableName
      */
     public function __construct(
         array $containerConfig,
@@ -83,17 +80,15 @@ class LocationAwareConfigRepository
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
-        mixed $loadLegacyConfigCallback = null,
-        ?string $storageDirectoryEnvVariableName = null
+        mixed $loadLegacyConfigCallback = null
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
-        $this->storageDirectory = $storageDirectory;
+        $this->storageDirectory = rtrim($storageDirectory, '/\\');
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
         $this->legacyConfigFile = $legacyConfigFile;
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
-        $this->storageDirectoryEnvVariableName = $storageDirectoryEnvVariableName;
     }
 
     public function loadConfigByKey(string $key)
@@ -302,32 +297,13 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @return string
-     */
-    public function getStorageDirectory() : string {
-        $storageDir = "";
-
-        if(isset($this->storageDirectoryEnvVariableName)) {
-            $storageDir = $_ENV[$this->storageDirectoryEnvVariableName] ?? null;
-        }
-        if(empty($storageDir) === true) {
-            $storageDir = $this->storageDirectory;
-        }
-
-        if(str_ends_with($storageDir, '/') === false) {
-            $storageDir = "$storageDir/";
-        }
-        return $storageDir;
-    }
-
-    /**
      * @param string $key
      *
      * @return string
      */
     private function getVarConfigFile(string $key): string
     {
-        return $this->getStorageDirectory() . $key . '.yaml';
+        return $this->storageDirectory . '/' . $key . '.yaml';
     }
 
     /**

@@ -176,20 +176,14 @@ abstract class Kernel extends SymfonyKernel
         }
 
         $configArray = [
-            ['storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
-                'defaultStorageDirectoryName' => 'image-thumbnails']
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
+                'defaultStorageDirectoryName' => 'image-thumbnails'
+            ]
         ];
 
         foreach($configArray as $config) {
-            $configDir = $config['storageDirectoryEnvVariableName'];
-            $configDir = $_ENV[$configDir] ?? null;
-            if(empty($configDir) === false) {
-                $configDir = "$configDir/";
-            }
-            else {
-                $configDir = $config['defaultStorageDirectoryName'];
-                $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
-            }
+            $configDir = rtrim($_ENV[$config['storageDirectoryEnvVariableName']] ?: PIMCORE_CONFIGURATION_DIRECTORY . "/" . $config['defaultStorageDirectoryName'], '/\\');
             if(is_dir($configDir)) {
                 // @phpstan-ignore-next-line
                 $loader->import($configDir);
