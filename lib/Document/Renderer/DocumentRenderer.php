@@ -112,14 +112,8 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
-        $eventAttributes = array_filter(
-            $attributes,
-            fn($key) => in_array($key, [EditmodeResolver::ATTRIBUTE_EDITMODE]),
-            ARRAY_FILTER_USE_KEY
-        );
-        
         $this->eventDispatcher->dispatch(
-            new DocumentEvent($document, $eventAttributes),
+            new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
         );
 
@@ -154,7 +148,7 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService->setLocale($tempLocale);
 
         $this->eventDispatcher->dispatch(
-            new DocumentEvent($document, $eventAttributes),
+            new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_POST_RENDER
         );
 
