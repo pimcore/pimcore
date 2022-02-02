@@ -65,7 +65,8 @@ action:
 //dynamic parameters
 $params = array('firstName' => 'Pim',
                 'lastName' => 'Core',
-                'product' => 73613);
+                'product' => \Pimcore\Model\DataObject::getById(73613)
+                );
  
 //sending the email
 $mail = new \Pimcore\Mail();
@@ -75,6 +76,11 @@ $mail->setParams($params);
 $mail->send();
 ```
 
+you can access the parameters in your mail content.
+```twig
+Hello {{ firstName }} {{ lastName }}
+Regarding the product {{ product.getName() }} ....
+```
 
 #### Sending a Plain Text Email:
 ```php

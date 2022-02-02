@@ -245,7 +245,7 @@ trait EmbeddedMetaDataTrait
         $data = [];
 
         if (is_file($filePath)) {
-            $result = getimagesize($filePath, $info);
+            $result = @getimagesize($filePath, $info);
             if ($result) {
                 $mapping = [
                     '1#000' => 'EnvelopeRecordVersion',

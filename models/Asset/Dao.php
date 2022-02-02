@@ -124,6 +124,7 @@ class Dao extends Model\Element\Dao
         $metadata = $this->model->getMetadata(null, null, false, true);
 
         $data['hasMetaData'] = 0;
+        $metadataItems = [];
         if (!empty($metadata)) {
             foreach ($metadata as $metadataItem) {
                 $metadataItem['cid'] = $this->model->getId();
@@ -145,13 +146,18 @@ class Dao extends Model\Element\Dao
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 
                 if (is_scalar($metadataItem['data'])) {
-                    $this->db->insert('assets_metadata', $metadataItem);
                     $data['hasMetaData'] = 1;
+                    $metadataItems[] = $metadataItem;
                 }
             }
         }
 
         $this->db->insertOrUpdate('assets', $data);
+        if ($data['hasMetaData'] && count($metadataItems)) {
+            foreach ($metadataItems as $metadataItem) {
+                $this->db->insert('assets_metadata', $metadataItem);
+            }
+        }
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'asset']);
@@ -271,19 +277,6 @@ class Dao extends Model\Element\Dao
     public function deleteAllProperties()
     {
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
-    }
-
-    /**
-     * deletes all metadata for the object from database
-     */
-    public function deleteAllMetadata()
-    {
-        $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
-    }
-
-    public function deleteAllPermissions()
-    {
-        $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
     }
 
     /**

@@ -319,14 +319,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Deletes all user permissions based on the document id.
-     */
-    public function deleteAllPermissions()
-    {
-        $this->db->delete('users_workspaces_document', ['cid' => $this->model->getId()]);
-    }
-
-    /**
      * Quick check if there are children.
      *
      * @param bool|null $includingUnpublished

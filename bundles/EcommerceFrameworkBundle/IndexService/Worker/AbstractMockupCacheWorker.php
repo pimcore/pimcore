@@ -81,7 +81,7 @@ abstract class AbstractMockupCacheWorker extends ProductCentricBatchProcessingWo
 
         $key = $this->createMockupCacheKey($objectId);
 
-        //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
+        //use cache instance directly to avoid cache locking -> in this case force writing to cache is needed
         $hasLock = Cache::getHandler()->getWriteLock()->hasLock();
         if ($hasLock) {
             Cache::getHandler()->getWriteLock()->disable();

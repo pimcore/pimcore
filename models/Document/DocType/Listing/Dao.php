@@ -33,6 +33,12 @@ class Dao extends Model\Document\DocType\Dao
         foreach ($this->loadIdList() as $id) {
             $docTypes[] = Model\Document\DocType::getById($id);
         }
+        if ($this->model->getFilter()) {
+            $docTypes = array_filter($docTypes, $this->model->getFilter());
+        }
+        if ($this->model->getOrder()) {
+            usort($docTypes, $this->model->getOrder());
+        }
 
         $this->model->setDocTypes($docTypes);
 
@@ -44,8 +50,6 @@ class Dao extends Model\Document\DocType\Dao
      */
     public function getTotalCount()
     {
-        $amount = count($this->loadIdList());
-
-        return $amount;
+        return count($this->loadList());
     }
 }

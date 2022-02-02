@@ -43,20 +43,16 @@ class ListHelper
     ) {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
-        if (!empty($orderKeysAsc)) {
-            foreach ($orderKeysAsc as $orderByEntry) {
-                if (!empty($orderByEntry)) {
-                    $orderByOptions[$orderByEntry]['asc'] = true;
-                }
+        foreach ($orderKeysAsc as $orderByEntry) {
+            if (!empty($orderByEntry)) {
+                $orderByOptions[$orderByEntry]['asc'] = true;
             }
         }
 
         $orderKeysDesc = explode(',', $filterDefinition->getOrderByDesc());
-        if (!empty($orderKeysDesc)) {
-            foreach ($orderKeysDesc as $orderByEntry) {
-                if (!empty($orderByEntry)) {
-                    $orderByOptions[$orderByEntry]['desc'] = true;
-                }
+        foreach ($orderKeysDesc as $orderByEntry) {
+            if (!empty($orderByEntry)) {
+                $orderByOptions[$orderByEntry]['desc'] = true;
             }
         }
 

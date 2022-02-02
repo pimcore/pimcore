@@ -366,7 +366,7 @@ class Model extends AbstractDefinitionHelper
 
             $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
-                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['Unittest'])
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['unittest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
                 ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
@@ -451,6 +451,10 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
+            /** @var ClassDefinition\Data\Input $inputWithDefault */
+            $inputWithDefault = $this->createDataChild('input', 'inputWithDefault');
+            $inputWithDefault->setDefaultValue('default');
+            $panel->addChild($inputWithDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

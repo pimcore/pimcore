@@ -421,6 +421,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return true;
+    }
+
+    /**
      * @param Model\DataObject\ClassDefinition\Data\UrlSlug $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)

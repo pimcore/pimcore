@@ -42,7 +42,7 @@ trait AllowObjectRelationTrait
         $allowed = true;
         if (!$this->getObjectsAllowed()) {
             $allowed = false;
-        } elseif ($this->getObjectsAllowed() && count($allowedClasses) > 0) {
+        } elseif (count($allowedClasses) > 0) {
             $allowedClassnames = [];
             foreach ($allowedClasses as $c) {
                 $allowedClassnames[] = $c['classes'];

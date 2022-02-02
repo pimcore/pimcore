@@ -49,7 +49,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             $this->settingsStoreScope,
             $params['storageDirectory'] ?? null,
             $params['writeTargetEnvVariableName'] ?? null,
-            null,
+            $params['defaultWriteLocation'] ?? null,
             $params['legacyConfigFile'] ?? null
         );
     }
@@ -141,7 +141,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     /**
      * @return bool
      */
-    public function isWriteable(): ?bool
+    public function isWriteable(): bool
     {
         return $this->locationAwareConfigRepository->isWriteable($this->id, $this->dataSource);
     }

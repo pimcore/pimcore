@@ -75,9 +75,17 @@ class ProductDiscount implements ProductDiscountInterface
     {
         $json = json_decode($string);
         if ($json->amount) {
+            if ($json->amount < 0) {
+                throw new \Exception('Only positive numbers and 0 are valid values for absolute discounts');
+            }
+
             $this->setAmount($json->amount);
         }
         if ($json->percent) {
+            if ($json->percent < 0) {
+                throw new \Exception('Only positive numbers and 0 are valid values for % discounts');
+            }
+
             $this->setPercent($json->percent);
         }
 

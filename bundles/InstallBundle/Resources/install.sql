@@ -19,7 +19,8 @@ CREATE TABLE `application_logs` (
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
   KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`)
+  KEY `priority` (`priority`),
+  KEY `maintenanceChecked` (`maintenanceChecked`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
@@ -46,13 +47,14 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
-  `cid` int(11) NOT NULL,
+  `cid` int(11) unsigned NOT NULL,
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
-	INDEX `name` (`name`)
+  INDEX `name` (`name`),
+  CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
@@ -120,7 +122,8 @@ CREATE TABLE `documents_editables` (
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
-  PRIMARY KEY (`documentId`,`name`)
+  PRIMARY KEY (`documentId`,`name`),
+  CONSTRAINT `fk_documents_editables_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_email`;
@@ -135,7 +138,8 @@ CREATE TABLE `documents_email` (
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_documents_email_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_newsletter`;
@@ -152,7 +156,8 @@ CREATE TABLE `documents_newsletter` (
   `sendingMode` varchar(20) DEFAULT NULL,
   `plaintext` LONGTEXT NULL DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_documents_newsletter_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_hardlink`;
@@ -162,7 +167,8 @@ CREATE TABLE `documents_hardlink` (
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childrenFromSource` tinyint(1) DEFAULT NULL,
   PRIMARY KEY `id` (`id`),
-  KEY `sourceId` (`sourceId`)
+  KEY `sourceId` (`sourceId`),
+  CONSTRAINT `fk_documents_hardlink_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_link`;
@@ -172,7 +178,8 @@ CREATE TABLE `documents_link` (
   `internal` int(11) unsigned default NULL,
   `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `fk_documents_link_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_page` ;
@@ -190,7 +197,8 @@ CREATE TABLE `documents_page` (
   `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorLifetime` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `prettyUrl` (`prettyUrl`)
+  KEY `prettyUrl` (`prettyUrl`),
+  CONSTRAINT `fk_documents_page_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_snippet`;
@@ -200,7 +208,8 @@ CREATE TABLE `documents_snippet` (
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_documents_snippet_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_translations`;
@@ -210,7 +219,8 @@ CREATE TABLE `documents_translations` (
   `language` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`sourceId`,`language`),
   KEY `id` (`id`),
-  KEY `language` (`language`)
+  KEY `language` (`language`),
+  CONSTRAINT `fk_documents_translations_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_printpage`;
@@ -222,7 +232,8 @@ CREATE TABLE `documents_printpage` (
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_documents_printpage_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 
@@ -252,7 +263,7 @@ CREATE TABLE `email_blacklist` (
 DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `documentId` int(11) DEFAULT NULL,
+  `documentId` int(11) unsigned DEFAULT NULL,
   `requestUri` varchar(500) DEFAULT NULL,
   `params` text,
   `from` varchar(500) DEFAULT NULL,
@@ -264,7 +275,9 @@ CREATE TABLE `email_log` (
   `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
-  FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`)
+  FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
+  INDEX `document_id` (`documentId`),
+  CONSTRAINT `fk_email_log_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `glossary`;
@@ -467,7 +480,8 @@ CREATE TABLE `sites` (
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `rootId` (`rootId`)
+  UNIQUE KEY `rootId` (`rootId`),
+  CONSTRAINT `fk_sites_documents` FOREIGN KEY (`rootId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS  `tags`;
@@ -634,7 +648,7 @@ DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
-  `userId` int(11) NOT NULL DEFAULT '0',
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
   `publish` tinyint(1) DEFAULT '0',
@@ -646,14 +660,16 @@ CREATE TABLE `users_workspaces_asset` (
   `properties` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
-  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  CONSTRAINT `fk_users_workspaces_asset_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `fk_users_workspaces_asset_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
-  `userId` int(11) NOT NULL DEFAULT '0',
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',
@@ -667,14 +683,16 @@ CREATE TABLE `users_workspaces_document` (
   `properties` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
-  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  CONSTRAINT `fk_users_workspaces_document_documents` FOREIGN KEY (`cid`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `fk_users_workspaces_document_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
-  `userId` int(11) NOT NULL DEFAULT '0',
+  `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
   `save` tinyint(1) unsigned DEFAULT '0',
@@ -691,7 +709,9 @@ CREATE TABLE `users_workspaces_object` (
   `layouts` text,
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
-  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`o_id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `uuids`;
@@ -871,12 +891,14 @@ CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
 	`classId` VARCHAR(50) NOT NULL,
     `objectId` INT(11) NOT NULL DEFAULT '0',
-	`gridConfigId` INT(11) NULL,
+	`gridConfigId` INT(11) NOT NULL,
 	`searchType` VARCHAR(50) NOT NULL DEFAULT '',
 	`type` enum('asset','object') NOT NULL DEFAULT 'object',
-  PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
+    PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
 	INDEX `classId` (`classId`),
-	INDEX `searchType` (`searchType`)
+	INDEX `searchType` (`searchType`),
+    INDEX `grid_config_id` (`gridConfigId`),
+    CONSTRAINT `fk_gridconfig_favourites_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
 ;
@@ -886,7 +908,9 @@ CREATE TABLE `gridconfig_shares` (
 	`gridConfigId` INT(11) NOT NULL,
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
-	INDEX `sharedWithUserId` (`sharedWithUserId`)
+	INDEX `sharedWithUserId` (`sharedWithUserId`),
+    INDEX `grid_config_id` (`gridConfigId`),
+    CONSTRAINT `fk_gridconfig_shares_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
 ;
@@ -940,8 +964,8 @@ DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `object_url_slugs`;
 CREATE TABLE `object_url_slugs` (
-      `objectId` INT(11) NOT NULL DEFAULT '0',
-	    `classId` VARCHAR(50) NOT NULL DEFAULT '0',
+      `objectId` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+      `classId` VARCHAR(50) NOT NULL DEFAULT '0',
       `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
       `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
       `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
@@ -958,7 +982,8 @@ CREATE TABLE `object_url_slugs` (
       INDEX `ownertype` (`ownertype`),
       INDEX `ownername` (`ownername`),
       INDEX `slug` (`slug`),
-      INDEX `siteId` (`siteId`)
+      INDEX `siteId` (`siteId`),
+      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;

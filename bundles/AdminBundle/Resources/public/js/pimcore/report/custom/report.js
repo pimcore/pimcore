@@ -350,7 +350,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             for(var i = 0; i < data.yAxis.length; i++) {
                 var yAxis = data.yAxis[i];
                 series.push({
-                    displayName: this.columnLabels[data.yAxis[i]],
+                    title: this.columnLabels[data.yAxis[i]],
                     type: (data.chartType == 'line' ? 'line' : 'bar'),
                     xField: data.xAxis,
                     yField: yAxis,
@@ -361,7 +361,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            tooltip.setHtml(record.get(data.xAxis) + ': ' + record.get(yAxis));
+                            tooltip.setHtml(record.get(data.xAxis) + ': ' + record.get(item.field));
                         }
                     }
                 });

@@ -28,7 +28,7 @@ use Twig\TwigFunction;
  */
 class DumpExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_dump', [$this, 'dump'], ['is_safe' => ['html']]),

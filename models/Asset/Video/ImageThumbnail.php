@@ -159,7 +159,7 @@ final class ImageThumbnail
                         );
                     } catch (\Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                        Logger::error($e);
+                        Logger::error($e->getMessage());
                     }
                 }
             }

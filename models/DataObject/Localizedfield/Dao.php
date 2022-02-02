@@ -181,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
                 $insertData['index'] = $context['index'];
             }
 
-            foreach ($fieldDefinitions as $fd) {
+            foreach ($fieldDefinitions as $fieldName => $fd) {
                 if ($fd instanceof CustomResourcePersistingInterface) {
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
@@ -190,7 +190,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
+                    $childParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         $saveLocalizedRelations = $forceUpdate || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false);
@@ -209,18 +209,22 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
                     if (is_array($fd->getColumnType())) {
+                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $this->model->getLocalizedValue($fieldName, $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false) ])
+                            $fieldDefinitionParams
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
+                        $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
                     } else {
+                        $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertData[$fd->getName()] = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $this->model->getLocalizedValue($fieldName, $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false)])
+                            $fieldDefinitionParams
                         );
+                        $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertData[$fd->getName()], $object, $fieldDefinitionParams), $language, false);
                     }
                 }
             }
@@ -543,7 +547,7 @@ class Dao extends Model\Dao\AbstractDao
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
         }
 
-        if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'] ?? null;
             $containerName = $context['fieldname'];
@@ -558,14 +562,12 @@ class Dao extends Model\Dao\AbstractDao
                 ).$dirtyLanguageCondition;
 
             $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
-            if ($container instanceof DataObject\Fieldcollection\Definition) {
-                return true;
-            }
-        } else {
-            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
-                )->getId().$dirtyLanguageCondition;
-            $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
+
+            return true;
         }
+
+        $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
+        $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
 
         return false;
     }
@@ -794,24 +796,26 @@ QUERY;
         if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
-              INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;"
+              INDEX `language` (`language`),
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
             $this->db->query(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
-              `ooo_id` int(11) NOT NULL default '0',
+              `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
-              INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;"
+              INDEX `language` (`language`),
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            ) DEFAULT CHARSET=utf8mb4;'
             );
         }
 
@@ -849,7 +853,7 @@ QUERY;
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key . '__' . $fkey;
                             }
-                        } elseif ($value->getColumnType()) {
+                        } else {
                             $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
                             $protectedColumns[] = $key;
                         }
@@ -872,11 +876,12 @@ QUERY;
 
                 $this->db->query(
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
-                      `ooo_id` int(11) NOT NULL default '0',
+                      `ooo_id` int(11) UNSIGNED NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
-                      INDEX `language` (`language`)
-                    ) DEFAULT CHARSET=utf8mb4;"
+                      INDEX `language` (`language`),
+                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+                    ) DEFAULT CHARSET=utf8mb4;'
                 );
 
                 $this->handleEncryption($this->model->getClass(), [$queryTable]);

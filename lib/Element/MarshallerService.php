@@ -16,27 +16,20 @@
 namespace Pimcore\Element;
 
 use Pimcore\Marshaller\MarshallerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class MarshallerService
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     /**
      * @var ServiceLocator
      */
     private $marshallerLocator;
 
     /**
-     * @param ContainerInterface $container
+     * @param ServiceLocator $marshallerLocator
      */
-    public function __construct($container, ServiceLocator $marshallerLocator)
+    public function __construct(ServiceLocator $marshallerLocator)
     {
-        $this->container = $container;
         $this->marshallerLocator = $marshallerLocator;
     }
 

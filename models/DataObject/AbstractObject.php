@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -78,6 +79,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var bool
      */
     protected static $disableDirtyDetection = false;
+
+    /**
+     * @internal
+     *
+     * @var string[]
+     */
+    protected static $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname', 'o_path'];
 
     /**
      * @internal
@@ -205,14 +213,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortBy;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortOrder;
 
@@ -603,9 +611,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         // remove all properties
         $this->getDao()->deleteAllProperties();
-
-        // remove all permissions
-        $this->getDao()->deleteAllPermissions();
     }
 
     /**
@@ -1527,5 +1532,87 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return mixed|Listing|null
+     *
+     * @throws \Exception
+     */
+    public static function __callStatic($method, $arguments)
+    {
+        $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
+
+        $realPropertyName = 'o_'.$propertyName;
+
+        $db = \Pimcore\Db::get();
+
+        if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
+            $arguments = array_pad($arguments, 4, 0);
+            [$value, $limit, $offset, $objectTypes] = $arguments;
+
+            $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
+
+            $listConfig = [
+                'condition' => $defaultCondition,
+            ];
+
+            if (!is_array($limit)) {
+                if ($limit) {
+                    $listConfig['limit'] = $limit;
+                }
+                if ($offset) {
+                    $listConfig['offset'] = $offset;
+                }
+            } else {
+                $listConfig = array_merge($listConfig, $limit);
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition.$limitCondition;
+            }
+
+            $list = static::makeList($listConfig, $objectTypes);
+
+            if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
+                $elements = $list->getObjects();
+
+                return isset($elements[0]) ? $elements[0] : null;
+            }
+
+            return $list;
+        }
+
+        // there is no property for the called method, so throw an exception
+        Logger::error('Class: DataObject\\AbstractObject => call to undefined static method ' . $method);
+
+        throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\AbstractObject');
+    }
+
+    /**
+     * @param  array  $listConfig
+     * @param  mixed $objectTypes
+     *
+     * @return Listing
+     *
+     * @throws \Exception
+     */
+    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    {
+        $list = static::getList($listConfig);
+
+        // Check if variants, in addition to objects, to be fetched
+        if (!empty($objectTypes)) {
+            if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+                Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
+
+                throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
+            }
+
+            $list->setObjectTypes($objectTypes);
+        }
+
+        return $list;
     }
 }

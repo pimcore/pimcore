@@ -88,8 +88,29 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                         return result.join("<br />");
                     }
                 }.bind(this, field.key),
+            getRelationFilter: this.getRelationFilter,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
+    },
+
+    getRelationFilter: function (dataIndex, editor) {
+        var filterValues = editor.store.getData().items;
+        if (!filterValues || !Array.isArray(filterValues) || !filterValues.length) {
+            filterValues = null;
+        } else {
+            filterValues = filterValues.map(function (item) {
+                return item.data.id;
+            }).join(',');
+        }
+
+        return new Ext.util.Filter({
+            operator: "like",
+            type: "string",
+            id: "x-gridfilter-" + dataIndex,
+            property: dataIndex,
+            dataIndex: dataIndex,
+            value: filterValues
+        });
     },
 
     openParentSearchEditor: function () {

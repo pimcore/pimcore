@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator
+class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * @internal
@@ -93,11 +93,9 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * Converts the data so it's suitable for the editmode
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         $this->setElements();
         $return = [];
@@ -219,19 +217,9 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         // reset existing elements store
         $this->elements = [];
@@ -265,7 +253,10 @@ class Relations extends Model\Document\Editable implements \Iterator
         return $finalVars;
     }
 
-    public function load()
+    /**
+     * {@inheritdoc}
+     */
+    public function load() /** : void */
     {
         $this->setElements();
     }

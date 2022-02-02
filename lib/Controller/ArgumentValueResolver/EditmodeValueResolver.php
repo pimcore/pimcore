@@ -35,12 +35,24 @@ final class EditmodeValueResolver implements ArgumentValueResolverInterface
         $this->editmodeResolver = $editmodeResolver;
     }
 
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return bool
+     */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $argument->getType() === 'bool' && $argument->getName() === 'editmode';
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    /**
+     * @param Request $request
+     * @param ArgumentMetadata $argument
+     *
+     * @return iterable
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->editmodeResolver->isEditmode($request);
     }

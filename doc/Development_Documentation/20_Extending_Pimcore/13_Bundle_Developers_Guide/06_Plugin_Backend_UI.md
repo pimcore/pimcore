@@ -113,6 +113,9 @@ corresponding method to the javascript plugin class.
 | prepareDocumentTreeContextMenu       | before context menu is opened, menu, tree and document record are passed as parameters                          |          |
 | prepareClassLayoutContextMenu        | before context menu is opened, allowedTypes array is passed as parameters                                       |          |
 | prepareOnRowContextmenu              | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |          |
+| prepareOnObjectTreeNodeClick         | before the data object is opened, after a tree node has been clicked. The node item is passed as parameter.     |          | 
+| preGetObjectFolder                   | before the data object grid folder configuration is loaded from the server. request configuration is passed.    |          |
+| preCreateObjectGrid                  | before the data object grid items are loaded from the server. request configuration are passed.                 |          |
 | reportExportMenu                     | fired when the export button in the report view gets generated, current button definition is passed as parameter |          |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 

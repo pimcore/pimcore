@@ -82,9 +82,4 @@ final class ReportConfigWriter
     {
         $this->mergeConfig(new Config($values));
     }
-
-    private function getConfigFile(): string
-    {
-        return \Pimcore\Config::locateConfigFile('reports.php');
-    }
 }

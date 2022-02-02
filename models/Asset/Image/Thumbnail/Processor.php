@@ -24,7 +24,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -96,6 +95,8 @@ class Processor
      * @param bool $generated
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, &$generated = false)
     {
@@ -405,7 +406,7 @@ class Processor
 
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
                 if ($optimizeContent && $isImageOptimizersEnabled) {
-                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );
                 }

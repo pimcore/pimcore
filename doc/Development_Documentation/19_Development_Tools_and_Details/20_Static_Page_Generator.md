@@ -22,6 +22,22 @@ RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{REQUEST_URI}.html -f
 RewriteRule ^(.*)$ /var/tmp/pages%{REQUEST_URI}.html [PT,L]
 ```
 
+If you are using NGINX as web server, the following modification must be done to the location block that matches all requests 
+```
+    location @staticpage{
+        try_files /var/tmp/pages$uri.html $uri /index.php$is_args$args;
+    }
+
+    location / {
+        error_page 404 /meta/404;
+        error_page 418 = @staticpage;
+        if ($args ~* ^(?!pimcore_editmode=true|pimcore_preview|pimcore_version)(.*)$){
+            return 418;
+        }
+        try_files $uri /index.php$is_args$args;
+    }
+```
+
 ## Processing
 Once the static generator option is enabled, Pimcore generates static pages on following actions:
  - First request to the page, after updating and saving the document in admin.

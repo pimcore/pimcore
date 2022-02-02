@@ -88,7 +88,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
@@ -120,7 +120,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getRouteCollection()
+    public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
     }
@@ -128,7 +128,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = [])
+    public function getRouteDebugMessage($name, array $parameters = []): string
     {
         return (string)$name;
     }
@@ -136,7 +136,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
@@ -216,16 +216,20 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         return $this->doMatch($request->getPathInfo(), $request);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
-    public function match($pathinfo)
+    public function match($pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }

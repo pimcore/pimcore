@@ -612,7 +612,7 @@
 .pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
 .pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,.pimcore_icon_cr2,
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
-.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
+.pimcore_icon_heic,.pimcore_icon_heif, .pimcore_icon_ico, .pimcore_icon_tiff, .pimcore_icon_avif, .pimcore_icon_apng {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
 }
 
@@ -626,7 +626,7 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_pdf {
+.pimcore_icon_pdf, .pimcore_icon_ps {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
 
@@ -646,11 +646,15 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/file-types.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video, .pimcore_icon_vob {
+.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv,
+.pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video,
+.pimcore_icon_vob, .pimcore_icon_mkv, .pimcore_icon_ogv, .pimcore_icon_qt, .pimcore_icon_m4v, .pimcore_icon_m4p,
+.pimcore_icon_asf, .pimcore_icon_mp2, .pimcore_icon_ts, .pimcore_icon_mpv, .pimcore_icon_mpe, .pimcore_icon_mts {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/video_file.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_mp3, .pimcore_icon_aac, .pimcore_icon_flac, .pimcore_icon_ogg, .pimcore_icon_wav, .pimcore_icon_wma, .pimcore_icon_ogg {
+.pimcore_icon_mp3, .pimcore_icon_aac, .pimcore_icon_flac, .pimcore_icon_ogg, .pimcore_icon_wav, .pimcore_icon_wma,
+.pimcore_icon_ogg {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg) center center no-repeat !important;
 }
 
