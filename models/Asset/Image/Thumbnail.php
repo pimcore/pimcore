@@ -485,6 +485,7 @@ final class Thumbnail
      */
     public function getSrcset($options = []): string
     {
+        /** @var Image $asset */
         $image = $this->getAsset();
         $path = $this->getPath(true);
         $thumbConfig = $this->getConfig();
