@@ -15,9 +15,11 @@
 
 namespace Pimcore\Model\Tool\Email;
 
-use Pimcore\File;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Storage;
 
 /**
  * @internal
@@ -332,8 +334,9 @@ class Log extends Model\AbstractModel
      */
     public function setEmailLogExistsHtml()
     {
-        $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log';
-        $this->emailLogExistsHtml = (is_file($file) && is_readable($file)) ? 1 : 0;
+        $storage = Storage::get('email_log');
+        $storageFile = 'email-' . $this->getId() . '-html.log';
+        $this->emailLogExistsHtml = $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
     }
@@ -353,8 +356,9 @@ class Log extends Model\AbstractModel
      */
     public function setEmailLogExistsText()
     {
-        $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log';
-        $this->emailLogExistsText = (is_file($file) && is_readable($file)) ? 1 : 0;
+        $storage = Storage::get('email_log');
+        $storageFile = 'email-' . $this->getId() . '-text.log';
+        $this->emailLogExistsText = $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
     }
@@ -377,7 +381,9 @@ class Log extends Model\AbstractModel
     public function getHtmlLog()
     {
         if ($this->getEmailLogExistsHtml()) {
-            return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
+
+            $storage = Storage::get('email_log');
+            return $storage->read('email-' . $this->getId() . '-html.log');
         }
 
         return false;
@@ -391,7 +397,8 @@ class Log extends Model\AbstractModel
     public function getTextLog()
     {
         if ($this->getEmailLogExistsText()) {
-            return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
+            $storage = Storage::get('email_log');
+            return $storage->read('email-' . $this->getId() . '-text.log');
         }
 
         return false;
@@ -402,27 +409,31 @@ class Log extends Model\AbstractModel
      */
     public function delete()
     {
-        @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
-        @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
+        $storage = Storage::get('email_log');
+        $storage->delete('email-' . $this->getId() . '-html.log');
+        $storage->delete('email-' . $this->getId() . '-text.log');
         $this->getDao()->delete();
     }
 
     public function save()
     {
         $this->getDao()->save();
-        if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
-            File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
-        }
+
+        $storage = Storage::get('email_log');
 
         if ($html = $this->getBodyHtml()) {
-            if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
-                Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
+            try {
+                $storage->write('email-' . $this->getId() . '-html.log', $html);
+            } catch (FilesystemException | UnableToWriteFile $exception) {
+                Logger::warn('Could not write html email log file.'.$exception.' LogId: ' . $this->getId());
             }
         }
 
         if ($text = $this->getBodyText()) {
-            if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
-                Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
+            try {
+                $storage->write('email-' . $this->getId() . '-text.log', $text);
+            } catch (FilesystemException | UnableToWriteFile $exception) {
+                Logger::warn('Could not write text email log file.'.$exception.' LogId: ' . $this->getId());
             }
         }
     }
