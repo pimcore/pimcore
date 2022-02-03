@@ -96,7 +96,7 @@ trait ChildsCompatibilityTrait
         if ($name === 'childs' && property_exists($this, 'children')) {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '10.3',
+                '10.4',
                 'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
             );
 
@@ -119,7 +119,7 @@ trait ChildsCompatibilityTrait
         if ($name === 'childs' && property_exists($this, 'children')) {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '10.3',
+                '10.4',
                 'Accessing childs property is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.'
             );
             $this->children = $value;
@@ -136,7 +136,7 @@ trait ChildsCompatibilityTrait
         if ($name === 'childs' && property_exists($this, 'children')) {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '10.3',
+                '10.4',
                 'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
             );
 
@@ -156,7 +156,7 @@ trait ChildsCompatibilityTrait
         if ($name === 'childs' && property_exists($this, 'children')) {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '10.3',
+                '10.4',
                 'Accessing childs property is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.'
             );
             unset($this->children);

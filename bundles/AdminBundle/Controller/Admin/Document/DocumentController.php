@@ -401,7 +401,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($type === 'childs') {
             trigger_deprecation(
                 'pimcore/pimcore',
-                '10.3',
+                '10.4',
                 'Type childs is deprecated. Use children instead'
             );
             $type = 'children';
