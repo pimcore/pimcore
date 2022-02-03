@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
@@ -368,7 +370,7 @@ final class Version extends AbstractModel
         $storage = Storage::get('version');
         try {
             $data = $storage->read($this->getStorageFilename());
-        } catch(\Throwable $e) {
+        } catch(UnableToReadFile | FilesystemException $e) {
             $data = null;
         }
 
