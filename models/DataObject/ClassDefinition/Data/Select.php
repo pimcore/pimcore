@@ -461,7 +461,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
@@ -575,7 +575,7 @@ class Select extends Data implements
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : self
+    public function jsonSerialize()// : static
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;

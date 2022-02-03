@@ -99,7 +99,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : self
+    public function jsonSerialize()// : static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

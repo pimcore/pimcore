@@ -32,5 +32,5 @@ interface LayoutDefinitionEnrichmentInterface
      *
      * @throws \Exception
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) /* : self */;
+    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) /* : static */;
 }
