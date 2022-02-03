@@ -57,7 +57,8 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @return $this
      */
-    public function jsonSerialize()
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()// : self
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

@@ -575,7 +575,7 @@ class Select extends Data implements
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize()// : self
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
