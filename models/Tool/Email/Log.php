@@ -15,7 +15,8 @@
 
 namespace Pimcore\Model\Tool\Email;
 
-use Pimcore\File;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Storage;
