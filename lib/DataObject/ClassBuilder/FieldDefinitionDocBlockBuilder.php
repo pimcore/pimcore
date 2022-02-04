@@ -24,7 +24,9 @@ class FieldDefinitionDocBlockBuilder implements FieldDefinitionDocBlockBuilderIn
         $text = str_pad('', $level, '-').' '.$fieldDefinition->getName().' ['.$fieldDefinition->getFieldtype()."]\n";
 
         if (method_exists($fieldDefinition, 'getFieldDefinitions')) {
-            $text .= $this->buildFieldDefinitionDocBlock($fieldDefinition, $level + 1);
+            foreach ($fieldDefinition->getFieldDefinitions() as $subDefinition) {
+                $text .= $this->buildFieldDefinitionDocBlock($subDefinition, $level + 1);
+            }
         }
 
         return $text;
