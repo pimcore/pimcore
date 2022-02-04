@@ -29,10 +29,14 @@ class PHPObjectBrickContainerClassWriter implements PHPObjectBrickContainerClass
     {
         $containerDefinition = [];
 
+        foreach ($definition->getClassDefinitions() as $cl) {
+            $containerDefinition[$cl['classname']][$cl['fieldname']][] = $definition->getKey();
+        }
+
         $list = new Definition\Listing();
         $list = $list->load();
         foreach ($list as $def) {
-            if ($definition->getKey() != $def->getKey()) {
+            if ($definition->getKey() !== $def->getKey()) {
                 $classDefinitions = $def->getClassDefinitions();
                 if (!empty($classDefinitions)) {
                     foreach ($classDefinitions as $cl) {
