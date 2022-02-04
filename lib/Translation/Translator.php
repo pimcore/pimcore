@@ -256,6 +256,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * Reset Catalogues initialization
+     */
+    public function resetCache()
+    {
+        $this->initializedCatalogues = [];
+    }
+
+    /**
      * @param string $id
      * @param string $translated
      * @param array $parameters
