@@ -17,7 +17,7 @@ namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\File;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ObjectBrick\Definition;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 class PHPObjectBrickContainerClassWriter implements PHPObjectBrickContainerClassWriterInterface
 {

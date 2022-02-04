@@ -16,7 +16,7 @@
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ObjectBrick\Definition;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 interface ObjectBrickContainerClassBuilderInterface
 {

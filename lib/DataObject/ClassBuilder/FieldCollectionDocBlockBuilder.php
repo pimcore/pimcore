@@ -29,7 +29,7 @@ class FieldCollectionDocBlockBuilder implements FieldCollectionDocBlockBuilderIn
         $cd .= "Fields Summary:\n";
 
         foreach ($definition->getFieldDefinitions() as $fieldDefinition) {
-            $cd = $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+            $cd .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
         }
 
         $cd .= '*/';

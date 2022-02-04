@@ -48,7 +48,7 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
 
         $implementsParts = [];
 
-        $implements = ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+        $implements = ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $definition->getImplementsInterfaces());
 
         $cd .= 'class ' . ucfirst($definition->getKey()) . ' extends ' . $extendClass . $implements . "\n";
         $cd .= '{' . "\n";
