@@ -45,7 +45,7 @@ jobs:
                 env:
                     MINIO_ACCESS_KEY: "${{ env.MINIO_ACCESS_KEY }}"
                     MINIO_SECRET_KEY: "${{ env.MINIO_SECRET_KEY }}"
-                    MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin"
+                    MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin,emaillog"
                 options: --name minio-server
             redis:
                 image: redis
