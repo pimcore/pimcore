@@ -335,7 +335,7 @@ class Log extends Model\AbstractModel
     public function setEmailLogExistsHtml()
     {
         $storage = Storage::get('email_log');
-        $storageFile = 'email-' . $this->getId() . '-html.log';
+        $storageFile = $this->getHtmlLogFilename();
         $this->emailLogExistsHtml = $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
@@ -357,7 +357,7 @@ class Log extends Model\AbstractModel
     public function setEmailLogExistsText()
     {
         $storage = Storage::get('email_log');
-        $storageFile = 'email-' . $this->getId() . '-text.log';
+        $storageFile = $this->getTextLogFilename();
         $this->emailLogExistsText = $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
@@ -374,6 +374,27 @@ class Log extends Model\AbstractModel
     }
 
     /**
+     * Returns the filename of the html log
+     *
+     * @return string
+     */
+    public function getHtmlLogFilename()
+    {
+        return 'email-' . $this->getId() . '-html.log';
+    }
+
+    /**
+     * Returns the filename of the text log
+     *
+     * @return string
+     */
+    public function getTextLogFilename()
+    {
+        return 'email-' . $this->getId() . '-txt.log';
+    }
+
+
+    /**
      * Returns the content of the html log file
      *
      * @return string | false
@@ -383,7 +404,7 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsHtml()) {
 
             $storage = Storage::get('email_log');
-            return $storage->read('email-' . $this->getId() . '-html.log');
+            return $storage->read($this->getHtmlLogFilename());
         }
 
         return false;
@@ -398,7 +419,7 @@ class Log extends Model\AbstractModel
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
-            return $storage->read('email-' . $this->getId() . '-text.log');
+            return $storage->read($this->getTextLogFilename());
         }
 
         return false;
@@ -410,8 +431,8 @@ class Log extends Model\AbstractModel
     public function delete()
     {
         $storage = Storage::get('email_log');
-        $storage->delete('email-' . $this->getId() . '-html.log');
-        $storage->delete('email-' . $this->getId() . '-text.log');
+        $storage->delete($this->getHtmlLogFilename());
+        $storage->delete($this->getTextLogFilename());
         $this->getDao()->delete();
     }
 
@@ -423,7 +444,7 @@ class Log extends Model\AbstractModel
 
         if ($html = $this->getBodyHtml()) {
             try {
-                $storage->write('email-' . $this->getId() . '-html.log', $html);
+                $storage->write($this->getHtmlLogFilename(), $html);
             } catch (FilesystemException | UnableToWriteFile $exception) {
                 Logger::warn('Could not write html email log file.'.$exception.' LogId: ' . $this->getId());
             }
@@ -431,7 +452,7 @@ class Log extends Model\AbstractModel
 
         if ($text = $this->getBodyText()) {
             try {
-                $storage->write('email-' . $this->getId() . '-text.log', $text);
+                $storage->write($this->getTextLogFilename(), $text);
             } catch (FilesystemException | UnableToWriteFile $exception) {
                 Logger::warn('Could not write text email log file.'.$exception.' LogId: ' . $this->getId());
             }
