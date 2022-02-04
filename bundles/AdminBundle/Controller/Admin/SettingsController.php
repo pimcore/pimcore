@@ -48,6 +48,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
+use enshrined\svgSanitize\Sanitizer;
+
 
 /**
  * @Route("/settings")
@@ -109,12 +111,22 @@ class SettingsController extends AdminController
             throw new \Exception('Unsupported file format');
         }
 
-        if ($fileExt === 'svg' && stripos(file_get_contents($_FILES['Filedata']['tmp_name']), '<script')) {
-            throw new \Exception('Scripts in SVG files are not supported');
-        }
 
         $storage = Tool\Storage::get('admin');
-        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
+
+        if ($fileExt === 'svg') {
+            $fileContent = file_get_contents($_FILES['Filedata']['tmp_name']);
+
+            $sanitizer = new Sanitizer();
+            $sanitizedFileContent = $sanitizer->sanitize($fileContent);
+            if ($sanitizedFileContent) {
+                $storage->write(self::CUSTOM_LOGO_PATH, $sanitizedFileContent);
+            }else{
+                throw new \Exception('Sanitization failed, probably due badly formatted XML');
+            }
+        }else {
+            $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
+        }
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
+use enshrined\svgSanitize\Sanitizer;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
@@ -434,6 +435,24 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         } else {
             throw new \Exception('The filename of the asset is empty');
         }
+
+
+        // SVG Sanitize check
+        $fileExt = File::getFileExtension($filename);
+
+        if ($fileExt === 'svg') {
+            $fileContent = file_get_contents($sourcePath);
+
+            $sanitizer = new Sanitizer();
+            $sanitizedFileContent = $sanitizer->sanitize($fileContent);
+
+            if ($sanitizedFileContent) {
+                File::put($sourcePath, $sanitizedFileContent);
+            }else{
+                throw new \Exception('Sanitization failed, probably due badly formatted XML');
+            }
+        }
+
 
         $parentId = $request->get('parentId');
         $parentPath = $request->get('parentPath');
