@@ -1,0 +1,77 @@
+services:
+    _defaults:
+        public: true
+
+    Pimcore\DataObject\ClassBuilder\ClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ClassBuilder'
+    Pimcore\DataObject\ClassBuilder\ClassBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder'
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilder'
+    Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ListingClassBuilder'
+    Pimcore\DataObject\ClassBuilder\ListingClassBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder'
+    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder'
+    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder'
+    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder: ~
+
+    Pimcore\DataObject\ClassBuilder\PHPClassWriterInterface: '@Pimcore\DataObject\ClassBuilder\PHPClassWriter'
+    Pimcore\DataObject\ClassBuilder\PHPClassWriter:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\ClassBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriterInterface: '@Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriter'
+    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriter:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassWriterInterface: '@Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassWriter'
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassWriter:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface'
+
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassWriterInterface: '@Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassWriter'
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassWriter:
+        arguments:
+            - '@Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface'
+
+

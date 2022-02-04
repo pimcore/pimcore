@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriterInterface;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -181,8 +182,6 @@ class Definition extends Model\AbstractModel
             throw new DataObject\Exception\DefinitionWriteException();
         }
 
-        $infoDocBlock = $this->getInfoDocBlock();
-
         $definitionFile = $this->getDefinitionFile();
 
         if ($generateDefinitionFile) {
@@ -196,70 +195,13 @@ class Definition extends Model\AbstractModel
 
             $data = '<?php';
             $data .= "\n\n";
-            $data .= $infoDocBlock;
-            $data .= "\n\n";
 
             $data .= "\nreturn " . $exportedClass . ";\n";
 
             \Pimcore\File::put($definitionFile, $data);
         }
 
-        $extendClass = 'DataObject\\Fieldcollection\\Data\\AbstractData';
-        if ($this->getParentClass()) {
-            $extendClass = $this->getParentClass();
-            $extendClass = '\\' . ltrim($extendClass, '\\');
-        }
-
-        // create class file
-        $cd = '<?php';
-        $cd .= "\n\n";
-        $cd .= $infoDocBlock;
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject\\Fieldcollection\\Data;';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
-
-        $implementsParts = [];
-
-        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
-
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
-        $cd .= '{' . "\n";
-
-        $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
-
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                $cd .= 'protected $' . $key . ";\n";
-            }
-        }
-
-        $cd .= "\n\n";
-
-        $fdDefs = $this->getFieldDefinitions();
-        if (is_array($fdDefs) && count($fdDefs)) {
-            foreach ($fdDefs as $key => $def) {
-                $cd .= $def->getGetterCodeFieldcollection($this);
-
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getGetterCode($this);
-                }
-
-                $cd .= $def->getSetterCodeFieldcollection($this);
-
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getSetterCode($this);
-                }
-            }
-        }
-
-        $cd .= "}\n";
-        $cd .= "\n";
-
-        File::put($this->getPhpClassFile(), $cd);
+        \Pimcore::getContainer()->get(PHPFieldCollectionClassWriterInterface::class)->writePHPClass($this);
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
@@ -323,48 +265,8 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      */
-    protected function getPhpClassFile()
+    public function getPhpClassFile()
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
-    }
-
-    /**
-     * @internal
-     *
-     * @return string
-     */
-    protected function getInfoDocBlock()
-    {
-        $cd = '/**' . "\n";
-        $cd .= "Fields Summary:\n";
-
-        $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
-
-        $cd .= '*/';
-
-        return $cd;
-    }
-
-    /**
-     * @internal
-     *
-     * @param Definition|DataObject\ClassDefinition\Data $definition
-     * @param string $text
-     * @param int $level
-     *
-     * @return string
-     */
-    protected function getInfoDocBlockForFields($definition, $text, $level)
-    {
-        if (is_array($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $fd) {
-                $text .= str_pad('', $level, '-') . ' ' . $fd->getName() . ' [' . $fd->getFieldtype() . "]\n";
-                if (method_exists($fd, 'getFieldDefinitions')) {
-                    $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
-                }
-            }
-        }
-
-        return $text;
     }
 }
