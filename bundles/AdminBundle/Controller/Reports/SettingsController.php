@@ -40,13 +40,6 @@ class SettingsController extends ReportsControllerBase
     {
         $this->checkPermission('system_settings');
 
-        // special piwik handling - as the piwik settings tab is on the same page as the other settings
-        // we need to check here if we want to include the piwik config in the response
-        $config = $this->getConfig()->toArray();
-        if (!$this->getAdminUser()->isAllowed('piwik_settings') && isset($config['piwik'])) {
-            unset($config['piwik']);
-        }
-
         $response = [
             'values' => $config,
             'config' => [],
