@@ -559,6 +559,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
+            $data['layout'] = self::getLayoutDefinitionArray($data['layout']);
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
@@ -915,7 +916,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();
@@ -933,16 +944,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $object = DataObject::getById($request->get('id'));
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     throw $this->createAccessDeniedHttpException();
-                } elseif ($object->isLocked()) {
-                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
-                } else {
-                    $object->delete();
                 }
+                if ($object->isLocked()) {
+                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
+                }
+                $object->delete();
             }
 
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
@@ -2337,5 +2349,41 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
+    }
+
+    /**
+     * @deprecated BC Layer for childs properties, can be removed in Pimcore 11
+     *
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data|null $layout
+     * @param string|null $childrenName
+     *
+     * @return array|null
+     */
+    private static function getLayoutDefinitionArray($layout, ?string $childrenName = null): ?array
+    {
+        if (!$layout) {
+            return null;
+        }
+
+        $return = (array)$layout;
+
+        if (isset($return['children']) && is_array($return['children'])) {
+            $children = $return['children'];
+            unset($return['children']);
+            if (!$childrenName || $childrenName === 'childs') {
+                $return['childs'] = [];
+                foreach ($children as $child) {
+                    $return['childs'][] = self::getLayoutDefinitionArray($child, 'childs');
+                }
+            }
+            if (!$childrenName || $childrenName === 'children') {
+                $return['children'] = [];
+                foreach ($children as $child) {
+                    $return['children'][] = self::getLayoutDefinitionArray($child, 'children');
+                }
+            }
+        }
+
+        return $return;
     }
 }
