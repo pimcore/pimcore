@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
