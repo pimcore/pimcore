@@ -438,9 +438,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
 
         // SVG Sanitize check
-        $fileExt = File::getFileExtension($filename);
+        $fileMimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
 
-        if ($fileExt === 'svg') {
+        if ($fileMimeType === 'image/svg+xml') {
             $fileContent = file_get_contents($sourcePath);
 
             $sanitizer = new Sanitizer();
