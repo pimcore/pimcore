@@ -37,19 +37,26 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         /**
          * @Route("/external_adminer/adminer", name="pimcore_admin_external_adminer_adminer")
          *
-         * @param Profiler|null $profiler
-         *
          * @return Response
          */
-        public function adminerAction(?Profiler $profiler)
+        public function adminerAction(?Profiler $profiler, Request $request)
         {
             if ($profiler) {
                 $profiler->disable();
             }
 
+            if($request->hasSession()) {
+                $session = $request->getSession();
+                if($session->isStarted()) {
+                    $session->save();
+                }
+            }
+
             // disable debug error handler while including adminer
             $errorHandler = set_error_handler(function () {
             });
+
+
 
             chdir($this->adminerHome . 'adminer');
             include($this->adminerHome . 'adminer/index.php');
