@@ -370,7 +370,7 @@ final class Version extends AbstractModel
         $storage = Storage::get('version');
         try {
             $data = $storage->read($this->getStorageFilename());
-        } catch(UnableToReadFile | FilesystemException $e) {
+        } catch(UnableToReadFile $e) {
             $data = null;
         }
 
