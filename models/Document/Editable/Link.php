@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Link extends Model\Document\Editable
+class Link extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     /**
      * Contains the data for the link
@@ -54,11 +54,9 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getDataEditmode
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getDataEditmode()
+    public function getDataEditmode() /** : mixed */
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -506,19 +504,9 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param array $idMapping
+     * { @inheritdoc }
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds($idMapping) /** : void */
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

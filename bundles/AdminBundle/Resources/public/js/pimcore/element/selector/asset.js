@@ -25,6 +25,9 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    type: 'asset'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename"]
@@ -161,6 +164,18 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                             text: t('remove'),
                             iconCls: "pimcore_icon_delete",
                             handler: function (index, item) {
+
+                                if(this.parent.multiselect) {
+                                    var resultPanelStore = this.resultPanel.getStore();
+                                    var elementId = this.selectionStore.getAt(index).id;
+                                    var record = resultPanelStore.findRecord("id", elementId);
+
+                                    if(record) {
+                                        record.set('asset-selected', false);
+                                    }
+                                    
+                                }
+
                                 this.selectionStore.removeAt(index);
                                 item.parentMenu.destroy();
                             }.bind(this, rowIndex)
@@ -205,7 +220,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         };
 
                         if (record.data.subtype in routes) {
-                            
                             var route = routes[record.data.subtype];
 
                             var params = {
@@ -225,6 +239,19 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
+            if (this.parent.multiselect) {
+                columns.unshift(
+                    {
+                        xtype: 'checkcolumn',
+                        fieldLabel: '',
+                        name: 'asset-select-checkbox',
+                        text: t("select"),
+                        dataIndex : 'asset-selected',
+                        sortable: false
+                    }
+                );
+            }
+
             this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
@@ -235,18 +262,38 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 columnLines: true,
                 stripeRows: true,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
+                    markDirty: false
                 },
                 plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
+                    cellclick: {
+                        fn: function(view, cellEl, colIdx, store, rowEl, rowIdx, event) {
+
+                            var data = view.getStore().getAt(rowIdx);
+
+                            if (this.parent.multiselect && colIdx == 0) {
+                                if (data.get('asset-selected')) {
+                                    this.addToSelection(data.data);
+                                } else {
+                                    this.removeFromSelection(data.data);
+                                }
+                            }
+                        }.bind(this)
+                    },
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
 
                         var data = grid.getStore().getAt(rowIndex);
 
                         if(this.parent.multiselect) {
                             this.addToSelection(data.data);
+
+                            if (!record.get('asset-selected')) {
+                                record.set('asset-selected', true);
+                            }
+
                         } else {
                             // select and close
                             this.parent.commitData(this.getData());
@@ -273,7 +320,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
-        proxy.setExtraParam("type", "asset");
         proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 

@@ -36,17 +36,14 @@ class Dao extends UserRole\Dao
         // assets
         $this->db->update('assets', ['userOwner' => null], ['userOwner' => $userId]);
         $this->db->update('assets', ['userModification' => null], ['userModification' => $userId]);
-        $this->db->delete('users_workspaces_asset', ['userId' => $userId]);
 
         // documents
         $this->db->update('documents', ['userOwner' => null], ['userOwner' => $userId]);
         $this->db->update('documents', ['userModification' => null], ['userModification' => $userId]);
-        $this->db->delete('users_workspaces_document', ['userId' => $userId]);
 
         // objects
         $this->db->update('objects', ['o_userOwner' => null], ['o_userOwner' => $userId]);
         $this->db->update('objects', ['o_userModification' => null], ['o_userModification' => $userId]);
-        $this->db->delete('users_workspaces_object', ['userId' => $userId]);
 
         // versions
         $this->db->update('versions', ['userId' => null], ['userId' => $userId]);

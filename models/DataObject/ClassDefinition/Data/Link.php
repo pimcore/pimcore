@@ -74,7 +74,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $data->_setOwnerFieldname('');
             $data->_setOwnerLanguage(null);
 
-            if ($data->getLinktype() == 'internal' && !$data->getPath()) {
+            if ($data->getLinktype() === 'internal' && !$data->getPath()) {
                 $data->setLinktype(null);
                 $data->setInternalType(null);
                 if ($data->isEmpty()) {
@@ -88,13 +88,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 $data->setInternalType(null);
                 $data->setInternal(null);
             }
+
+            return Serialize::serialize($data);
         }
 
-        if (is_null($data)) {
-            return null;
-        }
-
-        return Serialize::serialize($data);
+        return null;
     }
 
     /**
@@ -104,7 +102,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Link
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -119,13 +117,15 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             try {
                 $this->checkValidity($link, true, $params);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $link->setInternalType(null);
                 $link->setInternal(null);
             }
+
+            return $link;
         }
 
-        return $link;
+        return null;
     }
 
     /**
@@ -218,7 +218,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string) $data;
     }
 
     /**
@@ -226,22 +226,22 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($data) {
-            if ($data instanceof DataObject\Data\Link) {
-                if ((int)$data->getInternal() > 0) {
-                    if ($data->getInternalType() == 'document') {
-                        $doc = Document::getById($data->getInternal());
-                        if (!$doc instanceof Document) {
-                            throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
-                        }
-                    } elseif ($data->getInternalType() == 'asset') {
-                        $asset = Asset::getById($data->getInternal());
-                        if (!$asset instanceof Asset) {
-                            throw new Element\ValidationException('invalid internal link, referenced asset with id [' . $data->getInternal() . '] does not exist');
-                        }
+        if ($data instanceof DataObject\Data\Link) {
+            if ((int)$data->getInternal() > 0) {
+                if ($data->getInternalType() == 'document') {
+                    $doc = Document::getById($data->getInternal());
+                    if (!$doc instanceof Document) {
+                        throw new Element\ValidationException('invalid internal link, referenced document with id [' . $data->getInternal() . '] does not exist');
+                    }
+                } elseif ($data->getInternalType() == 'asset') {
+                    $asset = Asset::getById($data->getInternal());
+                    if (!$asset instanceof Asset) {
+                        throw new Element\ValidationException('invalid internal link, referenced asset with id [' . $data->getInternal() . '] does not exist');
                     }
                 }
             }
+        } elseif ($data !== null) {
+            throw new Element\ValidationException('Expected DataObject\\Data\\Link or null');
         }
     }
 
@@ -287,19 +287,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
             if ((int)$data->getInternal() > 0) {
-                if ($data->getInternalType() == 'document') {
-                    if ($doc = Document::getById($data->getInternal())) {
-                        if (!array_key_exists($doc->getCacheTag(), $tags)) {
-                            $tags = $doc->getCacheTags($tags);
-                        }
-                    }
-                } elseif ($data->getInternalType() == 'asset') {
-                    if ($asset = Asset::getById($data->getInternal())) {
-                        if (!array_key_exists($asset->getCacheTag(), $tags)) {
-                            $tags = $asset->getCacheTags($tags);
-                        }
-                    }
-                }
+                $tag = Element\Service::getElementCacheTag($data->getInternalType(), $data->getInternal());
+                $tags[$tag] = $tag;
             }
         }
 

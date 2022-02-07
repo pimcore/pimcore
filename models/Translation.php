@@ -60,14 +60,14 @@ final class Translation extends AbstractModel
     /**
      * @var string
      */
-    protected $type;
+    protected $type = 'simple';
 
     /**
      * @return string
      */
     public function getType()
     {
-        return $this->type;
+        return $this->type ?: 'simple';
     }
 
     /**
@@ -191,7 +191,7 @@ final class Translation extends AbstractModel
      */
     public function setDomain(string $domain): void
     {
-        $this->domain = $domain;
+        $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
     /**
@@ -417,7 +417,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || empty($languages) || !is_array($languages)) {
+            if (!$languages || !is_array($languages)) {
                 $languages = static::getValidLanguages($domain);
             }
 

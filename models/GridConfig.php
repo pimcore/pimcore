@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Db;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -76,6 +75,11 @@ class GridConfig extends AbstractModel
     protected $shareGlobally;
 
     /**
+     * @var bool
+     */
+    protected $setAsFavourite;
+
+    /**
      * @var string
      */
     protected $type = 'object';
@@ -121,11 +125,6 @@ class GridConfig extends AbstractModel
     public function delete()
     {
         $this->getDao()->delete();
-
-        // also delete the favourite
-        $db = Db::get();
-        $db->query('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
-        $db->query('DELETE from gridconfig_shares where gridConfigId = ' . $db->quote($this->getId()));
     }
 
     /**
@@ -286,6 +285,22 @@ class GridConfig extends AbstractModel
     public function setShareGlobally($shareGlobally)
     {
         $this->shareGlobally = $shareGlobally;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSetAsFavourite()
+    {
+        return $this->setAsFavourite;
+    }
+
+    /**
+     * @param bool $setAsFavourite
+     */
+    public function setSetAsFavourite($setAsFavourite)
+    {
+        $this->setAsFavourite = $setAsFavourite;
     }
 
     /**

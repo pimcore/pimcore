@@ -63,8 +63,8 @@ As you can see there are really useful cases for properties, feel free to use th
 * Documents follow the MVC pattern; therefore, Pimcore requires that there is at least one controller with an action and a template file.
 * Pimcore comes with a DefaultController containing a defaultAction and a template file.
 * Because of the MVC architecture, there is a clear separation between your data, the functionality and the templates.
-* The normal way to create templates for Pimcore is to use pure PHP. There's no new template syntax to learn - just code what you want - feel free!
-* Although the templates are written in PHP, there is a clear separation as mentioned before.
+* Templates for Pimcore are created with [Twig](https://twig.symfony.com/).
+* As the templates are written in Twig, there is a clear separation of logic (controllers) and design (view / template).
 
 ## Create Your First Document 
 Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_a_First_Project.md) manual. 

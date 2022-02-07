@@ -1,9 +1,13 @@
 {% set fields = element.getClass().getFieldDefinitions() %}
+{% set paddingTop = 20 %}
 
-<div class="small-icon {{ iconCls }}"></div>
+{% if iconCls is defined and iconCls != '' %}
+    <div class="small-icon {{ iconCls }}"></div>
+    {% set paddingTop = paddingTop + 50 %}
+{% endif %}
 {% include '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/info-table.html.twig' with {'element': element, 'cls': 'no-opacity'} %}
 
-<table class="data-table" style="top: 70px;">
+<table class="data-table" style="top: {{ paddingTop }}px">
     {% set c = 0 %}
     {% set break = false %}
     {% for fieldName, definition in fields|slice(0,30) %}

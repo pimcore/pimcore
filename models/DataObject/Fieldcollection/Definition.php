@@ -173,11 +173,12 @@ class Definition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     protected function generateClassFiles($generateDefinitionFile = true)
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
-            throw new \Exception(sprintf('Definitions in %s folder cannot be overwritten', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
+            throw new DataObject\Exception\DefinitionWriteException();
         }
 
         $infoDocBlock = $this->getInfoDocBlock();
@@ -314,7 +315,7 @@ class Definition extends Model\AbstractModel
      */
     public function getDefinitionFile($key = null)
     {
-        return $this->locateFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
+        return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
 
     /**

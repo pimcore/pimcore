@@ -261,12 +261,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $result->metaData['inherited'] = $level != 0;
         } else {
             $fieldValue = null;
-            $editmodeValue = null;
-            if (!empty($item)) {
-                $fieldValue = $item->$valueGetter();
+            $fieldValue = $item->$valueGetter();
+            $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
 
-                $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
-            }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
                 $backup = DataObject::getGetInheritedValues();
                 DataObject::setGetInheritedValues(true);
@@ -633,10 +630,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
 
             if ($validationExceptions) {
-                $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
-                $aggregatedExceptions->setSubItems($validationExceptions);
+                $errors = [];
+                /** @var Model\Element\ValidationException $e */
+                foreach ($validationExceptions as $e) {
+                    $errors[] = $e->getAggregatedMessage();
+                }
+                $message = implode(' / ', $errors);
 
-                throw $aggregatedExceptions;
+                throw new Model\Element\ValidationException('invalid brick ' . $this->getName().': '.$message);
             }
         }
     }

@@ -79,7 +79,7 @@ class OrderManager implements OrderManagerInterface
     protected $options;
 
     /**
-     * @var Folder
+     * @var Folder|null
      */
     protected $orderParentFolder;
 

@@ -48,7 +48,10 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    public function getFunctions()
+    /**
+     * {@inheritDoc}
+     */
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_video_is_available', [Video::class, 'isAvailable']),

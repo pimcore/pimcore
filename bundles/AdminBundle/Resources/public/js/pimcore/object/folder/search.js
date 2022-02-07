@@ -223,10 +223,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             language: this.gridLanguage,
         });
 
+        var eventData =  {requestParams: {classId: this.classId, folderId: this.object.id}};
+        pimcore.plugin.broker.fireEvent("preCreateObjectGrid", eventData);
+
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
-            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.classId, folderId: this.object.id}),
+            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', eventData.requestParams),
             baseParams,
             false
         );

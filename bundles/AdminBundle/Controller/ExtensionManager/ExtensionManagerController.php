@@ -439,9 +439,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
                 );
             }
 
-            if (!empty($iframePath)) {
-                return $iframePath;
-            }
+            return $iframePath;
         }
 
         return null;
@@ -502,5 +500,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
                 return $converted;
             }
         }
+
+        return null;
     }
 }

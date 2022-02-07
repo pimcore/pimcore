@@ -20,6 +20,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
 
@@ -137,23 +138,23 @@ class Builder
             $request = $this->requestHelper->getMainRequest();
 
             // try to find a page matching exactly the request uri
-            $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
+            $activePages = $this->findActivePages($navigation, 'uri', $request->getRequestUri());
 
             if (empty($activePages)) {
                 // try to find a page matching the path info
-                $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
+                $activePages = $this->findActivePages($navigation, 'uri', $request->getPathInfo());
             }
         }
 
         if ($activeDocument instanceof Document) {
             if (empty($activePages)) {
                 // use the provided pimcore document
-                $activePages = $navigation->findAllBy('realFullPath', $activeDocument->getRealFullPath());
+                $activePages = $this->findActivePages($navigation, 'realFullPath', $activeDocument->getRealFullPath());
             }
 
             if (empty($activePages)) {
                 // find by link target
-                $activePages = $navigation->findAllBy('uri', $activeDocument->getFullPath());
+                $activePages = $this->findActivePages($navigation, 'uri', $activeDocument->getFullPath());
             }
         }
 
@@ -176,18 +177,18 @@ class Builder
             }
         } elseif ($activeDocument instanceof Document) {
             // we didn't find the active document, so we try to build the trail on our own
-            $allPages = $navigation->findAllBy('uri', '/.*/', true);
+            $allPages = new \RecursiveIteratorIterator($navigation, \RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
                 if ($page instanceof Url && $page->getUri()) {
-                    if (strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
+                    if (str_starts_with($activeDocument->getRealFullPath(), $page->getUri() . '/')) {
                         $activeTrail = true;
                     } elseif (
                         $page instanceof DocumentPage &&
                         $page->getDocumentType() === 'link' &&
-                        strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0
+                        str_starts_with($activeDocument->getFullPath(), $page->getUri() . '/')
                     ) {
                         $activeTrail = true;
                     }
@@ -201,6 +202,22 @@ class Builder
         }
 
         return $navigation;
+    }
+
+    /**
+     * @param Container $navigation navigation container to iterate
+     * @param string $property name of property to match against
+     * @param string $value value to match property against
+     *
+     * @return Page[]
+     */
+    protected function findActivePages(Container $navigation, string $property, string $value): array
+    {
+        $filterByPrefix = new PrefixRecursiveFilterIterator($navigation, $property, $value);
+        $flatten = new \RecursiveIteratorIterator($filterByPrefix, \RecursiveIteratorIterator::SELF_FIRST);
+        $filterMatches = new \CallbackFilterIterator($flatten, static fn (Page $page): bool => $page->get($property) === $value);
+
+        return iterator_to_array($filterMatches, false);
     }
 
     /**

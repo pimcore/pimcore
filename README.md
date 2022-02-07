@@ -1,5 +1,3 @@
-[![Pimcore X out now!](doc/Development_Documentation/img/pimcore-x-banner.jpg)](https://pimcore.com/en/resources/blog/latest-technology-and-best-performance-pimcore-x-is-out-now_a150669)
-
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   
@@ -12,7 +10,7 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
 * 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
-* 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
+* 🉐 **Help translate Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
 * 👍 Like us on [Facebook](https://www.facebook.com/pimcore), follow us on [LinkedIn](https://www.linkedin.com/company/3505853/) and [Twitter](https://twitter.com/pimcore)
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
 * 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions
@@ -29,11 +27,11 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 ## Supported Versions
 
 | Version  | Supported | LTS** | CE End of life*** |
-| -------- |    :---:  | :---: |   :---:          |
-| `<= 4.x` |    ❌     |  ❌  | `2017-09-28`     |
-| `5.x`    |    ❌     |  ✅  | `2019-12-09`     |
-| `6.x`    |    ❌     |  ✅  | `2021-06-23`     |
-| `10.x`   |    ✅     |  ☑   |                  |
+|----------|:---------:|:-----:|:-----------------:|
+| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
+| `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
+| `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
+| `10.x`   |     ✅     |   ☑   |                   |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
 *** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
@@ -45,7 +43,7 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
 No matter if you're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
-UI design (web documents by a template and structured data with a intuitive graphical editor), Pimcore knows 
+UI design (web documents by a template and structured data with an intuitive graphical editor), Pimcore knows 
 how to persist the data efficiently and optimized for fast access.
 
 ### 🎛 Agnostic and Universal Framework for your Data
@@ -61,7 +59,7 @@ No more API, import/export and synchronization hell between MDM/PIM, E-Commerce,
 All is working seamlessly together, natively ... this is what Pimcore is built for. 
 
 ### ✨️ Modern and Intuitive UI
-We love good looking user interfaces, designed to be efficient for the daily use and optimized for a great
+We love good-looking user interfaces, designed to be efficient for daily use and optimized for a great
 experience for editors. 
 
 ## Preview and Demo
@@ -73,7 +71,7 @@ Manage any structured data based on a predefined data model, either manually or 
 Assets are the DAM part of Pimcore. Store, manage and organize digital files such as images, videos, PDFs, Word/Excel documents in a folder structure. Preview 200+ file types directly in Pimcore, edit pictures, and enrich files with additional meta-data. Facial recognition for focal points in images and support for VR/360° previews is available. Editors only need to maintain one high-resolution version of a file in the system. Pimcore can automatically generate all required output formats for various channels such as commerce, apps, websites. Of course, including comprehensive user management and version control.
 ### Documents
 ![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
-The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multi-lingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
+The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multilingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
 
 #### Demo (Community Edition)
 _Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  

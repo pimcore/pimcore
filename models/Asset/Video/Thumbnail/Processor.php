@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -178,7 +177,7 @@ class Processor
 
         $instance->save();
 
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VideoConvertMessage($instance->getProcessId())
         );
 

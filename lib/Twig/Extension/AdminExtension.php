@@ -20,6 +20,7 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 /**
@@ -31,10 +32,17 @@ class AdminExtension extends AbstractExtension
     {
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),
+        ];
+    }
+
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('pimcore_inline_icon', [$this, 'inlineIcon']),
         ];
     }
 
@@ -69,5 +77,12 @@ class AdminExtension extends AbstractExtension
     private function getScriptTag($url): string
     {
         return '<script src="' . $url . '"></script>' . "\n";
+    }
+
+    public function inlineIcon(string $icon)
+    {
+        $content = file_get_contents($icon);
+
+        return sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type($icon), base64_encode($content), basename($icon));
     }
 }

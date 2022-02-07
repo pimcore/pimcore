@@ -40,9 +40,11 @@ trait PimcoreExtensionsTrait
     private static array $tablePrimaryKeyCache = [];
 
     /**
-     * @see \Doctrine\DBAL\Connection::connect
+     *@return bool
+     *
+     *@see \Doctrine\DBAL\Connection::connect
      */
-    public function connect()
+    public function connect()// : bool
     {
         $returnValue = parent::connect();
 

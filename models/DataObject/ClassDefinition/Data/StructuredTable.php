@@ -264,7 +264,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         foreach ($this->getRows() as $r) {
             foreach ($this->getCols() as $c) {
                 $name = $r['key'] . '#' . $c['key'];
-                $structuredData[$r['key']][$c['key']] = $data[$this->getName() . '__' . $name];
+                $structuredData[$r['key']][$c['key']] = $data[$this->getName() . '__' . $name] ?? null;
             }
         }
 

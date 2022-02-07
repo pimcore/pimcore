@@ -806,9 +806,6 @@ class Document extends Element\AbstractElement
         // remove all properties
         $this->getDao()->deleteAllProperties();
 
-        // remove permissions
-        $this->getDao()->deleteAllPermissions();
-
         // remove dependencies
         $d = $this->getDependencies();
         $d->cleanAllForElement($this);

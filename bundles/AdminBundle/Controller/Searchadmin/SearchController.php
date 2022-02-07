@@ -71,7 +71,7 @@ class SearchController extends AdminController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $query = $this->filterQueryParam($allParams['query']);
+        $query = $this->filterQueryParam($allParams['query'] ?? '');
 
         $types = explode(',', $allParams['type'] ?? '');
         $subtypes = explode(',', $allParams['subtype'] ?? '');
@@ -434,13 +434,12 @@ class SearchController extends AdminController
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
-     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
+    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $query = $this->filterQueryParam($request->get('query'));
+        $query = $this->filterQueryParam($request->get('query', ''));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query
@@ -483,23 +482,10 @@ class SearchController extends AdminController
                 $data = [
                     'id' => $element->getId(),
                     'type' => $hit->getId()->getType(),
-                    'subtype' => $element->getType(),
-                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
-                    'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
                 $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
-
-                $validLanguages = \Pimcore\Tool::getValidLanguages();
-
-                $data['preview'] = $this->renderView('@PimcoreAdmin/SearchAdmin/Search/Quicksearch/' . $hit->getId()->getType() . '.html.twig', [
-                    'element' => $element,
-                    'iconCls' => $data['iconCls'],
-                    'config' => $config,
-                    'validLanguages' => $validLanguages,
-                ]);
 
                 $elements[] = $data;
             }
@@ -518,6 +504,65 @@ class SearchController extends AdminController
     }
 
     /**
+     * @Route("/quicksearch-get-by-id", name="pimcore_admin_searchadmin_search_quicksearch_by_id", methods={"GET"})
+     *
+     * @param Request $request
+     * @param Config $config
+     *
+     * @return JsonResponse
+     */
+    public function quicksearchByIdAction(Request $request, Config $config)
+    {
+        $type = $request->get('type');
+        $id = $request->get('id');
+        $db = \Pimcore\Db::get();
+        $searcherList = new Data\Listing();
+
+        $forbiddenConditions = $this->getForbiddenCondition();
+        if ($forbiddenConditions) {
+            $condition = '('.implode(' AND ', $forbiddenConditions).')';
+            $searcherList->addConditionParam($condition);
+        }
+
+        $searcherList->addConditionParam('id = :id', ['id' => $id]);
+        $searcherList->addConditionParam('maintype = :type', ['type' => $type]);
+
+        $hits = $searcherList->load();
+
+        //There will always be one result in hits but load returns array.
+        $data = [];
+        foreach ($hits as $hit) {
+            $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+            if ($element->isAllowed('list')) {
+                $data = [
+                    'id' => $element->getId(),
+                    'type' => $hit->getId()->getType(),
+                    'subtype' => $element->getType(),
+                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
+                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
+                    'iconCls' => 'pimcore_icon_asset_default',
+                ];
+
+                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+
+                $validLanguages = \Pimcore\Tool::getValidLanguages();
+
+                $data['preview'] = $this->renderView(
+                    '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/'.$hit->getId()->getType().'.html.twig', [
+                    'element' => $element,
+                    'iconCls' => $data['iconCls'],
+                    'config' => $config,
+                    'validLanguages' => $validLanguages,
+                ]
+                );
+            }
+        }
+
+        return $this->adminJson($data);
+    }
+
+    /**
      * @param string $path
      *
      * @return string
@@ -526,11 +571,10 @@ class SearchController extends AdminController
     {
         $parts = explode('/', trim($path, '/'));
         $count = count($parts) - 1;
-        $shortPath = '';
 
-        for ($i = $count; $i >= 0; $i--) {
+        for ($i = $count; ; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if (strlen($shortPath) <= 50 || $i == 0) {
+            if ($i === 0 || strlen($shortPath) <= 50) {
                 break;
             }
             array_splice($parts, $i - 1, 1, '…');

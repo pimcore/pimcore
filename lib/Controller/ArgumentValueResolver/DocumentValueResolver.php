@@ -47,7 +47,7 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
      *
      * @return bool
      */
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         if ($argument->getType() !== Document::class) {
             return false;
@@ -66,9 +66,9 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
      * @param Request $request
      * @param ArgumentMetadata $argument
      *
-     * @return \Generator|Document
+     * @return iterable
      */
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->documentResolver->getDocument($request);
     }

@@ -15,8 +15,8 @@ pimcore.registerNS("pimcore.settings.translation.translationmerger");
 pimcore.settings.translation.translationmerger = Class.create({
 
 
-    initialize: function (translationType, mergeResult, callback) {
-        this.translationType = translationType;
+    initialize: function (domain, mergeResult, callback) {
+        this.domain = domain;
         var delta = mergeResult.delta;
         delta = base64_decode(delta);
         delta = Ext.decode(delta);
@@ -138,7 +138,7 @@ pimcore.settings.translation.translationmerger = Class.create({
                                             method: "PUT",
                                             params: {
                                                 data: newData,
-                                                translationType: this.translationType
+                                                domain: this.domain
                                             },
                                             success: function (response) {
                                                 var result = Ext.decode(response.responseText);
@@ -175,7 +175,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             });
 
             this.panel = new Ext.Panel({
-                title: t("merge_translations"),
+                title: t("merge_translations") + " (Domain: " + this.domain + ")",
                 iconCls: "pimcore_icon_translations",
                 border: false,
                 layout: "fit",
@@ -233,7 +233,7 @@ pimcore.settings.translation.translationmerger = Class.create({
                 method: "PUT",
                 params: {
                     data: encodedData,
-                    translationType: this.translationType
+                    domain: this.domain
                 },
                 success: function (response) {
                     var result = Ext.decode(response.responseText);

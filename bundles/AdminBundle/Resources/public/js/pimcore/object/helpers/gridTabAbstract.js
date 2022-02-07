@@ -207,6 +207,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     }
                 );
 
+                this.grid.getStore().clearFilter();
                 this.grid.filters.clearFilters();
 
                 this.pagingtoolbar.moveFirst();
@@ -232,6 +233,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         );
         proxy.setExtraParam("condition", this.sqlEditor.getValue());
         if (this.grid && this.grid.filters) {
+            this.grid.getStore().clearFilter();
             this.grid.filters.clearFilters();
         }
 
@@ -295,6 +297,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 text: t("clear_filters"),
                 tooltip: t("clear_filters"),
                 handler: function (button) {
+                    this.grid.getStore().clearFilter();
                     this.grid.filters.clearFilters();
                     this.toolbarFilterInfo.hide();
                     this.clearFilterButton.hide();
@@ -312,6 +315,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 listeners: {
                     "change": function (field, checked) {
                         this.grid.getStore().setRemoteFilter(false);
+                        this.grid.getStore().clearFilter();
                         this.grid.filters.clearFilters();
 
                         this.store.getProxy().setExtraParam("only_direct_children", checked);

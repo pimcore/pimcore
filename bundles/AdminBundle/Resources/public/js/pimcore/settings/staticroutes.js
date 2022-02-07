@@ -191,13 +191,12 @@ pimcore.settings.staticroutes = Class.create({
             }
         ];
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
             clicksToEdit: 1,
+            clicksToMoveEditor: 1,
             listeners: {
-                validateedit: function (editor, context, eOpts) {
+                beforeedit: function (editor, context, eOpts) {
                     if (!context.record.data.writeable) {
-                        editor.cancelEdit();
-                        pimcore.helpers.showNotification(t("info"), t("config_not_writeable"), "info");
                         return false;
                     }
                 }
@@ -221,7 +220,7 @@ pimcore.settings.staticroutes = Class.create({
             },
             sm: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                this.cellEditing
+                this.rowEditing
             ],
             tbar: {
                 cls: 'pimcore_main_toolbar',

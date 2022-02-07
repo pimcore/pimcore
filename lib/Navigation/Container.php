@@ -155,12 +155,9 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function addPages($pages)
     {
-        if ($pages instanceof self) {
-            $pages = iterator_to_array($pages);
-        }
-
-        if (!is_array($pages)) {
-            throw new \Exception('Invalid argument: $pages must be an array  or an instance of Container');
+        // @phpstan-ignore-next-line this should be checked via parameter type in Pimcore 11
+        if (!$pages instanceof self && !is_array($pages)) {
+            throw new \Exception('Invalid argument: $pages must be an array or an instance of ' . self::class);
         }
 
         foreach ($pages as $page) {
@@ -395,11 +392,15 @@ class Container implements \RecursiveIterator, \Countable
                             foreach ($item as $item2) {
                                 if (preg_match($value, $item2)) {
                                     $found[] = $page;
+
+                                    break 2;
                                 }
                             }
                         } else {
                             if (in_array($value, $item)) {
                                 $found[] = $page;
+
+                                break;
                             }
                         }
                     } else {
@@ -407,10 +408,14 @@ class Container implements \RecursiveIterator, \Countable
                         if (true === $useRegex) {
                             if (preg_match($value, $item)) {
                                 $found[] = $page;
+
+                                break;
                             }
                         } else {
                             if ($item == $value) {
                                 $found[] = $page;
+
+                                break;
                             }
                         }
                     }

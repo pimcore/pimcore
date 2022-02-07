@@ -21,7 +21,6 @@ use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal
@@ -79,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targetid = ? AND targettype = ?', [$id, $type]);
             if (is_array($data)) {
                 foreach ($data as $row) {
-                    \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                         new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
                     );
                 }
