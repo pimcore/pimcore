@@ -172,12 +172,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             }
         }
 
-        data.childs = null;
+        data.children = null;
         if (node.childNodes.length > 0) {
-            data.childs = [];
+            data.children = [];
 
             for (var i = 0; i < node.childNodes.length; i++) {
-                data.childs.push(this.getNodeData(node.childNodes[i]));
+                data.children.push(this.getNodeData(node.childNodes[i]));
             }
         }
 
@@ -370,10 +370,10 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var copy = n.createNode(config);
 
         if (n.hasChildNodes()) {
-            var childs = n.childNodes;
+            var children = n.childNodes;
             var i;
-            for (i = 0; i < childs.length; i++) {
-                copy.appendChild(this.recursiveCloneNode(childs[i]));
+            for (i = 0; i < children.length; i++) {
+                copy.appendChild(this.recursiveCloneNode(children[i]));
             }
         }
 
@@ -394,12 +394,12 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             parentType = record.data.type;
         }
 
-        var childsAllowed = false;
+        var childrenAllowed = false;
         if (allowedTypes[parentType] && allowedTypes[parentType].length > 0) {
-            childsAllowed = true;
+            childrenAllowed = true;
         }
 
-        if (childsAllowed) {
+        if (childrenAllowed) {
             // get available layouts
             var layoutMenu = [];
             var layouts = Object.keys(pimcore.object.classes.layout);
@@ -583,10 +583,10 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var baseNode = rootNode;
 
         if (data.layoutDefinitions) {
-            if (data.layoutDefinitions.childs) {
-                for (var i = 0; i < data.layoutDefinitions.childs.length; i++) {
+            if (data.layoutDefinitions.children) {
+                for (var i = 0; i < data.layoutDefinitions.children.length; i++) {
                     var attributePrefix = "";
-                    var child = this.data.layoutDefinitions.childs[i];
+                    var child = this.data.layoutDefinitions.children[i];
 
                     var text = t(child.name);
                     if(child.nodeType == "objectbricks") {
@@ -616,9 +616,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         newNode = fn();
 
-        if (con.childs) {
-            for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode, attributePrefix, addListener);
+        if (con.children) {
+            for (var i = 0; i < con.children.length; i++) {
+                this.recursiveAddNode(con.children[i], newNode, attributePrefix, addListener);
             }
         }
 
@@ -664,7 +664,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         newNode = record.appendChild(newNode);
 
-        //to hide or show the expanding icon depending if childs are available or not
+        //to hide or show the expanding icon depending if children are available or not
         newNode.addListener('remove', function(node, removedNode, isMove) {
             if(!node.hasChildNodes()) {
                 node.set('expandable', false);

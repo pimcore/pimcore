@@ -17,11 +17,10 @@ pimcore.registerNS("pimcore.object.helpers.layout");
 pimcore.object.helpers.layout = {
 
     /**
-     * specify which childs a layout can have
+     * specify which children a layout can have
      * @param source
     */
     getAllowedTypes : function (source) {
-        // specify which childs a layout can have
         var allowedTypes = {
             accordion: ["panel","region","tabpanel","text","iframe"],
             fieldset: ["data","text","iframe"],

@@ -189,9 +189,9 @@ pimcore.object.classes.klass = Class.create({
     initLayoutFields: function () {
 
         if (this.data.layoutDefinitions) {
-            if (this.data.layoutDefinitions.childs) {
-                for (var i = 0; i < this.data.layoutDefinitions.childs.length; i++) {
-                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i],
+            if (this.data.layoutDefinitions.children) {
+                for (var i = 0; i < this.data.layoutDefinitions.children.length; i++) {
+                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.children[i],
                         this.tree.getRootNode()));
                 }
                 this.tree.getRootNode().expand();
@@ -213,9 +213,9 @@ pimcore.object.classes.klass = Class.create({
 
         newNode = fn();
 
-        if (con.childs) {
-            for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode);
+        if (con.children) {
+            for (var i = 0; i < con.children.length; i++) {
+                this.recursiveAddNode(con.children[i], newNode);
             }
         }
 
@@ -383,12 +383,12 @@ pimcore.object.classes.klass = Class.create({
             changeTypeAllowed = true;
         }
 
-        var childsAllowed = false;
+        var childrenAllowed = false;
         if (allowedTypes[parentType] && allowedTypes[parentType].length > 0) {
-            childsAllowed = true;
+            childrenAllowed = true;
         }
 
-        if (childsAllowed || changeTypeAllowed) {
+        if (childrenAllowed || changeTypeAllowed) {
             // get available layouts
             var layoutMenu = [];
             var layouts = Object.keys(pimcore.object.classes.layout);
@@ -457,7 +457,7 @@ pimcore.object.classes.klass = Class.create({
                 handler: this.copyNode.bind(this, tree, record)
             }));
 
-            if (childsAllowed) {
+            if (childrenAllowed) {
                 if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
                     menu.add(new Ext.menu.Item({
                         text: t('paste'),
@@ -1195,7 +1195,7 @@ pimcore.object.classes.klass = Class.create({
         };
         newNode = this.appendChild(newNode);
 
-        //to hide or show the expanding icon depending if childs are available or not
+        //to hide or show the expanding icon depending if children are available or not
         newNode.addListener('remove', function(node, removedNode, isMove) {
             if(!node.hasChildNodes()) {
                 node.set('expandable', false);
@@ -1426,12 +1426,12 @@ pimcore.object.classes.klass = Class.create({
             }
         }
 
-        data.childs = null;
+        data.children = null;
         if (node.childNodes.length > 0) {
-            data.childs = [];
+            data.children = [];
 
             for (var i = 0; i < node.childNodes.length; i++) {
-                data.childs.push(this.getNodeData(node.childNodes[i]));
+                data.children.push(this.getNodeData(node.childNodes[i]));
             }
         }
 

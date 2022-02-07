@@ -23,7 +23,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -39,7 +39,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "panel",
                         "layout": "",
@@ -55,7 +55,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": "",
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "<font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\">\u200b<b>OnlineShopOrder <\/b>as storage for created orders.&nbsp;<\/span><\/font><div><span style=\"font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif; font-size: 13px;\">\u200bMay be extended for specific use case.&nbsp;<\/span><br><\/div>",
@@ -73,7 +73,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {
@@ -89,7 +89,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
@@ -312,7 +312,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToManyObjectRelation",
                                         "width": "",
@@ -362,7 +362,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "fieldcollections",
                                         "allowedTypes": [
@@ -578,7 +578,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
@@ -694,7 +694,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "manyToOneRelation",
                                 "width": 400,
@@ -960,7 +960,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "input",
                                 "width": 400,
@@ -1166,7 +1166,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "Payment Information with<div>- Payment Provider: returned data of payment provider after actual transaction.<\/div><div>- Payment Information: information about every payment try of customer.&nbsp;<\/div>",
@@ -1184,7 +1184,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {
@@ -1247,7 +1247,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
@@ -1300,7 +1300,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "<b>Customized<\/b>&nbsp;gives you the possibility to add object bricks with additional data to your orders.",
@@ -1318,7 +1318,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {

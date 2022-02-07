@@ -657,7 +657,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
@@ -675,7 +685,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
             if ($asset && $asset->isAllowed('delete')) {
                 if ($asset->isLocked()) {
@@ -683,11 +694,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                         'success' => false,
                         'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId(),
                     ]);
-                } else {
-                    $asset->delete();
-
-                    return $this->adminJson(['success' => true]);
                 }
+
+                $asset->delete();
+
+                return $this->adminJson(['success' => true]);
             }
         }
 
