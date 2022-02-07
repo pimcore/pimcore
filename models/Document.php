@@ -1409,7 +1409,7 @@ class Document extends Element\AbstractElement
     {
         $includingUnpublished = (bool)($args[0] ?? false);
 
-        return 'document_list' . (!empty($includingUnpublished) ? '_' : '') . $includingUnpublished;
+        return 'document_list_' . ($includingUnpublished ? '1' : '0');
     }
 
     public function __clone()
