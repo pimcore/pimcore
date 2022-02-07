@@ -173,6 +173,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                                     if(record) {
                                         record.set('asset-selected', false);
                                     }
+
+                                    resultPanelStore.reload();
                                     
                                 }
 
@@ -247,7 +249,19 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         name: 'asset-select-checkbox',
                         text: t("select"),
                         dataIndex : 'asset-selected',
-                        sortable: false
+                        sortable: false,
+                        renderer: function (value, metaData, record, rowIndex) {
+                            var currentElementId = this.resultPanel.getStore().getAt(rowIndex).id;
+                            var rec = this.selectionStore.getData().find("id", currentElementId);
+
+                            var checkbox = new Ext.grid.column.Check();
+
+                            if (value || rec) {
+                                return checkbox.renderer(true);
+                            } else {
+                                return checkbox.renderer(false);
+                            }
+                        }.bind(this)
                     }
                 );
             }
