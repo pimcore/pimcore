@@ -2187,6 +2187,9 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             searchButton.disable();
             openButton.disable();
 
+            posterImageSearchButton.disable();
+            posterImageOpenButton.disable();
+
             poster.hide();
             poster.setValue("");
             form.getComponent("title").hide();
