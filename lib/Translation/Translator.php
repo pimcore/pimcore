@@ -280,7 +280,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
-        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
@@ -325,8 +324,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        // now check for custom fallback locales, only for shared translations
-        if ($lookForFallback && $domain == 'messages') {
+        // now check for custom fallback locales
+        if (
+            ($domain === Translation::DOMAIN_DEFAULT && empty($translated)) ||
+            ($domain === Translation::DOMAIN_ADMIN && $id === $translated)
+        ) {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
