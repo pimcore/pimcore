@@ -2187,8 +2187,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             searchButton.disable();
             openButton.disable();
 
-            posterImageSearchButton.disable();
-            posterImageOpenButton.disable();
+            posterImageSearchButton.hide();
+            posterImageOpenButton.hide();
 
             poster.hide();
             poster.setValue("");
@@ -2197,6 +2197,9 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             form.getComponent("description").hide();
             form.getComponent("description").setValue("");
         } else {
+            posterImageSearchButton.show();
+            posterImageOpenButton.show();
+            
             poster.show();
             form.getComponent("title").show();
             form.getComponent("description").show();
