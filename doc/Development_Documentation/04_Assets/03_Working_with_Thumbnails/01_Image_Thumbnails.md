@@ -230,7 +230,21 @@ $thumbnail->getHtml([
 
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
 
+## Lazy Loading 
 
+By default, the images are lazy loading. This can be changed by setting the value to "eager" in the imgAttribute:
+    
+```twig
+
+{{ image.thumbnail('example').html({
+    'imgAttributes': {
+        'loading': 'eager',
+    }
+}) }}
+    
+
+````
+    
 ## Using ICC Color Profiles for CMYK -> RGB 
 Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
 to RGB. 
