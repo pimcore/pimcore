@@ -36,7 +36,7 @@ class Version20211103055110 extends AbstractMigration
 
             if ($schema->hasTable($objectDatastoreTableRelation)) {
                 $this->addSql(
-                    "UPDATE $objectDatastoreTableRelation SET `type` = NULL WHERE `type` = 'object'"
+                    "UPDATE $objectDatastoreTableRelation SET `type` = 'object' WHERE `type` = NULL"
                 );
                 $this->addSql(
                     "ALTER TABLE $objectDatastoreTableRelation CHANGE COLUMN
