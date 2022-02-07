@@ -65,17 +65,6 @@ class SettingsController extends ReportsControllerBase
             $values = [];
         }
 
-        // special piwik handling - if the user is not allowed to save piwik settings
-        // force override the settings to write with the current config and ignore the
-        // submitted values
-        if (!$this->getAdminUser()->isAllowed('piwik_settings')) {
-            $currentConfig = Config::getReportConfig()->toArray();
-            $piwikConfig = $currentConfig['piwik'] ?? [];
-
-            // override piwik settings with current config
-            $values['piwik'] = $piwikConfig;
-        }
-
         try {
             $configWriter->write($values);
         } catch (Exception $e) {
