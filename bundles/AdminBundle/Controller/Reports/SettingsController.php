@@ -39,7 +39,8 @@ class SettingsController extends ReportsControllerBase
     public function getAction(Request $request)
     {
         $this->checkPermission('system_settings');
-
+        $config = $this->getConfig()->toArray();
+        
         $response = [
             'values' => $config,
             'config' => [],
