@@ -122,7 +122,7 @@ class SettingsController extends AdminController
             if ($sanitizedFileContent) {
                 $storage->write(self::CUSTOM_LOGO_PATH, $sanitizedFileContent);
             }else{
-                throw new \Exception('Sanitization failed, probably due badly formatted XML');
+                throw new \Exception('SVG Sanitization failed, probably due badly formatted XML. Filename:'.$sourcePath);
             }
         }else {
             $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));

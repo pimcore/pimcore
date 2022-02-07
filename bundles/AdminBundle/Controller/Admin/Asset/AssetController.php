@@ -449,7 +449,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             if ($sanitizedFileContent) {
                 File::put($sourcePath, $sanitizedFileContent);
             }else{
-                throw new \Exception('Sanitization failed, probably due badly formatted XML');
+                throw new \Exception('SVG Sanitization failed, probably due badly formatted XML. Filename:'.$sourcePath);
             }
         }
 
