@@ -171,6 +171,16 @@ final class DocumentEvents
      *
      * @var string
      */
+    const PRE_COPY = 'pimcore.document.preCopy';
+
+    /**
+     * Arguments:
+     *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
     const POST_COPY = 'pimcore.document.postCopy';
 
     /**

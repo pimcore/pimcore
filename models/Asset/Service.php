@@ -78,6 +78,10 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setObjectVar('id', null);
@@ -126,6 +130,10 @@ class Service extends Model\Element\Service
     public function copyAsChild($target, $source)
     {
         $source->getProperties();
+
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
 
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);

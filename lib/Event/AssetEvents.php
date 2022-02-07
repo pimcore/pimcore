@@ -15,6 +15,8 @@
 
 namespace Pimcore\Event;
 
+use Pimcore\Model\Asset;
+
 final class AssetEvents
 {
     /**
@@ -116,7 +118,17 @@ final class AssetEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
+     *  - base_element | Pimcore\Model\Asset | contains the base asset used in copying process
+     *
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const PRE_COPY = 'pimcore.asset.preCopy';
+
+    /**
+     * Arguments:
+     *  - base_element | Pimcore\Model\Asset | contains the base document used in copying process
      *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *

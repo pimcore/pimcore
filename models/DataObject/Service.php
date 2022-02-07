@@ -139,6 +139,10 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        // triggers actions before object cloning
+        $event = new DataObjectEvent($source);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+
         $new = $this->copy($source, $target);
 
         // add to store
@@ -181,6 +185,10 @@ class Service extends Model\Element\Service
 
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
+
+        // triggers actions before object cloning
+        $event = new DataObjectEvent($source);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
 
         $new = $this->copy($source, $target);
 
