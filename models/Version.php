@@ -367,9 +367,10 @@ final class Version extends AbstractModel
     public function loadData($renewReferences = true)
     {
         $storage = Storage::get('version');
+
         try {
             $data = $storage->read($this->getStorageFilename());
-        } catch(UnableToReadFile $e) {
+        } catch (UnableToReadFile $e) {
             $data = null;
         }
 
