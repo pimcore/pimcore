@@ -45,9 +45,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 $profiler->disable();
             }
 
-            if($request->hasSession()) {
+            if ($request->hasSession()) {
                 $session = $request->getSession();
-                if($session->isStarted()) {
+                if ($session->isStarted()) {
                     $session->save();
                 }
             }
@@ -55,8 +55,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             // disable debug error handler while including adminer
             $errorHandler = set_error_handler(function () {
             });
-
-
 
             chdir($this->adminerHome . 'adminer');
             include($this->adminerHome . 'adminer/index.php');

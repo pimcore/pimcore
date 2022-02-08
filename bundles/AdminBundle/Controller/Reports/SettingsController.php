@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Exception;
-use Pimcore\Config;
 use Pimcore\Config\ReportConfigWriter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +39,7 @@ class SettingsController extends ReportsControllerBase
     {
         $this->checkPermission('system_settings');
         $config = $this->getConfig()->toArray();
-        
+
         $response = [
             'values' => $config,
             'config' => [],
