@@ -30,14 +30,8 @@ framework:
             pimcore_newsletter: native://default
     messenger:
         transports:
-            pimcore_core:
-                dsn: "doctrine://default"
-                options:
-                    queue_name: pimcore_core
-            pimcore_maintenance:
-                dsn: "doctrine://default"
-                options:
-                    queue_name: pimcore_maintenance
+            pimcore_core: "doctrine://default?queue_name=pimcore_core"
+            pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
