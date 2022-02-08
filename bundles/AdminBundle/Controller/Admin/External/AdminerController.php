@@ -39,17 +39,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          *
          * @return Response
          */
-        public function adminerAction(?Profiler $profiler, Request $request)
+        public function adminerAction(?Profiler $profiler)
         {
             if ($profiler) {
                 $profiler->disable();
-            }
-
-            if ($request->hasSession()) {
-                $session = $request->getSession();
-                if ($session->isStarted()) {
-                    $session->save();
-                }
             }
 
             // disable debug error handler while including adminer
