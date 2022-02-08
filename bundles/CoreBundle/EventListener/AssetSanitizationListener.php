@@ -21,6 +21,7 @@ use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use enshrined\svgSanitize\Sanitizer;
+use Symfony\Component\Mime\MimeTypes;
 
 /**
  * @internal
@@ -41,13 +42,15 @@ class AssetSanitizationListener implements EventSubscriberInterface
     public function sanitizeAsset(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        if ($element instanceof Asset) {
+        if ($element instanceof Asset && $element->getType() === 'image') {
             $assetStream = $element->getStream();
-            if (isset($assetStream)) {
-                $mime = mime_content_type($assetStream);
 
-                if ($mime == 'image/svg+xml') {
-                    $sanitizedData = $this->sanitizeSVG($element->getData());
+            if (isset($assetStream)) {
+                $streamMetaData = stream_get_meta_data($assetStream);
+                $mime = MimeTypes::getDefault()->guessMimeType($streamMetaData['uri']);
+
+                if ($mime === 'image/svg+xml') {
+                    $sanitizedData = $this->sanitizeSVG(stream_get_contents($assetStream));
                     $element->setData($sanitizedData);
                 }
             }
