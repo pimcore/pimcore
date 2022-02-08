@@ -42,13 +42,15 @@ class AssetSanitizationListener implements EventSubscriberInterface
     {
         $element = $e->getElement();
         if ($element instanceof Asset) {
-            $mime = mime_content_type($element->getStream());
+            $assetStream = $element->getStream();
+            if (isset($assetStream)) {
+                $mime = mime_content_type($assetStream);
 
-            if ($mime == 'image/svg+xml') {
-                $sanitizedData = $this->sanitizeSVG($element->getData());
-                $element->setData($sanitizedData);
+                if ($mime == 'image/svg+xml') {
+                    $sanitizedData = $this->sanitizeSVG($element->getData());
+                    $element->setData($sanitizedData);
+                }
             }
-
         }
     }
 
