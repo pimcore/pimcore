@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 
 class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterface
 {
-    public function __construct(protected FieldCollectionDocBlockBuilderInterface $docBlockBuilder)
+    public function __construct(protected FieldDefinitionDocBlockBuilder $fieldDefinitionDocBlockBuilder)
     {
     }
 
@@ -32,7 +32,12 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
             $extendClass = '\\' . ltrim($extendClass, '\\');
         }
 
-        $infoDocBlock = $this->docBlockBuilder->buildDocBlock($definition);
+        $infoDocBlock = '/**' . "\n";
+        $infoDocBlock .= "Fields Summary:\n";
+
+        foreach ($definition->getFieldDefinitions() as $fieldDefinition) {
+            $infoDocBlock .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+        }
 
         // create class file
         $cd = '<?php';

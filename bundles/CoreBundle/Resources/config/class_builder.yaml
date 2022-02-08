@@ -5,18 +5,12 @@ services:
     Pimcore\DataObject\ClassBuilder\ClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ClassBuilder'
     Pimcore\DataObject\ClassBuilder\ClassBuilder:
         arguments:
-            - '@Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilderInterface'
-            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
             - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface'
             - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface'
 
     Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder'
     Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder:
-        arguments:
-            - '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface'
-
-    Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilder:
         arguments:
             - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
 
@@ -26,16 +20,8 @@ services:
     Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder'
     Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder: ~
 
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionDynamicMethodsBuilder: ~
-
     Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder'
     Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder: ~
-
-    Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilder'
-    Pimcore\DataObject\ClassBuilder\InfoDocBlockBuilder:
-        arguments:
-            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
 
     Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ListingClassBuilder'
     Pimcore\DataObject\ClassBuilder\ListingClassBuilder:

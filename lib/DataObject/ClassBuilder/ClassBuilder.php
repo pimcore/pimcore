@@ -20,8 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 class ClassBuilder implements ClassBuilderInterface
 {
     public function __construct(
-        protected InfoDocBlockBuilderInterface $infoDocBlockBuilder,
-        protected FieldDefinitionDynamicMethodsBuilderInterface $dynamicMethodsBuilder,
+        protected FieldDefinitionDocBlockBuilder $fieldDefinitionDocBlockBuilder,
         protected FieldDefinitionPropertiesBuilderInterface $propertiesBuilder,
         protected FieldDefinitionBuilderInterface $fieldDefinitionBuilder,
     )
@@ -39,7 +38,28 @@ class ClassBuilder implements ClassBuilderInterface
 
         $cd = '<?php';
         $cd .= "\n\n";
-        $cd .= $this->infoDocBlockBuilder->buildInfoDocBlock($classDefinition);
+        $cd .= '/**' . "\n";
+        $cd .= '* Inheritance: '.($classDefinition->getAllowInherit() ? 'yes' : 'no')."\n";
+        $cd .= '* Variants: '.($classDefinition->getAllowVariants() ? 'yes' : 'no')."\n";
+
+        if ($classDefinition->getDescription()) {
+            $description = str_replace(
+                array('/**', '*/', '//', "\n"),
+                array('', '', '', "\n* "),
+                $classDefinition->getDescription()
+            );
+
+            $cd .= '* '.$description."\n";
+        }
+
+        $cd .= "\n\n";
+        $cd .= "Fields Summary:\n";
+
+        foreach ($classDefinition->getFieldDefinitions() as $fieldDefinition) {
+            $cd .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+        }
+
+        $cd .= '*/';
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
@@ -50,8 +70,32 @@ class ClassBuilder implements ClassBuilderInterface
         $cd .= "/**\n";
         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'\Listing getList(array $config = [])'."\n";
 
-        foreach ($classDefinition->getFieldDefinitions() as $def) {
-            $cd .= $this->dynamicMethodsBuilder->buildFieldDefinition($classDefinition, $def);
+        foreach ($classDefinition->getFieldDefinitions() as $fieldDefinition) {
+            if ($fieldDefinition instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $classDefinition->getName()
+                    ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $classDefinition->getName()
+                    ).'|$fieldDefinition getBy'.ucfirst(
+                        $fieldDefinition->getName()
+                    ).'($field, $value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+
+                foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $classDefinition->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $classDefinition->getName()
+                        ).'|null getBy'.ucfirst(
+                            $localizedFieldDefinition->getName()
+                        ).'($value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                }
+            } elseif ($fieldDefinition->isFilterable()) {
+                $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $classDefinition->getName()
+                    ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $classDefinition->getName()
+                    ).'|null getBy'.ucfirst($fieldDefinition->getName()).'($value, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+            }
         }
 
         $cd .= "*/\n\n";
