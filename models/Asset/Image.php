@@ -106,7 +106,7 @@ class Image extends Model\Asset
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
             $reference = $thumbnail->getPathReference();
-            if(in_array($reference['type'], ['asset', 'thumbnail'])) {
+            if (in_array($reference['type'], ['asset', 'thumbnail'])) {
                 $image = $thumbnail->getLocalFile();
                 $imageWidth = $thumbnail->getWidth();
                 $imageHeight = $thumbnail->getHeight();
