@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
-use enshrined\svgSanitize\Sanitizer;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
@@ -436,17 +435,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('The filename of the asset is empty');
         }
 
-
-        // SVG Sanitize check
-        $fileMimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
-        if ($fileMimeType === 'image/svg+xml') {
-            try{
-                File::put($sourcePath,$this->sanitizeSVG($sourcePath));
-            } catch (\Exception $e) {
-                throw $e;
-            }
-        }
-
         $parentId = $request->get('parentId');
         $parentPath = $request->get('parentPath');
 
@@ -596,14 +584,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'success' => false,
                 'message' => sprintf($this->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
             ]);
-        }
-
-        if ($mimetype === 'image/svg+xml') {
-            try{
-                File::put($_FILES['Filedata']['tmp_name'],$this->sanitizeSVG($_FILES['Filedata']['tmp_name']));
-            } catch (\Exception $e) {
-                throw $e;
-            }
         }
 
         $stream = fopen($_FILES['Filedata']['tmp_name'], 'r+');
@@ -2410,25 +2390,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return $this->adminJson([
             'success' => true,
         ]);
-    }
-    /**
-     * @param string $sourcePath
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    protected function sanitizeSVG(string $sourcePath)
-    {
-        $fileContent = file_get_contents($sourcePath);
-
-        $sanitizer = new Sanitizer();
-        $sanitizedFileContent = $sanitizer->sanitize($fileContent);
-
-        if (!$sanitizedFileContent) {
-            throw new \Exception('SVG Sanitization failed, probably due badly formatted XML. Filename:'.$sourcePath);
-        }
-        return $sanitizedFileContent;
     }
 
     protected function checkForPharStreamWrapper($path)

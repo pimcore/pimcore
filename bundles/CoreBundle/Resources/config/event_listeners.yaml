@@ -147,3 +147,5 @@ services:
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
 
     Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\AssetSanitizationListener: ~
