@@ -60,6 +60,7 @@ class SearchBackendHandler implements BatchHandlerInterface
         }
     }
 
+    // @phpstan-ignore-next-line
     private function shouldFlush(): bool
     {
         return 50 <= \count($this->jobs);
