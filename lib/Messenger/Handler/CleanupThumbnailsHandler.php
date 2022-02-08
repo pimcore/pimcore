@@ -17,18 +17,37 @@ namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model\Asset;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 /**
  * @internal
  */
-class CleanupThumbnailsHandler
+class CleanupThumbnailsHandler implements BatchHandlerInterface
 {
-    public function __invoke(CleanupThumbnailsMessage $message)
+    use BatchHandlerTrait;
+
+    public function __invoke(CleanupThumbnailsMessage $message, Acknowledger $ack = null)
     {
-        $configClass = 'Pimcore\Model\Asset\\' . ucfirst($message->getType()) . '\Thumbnail\Config';
-        /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config|null $thumbConfig */
-        $thumbConfig = new $configClass();
-        $thumbConfig->setName($message->getName());
-        $thumbConfig->clearTempFiles();
+        return $this->handle($message, $ack);
+    }
+
+    private function process(array $jobs): void
+    {
+        foreach ($jobs as [$message, $ack]) {
+            try {
+
+                $configClass = 'Pimcore\Model\Asset\\' . ucfirst($message->getType()) . '\Thumbnail\Config';
+                /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config|null $thumbConfig */
+                $thumbConfig = new $configClass();
+                $thumbConfig->setName($message->getName());
+                $thumbConfig->clearTempFiles();
+
+                $ack->ack($message);
+            } catch (\Throwable $e) {
+                $ack->nack($e);
+            }
+        }
     }
 }

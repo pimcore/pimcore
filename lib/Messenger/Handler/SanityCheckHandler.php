@@ -21,17 +21,35 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 /**
  * @internal
  */
-class SanityCheckHandler
+class SanityCheckHandler implements BatchHandlerInterface
 {
-    public function __invoke(SanityCheckMessage $message)
+    use BatchHandlerTrait;
+
+    public function __invoke(SanityCheckMessage $message, Acknowledger $ack = null)
     {
-        $element = Service::getElementById($message->getType(), $message->getId(), true);
-        if ($element) {
-            $this->performSanityCheck($element);
+        return $this->handle($message, $ack);
+    }
+
+    private function process(array $jobs): void
+    {
+        foreach ($jobs as [$message, $ack]) {
+            try {
+                $element = Service::getElementById($message->getType(), $message->getId(), true);
+                if ($element) {
+                    $this->performSanityCheck($element);
+                }
+
+                $ack->ack($message);
+            } catch (\Throwable $e) {
+                $ack->nack($e);
+            }
         }
     }
 

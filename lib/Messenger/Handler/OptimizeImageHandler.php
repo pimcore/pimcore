@@ -19,29 +19,52 @@ use Pimcore\Image\ImageOptimizerInterface;
 use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 /**
  * @internal
  */
-class OptimizeImageHandler
+class OptimizeImageHandler implements BatchHandlerInterface
 {
+    use BatchHandlerTrait;
+
     public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
     {
     }
 
-    public function __invoke(OptimizeImageMessage $message)
+    public function __invoke(OptimizeImageMessage $message, Acknowledger $ack = null)
     {
-        $storage = Storage::get('thumbnail');
+        return $this->handle($message, $ack);
+    }
 
-        $path = $message->getPath();
+    private function process(array $jobs): void
+    {
+        foreach ($jobs as [$message, $ack]) {
+            try {
+                $storage = Storage::get('thumbnail');
 
-        if ($storage->fileExists($path)) {
-            $originalFilesize = $storage->fileSize($path);
-            $this->optimizer->optimizeImage($path);
+                $path = $message->getPath();
 
-            $this->logger->debug('Optimized image: '.$path.' saved '.formatBytes($originalFilesize - $storage->fileSize($path)));
-        } else {
-            $this->logger->debug('Skip optimizing of '.$path." because it doesn't exist anymore");
+                if ($storage->fileExists($path)) {
+                    $originalFilesize = $storage->fileSize($path);
+                    $this->optimizer->optimizeImage($path);
+
+                    $this->logger->debug('Optimized image: '.$path.' saved '.formatBytes($originalFilesize - $storage->fileSize($path)));
+                } else {
+                    $this->logger->debug('Skip optimizing of '.$path." because it doesn't exist anymore");
+                }
+
+                $ack->ack($message);
+            } catch (\Throwable $e) {
+                $ack->nack($e);
+            }
         }
+    }
+
+    private function shouldFlush(): bool
+    {
+        return 100 <= \count($this->jobs);
     }
 }
