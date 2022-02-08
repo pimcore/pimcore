@@ -39,6 +39,8 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
             $infoDocBlock .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
         }
 
+        $infoDocBlock .= '*/';
+
         $cd = '<?php';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;

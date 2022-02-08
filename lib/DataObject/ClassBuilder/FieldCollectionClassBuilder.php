@@ -39,6 +39,8 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
             $infoDocBlock .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
         }
 
+        $infoDocBlock .= '*/';
+
         // create class file
         $cd = '<?php';
         $cd .= "\n\n";
