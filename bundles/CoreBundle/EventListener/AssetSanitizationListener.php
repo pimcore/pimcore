@@ -42,7 +42,11 @@ class AssetSanitizationListener implements EventSubscriberInterface
     public function sanitizeAsset(ElementEventInterface $e)
     {
         $element = $e->getElement();
-        if ($element instanceof Asset && $element->getType() === 'image') {
+
+        if ($element instanceof Asset &&
+            $element->getType() === 'image' &&
+            $element->getDataChanged()
+        ) {
             $assetStream = $element->getStream();
 
             if (isset($assetStream)) {
