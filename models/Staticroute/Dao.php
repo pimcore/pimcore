@@ -33,7 +33,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         parent::configure([
             'containerConfig' => $config['staticroutes']['definitions'] ?? [],
             'settingsStoreScope' => 'pimcore_staticroutes',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
+            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
             'legacyConfigFile' => 'staticroutes.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
         ]);
