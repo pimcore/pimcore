@@ -34,7 +34,7 @@ services:
     Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder'
     Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder:
         arguments:
-            - '@Pimcore\DataObject\ClassBuilder\FieldCollectionDocBlockBuilderInterface'
+            - '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface'
 
     Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder'
     Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder: ~

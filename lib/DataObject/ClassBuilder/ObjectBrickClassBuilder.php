@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 
 class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 {
-    public function __construct(protected FieldCollectionDocBlockBuilderInterface $docBlockBuilder)
+    public function __construct(protected FieldDefinitionDocBlockBuilder $fieldDefinitionDocBlockBuilder)
     {
     }
 
@@ -32,7 +32,12 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
             $extendClass = '\\' . ltrim($extendClass, '\\');
         }
 
-        $infoDocBlock = $this->docBlockBuilder->buildDocBlock($definition);
+        $infoDocBlock = '/**' . "\n";
+        $infoDocBlock .= "Fields Summary:\n";
+
+        foreach ($definition->getFieldDefinitions() as $fieldDefinition) {
+            $infoDocBlock .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+        }
 
         $cd = '<?php';
         $cd .= "\n\n";
