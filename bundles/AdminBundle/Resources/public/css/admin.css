@@ -1834,6 +1834,10 @@ span.warning {
     overflow: hidden;
 }
 
+.pimcore_asset_image_preview img {
+    user-select: none;
+}
+
 .pimcore_asset_image_preview .marker {
     position: absolute;
     z-index: 10000;
@@ -1844,6 +1848,7 @@ span.warning {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
     cursor: pointer;
     margin: -50px 0 0 -50px;
+    user-select: none;
 }
 
 .pimcore_asset_image_preview .image_feature {
