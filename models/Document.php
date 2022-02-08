@@ -1407,10 +1407,9 @@ class Document extends Element\AbstractElement
      */
     protected function getListingCacheKey(array $args = [])
     {
-        $unpublished = (bool)($args[0] ?? false);
-        $cacheKey = (string)$unpublished;
+        $includingUnpublished = (bool)($args[0] ?? false);
 
-        return $cacheKey;
+        return 'document_list_' . ($includingUnpublished ? '1' : '0');
     }
 
     public function __clone()
