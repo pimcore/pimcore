@@ -237,15 +237,18 @@ class LogController extends AdminController implements KernelControllerEventInte
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
+
         if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-            $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
+            if(!file_exists($filePath)) {
+                $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
+            }
             $filePath = realpath($filePath);
             $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
         } else {
             $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
         }
 
-        if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
+        if (!str_starts_with($filePath, $fileObjectPath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');
         }
 
