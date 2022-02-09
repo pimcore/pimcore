@@ -39,9 +39,12 @@ This feature is currently supported by the following configurations:
 
 You can change the write target individually for each type by using environment variables.
 The following options are available: 
-- `symfony-config` - write configs as Symfony Config as YAML files to `/var/config/.../example.yaml`
-- `settings-store` - write configs to the `SettingsStore`
-- `disabled` - do not allow to edit/write configs at all
+- `symfony-config` 
+  - write configs as Symfony Config as YAML files to the configured storage directory
+- `settings-store` 
+  - write configs to the `SettingsStore`
+- `disabled` 
+  - do not allow to edit/write configs at all
 
 Available environment variables are: 
 ```bash
@@ -55,6 +58,23 @@ PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA=settings-store
 PIMCORE_WRITE_TARGET_STATICROUTES=settings-store
 PIMCORE_WRITE_TARGET_PERSPECTIVES=settings-store
 PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
+```
+#### Storage directory for symfony Config files
+
+The default storage directory for Symfony Config files is `/var/config/...`. However you can change
+the directory to any other directory using the corresponding environment variable:
+
+```bash
+PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
+PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS=/var/www/html/var/config/custom-reports
+PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS=/var/www/html/var/config/video-thumbnails
+PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES=/var/www/html/var/config/document-types
+PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT=/var/www/html/var/config/web-to-print
+PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES=/var/www/html/var/config/predefined-properties
+PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA=/var/www/html/var/config/predefined-asset-metadata
+PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES=/var/www/html/var/config/staticroutes
+PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES=/var/www/html/var/config/perspectives
+PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS=/var/www/html/var/config/custom-views
 ```
 
 #### Production environment with `symfony-config`
