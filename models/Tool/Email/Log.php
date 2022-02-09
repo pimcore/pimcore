@@ -393,7 +393,6 @@ class Log extends Model\AbstractModel
         return 'email-' . $this->getId() . '-txt.log';
     }
 
-
     /**
      * Returns the content of the html log file
      *
@@ -402,8 +401,8 @@ class Log extends Model\AbstractModel
     public function getHtmlLog()
     {
         if ($this->getEmailLogExistsHtml()) {
-
             $storage = Storage::get('email_log');
+
             return $storage->read($this->getHtmlLogFilename());
         }
 
@@ -419,6 +418,7 @@ class Log extends Model\AbstractModel
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
+
             return $storage->read($this->getTextLogFilename());
         }
 
