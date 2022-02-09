@@ -96,7 +96,6 @@ $convertedValue = $originalValue->convertTo(Unit::getByAbbreviation('mm'));
 // $convertedValue is a QuantityValue with value 3000 and unit mm
 ```
 or
-
 ```php
 $originalValue = new QuantityValue(3, Unit::getByAbbreviation('m')->getId());
 $convertedValue = $originalValue->convertTo('mm');
