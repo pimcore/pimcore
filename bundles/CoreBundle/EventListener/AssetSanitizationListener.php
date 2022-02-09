@@ -43,10 +43,7 @@ class AssetSanitizationListener implements EventSubscriberInterface
     {
         $element = $e->getElement();
 
-        if ($element instanceof Asset &&
-            $element->getType() === 'image' &&
-            $element->getDataChanged()
-        ) {
+        if ($element instanceof Asset\Image && $element->getDataChanged()) {
             $assetStream = $element->getStream();
 
             if (isset($assetStream)) {
