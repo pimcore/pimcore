@@ -125,7 +125,6 @@ class LibreOffice extends Ghostscript
 
         $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
         if (!$storage->fileExists($storagePath)) {
-
             $localAssetTmpPath = $asset->getLocalFile();
 
             // a list of all available filters is here:
