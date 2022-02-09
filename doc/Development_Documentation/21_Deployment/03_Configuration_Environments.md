@@ -61,7 +61,7 @@ PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
 ```
 #### Storage directory for symfony Config files
 
-The default storage directory for symfony Config files is `/var/config/...`. However you can change
+The default storage directory for Symfony Config files is `/var/config/...`. However you can change
 the directory to any other directory using the corresponding environment variable:
 
 ```bash
