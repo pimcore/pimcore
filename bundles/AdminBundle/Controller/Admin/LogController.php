@@ -239,7 +239,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         $filePath = $request->get('filePath');
 
         if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-            if(!file_exists($filePath)) {
+            if (!file_exists($filePath)) {
                 $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
             }
             $filePath = realpath($filePath);
