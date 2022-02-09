@@ -32,8 +32,8 @@ if($asset instanceof Asset\Video) {
       /*
          OUTPUTS:
          Array(
-             "mp4" => "/Sample%20Content/Videos/video-thumb__123/myVideoThumbnail...mp4",
-             "webm" => "/Sample%20Content/Videos/video-thumb__123/myVideoThumbnail...webm"
+             "mp4" => "/Sample%20Content/Videos/123/video-thumb__123__myVideoThumbnail...mp4",
+             "webm" => "/Sample%20Content/Videos/123/video-thumb__123__myVideoThumbnail...webm"
          )
       */
    } else if ($thumbnail["status"] == "inprogress")  {
@@ -61,8 +61,8 @@ However, you have to include a polyfill for all major browsers to support Adapti
 generates frontend:
 ```html
 <video width="100%" height="auto" controls="controls" class="pimcore_video" preload="auto" src="blob:http://xyz/01f91372-ddd8-4d3f-ac85-e420432d9704">
-    <source type="video/mp4" src="/videodata/video-thumb__955/campaignVideo/Volkswagen-Van.mp4">
-    <source type="application/dash+xml" src="/videodata/video-thumb__955/campaignVideo/Volkswagen-Van.mpd">
+    <source type="video/mp4" src="/videodata/955/video-thumb__955__campaignVideo/Volkswagen-Van.mp4">
+    <source type="application/dash+xml" src="/videodata/955/video-thumb__955__campaignVideo/Volkswagen-Van.mpd">
 </video>
 ```
 

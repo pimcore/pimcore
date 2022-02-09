@@ -117,8 +117,10 @@ class LibreOffice extends Ghostscript
             // nothing to do, delegate to libreoffice
         }
 
-        $storagePath = sprintf('%s/pdf-thumb__%s/libreoffice-document.png',
+        $storagePath = sprintf(
+            '%s/%s/pdf-thumb__%s__libreoffice-document.png',
             rtrim($asset->getRealPath(), '/'),
+            $asset->getId(),
             $asset->getId(),
         );
         $storage = Storage::get('asset_cache');

@@ -100,7 +100,7 @@ server {
     }
     
     # Thumbnails
-    location ~* .*/(image|video)-thumb__\d+/.* {
+    location ~* .*/(image|video)-thumb__\d+__.* {
         try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
@@ -375,7 +375,7 @@ server {
     }
     
     # Thumbnails
-    location ~* .*/(image|video)-thumb__\d+/.* {
+    location ~* .*/(image|video)-thumb__\d+__.* {
         try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
@@ -476,7 +476,7 @@ __Step 2: Replace the location that handles on-demand thumbnail generation__
 ```nginx
     # Pimcore On-Demand Thumbnail generation
     # with Rate-Limit.
-    location ~* .*/(image|video)-thumb__\d+/.* {
+    location ~* .*/(image|video)-thumb__\d+__.* {
         try_files /var/tmp/thumbnails$uri @imggen;
         expires 2w;
         access_log off;

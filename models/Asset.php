@@ -1989,7 +1989,7 @@ class Asset extends Element\AbstractElement
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                $storage->deleteDirectory($this->getRealPath().'image-thumb__'.$this->getId());
+                $storage->deleteDirectory($this->getRealPath().'/'.$this->getId());
             }
         }
     }
@@ -2047,7 +2047,7 @@ class Asset extends Element\AbstractElement
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
-                if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '\/@', $item->path())) {
+                if (preg_match('@(image|video|pdf)\-thumb__'.$this->getId().'__@', $item->path())) {
                     $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
                     if (!$storage->fileExists($replacePath)) {
                         $storage->move($item->path(), $replacePath);
@@ -2073,7 +2073,7 @@ class Asset extends Element\AbstractElement
     public function clearThumbnail($name)
     {
         try {
-            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . 'image-thumb__' . $this->getId() . '/' . $name);
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
         } catch (\Exception $e) {
             // noting to do
         }
