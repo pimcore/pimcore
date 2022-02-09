@@ -15,8 +15,10 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
@@ -75,6 +77,17 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         }
 
         return $this->unit;
+    }
+
+    /**
+     * @param Unit $unit target unit
+     * @return self
+     * @throws \Exception
+     */
+    public function convertTo(Unit $unit) {
+        /** @var UnitConversionService $converter */
+        $converter = Pimcore::getContainer()->get(UnitConversionService::class);
+        return $converter->convert($this, $unit);
     }
 
     abstract public function getValue();
