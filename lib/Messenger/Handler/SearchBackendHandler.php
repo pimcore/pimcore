@@ -35,7 +35,6 @@ class SearchBackendHandler implements BatchHandlerInterface
         return $this->handle($message, $ack);
     }
 
-    // @phpstan-ignore-next-line
     private function process(array $jobs): void
     {
         $jobs = $this->filterUnique($jobs, static function (SearchBackendMessage $message) {
@@ -65,7 +64,6 @@ class SearchBackendHandler implements BatchHandlerInterface
         }
     }
 
-    // @phpstan-ignore-next-line
     private function shouldFlush(): bool
     {
         return 50 <= \count($this->jobs);
