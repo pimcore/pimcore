@@ -52,6 +52,18 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
+                'filenamePrefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of images with filenames starting with (filenamePrefix)'
+            )
+            ->addOption(
+                'filenamePostfix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of images with filenames ending with (filenamePostfix)'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -98,6 +110,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list->setOrder('DESC');
 
         $parentConditions = [];
+        $conditionVariables = [];
 
         // get only images
         $conditions = ["type = 'image'"];
@@ -116,11 +129,21 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
+        if ($filenamePrefix = $input->getOption('filenamePrefix')) {
+            $conditions[] = '`filename` LIKE ?';
+            $conditionVariables[] = $filenamePrefix . '%';
+        }
+
+        if ($filenamePostfix = $input->getOption('filenamePostfix')) {
+            $conditions[] = '`filename` LIKE ?';
+            $conditionVariables[] = '%' . $filenamePostfix;
+        }
+
         if ($ids = $input->getOption('id')) {
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        $list->setCondition(implode(' AND ', $conditions));
+        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
 
         $assetIdsList = $list->loadIdList();
         $thumbnailList = [];
