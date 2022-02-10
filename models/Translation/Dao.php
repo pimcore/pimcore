@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * @internal
@@ -61,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setType($d['type']);
             }
         } else {
-            throw new \Exception("Translation-Key -->'" . $key . "'<-- not found");
+            throw new NotFoundResourceException("Translation-Key -->'" . $key . "'<-- not found");
         }
     }
 
