@@ -1,14 +1,13 @@
 # Upgrade Notes
 ## 10.3.0
-- **Important notice**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
+- **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
   required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
   the messages on default queue gets consumed.
-- [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
+- **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:thumbnails:migrate-folder-structure` after the update to copy existing thumbnails to new folder structure
 - **Important**: In preparation of upgrade to Symfony 6, return types must be added to methods which are extended from Symfony. In Pimcore, following changes are applied:
-  - Return type added to safe methods, which are `final` & marked as `internal`.
-  - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return
-    types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes.
-    Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
+    - Return type added to safe methods, which are `final` & marked as `internal`.
+    - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes. Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
+- [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 - [Data objects] Default values now get saved to versions -> Restoring a version also restores the default values (before those fields were null after restoring)
 
 ## 10.2.0
