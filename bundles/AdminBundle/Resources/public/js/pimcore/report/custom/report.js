@@ -210,7 +210,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         topBar.push("->");
 
-        var exportButton = {
+        topBar.push({
             xtype: 'splitbutton',
             text: t("export_csv"),
             iconCls: "pimcore_icon_export",
@@ -221,9 +221,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 iconCls: "pimcore_icon_export",
                 handler: exportBtnHandler.bind(this)
             }]
-        };
-
-        topBar.push(exportButton);
+        });
 
         this.grid = new Ext.grid.GridPanel({
             region: "center",
