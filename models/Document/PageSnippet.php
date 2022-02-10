@@ -128,6 +128,8 @@ abstract class PageSnippet extends Model\Document
      */
     protected function update($params = [])
     {
+        // update this
+        parent::update($params);
 
         // update elements
         $this->getEditables();
@@ -144,10 +146,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         // scheduled tasks are saved in $this->saveVersion();
-
-        // update this
-        parent::update($params);
-
         // save version if needed
         $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
     }
