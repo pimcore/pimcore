@@ -47,6 +47,18 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
+                'filenamePrefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of images with filenames starting with (filenamePrefix)'
+            )
+            ->addOption(
+                'filenamePostfix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of images with filenames ending with (filenamePostfix)'
+            )
+            ->addOption(
                 'force',
                 'f',
                 InputOption::VALUE_NONE,
@@ -60,6 +72,8 @@ class LowQualityImagePreviewCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $conditionVariables = [];
+
         // get only images
         $conditions = ["type = 'image'"];
 
@@ -77,6 +91,16 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
+        if ($filenamePrefix = $input->getOption('filenamePrefix')) {
+            $conditions[] = '`filename` LIKE ?';
+            $conditionVariables[] = $filenamePrefix . '%';
+        }
+
+        if ($filenamePostfix = $input->getOption('filenamePostfix')) {
+            $conditions[] = '`filename` LIKE ?';
+            $conditionVariables[] = '%' . $filenamePostfix;
+        }
+
         $generator = null;
         if ($input->getOption('generator')) {
             $generator = $input->getOption('generator');
@@ -85,7 +109,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         $force = $input->getOption('force');
 
         $list = new Asset\Listing();
-        $list->setCondition(implode(' AND ', $conditions));
+        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
         $total = $list->getTotalCount();
         $perLoop = 10;
         $progressBar = new ProgressBar($this->output, $total);
