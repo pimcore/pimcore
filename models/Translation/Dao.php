@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $key
      *
-     * @throws \Exception
+     * @throws NotFoundResourceException
      */
     public function getByKey($key)
     {
