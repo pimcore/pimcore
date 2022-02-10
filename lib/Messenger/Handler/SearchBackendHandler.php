@@ -28,6 +28,7 @@ use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 class SearchBackendHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
+    use HandlerHelperTrait;
 
     public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null)
     {
@@ -37,6 +38,10 @@ class SearchBackendHandler implements BatchHandlerInterface
     // @phpstan-ignore-next-line
     private function process(array $jobs): void
     {
+        $jobs = $this->filterUnique($jobs, static function (SearchBackendMessage $message) {
+            return $message->getType() . '-' . $message->getId();
+        });
+
         foreach ($jobs as [$message, $ack]) {
             try {
                 $element = Element\Service::getElementById($message->getType(), $message->getId());

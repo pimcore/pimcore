@@ -31,6 +31,7 @@ use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 class SanityCheckHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
+    use HandlerHelperTrait;
 
     public function __invoke(SanityCheckMessage $message, Acknowledger $ack = null)
     {
@@ -40,6 +41,10 @@ class SanityCheckHandler implements BatchHandlerInterface
     // @phpstan-ignore-next-line
     private function process(array $jobs): void
     {
+        $jobs = $this->filterUnique($jobs, static function (SanityCheckMessage $message) {
+            return $message->getType() . '-' . $message->getId();
+        });
+
         foreach ($jobs as [$message, $ack]) {
             try {
                 $element = Service::getElementById($message->getType(), $message->getId(), true);

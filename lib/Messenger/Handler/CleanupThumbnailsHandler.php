@@ -27,6 +27,7 @@ use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 class CleanupThumbnailsHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
+    use HandlerHelperTrait;
 
     public function __invoke(CleanupThumbnailsMessage $message, Acknowledger $ack = null)
     {
@@ -36,6 +37,10 @@ class CleanupThumbnailsHandler implements BatchHandlerInterface
     // @phpstan-ignore-next-line
     private function process(array $jobs): void
     {
+        $jobs = $this->filterUnique($jobs, static function (CleanupThumbnailsMessage $message) {
+            return $message->getType() . '-' . $message->getName();
+        });
+
         foreach ($jobs as [$message, $ack]) {
             try {
 
