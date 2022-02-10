@@ -741,7 +741,8 @@ class Asset extends Element\AbstractElement
                     $tempFilePath .= '.' . $pathInfo['extension'];
                 }
 
-                $storage->writeStream($tempFilePath, $src);
+                $tempFile = tmpfile();
+                File::put($tempFile, $src);
 
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
@@ -756,7 +757,8 @@ class Asset extends Element\AbstractElement
                     $storage->delete($path);
                 }
 
-                $storage->move($tempFilePath, $path);
+                $storage->writeStream($path, $tempFile);
+                unlink($tempFile);
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
