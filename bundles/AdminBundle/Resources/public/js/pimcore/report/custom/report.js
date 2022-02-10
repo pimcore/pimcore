@@ -222,7 +222,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 handler: exportBtnHandler.bind(this)
             }]
         };
-        pimcore.plugin.broker.fireEvent("reportExportMenu", exportButton, this.store);
 
         topBar.push(exportButton);
 
@@ -533,6 +532,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
                     this.panel.add(subPanel);
                     this.panel.updateLayout();
+
+                    pimcore.plugin.broker.fireEvent("postOpenReport", this.grid);
                 }.bind(this)
             });
         }

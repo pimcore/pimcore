@@ -116,7 +116,7 @@ corresponding method to the javascript plugin class.
 | prepareOnObjectTreeNodeClick         | before the data object is opened, after a tree node has been clicked. The node item is passed as parameter.     |          | 
 | preGetObjectFolder                   | before the data object grid folder configuration is loaded from the server. request configuration is passed.    |          |
 | preCreateObjectGrid                  | before the data object grid items are loaded from the server. request configuration are passed.                 |          |
-| reportExportMenu                     | fired when the export button in the report view gets generated, current button definition and report store are passed as arguments |          |
+| postOpenReport                       | fired when a report has been opened, report grid panel gets passed as argument |          |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.
