@@ -818,7 +818,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
-                    if (this.tab) {
+                    if (this.tab && this.tab.getData()) {
                         this.tab.unmask();
                     }
 
@@ -872,7 +872,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 tabIndex: currentTabIndex,
                 uiState: uiState
             };
-            this.tab = null;
 
             window.setTimeout(function (id) {
                 pimcore.helpers.openObject(id, "object", options);
