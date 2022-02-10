@@ -272,7 +272,7 @@ final class Translation extends AbstractModel
 
         try {
             $translation->getDao()->getByKey($id);
-        } catch (NotFoundResourceException) {
+        } catch (\Exception $e) {
             if (!$create) {
                 return null;
             }
@@ -281,15 +281,13 @@ final class Translation extends AbstractModel
             $translation->setCreationDate(time());
             $translation->setModificationDate(time());
 
-            $translations = [];
-            foreach ($languages as $lang) {
-                $translations[$lang] = '';
-            }
-            $translation->setTranslations($translations);
-            $translation->save();
-        } catch(\Exception) {
-            if (!$create) {
-                return null;
+            if($e instanceof NotFoundResourceException) {
+                $translations = [];
+                foreach ($languages as $lang) {
+                    $translations[$lang] = '';
+                }
+                $translation->setTranslations($translations);
+                $translation->save();
             }
         }
 
