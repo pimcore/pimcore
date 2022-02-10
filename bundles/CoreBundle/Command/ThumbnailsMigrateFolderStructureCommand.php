@@ -57,7 +57,10 @@ class ThumbnailsMigrateFolderStructureCommand extends AbstractCommand
         foreach ($thumbnailFiles as $thumbnailFile) {
             $targetPath = preg_replace('/image-thumb__(\d+)__(.+)$/', '$1/image-thumb__$1__$2', $thumbnailFile->path());
 
-            $storage->move($thumbnailFile->path(), $targetPath);
+            if(!$storage->fileExists($targetPath)) {
+                $storage->move($thumbnailFile->path(), $targetPath);
+            }
+
             $progressBar->advance();
         }
         $progressBar->finish();
