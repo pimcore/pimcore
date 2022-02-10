@@ -736,12 +736,12 @@ class Asset extends Element\AbstractElement
                 // Write original data to temp path for writing stream
                 // as original file will be deleted before overwrite
                 $pathInfo = pathinfo($this->getFilename());
-                $tempFilePath = $this->getRealPath() . uniqid('temp_');
+                $tempFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . $this->getRealPath() . uniqid('temp_');
                 if ($pathInfo['extension'] ?? false) {
                     $tempFilePath .= '.' . $pathInfo['extension'];
                 }
 
-                $storage->writeStream($tempFilePath, $src);
+                File::put($tempFilePath, $src);
 
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
@@ -756,7 +756,10 @@ class Asset extends Element\AbstractElement
                     $storage->delete($path);
                 }
 
-                $storage->move($tempFilePath, $path);
+                $tempHandle = fopen($tempFilePath, 'rb');
+                $storage->writeStream($path, $tempHandle);
+                fclose($tempHandle);
+                unlink($tempFilePath);
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
