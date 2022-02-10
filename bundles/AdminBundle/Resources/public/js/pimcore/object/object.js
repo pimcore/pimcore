@@ -818,7 +818,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
-                    if (this.tab && this.tab.getData()) {
+                    if (this.tab && (this.tab.getMaskTarget() || this.tab.el).getData()) {
                         this.tab.unmask();
                     }
 
