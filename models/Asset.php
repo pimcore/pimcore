@@ -733,7 +733,7 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                if(!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
                     // write stream directly if target file doesn't exist or if target is a remote storage
                     // this is because we don't have hardlinks there, so we don't need to consider them (see below)
                     $storage->writeStream($path, $src);
