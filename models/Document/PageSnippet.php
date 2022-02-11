@@ -134,7 +134,7 @@ abstract class PageSnippet extends Model\Document
 
         parent::update($params);
 
-        if (is_array($editables) && count($editables) > 0) {
+        if (is_array($editables) && count($editables)) {
             foreach ($editables as $name => $editable) {
                 if (!$editable->getInherited()) {
                     $editable->setDao(null);
