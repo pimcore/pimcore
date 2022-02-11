@@ -733,30 +733,31 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                // Write original data to temp path for writing stream
-                // as original file will be deleted before overwrite
-                $pathInfo = pathinfo($this->getFilename());
-                $tempFilePath = $this->getRealPath() . uniqid('temp_');
-                if ($pathInfo['extension'] ?? false) {
-                    $tempFilePath .= '.' . $pathInfo['extension'];
+                if(!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                    // write stream directly if target file doesn't exist or if target is a remote storage
+                    // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    $storage->writeStream($path, $src);
+                } else {
+                    // We don't open a stream on existing files, because they could be possibly used by versions
+                    // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
+                    // also the versioning information persists. Using the stream on the existing file would overwrite the
+                    // contents of the inode and therefore leads to wrong version data
+                    $pathInfo = pathinfo($this->getFilename());
+                    $tempFilePath = $this->getRealPath() . uniqid('temp_');
+                    if ($pathInfo['extension'] ?? false) {
+                        $tempFilePath .= '.' . $pathInfo['extension'];
+                    }
+
+                    $storage->writeStream($tempFilePath, $src);
+                    $storage->delete($path);
+                    $storage->move($tempFilePath, $path);
                 }
 
-                $storage->writeStream($tempFilePath, $src);
-
+                // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
-
-                if ($storage->fileExists($path)) {
-                    // We don't open a stream on existing files, because they could be possibly used by versions
-                    // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                    // versioning information persists. Using the stream on the existing file would overwrite the
-                    // contents of the inode and therefore leads to wrong version data
-                    $storage->delete($path);
-                }
-
-                $storage->move($tempFilePath, $path);
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
