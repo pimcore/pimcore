@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use enshrined\svgSanitize\Sanitizer;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
@@ -49,8 +50,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
-use enshrined\svgSanitize\Sanitizer;
-
 
 /**
  * @Route("/settings")
@@ -113,7 +112,6 @@ class SettingsController extends AdminController
             throw new \Exception('Unsupported file format');
         }
 
-
         $storage = Tool\Storage::get('admin');
 
         $fileMimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
@@ -125,10 +123,10 @@ class SettingsController extends AdminController
             $sanitizedFileContent = $sanitizer->sanitize($fileContent);
             if ($sanitizedFileContent) {
                 $storage->write(self::CUSTOM_LOGO_PATH, $sanitizedFileContent);
-            }else{
+            } else {
                 throw new \Exception('SVG Sanitization failed, probably due badly formatted XML. Filename:'.$sourcePath);
             }
-        }else {
+        } else {
             $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($sourcePath, 'rb'));
         }
 

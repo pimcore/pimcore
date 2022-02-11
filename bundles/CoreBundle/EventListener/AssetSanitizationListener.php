@@ -9,18 +9,17 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-
+use enshrined\svgSanitize\Sanitizer;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -65,7 +64,6 @@ class AssetSanitizationListener implements EventSubscriberInterface
      *
      * @throws \Exception
      */
-
     protected function sanitizeSVG(string $fileContent)
     {
         $sanitizer = new Sanitizer();
