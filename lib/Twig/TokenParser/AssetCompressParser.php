@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\TokenParser;
 
 use Pimcore\Twig\Node\AssetCompressNode;
+use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
@@ -29,7 +30,7 @@ use Twig\TokenParser\AbstractTokenParser;
  */
 class AssetCompressParser extends AbstractTokenParser
 {
-    public function parse(Token $token)
+    public function parse(Token $token): Node
     {
         $lineno = $token->getLine();
 
@@ -45,7 +46,7 @@ class AssetCompressParser extends AbstractTokenParser
         return $token->test('endpimcoreassetcompress');
     }
 
-    public function getTag()
+    public function getTag(): string
     {
         return 'pimcoreassetcompress';
     }
