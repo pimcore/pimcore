@@ -20,6 +20,7 @@ use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
@@ -34,11 +35,14 @@ final class Redirect extends AbstractModel
 
     const TYPE_AUTO_CREATE = 'auto_create';
 
+    const TYPE_STATUS_CODE = 'status_code';
+
     const TYPES = [
         self::TYPE_ENTIRE_URI,
         self::TYPE_PATH_QUERY,
         self::TYPE_PATH,
         self::TYPE_AUTO_CREATE,
+        self::TYPE_STATUS_CODE,
     ];
 
     /**
@@ -167,6 +171,18 @@ final class Redirect extends AbstractModel
         try {
             $redirect = new self();
             $redirect->getDao()->getByExactMatch($request, $site, $override);
+
+            return $redirect;
+        } catch (NotFoundException $e) {
+            return null;
+        }
+    }
+
+    public static function getByExceptionStatusCode(HttpException $exception, ?Site $site = null): ?self
+    {
+        try {
+            $redirect = new self();
+            $redirect->getDao()->getByExceptionStatusCode($exception, $site);
 
             return $redirect;
         } catch (NotFoundException $e) {

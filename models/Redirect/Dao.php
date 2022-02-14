@@ -21,6 +21,7 @@ use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @internal
@@ -87,6 +88,34 @@ class Dao extends Model\Dao\AbstractDao
             'typePathQuery' => Redirect::TYPE_PATH_QUERY,
             'typeEntireUri' => Redirect::TYPE_ENTIRE_URI,
             'typeAuto' => Redirect::TYPE_AUTO_CREATE,
+        ]);
+
+        if (!$data) {
+            throw new NotFoundException('No matching redirect found for the given request');
+        }
+
+        $this->assignVariablesToModel($data);
+    }
+
+    public function getByExceptionStatusCode(HttpException $exception, ?Site $site = null)
+    {
+        $siteId = $site ? $site->getId() : null;
+
+        $sql = 'SELECT * FROM redirects WHERE
+        (sourceStatusCode = :sourceStatusCode AND `type` = :typeStatusCode)
+        AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
+
+        if ($siteId) {
+            $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
+        } else {
+            $sql .= ' AND (sourceSite IS NULL OR sourceSite = 0)';
+        }
+
+        $sql .= ' ORDER BY `priority` DESC';
+
+        $data = $this->db->fetchRow($sql, [
+            'sourceStatusCode' => $exception->getStatusCode(),
+            'typeStatusCode' => Redirect::TYPE_STATUS_CODE,
         ]);
 
         if (!$data) {

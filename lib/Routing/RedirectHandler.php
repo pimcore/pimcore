@@ -15,6 +15,7 @@
 
 namespace Pimcore\Routing;
 
+use Embera\Provider\Reddit;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
@@ -26,6 +27,8 @@ use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -114,6 +117,30 @@ final class RedirectHandler implements LoggerAwareInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param ExceptionEvent $event
+     * @return void
+     */
+    public function checkForExceptionRedirect(ExceptionEvent $event): void
+    {
+        $request = $event->getRequest();
+        $throwable = $event->getThrowable();
+        $sourceSite = null;
+
+        if ($throwable instanceof HttpException) {
+            // get current site if available
+            if ($this->siteResolver->isSiteRequest($request)) {
+                $sourceSite = $this->siteResolver->getSite($request);
+            }
+
+            if ($redirect = Redirect::getByExceptionStatusCode($throwable, $sourceSite)) {
+                if (null !== $response = $this->buildRedirectResponse($redirect, $request)) {
+                    $event->setResponse($response);
+                }
+            }
+        }
     }
 
     private function matchRegexRedirect(

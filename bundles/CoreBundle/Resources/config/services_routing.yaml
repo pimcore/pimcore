@@ -54,3 +54,5 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: routing }
+            - { name: kernel.event_listener, event: kernel.exception, method: checkForExceptionRedirect }
+
