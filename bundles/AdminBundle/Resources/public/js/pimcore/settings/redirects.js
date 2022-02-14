@@ -711,7 +711,7 @@ pimcore.settings.redirects = Class.create({
                 ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/foo?key=value'],
                 ["path_query", t('redirects_type_path_query') + ': /foo?key=value'],
                 ["path", t('redirects_type_path') + ': /foo'],
-                ["status_code", t('status_code')],
+                ["status_code", t('redirects_type_status_code')],
                 ["auto_create", t('auto_create')],
             ]
         });
