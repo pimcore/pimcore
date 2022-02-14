@@ -65,6 +65,7 @@ pimcore.settings.redirects = Class.create({
                 {name: 'type', allowBlank: false},
                 {name: 'source', allowBlank: false},
                 {name: 'sourceSite'},
+                {name: 'sourceStatusCode'},
                 {name: 'target', allowBlank: false},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
@@ -149,6 +150,28 @@ pimcore.settings.redirects = Class.create({
                 renderer: function (value) {
                     return Ext.util.Format.htmlEncode(value);
                 }
+            },
+            {
+                text: t("source_status_code"),
+                flex: 200,
+                sortable: true,
+                dataIndex: 'sourceStatusCode',
+                editor: new Ext.form.ComboBox({
+                    store: [
+                        ["400", "400 Bad Request"],
+                        ["401", "401 Unauthorized"],
+                        ["403", "403 Forbidden"],
+                        ["404", "404 Not Found"],
+                        ["409", "409 Conflict"],
+                        ["410", "410 Gone"]
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    editable: false,
+                    listConfig: {minWidth: 200},
+                    forceSelection: true,
+                    triggerAction: "all"
+                })
             },
             {
                 text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable: true, dataIndex: "targetSite",
@@ -688,6 +711,7 @@ pimcore.settings.redirects = Class.create({
                 ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/foo?key=value'],
                 ["path_query", t('redirects_type_path_query') + ': /foo?key=value'],
                 ["path", t('redirects_type_path') + ': /foo'],
+                ["status_code", t('status_code')],
                 ["auto_create", t('auto_create')],
             ]
         });

@@ -66,6 +66,11 @@ final class Redirect extends AbstractModel
     protected $sourceSite;
 
     /**
+     * @var int|null
+     */
+    protected $sourceStatusCode;
+
+    /**
      * @var bool
      */
     protected $passThroughParameters = false;
@@ -218,6 +223,14 @@ final class Redirect extends AbstractModel
     }
 
     /**
+     * @return int|null
+     */
+    public function getSourceStatusCode(): ?int
+    {
+        return $this->sourceStatusCode;
+    }
+
+    /**
      * @return string
      */
     public function getTarget()
@@ -265,6 +278,19 @@ final class Redirect extends AbstractModel
     public function setSource($source)
     {
         $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * @param string $statusCode
+     * @return self
+     */
+    public function setSourceStatusCode($statusCode): self
+    {
+        if (in_array(intval($statusCode), [400, 401, 403, 404, 409, 410])) {
+            $this->sourceStatusCode = intval($statusCode);
+        }
 
         return $this;
     }
