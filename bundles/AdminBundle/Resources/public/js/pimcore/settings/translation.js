@@ -545,10 +545,12 @@ pimcore.settings.translation.domain = Class.create({
                     queryString += "&searchString=" + this.filterField.getValue() + "&domain=" + this.domain;
                     queryString += "&filter=" + proxy.encodeFilters(storeFilters);
                 }
+                pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
             }.bind(this));
+        } else {
+            pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
         }
 
-        pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
     },
 
     onAdd: function (btn, ev) {

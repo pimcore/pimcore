@@ -395,8 +395,10 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (null === $request) {
-            return null;
+        if (null === $request || !$request->getHost() || $request->getHost() === 'localhost') {
+            $domain = \Pimcore\Config::getSystemConfiguration('general')['domain'];
+
+            return $domain ?: null;
         }
 
         return $request->getHost();
@@ -444,7 +446,7 @@ final class Tool
         }
 
         // get it from System settings
-        if (!$hostname || $hostname == 'localhost') {
+        if (!$hostname || $hostname === 'localhost') {
             $systemConfig = Config::getSystemConfiguration('general');
             $hostname = $systemConfig['domain'] ?? null;
 
