@@ -39,7 +39,10 @@ class Document extends Model\Asset
         }
 
         parent::update($params);
-        $this->clearThumbnails();
+
+        if($params['isUpdate']) {
+            $this->clearThumbnails();
+        }
     }
 
     /**
