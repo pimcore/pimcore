@@ -21,7 +21,7 @@ Pimcore uses the `pimcore.cache.pool` Symfony cache pool, you can configure it a
 that the pool supports tags.
 
 ```yaml
-# config/cache.yaml
+# config/local/cache.yaml
 framework:
     cache:
         pools:
