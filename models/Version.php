@@ -128,11 +128,9 @@ final class Version extends AbstractModel
      */
     protected string $storageType;
 
-
-    protected ProxyVersionStorageAdapter $storageAdapter;
-    public function __construct()
+    public function __construct(protected ProxyVersionStorageAdapter $storageAdapter)
     {
-        $this->storageAdapter = new ProxyVersionStorageAdapter();
+
     }
 
     /**

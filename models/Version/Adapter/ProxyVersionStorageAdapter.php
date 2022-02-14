@@ -20,20 +20,16 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
     protected int $serializedDataThreshold;
     protected int $binaryDataThreshold;
     protected bool $storeInDatabase;
-    private array $adapters;
     private string $defaultAdapter;
     private string $fallbackAdapter;
 
-    public function __construct()
+    public function __construct(protected array $adapters)
     {
         $container = \Pimcore::getContainer();
         $this->serializedDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['serialized_data_character_threshold'];
         $this->binaryDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['binary_data_byte_threshold'];
         $this->defaultAdapter = $container->getParameter('pimcore.config')['assets']['versions']['default_version_storage_adapter'];
-        $this->fallbackAdapter = $container->getParameter('pimcore.config')['assets']['versions']['fallback_version_storage_adapter'];
-
-        $this->adapters = ['db' => new DatabaseVersionStorageAdapter(),
-        'fs' => new FileSystemVersionStorageAdapter()];
+        $this->fallbackAdapter = $container->getParameter('pimcore.config')['assets']['versions']['fallback_version_storage_adapter'] ?? null;
     }
 
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
@@ -102,8 +98,9 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         }
 
         //switch to fallback adapter if one of the thresholds was reached
-        if(strlen($metaData) >= $this->serializedDataThreshold ||
-                $size >= $this->binaryDataThreshold) {
+        if(isset($this->fallbackAdapter) === true  &&
+            strlen($metaData) >= $this->serializedDataThreshold ||
+            $size >= $this->binaryDataThreshold) {
             $adapter = $this->getAdapter($this->fallbackAdapter);
         }
 
