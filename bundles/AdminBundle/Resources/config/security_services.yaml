@@ -65,6 +65,13 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler:
+        public: true
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
     # user checker checking admin users for validity
     Pimcore\Bundle\AdminBundle\Security\User\UserChecker: ~
 
