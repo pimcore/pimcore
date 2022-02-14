@@ -74,6 +74,14 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
+            versioning:
+                    driver: pdo_mysql
+                    charset: UTF8MB4
+                    logging: false
+                    profiling: false
+                    default_table_options:
+                        charset: UTF8MB4
+                        collate: utf8mb4_general_ci
 
 # Monolog Configuration
 monolog:

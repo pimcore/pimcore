@@ -257,3 +257,6 @@ services:
     Pimcore\Image\Adapter\GD:
         shared: false
         public: true
+
+    Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter:
+        public: true
