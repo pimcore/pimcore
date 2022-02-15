@@ -752,9 +752,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset instanceof Asset\Image) {
             try {
-                if ($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
-                }
+                $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
 
                 // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
                 if ($asset->getCustomSetting('imageDimensionsCalculated')) {
@@ -796,16 +794,19 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @param Asset $asset
+     * @param array $params
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset)
+    protected function getThumbnailUrl(Asset $asset, array $params = [])
     {
-        $params = [
+        $defaults = [
             'id' => $asset->getId(),
             'treepreview' => true,
             '_dc' => $asset->getModificationDate(),
         ];
+
+        $params = array_merge($defaults, $params);
 
         if ($asset instanceof Asset\Image) {
             return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
@@ -1342,6 +1343,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($request->get('treepreview')) {
             $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            if($request->get('origin') === 'treeNode' && !$image->getThumbnail($thumbnailConfig)->exists()) {
+                throw $this->createNotFoundException('Asset not found');
+            }
         }
 
         $cropPercent = $request->get('cropPercent');

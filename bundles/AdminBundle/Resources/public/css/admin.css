@@ -907,7 +907,8 @@ span.warning {
 }
 
 #pimcore_tree_preview.hidden {
-    display:none;
+    position: absolute;
+    left: -2000px !important;
 }
 
 #pimcore_tree_preview iframe {
