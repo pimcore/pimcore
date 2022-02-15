@@ -207,8 +207,6 @@ services:
 
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
-    Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper: ~
-
     # Decorates Symfony Mailer
     Pimcore\Mail\Mailer:
         decorates: mailer
@@ -216,6 +214,8 @@ services:
             - '@Pimcore\Mail\Mailer.inner'
             - '@Pimcore\Mail\Plugins\RedirectingPlugin'
         public: true
+
+    Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper: ~
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true
