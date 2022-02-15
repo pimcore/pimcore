@@ -273,7 +273,7 @@ final class Translation extends AbstractModel
         try {
             $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
-            if(!$create && !$returnIdIfEmpty) {
+            if (!$create && !$returnIdIfEmpty) {
                 return null;
             }
 
@@ -281,7 +281,7 @@ final class Translation extends AbstractModel
             $translation->setCreationDate(time());
             $translation->setModificationDate(time());
 
-            if($create && $e instanceof NotFoundResourceException) {
+            if ($create && $e instanceof NotFoundResourceException) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';
