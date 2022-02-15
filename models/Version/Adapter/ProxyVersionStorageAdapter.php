@@ -49,7 +49,7 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
     protected function getStorageTypeForAdapter(VersionStorageAdapterInterface $adapter = null): string
     {
         if(isset($adapter) === false)
-            return $this->defaultAdapter['storageType'];
+            return $this->adapters[$this->defaultAdapter]['storageType'];
         else {
             foreach($this->adapters as $key => $value) {
                 if($value['class'] === $adapter) {

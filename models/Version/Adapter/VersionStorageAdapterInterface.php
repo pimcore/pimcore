@@ -23,7 +23,9 @@ interface VersionStorageAdapterInterface
      * @param string $cType
      * @param string $metaData
      * @param mixed|null $binaryDataStream
-     * @return array
+     * @param string|null $binaryFileHash
+     * @param int|null $binaryFileId
+     * @return string|null
      */
     public function save(int $id,
                          int $cId,

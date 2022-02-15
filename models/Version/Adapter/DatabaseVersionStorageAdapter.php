@@ -21,19 +21,14 @@ use Doctrine\DBAL\ParameterType;
 class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     CONST versionsTableName = "versionsData";
-    protected Connection $db;
 
-    public function __construct()
+    protected function getDb() : Connection
     {
         $dbConnectionString = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['database_connection'] ?? "";
         if(empty($dbConnectionString) === true) {
             throw new \Exception("configuration value 'database_connection' is not set");
         }
-        $this->db = \Pimcore::getContainer()->get($dbConnectionString);
-    }
-
-    protected function binaryFileHashExists(string $binaryFileHash) {
-
+        return \Pimcore::getContainer()->get($dbConnectionString);
     }
 
     public function save(int $id,
@@ -51,7 +46,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         }
 
         $sql = "insert into " . self::versionsTableName . "(id, cid, ctype, metaData, binaryData) values (:id, :cid, :ctype, :metaData, :binaryData)";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->getDb()->prepare($sql);
         $stmt->bindValue("id", $id);
         $stmt->bindValue("cid", $cId);
         $stmt->bindValue("ctype", $cType);
@@ -78,7 +73,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
         $sql = "SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->getDb()->prepare($sql);
         $stmt->bindValue("id", $id);
         $stmt->bindValue("cid", $cId);
         $stmt->bindValue("ctype", $cType);
@@ -120,7 +115,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                            int $binaryFileId = null): void
     {
         $sql = "delete from " . self::versionsTableName . " where id=:id and cid=:cid and ctype=:ctype";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->getDb()->prepare($sql);
         $stmt->bindValue("id", $id);
         $stmt->bindValue("cid", $cId);
         $stmt->bindValue("ctype", $cType);

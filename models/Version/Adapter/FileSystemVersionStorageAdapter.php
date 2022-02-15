@@ -15,14 +15,14 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
-use League\Flysystem\FileSystemOperator;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\File;
 use Pimcore\Tool\Storage;
 
 class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
 {
-    protected FileSystemOperator $storage;
+    protected FilesystemOperator $storage;
 
     public function __construct()
     {
