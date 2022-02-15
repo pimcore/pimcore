@@ -23,6 +23,7 @@ use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
@@ -273,13 +274,15 @@ final class Translation extends AbstractModel
         try {
             $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
-            if (!$create) {
+            if (!$create && !$returnIdIfEmpty) {
                 return null;
-            } else {
-                $translation->setKey($id);
-                $translation->setCreationDate(time());
-                $translation->setModificationDate(time());
+            }
 
+            $translation->setKey($id);
+            $translation->setCreationDate(time());
+            $translation->setModificationDate(time());
+
+            if ($create && $e instanceof NotFoundResourceException) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';
