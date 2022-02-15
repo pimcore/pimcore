@@ -260,6 +260,12 @@ services:
 
     Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter: ~
 
+    pimcore.version.storage.adapter.proxy:
+        class: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
+        arguments:
+            $adapters: "%adapters%"
+        public: true
+
     pimcore.version.storage.adapter.fs:
         class: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
         tags:

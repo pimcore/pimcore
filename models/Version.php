@@ -128,9 +128,11 @@ final class Version extends AbstractModel
      */
     protected string $storageType;
 
-    public function __construct(protected ProxyVersionStorageAdapter $storageAdapter)
-    {
+    protected ProxyVersionStorageAdapter $storageAdapter;
 
+    public function __construct()
+    {
+        $this->storageAdapter = \Pimcore::getContainer()->get("pimcore.version.storage.adapter.proxy");
     }
 
     /**

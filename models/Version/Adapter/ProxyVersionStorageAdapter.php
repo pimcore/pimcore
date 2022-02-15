@@ -19,7 +19,7 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected int $serializedDataThreshold;
     protected int $binaryDataThreshold;
-    protected bool $storeInDatabase;
+
     private string $defaultAdapter;
     private string $fallbackAdapter;
 
