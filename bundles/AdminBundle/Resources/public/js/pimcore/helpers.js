@@ -1114,6 +1114,7 @@ pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
 };
 
 pimcore.helpers.treeNodeThumbnailTimeout = null;
+pimcore.helpers.treeNodeThumbnailHideTimeout = null;
 pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
 pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
@@ -1125,10 +1126,15 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
             return;
         }
 
-        var uriPrefix = window.location.protocol + "//" + window.location.host;
         var thumbnail = record.data["thumbnail"];
 
         if (thumbnail) {
+
+            if (pimcore.helpers.treeNodeThumbnailHideTimeout) {
+                clearTimeout(pimcore.helpers.treeNodeThumbnailHideTimeout);
+                pimcore.helpers.treeNodeThumbnailHideTimeout = null;
+            }
+
             var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
             var position = treeEl.getOffsetsTo(Ext.getBody());
             position = position[0];
@@ -1141,69 +1147,33 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
 
             var container = Ext.get("pimcore_tree_preview");
             if (!container) {
-                container = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+                container = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" class="hidden"><div id="pimcore_tree_preview_thumb"></div></div>');
                 container = Ext.get(container);
-                container.addCls("hidden");
             }
 
-            // check for an existing iframe
-            var existingIframe = container.query("iframe")[0];
-            if (existingIframe) {
-                // stop loading the existing iframe (images, etc.)
-                var existingIframeWin = existingIframe.contentWindow;
-                if (typeof existingIframeWin["stop"] == "function") {
-                    existingIframeWin.stop();
-                } else if (typeof existingIframeWin.document["execCommand"] == "function") {
-                    existingIframeWin.document.execCommand('Stop');
-                }
-            }
+            var triggerTime = (new Date()).getTime();
+            var thumbContainer = Ext.get("pimcore_tree_preview_thumb");
+            thumbContainer.update('');
 
-            var styles = "left: " + position + "px";
-
-            // we need to create an iframe so that we can use window.stop();
-            var iframe = document.createElement("iframe");
-            iframe.setAttribute("frameborder", "0");
-            iframe.setAttribute("scrolling", "no");
-            iframe.setAttribute("marginheight", "0");
-            iframe.setAttribute("marginwidth", "0");
-            iframe.setAttribute("style", "width: 100%; height: 2500px;");
-
-            iframe.onload = function () {
-                this.contentWindow.document.body.innerHTML = '<style>' +
-                    'body { margin:0; padding: 0; } ' +
-                    '#thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; min-height: 300px; } ' +
-                    '#thumb.complete { border:none; border-radius: 0; background:none; max-width: 100%; }' +
-                    '#thumb.complete img { max-width: 100%; }' +
-                    '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
-                    '</style>' +
-                    '<div id="thumb"></div>';
-
-                var thumbContainer = this.contentWindow.document.getElementById('thumb');
+            pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function () {
                 let img = document.createElement("img");
-                img.setAttribute("src", uriPrefix + thumbnail);
+                img.src = thumbnail;
                 img.addEventListener('load', function (ev) {
 
-                    thumbContainer.classList.add('complete');
-                    var date = new Date();
-                    if (pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
-                        // open deferred
-                        pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function () {
-                            container.removeCls("hidden");
-                        }, 500);
-                    } else {
-                        // open immediately
+                    if(triggerTime > pimcore.helpers.treeNodeThumbnailLastClose) {
+                        thumbContainer.addCls('complete');
                         container.removeCls("hidden");
                     }
-
                 });
 
-                thumbContainer.appendChild(img);
-            };
+                img.addEventListener('error', function (ev) {
+                    container.addCls("hidden");
+                });
 
-            container.update(""); // remove all
-            container.clean(true);
-            container.dom.appendChild(iframe);
-            container.applyStyles(styles);
+                container.applyStyles("left: " + position + "px");
+                thumbContainer.dom.appendChild(img);
+
+            }, 300);
         }
     }
 };
@@ -1215,13 +1185,12 @@ pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
         pimcore.helpers.treeNodeThumbnailTimeout = null;
     }
 
-    var container = Ext.get("pimcore_tree_preview");
+    let container = Ext.get("pimcore_tree_preview");
     if (container) {
-        if (!container.hasCls("hidden")) {
-            var date = new Date();
-            pimcore.helpers.treeNodeThumbnailLastClose = date.getTime();
-        }
-        container.addCls("hidden");
+        pimcore.helpers.treeNodeThumbnailLastClose = (new Date()).getTime();
+        pimcore.helpers.treeNodeThumbnailHideTimeout = window.setTimeout(function () {
+            container.addCls("hidden");
+        }, 50);
     }
 };
 

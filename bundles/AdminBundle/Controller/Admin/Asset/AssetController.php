@@ -741,7 +741,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $tmpAsset['expanded'] = !$hasChildren;
             $tmpAsset['loaded'] = !$hasChildren;
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
-            $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+            $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
         } else {
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
@@ -765,7 +765,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         } elseif ($asset->getType() == 'video') {
             try {
                 if (\Pimcore\Video::isAvailable()) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -774,7 +774,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -1344,7 +1344,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($request->get('treepreview')) {
             $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
             if($request->get('origin') === 'treeNode' && !$image->getThumbnail($thumbnailConfig)->exists()) {
-                throw $this->createNotFoundException('Asset not found');
+                throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $image->getId()));
             }
         }
 
@@ -1402,7 +1402,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $stream = $folder->getPreviewImage();
                 if (!$stream) {
-                    $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/blank.png');
+                    throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $folder->getId()));
                 } else {
                     $response = new StreamedResponse(function () use ($stream) {
                         fpassthru($stream);
@@ -1475,6 +1475,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
 
+        if($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $video->getId()));
+        }
+
         $stream = $thumb->getStream();
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
@@ -1523,6 +1527,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $thumb = $document->getImageThumbnail($thumbnail, $page);
+
+        if($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $document->getId()));
+        }
 
         $stream = $thumb->getStream();
         if ($stream) {
