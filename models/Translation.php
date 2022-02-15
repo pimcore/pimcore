@@ -284,7 +284,6 @@ final class Translation extends AbstractModel
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
-                $translation->save();
             }
         }
 

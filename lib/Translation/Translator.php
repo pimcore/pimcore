@@ -18,6 +18,7 @@ namespace Pimcore\Translation;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -316,7 +317,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         }
                     }
 
-                    $t->save();
+                    TranslationEntriesDumper::addToSaveQueue($t);
                 }
 
                 // put it into the catalogue, otherwise when there are more calls to the same key during one process
