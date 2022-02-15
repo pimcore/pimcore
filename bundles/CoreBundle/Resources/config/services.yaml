@@ -258,12 +258,7 @@ services:
         shared: false
         public: true
 
-    Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter: ~
-
-    pimcore.version.storage.adapter.proxy:
-        class: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
-        arguments:
-            $adapters: "%adapters%"
+    Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter:
         public: true
 
     pimcore.version.storage.adapter.fs:

@@ -29,7 +29,9 @@ interface VersionStorageAdapterInterface
                          int $cId,
                          string $cType,
                          string $metaData,
-                         mixed $binaryDataStream = null) : array;
+                         mixed $binaryDataStream = null,
+                         string $binaryFileHash = null,
+                         int $binaryFileId = null) : ?string;
 
     /**
      * @param int $id

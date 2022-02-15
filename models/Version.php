@@ -132,7 +132,7 @@ final class Version extends AbstractModel
 
     public function __construct()
     {
-        $this->storageAdapter = \Pimcore::getContainer()->get("pimcore.version.storage.adapter.proxy");
+        $this->storageAdapter = \Pimcore::getContainer()->get("Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter");
     }
 
     /**
@@ -241,10 +241,19 @@ final class Version extends AbstractModel
 
         if($data instanceof Asset) {
             $dataStream = $data->getStream();
+            $ctx = hash_init('sha3-512');
+            hash_update_stream($ctx, $dataStream);
+            $this->binaryFileHash = hash_final($ctx);
         }
-        list('binaryFileHash' => $this->binaryFileHash, 'storageType' => $storageType) = $this->storageAdapter->save($this->getId(), $this->getCid(), $this->getCtype(), $dataString, $dataStream ?? null);
-        $this->setStorageType($storageType);
         $this->binaryFileId = $this->getDao()->getBinaryFileIdForHash($this->binaryFileHash);
+        $storageType = $this->storageAdapter->save($this->getId(),
+                                                    $this->getCid(),
+                                                    $this->getCtype(),
+                                                    $dataString,
+                                                    $this->binaryFileHash ? $data->getStream() : null,
+                                                    $this->binaryFileHash,
+                                                    $this->binaryFileId);
+        $this->setStorageType($storageType);
 
         //save again to update the storage column
         $this->getDao()->save();

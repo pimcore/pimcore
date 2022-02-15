@@ -103,18 +103,12 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
                          int $cId,
                          string $cType,
                          string $metaData,
-                         mixed $binaryDataStream = null): array {
-
-        $binaryFileHash = "";
+                         mixed $binaryDataStream = null,
+                         string $binaryFileHash = null,
+                         int $binaryFileId = null): ?string {
 
         $this->storage->write($this->getStorageFilename($id, $cId, $cType), $metaData);
-        if(isset($binaryDataStream) === true) {
-            $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType);
-
-            $ctx = hash_init('sha3-512');
-            hash_update_stream($ctx, $binaryDataStream);
-            $binaryFileHash = hash_final($ctx);
-        }
+        $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId);
 
         // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
         if (isset($binaryDataStream) === true &&
@@ -125,7 +119,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
             // old file first before opening a new stream -> see Asset::update()
             $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
-            $this->storage->write($this->getBinaryStoragePath($id, $cId, $cType), '1'); // temp file to determine if stream is local or not
+            $this->storage->write($binaryStoragePath, '1'); // temp file to determine if stream is local or not
             if ($useHardlinks && stream_is_local($this->getBinaryFileStream($id, $cId, $cType)) && stream_is_local($binaryDataStream)) {
                 $linkPath = stream_get_meta_data($this->getBinaryFileStream($id, $cId, $cType))['uri'];
                 $this->storage->delete($binaryStoragePath);
@@ -137,7 +131,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             }
         }
 
-        return ['binaryFileHash' => $binaryFileHash];
+        return null;
     }
 
     public function delete(int $id,

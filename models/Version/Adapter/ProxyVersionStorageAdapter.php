@@ -28,8 +28,8 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         $container = \Pimcore::getContainer();
         $this->serializedDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['serialized_data_character_threshold'];
         $this->binaryDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['binary_data_byte_threshold'];
-        $this->defaultAdapter = $container->getParameter('pimcore.config')['assets']['versions']['default_version_storage_adapter'];
-        $this->fallbackAdapter = $container->getParameter('pimcore.config')['assets']['versions']['fallback_version_storage_adapter'] ?? null;
+        $this->defaultAdapter = $container->getParameter('pimcore.config')['assets']['versions']['default_version_storage_adapter'] ?? "fs";
+        $this->fallbackAdapter = $container->getParameter('pimcore.config')['assets']['versions']['fallback_version_storage_adapter'] ?? "";
     }
 
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
@@ -40,19 +40,19 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         else {
             $adapter = $this->adapters[$storageType] ?? null;
         }
-        if(isset($adapter) === false) {
+        if(isset($adapter) === false || isset($adapter['class']) === false) {
             throw new \Exception("no adapter for storage type" . $storageType . " found.");
         }
-        return $adapter;
+        return $adapter['class'];
     }
 
     protected function getStorageTypeForAdapter(VersionStorageAdapterInterface $adapter = null): string
     {
         if(isset($adapter) === false)
-            return $this->defaultAdapter;
+            return $this->defaultAdapter['storageType'];
         else {
             foreach($this->adapters as $key => $value) {
-                if($value === $adapter) {
+                if($value['class'] === $adapter) {
                     return $key;
                 }
             }
@@ -88,27 +88,35 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
                          int $cId,
                          string $cType,
                          string $metaData,
-                         mixed $binaryDataStream = null) : array {
+                         mixed $binaryDataStream = null,
+                         string $binaryFileHash = null,
+                         int $binaryFileId = null) : string {
 
         $size = 0;
         $adapter = $this->getAdapter();
-        if(isset($binaryDataStream) === true) {
-            $stats = fstat($binaryDataStream);
-            $size = $stats['size'];
-        }
 
         //switch to fallback adapter if one of the thresholds was reached
-        if(isset($this->fallbackAdapter) === true  &&
-            strlen($metaData) >= $this->serializedDataThreshold ||
-            $size >= $this->binaryDataThreshold) {
-            $adapter = $this->getAdapter($this->fallbackAdapter);
+        if(empty($this->fallbackAdapter) === false) {
+            if(isset($binaryDataStream) === true) {
+                $stats = fstat($binaryDataStream);
+                $size = $stats['size'];
+            }
+            if(strlen($metaData) >= $this->serializedDataThreshold ||
+                $size >= $this->binaryDataThreshold) {
+                $adapter = $this->getAdapter($this->fallbackAdapter);
+            }
         }
 
-        $returnValues = $adapter->save($id, $cId, $cType, $metaData, $binaryDataStream);
-        //set the storage type based on the used adapter
-        $returnValues['storageType'] = $this->getStorageTypeForAdapter($adapter);
+        $adapter->save($id,
+                        $cId,
+                        $cType,
+                        $metaData,
+                        $binaryDataStream,
+                        $binaryFileHash,
+                        $binaryFileId);
 
-        return $returnValues;
+        //set the storage type based on the used adapter
+        return $this->getStorageTypeForAdapter($adapter);
     }
 
     public function delete(int $id,

@@ -32,20 +32,21 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->db = \Pimcore::getContainer()->get($dbConnectionString);
     }
 
+    protected function binaryFileHashExists(string $binaryFileHash) {
+
+    }
+
     public function save(int $id,
                          int $cId,
                          string $cType,
                          string $metaData,
-                         mixed $binaryDataStream = null): array
+                         mixed $binaryDataStream = null,
+                         string $binaryFileHash = null,
+                         int $binaryFileId = null): ?string
     {
-        $binaryFileHash = "";
 
-       if(isset($binaryDataStream) === true) {
-            $ctx = hash_init('sha3-512');
-            hash_update_stream($ctx, $binaryDataStream);
-            $binaryFileHash = hash_final($ctx);
-
-            rewind($binaryDataStream);
+        if(isset($binaryDataStream) === true &&
+            isset($binaryFileId) === false) {
             $contents = stream_get_contents($binaryDataStream);
         }
 
@@ -58,7 +59,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         $stmt->bindValue("binaryData", $contents ?? null, ParameterType::LARGE_OBJECT);
         $stmt->executeQuery();
 
-        return ['binaryFileHash' => $binaryFileHash];
+        return null;
     }
 
     /**
@@ -103,7 +104,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                                    string $storageType,
                                    int $binaryFileId = null): mixed
     {
-        $binaryData = $this->loadData($id, $cId, $cType, true);
+        $binaryData = $this->loadData($binaryFileId ?? $id, $cId, $cType, true);
         if(isset($binaryData) === true) {
             $fileName = tmpfile();
             fwrite($fileName, $binaryData);
