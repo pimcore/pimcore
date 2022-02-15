@@ -20,8 +20,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.id = intval(id);
         this.setType("image");
         this.addLoadingPanel();
-        this.previewPanelWidth = 800;
-        this.previewPanelHeight = 600;
 
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "image");
 
@@ -192,7 +190,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     handler: function () {
                         if(this.previewMode != 'image') {
                             this.initPreviewImage();
-                            this.setPreviewPanelSize();
                         }
                     }.bind(this)
                 }, {
@@ -439,26 +436,11 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     this.initPreviewVr();
                 } else {
                     this.initPreviewImage();
-                    this.setPreviewPanelSize(width - 340, height - 40);
                 }
             }.bind(this));
         }
 
         return this.displayPanel;
-    },
-
-    setPreviewPanelSize: function(width, height) {
-        if(typeof width == 'number') {
-            this.previewPanelWidth = width;
-        }
-        if(typeof height == 'number') {
-            this.previewPanelHeight = height;
-        }
-        let area = this.displayPanel.getEl().down('img');
-        if(area) {
-            area.setStyle('max-width', this.previewPanelWidth + "px");
-            area.setStyle('max-height', this.previewPanelHeight + "px");
-        }
     },
 
     initPreviewVr: function () {
@@ -480,6 +462,12 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewContainerId).setHtml(html);
 
         this.previewMode = 'image';
+
+        let area = this.displayPanel.getEl().down('img');
+        if(area) {
+            area.setStyle('max-width', (this.displayPanel.getWidth() - 340) + "px");
+            area.setStyle('max-height', (this.displayPanel.getHeight() - 40) + "px");
+        }
 
         if(this.data['customSettings']) {
             if (this.data['customSettings']['focalPointX']) {
