@@ -30,6 +30,11 @@ class Dao extends Model\Dao\AbstractDao
     const TABLE_PREFIX = 'translations_';
 
     /**
+     * @var array[]
+     */
+    private static $translationEntries = [];
+
+    /**
      * @return string
      */
     public function getDatabaseTableName(): string
@@ -70,9 +75,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        //Create Domain table if doesn't exist
-        $this->createOrUpdateTable();
-
         if ($this->model->getKey() !== '') {
             if (is_array($this->model->getTranslations())) {
                 foreach ($this->model->getTranslations() as $language => $text) {
@@ -84,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                     ];
-                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                    self::$translationEntries[] = $data;
                 }
             }
         }
@@ -150,7 +152,22 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createOrUpdateTable()
+    /**
+     * Dump new translations to DB
+     *
+     * @return void
+     */
+    public function dumpTranslationEntries()
+    {
+        //Create Domain table if doesn't exist
+        $this->createOrUpdateTable();
+
+        foreach (self::$translationEntries as $entry) {
+            $this->db->insertOrUpdate($this->getDatabaseTableName(), $entry);
+        }
+    }
+
+    private function createOrUpdateTable()
     {
         $table = $this->getDatabaseTableName();
 
