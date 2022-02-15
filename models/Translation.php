@@ -22,6 +22,7 @@ use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
@@ -284,6 +285,7 @@ final class Translation extends AbstractModel
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
+                TranslationEntriesDumper::addToSaveQueue($translation);
             }
         }
 
