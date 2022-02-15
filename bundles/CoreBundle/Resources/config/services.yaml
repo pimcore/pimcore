@@ -207,6 +207,8 @@ services:
 
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
+    Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper: ~
+
     # Decorates Symfony Mailer
     Pimcore\Mail\Mailer:
         decorates: mailer
