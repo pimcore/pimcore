@@ -16,7 +16,7 @@ class TranslationEntriesDumper
      */
     public static function addToSaveQueue(Translation $translation)
     {
-        self::$translations[] = $translation;
+        self::$translations[$translation->getKey()] = $translation;
     }
 
     public function dumpToDb()
