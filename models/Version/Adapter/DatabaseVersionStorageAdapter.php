@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Version\Adapter;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\ParameterType;
 
 class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
@@ -71,6 +72,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                                 string $cType,
                                 bool   $binaryData = false): mixed {
 
+        $data = null;
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
         $resultSet = $this->getDb()->executeQuery("SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype",
             [
@@ -79,11 +81,11 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                 'ctype' => $cType
             ]);
 
-        $result = $resultSet->fetchAssociative();
-        if(empty($result) === false) {
-            return $result[$dataColumn] ?? null;
+        if ($resultSet instanceof Result) {
+            $data = $resultSet->fetchOne();
+            $resultSet->free();
         }
-        return null;
+        return $data;
     }
 
     public function loadMetaData(int $id,
