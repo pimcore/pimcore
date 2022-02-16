@@ -465,6 +465,7 @@ final class Localizedfield extends Model\AbstractModel implements
      * @return mixed|null
      *
      * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false)
     {
