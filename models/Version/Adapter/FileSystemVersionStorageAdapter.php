@@ -32,7 +32,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     public function loadMetaData(int $id,
                                  int $cId,
                                  string $cType,
-                                 string $storageType) : ?string
+                                 string $storageType = null) : ?string
     {
 
         try {
@@ -47,7 +47,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     public function loadBinaryData(int $id,
                                    int $cId,
                                    string $cType,
-                                   string $storageType,
+                                   string $storageType = null,
                                    int $binaryFileId = null): mixed
     {
         $binaryStoragePath = $this->getBinaryStoragePath($id,

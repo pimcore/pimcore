@@ -39,27 +39,49 @@ interface VersionStorageAdapterInterface
      * @param int $id
      * @param int $cId
      * @param string $cType
-     * @param string $storageType
+     * @param string|null $storageType
      * @return ?string
      */
     public function loadMetaData(int $id,
                                  int $cId,
                                  string $cType,
-                                 string $storageType) : ?string;
+                                 string $storageType = null) : ?string;
 
     /**
      * @param int $id
      * @param int $cId
      * @param string $cType
-     * @param string $storageType
+     * @param string|null $storageType
      * @param int|null $binaryFileId
      * @return mixed
      */
     public function loadBinaryData(int    $id,
                                    int    $cId,
                                    string $cType,
-                                   string $storageType,
+                                   string $storageType = null,
                                    int    $binaryFileId = null): mixed;
+
+    /**
+     * @param int $id
+     * @param int $cId
+     * @param string $cType
+     * @param int|null $binaryFileId
+     * @return mixed
+     */
+    public function getBinaryFileStream(int    $id,
+                                        int    $cId,
+                                        string $cType,
+                                        int    $binaryFileId = null): mixed;
+
+    /**
+     * @param int $id
+     * @param int $cId
+     * @param string $cType
+     * @return mixed
+     */
+    public function getFileStream(int    $id,
+                                  int    $cId,
+                                  string $cType): mixed;
 
     /**
      * @param int $id

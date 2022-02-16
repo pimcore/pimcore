@@ -63,8 +63,9 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
     public function loadMetaData(int $id,
                                  int $cId,
                                  string $cType,
-                                 string $storageType) : ?string {
+                                 string $storageType = null) : ?string {
 
+        $storageType = $storageType ?? $this->defaultAdapter;
         return $this->getAdapter($storageType)->loadMetaData($id,
                                                             $cId,
                                                             $cType,
@@ -74,9 +75,10 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
     public function loadBinaryData(int $id,
                                    int $cId,
                                    string $cType,
-                                   string $storageType,
+                                   string $storageType = null,
                                    int $binaryFileId = null): mixed
     {
+        $storageType = $storageType ?? $this->defaultAdapter;
         return $this->getAdapter($storageType)->loadBinaryData($id,
                                                                 $cId,
                                                                 $cType,
@@ -130,5 +132,20 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
                                 $cType,
                                 $isBinaryHashInUse,
                                 $binaryFileId);
+    }
+
+    public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed
+    {
+        return $this->getAdapter()->getBinaryFileStream($id,
+                                                        $cId,
+                                                        $cType,
+                                                        $binaryFileId);
+    }
+
+    public function getFileStream(int $id, int $cId, string $cType): mixed
+    {
+        return $this->getAdapter()->getFileStream($id,
+                                                  $cId,
+                                                  $cType);
     }
 }

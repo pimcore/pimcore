@@ -404,6 +404,22 @@ final class Version extends AbstractModel
         return $data;
     }
 
+
+    public function getFileStream()
+    {
+        return $this->storageAdapter->getFileStream($this->getId(),
+                                                    $this->getCid(),
+                                                    $this->getCtype());
+    }
+
+    public function getBinaryFileStream()
+    {
+        return $this->storageAdapter->getBinaryFileStream($this->getId(),
+                                                          $this->getCid(),
+                                                          $this->getCtype(),
+                                                          $this->getBinaryFileId());
+    }
+
     /**
      * @return int
      */

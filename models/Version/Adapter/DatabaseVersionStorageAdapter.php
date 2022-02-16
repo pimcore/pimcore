@@ -91,24 +91,34 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     public function loadMetaData(int $id,
                                  int $cId,
                                  string $cType,
-                                 string $storageType): ?string
+                                 string $storageType = null): ?string
     {
         return $this->loadData($id, $cId, $cType);
+    }
+
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    protected function getStream(string $data): mixed
+    {
+        if($data) {
+            $fileName = tmpfile();
+            fwrite($fileName, $data);
+            return $fileName;
+        }
+        return null;
     }
 
     public function loadBinaryData(int $id,
                                    int $cId,
                                    string $cType,
-                                   string $storageType,
+                                   string $storageType = null,
                                    int $binaryFileId = null): mixed
     {
         $binaryData = $this->loadData($binaryFileId ?? $id, $cId, $cType, true);
-        if(isset($binaryData) === true) {
-            $fileName = tmpfile();
-            fwrite($fileName, $binaryData);
-            return $fileName;
-        }
-        return null;
+        return $this->getStream($binaryData);
+
     }
 
     public function delete(int $id,
@@ -123,5 +133,23 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                 'cid' => $cId,
                 'ctype' => $cType
             ]);
+    }
+
+    public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed
+    {
+        return $this->loadBinaryData($id,
+                                    $cId,
+                                    $cType,
+                                    null,
+                                    $binaryFileId);
+
+    }
+
+    public function getFileStream(int $id, int $cId, string $cType): mixed
+    {
+        $metaData = $this->loadMetaData($id,
+                                        $cId,
+                                        $cType);
+        return $this->getStream($metaData);
     }
 }
