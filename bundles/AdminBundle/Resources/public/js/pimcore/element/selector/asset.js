@@ -256,11 +256,16 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
                             var checkbox = new Ext.grid.column.Check();
 
-                            if (value || rec) {
+                            if (typeof value ==='undefined' && rec !== null){
+                                this.resultPanel.getStore().getAt(rowIndex).set('asset-selected', true);
                                 return checkbox.renderer(true);
-                            } else {
-                                return checkbox.renderer(false);
                             }
+                              
+                            if (value && rec === null) {
+                                return checkbox.renderer(true);
+                            }
+                            
+                            return checkbox.renderer(false);
                         }.bind(this)
                     }
                 );
