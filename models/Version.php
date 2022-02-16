@@ -124,9 +124,9 @@ final class Version extends AbstractModel
     protected bool $autoSave = false;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected string $storageType;
+    protected ?string $storageType = null;
 
     protected ProxyVersionStorageAdapter $storageAdapter;
 
