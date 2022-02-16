@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Translation\TranslationEntriesDumper;
+namespace Pimcore\Translation;
 
 use Pimcore\Model\Translation;
 

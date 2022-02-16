@@ -215,7 +215,7 @@ services:
             - '@Pimcore\Mail\Plugins\RedirectingPlugin'
         public: true
 
-    Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper: ~
+    Pimcore\Translation\TranslationEntriesDumper: ~
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true

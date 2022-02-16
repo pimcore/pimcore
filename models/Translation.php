@@ -22,7 +22,7 @@ use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
-use Pimcore\Translation\TranslationEntriesDumper\TranslationEntriesDumper;
+use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
