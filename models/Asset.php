@@ -2025,20 +2025,13 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldParent = dirname($oldPath);
-        $newParent = dirname($this->getRealFullPath());
+        $oldParent = dirname($oldPath).'/'.$this->getId();
+        $newParent = dirname($this->getRealFullPath()).'/'.$this->getId();
         $storage = Storage::get('thumbnail');
 
         try {
-            //remove source parent folder thumbnails
-            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
-            }
-
             //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
+            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => str_contains($attributes['path'], 'image-thumb_'));
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
                 $storage->delete($item['path']);
@@ -2055,9 +2048,9 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            //required in case if renaming or moving parent folder
+            //required in case of renaming or moving parent folder
             try {
-                $storage->move($oldPath, $this->getRealFullPath());
+                $storage->move($oldPath, $newParent);
             } catch (UnableToMoveFile $e) {
                 //update children, if unable to move parent
                 $this->updateChildPaths($storage, $oldPath);
