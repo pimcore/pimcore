@@ -472,6 +472,10 @@ final class Localizedfield extends Model\AbstractModel implements
         $context = $this->getContext();
         $fieldDefinition = $this->getFieldDefinition($name, $context);
 
+        if (!$fieldDefinition instanceof ClassDefinition\Data) {
+            throw new Model\Exception\NotFoundException(sprintf('Field "%s" does not exist in localizedfields', $name));
+        }
+
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
             $valueData->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $fieldDefinition);
