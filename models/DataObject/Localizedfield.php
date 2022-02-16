@@ -462,7 +462,9 @@ final class Localizedfield extends Model\AbstractModel implements
      * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
+     * @return mixed|null
+     *
+     * @throws \Exception
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false)
     {
@@ -559,7 +561,7 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
+        if ($fieldDefinition instanceof PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
             if (!$fieldDefinition instanceof PreGetDataInterface) {
                 trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
                     'Implement the %s interface instead.', PreGetDataInterface::class));
