@@ -45,7 +45,7 @@ class Video extends Model\Asset
             }
         }
 
-        if($params['isUpdate']) {
+        if ($params['isUpdate']) {
             $this->clearThumbnails();
         }
 

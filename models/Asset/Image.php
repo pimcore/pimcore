@@ -49,7 +49,7 @@ class Image extends Model\Asset
             }
         }
 
-        if($params['isUpdate']) {
+        if ($params['isUpdate']) {
             $this->clearThumbnails($this->clearThumbnailsOnSave);
             $this->clearThumbnailsOnSave = false; // reset to default
         }
