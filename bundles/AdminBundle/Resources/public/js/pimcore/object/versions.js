@@ -26,7 +26,7 @@ pimcore.object.versions = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['id', 'date', 'scheduled', 'note', {
+                    fields: ['id', { name: "date", type: 'date', dateFormat: 'timestamp' }, 'scheduled', 'note', {
                         name: 'name', convert: function (v, rec) {
                             if (rec.data) {
                                 if (rec.data.user) {
@@ -76,7 +76,7 @@ pimcore.object.versions = Class.create({
 
             var grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
-                plugins: [this.cellEditing],
+                plugins: [this.cellEditing, 'gridfilters'],
                 columns: [
                     {
                         text: t("published"),
@@ -100,13 +100,12 @@ pimcore.object.versions = Class.create({
                         editable: false
                     },
                     {
-                        text: t("date"), width: 150, sortable: true, dataIndex: 'date', renderer: function (d) {
-                            var date = new Date(d * 1000);
-                            return Ext.Date.format(date, "Y-m-d H:i:s");
+                        text: t("date"), width: 150, sortable: true, dataIndex: 'date', filter: 'date', renderer: function (d) {
+                            return Ext.Date.format(d, "Y-m-d H:i:s");
                         }
                     },
                     {text: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
-                    {text: t("user"), sortable: true, dataIndex: 'name'},
+                    {text: t("user"), sortable: true, dataIndex: 'name', filter: 'list'},
                     {
                         text: t("scheduled"),
                         width: 130,
@@ -120,7 +119,7 @@ pimcore.object.versions = Class.create({
                         },
                         editable: false
                     },
-                    {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode},
+                    {text: t("note"), sortable: true, dataIndex: 'note', filter: 'string', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode},
                     {
                         xtype: "checkcolumn",
                         text: t("auto_save"),
