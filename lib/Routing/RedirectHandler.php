@@ -129,6 +129,10 @@ final class RedirectHandler implements LoggerAwareInterface
         $throwable = $event->getThrowable();
         $sourceSite = null;
 
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+            return;
+        }
+
         if ($throwable instanceof HttpException) {
             // get current site if available
             if ($this->siteResolver->isSiteRequest($request)) {

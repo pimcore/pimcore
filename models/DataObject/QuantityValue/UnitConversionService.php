@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Psr\Container\ContainerInterface;
 
@@ -36,7 +37,7 @@ class UnitConversionService
      *
      * @throws \Exception
      */
-    public function convert(QuantityValue $quantityValue, Unit $toUnit)
+    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit)
     {
         $baseUnit = $toUnit->getBaseunit();
 
