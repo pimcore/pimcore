@@ -26,6 +26,8 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener: ~
 
+    Pimcore\Bundle\CoreBundle\EventListener\DumpTranslationEntriesListener: ~
+
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
     #

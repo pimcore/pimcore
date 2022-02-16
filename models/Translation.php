@@ -22,6 +22,7 @@ use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -287,7 +288,7 @@ final class Translation extends AbstractModel
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
-                $translation->save();
+                TranslationEntriesDumper::addToSaveQueue($translation);
             }
         }
 
