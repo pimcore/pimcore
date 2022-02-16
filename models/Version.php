@@ -736,9 +736,9 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getStorageType(): string
+    public function getStorageType(): ?string
     {
         return $this->storageType;
     }
