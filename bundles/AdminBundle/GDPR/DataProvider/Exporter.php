@@ -143,7 +143,7 @@ class Exporter
             $getter = 'get' . ucfirst($fd->getName());
             $value = $object->$getter();
 
-            if ($fd instanceof Data\Fieldcollections) {
+            if ($fd instanceof Data\Fieldcollections && $value instanceof Fieldcollection) {
                 self::doExportFieldcollection($object, $result, $value, $fd);
             } elseif ($fd instanceof Data\Objectbricks && $value instanceof Objectbrick) {
                 self::doExportBrick($object, $result, $value, $fd);
