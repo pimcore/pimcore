@@ -861,7 +861,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -1267,7 +1267,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
