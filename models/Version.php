@@ -243,16 +243,16 @@ final class Version extends AbstractModel
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
             hash_update_stream($ctx, $dataStream);
-            $this->binaryFileHash = hash_final($ctx);
+            $this->setBinaryFileHash(hash_final($ctx));
+            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->binaryFileHash));
         }
-        $this->binaryFileId = $this->getDao()->getBinaryFileIdForHash($this->binaryFileHash);
         $storageType = $this->storageAdapter->save($this->getId(),
                                                     $this->getCid(),
                                                     $this->getCtype(),
                                                     $dataString,
-                                                    $this->binaryFileHash ? $data->getStream() : null,
-                                                    $this->binaryFileHash,
-                                                    $this->binaryFileId);
+                                                    $this->getBinaryFileHash() ? $data->getStream() : null,
+                                                    $this->getBinaryFileHash(),
+                                                    $this->getBinaryFileId());
         $this->setStorageType($storageType);
 
         //save again to update the storage column

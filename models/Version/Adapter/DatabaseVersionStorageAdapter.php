@@ -45,14 +45,14 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
             $contents = stream_get_contents($binaryDataStream);
         }
 
-        $sql = "insert into " . self::versionsTableName . "(id, cid, ctype, metaData, binaryData) values (:id, :cid, :ctype, :metaData, :binaryData)";
-        $stmt = $this->getDb()->prepare($sql);
-        $stmt->bindValue("id", $id);
-        $stmt->bindValue("cid", $cId);
-        $stmt->bindValue("ctype", $cType);
-        $stmt->bindValue("metaData", $metaData);
-        $stmt->bindValue("binaryData", $contents ?? null, ParameterType::LARGE_OBJECT);
-        $stmt->executeQuery();
+        $this->getDb()->executeStatement("insert into " . self::versionsTableName . "(id, cid, ctype, metaData, binaryData) values (:id, :cid, :ctype, :metaData, :binaryData)",
+            [
+                'id' => $id,
+                'cid' => $cId,
+                'ctype' => $cType,
+                'metaData' => $metaData,
+                'binaryData' => $contents ?? null
+            ]);
 
         return null;
     }
@@ -72,12 +72,13 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                                 bool   $binaryData = false): mixed {
 
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
-        $sql = "SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype";
-        $stmt = $this->getDb()->prepare($sql);
-        $stmt->bindValue("id", $id);
-        $stmt->bindValue("cid", $cId);
-        $stmt->bindValue("ctype", $cType);
-        $resultSet = $stmt->executeQuery();
+        $resultSet = $this->getDb()->executeQuery("SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype",
+            [
+                'id' => $id,
+                'cid' => $cId,
+                'ctype' => $cType
+            ]);
+
         $result = $resultSet->fetchAssociative();
         if(empty($result) === false) {
             return $result[$dataColumn] ?? null;
@@ -114,11 +115,11 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                            bool $isBinaryHashInUse,
                            int $binaryFileId = null): void
     {
-        $sql = "delete from " . self::versionsTableName . " where id=:id and cid=:cid and ctype=:ctype";
-        $stmt = $this->getDb()->prepare($sql);
-        $stmt->bindValue("id", $id);
-        $stmt->bindValue("cid", $cId);
-        $stmt->bindValue("ctype", $cType);
-        $stmt->executeQuery();
+        $this->getDb()->executeStatement("delete from " . self::versionsTableName . " where id=:id and cid=:cid and ctype=:ctype",
+            [
+                'id' => $id,
+                'cid' => $cId,
+                'ctype' => $cType
+            ]);
     }
 }
