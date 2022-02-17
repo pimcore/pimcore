@@ -2032,7 +2032,7 @@ class Asset extends Element\AbstractElement
 
         try {
             //remove source parent folder preview thumbnails
-            $sourceFolder = self::getByPath($oldPath);
+            $sourceFolder = Folder::getByPath(dirname($oldPath));
             if($sourceFolder) {
                 $this->clearFolderThumbnailsOfParents($sourceFolder);
             }
