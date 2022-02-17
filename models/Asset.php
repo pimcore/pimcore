@@ -2038,7 +2038,7 @@ class Asset extends Element\AbstractElement
             }
 
             //remove target parent folder preview thumbnails
-            $this->clearFolderThumbnailsOfParents($this);
+            $this->clearFolderThumbnailsOfParents($this->getParent());
 
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
@@ -2068,9 +2068,10 @@ class Asset extends Element\AbstractElement
      */
     private function clearFolderThumbnailsOfParents(Folder $asset): void
     {
-        while ($asset = $asset->getParent()) {
+        do {
             $asset->clearThumbnails(true);
-        }
+            $asset = $asset->getParent();
+        } while ($asset !== null);
     }
 
     /**
