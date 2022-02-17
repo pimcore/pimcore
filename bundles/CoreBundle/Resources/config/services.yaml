@@ -260,6 +260,10 @@ services:
 
     Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter:
         public: true
+        arguments:
+            $byte_threshold: 500000
+            $defaultAdapter: fs
+            $fallbackAdapter: fs
 
     pimcore.version.storage.adapter.fs:
         class: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
@@ -268,5 +272,7 @@ services:
 
     pimcore.version.storage.adapter.db:
         class: Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter
+        arguments:
+            $database_connection: versioning
         tags:
             - { name: pimcore.version.storage.adapter, storageType: db }

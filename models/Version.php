@@ -29,7 +29,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
 
@@ -128,11 +128,12 @@ final class Version extends AbstractModel
      */
     protected ?string $storageType = null;
 
-    protected ProxyVersionStorageAdapter $storageAdapter;
+    protected VersionStorageAdapterInterface $storageAdapter;
 
     public function __construct()
     {
-        $this->storageAdapter = \Pimcore::getContainer()->get("Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter");
+        $delegate = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['ThresholdDelegate'];
+        $this->storageAdapter = \Pimcore::getContainer()->get($delegate);
     }
 
     /**

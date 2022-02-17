@@ -17,19 +17,12 @@ namespace Pimcore\Model\Version\Adapter;
 
 class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 {
-    protected int $serializedDataThreshold;
-    protected int $binaryDataThreshold;
-
-    private string $defaultAdapter;
-    private string $fallbackAdapter;
-
-    public function __construct(protected array $adapters)
+    public function __construct(protected array $adapters,
+                                protected int $byte_threshold,
+                                protected string $defaultAdapter,
+                                protected string $fallbackAdapter)
     {
-        $container = \Pimcore::getContainer();
-        $this->serializedDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['serialized_data_character_threshold'];
-        $this->binaryDataThreshold = $container->getParameter('pimcore.config')['assets']['versions']['binary_data_byte_threshold'];
-        $this->defaultAdapter = $container->getParameter('pimcore.config')['assets']['versions']['default_version_storage_adapter'] ?? "fs";
-        $this->fallbackAdapter = $container->getParameter('pimcore.config')['assets']['versions']['fallback_version_storage_adapter'] ?? "";
+
     }
 
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
@@ -103,8 +96,8 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
                 $stats = fstat($binaryDataStream);
                 $size = $stats['size'];
             }
-            if(strlen($metaData) >= $this->serializedDataThreshold ||
-                $size >= $this->binaryDataThreshold) {
+            if(strlen($metaData) >= $this->byte_threshold ||
+                $size >= $this->byte_threshold) {
                 $adapter = $this->getAdapter($this->fallbackAdapter);
             }
         }

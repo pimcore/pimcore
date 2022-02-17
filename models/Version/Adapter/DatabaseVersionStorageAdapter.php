@@ -25,11 +25,11 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 
     protected function getDb() : Connection
     {
-        $dbConnectionString = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['database_connection'] ?? "";
-        if(empty($dbConnectionString) === true) {
-            throw new \Exception("configuration value 'database_connection' is not set");
-        }
-        return \Pimcore::getContainer()->get($dbConnectionString);
+        return \Pimcore::getContainer()->get($this->database_connection);
+    }
+
+    public function __construct(protected string $database_connection)
+    {
     }
 
     public function save(int $id,
