@@ -1,6 +1,6 @@
 # Upgrade Notes
 ## 10.4.0
-- **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:thumbnails:migrate-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
+- **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
