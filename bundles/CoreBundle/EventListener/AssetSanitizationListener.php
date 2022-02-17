@@ -47,11 +47,14 @@ class AssetSanitizationListener implements EventSubscriberInterface
 
             if (isset($assetStream)) {
                 $streamMetaData = stream_get_meta_data($assetStream);
-                $mime = MimeTypes::getDefault()->guessMimeType($streamMetaData['uri']);
+                
+                if ($streamMetaData['uri'] !== 'php://temp') {
+                    $mime = MimeTypes::getDefault()->guessMimeType($streamMetaData['uri']);
 
-                if ($mime === 'image/svg+xml') {
-                    $sanitizedData = $this->sanitizeSVG(stream_get_contents($assetStream));
-                    $element->setData($sanitizedData);
+                    if ($mime === 'image/svg+xml') {
+                        $sanitizedData = $this->sanitizeSVG(stream_get_contents($assetStream));
+                        $element->setData($sanitizedData);
+                    }
                 }
             }
         }
