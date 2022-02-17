@@ -29,6 +29,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
+use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -2030,11 +2031,15 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
-            //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => str_contains($attributes['path'], 'image-thumb_'));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
+            //remove source parent folder thumbnails
+            $sourceFolder = Folder::getByPath($oldPath);
+            if($sourceFolder) {
+                $this->clearFolderThumbnailsOfParents($sourceFolder);
+            }
+
+            $targetFolder = Folder::getByPath($this->getRealFullPath());
+            if ($targetFolder) {
+                $this->clearFolderThumbnailsOfParents($targetFolder);
             }
 
             $contents = $storage->listContents($oldParent);
@@ -2057,6 +2062,16 @@ class Asset extends Element\AbstractElement
             }
         } catch (UnableToMoveFile $e) {
             // noting to do
+        }
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    private function clearFolderThumbnailsOfParents(Folder $asset): void
+    {
+        while ($asset = $asset->getParent()) {
+            $asset->clearThumbnails(true);
         }
     }
 
