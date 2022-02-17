@@ -575,7 +575,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= '/**' . "\n";
                     $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "|null\n";
                     $cd .= '*/' . "\n";
-                    $cd .= 'public function get' . ucfirst($brickKey) . '()' . "\n";
+                    $cd .= 'public function get' . ucfirst($brickKey) . '(bool $ignoreDeletedBricks = false)' . "\n";
                     $cd .= '{' . "\n";
 
                     if ($class->getAllowInherit()) {
@@ -584,7 +584,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t\t" . '$brickContainer = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t\t" . 'if(!empty($brickContainer)) {' . "\n";
                         $cd .= "\t\t\t\t" . '//check if parent object has brick, and if so, create an empty brick to enable inheritance' . "\n";
-                        $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "();\n";
+                        $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . '($ignoreDeletedBricks);'. "\n";
                         $cd .= "\t\t\t\t" . 'if (!empty($parentBrick)) {' . "\n";
                         $cd .= "\t\t\t\t\t" . '$brickType = "\\\Pimcore\\\Model\\\DataObject\\\Objectbrick\\\Data\\\" . ucfirst($parentBrick->getType());' . "\n";
                         $cd .= "\t\t\t\t\t" . '$brick = new $brickType($this->getObject());' . "\n";
@@ -598,6 +598,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";
                     }
+                    $cd .= "\t" . 'if(!$ignoreDeletedBricks &&' . "\n";
+                    $cd .= "\t\t" . 'isset($this->' . "$brickKey" . ') &&' . "\n";
+                    $cd .= "\t\t" . '$this->' . "$brickKey" .'->getDoDelete()) {' . "\n";
+                    $cd .= "\t\t\t" . 'return null;' . "\n";
+                    $cd .= "\t" . '}' . "\n";
                     $cd .= "\t" . 'return $this->' . $brickKey . ";\n";
 
                     $cd .= "}\n\n";
