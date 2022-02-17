@@ -70,7 +70,9 @@ have a look at the logs as a starting point when debugging installation issues.
 ## 5. Maintenance Cron Job
 
 ```bash
-*/5 * * * * /your/project/bin/console pimcore:maintenance
+# this command needs anyway executed via cron or similar task scheduler
+# it fills the message queue with the necessary tasks, which are then processed by messenger:consume
+*/5 * * * * /your/project/bin/console pimcore:maintenance --async
 
 # it's recommended to run the following command using a process control system like Supervisor
 # please follow the Symfony Messenger guide for a best practice production setup: 
