@@ -734,7 +734,7 @@ final class Configuration implements ConfigurationInterface
 
                             foreach ($config as $tenant => $tenantConfig) {
                                 /* merge attributes placeholders */
-                                foreach ($tenantConfig["attributes"] as $attribute => $attributeConfig) {
+                                foreach ($tenantConfig["attributes"] ?? [] as $attribute => $attributeConfig) {
                                     if (isset($attributeConfig['placeholders']) && is_array($attributeConfig['placeholders']) && count($attributeConfig['placeholders']) > 0) {
                                         $placeholders = $attributeConfig['placeholders'];
 
@@ -742,11 +742,13 @@ final class Configuration implements ConfigurationInterface
                                         unset($attributeConfig['placeholders']);
 
                                         $config[$tenant]['attributes'][$attribute] = $this->placeholderProcessor->mergePlaceholders($attributeConfig, $placeholders);
-
+                                        
                                         // re-add placeholders
                                         $config[$tenant]['attributes'][$attribute]['placeholders'] = $placeholders;
                                     }
                                 }
+
+                                $tenantConfig = $config[$tenant]; // update tenantConfig by attribute placeholders
                                 
                                 /* merge tenant placeholders */
                                 if (isset($tenantConfig['placeholders']) && is_array($tenantConfig['placeholders']) && count($tenantConfig['placeholders']) > 0) {
@@ -868,6 +870,19 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
+                                        ->arrayNode('placeholders')
+                                            ->info('Placeholder values in this attribute definition (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
+                                            ->example([
+                                                'placeholders' => [
+                                                    '%%locale%%' => 'de_AT',
+                                                ],
+                                            ])
+                                            ->defaultValue([])
+                                            ->beforeNormalization()
+                                                ->castToArray()
+                                            ->end()
+                                            ->prototype('scalar')->end()
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()
