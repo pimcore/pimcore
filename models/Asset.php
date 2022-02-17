@@ -2031,12 +2031,13 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('thumbnail');
 
         try {
-            //remove source parent folder thumbnails
+            //remove source parent folder preview thumbnails
             $sourceFolder = Folder::getByPath($oldPath);
             if($sourceFolder) {
                 $this->clearFolderThumbnailsOfParents($sourceFolder);
             }
 
+            //remove target parent folder preview thumbnails
             $targetFolder = Folder::getByPath($this->getRealFullPath());
             if ($targetFolder) {
                 $this->clearFolderThumbnailsOfParents($targetFolder);
