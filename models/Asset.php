@@ -2034,11 +2034,11 @@ class Asset extends Element\AbstractElement
             //remove source parent folder preview thumbnails
             $sourceFolder = Folder::getByPath(dirname($oldPath));
             if($sourceFolder) {
-                $this->clearFolderThumbnailsOfParents($sourceFolder);
+                $this->clearFolderThumbnails($sourceFolder);
             }
 
             //remove target parent folder preview thumbnails
-            $this->clearFolderThumbnailsOfParents($this->getParent());
+            $this->clearFolderThumbnails($this->getParent());
 
             $contents = $storage->listContents($oldParent);
             /** @var StorageAttributes $item */
@@ -2066,7 +2066,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param Asset $asset
      */
-    private function clearFolderThumbnailsOfParents(Folder $asset): void
+    private function clearFolderThumbnails(Folder $asset): void
     {
         do {
             $asset->clearThumbnails(true);
