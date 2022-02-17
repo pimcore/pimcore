@@ -2053,7 +2053,7 @@ class Asset extends Element\AbstractElement
 
             //required in case of renaming or moving parent folder
             try {
-                $storage->move($oldPath, $newParent);
+                $storage->move($oldThumbnailsPath, $newThumbnailsPath);
             } catch (UnableToMoveFile $e) {
                 //update children, if unable to move parent
                 $this->updateChildPaths($storage, $oldPath);
