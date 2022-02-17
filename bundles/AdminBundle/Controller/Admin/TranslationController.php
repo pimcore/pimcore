@@ -54,6 +54,8 @@ class TranslationController extends AdminController
      * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function importAction(Request $request, LocaleServiceInterface $localeService)
     {
@@ -69,6 +71,11 @@ class TranslationController extends AdminController
 
         if (!empty($tmpFile)) {
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
+            $realTmpFile = realpath($tmpFile);
+
+            if ($realTmpFile === false || !str_starts_with($realTmpFile, realpath(PIMCORE_SYSTEM_TEMP_DIRECTORY) . DIRECTORY_SEPARATOR)) {
+                throw $this->createNotFoundException(sprintf('Import file does not exist at path %s', $realTmpFile));
+            }
         } else {
             $tmpFile = $_FILES['Filedata']['tmp_name'];
         }
