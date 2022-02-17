@@ -2026,8 +2026,8 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldParent = dirname($oldPath).'/'.$this->getId();
-        $newParent = dirname($this->getRealFullPath()).'/'.$this->getId();
+        $oldThumbnailsPath= $oldPath . '/' . $this->getId();
+        $newThumbnailsPath= $this->getRealFullPath() . '/' . $this->getId();
         $storage = Storage::get('thumbnail');
 
         try {
