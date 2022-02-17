@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\StorageAttributes;
@@ -29,12 +29,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
-class ThumbnailsMigrateFolderStructureCommand extends AbstractCommand
+class ThumbnailsFolderStructureCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('pimcore:thumbnails:migrate-folder-structure')
+            ->setName('pimcore:migrate:thumbnails-folder-structure')
             ->setDescription('Change thumbnail folder structure to <asset storage>/<path to asset>/<asset id>/image-thumb__<asset id>__<thumbnail name>/<asset filename> instead of <asset storage>/<path to asset>/image-thumb__<asset id>__<thumbnail name>/<asset filename>');
     }
 

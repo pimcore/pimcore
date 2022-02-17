@@ -2026,8 +2026,8 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldThumbnailsPath= $oldPath . '/' . $this->getId();
-        $newThumbnailsPath= $this->getRealFullPath() . '/' . $this->getId();
+        $oldThumbnailsPath = $oldPath . '/' . $this->getId();
+        $newThumbnailsPath = $this->getRealFullPath() . '/' . $this->getId();
         $storage = Storage::get('thumbnail');
 
         try {
@@ -2040,11 +2040,11 @@ class Asset extends Element\AbstractElement
             //remove target parent folder preview thumbnails
             $this->clearFolderThumbnails($this);
 
-            $contents = $storage->listContents($oldParent);
+            $contents = $storage->listContents($oldThumbnailsPath);
             /** @var StorageAttributes $item */
             foreach ($contents as $item) {
                 if (preg_match('@(image|video|pdf)\-thumb__'.$this->getId().'__@', $item->path())) {
-                    $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
+                    $replacePath = ltrim($newThumbnailsPath, '/') .'/' . basename($item->path());
                     if (!$storage->fileExists($replacePath)) {
                         $storage->move($item->path(), $replacePath);
                     }
