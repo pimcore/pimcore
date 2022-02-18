@@ -31,8 +31,6 @@ pimcore.document.pages.preview = Class.create({
 
         if (this.layout == null) {
 
-            var iframeOnLoad = "pimcore.globalmanager.get('document_" + this.page.id + "').preview.iFrameLoaded()";
-
             // preview switcher only for pages not for emails
             var tbar = [];
             if(this.page.getType() == "page") {
@@ -124,9 +122,16 @@ pimcore.document.pages.preview = Class.create({
                 scrollable: false,
                 bodyStyle: "background:#323232;",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" onload="' + iframeOnLoad + '" frameborder="0" ' +
+                html: '<iframe src="about:blank" frameborder="0" ' +
                     'style="width: 100%;background: #fff;" id="' + this.iframeName + '" ' +
-                    'name="' + this.iframeName + '"></iframe>'
+                    'name="' + this.iframeName + '"></iframe>',
+                listeners: {
+                    afterrender: function () {
+                        Ext.get(this.getIframe()).on('load', function () {
+                            this.iFrameLoaded();
+                        }.bind(this));
+                    }.bind(this)
+                }
             });
 
             this.timeSlider = Ext.create('Ext.slider.Single', {
