@@ -38,7 +38,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
-                         int $binaryFileId = null): ?string
+                         int $binaryFileId = null): void
     {
 
         if(isset($binaryDataStream) === true &&
@@ -54,8 +54,6 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                 'metaData' => $metaData,
                 'binaryData' => $contents ?? null
             ]);
-
-        return null;
     }
 
     /**
@@ -151,5 +149,10 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                                         $cId,
                                         $cType);
         return $this->getStream($metaData);
+    }
+
+    public function getStorageType(string $metaData, mixed $binaryDataStream = null): string
+    {
+        return "db";
     }
 }

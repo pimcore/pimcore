@@ -262,7 +262,7 @@ services:
         public: true
         arguments:
             $byte_threshold: 500000
-            $defaultAdapter: fs
+            $defaultAdapter: db
             $fallbackAdapter: fs
 
     pimcore.version.storage.adapter.fs:
@@ -273,6 +273,6 @@ services:
     pimcore.version.storage.adapter.db:
         class: Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter
         arguments:
-            $database_connection: versioning
+            $database_connection: doctrine.dbal.versioning_connection
         tags:
             - { name: pimcore.version.storage.adapter, storageType: db }

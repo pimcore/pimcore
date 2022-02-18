@@ -105,7 +105,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
-                         int $binaryFileId = null): ?string {
+                         int $binaryFileId = null): void {
 
         $this->storage->write($this->getStorageFilename($id, $cId, $cType), $metaData);
         $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId);
@@ -130,8 +130,6 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
                 $this->storage->writeStream($binaryStoragePath, $binaryDataStream);
             }
         }
-
-        return null;
     }
 
     public function delete(int $id,
@@ -152,5 +150,10 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         if ($this->storage->fileExists($binaryStoragePath) && !$isBinaryHashInUse) {
             $this->storage->delete($binaryStoragePath);
         }
+    }
+
+    public function getStorageType(string $metaData, mixed $binaryDataStream = null): string
+    {
+        return "fs";
     }
 }

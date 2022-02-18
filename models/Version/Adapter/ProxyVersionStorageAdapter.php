@@ -79,29 +79,34 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
                                                                 $binaryFileId);
     }
 
+    public function getStorageType(string $metaData,
+                                   mixed $binaryDataStream = null): string {
+        if(empty($this->fallbackAdapter) === false) {
+            $binarySize = 0;
+            $metaDataSize = strlen($metaData);
+
+            if (isset($binaryDataStream) === true) {
+                $stats = fstat($binaryDataStream);
+                $binarySize = $stats['size'];
+            }
+
+            if ($metaDataSize > $this->byte_threshold ||
+                $binarySize > $this->byte_threshold) {
+                return $this->fallbackAdapter;
+            }
+        }
+        return $this->defaultAdapter;
+    }
+
     public function save(int $id,
                          int $cId,
                          string $cType,
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
-                         int $binaryFileId = null) : string {
+                         int $binaryFileId = null) : void {
 
-        $size = 0;
-        $adapter = $this->getAdapter();
-
-        //switch to fallback adapter if one of the thresholds was reached
-        if(empty($this->fallbackAdapter) === false) {
-            if(isset($binaryDataStream) === true) {
-                $stats = fstat($binaryDataStream);
-                $size = $stats['size'];
-            }
-            if(strlen($metaData) >= $this->byte_threshold ||
-                $size >= $this->byte_threshold) {
-                $adapter = $this->getAdapter($this->fallbackAdapter);
-            }
-        }
-
+        $adapter = $this->getAdapter($this->getStorageType($metaData, $binaryDataStream));
         $adapter->save($id,
                         $cId,
                         $cType,
@@ -109,9 +114,6 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
                         $binaryDataStream,
                         $binaryFileHash,
                         $binaryFileId);
-
-        //set the storage type based on the used adapter
-        return $this->getStorageTypeForAdapter($adapter);
     }
 
     public function delete(int $id,

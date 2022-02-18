@@ -198,6 +198,7 @@ final class Version extends AbstractModel
             return;
         }
 
+        $isAsset = false;
         if (!$this->date) {
             $this->setDate(time());
         }
@@ -237,27 +238,30 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
-        $id = $this->getDao()->save();
-        $this->setId($id);
-
         if($data instanceof Asset) {
+            $isAsset = true;
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
             hash_update_stream($ctx, $dataStream);
             $this->setBinaryFileHash(hash_final($ctx));
+        }
+
+        $this->setStorageType($this->storageAdapter->getStorageType($dataString, $isAsset ? $data->getStream() : null));
+
+        if($isAsset) {
             $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->binaryFileHash));
         }
-        $storageType = $this->storageAdapter->save($this->getId(),
-                                                    $this->getCid(),
-                                                    $this->getCtype(),
-                                                    $dataString,
-                                                    $this->getBinaryFileHash() ? $data->getStream() : null,
-                                                    $this->getBinaryFileHash(),
-                                                    $this->getBinaryFileId());
-        $this->setStorageType($storageType);
 
-        //save again to update the storage column
-        $this->getDao()->save();
+        $id = $this->getDao()->save();
+        $this->setId($id);
+
+        $this->storageAdapter->save($this->getId(),
+                                    $this->getCid(),
+                                    $this->getCtype(),
+                                    $dataString,
+                                    $isAsset ? $data->getStream() : null,
+                                    $this->getBinaryFileHash(),
+                                    $this->getBinaryFileId());
 
         \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
     }

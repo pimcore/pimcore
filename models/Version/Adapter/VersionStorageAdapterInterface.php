@@ -18,6 +18,14 @@ namespace Pimcore\Model\Version\Adapter;
 interface VersionStorageAdapterInterface
 {
     /**
+     * @param string $metaData
+     * @param mixed|null $binaryDataStream
+     * @return string
+     */
+    public function getStorageType(string $metaData,
+                                   mixed  $binaryDataStream = null): string;
+
+    /**
      * @param int $id
      * @param int $cId
      * @param string $cType
@@ -33,7 +41,7 @@ interface VersionStorageAdapterInterface
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
-                         int $binaryFileId = null) : ?string;
+                         int $binaryFileId = null) : void;
 
     /**
      * @param int $id
