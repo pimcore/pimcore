@@ -25,6 +25,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Pimcore\Tool\Session;
 use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
 use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
@@ -36,6 +37,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -61,23 +63,17 @@ class TranslationController extends AdminController
         $admin = $domain == Translation::DOMAIN_ADMIN;
 
         $dialect = $request->get('csvSettings', null);
-        $tmpFile = $request->get('importFile');
+        $session = Session::get('pimcore_importconfig');
+        $tmpFile = $session->get('translation_import_file');
 
         if ($dialect) {
             $dialect = json_decode($dialect);
         }
 
-        if (!empty($tmpFile)) {
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
-        } else {
-            $tmpFile = $_FILES['Filedata']['tmp_name'];
-        }
-
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         $merge = $request->get('merge');
-
-        $overwrite = $merge ? false : true;
+        $overwrite = !$merge;
 
         $allowedLanguages = $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations();
         if ($admin) {
@@ -138,6 +134,10 @@ class TranslationController extends AdminController
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
         File::put($importFile, $tmpData);
 
+        Session::useSession(function (AttributeBagInterface $session) use ($importFile) {
+            $session->set('translation_import_file', $importFile);
+        }, 'pimcore_importconfig');
+
         // determine csv settings
         $dialect = Tool\Admin::determineCsvDialect($importFile);
 
@@ -149,7 +149,6 @@ class TranslationController extends AdminController
         return $this->adminJson([
             'success' => true,
             'config' => [
-                'tmpFile' => $filename,
                 'csvSettings' => $dialect,
             ],
         ]);
