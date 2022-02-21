@@ -33,7 +33,7 @@ interface VersionStorageAdapterInterface
      * @param mixed|null $binaryDataStream
      * @param string|null $binaryFileHash
      * @param int|null $binaryFileId
-     * @return string|null
+     * @return void
      */
     public function save(int $id,
                          int $cId,

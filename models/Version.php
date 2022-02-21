@@ -132,7 +132,7 @@ final class Version extends AbstractModel
 
     public function __construct()
     {
-        $delegate = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['ThresholdDelegate'];
+        $delegate = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['ThresholdDelegate'] ?? "";
         $this->storageAdapter = \Pimcore::getContainer()->get($delegate);
     }
 
