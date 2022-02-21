@@ -108,9 +108,6 @@ To print taxes into the frontend use following samples:
     <p><strong>{{ 'shop.detail.included_tax'|trans }}'</strong></p>
     <ul>
         {% for entry in price.taxEntries %}
-            <?php
-                $amountAsCurrency = $price->getCurrency()->toCurrency($entry->getAmount());
-            ?>
             <li>{{ entry.entry.name }}: {{ entry.percent }}% ({{ price.currency.toCurrency(entry.amount) }})</li>
         {% endfor %}
     </ul>
@@ -125,9 +122,6 @@ To print taxes into the frontend use following samples:
         <td>{{ 'cart.taxes'|trans }}</td>
         <td>
             {% for taxEntry in grandTotal.taxEntries %}
-                <?php
-                    $amountAsCurrency = $grandTotal->getCurrency()->toCurrency($taxEntry->getAmount());
-                ?>
                 {{ taxEntry.entry.name }}: {{ taxEntry.percent }}% ({{ grandTotal.currency.toCurrency(taxEntry.amount) }})<br/>
             {% endfor %}
         </td>
