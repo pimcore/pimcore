@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
-class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
+class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     public function __construct(protected array $adapters,
                                 protected int $byte_threshold,

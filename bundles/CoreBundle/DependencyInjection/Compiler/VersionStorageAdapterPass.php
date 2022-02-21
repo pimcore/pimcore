@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -25,7 +25,7 @@ class VersionStorageAdapterPass implements CompilerPassInterface
             }
         }
 
-        $proxyService = $container->getDefinition(ProxyVersionStorageAdapter::class);
+        $proxyService = $container->getDefinition(DelegateVersionStorageAdapter::class);
         $proxyService->setArgument('$adapters', $adapters);
     }
 }
