@@ -494,7 +494,7 @@ pimcore.settings.translation.domain = Class.create({
                             var csvSettings = Ext.encode(this.config.csvSettings);
                             ImportForm.getForm().submit({
                                 url: this.mergeUrl,
-                                params: {importFile: this.config.tmpFile, csvSettings: csvSettings, domain: this.domain},
+                                params: {csvSettings: csvSettings, domain: this.domain},
                                 waitMsg: t("please_wait"),
                                 success: function (el, response) {
                                     try {
