@@ -37,6 +37,9 @@ final class LongRunningHelper
 
     protected $monologHandlers = [];
 
+    /** @var string[] */
+    protected static $tmpFilePaths = [];
+
     /**
      * LongRunningHelper constructor.
      *
@@ -56,6 +59,7 @@ final class LongRunningHelper
         $this->cleanupMonolog();
         $this->cleanupPimcoreRuntimeCache($options);
         $this->triggerPhpGarbageCollector();
+        $this->deleteTemporaryFiles();
     }
 
     protected function cleanupDoctrine()
@@ -152,5 +156,19 @@ final class LongRunningHelper
         }
 
         return [];
+    }
+
+    /**
+     * Register a temp file which will be deleted on next call of cleanUp()
+     */
+    public static function addTmpFilePath(string $tmpFilePath) {
+        self::$tmpFilePaths[] = $tmpFilePath;
+    }
+
+    private function deleteTemporaryFiles() {
+        foreach (self::$tmpFilePaths as $tmpFilePath) {
+            @unlink($tmpFilePath);
+        }
+        self::$tmpFilePaths = [];
     }
 }

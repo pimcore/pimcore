@@ -75,6 +75,7 @@ trait TemporaryFileHelperTrait
         fclose($dest);
 
         if (!$keep) {
+            LongRunningHelper::addTmpFilePath($tmpFilePath);
             register_shutdown_function(static function () use ($tmpFilePath) {
                 @unlink($tmpFilePath);
             });
