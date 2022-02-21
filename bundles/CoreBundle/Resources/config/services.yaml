@@ -258,7 +258,7 @@ services:
         shared: false
         public: true
 
-    Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter:
+    Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter:
         public: true
         arguments:
             $byte_threshold: 500000
