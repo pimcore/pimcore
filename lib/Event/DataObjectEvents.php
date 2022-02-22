@@ -15,8 +15,6 @@
 
 namespace Pimcore\Event;
 
-use Pimcore\Model\DataObject\AbstractObject;
-
 final class DataObjectEvents
 {
     /**
