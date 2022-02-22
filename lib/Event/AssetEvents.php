@@ -118,7 +118,7 @@ final class AssetEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\Asset | contains the base asset used in copying process
+     *  - target_element | Pimcore\Model\Asset | contains the target asset used in copying process
      *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *

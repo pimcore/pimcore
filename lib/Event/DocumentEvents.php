@@ -165,7 +165,7 @@ final class DocumentEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
+     *  - target_element | Pimcore\Model\Document | contains the target document used in copying process
      *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *

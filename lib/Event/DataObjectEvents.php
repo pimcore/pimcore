@@ -120,7 +120,7 @@ final class DataObjectEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\AbstractObject | contains the base object used in copying process
+     *  - target_element | Pimcore\Model\AbstractObject | contains the target object used in copying process
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
