@@ -15,6 +15,8 @@
 
 namespace Pimcore\Event;
 
+use Pimcore\Model\DataObject\AbstractObject;
+
 final class DataObjectEvents
 {
     /**
@@ -118,7 +120,17 @@ final class DataObjectEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
+     *  - target_element | Pimcore\Model\AbstractObject | contains the target object used in copying process
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const PRE_COPY = 'pimcore.dataobject.preCopy';
+
+    /**
+     * Arguments:
+     *  - base_element | Pimcore\Model\AbstractObject | contains the base document used in copying process
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
