@@ -671,5 +671,6 @@
   "max_characters": "Maximum Characters",
   "sites": "Sites",
   "show_hide_areablock": "Show or Hide on frontend",
-  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes."
+  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
+  "could_not_open_zip_file": "The uploaded zip file could not be opened."
 }
