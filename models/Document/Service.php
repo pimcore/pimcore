@@ -155,6 +155,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         /** @var Document $new */
         $new = Element\Service::cloneMe($source);
@@ -214,6 +215,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         /**
          * @var Document $new

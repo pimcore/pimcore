@@ -144,6 +144,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         $new = $this->copy($source, $target);
 
@@ -193,6 +194,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         $new = $this->copy($source, $target);
 

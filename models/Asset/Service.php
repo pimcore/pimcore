@@ -83,6 +83,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
@@ -138,6 +139,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
