@@ -19,8 +19,8 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     public function __construct(protected array $adapters,
                                 protected int $byte_threshold,
-                                protected string $defaultAdapter,
-                                protected string $fallbackAdapter)
+                                protected VersionStorageAdapterInterface $defaultAdapter,
+                                protected VersionStorageAdapterInterface $fallbackAdapter)
     {
 
     }
@@ -28,29 +28,15 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
     {
         if(empty($storageType) === true) {
-            $adapter = $this->adapters[$this->defaultAdapter];
+            return $this->defaultAdapter;
         }
         else {
             $adapter = $this->adapters[$storageType] ?? null;
         }
         if(isset($adapter) === false || isset($adapter['class']) === false) {
-            throw new \Exception("no adapter for storage type" . $storageType . " found.");
+            throw new \Exception("no adapter for storage type " . $storageType . " found.");
         }
         return $adapter['class'];
-    }
-
-    protected function getStorageTypeForAdapter(VersionStorageAdapterInterface $adapter = null): string
-    {
-        if(isset($adapter) === false)
-            return $this->adapters[$this->defaultAdapter]['storageType'];
-        else {
-            foreach($this->adapters as $key => $value) {
-                if($value['class'] === $adapter) {
-                    return $key;
-                }
-            }
-        }
-        throw new \Exception("no storage type for adapter found.");
     }
 
     public function loadMetaData(int $id,
@@ -92,10 +78,10 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 
             if ($metaDataSize > $this->byte_threshold ||
                 $binarySize > $this->byte_threshold) {
-                return $this->fallbackAdapter;
+                return $this->fallbackAdapter->getStorageType($metaData, $binaryDataStream);
             }
         }
-        return $this->defaultAdapter;
+        return $this->defaultAdapter->getStorageType($metaData, $binaryDataStream);
     }
 
     public function save(int $id,
@@ -119,14 +105,16 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
     public function delete(int $id,
                            int $cId,
                            string $cType,
+                           string $storageType,
                            bool $isBinaryHashInUse,
                            int $binaryFileId = null): void {
 
-        $this->getAdapter()->delete($id,
-                                $cId,
-                                $cType,
-                                $isBinaryHashInUse,
-                                $binaryFileId);
+        $this->getAdapter($storageType)->delete($id,
+                                                $cId,
+                                                $cType,
+                                                $storageType,
+                                                $isBinaryHashInUse,
+                                                $binaryFileId);
     }
 
     public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed

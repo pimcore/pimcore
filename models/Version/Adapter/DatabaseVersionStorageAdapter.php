@@ -122,6 +122,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     public function delete(int $id,
                            int $cId,
                            string $cType,
+                           string $storageType,
                            bool $isBinaryHashInUse,
                            int $binaryFileId = null): void
     {

@@ -633,8 +633,6 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->defaultFalse()
                             ->end()
-                            ->scalarNode('ThresholdDelegate')
-                            ->end()
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')

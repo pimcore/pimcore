@@ -133,10 +133,11 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     public function delete(int $id,
-                            int $cId,
-                            string $cType,
-                            bool $isBinaryHashInUse,
-                            int $binaryFileId = null): void {
+                           int $cId,
+                           string $cType,
+                           string $storageType,
+                           bool $isBinaryHashInUse,
+                           int $binaryFileId = null): void {
 
         $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId);
         $storageFileName = $this->getStorageFilename($id, $cId, $cType);
