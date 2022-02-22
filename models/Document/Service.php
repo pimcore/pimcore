@@ -151,7 +151,9 @@ class Service extends Model\Element\Service
         $source->getProperties();
 
         // triggers actions before document cloning
-        $event = new DocumentEvent($source);
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
 
         /** @var Document $new */
@@ -208,7 +210,9 @@ class Service extends Model\Element\Service
         $source->getProperties();
 
         // triggers actions before document cloning
-        $event = new DocumentEvent($source);
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
 
         /**

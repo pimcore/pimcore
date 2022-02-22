@@ -140,7 +140,9 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         // triggers actions before object cloning
-        $event = new DataObjectEvent($source);
+        $event = new DataObjectEvent($source, [
+            'target_element' => $target,
+        ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
 
         $new = $this->copy($source, $target);
@@ -187,7 +189,9 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         // triggers actions before object cloning
-        $event = new DataObjectEvent($source);
+        $event = new DataObjectEvent($source, [
+            'target_element' => $target,
+        ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
 
         $new = $this->copy($source, $target);
