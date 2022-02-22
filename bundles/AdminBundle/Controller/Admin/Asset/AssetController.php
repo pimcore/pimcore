@@ -29,6 +29,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -1344,6 +1345,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($request->get('treepreview')) {
             $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
             if($request->get('origin') === 'treeNode' && !$image->getThumbnail($thumbnailConfig)->exists()) {
+                \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new AssetPreviewImageMessage($image->getId())
+                );
+
                 throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $image->getId()));
             }
         }
@@ -1476,6 +1481,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
 
         if($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetPreviewImageMessage($video->getId())
+            );
+
             throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $video->getId()));
         }
 
@@ -1529,6 +1538,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $thumb = $document->getImageThumbnail($thumbnail, $page);
 
         if($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetPreviewImageMessage($document->getId())
+            );
+
             throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $document->getId()));
         }
 

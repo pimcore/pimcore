@@ -20,6 +20,12 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Messenger\Handler\AssetPreviewImageHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\MaintenanceTaskHandler:
         arguments:
             - '@Pimcore\Maintenance\Executor'
