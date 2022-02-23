@@ -81,7 +81,7 @@
                         {% set brickValue = attribute(brick,allowedMethod) %}
 
                         {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
-                            {% set language = languages[0] %} {# show only one language data #}
+                            {% set language = validLanguages[0] %} {# show only one language data #}
                             {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
                                 {% set trClass = (c % 2) ? 'odd' : '' %}
                                 <tr class="{{ trClass }}">
