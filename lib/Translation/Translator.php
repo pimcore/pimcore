@@ -255,6 +255,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+    * Resets the initialization of a specific catalogue 
+    */
+    public function resetInitialization($domain, $locale)
+    {
+        $cacheKey = 'translation_data_' . md5($domain . '_' . $locale);
+        unset($this->initializedCatalogues[$cacheKey]);
+    }
+    
+    /**
      * Reset Catalogues initialization
      */
     public function resetCache()
