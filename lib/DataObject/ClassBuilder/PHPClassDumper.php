@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\ClassBuilder;
 use Pimcore\File;
 use Pimcore\Model\DataObject\ClassDefinition;
 
-class PHPClassWriter implements PHPClassWriterInterface
+class PHPClassDumper implements PHPClassDumperInterface
 {
     public function __construct(
         protected ClassBuilderInterface $classBuilder,
@@ -27,7 +27,7 @@ class PHPClassWriter implements PHPClassWriterInterface
     {
     }
 
-    public function writePHPClasses(ClassDefinition $classDefinition): void
+    public function dumpPHPClasses(ClassDefinition $classDefinition): void
     {
         $classFilePath = $classDefinition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($classDefinition);

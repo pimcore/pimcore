@@ -16,10 +16,10 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\DataObject\ClassBuilder\PHPClassWriterInterface;
-use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriterInterface;
-use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassWriterInterface;
-use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassWriterInterface;
+use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
+use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
+use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
+use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Model\DataObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,10 +30,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ClassesDefinitionsBuildCommand extends AbstractCommand
 {
     public function __construct(
-        protected PHPClassWriterInterface $classWriter,
-        protected PHPFieldCollectionClassWriterInterface $collectionClassWriter,
-        protected PHPObjectBrickClassWriterInterface $brickClassWriter,
-        protected PHPObjectBrickContainerClassWriterInterface $brickContainerClassWriter,
+        protected PHPClassDumperInterface $classDumper,
+        protected PHPFieldCollectionClassDumperInterface $collectionClassDumper,
+        protected PHPObjectBrickClassDumperInterface $brickClassDumper,
+        protected PHPObjectBrickContainerClassDumperInterface $brickContainerClassDumper,
     ) {
         parent::__construct();
     }
@@ -60,20 +60,20 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
         foreach ($files as $file) {
             $class = include $file;
 
-            $this->classWriter->writePHPClasses($class);
+            $this->classDumper->dumpPHPClasses($class);
         }
 
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
         foreach ($list as $brickDefinition) {
-            $this->brickClassWriter->writePHPClasses($brickDefinition);
-            $this->brickContainerClassWriter->writeContainerClasses($brickDefinition);
+            $this->brickClassDumper->dumpPHPClasses($brickDefinition);
+            $this->brickContainerClassDumper->dumpContainerClasses($brickDefinition);
         }
 
         $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
         foreach ($list as $fcDefinition) {
-            $this->collectionClassWriter->writePHPClass($fcDefinition);
+            $this->collectionClassDumper->dumpPHPClass($fcDefinition);
         }
 
         return 0;

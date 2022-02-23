@@ -16,15 +16,15 @@
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\File;
-use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 
-class PHPFieldCollectionClassWriter implements PHPFieldCollectionClassWriterInterface
+class PHPObjectBrickClassDumper implements PHPObjectBrickClassDumperInterface
 {
-    public function __construct(protected FieldCollectionClassBuilderInterface $classBuilder)
+    public function __construct(protected ObjectBrickClassBuilderInterface $classBuilder)
     {
     }
 
-    public function writePHPClass(Definition $definition): void
+    public function dumpPHPClasses(Definition $definition): void
     {
         $classFilePath = $definition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($definition);

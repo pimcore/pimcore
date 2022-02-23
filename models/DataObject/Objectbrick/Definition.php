@@ -17,8 +17,8 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
-use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassWriterInterface;
-use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassWriterInterface;
+use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
+use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -267,7 +267,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             \Pimcore\File::put($definitionFile, $data);
         }
 
-        \Pimcore::getContainer()->get(PHPObjectBrickClassWriterInterface::class)->writePHPClasses($this);
+        \Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
     }
 
     /**
@@ -455,7 +455,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        \Pimcore::getContainer()->get(PHPObjectBrickContainerClassWriterInterface::class)->writeContainerClasses($this);
+        \Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
     }
 
     /**

@@ -19,13 +19,13 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
-class PHPObjectBrickContainerClassWriter implements PHPObjectBrickContainerClassWriterInterface
+class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClassDumperInterface
 {
     public function __construct(protected ObjectBrickContainerClassBuilderInterface $classBuilder)
     {
     }
 
-    public function writeContainerClasses(Definition $definition): void
+    public function dumpContainerClasses(Definition $definition): void
     {
         $containerDefinition = [];
 

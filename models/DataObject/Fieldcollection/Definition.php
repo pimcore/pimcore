@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
-use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassWriterInterface;
+use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -201,7 +201,7 @@ class Definition extends Model\AbstractModel
             \Pimcore\File::put($definitionFile, $data);
         }
 
-        \Pimcore::getContainer()->get(PHPFieldCollectionClassWriterInterface::class)->writePHPClass($this);
+        \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {

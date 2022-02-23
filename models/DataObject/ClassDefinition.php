@@ -16,7 +16,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
-use Pimcore\DataObject\ClassBuilder\PHPClassWriterInterface;
+use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
@@ -484,7 +484,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
-        \Pimcore::getContainer()->get(PHPClassWriterInterface::class)->writePHPClasses($this);
+        \Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
 
         if ($generateDefinitionFile) {
             // save definition as a php file

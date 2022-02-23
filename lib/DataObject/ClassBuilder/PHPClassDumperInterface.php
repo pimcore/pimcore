@@ -15,9 +15,9 @@
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\Model\DataObject\Objectbrick\Definition;
+use Pimcore\Model\DataObject\ClassDefinition;
 
-interface PHPObjectBrickContainerClassWriterInterface
+interface PHPClassDumperInterface
 {
-    public function writeContainerClasses(Definition $definition): void;
+    public function dumpPHPClasses(ClassDefinition $classDefinition): void;
 }
