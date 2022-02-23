@@ -185,7 +185,8 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     public function getStatistics($usagePeriod = null)
     {
         $overallCount = (int) $this->configuration->getUsages();
-        $usageCount = Token::getByCode($this->configuration->getToken())->getUsages();
+        $token = Token::getByCode($this->configuration->getToken());
+        $usageCount = $token instanceof Token ? $token->getUsages() : 0;
         $reservedTokenCount = (int) Token\Listing::getCountByReservation($this->seriesId);
 
         $usage = Statistic::getBySeriesId($this->seriesId, $usagePeriod);
