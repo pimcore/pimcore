@@ -125,6 +125,16 @@ final class Console
 
                 $executableFinder = new ExecutableFinder();
                 $fullQualifiedPath = $executableFinder->find($executablePath);
+
+                if(!$fullQualifiedPath) {
+                    $checkCmd = 'which '.escapeshellarg($executablePath);
+                    if (self::getSystemEnvironment() === 'windows') {
+                        $checkCmd = 'where '.escapeshellarg($path).':'.$name;
+                    }
+                    $fullQualifiedPath = shell_exec($checkCmd.' '.$executablePath);
+                    $fullQualifiedPath = trim(strtok($fullQualifiedPath, "\n")); // get the first line/result
+                }
+
                 if ($fullQualifiedPath) {
                     if (!$customCheckMethod || self::$customCheckMethod($executablePath)) {
                         self::$executableCache[$name] = $fullQualifiedPath;
