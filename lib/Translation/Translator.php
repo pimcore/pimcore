@@ -160,7 +160,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     public function lazyInitialize($domain, $locale)
     {
-        $cacheKey = 'translation_data_' . md5($domain . '_' . $locale);
+        $cacheKey = $this->getCacheKey($domain,$locale);
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
@@ -255,14 +255,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-    * Resets the initialization of a specific catalogue 
+    * Resets the initialization of a specific catalogue
     */
     public function resetInitialization($domain, $locale)
     {
-        $cacheKey = 'translation_data_' . md5($domain . '_' . $locale);
+        $cacheKey = $this->getCacheKey($domain,$locale);
         unset($this->initializedCatalogues[$cacheKey]);
     }
-    
+
     /**
      * Reset Catalogues initialization
      */
@@ -455,5 +455,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     public function __call($method, $args)
     {
         return call_user_func_array([$this->translator, $method], $args);
+    }
+
+    private function getCacheKey($domain, $locale){
+        return 'translation_data_' . md5($domain . '_' . $locale);
     }
 }
