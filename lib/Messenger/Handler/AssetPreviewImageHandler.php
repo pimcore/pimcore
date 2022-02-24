@@ -15,7 +15,6 @@
 
 namespace Pimcore\Messenger\Handler;
 
-use Pimcore\Logger;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -62,7 +61,6 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
             }
         }
     }
-
 
     // @phpstan-ignore-next-line
     private function shouldFlush(): bool

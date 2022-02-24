@@ -105,6 +105,7 @@ class Folder extends Model\Asset
      * @internal
      *
      * @param bool $force
+     *
      * @return resource|null
      *
      * @throws \Doctrine\DBAL\Exception
