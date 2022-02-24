@@ -24,3 +24,4 @@ jobs:
               uses: docker://vimeo/psalm-github-actions
               with:
                 security_analysis: true
+                composer_ignore_platform_reqs: true
