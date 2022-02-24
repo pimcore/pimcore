@@ -179,14 +179,12 @@ class Folder extends Model\Asset
                         break;
                     }
 
-                    if(!$skipped) {
-                        $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
-                        imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
+                    $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
+                    imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
-                        $count++;
-                        if ($count % $colums === 0) {
-                            $offsetTop += ($squareDimension + $gutter);
-                        }
+                    $count++;
+                    if ($count % $colums === 0) {
+                        $offsetTop += ($squareDimension + $gutter);
                     }
                 }
             }
