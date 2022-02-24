@@ -204,12 +204,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             return $relation;
         }, $relations);
 
-        // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
-        // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, static function ($a, $b) {
-            return $a['index'] <=> $b['index'];
-        });
-
         $data = $this->loadData($relations, $object, $params);
         if ($object instanceof Model\Element\DirtyIndicatorInterface) {
             $object->markFieldDirty($this->getName(), false);
