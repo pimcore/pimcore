@@ -194,4 +194,17 @@ class Folder extends Model\Asset
 
         return null;
     }
+    
+    /**
+     * @param bool $force
+     */
+    public function clearThumbnails($force = false)
+    {
+        if ($this->getDataChanged() || $force) {
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+                $storage->deleteDirectory($this->getRealFullPath().'/'.$this->getId());
+            }
+        }
+    }    
 }
