@@ -15,24 +15,37 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
-use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
-class ThumbnailsFolderStructureCommand extends AbstractCommand
+class StorageCommand extends AbstractCommand
 {
+    /**
+     * @param ContainerInterface $locator
+     */
+    public function __construct(private ContainerInterface $locator)
+    {
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
-            ->setName('pimcore:migrate:thumbnails-folder-structure')
-            ->setDescription('Change thumbnail folder structure to <asset storage>/<path to asset>/<asset id>/image-thumb__<asset id>__<thumbnail name>/<asset filename> instead of <asset storage>/<path to asset>/image-thumb__<asset id>__<thumbnail name>/<asset filename>');
+            ->setName('pimcore:migrate:storage')
+            ->setDescription('Migrate data from one storage to another')
+            ->addArgument(
+                'storage',
+                InputArgument::IS_ARRAY,
+                'A list of storages to be migrated'
+            );
     }
 
     /**
@@ -40,56 +53,66 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $thumbnailStorage = Storage::get('thumbnail');
+        $storages = $input->getArgument('storage');
 
-        $output->writeln('Migrating thumbnails ...');
-        $this->doMigrateStorage($output, $thumbnailStorage);
-        $output->writeln("\nSuccessfully moved thumbnail files to new folder structure\n");
+        foreach ($storages as $storageName) {
+            $storageSourceName = $this->getStorageName($storageName, 'source');
+            $storageTargetName = $this->getStorageName($storageName, 'target');
 
-        $assetCacheStorage = Storage::get('asset_cache');
+            try {
+                $sourceStorage = $this->locator->get($storageSourceName);
+                $targetStorage = $this->locator->get($storageTargetName);
+            } catch (\Exception $e) {
+                $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageTargetName));
 
-        $output->writeln('Migrating asset cache (document previews, etc.) ...');
-        $this->doMigrateStorage($output, $assetCacheStorage);
-        $output->writeln("\nSuccessfully moved asset cache files to new folder structure");
+                continue;
+            }
+
+            $this->io->newLine();
+            $this->io->info(sprintf('Migrating storage "%s"', $storageName));
+
+            $progressBar = new ProgressBar($output);
+            $progressBar->setFormat('%current% [%bar%] %message%');
+            $progressBar->start();
+
+            /** @var StorageAttributes $item */
+            foreach ($sourceStorage->listContents('/', true) as $item) {
+                if ($item->isFile()) {
+                    $path = $item->path();
+
+                    try {
+                        $stream = $sourceStorage->readStream($path);
+
+                        if (!$targetStorage->fileExists($path)) {
+                            $targetStorage->writeStream($item->path(), $stream);
+
+                            $progressBar->setMessage(sprintf('Migrating %s: %s', $storageName, $item->path()));
+                        } else {
+                            $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
+                        }
+                    } catch (\Exception $e) {
+                        $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
+                    }
+                    $progressBar->advance();
+                }
+            }
+
+            $progressBar->finish();
+        }
+
+        $this->io->success('Finished Migrating Storage!');
 
         return 0;
     }
 
-    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage) {
-        $thumbnailFiles = $storage->listContents('/', true)->filter(function (StorageAttributes $attributes) {
-
-            if($attributes->isDir()) {
-                return false;
-            }
-
-            $matches = [];
-            preg_match('/(image-thumb|video-thumb|pdf-thumb)__(\d+)__/', $attributes->path(), $matches);
-
-            return count($matches) > 2 && !str_contains('/' . $attributes->path(), '/'.$matches[2].'/' . $matches[1] . '__'.$matches[2].'__');
-        });
-
-        $iterator = $thumbnailFiles->toArray();
-        $progressBar = new ProgressBar($output, count($iterator));
-
-        $progressBar->start();
-
-        /** @var StorageAttributes $thumbnailFile */
-        foreach ($iterator as $thumbnailFile) {
-            $targetPath = preg_replace('/(image-thumb|video-thumb|pdf-thumb)__(\d+)__(.+)$/', '$2/$1__$2__$3', $thumbnailFile->path());
-
-            if(!$storage->fileExists($targetPath)) {
-                $storage->move($thumbnailFile->path(), $targetPath);
-            } else {
-                if($thumbnailFile->isDir()) {
-                    $storage->deleteDirectory($thumbnailFile->path());
-                } else {
-                    $storage->delete($thumbnailFile->path());
-                }
-            }
-
-            $progressBar->advance();
-        }
-        $progressBar->finish();
-
+    /**
+     * @param string $name
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getStorageName(string $name, string $type): string
+    {
+        return sprintf('pimcore.%s.storage.%s', $name, $type);
     }
 }
