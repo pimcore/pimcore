@@ -158,9 +158,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * @param string $domain
      * @param string $locale
      */
-    public function lazyInitialize($domain, $locale)
+    public function lazyInitialize(string $domain, string $locale)
     {
-        $cacheKey = $this->getCacheKey($domain,$locale);
+        $cacheKey = $this->getCacheKey($domain, $locale);
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
@@ -259,8 +259,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @param string $domain
      * @param string $locale
+     *
+     * @return void
      */
-    public function resetInitialization($domain, $locale)
+    public function resetInitialization(string $domain, string $locale): void
     {
         $cacheKey = $this->getCacheKey($domain, $locale);
         unset($this->initializedCatalogues[$cacheKey]);
@@ -466,7 +468,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string
      */
-    private function getCacheKey($domain, $locale)
+    private function getCacheKey(string $domain, string $locale): string
     {
         return 'translation_data_' . md5($domain . '_' . $locale);
     }
