@@ -1098,6 +1098,9 @@ class Asset extends Element\AbstractElement
             }
 
             $this->clearThumbnails(true);
+            
+            //remove target parent folder preview thumbnails
+            $this->clearFolderThumbnails($this);
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new AssetEvent($this);
