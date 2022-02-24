@@ -31,11 +31,11 @@ class IdList implements InterpreterInterface
 
         if (is_array($value)) {
             foreach ($value as $val) {
-                if (method_exists($val, 'getId')) {
+                if ($val && method_exists($val, 'getId')) {
                     $ids[] = $val->getId();
                 }
             }
-        } elseif (method_exists($value, 'getId')) {
+        } elseif ($value && method_exists($value, 'getId')) {
             $ids[] = $value->getId();
         }
 
