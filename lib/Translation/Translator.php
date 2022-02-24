@@ -255,11 +255,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-    * Resets the initialization of a specific catalogue
-    */
+     * Resets the initialization of a specific catalogue
+     *
+     * @param string $domain
+     * @param string $locale
+     */
     public function resetInitialization($domain, $locale)
     {
-        $cacheKey = $this->getCacheKey($domain,$locale);
+        $cacheKey = $this->getCacheKey($domain, $locale);
         unset($this->initializedCatalogues[$cacheKey]);
     }
 
@@ -457,7 +460,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return call_user_func_array([$this->translator, $method], $args);
     }
 
-    private function getCacheKey($domain, $locale){
+    /**
+     * @param string $domain
+     * @param string $locale
+     *
+     * @return string
+     */
+    private function getCacheKey($domain, $locale)
+    {
         return 'translation_data_' . md5($domain . '_' . $locale);
     }
 }
