@@ -930,4 +930,34 @@ final class Config extends Model\AbstractModel
             }
         }
     }
+
+    /**
+     * @return array
+     */
+    public static function getAutFormats(): array
+    {
+        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
+    }
+
+    /**
+     * @return Config[]
+     */
+    public function getAutoFormatThumbnailConfigs(): array
+    {
+        $autFormatThumbnails = [];
+
+        foreach ($this->getAutFormats() as $autoFormat => $autoFormatConfig) {
+            if (Model\Asset\Image\Thumbnail::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
+                $autFormatThumbnail = clone $this;
+                $autFormatThumbnail->setFormat($autoFormat);
+                if (!empty($autoFormatConfig['quality'])) {
+                    $autFormatThumbnail->setQuality($autoFormatConfig['quality']);
+                }
+
+                $autFormatThumbnails[$autoFormat] = $autFormatThumbnail;
+            }
+        }
+
+        return $autFormatThumbnails;
+    }
 }
