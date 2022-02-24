@@ -127,6 +127,7 @@ class LibreOffice extends Ghostscript
 
         $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
         if (!$storage->fileExists($storagePath)) {
+            $localAssetTmpPath = $asset->getLocalFile();
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
@@ -135,7 +136,7 @@ class LibreOffice extends Ghostscript
                 '--headless', '--nologo', '--nofirststartwizard',
                 '-env:UserInstallation=file:///' . ltrim(PIMCORE_SYSTEM_TEMP_DIRECTORY, '/') . '/libreoffice',
                 '--norestore', '--convert-to', 'pdf:writer_web_pdf_Export',
-                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $asset->getLocalFile(),
+                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $localAssetTmpPath,
             ];
 
             $lock->acquire(true);
@@ -156,7 +157,7 @@ class LibreOffice extends Ghostscript
 
             Logger::debug('LibreOffice Output was: ' . $out);
 
-            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($asset->getFilename()) . '$/', '.pdf', $asset->getFilename());
+            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($localAssetTmpPath) . '$/', '.pdf', basename($localAssetTmpPath));
             if (file_exists($tmpName)) {
                 $storage->write($storagePath, file_get_contents($tmpName));
                 unlink($tmpName);

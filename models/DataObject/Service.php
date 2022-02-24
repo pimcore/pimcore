@@ -139,6 +139,13 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        // triggers actions before object cloning
+        $event = new DataObjectEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         $new = $this->copy($source, $target);
 
         // add to store
@@ -181,6 +188,13 @@ class Service extends Model\Element\Service
 
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
+
+        // triggers actions before object cloning
+        $event = new DataObjectEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         $new = $this->copy($source, $target);
 
@@ -438,7 +452,7 @@ class Service extends Model\Element\Service
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
-                            $parent = self::hasInheritableParentObject($object, $key);
+                            $parent = self::hasInheritableParentObject($object);
 
                             if (!empty($parent)) {
                                 $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
@@ -715,7 +729,7 @@ class Service extends Model\Element\Service
         }
 
         if ($fieldDefinition->isEmpty($value)) {
-            $parent = self::hasInheritableParentObject($object, $key);
+            $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
                 return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
             }
@@ -789,10 +803,10 @@ class Service extends Model\Element\Service
      *
      * @return AbstractObject|null
      */
-    public static function hasInheritableParentObject(Concrete $object, $fieldName = null)
+    public static function hasInheritableParentObject(Concrete $object)
     {
         if ($object->getClass()->getAllowInherit()) {
-            return $object->getNextParentForInheritance($fieldName);
+            return $object->getNextParentForInheritance();
         }
 
         return null;

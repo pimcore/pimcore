@@ -128,7 +128,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 'id' => $class->getId(),
                 'text' => $text,
                 'leaf' => true,
-                'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
+                'icon' => $class->getIcon() ? htmlspecialchars($class->getIcon()) : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'enableGridLocking' => $class->isEnableGridLocking(),
@@ -861,7 +861,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -925,9 +925,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         if ($forObjectEditor) {
             return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
-        } else {
-            return $this->adminJson($definitions);
         }
+
+        return $this->adminJson($definitions);
     }
 
     /**
@@ -998,6 +998,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 
+        /** @var DataObject\ClassDefinition\Layout $layoutDefinitions */
         $layoutDefinitions = isset($filteredDefinitions['layoutDefinition']) ? $filteredDefinitions['layoutDefinition'] : false;
         $filteredFieldDefinition = isset($filteredDefinitions['fieldDefinition']) ? $filteredDefinitions['fieldDefinition'] : false;
 
@@ -1007,7 +1008,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         DataObject\Service::enrichLayoutDefinition($layoutDefinitions);
 
-        $result['objectColumns']['childs'] = $layoutDefinitions->getChilds();
+        $result['objectColumns']['children'] = $layoutDefinitions->getChildren();
         $result['objectColumns']['nodeLabel'] = 'object_columns';
         $result['objectColumns']['nodeType'] = 'object';
 
@@ -1019,7 +1020,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
         $result['systemColumns']['nodeLabel'] = 'system_columns';
         $result['systemColumns']['nodeType'] = 'system';
-        $result['systemColumns']['childs'] = $systemColumns;
+        $result['systemColumns']['children'] = $systemColumns;
 
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
@@ -1047,7 +1048,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $result[$key]['nodeLabel'] = $key;
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
-                        $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
+                        $result[$key]['children'] = $brickLayoutDefinitions->getChildren();
 
                         break;
                     }
@@ -1266,7 +1267,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,

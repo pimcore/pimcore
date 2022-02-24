@@ -276,6 +276,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 '{[Ext.util.Format.stripTags(values.key)]}',
                 '</tpl>'
             ),
+            displayField: 'key',
             valueField: 'value',
             labelWidth: 100
         };

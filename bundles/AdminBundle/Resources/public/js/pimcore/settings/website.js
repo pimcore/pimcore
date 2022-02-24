@@ -36,7 +36,7 @@ pimcore.settings.website = Class.create({
                 border:false,
                 layout:"fit",
                 closable:true,
-                items:[this.getRowEditor()]
+                items:[this.getRowEditor()],
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -133,6 +133,7 @@ pimcore.settings.website = Class.create({
                 dataIndex: 'data',
                 flex: 300,
                 editable: true,
+                editor: new Ext.form.TextField({}),
                 renderer: this.getCellRenderer.bind(this),
             },
             {text: t("site"), flex: 100, sortable:true, dataIndex: "siteId",
@@ -303,7 +304,10 @@ pimcore.settings.website = Class.create({
             bodyCls: "pimcore_editable_grid",
             stripeRows:true,
             columns : {
-                items: typesColumns
+                items: typesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
             },
             sm:  Ext.create('Ext.selection.RowModel', {}),
             bbar:this.pagingtoolbar,
@@ -359,15 +363,23 @@ pimcore.settings.website = Class.create({
     },
 
     getCellEditor: function (record) {
-        var data = record.data;
+        let data = record.data;
 
-        var type = data.type;
-        var property;
+        let type = data.type;
+        let property;
 
         if (type === "text") {
-            property = Ext.create('Ext.form.TextField');
+            property = {
+                xtype: 'textfield',
+                flex: 1,
+                value: data.data
+            }
         } else if (type == "textarea") {
-            property = Ext.create('Ext.form.TextArea');
+            property = {
+                xtype: "textarea",
+                flex: 1,
+                value: data.data
+            }
         } else if (type == "document" || type == "asset" || type == "object") {
             property = {
                 xtype: 'textfield',

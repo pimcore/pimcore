@@ -37,8 +37,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         /**
          * @Route("/external_adminer/adminer", name="pimcore_admin_external_adminer_adminer")
          *
-         * @param Profiler|null $profiler
-         *
          * @return Response
          */
         public function adminerAction(?Profiler $profiler)

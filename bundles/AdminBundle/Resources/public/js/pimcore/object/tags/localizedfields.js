@@ -431,11 +431,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 afterrender: function (l, editable, runtimeContext, dataProvider, panel) {
                     if (!panel.__tabpanel_initialized) {
                         panel.__tabpanel_initialized = true;
-                        if (l.childs && typeof l.childs == "object") {
-                            if (l.childs.length > 0) {
+                        if (l.children && typeof l.children == "object") {
+                            if (l.children.length > 0) {
                                 l.items = [];
-                                for (var i = 0; i < l.childs.length; i++) {
-                                    var childConfig = l.childs[i];
+                                for (var i = 0; i < l.children.length; i++) {
+                                    var childConfig = l.children[i];
 
                                     // inherit label width/align from localized fields configuration
                                     if (this.fieldConfig.labelWidth) {

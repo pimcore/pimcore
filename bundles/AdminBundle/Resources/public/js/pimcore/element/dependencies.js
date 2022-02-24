@@ -119,7 +119,15 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1,
+                    renderer:
+                        function (value, metaData, record, rowIndex, colIndex, store) {
+                            if(record.data.published === false) {
+                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+                            }
+                            return Ext.util.Format.htmlEncode(value);
+                        }
+                }
             ],
             flex: 1,
             columnLines: true,
@@ -219,7 +227,15 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1,
+                    renderer:
+                        function (value, metaData, record, rowIndex, colIndex, store) {
+                            if(record.data.published === false) {
+                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+                            }
+                            return Ext.util.Format.htmlEncode(value);
+                        }
+                }
             ],
             columnLines: true,
             stripeRows: true,

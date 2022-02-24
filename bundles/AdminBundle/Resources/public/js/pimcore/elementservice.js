@@ -82,7 +82,7 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
             message += "<br />" + t('delete_message_dependencies');
         }
 
-        if(res["childs"] > 100) {
+        if (res['children'] > 100) {
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 

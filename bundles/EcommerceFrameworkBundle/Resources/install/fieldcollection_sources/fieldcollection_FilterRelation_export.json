@@ -19,7 +19,7 @@
     "bodyStyle": null,
     "datatype": "layout",
     "permissions": null,
-    "childs": [
+    "children": [
       {
         "fieldtype": "panel",
         "layout": "",
@@ -35,7 +35,7 @@
         "bodyStyle": "",
         "datatype": "layout",
         "permissions": "",
-        "childs": [
+        "children": [
           {
             "fieldtype": "text",
             "html": "<b>Filter&nbsp;Relation<\/b><div>Single selection filter for relation fields.<br><\/div>",
@@ -53,7 +53,7 @@
             "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
             "datatype": "layout",
             "permissions": null,
-            "childs": [],
+            "children": [],
             "locked": false
           },
           {

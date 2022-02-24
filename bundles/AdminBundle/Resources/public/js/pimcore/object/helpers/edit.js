@@ -141,12 +141,11 @@ pimcore.object.helpers.edit = {
         }
 
         if (l.datatype == "layout") {
-            if (skipLayoutChildren !== true && l.childs && typeof l.childs == "object") {
-                if (l.childs.length > 0) {
+            if (skipLayoutChildren !== true && l.children && typeof l.children == "object") {
+                if (l.children.length > 0) {
                     l.items = [];
-                    for (var i = 0; i < l.childs.length; i++) {
-
-                        var childConfig = l.childs[i];
+                    for (var i = 0; i < l.children.length; i++) {
+                        var childConfig = l.children[i];
                         if (typeof childConfig.labelWidth == "undefined" && l.labelWidth != "undefined") {
                             childConfig.labelWidth = l.labelWidth;
                         }
@@ -157,7 +156,6 @@ pimcore.object.helpers.edit = {
                         if (typeof childConfig.fieldLabel == "undefined" && l.fieldLabel != "undefined") {
                             childConfig.fieldLabel = l.fieldLabel;
                         }
-
 
                         if(l.fieldtype =='tabpanel' && !disableLazyRendering) {
                             tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, true, false, dataProvider, disableLazyRendering);

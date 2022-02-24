@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Cache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent;
 use Pimcore\Model;
@@ -24,14 +25,16 @@ use Pimcore\Model;
  */
 final class CollectionConfig extends Model\AbstractModel
 {
+    use Cache\RuntimeCacheTrait;
+
     /**
-     * Group id.
-     *
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
+     * Store ID
+     *
      * @var int
      */
     protected $storeId = 1;
@@ -65,9 +68,18 @@ final class CollectionConfig extends Model\AbstractModel
      */
     public static function getById($id)
     {
+        $id = (int)$id;
+        $cacheKey = self::getCacheKey($id);
+
         try {
+            if ($config = self::getCache($cacheKey)) {
+                return $config;
+            }
+
             $config = new self();
-            $config->getDao()->getById((int)$id);
+            $config->getDao()->getById($id);
+
+            self::setCache($config, $cacheKey);
 
             return $config;
         } catch (Model\Exception\NotFoundException $e) {
@@ -85,11 +97,19 @@ final class CollectionConfig extends Model\AbstractModel
      */
     public static function getByName($name, $storeId = 1)
     {
+        $cacheKey = self::getCacheKey($storeId, $name);
+
         try {
+            if ($config = self::getCache($cacheKey)) {
+                return $config;
+            }
+
             $config = new self();
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
+
+            self::setCache($config, $cacheKey);
 
             return $config;
         } catch (Model\Exception\NotFoundException $e) {
@@ -121,7 +141,7 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -173,11 +193,16 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * Deletes the key value group configuration
+     * Deletes the key value collection configuration
      */
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(new CollectionConfigEvent($this), DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_DELETE);
+        if ($this->getId()) {
+            self::removeCache(self::getCacheKey($this->getId()));
+            self::removeCache(self::getCacheKey($this->getStoreId(), $this->getName()));
+        }
+
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(new CollectionConfigEvent($this), DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_DELETE);
     }
@@ -190,6 +215,9 @@ final class CollectionConfig extends Model\AbstractModel
         $isUpdate = false;
 
         if ($this->getId()) {
+            self::removeCache(self::getCacheKey($this->getId()));
+            self::removeCache(self::getCacheKey($this->getStoreId(), $this->getName()));
+
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(new CollectionConfigEvent($this), DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_UPDATE);
         } else {
@@ -248,6 +276,20 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
+     * Returns all groups belonging to this collection
+     *
+     * @return CollectionGroupRelation[]
+     */
+    public function getRelations()
+    {
+        $list = new CollectionGroupRelation\Listing();
+        $list->setCondition('colId = ' . $this->id);
+        $list = $list->load();
+
+        return $list;
+    }
+
+    /**
      * @return int
      */
     public function getStoreId()
@@ -261,5 +303,23 @@ final class CollectionConfig extends Model\AbstractModel
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+    }
+
+    /**
+     * Calculate cache key
+     *
+     * @param int $id
+     * @param string|null $name
+     *
+     * @return string
+     */
+    private static function getCacheKey(int $id, string $name = null): string
+    {
+        $cacheKey = 'cs_collectionconfig_' . $id;
+        if ($name !== null) {
+            $cacheKey .= '_' . md5($name);
+        }
+
+        return $cacheKey;
     }
 }

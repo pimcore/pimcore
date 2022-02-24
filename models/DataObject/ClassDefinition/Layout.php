@@ -104,7 +104,7 @@ class Layout
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -286,7 +286,7 @@ class Layout
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -296,7 +296,7 @@ class Layout
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
 
         return $this;
     }
@@ -306,7 +306,7 @@ class Layout
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
+        if (is_array($this->children) && count($this->children) > 0) {
             return true;
         }
 
@@ -318,7 +318,7 @@ class Layout
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
     }
 
     /**

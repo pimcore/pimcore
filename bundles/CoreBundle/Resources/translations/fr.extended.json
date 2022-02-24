@@ -474,7 +474,7 @@
     "conversionFactor": "Facteur de Conversion",
     "conversionOffset": "Offset Conversion",
     "reset": "Remise à zéro",
-    "password_hint": "Le mot de passe doit contenir au minimum 10 caractères, une en minuscule, une en majuscule, une en numérique et une avec un caractère spécial !",
+    "password_hint": "Le mot de passe doit contenir au moins 10 caractères !",
     "log_pid": "PID",
     "search_console_settings_description": "Pour utiliser l'intégration Google Search Console, veuillez configurer le compte de service de l'API Google (Google API Service Account) dans les Paramètres Système",
     "fieldcontainer": "Conteneur de champs",
@@ -664,6 +664,12 @@
     "calculatedValue_calculatorexpression": "Expression de calcul",
     "enable_text_selection": "Activer la sélection du texte",
     "static": "Statique",
-    "frontend_languages": "Frontend Languages",
-    "drag_object_preview": "Drag Object for Preview"
+    "frontend_languages": "Langages frontaux",
+    "drag_object_preview": "Faites glisser l'objet pour l'aperçu",
+    "sites": "Sites",
+    "admin_interface_background": "Fond de l'interface d'administration",
+    "show_hide_areablock": "Afficher ou masquer sur le frontend",
+    "asset_type_changed": "Le type d'asset a été modifié entre-temps. Veuillez recharger l'interface d'administration pour voir les dernières modifications.",
+    "success_generating_previews": "Génération d'aperçus de page en arrière-plan. Veuillez recharger l'interface d'administration après un certain temps pour qu'elle prenne effet.",
+    "error_generating_previews": "Erreur lors de la génération des aperçus de page."
 }

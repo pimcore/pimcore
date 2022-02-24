@@ -907,12 +907,18 @@ span.warning {
 }
 
 #pimcore_tree_preview.hidden {
-    display:none;
+    position: absolute;
+    left: -2000px !important;
 }
 
-#pimcore_tree_preview iframe {
-    padding: 0;
-    margin:0;
+#pimcore_tree_preview_thumb {
+    box-sizing: border-box;
+    min-height: 300px;
+    max-width: 100%;
+}
+
+#pimcore_tree_preview_thumb img {
+    max-width: 100%;
 }
 
 .password_valid .x-form-trigger-wrap {
@@ -1434,6 +1440,22 @@ span.warning {
     background: #393C3F;
 }
 
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-inner-default  {
+    color: #fff;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-active .x-tab-inner-default {
+    color: #404040;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-active.x-tab-over .x-tab-inner-default {
+    color: #fff;
+}
+
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child > .x-panel-bodyWrap > .x-tab-bar .x-tab-over {
+    background-color: #444547;
+}
+
 #pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-close-btn {
     width: 20px;
     height: 20px;
@@ -1513,7 +1535,7 @@ span.warning {
     border:0;
 }
 
-.pimcore_main_toolbar .x-toolbar-text {
+.pimcore_main_toolbar .x-toolbar-text, .pimcore_main_toolbar .x-form-cb-label {
     color: #e3e4e5;
 }
 
@@ -1818,6 +1840,10 @@ span.warning {
     overflow: hidden;
 }
 
+.pimcore_asset_image_preview img {
+    user-select: none;
+}
+
 .pimcore_asset_image_preview .marker {
     position: absolute;
     z-index: 10000;
@@ -1828,6 +1854,7 @@ span.warning {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
     cursor: pointer;
     margin: -50px 0 0 -50px;
+    user-select: none;
 }
 
 .pimcore_asset_image_preview .image_feature {
@@ -2340,7 +2367,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     color: #8e8e8e;
 }
 
-.x-panel-header .x-tool-tool-el {
+.x-panel-header-default .x-tool-tool-el{
     color: #484B4E;
 }
 
