@@ -15,15 +15,12 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
-use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
-use League\Flysystem\UnableToMoveFile;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -43,32 +40,56 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $storage = Storage::get('thumbnail');
+        $thumbnailStorage = Storage::get('thumbnail');
 
+        $output->writeln('Migrating thumbnails ...');
+        $this->doMigrateStorage($output, $thumbnailStorage);
+        $output->writeln("\nSuccessfully moved thumbnail files to new folder structure\n");
+
+        $assetCacheStorage = Storage::get('asset_cache');
+
+        $output->writeln('Migrating asset cache (document previews, etc.) ...');
+        $this->doMigrateStorage($output, $assetCacheStorage);
+        $output->writeln("\nSuccessfully moved asset cache files to new folder structure");
+
+        return 0;
+    }
+
+    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage) {
         $thumbnailFiles = $storage->listContents('/', true)->filter(function (StorageAttributes $attributes) {
-            return $attributes->isDir() && preg_match('/image-thumb__\d+__/', $attributes->path(), $matches) && !str_contains($attributes->path(), '/'.$matches[1].'/image-thumb__'.$matches[1].'__');
+
+            if($attributes->isDir()) {
+                return false;
+            }
+
+            $matches = [];
+            preg_match('/(image-thumb|video-thumb|pdf-thumb)__(\d+)__/', $attributes->path(), $matches);
+
+            return count($matches) > 2 && !str_contains('/' . $attributes->path(), '/'.$matches[2].'/' . $matches[1] . '__'.$matches[2].'__');
         });
 
-        $progressBar = new ProgressBar($output, iterator_count($thumbnailFiles));
+        $iterator = $thumbnailFiles->toArray();
+        $progressBar = new ProgressBar($output, count($iterator));
 
         $progressBar->start();
 
         /** @var StorageAttributes $thumbnailFile */
-        foreach ($thumbnailFiles as $thumbnailFile) {
-            $targetPath = preg_replace('/image-thumb__(\d+)__(.+)$/', '$1/image-thumb__$1__$2', $thumbnailFile->path());
+        foreach ($iterator as $thumbnailFile) {
+            $targetPath = preg_replace('/(image-thumb|video-thumb|pdf-thumb)__(\d+)__(.+)$/', '$2/$1__$2__$3', $thumbnailFile->path());
 
             if(!$storage->fileExists($targetPath)) {
                 $storage->move($thumbnailFile->path(), $targetPath);
             } else {
-                $storage->deleteDirectory($thumbnailFile->path());
+                if($thumbnailFile->isDir()) {
+                    $storage->deleteDirectory($thumbnailFile->path());
+                } else {
+                    $storage->delete($thumbnailFile->path());
+                }
             }
 
             $progressBar->advance();
         }
         $progressBar->finish();
 
-        $output->writeln('Successfully moved thumbnail files to new folder structure');
-
-        return 0;
     }
 }
