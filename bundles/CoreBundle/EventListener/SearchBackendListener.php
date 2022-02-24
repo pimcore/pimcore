@@ -49,8 +49,8 @@ class SearchBackendListener implements EventSubscriberInterface
             DocumentEvents::PRE_DELETE => 'onPreDeleteElement',
             AssetEvents::PRE_DELETE => 'onPreDeleteElement',
 
-            DataObjectEvents::POST_UPDATE => 'onPostUpdateDataObject',
-            DocumentEvents::POST_UPDATE => 'onPostUpdateElement',
+            DataObjectEvents::POST_UPDATE => 'onPostUpdateDataObjectDocument',
+            DocumentEvents::POST_UPDATE => 'onPostUpdateDataObjectDocument',
             AssetEvents::POST_UPDATE => 'onPostUpdateElement',
         ];
     }
@@ -92,7 +92,7 @@ class SearchBackendListener implements EventSubscriberInterface
     /**
      * @param ElementEventInterface $e
      */
-    public function onPostUpdateDataObject(ElementEventInterface $e)
+    public function onPostUpdateDataObjectDocument(ElementEventInterface $e)
     {
         //do not update index when auto save or only saving version
         if (
