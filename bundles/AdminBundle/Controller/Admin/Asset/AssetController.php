@@ -2231,8 +2231,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         else {
             return $this->adminJson([
                 'success' => false,
-                'message' => $this->trans('could_not_open_zip_file', [], 'admin'),
-                'ZipArchiveReturnCode' => $retCode
+                'message' => $this->trans('could_not_open_zip_file', [], 'admin')
             ]);
         }
     }
