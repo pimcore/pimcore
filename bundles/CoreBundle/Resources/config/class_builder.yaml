@@ -4,43 +4,42 @@ services:
         autowire: true
         autoconfigure: true
 
-    Pimcore\DataObject\ClassBuilder\ClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ClassBuilder'
-    Pimcore\DataObject\ClassBuilder\ClassBuilder: ~
+    Pimcore\DataObject\ClassBuilder\ClassBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\ClassBuilder'
 
-    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder: ~
+    Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\FieldCollectionClassBuilder'
 
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder: ~
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\FieldDefinitionBuilder'
 
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder: ~
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder'
 
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface: '@Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder'
-    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder: ~
+    Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder'
 
-    Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ListingClassBuilder'
-    Pimcore\DataObject\ClassBuilder\ListingClassBuilder: ~
+    Pimcore\DataObject\ClassBuilder\ListingClassBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\ListingClassBuilder'
 
-    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder'
-    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder: ~
+    Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\ListingClassFieldDefinitionBuilder'
 
-    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder'
-    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder: ~
+    Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\ObjectBrickClassBuilder'
 
-    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface: '@Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder'
-    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder: ~
+    Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilderInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\ObjectBrickContainerClassBuilder'
 
-    Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface: '@Pimcore\DataObject\ClassBuilder\PHPClassDumper'
-    Pimcore\DataObject\ClassBuilder\PHPClassDumper: ~
+    Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPClassDumper'
 
-    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface: '@Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumper'
-    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumper: ~
+    Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumper'
 
-    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface: '@Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumper'
-    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumper: ~
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumper'
 
-    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface: '@Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper'
-    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper: ~
-
-
+    Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface:
+        class: 'Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper'
+    
