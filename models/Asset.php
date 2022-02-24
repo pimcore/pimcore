@@ -2069,7 +2069,13 @@ class Asset extends Element\AbstractElement
 
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                $this->updateChildPaths($storage, $oldThumbnailsPath, $newThumbnailsPath);
+                
+                try {
+                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                } catch (UnableToMoveFile $e) {
+                    //update children, if unable to move parent
+                    $this->updateChildPaths($storage, $oldPath);
+                }
             }
         }
     }
