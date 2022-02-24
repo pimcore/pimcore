@@ -2001,17 +2001,22 @@ class Asset extends Element\AbstractElement
     /**
      * @param FilesystemOperator $storage
      * @param string $oldPath
+     * @param string|null $newPath
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
     {
+        if($newPath === null) {
+            $newPath = $this->getRealFullPath();
+        }
+
         try {
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
+                    $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
                 }
             }
@@ -2029,11 +2034,21 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldThumbnailsPath = $oldPath . '/' . $this->getId();
-        $newThumbnailsPath = $this->getRealFullPath() . '/' . $this->getId();
-        $storage = Storage::get('thumbnail');
+        if($this instanceof Folder) {
+            $oldThumbnailsPath = $oldPath;
+            $newThumbnailsPath = $this->getRealFullPath();
+        } else {
+            $oldThumbnailsPath = dirname($oldPath) . '/' . $this->getId();
+            $newThumbnailsPath = $this->getRealPath() . $this->getId();
+        }
 
-        try {
+        if($oldThumbnailsPath === $newThumbnailsPath) {
+
+            //path is equal, probably file name changed - so clear all thumbnails
+            $this->clearThumbnails(true);
+
+        } else {
+
             //remove source parent folder preview thumbnails
             $sourceFolder = Asset::getByPath(dirname($oldPath));
             if($sourceFolder) {
@@ -2043,26 +2058,10 @@ class Asset extends Element\AbstractElement
             //remove target parent folder preview thumbnails
             $this->clearFolderThumbnails($this);
 
-            $contents = $storage->listContents($oldThumbnailsPath);
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                if (preg_match('@(image|video|pdf)\-thumb__'.$this->getId().'__@', $item->path())) {
-                    $replacePath = ltrim($newThumbnailsPath, '/') .'/' . basename($item->path());
-                    if (!$storage->fileExists($replacePath)) {
-                        $storage->move($item->path(), $replacePath);
-                    }
-                }
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+                $this->updateChildPaths($storage, $oldThumbnailsPath, $newThumbnailsPath);
             }
-
-            //required in case of renaming or moving parent folder
-            try {
-                $storage->move($oldThumbnailsPath, $newThumbnailsPath);
-            } catch (UnableToMoveFile $e) {
-                //update children, if unable to move parent
-                $this->updateChildPaths($storage, $oldPath);
-            }
-        } catch (UnableToMoveFile $e) {
-            // noting to do
         }
     }
 
