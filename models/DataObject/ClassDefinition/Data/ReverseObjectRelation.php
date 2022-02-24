@@ -260,10 +260,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function preGetData($container, $params = [])
     {
-        if($container instanceof DataObject\LazyLoadedFieldsInterface) {
-            $container->unmarkLazyKeyAsLoaded($this->getName());
-        }
-        return parent::preGetData($container, $params);
+        return $this->load($container);
     }
 }
 
