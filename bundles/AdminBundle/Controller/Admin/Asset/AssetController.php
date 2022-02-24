@@ -1437,7 +1437,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $time = null;
-        if ($request->get('time')) {
+        if (is_numeric($request->get('time'))) {
             $time = (int)$request->get('time');
         }
 
