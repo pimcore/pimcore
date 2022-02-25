@@ -92,7 +92,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         //fallback for legacy data
         if (empty($this->ownerClassName) && $this->ownerClassId) {
             try {
-                if(empty($this->ownerClassId)) {
+                if (empty($this->ownerClassId)) {
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
@@ -113,8 +113,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         if (empty($this->ownerClassId)) {
             try {
                 $class = DataObject\ClassDefinition::getByName($this->ownerClassName);
-                if(!$class instanceof DataObject\ClassDefinition) {
+                if (!$class instanceof DataObject\ClassDefinition) {
                     Logger::error('Reverse relation '.$this->getName().' has no owner class assigned');
+
                     return null;
                 }
                 $this->ownerClassId = $class->getId();
@@ -191,7 +192,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      */
     public function load($object, $params = [])
     {
-        if($this->getOwnerClassId() === null) {
+        if ($this->getOwnerClassId() === null) {
             return [];
         }
 
@@ -201,6 +202,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $relations = array_map(static function ($relation) {
             $relation['dest_id'] = $relation['src_id'];
             unset($relation['src_id']);
+
             return $relation;
         }, $relations);
 
@@ -242,7 +244,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     {
         return $this->load($container);
     }
-    
+
     public function supportsInheritance()
     {
         return false;
