@@ -92,7 +92,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         //fallback for legacy data
         if (empty($this->ownerClassName)) {
             try {
-                if(!$this->ownerClassId) {
+                if(empty($this->ownerClassId)) {
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
@@ -241,6 +241,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function preGetData($container, $params = [])
     {
         return $this->load($container);
+    }
+    
+    public function supportsInheritance()
+    {
+        return false;
     }
 }
 
