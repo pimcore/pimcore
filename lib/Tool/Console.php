@@ -386,7 +386,7 @@ final class Console
             if (is_string($cmd)) {
                 $cmd = $nice . ' -n 19 ' . $cmd;
             } elseif (is_array($cmd)) {
-                array_unshift($cmd, $nice, '-n 19');
+                array_unshift($cmd, $nice, '-n', '19');
             }
         }
     }
