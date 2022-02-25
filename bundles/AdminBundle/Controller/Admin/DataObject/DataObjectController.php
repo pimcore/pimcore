@@ -430,6 +430,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $objectData['draft'] = [
                     'id' => $draftVersion->getId(),
                     'modificationDate' => $draftVersion->getDate(),
+                    'isAutoSave' => $draftVersion->isAutoSave(),
                 ];
             }
 
@@ -1401,6 +1402,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $draftData = [
                     'id' => $version->getId(),
                     'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
                 ];
             } else {
                 $object->save();
