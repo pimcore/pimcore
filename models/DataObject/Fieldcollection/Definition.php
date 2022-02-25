@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
-use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
@@ -262,8 +261,8 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @internal
+     *
      * @return string
      */
     public function getPhpClassFile()

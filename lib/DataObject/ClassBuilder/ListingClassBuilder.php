@@ -21,8 +21,7 @@ class ListingClassBuilder implements ListingClassBuilderInterface
 {
     public function __construct(
         protected ListingClassFieldDefinitionBuilderInterface $fieldDefinitionBuilder
-    )
-    {
+    ) {
     }
 
     public function buildListingClass(ClassDefinition $classDefinition): string

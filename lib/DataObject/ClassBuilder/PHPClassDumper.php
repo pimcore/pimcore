@@ -23,8 +23,7 @@ class PHPClassDumper implements PHPClassDumperInterface
     public function __construct(
         protected ClassBuilderInterface $classBuilder,
         protected ListingClassBuilderInterface $listingClassBuilder
-    )
-    {
+    ) {
     }
 
     public function dumpPHPClasses(ClassDefinition $classDefinition): void

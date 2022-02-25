@@ -19,7 +19,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -394,7 +393,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param DataObject\ClassDefinition $class
+     *
      * @internal
+     *
      * @return array
      */
     public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class)
@@ -463,6 +464,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $fieldname
      *
      * @internal
+     *
      * @return string
      */
     public function getContainerClassName($classname, $fieldname)
@@ -475,6 +477,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $fieldname
      *
      * @internal
+     *
      * @return string
      */
     public function getContainerNamespace($classname, $fieldname)
@@ -486,6 +489,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $classname
      *
      * @internal
+     *
      * @return string
      */
     public function getContainerClassFolder($classname)
@@ -593,8 +597,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
      * @internal
+     *
      * @return string
      */
     public function getPhpClassFile()

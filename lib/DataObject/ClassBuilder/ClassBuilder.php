@@ -23,8 +23,7 @@ class ClassBuilder implements ClassBuilderInterface
         protected FieldDefinitionDocBlockBuilderInterface $fieldDefinitionDocBlockBuilder,
         protected FieldDefinitionPropertiesBuilderInterface $propertiesBuilder,
         protected FieldDefinitionBuilderInterface $fieldDefinitionBuilder,
-    )
-    {
+    ) {
     }
 
     public function buildClass(ClassDefinition $classDefinition): string
@@ -44,8 +43,8 @@ class ClassBuilder implements ClassBuilderInterface
 
         if ($classDefinition->getDescription()) {
             $description = str_replace(
-                array('/**', '*/', '//', "\n"),
-                array('', '', '', "\n* "),
+                ['/**', '*/', '//', "\n"],
+                ['', '', '', "\n* "],
                 $classDefinition->getDescription()
             );
 

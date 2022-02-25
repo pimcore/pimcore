@@ -15,8 +15,8 @@
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterface
 {
