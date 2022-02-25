@@ -551,8 +551,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
-                ) {
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                     $cd .= 'protected $'.$key.";\n";
                 }
             }
@@ -575,13 +574,13 @@ final class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
-                    continue;
-                }
 
                 // get setter and getter code
                 $cd .= $def->getGetterCode($this);
-                $cd .= $def->getSetterCode($this);
+
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                    $cd .= $def->getSetterCode($this);
+                }
 
                 // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
                 //TODO Pimcore 11 remove method_exists call
