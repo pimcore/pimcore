@@ -2199,7 +2199,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         copy($_FILES['Filedata']['tmp_name'], $zipFile);
 
         $zip = new \ZipArchive;
-        if ($zip->open($zipFile) === true) {
+        $retCode = $zip->open($zipFile);
+        if ($retCode === true) {
             $jobAmount = ceil($zip->numFiles / $filesPerJob);
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
@@ -2215,18 +2216,24 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 ]];
             }
             $zip->close();
+
+            // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
+            // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
+            // request and not XHR where the content-type doesn't matter
+            $responseJson = $this->encodeJson([
+                'success' => true,
+                'jobs' => $jobs,
+                'jobId' => $jobId,
+            ]);
+
+            return new Response($responseJson);
         }
-
-        // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
-        // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
-        // request and not XHR where the content-type doesn't matter
-        $responseJson = $this->encodeJson([
-            'success' => true,
-            'jobs' => $jobs,
-            'jobId' => $jobId,
-        ]);
-
-        return new Response($responseJson);
+        else {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $this->trans('could_not_open_zip_file')
+            ]);
+        }
     }
 
     /**
