@@ -209,7 +209,7 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            if($this->exists()) {
+            if ($this->exists()) {
                 $dimensions = $this->readDimensionsFromFile();
             }
 
