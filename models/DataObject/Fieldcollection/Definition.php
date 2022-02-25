@@ -263,6 +263,7 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      *
+     * @internal
      * @return string
      */
     public function getPhpClassFile()

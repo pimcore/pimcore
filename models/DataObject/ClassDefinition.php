@@ -607,11 +607,17 @@ final class ClassDefinition extends Model\AbstractModel
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
 
+    /**
+     * @internal
+     */
     public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s.php');
     }
 
+    /**
+     * @internal
+     */
     public function getPhpListingClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s/Listing.php');
