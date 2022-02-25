@@ -32,7 +32,7 @@ pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","style"];
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","style", "visibleGridView", "visibleSearch"];
 
         this.treeNode = treeNode;
     },
@@ -52,8 +52,6 @@ pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.
     getLayout: function ($super) {
 
         $super();
-
-        this.specificPanel.removeAll();
 
         this.specificPanel.removeAll();
         this.specificPanel.add([

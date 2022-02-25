@@ -396,7 +396,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
@@ -416,7 +426,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $document = Document::getById($request->get('id'));
             if ($document && $document->isAllowed('delete')) {
                 try {
@@ -913,7 +924,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $childIds = [];
             if ($document->hasChildren()) {
-                // get amount of childs
+                // get amount of children
                 $list = new Document\Listing();
                 $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);

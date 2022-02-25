@@ -76,7 +76,8 @@ For thumbnails in action also have a look at our [Live Demo](https://demo.pimcor
 
 ## Generating HTML for Thumbnails
 
-Pimcore offers the method `getHTML(array $options)` to get a ready to use `<picture>` tag for your thumbnail. 
+Pimcore offers the method `getHTML(array $options)` to get a ready to use `<picture>` tag for your thumbnail. When a `<picture>` element is not needed or desired an `<img />` element can used by calling `getImageTag(array $options)` instead.
+
 You can configure the generated markup with the following options: 
 
 | Name                           | Type     | Description                                                                                                                                                                                                                              |
@@ -94,8 +95,6 @@ You can configure the generated markup with the following options:
 | `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.   |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.   |
-
-
 
 ## Usage Examples
 ```twig
@@ -226,11 +225,29 @@ $thumbnail->getHtml([
 {{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'}) }}
 /* OR */
 {{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'}) }}
+    
+
+/* Output only <img> element wihout <picture> and <source> around it */
+{{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}    
 ```
 
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
 
+## Lazy Loading 
 
+By default, the images are lazy loading. This can be changed by setting the value to "eager" in the imgAttribute:
+    
+```twig
+
+{{ image.thumbnail('example').html({
+    'imgAttributes': {
+        'loading': 'eager',
+    }
+}) }}
+    
+
+````
+    
 ## Using ICC Color Profiles for CMYK -> RGB 
 Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
 to RGB. 

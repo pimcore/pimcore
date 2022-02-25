@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 
 class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 {
-    public function __construct(protected FieldDefinitionDocBlockBuilder $fieldDefinitionDocBlockBuilder)
+    public function __construct(protected FieldDefinitionDocBlockBuilderInterface $fieldDefinitionDocBlockBuilder)
     {
     }
 

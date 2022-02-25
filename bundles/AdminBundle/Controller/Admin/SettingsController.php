@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use enshrined\svgSanitize\Sanitizer;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
@@ -46,6 +47,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
 
@@ -104,17 +106,29 @@ class SettingsController extends AdminController
      */
     public function uploadCustomLogoAction(Request $request)
     {
+        $sourcePath = $_FILES['Filedata']['tmp_name'];
         $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
         if (!in_array($fileExt, ['svg', 'png', 'jpg'])) {
             throw new \Exception('Unsupported file format');
         }
 
-        if ($fileExt === 'svg' && stripos(file_get_contents($_FILES['Filedata']['tmp_name']), '<script')) {
-            throw new \Exception('Scripts in SVG files are not supported');
-        }
-
         $storage = Tool\Storage::get('admin');
-        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
+
+        $fileMimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
+
+        if ($fileMimeType === 'image/svg+xml') {
+            $fileContent = file_get_contents($sourcePath);
+
+            $sanitizer = new Sanitizer();
+            $sanitizedFileContent = $sanitizer->sanitize($fileContent);
+            if ($sanitizedFileContent) {
+                $storage->write(self::CUSTOM_LOGO_PATH, $sanitizedFileContent);
+            } else {
+                throw new \Exception('SVG Sanitization failed, probably due badly formatted XML. Filename:'.$sourcePath);
+            }
+        } else {
+            $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($sourcePath, 'rb'));
+        }
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed

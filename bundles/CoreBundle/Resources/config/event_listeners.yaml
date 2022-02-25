@@ -26,6 +26,8 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener: ~
 
+    Pimcore\Bundle\CoreBundle\EventListener\DumpTranslationEntriesListener: ~
+
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
     #
@@ -147,3 +149,5 @@ services:
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
 
     Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\AssetSanitizationListener: ~

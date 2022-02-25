@@ -21,13 +21,11 @@ class FieldDefinitionBuilder implements FieldDefinitionBuilderInterface
 {
     public function buildFieldDefinition(ClassDefinition $classDefinition, ClassDefinition\Data $fieldDefinition): string
     {
-        if ($fieldDefinition instanceof ClassDefinition\Data\ReverseObjectRelation) {
-            return '';
-        }
+        $cd = $fieldDefinition->getGetterCode($classDefinition);
 
-        $cd = '';
-        $cd .= $fieldDefinition->getGetterCode($classDefinition);
-        $cd .= $fieldDefinition->getSetterCode($classDefinition);
+        if (!$fieldDefinition instanceof ClassDefinition\Data\ReverseObjectRelation) {
+            $cd .= $fieldDefinition->getSetterCode($classDefinition);
+        }
 
         // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
         //TODO Pimcore 11 remove method_exists call

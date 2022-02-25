@@ -29,7 +29,7 @@ use Pimcore\Normalizer\NormalizerInterface;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, LayoutDefinitionEnrichmentInterface
 {
     use Extension\ColumnType;
 
@@ -475,11 +475,17 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @inheritdoc
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         $delegate = $this->getDelegate();
 
-        if (method_exists($delegate, 'enrichLayoutDefinition')) {
+        //TODO Pimcore 11: remove method_exists BC layer
+        if ($delegate instanceof LayoutDefinitionEnrichmentInterface || method_exists($delegate, 'enrichLayoutDefinition')) {
+            if (!$delegate instanceof LayoutDefinitionEnrichmentInterface) {
+                trigger_deprecation('pimcore/pimcore', '10.1',
+                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
+                        'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
+            }
             $delegate->enrichLayoutDefinition($object, $context);
         }
 

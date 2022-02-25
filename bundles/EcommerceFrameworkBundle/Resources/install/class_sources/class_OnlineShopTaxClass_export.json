@@ -23,7 +23,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "panel",
                 "layout": null,
@@ -39,7 +39,7 @@
                 "bodyStyle": "",
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "text",
                         "html": "<div><font size=\"2\"><b>OnlineShopTaxClass <\/b>as definition for tax calculation within ecommerce frameworks price systems. Products price system decides which TaxClass to take and does the tax calculation based on it.&nbsp;<br><\/font><\/div><div><font size=\"2\"><b><br><\/b><\/font><\/div><div><font size=\"2\"><b>Tax Entry Combination Type<\/b> defines how tax entry rates are combined:&nbsp;<\/font><\/div><div><ul><li><font size=\"2\"><b>Combine:<\/b> Sum up all tax rates and calculates tax amount afterwards.<br><\/font><\/li><li><font size=\"2\"><b>One After Another:<\/b> For each tax rate calculate tax amount, add it to total sum and then calculate tax amount for next tax rate based on new total sum. <\/font><b style=\"font-size: 13px;\">&nbsp;<\/b><br><\/li><\/ul><\/div>",
@@ -57,7 +57,7 @@
                         "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [],
+                        "children": [],
                         "locked": false
                     },
                     {

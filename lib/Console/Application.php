@@ -102,7 +102,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         return $inputDefinition;
     }
 
-    public function add(Command $command)
+    public function add(Command $command): ?Command
     {
         if ($command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();

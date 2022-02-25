@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 class ClassBuilder implements ClassBuilderInterface
 {
     public function __construct(
-        protected FieldDefinitionDocBlockBuilder $fieldDefinitionDocBlockBuilder,
+        protected FieldDefinitionDocBlockBuilderInterface $fieldDefinitionDocBlockBuilder,
         protected FieldDefinitionPropertiesBuilderInterface $propertiesBuilder,
         protected FieldDefinitionBuilderInterface $fieldDefinitionBuilder,
     )

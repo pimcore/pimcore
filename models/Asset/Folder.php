@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\File;
+use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
@@ -103,12 +104,14 @@ class Folder extends Model\Asset
     /**
      * @internal
      *
+     * @param bool $force
+     *
      * @return resource|null
      *
      * @throws \Doctrine\DBAL\Exception
      * @throws \League\Flysystem\FilesystemException
      */
-    public function getPreviewImage()
+    public function getPreviewImage(bool $force = false)
     {
         $storage = Storage::get('thumbnail');
         $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
@@ -135,7 +138,7 @@ class Folder extends Model\Asset
 
         $list = new Asset\Listing();
         $list->setCondition($condition, $conditionParams);
-        $list->setOrderKey('filename');
+        $list->setOrderKey('id');
         $list->setOrder('asc');
         $list->setLimit($limit);
 
@@ -145,6 +148,7 @@ class Folder extends Model\Asset
         $squareDimension = 130;
         $offsetTop = 0;
         $colums = 3;
+        $skipped = false;
 
         if ($totalImages) {
             $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
@@ -165,9 +169,15 @@ class Folder extends Model\Asset
                 }
 
                 if ($tileThumb) {
-                    if (!$tileThumb->exists()) {
+                    if (!$tileThumb->exists() && !$force) {
                         // only generate if all necessary thumbs are available
-                        continue;
+                        $skipped = true;
+
+                        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                            new AssetPreviewImageMessage($this->getId())
+                        );
+
+                        break;
                     }
 
                     $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
@@ -180,7 +190,7 @@ class Folder extends Model\Asset
                 }
             }
 
-            if ($count) {
+            if ($count && !$skipped) {
                 $localFile = File::getLocalTempFilePath('jpg');
                 imagejpeg($collage, $localFile, 60);
                 $storage->write($cacheFilePath, file_get_contents($localFile));

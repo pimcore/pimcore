@@ -233,6 +233,7 @@ class Service extends Model\AbstractModel
             'path' => $element->getRealFullPath(),
             'type' => self::getElementType($element),
             'subtype' => $element->getType(),
+            'published' => self::isPublished($element),
         ];
     }
 

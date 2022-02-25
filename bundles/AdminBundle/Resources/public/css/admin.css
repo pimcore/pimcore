@@ -907,12 +907,18 @@ span.warning {
 }
 
 #pimcore_tree_preview.hidden {
-    display:none;
+    position: absolute;
+    left: -2000px !important;
 }
 
-#pimcore_tree_preview iframe {
-    padding: 0;
-    margin:0;
+#pimcore_tree_preview_thumb {
+    box-sizing: border-box;
+    min-height: 300px;
+    max-width: 100%;
+}
+
+#pimcore_tree_preview_thumb img {
+    max-width: 100%;
 }
 
 .password_valid .x-form-trigger-wrap {
@@ -1834,6 +1840,10 @@ span.warning {
     overflow: hidden;
 }
 
+.pimcore_asset_image_preview img {
+    user-select: none;
+}
+
 .pimcore_asset_image_preview .marker {
     position: absolute;
     z-index: 10000;
@@ -1844,6 +1854,7 @@ span.warning {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
     cursor: pointer;
     margin: -50px 0 0 -50px;
+    user-select: none;
 }
 
 .pimcore_asset_image_preview .image_feature {

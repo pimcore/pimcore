@@ -1,4 +1,11 @@
 # Upgrade Notes
+
+## 10.4.0
+
+- [Image Optimizer] Optimize Image messages are now routed to different queue
+  instead of `pimcore_core`. If you want to handle image optimize messages, then it is required to add specific option `pimcore_image_optimize` to the command `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize`. Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that ImageOptimize messages on the queue gets consumed.
+  
+
 ## 10.3.0
 - **Important notice**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
   required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that

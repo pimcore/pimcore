@@ -42,7 +42,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -495,7 +495,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -505,7 +505,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -516,7 +516,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
+        if (is_array($this->children) && count($this->children) > 0) {
             return true;
         }
 
@@ -528,7 +528,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
     }
 
@@ -1073,7 +1073,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);

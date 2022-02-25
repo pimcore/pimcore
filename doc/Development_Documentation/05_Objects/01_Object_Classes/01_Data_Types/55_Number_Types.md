@@ -89,6 +89,19 @@ $convertedValue = $converter->convert($originalValue, Unit::getByAbbreviation('m
 // $convertedValue is a QuantityValue with value 3000 and unit mm
 ```
 
+Alternatively you can use
+```php
+$originalValue = new QuantityValue(3, Unit::getByAbbreviation('m')->getId());
+$convertedValue = $originalValue->convertTo(Unit::getByAbbreviation('mm'));
+// $convertedValue is a QuantityValue with value 3000 and unit mm
+```
+or
+```php
+$originalValue = new QuantityValue(3, Unit::getByAbbreviation('m')->getId());
+$convertedValue = $originalValue->convertTo('mm');
+// $convertedValue is a QuantityValue with value 3000 and unit mm
+```
+
 Units without base unit are expected to be a base unit itself. That is why in above example configuration meter has no base unit - but of course you can set it to meter to be more explicit.
 
 In quantity value unit configuration there is also the column "offset". This is for unit conversions where addition / subtraction is needed. For example 

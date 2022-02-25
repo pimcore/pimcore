@@ -31,7 +31,7 @@ class ElementTagsListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DataObjectEvents::POST_COPY => 'onPostCopy',

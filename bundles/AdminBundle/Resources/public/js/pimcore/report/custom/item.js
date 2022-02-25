@@ -898,7 +898,7 @@ pimcore.report.custom.item = Class.create({
         let error = false;
 
         ['group', 'groupIconClass', 'iconClass', 'niceName', 'reportClass'].forEach(function (name) {
-            if(m[name].length && !m[name].match(/^[_a-zA-Z]+[_a-zA-Z0-9-\s]*$/)) {
+            if(m[name].length && !m[name].match(/^[_a-zA-Z]+[_a-zA-Z0-9-.\s]*$/)) {
                 error = name;
             }
         });

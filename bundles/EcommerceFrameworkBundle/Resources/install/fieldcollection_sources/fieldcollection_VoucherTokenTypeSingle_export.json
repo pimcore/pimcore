@@ -19,7 +19,7 @@
     "bodyStyle": null,
     "datatype": "layout",
     "permissions": null,
-    "childs": [
+    "children": [
       {
         "fieldtype": "panel",
         "layout": null,
@@ -35,7 +35,7 @@
         "bodyStyle": "",
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
           {
             "fieldtype": "text",
             "html": "Specify one single token and allow usage of this token multiple times.&nbsp;",
@@ -53,7 +53,7 @@
             "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
             "datatype": "layout",
             "permissions": null,
-            "childs": [],
+            "children": [],
             "locked": false
           },
           {
