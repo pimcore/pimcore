@@ -471,7 +471,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function getConditionVariables()
     {
-        if(!$this-conditionVariables) {
+        if(!$this->conditionVariables) {
             $this->getCondition();
         }
         
