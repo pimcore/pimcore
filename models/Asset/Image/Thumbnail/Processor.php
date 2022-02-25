@@ -405,7 +405,7 @@ class Processor
                 $generated = true;
 
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
-                if ($optimizeContent && $isImageOptimizersEnabled) {
+                if ($optimizedFormat && $optimizeContent && $isImageOptimizersEnabled) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );
