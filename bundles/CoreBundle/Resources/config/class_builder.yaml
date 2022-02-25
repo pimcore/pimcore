@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: true
         autowire: true
         autoconfigure: true
 
@@ -33,13 +32,17 @@ services:
 
     Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface:
         class: 'Pimcore\DataObject\ClassBuilder\PHPClassDumper'
+        public: true
 
     Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface:
         class: 'Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumper'
+        public: true
 
     Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface:
         class: 'Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumper'
+        public: true
 
     Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface:
         class: 'Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper'
+        public: true
     
