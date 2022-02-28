@@ -76,7 +76,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         $codes = $this->getCodes();
         if ($codes && $this->getConfiguration()->getToken() != $codes[0]['token']) {
             $viewParamsBag['generateWarning'] = 'bundle_ecommerce_voucherservice_msg-error-overwrite-single';
-            $viewParamsBag['settings']['Original Token'] = $this->getCodes()[0];
+            $viewParamsBag['settings']['Original Token'] = $codes[0];
         }
 
         if ($codes) {
