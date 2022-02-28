@@ -140,8 +140,8 @@ class RequestHelper
         $request = $this->getRequest($request);
         $attribute = self::ATTRIBUTE_FRONTEND_REQUEST;
 
-        if ($request->attributes->has($attribute) && $request->attributes->get($attribute)) {
-            return true;
+        if ($request->attributes->has($attribute)) {
+            return (bool)$request->attributes->get($attribute);
         }
 
         $frontendRequest = $this->detectFrontendRequest($request);
