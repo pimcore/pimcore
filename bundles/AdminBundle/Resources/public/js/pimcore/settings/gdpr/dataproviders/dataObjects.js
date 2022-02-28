@@ -16,6 +16,8 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
 
     title: t("gdpr_dataSource_dataObjects"),
     iconCls: "pimcore_icon_object",
+    searchUrl: Routing.generate('pimcore_admin_gdpr_dataobject_searchdataobjects'),
+    downloadUrl: Routing.generate('pimcore_admin_gdpr_dataobject_exportdataobject', {id: ''}),
 
     searchParams: [],
 
@@ -49,7 +51,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
             pageSize: pimcore.helpers.grid.getDefaultPageSize(),
             proxy : {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_gdpr_dataobject_searchdataobjects'),
+                url: this.searchUrl,
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -87,7 +89,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 pimcore.helpers.showPermissionError("view");
                                 return;
                             }
-                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_dataobject_exportdataobject', {id: data.data.id}));
+                            pimcore.helpers.download(this.downloadUrl + data.data.id);
                         }.bind(this),
                         getClass: function (v, meta, rec) {
                             if (!rec.get("permissions").view) {
