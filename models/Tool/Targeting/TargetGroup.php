@@ -21,6 +21,7 @@ use Pimcore\Model;
  * @internal
  *
  * @method TargetGroup\Dao getDao()
+ * @method void save()
  * @method void delete()
  */
 class TargetGroup extends Model\AbstractModel
