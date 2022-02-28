@@ -73,12 +73,13 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
-        if ($this->getConfiguration()->getToken() != $this->getCodes()[0]['token']) {
+        $codes = $this->getCodes();
+        if ($codes && $this->getConfiguration()->getToken() != $codes[0]['token']) {
             $viewParamsBag['generateWarning'] = 'bundle_ecommerce_voucherservice_msg-error-overwrite-single';
-            $viewParamsBag['settings']['Original Token'] = $this->getCodes()[0];
+            $viewParamsBag['settings']['Original Token'] = $codes[0];
         }
 
-        if ($codes = $this->getCodes()) {
+        if ($codes) {
             /** @var PaginatorInterface $paginator */
             $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
             $paginator = $paginator->paginate(
@@ -184,8 +185,9 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function getStatistics($usagePeriod = null)
     {
+        $token = Token::getByCode($this->configuration->getToken());
         $overallCount = (int) $this->configuration->getUsages();
-        $usageCount = Token::getByCode($this->configuration->getToken())->getUsages();
+        $usageCount = $token ? $token->getUsages() : 0;
         $reservedTokenCount = (int) Token\Listing::getCountByReservation($this->seriesId);
 
         $usage = Statistic::getBySeriesId($this->seriesId, $usagePeriod);
