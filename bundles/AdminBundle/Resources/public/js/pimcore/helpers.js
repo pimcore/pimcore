@@ -2121,6 +2121,31 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var posterImageSearchButton = new Ext.Button({
+        iconCls: "pimcore_icon_search",
+        handler: function () {
+            pimcore.helpers.itemselector(false, function (item) {
+                if (item) {
+                    poster.setValue(item.fullpath);
+                    return true;
+                }
+            }, {
+                type: ["asset"],
+                subtype: {
+                    asset: ["image"]
+                }
+            });
+        }
+    });
+
+    var posterImageOpenButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(poster.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
         openButton.enable();
@@ -2134,12 +2159,14 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
             poster.hide();
             poster.setValue("");
+            form.getComponent("posterContainer").hide();
             form.getComponent("title").hide();
             form.getComponent("title").setValue("");
             form.getComponent("description").hide();
             form.getComponent("description").setValue("");
         } else {
             poster.show();
+            form.getComponent("posterContainer").show();
             form.getComponent("title").show();
             form.getComponent("description").show();
         }
@@ -2183,7 +2210,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             border: false,
             itemId: "pathContainer",
             items: [fieldPath, searchButton, openButton]
-        }, poster, {
+        }, {
+            xtype: "fieldcontainer",
+            layout: 'hbox',
+            border: false,
+            itemId: "posterContainer",
+            items: [poster, posterImageSearchButton, posterImageOpenButton]
+        }, {
             xtype: "textfield",
             name: "title",
             itemId: "title",
