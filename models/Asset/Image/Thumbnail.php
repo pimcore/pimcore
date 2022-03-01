@@ -309,9 +309,9 @@ final class Thumbnail
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
                         foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
-                            $sourceWebP = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
-                            if (!empty($sourceWebP)) {
-                                $html .= "\t" . $sourceWebP . "\n";
+                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                            if (!empty($autoFormatThumbnailHtml)) {
+                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
                             }
                         }
                     }

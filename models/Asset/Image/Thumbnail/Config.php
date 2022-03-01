@@ -934,7 +934,7 @@ final class Config extends Model\AbstractModel
     /**
      * @return array
      */
-    public static function getAutFormats(): array
+    public static function getAutoFormats(): array
     {
         return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
     }
@@ -944,20 +944,20 @@ final class Config extends Model\AbstractModel
      */
     public function getAutoFormatThumbnailConfigs(): array
     {
-        $autFormatThumbnails = [];
+        $autoFormatThumbnails = [];
 
-        foreach ($this->getAutFormats() as $autoFormat => $autoFormatConfig) {
+        foreach ($this->getAutoFormats() as $autoFormat => $autoFormatConfig) {
             if (Model\Asset\Image\Thumbnail::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
-                $autFormatThumbnail = clone $this;
-                $autFormatThumbnail->setFormat($autoFormat);
+                $autoFormatThumbnail = clone $this;
+                $autoFormatThumbnail->setFormat($autoFormat);
                 if (!empty($autoFormatConfig['quality'])) {
-                    $autFormatThumbnail->setQuality($autoFormatConfig['quality']);
+                    $autoFormatThumbnail->setQuality($autoFormatConfig['quality']);
                 }
 
-                $autFormatThumbnails[$autoFormat] = $autFormatThumbnail;
+                $autoFormatThumbnails[$autoFormat] = $autoFormatThumbnail;
             }
         }
 
-        return $autFormatThumbnails;
+        return $autoFormatThumbnails;
     }
 }

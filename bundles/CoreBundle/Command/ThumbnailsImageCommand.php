@@ -79,7 +79,7 @@ class ThumbnailsImageCommand extends AbstractCommand
             );
 
 
-        foreach (Image\Thumbnail\Config::getAutFormats() as $autoFormat => $autoFormatConfig) {
+        foreach (Image\Thumbnail\Config::getAutoFormats() as $autoFormat => $autoFormatConfig) {
             if ($autoFormatConfig['enabled']) {
                 $this->addOption(
                     'skip-' . $autoFormat,
