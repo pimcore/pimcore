@@ -59,6 +59,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             $data['draft'] = [
                 'id' => $draftVersion->getId(),
                 'modificationDate' => $draftVersion->getDate(),
+                'isAutoSave' => $draftVersion->isAutoSave(),
             ];
         }
 
