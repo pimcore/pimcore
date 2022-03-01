@@ -100,9 +100,7 @@ pimcore.report.custom.item = Class.create({
             ],
             viewConfig: {
                 plugins: {
-                    ptype: 'gridviewdragdrop',
-                    pluginId: 'gridviewdragdrop',
-                    dragText: t('pim.dataport.change-order-hint')
+                    ptype: 'gridviewdragdrop'
                 }
             },
             columns: [
