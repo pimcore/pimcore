@@ -16,7 +16,6 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
-use enshrined\svgSanitize\Sanitizer;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
