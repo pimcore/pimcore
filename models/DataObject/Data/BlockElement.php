@@ -16,6 +16,8 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use DeepCopy\DeepCopy;
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
@@ -243,6 +245,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             ),
             new \Pimcore\Model\Element\DeepCopy\MarshalMatcher(null, null)
         );
+        $copier->addFilter(new SetNullFilter(), new PropertyNameMatcher('_owner'));
+
         $data = $copier->copy($this);
 
         return $data;
