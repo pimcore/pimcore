@@ -129,7 +129,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
@@ -404,7 +404,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
