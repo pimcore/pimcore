@@ -90,7 +90,10 @@ class SettingsController extends AdminController
 
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
-        }, 200, ['Content-Type' => $mime]);
+        }, 200, [
+            'Content-Type' => $mime,
+            'Content-Security-Policy' => "script-src 'none'",
+        ]);
     }
 
     /**
