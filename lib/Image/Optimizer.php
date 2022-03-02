@@ -40,8 +40,10 @@ class Optimizer implements ImageOptimizerInterface
 
         foreach ($this->optimizers as $optimizer) {
             if ($optimizer->supports($storage->mimeType($path))) {
+                $tmpFilePath = File::getLocalTempFilePath($extension);
+
                 try {
-                    $optimizedFile = $optimizer->optimizeImage($workingPath, File::getLocalTempFilePath($extension));
+                    $optimizedFile = $optimizer->optimizeImage($workingPath, $tmpFilePath);
 
                     $optimizedImages[] = [
                         'filesize' => filesize($optimizedFile),
@@ -49,6 +51,9 @@ class Optimizer implements ImageOptimizerInterface
                         'optimizer' => $optimizer,
                     ];
                 } catch (ImageOptimizationFailedException $ex) {
+                    if (file_exists($tmpFilePath)) {
+                        unlink($tmpFilePath);
+                    }
                 }
             }
         }
