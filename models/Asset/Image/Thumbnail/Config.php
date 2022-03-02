@@ -932,6 +932,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return array
      */
     public static function getAutoFormats(): array
@@ -940,6 +941,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return Config[]
      */
     public function getAutoFormatThumbnailConfigs(): array
