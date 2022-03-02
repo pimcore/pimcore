@@ -114,8 +114,10 @@ class Folder extends Model\Asset
     public function getPreviewImage(bool $force = false)
     {
         $storage = Storage::get('thumbnail');
-        $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
-            rtrim($this->getRealFullPath(), '/'),
+        $cacheFilePath = sprintf(
+            '%s/%s/image-thumb__%s__-folder-preview%s.jpg',
+            rtrim($this->getRealPath(), '/'),
+            $this->getId(),
             $this->getId(),
             '-hdpi'
         );

@@ -1,21 +1,17 @@
 # Upgrade Notes
-
 ## 10.4.0
-
+- **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
 - [Image Optimizer] Optimize Image messages are now routed to different queue
   instead of `pimcore_core`. If you want to handle image optimize messages, then it is required to add specific option `pimcore_image_optimize` to the command `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize`. Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that ImageOptimize messages on the queue gets consumed.
-  
 
 ## 10.3.0
-- **Important notice**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
+- **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
   required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
   the messages on default queue gets consumed.
-- [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 - **Important**: In preparation of upgrade to Symfony 6, return types must be added to methods which are extended from Symfony. In Pimcore, following changes are applied:
-  - Return type added to safe methods, which are `final` & marked as `internal`.
-  - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return
-    types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes.
-    Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
+    - Return type added to safe methods, which are `final` & marked as `internal`.
+    - Return type hints are added as comments on the methods which are extendable and phpdocs are updated. These return types will be introduced in Pimcore 11. You must add return types, if you're extending any of these Pimcore classes. Please check changes [here](https://github.com/pimcore/pimcore/pull/10846/files)
+- [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 - [Data objects] Default values now get saved to versions -> Restoring a version also restores the default values (before those fields were null after restoring)
 - Method `create()` from `Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation` and `Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` no longer saves the new object, but just returns the instance. Related changes can be found here: https://github.com/pimcore/pimcore/pull/11326/files 
 

@@ -234,8 +234,10 @@ EOT;
      */
     private function getLowQualityPreviewStoragePath()
     {
-        return sprintf('%s/image-thumb__%s__-low-quality-preview.svg',
+        return sprintf(
+            '%s/%s/image-thumb__%s__-low-quality-preview.svg',
             rtrim($this->getRealPath(), '/'),
+            $this->getId(),
             $this->getId()
         );
     }
