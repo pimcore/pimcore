@@ -1154,6 +1154,11 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/info-gray.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_gray_lock {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/lock-gray.svg) center center no-repeat !important;
+    background-size: contain !important;
+}
+
 .pimcore_icon_video {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/clapperboard.svg) center center no-repeat !important;
 }
