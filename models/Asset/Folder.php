@@ -116,7 +116,7 @@ class Folder extends Model\Asset
         $storage = Storage::get('thumbnail');
         $cacheFilePath = sprintf(
             '%s/%s/image-thumb__%s__-folder-preview%s.jpg',
-            rtrim($this->getRealFullPath(), '/'),
+            rtrim($this->getRealPath(), '/'),
             $this->getId(),
             $this->getId(),
             '-hdpi'
@@ -204,17 +204,4 @@ class Folder extends Model\Asset
 
         return null;
     }
-    
-    /**
-     * @param bool $force
-     */
-    public function clearThumbnails($force = false)
-    {
-        if ($this->getDataChanged() || $force) {
-            foreach (['thumbnail', 'asset_cache'] as $storageName) {
-                $storage = Storage::get($storageName);
-                $storage->deleteDirectory($this->getRealFullPath().'/'.$this->getId());
-            }
-        }
-    }    
 }
