@@ -17,7 +17,6 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
@@ -1101,7 +1100,7 @@ class Asset extends Element\AbstractElement
             }
 
             $this->clearThumbnails(true);
-            
+
             //remove target parent folder preview thumbnails
             $this->clearFolderThumbnails($this);
         } catch (\Exception $e) {
@@ -2016,7 +2015,7 @@ class Asset extends Element\AbstractElement
      */
     private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
     {
-        if($newPath === null) {
+        if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
 
@@ -2043,7 +2042,7 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        if($this instanceof Folder) {
+        if ($this instanceof Folder) {
             $oldThumbnailsPath = $oldPath;
             $newThumbnailsPath = $this->getRealFullPath();
         } else {
@@ -2051,16 +2050,15 @@ class Asset extends Element\AbstractElement
             $newThumbnailsPath = $this->getRealPath() . $this->getId();
         }
 
-        if($oldThumbnailsPath === $newThumbnailsPath) {
+        if ($oldThumbnailsPath === $newThumbnailsPath) {
 
             //path is equal, probably file name changed - so clear all thumbnails
             $this->clearThumbnails(true);
-
         } else {
 
             //remove source parent folder preview thumbnails
             $sourceFolder = Asset::getByPath(dirname($oldPath));
-            if($sourceFolder) {
+            if ($sourceFolder) {
                 $this->clearFolderThumbnails($sourceFolder);
             }
 
@@ -2069,7 +2067,7 @@ class Asset extends Element\AbstractElement
 
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                
+
                 try {
                     $storage->move($oldThumbnailsPath, $newThumbnailsPath);
                 } catch (UnableToMoveFile $e) {
@@ -2086,7 +2084,7 @@ class Asset extends Element\AbstractElement
     private function clearFolderThumbnails(Asset $asset): void
     {
         do {
-            if($asset instanceof Folder) {
+            if ($asset instanceof Folder) {
                 $asset->clearThumbnails(true);
             }
 

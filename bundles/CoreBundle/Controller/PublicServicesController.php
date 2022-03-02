@@ -56,7 +56,7 @@ class PublicServicesController extends Controller
         if ($asset) {
             $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
             $prefix = preg_replace('@/' . $asset->getId() . '/$@', '/', $prefix);
-            if($asset->getPath() === ('/' . $prefix)) {
+            if ($asset->getPath() === ('/' . $prefix)) {
                 // we need to check the path as well, this is important in the case you have restricted the public access to
                 // assets via rewrite rules
                 try {

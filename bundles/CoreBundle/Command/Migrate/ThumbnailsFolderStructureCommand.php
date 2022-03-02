@@ -55,10 +55,10 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
         return 0;
     }
 
-    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage) {
+    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage)
+    {
         $thumbnailFiles = $storage->listContents('/', true)->filter(function (StorageAttributes $attributes) {
-
-            if($attributes->isDir()) {
+            if ($attributes->isDir()) {
                 return false;
             }
 
@@ -77,10 +77,10 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
         foreach ($iterator as $thumbnailFile) {
             $targetPath = preg_replace('/(image-thumb|video-thumb|pdf-thumb)__(\d+)__(.+)$/', '$2/$1__$2__$3', $thumbnailFile->path());
 
-            if(!$storage->fileExists($targetPath)) {
+            if (!$storage->fileExists($targetPath)) {
                 $storage->move($thumbnailFile->path(), $targetPath);
             } else {
-                if($thumbnailFile->isDir()) {
+                if ($thumbnailFile->isDir()) {
                     $storage->deleteDirectory($thumbnailFile->path());
                 } else {
                     $storage->delete($thumbnailFile->path());
@@ -90,6 +90,5 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
             $progressBar->advance();
         }
         $progressBar->finish();
-
     }
 }
