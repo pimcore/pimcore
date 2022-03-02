@@ -78,7 +78,6 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'do not generate high-res (@2x) versions of thumbnails'
             );
 
-
         foreach (Image\Thumbnail\Config::getAutoFormats() as $autoFormat => $autoFormatConfig) {
             if ($autoFormatConfig['enabled']) {
                 $this->addOption(
