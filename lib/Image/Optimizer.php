@@ -35,7 +35,6 @@ class Optimizer implements ImageOptimizerInterface
         $extension = File::getFileExtension($path);
         $storage = Storage::get('thumbnail');
         $optimizedImages = [];
-        $failedImages = [];
         $workingPath = File::getLocalTempFilePath($extension);
         file_put_contents($workingPath, $storage->read($path));
 
@@ -52,7 +51,9 @@ class Optimizer implements ImageOptimizerInterface
                         'optimizer' => $optimizer,
                     ];
                 } catch (ImageOptimizationFailedException $ex) {
-                    $failedImages[] = $tmpFilePath;
+                    if (file_exists($tmpFilePath)) {
+                        unlink($tmpFilePath);
+                    }
                 }
             }
         }
@@ -74,12 +75,6 @@ class Optimizer implements ImageOptimizerInterface
         // cleanup
         foreach ($optimizedImages as $tmpFile) {
             unlink($tmpFile['path']);
-        }
-
-        foreach ($failedImages as $failedImage) {
-            if (is_file($failedImage)) {
-                unlink($failedImage);
-            }
         }
 
         if (is_file($workingPath)) {
