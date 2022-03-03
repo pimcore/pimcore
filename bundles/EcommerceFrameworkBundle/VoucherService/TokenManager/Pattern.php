@@ -553,8 +553,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $viewParamsBag['paginator'] = $paginator;
         $viewParamsBag['count'] = count($tokens);
 
-        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
-        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
+        $viewParamsBag['msg']['error'] = $params['error'] ?? null;
+        $viewParamsBag['msg']['success'] = $params['success'] ?? null;
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [

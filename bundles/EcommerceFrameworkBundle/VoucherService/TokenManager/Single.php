@@ -91,8 +91,8 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             $viewParamsBag['count'] = count($codes);
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
-        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
+        $viewParamsBag['msg']['error'] = $params['error'] ?? null;
+        $viewParamsBag['msg']['success'] = $params['success'] ?? null;
 
         $viewParamsBag['settings'] = [
             'bundle_ecommerce_voucherservice_settings-token' => $this->getConfiguration()->getToken(),
