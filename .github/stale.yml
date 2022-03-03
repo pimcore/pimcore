@@ -1,12 +1,12 @@
-daysUntilStale: 7
+daysUntilStale: 20
 daysUntilClose: 180
 exemptLabels:
     - Priority
-    - Critical
+    - Backlog
 staleLabel: "PR Welcome"
 markComment: >
     Thanks a lot for reporting the issue.
-    The issue was not considered by us as "critical" or "priority",
+    The issue was not considered by us as "Priority" or "Backlog",
     so we're not gonna work on that anytime soon.
     In case this is a bug report, please create a pull request fixing the issue,
     we'll then review it as soon as possible.

@@ -26,6 +26,15 @@ If you've created a pull request, it's not necessary anymore to create an issue 
 * Occasionally we'll close issues if they appear stale or are too vague - please don't take this personally! 
 Please feel free to re-open issues we've closed if there's something we've missed and they still need to be addressed.
 
+### Inactive Issue Closing Policy
+Pimcore uses a bot that closes abandoned issues after a period of inactivity.
+If an issue was not labeled as "Priority" or "Backlog" by us, 
+this means that we're not going to work on that anytime soon.
+In case of a bug report, you can create a pull request fixing the issue instead,
+which will be then reviewed as soon as possible.
+If you're interested in contributing a feature, please contact us first,
+before creating a pull request, we'll then decide whether we'd accept it or not.
+
 ### Contributor License Agreement
 The following terms are used throughout this agreement:
 
