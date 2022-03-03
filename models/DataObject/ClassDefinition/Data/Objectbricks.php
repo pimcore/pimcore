@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
@@ -620,13 +621,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             try {
                                 $key = $fd->getName();
                                 $getter = 'get' . ucfirst($key);
-                                
+
                                 $value = $item->$getter();
                                 if (empty($value)) {
-                                    $value = $item->getValueFromParent($key);
+                                    try {
+                                        $value = $item->getValueFromParent($key);
+                                    }catch (InheritanceParentNotFoundException $e){}
                                 }
                                 $fd->checkValidity($value, false, $params);
-                                
+
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName());
                                 $validationExceptions[] = $ve;
