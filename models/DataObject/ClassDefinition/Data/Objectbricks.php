@@ -620,7 +620,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             try {
                                 $key = $fd->getName();
                                 $getter = 'get' . ucfirst($key);
-                                $fd->checkValidity($item->$getter(), false, $params);
+                                
+                                $value = $item->$getter();
+                                if (empty($value)) {
+                                    $value = $item->getValueFromParent($key);
+                                }
+                                $fd->checkValidity($value, false, $params);
+                                
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName());
                                 $validationExceptions[] = $ve;
