@@ -623,7 +623,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                 $getter = 'get' . ucfirst($key);
 
                                 $value = $item->$getter();
-                                if (empty($value)) {
+                                if ($fd->getMandatory() && empty($value)) {
                                     try {
                                         $value = $item->getValueFromParent($key);
                                     }catch (InheritanceParentNotFoundException $e){}
