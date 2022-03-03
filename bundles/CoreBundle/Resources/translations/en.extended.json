@@ -42,6 +42,7 @@
   "regex_validation": "Regular Expression Validation",
   "test_string": "Test string",
   "regex": "RegEx",
+  "regex_flags": "RegEx Flags",
   "code_before_init": "Code before init",
   "code_after_pageview": "Code after pageview",
   "code_before_pageview": "Code before pageview",
