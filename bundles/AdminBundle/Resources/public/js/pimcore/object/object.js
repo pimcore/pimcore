@@ -754,7 +754,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 if (e instanceof pimcore.error.ActionCancelledException) {
                     this.tab.unmask();
-                    pimcore.helpers.showNotification(t("Info"), 'Object not saved: ' + e.message, 'info');
+                    pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + e.message, 'info');
                     return false;
                 }
             }
