@@ -461,7 +461,7 @@ class Imagick extends Adapter
                 $path = __DIR__ . '/../icc-profiles/ISOcoated_v2_eci.icc'; // default profile
             }
 
-            if ($path && file_exists($path)) {
+            if (file_exists($path)) {
                 self::$CMYKColorProfile = file_get_contents($path);
             }
         }

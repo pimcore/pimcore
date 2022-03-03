@@ -29,12 +29,12 @@ use Symfony\Component\Process\Process;
 class AssetsInstaller
 {
     /**
-     * @var \Closure
+     * @var \Closure|null
      */
     private $runCallback;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $composerJsonSetting;
 
@@ -109,7 +109,7 @@ class AssetsInstaller
     }
 
     /**
-     * @param \Closure $runCallback
+     * @param \Closure|null $runCallback
      */
     public function setRunCallback(\Closure $runCallback = null)
     {
