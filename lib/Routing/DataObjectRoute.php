@@ -89,7 +89,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     public function getRouteKey(): ?string
     {
         if ($this->object) {
-            return sprintf('data_object_%d_%s', $this->object->getId(), $this->getPath());
+            return sprintf('data_object_%d_%s_%s', $this->object->getId(), $this->getDefault('site'), $this->getPath());
         }
 
         return null;
