@@ -343,7 +343,7 @@ class UrlSlug implements OwnerAwareFieldInterface
         try {
             $filterSiteId = 'siteId = 0';
             if ($siteId){
-                $filterSiteId = sprintf('(siteId = %d OR siteId = 0)', $siteId)
+                $filterSiteId = sprintf('(siteId = %d OR siteId = 0)', $siteId);
             }
             
             $query = sprintf(
