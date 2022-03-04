@@ -341,11 +341,16 @@ class UrlSlug implements OwnerAwareFieldInterface
         $db = Db::get();
 
         try {
+            $filterSiteId = 'siteId = 0';
+            if ($siteId){
+                $filterSiteId = sprintf('(siteId = %d OR siteId = 0)', $siteId)
+            }
+            
             $query = sprintf(
-                'SELECT * FROM %s WHERE slug = %s AND (siteId = %d OR siteId = 0) ORDER BY siteId DESC LIMIT 1',
+                'SELECT * FROM %s WHERE slug = %s AND %s ORDER BY siteId DESC LIMIT 1',
                 self::TABLE_NAME,
                 $db->quote($path),
-                $siteId
+                $filterSiteId
             );
 
             $rawItem = $db->fetchRow($query);
