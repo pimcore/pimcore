@@ -21,6 +21,33 @@ use Pimcore\Model\Element\Service;
 class Document extends Data
 {
     /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        $element = Service::getElementByPath('document', $value);
+        if ($element) {
+            return $element->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        $element = null;
+        if (is_numeric($value)) {
+            $element = Service::getElementById('document', $value);
+        }
+
+        return $element ? $element->getRealFullPath() : '';
+    }
+
+
+    /**
      * @param mixed $value
      * @param array $params
      *
@@ -28,12 +55,7 @@ class Document extends Data
      */
     public function marshal($value, $params = [])
     {
-        $element = Service::getElementByPath('document', $value);
-        if ($element) {
-            return $element->getId();
-        } else {
-            return null;
-        }
+        return $this->normalize($value, $params);
     }
 
     /**
@@ -44,17 +66,7 @@ class Document extends Data
      */
     public function unmarshal($value, $params = [])
     {
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('document', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
+        return $this->denormalize($value, $params);
     }
 
     /**

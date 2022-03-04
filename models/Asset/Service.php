@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -404,10 +405,10 @@ class Service extends Model\Element\Service
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);
 
-                if ($mode == 'grid') {
-                    $transformedData = $instance->getDataFromListfolderGrid($item['data'] ?? null, $item);
+                if ($instance instanceof NormalizerInterface) {
+                    $transformedData = $instance->normalize($item['data'] ?? null);
                 } else {
-                    $transformedData = $instance->getDataFromEditMode($item['data'] ?? null, $item);
+                    throw new \Exception($item['name'] . ' does not implement NormalizerInterface');
                 }
 
                 $item['data'] = $transformedData;
@@ -441,7 +442,11 @@ class Service extends Model\Element\Service
             try {
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);
-                $transformedData = $instance->getDataForEditMode($item['data'], $item);
+                if ($instance instanceof NormalizerInterface) {
+                    $transformedData = $instance->denormalize($item['data'], $item);
+                } else {
+                    throw new \Exception($item['name'] . ' does not implement NormalizerInterface');
+                }
             } catch (UnsupportedException $e) {
             }
 

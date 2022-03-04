@@ -17,6 +17,19 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 class Date extends Data
 {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value && !is_numeric($value)) {
+            $value = strtotime($value);
+        }
+
+        return $value;
+    }
+
     /**
      * @param mixed $value
      * @param array $params
@@ -25,11 +38,7 @@ class Date extends Data
      */
     public function marshal($value, $params = [])
     {
-        if ($value && !is_numeric($value)) {
-            $value = strtotime($value);
-        }
-
-        return $value;
+        return $this->normalize($value, $params);
     }
 
     /**

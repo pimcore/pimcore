@@ -15,8 +15,13 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-abstract class Data implements DataDefinitionInterface
+use Pimcore\Model\DataObject\Traits\SimpleNormalizerTrait;
+use Pimcore\Normalizer\NormalizerInterface;
+
+abstract class Data implements DataDefinitionInterface, NormalizerInterface
 {
+    use SimpleNormalizerTrait;
+
     /**
      * @param mixed $value
      * @param array $params
@@ -25,7 +30,7 @@ abstract class Data implements DataDefinitionInterface
      */
     public function marshal($value, $params = [])
     {
-        return $value;
+        return $this->normalize($value, $params);
     }
 
     /**
@@ -36,7 +41,7 @@ abstract class Data implements DataDefinitionInterface
      */
     public function unmarshal($value, $params = [])
     {
-        return $value;
+        return $this->denormalize($value, $params);
     }
 
     public function __toString()

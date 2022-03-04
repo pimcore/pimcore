@@ -22,6 +22,33 @@ use Pimcore\Model\Element\Service;
 class DataObject extends Data
 {
     /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        $element = Service::getElementByPath('object', $value);
+        if ($element) {
+            return 123;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        $element = null;
+        if (is_numeric($value)) {
+            $element = Service::getElementById('object', $value);
+        }
+
+        return $element ? $element->getRealFullPath() : '';
+    }
+
+
+    /**
      * @param mixed $value
      * @param array $params
      *
@@ -29,12 +56,7 @@ class DataObject extends Data
      */
     public function marshal($value, $params = [])
     {
-        $element = Service::getElementByPath('object', $value);
-        if ($element) {
-            return $element->getId();
-        } else {
-            return null;
-        }
+        return $this->normalize($value, $params);
     }
 
     /**
@@ -45,17 +67,7 @@ class DataObject extends Data
      */
     public function unmarshal($value, $params = [])
     {
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('object', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
+        return $this->denormalize($value, $params);
     }
 
     /**

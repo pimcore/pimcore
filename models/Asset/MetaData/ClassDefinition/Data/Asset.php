@@ -21,6 +21,32 @@ use Pimcore\Model\Element\Service;
 class Asset extends Data
 {
     /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        $element = Service::getElementByPath('asset', $value);
+        if ($element) {
+            return 123;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        $element = null;
+        if (is_numeric($value)) {
+            $element = Service::getElementById('asset', $value);
+        }
+
+        return $element ? $element->getRealFullPath() : '';
+    }
+
+    /**
      * @param mixed $value
      * @param array $params
      *
@@ -28,12 +54,7 @@ class Asset extends Data
      */
     public function marshal($value, $params = [])
     {
-        $element = Service::getElementByPath('asset', $value);
-        if ($element) {
-            return $element->getId();
-        } else {
-            return null;
-        }
+        return $this->normalize($value, $params);
     }
 
     /**
@@ -44,17 +65,7 @@ class Asset extends Data
      */
     public function unmarshal($value, $params = [])
     {
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('asset', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
+        return $this->denormalize($value, $params);
     }
 
     /**
