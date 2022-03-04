@@ -400,6 +400,7 @@ class Service extends Model\Element\Service
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $transformedData = $item['data'];
 
             try {
                 /** @var Data $instance */
@@ -407,8 +408,6 @@ class Service extends Model\Element\Service
 
                 if ($instance instanceof NormalizerInterface) {
                     $transformedData = $instance->normalize($item['data'] ?? null);
-                } else {
-                    throw new \Exception($item['name'] . ' does not implement NormalizerInterface');
                 }
 
                 $item['data'] = $transformedData;
@@ -444,8 +443,6 @@ class Service extends Model\Element\Service
                 $instance = $loader->build($item['type']);
                 if ($instance instanceof NormalizerInterface) {
                     $transformedData = $instance->denormalize($item['data'], $item);
-                } else {
-                    throw new \Exception($item['name'] . ' does not implement NormalizerInterface');
                 }
             } catch (UnsupportedException $e) {
             }
