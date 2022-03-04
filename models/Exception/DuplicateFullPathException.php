@@ -15,6 +15,21 @@
 
 namespace Pimcore\Model\Exception;
 
+use Pimcore\Model\Element\AbstractElement;
+
 class DuplicateFullPathException extends \Exception
 {
+    private AbstractElement $duplicateElement;
+
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, AbstractElement $duplicateElement = null)
+    {
+        $this->duplicateElement = $duplicateElement;
+
+        parent::__construct($message, $code, $previous);
+    }
+
+    public function getDuplicateElement(): ?AbstractElement
+    {
+        return $this->duplicateElement;
+    }
 }
