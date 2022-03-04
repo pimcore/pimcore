@@ -21,7 +21,7 @@ class DuplicateFullPathException extends \Exception
 {
     private AbstractElement $duplicateElement;
 
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, AbstractElement $duplicateElement = null)
+    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, AbstractElement $duplicateElement = null)
     {
         $this->duplicateElement = $duplicateElement;
 
