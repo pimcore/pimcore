@@ -225,6 +225,17 @@ class Asset extends Element\AbstractElement
      *
      * @return array
      */
+
+    protected static $disabledEvents = [];
+
+    public static function disableEvents(array $events = []){
+        self::$disabledEvents = $events;
+    }
+    
+    private function isAllowedEvent($eventName){
+        return !in_array($eventName, self::$disabledEvents);
+    }
+
     public static function getTypes()
     {
         return self::$types;
@@ -638,7 +649,9 @@ class Asset extends Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_UPDATE);
+                if ($this->isAllowedEvent(AssetEvents::POST_UPDATE)){
+                    \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_UPDATE);
+                }
             } else {
                 \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_ADD);
             }
