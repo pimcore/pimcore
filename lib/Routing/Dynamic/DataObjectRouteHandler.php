@@ -97,6 +97,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute
     {
+        $site = $this->siteResolver->getSite();
         $route = new DataObjectRoute($slug->getSlug());
         $route->setOption('utf8', true);
         $route->setObject($object);
@@ -104,7 +105,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
-        $route->setDefault('site', $this->siteResolver->getSite());
+        $route->setDefault('site', $site ? $site->getId() : 0);
 
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
