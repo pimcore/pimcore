@@ -36,6 +36,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Exception\DuplicateFullPathException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -660,7 +661,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
     public function correctPath()
     {
@@ -709,7 +710,7 @@ class Asset extends Element\AbstractElement
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
+                throw new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
             }
         }
 
