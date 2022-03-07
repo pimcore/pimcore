@@ -32,6 +32,12 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
      */
     public function marshal($value, $params = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.3',
+            sprintf('%s is deprecated, please use normalize() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $this->normalize($value, $params);
     }
 
@@ -45,6 +51,12 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
      */
     public function unmarshal($value, $params = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.3',
+            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $this->denormalize($value, $params);
     }
 

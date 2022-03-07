@@ -46,33 +46,6 @@ class Document extends Data
         return $element ? $element->getRealFullPath() : '';
     }
 
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return null|int
-     *
-     * @deprecated use normalize() instead, will be removed in Pimcore 11
-     */
-    public function marshal($value, $params = [])
-    {
-        return $this->normalize($value, $params);
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal($value, $params = [])
-    {
-        return $this->denormalize($value, $params);
-    }
-
     /**
      * @param mixed $data
      * @param array $params

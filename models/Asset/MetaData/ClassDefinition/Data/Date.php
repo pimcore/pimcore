@@ -34,19 +34,6 @@ class Date extends Data
      * @param mixed $value
      * @param array $params
      *
-     * @return null|string
-     *
-     * @deprecated use normalize() instead, will be removed in Pimcore 11
-     */
-    public function marshal($value, $params = [])
-    {
-        return $this->normalize($value, $params);
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
      * @return string
      */
     public function getVersionPreview($value, $params = [])
