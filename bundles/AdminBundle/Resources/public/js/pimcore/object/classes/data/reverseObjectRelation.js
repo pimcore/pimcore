@@ -54,8 +54,6 @@ pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.
         $super();
 
         this.specificPanel.removeAll();
-
-        this.specificPanel.removeAll();
         this.specificPanel.add([
             {
                 xtype: "textfield",

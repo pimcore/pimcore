@@ -105,7 +105,7 @@ final class BlockState implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'blocks' => $this->blocks,

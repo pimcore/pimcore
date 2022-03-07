@@ -49,8 +49,10 @@ class Image extends Model\Asset
             }
         }
 
-        $this->clearThumbnails($this->clearThumbnailsOnSave);
-        $this->clearThumbnailsOnSave = false; // reset to default
+        if ($params['isUpdate']) {
+            $this->clearThumbnails($this->clearThumbnailsOnSave);
+            $this->clearThumbnailsOnSave = false; // reset to default
+        }
 
         parent::update($params);
     }
@@ -123,10 +125,10 @@ class Image extends Model\Asset
                         list($x, $y, $width, $height) = explode(' ', $coordinates);
 
                         // percentages
-                        $Px = $x / $imageWidth * 100;
-                        $Py = $y / $imageHeight * 100;
-                        $Pw = $width / $imageWidth * 100;
-                        $Ph = $height / $imageHeight * 100;
+                        $Px = (int) $x / $imageWidth * 100;
+                        $Py = (int) $y / $imageHeight * 100;
+                        $Pw = (int) $width / $imageWidth * 100;
+                        $Ph = (int) $height / $imageHeight * 100;
 
                         $faceCoordinates[] = [
                             'x' => $Px,
