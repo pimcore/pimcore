@@ -155,7 +155,7 @@ class ApplicationLogger implements LoggerInterface
             } elseif($context['fileObject'] instanceof FileObject) {
                 $context['fileObject'] = $context['fileObject']->getFilename();
             } else {
-                throw new InvalidArgumentException('fileObject must either be the path to a file as string or an instanceof FileObject');
+                throw new InvalidArgumentException('fileObject must either be the path to a file as string or an instance of FileObject');
             }
         }
 
