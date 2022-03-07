@@ -150,9 +150,9 @@ class ApplicationLogger implements LoggerInterface
 
         if (isset($context['fileObject'])) {
             if (is_string($context['fileObject'])) {
-                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']);
+                $context['fileObject'] = preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $context['fileObject']);
             } else {
-                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']->getFilename());
+                $context['fileObject'] = $context['fileObject']->getFilename();
             }
         }
 
