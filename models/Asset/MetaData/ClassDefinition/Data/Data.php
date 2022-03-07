@@ -27,6 +27,8 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
      * @param array $params
      *
      * @return mixed
+     *
+     * @deprecated use normalize() instead, will be removed in Pimcore 11
      */
     public function marshal($value, $params = [])
     {
@@ -38,6 +40,8 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
      * @param array $params
      *
      * @return mixed
+     *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
      */
     public function unmarshal($value, $params = [])
     {

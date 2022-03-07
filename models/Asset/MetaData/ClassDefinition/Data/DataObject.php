@@ -53,6 +53,8 @@ class DataObject extends Data
      * @param array $params
      *
      * @return null|int
+     *
+     * @deprecated use normalize() instead, will be removed in Pimcore 11
      */
     public function marshal($value, $params = [])
     {
@@ -64,6 +66,8 @@ class DataObject extends Data
      * @param array $params
      *
      * @return string
+     *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
      */
     public function unmarshal($value, $params = [])
     {

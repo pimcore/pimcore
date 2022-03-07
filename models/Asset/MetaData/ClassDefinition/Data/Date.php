@@ -35,6 +35,8 @@ class Date extends Data
      * @param array $params
      *
      * @return null|string
+     *
+     * @deprecated use normalize() instead, will be removed in Pimcore 11
      */
     public function marshal($value, $params = [])
     {
