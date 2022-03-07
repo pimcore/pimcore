@@ -21,6 +21,7 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
@@ -438,12 +439,18 @@ class PageController extends DocumentControllerBase
         BlockStateStack $blockStateStack,
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
-        EditableRenderer $editableRenderer
+        EditableRenderer $editableRenderer,
+        DocumentResolver $documentResolver
     ) {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
         $document = Document\PageSnippet::getById($request->get('documentId'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
+
+        $documentResolver->setDocument($request, $document);
 
         $twig->addGlobal('document', $document);
         $twig->addGlobal('editmode', true);
