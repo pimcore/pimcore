@@ -27,7 +27,7 @@ class Asset extends Data
     {
         $element = Service::getElementByPath('asset', $value);
         if ($element) {
-            return 123;
+            return $element->getId();
         }
 
         return null;

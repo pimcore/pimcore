@@ -28,7 +28,7 @@ class DataObject extends Data
     {
         $element = Service::getElementByPath('object', $value);
         if ($element) {
-            return 123;
+            return $element->getId();
         }
 
         return null;
