@@ -79,8 +79,8 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var updateSerpPreview = function () {
 
                 var metaPanel = this.layout.getComponent("metaDataPanel");
-                var title = metaPanel.getComponent("title").getValue();
-                var description = metaPanel.getComponent("description").getValue();
+                var title = htmlspecialchars(metaPanel.getComponent("title").getValue());
+                var description = htmlspecialchars(metaPanel.getComponent("description").getValue());
 
                 var truncate = function( text, n ){
                     if (text.length <= n) { return text; }
