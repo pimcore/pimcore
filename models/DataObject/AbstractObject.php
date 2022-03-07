@@ -855,12 +855,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if (Service::pathExists($this->getRealFullPath())) {
             $duplicate = DataObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
-                throw new DuplicateFullPathException(
+                $duplicateFullPathException = new DuplicateFullPathException(
                     'Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object',
                     0,
                     null,
-                    $duplicate
                 );
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+
+                throw $duplicateFullPathException;
             }
         }
 
