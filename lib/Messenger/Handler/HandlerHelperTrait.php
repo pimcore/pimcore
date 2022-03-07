@@ -22,7 +22,7 @@ trait HandlerHelperTrait
         $filteredJobs = [];
         foreach ($jobs as [$message, $ack]) {
             $key = $callback($message);
-            if(isset($filteredJobs[$key])) {
+            if (isset($filteredJobs[$key])) {
                 $ack->ack($message);
             } else {
                 $filteredJobs[$key] = [$message, $ack];
