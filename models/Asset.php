@@ -710,11 +710,7 @@ class Asset extends Element\AbstractElement
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
-                $duplicateFullPathException = new DuplicateFullPathException(
-                    'Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset',
-                    0,
-                    null
-                );
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset',);
                 $duplicateFullPathException->setDuplicateElement($duplicate);
 
                 throw $duplicateFullPathException;
