@@ -808,8 +808,8 @@ pimcore.helpers.loadingHide = function () {
     pimcore.globalmanager.get("loadingmask").hide();
 };
 
-pimcore.helpers.itemselector = function (muliselect, callback, restrictions, config) {
-    var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions, config);
+pimcore.helpers.itemselector = function (multiselect, callback, restrictions, config) {
+    var itemselector = new pimcore.element.selector.selector(multiselect, callback, restrictions, config);
 };
 
 
