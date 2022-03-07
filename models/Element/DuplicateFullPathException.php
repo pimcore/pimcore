@@ -13,9 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Exception;
-
-use Pimcore\Model\Element\AbstractElement;
+namespace Pimcore\Model\Element;
 
 class DuplicateFullPathException extends \Exception
 {
