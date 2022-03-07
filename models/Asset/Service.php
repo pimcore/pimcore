@@ -400,14 +400,15 @@ class Service extends Model\Element\Service
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $item['data'];
 
             try {
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);
 
-                if ($instance instanceof NormalizerInterface) {
-                    $transformedData = $instance->normalize($item['data'] ?? null);
+                if ($mode == 'grid') {
+                    $transformedData = $instance->getDataFromListfolderGrid($item['data'] ?? null, $item);
+                } else {
+                    $transformedData = $instance->getDataFromEditMode($item['data'] ?? null, $item);
                 }
 
                 $item['data'] = $transformedData;
@@ -441,9 +442,7 @@ class Service extends Model\Element\Service
             try {
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);
-                if ($instance instanceof NormalizerInterface) {
-                    $transformedData = $instance->denormalize($item['data'], $item);
-                }
+                $transformedData = $instance->getDataForEditMode($item['data'], $item);
             } catch (UnsupportedException $e) {
             }
 
