@@ -43,8 +43,10 @@ jobs:
                 ports:
                     - 9000:9000
                 env:
-                    MINIO_ACCESS_KEY: "${{ env.MINIO_ACCESS_KEY }}"
-                    MINIO_SECRET_KEY: "${{ env.MINIO_SECRET_KEY }}"
+                    MINIO_ROOT_USER: "${{ env.MINIO_ACCESS_KEY }}"
+                    MINIO_ROOT_PASSWORD: "${{ env.MINIO_SECRET_KEY }}"
+                    MINIO_SERVER_ACCESS_KEY: "${{ env.MINIO_ACCESS_KEY }}"
+                    MINIO_SERVER_SECRET_KEY: "${{ env.MINIO_SECRET_KEY }}"
                     MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin,emaillog"
                 options: --name minio-server
             redis:
