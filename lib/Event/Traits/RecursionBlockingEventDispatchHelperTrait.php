@@ -32,7 +32,7 @@ trait RecursionBlockingEventDispatchHelperTrait
      */
     protected function dispatchEvent(object $event, string $eventName = null): void
     {
-        $eventName = $eventName ?? \get_class($event);
+        $eventName ??= \get_class($event);
         if (!isset($this->activeDispatchingEvents[$eventName])) {
             $this->activeDispatchingEvents[$eventName] = true;
             \Pimcore::getEventDispatcher()->dispatch($event, $eventName);
