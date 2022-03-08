@@ -19,6 +19,7 @@ use Monolog\Logger;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
 class ApplicationLogger implements LoggerInterface
@@ -150,9 +151,11 @@ class ApplicationLogger implements LoggerInterface
 
         if (isset($context['fileObject'])) {
             if (is_string($context['fileObject'])) {
-                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']);
+                $context['fileObject'] = preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $context['fileObject']);
+            } elseif($context['fileObject'] instanceof FileObject) {
+                $context['fileObject'] = $context['fileObject']->getFilename();
             } else {
-                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']->getFilename());
+                throw new InvalidArgumentException('fileObject must either be the path to a file as string or an instance of FileObject');
             }
         }
 
