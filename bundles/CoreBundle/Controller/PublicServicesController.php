@@ -116,6 +116,10 @@ class PublicServicesController extends Controller
 
                     preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
 
+                    if (empty($matches) || ! isset($matches[1])) {
+                        throw new \RuntimeException('Requested asset does not exist');
+                    }
+
                     if (array_key_exists(2, $matches) && $matches[2]) {
                         $highResFactor = (float) str_replace(['@', 'x'], '', $matches[2]);
                         $thumbnailConfig->setHighResolution($highResFactor);
