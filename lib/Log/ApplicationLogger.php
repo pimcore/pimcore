@@ -152,7 +152,7 @@ class ApplicationLogger implements LoggerInterface
         if (isset($context['fileObject'])) {
             if (is_string($context['fileObject'])) {
                 $context['fileObject'] = preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $context['fileObject']);
-            } elseif($context['fileObject'] instanceof FileObject) {
+            } elseif ($context['fileObject'] instanceof FileObject) {
                 $context['fileObject'] = $context['fileObject']->getFilename();
             } else {
                 throw new InvalidArgumentException('fileObject must either be the path to a file as string or an instance of FileObject');
