@@ -77,7 +77,7 @@ final class RedirectingPlugin
         // additional checks if message is Pimcore\Mail
         if ($message->doRedirectMailsToDebugMailAddresses()) {
             if (empty($this->getRecipient())) {
-                throw new \Exception("Please update your system settings for 'pimcore.email.debug.email_addresses'");
+                throw new \Exception('No valid debug email address given in "Settings" -> "System Settings" -> "Debug"');
             }
 
             $this->appendDebugInformation($message);
