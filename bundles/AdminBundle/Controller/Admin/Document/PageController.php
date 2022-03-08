@@ -32,6 +32,7 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
@@ -431,6 +432,9 @@ class PageController extends DocumentControllerBase
      * @param EditmodeEditableDefinitionCollector $definitionCollector
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
+     * @param DocumentResolver $documentResolver
+     *
+     * @throws NotFoundHttpException
      *
      * @return JsonResponse
      */
