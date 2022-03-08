@@ -987,8 +987,7 @@ CREATE TABLE `object_url_slugs` (
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;
-CREATE TABLE IF NOT EXISTS webdav_locks
-(
+CREATE TABLE `webdav_locks` (
     id      INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     owner   VARCHAR(100),
     timeout INTEGER UNSIGNED,
@@ -999,5 +998,4 @@ CREATE TABLE IF NOT EXISTS webdav_locks
     uri     VARBINARY(1000),
     INDEX (token),
     INDEX (uri(100))
-) ENGINE = InnoDB
-DEFAULT CHARSET = utf8mb4;
+) DEFAULT CHARSET = utf8mb4;
