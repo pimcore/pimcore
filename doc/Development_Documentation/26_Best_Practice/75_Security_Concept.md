@@ -46,7 +46,7 @@ If a script does not contain valid a nonce, then it is stopped from being execut
 This issue can be resolved either by using Pimcore [Headscript extension](../02_MVC/02_Template/02_Template_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
 
 ```twig
-<script {{ pimcore_nonce.getNonce()|raw }}>
+<script {{ pimcore_csp.getNonce()|raw }}>
 ```
 
 ### Handling Security Issues

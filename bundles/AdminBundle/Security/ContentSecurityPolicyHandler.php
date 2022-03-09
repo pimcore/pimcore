@@ -30,6 +30,30 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     /** @var String|null */
     private ?string $nonce = null;
 
+    public const DEFAULT_OPT = 'default-src';
+    public const IMG_OPT = 'img-src';
+    public const SCRIPT_OPT = 'script-src';
+    public const STYLE_OPT = 'style-src';
+    public const CONNECT_OPT = 'connect-src';
+    public const FONT_OPT = 'font-src';
+    public const MEDIA_OPT = 'media-src';
+    public const FRAME_OPT = 'frame-src';
+
+    /**
+     * @var array
+     */
+    private array $allowedUrls = [
+        self::SCRIPT_OPT => [],
+        self::STYLE_OPT =>  [],
+        self::CONNECT_OPT => [
+            'https://liveupdate.pimcore.org/update-check', //AdminBundle statistics & update-check service
+            'https://nominatim.openstreetmap.org/' //CoreBundle geocoding_url_template
+        ],
+        self::FONT_OPT => [],
+        self::MEDIA_OPT => [],
+        self::FRAME_OPT => [],
+    ];
+
     public function __construct(protected Config $config, protected array $cspHeaderOptions = [])
     {
         $resolver = new OptionsResolver();
@@ -41,14 +65,14 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            "default-src" => "'self'",
-            "img-src" => "* data: blob:",
-            "media-src" => "'self' data:",
-            "script-src" => "'self' 'nonce-" . $this->nonce() . "' 'unsafe-inline' 'unsafe-eval' https://code.jquery.com/ https://cdnjs.cloudflare.com/ajax/libs/popper.js/ https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/ http://unpkg.com/react/umd/ http://unpkg.com/axios/dist/ http://unpkg.com/react-dom/umd/",
-            "style-src" => "'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com/bootstrap/ https://cdn.jsdelivr.net/npm/ https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css",
-            "frame-src" => "'self'",
-            "connect-src" => "'self' blob: https://liveupdate.pimcore.org/ https://license.pimcore.com/ https://nominatim.openstreetmap.org/",
-            "font-src" => "'self' https://cdn.jsdelivr.net/npm/",
+            self::DEFAULT_OPT => "'self'",
+            self::IMG_OPT => "* data: blob:",
+            self::MEDIA_OPT => "'self' data:",
+            self::SCRIPT_OPT => "'self' 'nonce-" . $this->nonce() . "' 'unsafe-inline' 'unsafe-eval'",
+            self::STYLE_OPT => "'self' 'unsafe-inline'",
+            self::FRAME_OPT => "'self'",
+            self::CONNECT_OPT => "'self' blob:",
+            self::FONT_OPT => "'self'",
         ]);
     }
 
@@ -58,10 +82,53 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     public function getCspHeader(): string
     {
         $cspHeaderOptions = array_map(function ($k, $v) {
-            return "$k $v";
+            return "$k $v " . $this->getAllowedUrls($k);
         }, array_keys($this->cspHeaderOptions), array_values($this->cspHeaderOptions));
 
         return implode(';' ,$cspHeaderOptions);
+    }
+
+    /**
+     * @param string $key
+     * @param bool $flatten
+     *
+     * @return array|string
+     */
+    public function getAllowedUrls(string $key, bool $flatten = true): array|string
+    {
+        if (!$flatten) {
+            return $this->allowedUrls[$key] ?? [];
+        }
+
+        return isset($this->allowedUrls[$key]) && is_array($this->allowedUrls[$key]) ? implode(' ', $this->allowedUrls[$key]) : '';
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function setAllowedUrls(string $key, array $value): self
+    {
+        foreach ($value as $val) {
+            $this->allowedUrls[$key][] = $val;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     *
+     * @return $this
+     */
+    public function setCspHeader(string $key, string $value): self
+    {
+        $this->cspHeaderOptions[$key] = $value;
+
+        return $this;
     }
 
     /**
