@@ -79,6 +79,7 @@ class LowQualityImagePreviewTask implements TaskInterface
                     }
                 }
                 \Pimcore::collectGarbage();
+                \Pimcore::deleteTemporaryFiles();
             }
         } else {
             $this->logger->debug('Skip low quality image preview execution, was done within the last 24 hours');

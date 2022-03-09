@@ -59,7 +59,6 @@ final class LongRunningHelper
         $this->cleanupMonolog();
         $this->cleanupPimcoreRuntimeCache($options);
         $this->triggerPhpGarbageCollector();
-        $this->deleteTemporaryFiles();
     }
 
     protected function cleanupDoctrine()
@@ -165,7 +164,7 @@ final class LongRunningHelper
         self::$tmpFilePaths[] = $tmpFilePath;
     }
 
-    private function deleteTemporaryFiles() {
+    public function deleteTemporaryFiles() {
         foreach (self::$tmpFilePaths as $tmpFilePath) {
             @unlink($tmpFilePath);
         }
