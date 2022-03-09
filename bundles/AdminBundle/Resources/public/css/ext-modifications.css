@@ -311,7 +311,7 @@ body.x-border-layout-ct, div.x-border-layout-ct {
 }
 
 .dragdrop .x-grid-cell-inner {
-    cursor: move !important;
+    cursor: grab !important;
 }
 
 .x-grid-cell-inner, .x-grid-cell-inner-checkcolumn, .x-grid-cell-inner-action-col {
