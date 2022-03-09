@@ -15,6 +15,9 @@
 
 namespace Pimcore\Event\Traits;
 
+/**
+ * @internal
+ */
 trait RecursionBlockingEventDispatchHelperTrait
 {
 
