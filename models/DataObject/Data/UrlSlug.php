@@ -342,10 +342,10 @@ class UrlSlug implements OwnerAwareFieldInterface
 
         try {
             $filterSiteId = 'siteId = 0';
-            if ($siteId){
+            if ($siteId) {
                 $filterSiteId = sprintf('(siteId = %d OR siteId = 0)', $siteId);
             }
-            
+
             $query = sprintf(
                 'SELECT * FROM %s WHERE slug = %s AND %s ORDER BY siteId DESC LIMIT 1',
                 self::TABLE_NAME,
