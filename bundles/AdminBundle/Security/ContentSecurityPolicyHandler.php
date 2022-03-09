@@ -105,7 +105,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     /**
      * @param string $key
-     * @param mixed $value
+     * @param array $value
      *
      * @return $this
      */
