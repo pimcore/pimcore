@@ -40,8 +40,5 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
 
         },
-        failure: function(res) {
-            alert('oh no!');
-        }
     });
 };
