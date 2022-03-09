@@ -221,6 +221,7 @@ final class Thumbnail
     {
         $sourceTagAttributes = [];
         $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $mediaQuery, $image, $options);
+        $thumb = $image->getThumbnail($thumbConfig, true);
 
         if ($mediaQuery) {
             $sourceTagAttributes['media'] = $mediaQuery;
