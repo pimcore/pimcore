@@ -38,6 +38,19 @@ pimcore_admin:
         enabled: true
 ```
 
+And to allow external urls for each directive, you can provide a list in the configuration:
+```yaml
+# config/config.yaml
+pimcore_admin:
+    admin_csp_header:
+        additional_urls:
+            script_src:
+                - 'https://oreo.cat/scripts/meow.js' 
+                - 'https://bagheera.cat/*'
+            style-src:
+                - 'https://oreo.cat/scripts/meow.css'
+```
+
 In case, you are using third party bundles or custom implementation that extends the admin backend interface with custom views then you would need to use generated nonce string in your scripts.
 If a script does not contain valid a nonce, then it is stopped from being executed wih a warning in console like:
 
@@ -46,7 +59,7 @@ If a script does not contain valid a nonce, then it is stopped from being execut
 This issue can be resolved either by using Pimcore [Headscript extension](../02_MVC/02_Template/02_Template_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
 
 ```twig
-<script {{ pimcore_csp.getNonce()|raw }}>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
 ```
 
 ### Handling Security Issues

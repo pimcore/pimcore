@@ -485,7 +485,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
         /** @var ContentSecurityPolicyHandler $cspHandler */
         $cspHandler = \Pimcore::getContainer()->get(ContentSecurityPolicyHandler::class);
-        $attrString .= $cspHandler->getNonce();
+        $attrString .= $cspHandler->getNonceHtmlAttribute();
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
         $html = '<script' . $attrString . '>';

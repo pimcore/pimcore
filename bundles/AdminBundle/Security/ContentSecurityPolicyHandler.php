@@ -68,7 +68,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
             self::DEFAULT_OPT => "'self'",
             self::IMG_OPT => "* data: blob:",
             self::MEDIA_OPT => "'self' data:",
-            self::SCRIPT_OPT => "'self' 'nonce-" . $this->nonce() . "' 'unsafe-inline' 'unsafe-eval'",
+            self::SCRIPT_OPT => "'self' 'nonce-" . $this->getNonce() . "' 'unsafe-inline' 'unsafe-eval'",
             self::STYLE_OPT => "'self' 'unsafe-inline'",
             self::FRAME_OPT => "'self'",
             self::CONNECT_OPT => "'self' blob:",
@@ -94,7 +94,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      *
      * @return array|string
      */
-    public function getAllowedUrls(string $key, bool $flatten = true): array|string
+    private function getAllowedUrls(string $key, bool $flatten = true): array|string
     {
         if (!$flatten) {
             return $this->allowedUrls[$key] ?? [];
@@ -109,7 +109,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      *
      * @return $this
      */
-    public function setAllowedUrls(string $key, array $value): self
+    public function addAllowedUrls(string $key, array $value): self
     {
         foreach ($value as $val) {
             $this->allowedUrls[$key][] = $val;
@@ -135,9 +135,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      *
      * @return string
      */
-    public function getNonce(): string
+    public function getNonceHtmlAttribute(): string
     {
-        return $this->config['admin_csp_header']['enabled'] ? ' nonce="' . $this->nonce() . '"' : '';
+        return $this->config['admin_csp_header']['enabled'] ? ' nonce="' . $this->getNonce() . '"' : '';
     }
 
     /**
@@ -145,7 +145,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      *
      * @return string
      */
-    public function nonce(): string
+    private function getNonce(): string
     {
         if (!$this->nonce) {
             $this->nonce = generateRandomSymfonySecret();
