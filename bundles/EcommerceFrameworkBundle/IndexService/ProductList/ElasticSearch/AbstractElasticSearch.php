@@ -1252,7 +1252,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function convertBucketValues(array $bucket)
     {
         $data = [
-            'value' => $bucket['key'],
+            'value' => $bucket['key'] ?? null,
             'count' => $bucket['doc_count'],
         ];
 
