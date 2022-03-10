@@ -623,7 +623,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             try {
                                 $fd->checkValidity($item->$getter(), false, $params);
                             } catch (Model\Element\ValidationException $ve) {
-
                                 if ($item->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($item->$getter())) {
                                     //try again with parent data when inheritance is activated
                                     try {
@@ -633,7 +632,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
 
                                         DataObject::setGetInheritedValues($getInheritedValues);
-
                                     } catch (\Exception $e) {
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
