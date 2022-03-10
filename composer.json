@@ -128,7 +128,7 @@
     "symfony/stopwatch": "^6.0",
     "symfony/string": "^6.0",
     "symfony/templating": "^6.0",
-    "symfony/translation": "^^6.0",
+    "symfony/translation": "6.0",
     "symfony/twig-bridge": "^6.0",
     "symfony/twig-bundle": "^6.0",
     "symfony/uid": "^6.0",
