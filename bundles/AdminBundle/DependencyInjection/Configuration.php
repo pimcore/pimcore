@@ -59,6 +59,7 @@ final class Configuration implements ConfigurationInterface
                 ->info('Can be used to enable or disable the Content Security Policy headers.')
                 ->children()
                     ->arrayNode('additional_urls')
+                        ->addDefaultsIfNotSet()
                         ->normalizeKeys(false)
                         ->children()
                             ->arrayNode('script-src')
