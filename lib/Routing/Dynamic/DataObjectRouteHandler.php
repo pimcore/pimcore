@@ -111,6 +111,23 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
             $this->config['routing']['allow_processing_unpublished_fallback_document']
         );
 
+        $this->matchLocale($route, $slug);
+
         return $route;
+    }
+
+    private function matchLocale(DataObjectRoute $route, DataObject\Data\UrlSlug $slug)
+    {
+        if (!$slugUrl = $slug->getSlug()) {
+            return;
+        }
+
+        preg_match("/\/(\w+)\/.*/", $slugUrl, $matches);
+
+        if (is_array($matches) && count($matches) === 2) {
+            // TODO check, whether locale is valid. Own SluggableInterface implementations may have
+            // other patterns
+            $route->setDefault('_locale', $matches[1]);
+        }
     }
 }
