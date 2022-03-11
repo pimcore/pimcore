@@ -125,9 +125,10 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         preg_match("/\/(\w+)\/.*/", $slugUrl, $matches);
 
         if (is_array($matches) && count($matches) === 2) {
-            // TODO check, whether locale is valid. Own SluggableInterface implementations may have
-            // other patterns
-            $route->setDefault('_locale', $matches[1]);
+            $validLanguages = \Pimcore\Tool::getValidLanguages();
+            if (\in_array($matches[1], $validLanguages, true)) {
+                $route->setDefault('_locale', $matches[1]);
+            }
         }
     }
 }
