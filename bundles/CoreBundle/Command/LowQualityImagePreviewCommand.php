@@ -87,7 +87,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
 
         if ($filenameRegex = $input->getOption('filenameRegex')) {
             $conditions[] = '`filename` REGEXP ?';
-            $conditionVariables[] = $filenameRegex . '%';
+            $conditionVariables[] = $filenameRegex;
         }
 
         $generator = null;
