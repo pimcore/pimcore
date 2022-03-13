@@ -52,16 +52,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
-                'filenamePrefix',
+                'filenameRegex',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images with filenames starting with (filenamePrefix)'
-            )
-            ->addOption(
-                'filenamePostfix',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images with filenames ending with (filenamePostfix)'
+                'only create thumbnails of images with filenames matching the given regex'
             )
             ->addOption(
                 'thumbnails',
@@ -129,14 +123,9 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
-        if ($filenamePrefix = $input->getOption('filenamePrefix')) {
-            $conditions[] = '`filename` LIKE ?';
-            $conditionVariables[] = $filenamePrefix . '%';
-        }
-
-        if ($filenamePostfix = $input->getOption('filenamePostfix')) {
-            $conditions[] = '`filename` LIKE ?';
-            $conditionVariables[] = '%' . $filenamePostfix;
+        if ($filenameRegex = $input->getOption('filenameRegex')) {
+            $conditions[] = '`filename` REGEXP ?';
+            $conditionVariables[] = $filenameRegex . '%';
         }
 
         if ($ids = $input->getOption('id')) {
