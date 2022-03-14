@@ -310,10 +310,6 @@ body.x-border-layout-ct, div.x-border-layout-ct {
     cursor: pointer !important;
 }
 
-.dragdrop .x-grid-cell-inner {
-    cursor: grab !important;
-}
-
 .x-grid-cell-inner, .x-grid-cell-inner-checkcolumn, .x-grid-cell-inner-action-col {
     padding: 2px 10px 2px;
 }

@@ -98,7 +98,6 @@ pimcore.report.custom.item = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            cls: 'dragdrop',
             viewConfig: {
                 plugins: {
                     ptype: 'gridviewdragdrop'
