@@ -443,7 +443,8 @@ class PageController extends DocumentControllerBase
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
-        $document = Document\PageSnippet::getById($request->get('documentId'));
+        $document = clone Document\PageSnippet::getById($request->get('documentId'));
+        $document->setEditables([]);
 
         $twig->addGlobal('document', $document);
         $twig->addGlobal('editmode', true);
