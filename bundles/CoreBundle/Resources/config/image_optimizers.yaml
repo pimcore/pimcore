@@ -3,8 +3,6 @@ services:
         public: true
 
     Pimcore\Image\Optimizer\AdvancedPngOptimizer:
-        tags:
-            - { name: pimcore.image.optimizer }
 
     Pimcore\Image\Optimizer\CjpegOptimizer:
         tags:
@@ -19,8 +17,6 @@ services:
             - { name: pimcore.image.optimizer }
 
     Pimcore\Image\Optimizer\PngOutOptimizer:
-        tags:
-            - { name: pimcore.image.optimizer }
 
     Pimcore\Image\Optimizer\ZopflipngOptimizer:
         tags:

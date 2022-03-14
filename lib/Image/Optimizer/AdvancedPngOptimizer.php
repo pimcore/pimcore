@@ -15,6 +15,9 @@
 
 namespace Pimcore\Image\Optimizer;
 
+/**
+ * @deprecated
+ */
 final class AdvancedPngOptimizer extends AbstractCommandOptimizer
 {
     /**
