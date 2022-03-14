@@ -15,6 +15,7 @@
 
 namespace Pimcore\Helper;
 
+use Pimcore;
 use Pimcore\File;
 
 /**
@@ -75,7 +76,9 @@ trait TemporaryFileHelperTrait
         fclose($dest);
 
         if (!$keep) {
-            LongRunningHelper::addTmpFilePath($tmpFilePath);
+            /** @var LongRunningHelper $longRunningHelper */
+            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
+            $longRunningHelper->addTmpFilePath($tmpFilePath);
             register_shutdown_function(static function () use ($tmpFilePath) {
                 @unlink($tmpFilePath);
             });
