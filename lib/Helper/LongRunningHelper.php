@@ -161,11 +161,13 @@ final class LongRunningHelper
      * @internal
      * Register a temp file which will be deleted on next call of cleanUp()
      */
-    public function addTmpFilePath(string $tmpFilePath) {
+    public function addTmpFilePath(string $tmpFilePath)
+    {
         $this->tmpFilePaths[] = $tmpFilePath;
     }
 
-    public function deleteTemporaryFiles() {
+    public function deleteTemporaryFiles()
+    {
         foreach ($this->tmpFilePaths as $tmpFilePath) {
             @unlink($tmpFilePath);
         }
