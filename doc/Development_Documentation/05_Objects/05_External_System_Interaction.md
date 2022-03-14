@@ -86,8 +86,7 @@ For simple CSV exports, Pimcore backend interface provides a CSV export function
  
  
 ## Memory Issues
-If you're using / creating very much objects you should call the Pimcore garbage collector after several cycle to 
-prevent memory issues
+If you're using / creating very much objects you should call the Pimcore garbage collector after several cycles to prevent memory issues
 
 ```php
 // just call this static method
@@ -110,3 +109,10 @@ $longRunningHelper->removePimcoreRuntimeCacheProtectedItems(["myVeryImportantKey
 
 ```
 You can pass in a string instead of an array if you only want to supply a single key.
+
+## Temporary files
+
+Temporary files which get created during processing are usually deleted when the current process finishes. In some cases this may be a problem when thousands of temporary files get created within a process. If you want to clear temporary files before the script ends, you can call
+```php
+\Pimcore::deleteTemporaryFiles();
+```
