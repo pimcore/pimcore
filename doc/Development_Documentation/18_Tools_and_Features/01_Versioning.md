@@ -22,6 +22,81 @@ You can configure the versioning behavior in the ![Settings](../img/Icon_setting
 ![Objects version history settings](../img/versioning_settings.png)
 
 
+## Version storage
+
+For every version the metadata and, if present, binary data is stored. Since the amount of information can turn out to
+be too big real quick, Pimcore provides 3 different ways to handle the storage of version data.
+
+### Configuration
+
+#### Filesystem
+
+*This is the default setting*. 
+To store version data in the filesystem, use the `FileSystemStorageAdapter`. 
+
+```yml
+Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+    public: true
+    alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
+
+Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+```
+    
+#### Database 
+To store the version data in a database, use the `DatabaseVersionStorageAdapter` service.
+You need to pass a configured doctrine database connection as an argument. 
+Therefore, you are able to provide a connection to a completely separate database which may contains only the version data.    
+
+```yml
+Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+    public: true
+    alias: Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter
+
+Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
+    arguments:
+        $database_connection: doctrine.dbal.versioning
+```
+
+The database needs to contain a table called `versionsData`. The following script can be used to create the table include the necessary columns.
+
+```sql
+CREATE TABLE `versionsData` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `cid` int(11) unsigned DEFAULT NULL,
+  `ctype` enum('document','asset','object') DEFAULT NULL,
+  `metaData` longblob DEFAULT NULL,
+  `binaryData` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+```
+
+### Delegate
+
+To store the version data based on a threshold in either the default storage location or a fallback storage location use `DelegateVersionStorageAdapter` service.
+If the size of metadata or binary data information exceeds the configured `byte_threshold` value, the version data is stored using the fallback adapter.
+
+```yaml
+Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+    public: true
+    alias: Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter
+
+Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter:
+    public: true
+    arguments:
+        $byte_threshold: 1000000
+        $defaultAdapter: '@Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter'
+        $fallbackAdapter: '@Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter'
+
+Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+
+Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
+    arguments:
+        $database_connection: doctrine.dbal.versioning
+```
+
+In this example the version data is stored in the database as long as neither the metadata nor the binary data exceeds 1000000 bytes in size.
+Otherwise, the filesystem is used as storage.
+
 ## Turn off Versioning for the Current Process
 
 Sometimes it is very useful to just deactivate versioning for a process. For example for importers or synchronization with 3rd party systems. 
