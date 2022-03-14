@@ -262,6 +262,5 @@ services:
         public: true
         alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
-    Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter:
-        tags:
-            - { name: pimcore.version.storage.adapter, storageType: fs }
+    Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+
