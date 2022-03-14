@@ -20,13 +20,13 @@ use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Event\Model\TargetGroupEvent;
 use Pimcore\Event\TargetGroupEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/targeting")
@@ -35,6 +35,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class TargetingController extends AdminController implements KernelControllerEventInterface
 {
+    use RecursionBlockingEventDispatchHelperTrait;
     // RULES
 
     private function correctName(string $name): string
@@ -240,7 +241,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_ADD);
+        $this->dispatchEvent($event, TargetGroupEvents::POST_ADD);
 
         $cache->clearTag('target_groups');
 
@@ -266,7 +267,7 @@ class TargetingController extends AdminController implements KernelControllerEve
             $targetGroup->delete();
             $success = true;
 
-            $eventDispatcher->dispatch($event, TargetGroupEvents::POST_DELETE);
+            $this->dispatchEvent($event, TargetGroupEvents::POST_DELETE);
         }
 
         $cache->clearTag('target_groups');
@@ -310,7 +311,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_UPDATE);
+        $this->dispatchEvent($event, TargetGroupEvents::POST_UPDATE);
 
         $cache->clearTag('target_groups');
 
