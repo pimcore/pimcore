@@ -18,25 +18,44 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Logger;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Version;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 /**
  * @internal
  */
-class VersionDeleteHandler
+class VersionDeleteHandler implements BatchHandlerInterface
 {
-    public function __invoke(VersionDeleteMessage $message)
-    {
-        $versions = new Version\Listing();
-        $versions->setCondition('cid = :cid AND ctype = :ctype', [
-            'cid' => $message->getElementId(),
-            'ctype' => $message->getElementType(),
-        ]);
+    use BatchHandlerTrait;
 
-        foreach ($versions as $version) {
+    public function __invoke(VersionDeleteMessage $message, Acknowledger $ack = null)
+    {
+        return $this->handle($message, $ack);
+    }
+
+    // @phpstan-ignore-next-line
+    private function process(array $jobs): void
+    {
+        foreach ($jobs as [$message, $ack]) {
             try {
-                $version->delete();
-            } catch (\Exception $e) {
-                Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s', $version->getId(), $e->getMessage()));
+                $versions = new Version\Listing();
+                $versions->setCondition('cid = :cid AND ctype = :ctype', [
+                    'cid' => $message->getElementId(),
+                    'ctype' => $message->getElementType(),
+                ]);
+
+                foreach ($versions as $version) {
+                    try {
+                        $version->delete();
+                    } catch (\Exception $e) {
+                        Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s', $version->getId(), $e->getMessage()));
+                    }
+                }
+
+                $ack->ack($message);
+            } catch (\Throwable $e) {
+                $ack->nack($e);
             }
         }
     }

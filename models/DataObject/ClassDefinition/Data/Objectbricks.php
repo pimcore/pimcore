@@ -117,6 +117,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         'containerType' => 'objectbrick',
                         'containerKey' => $allowedBrickType,
                     ],
+                    'owner' => $data,
                     'fieldname' => $this->getName(),
                 ];
 

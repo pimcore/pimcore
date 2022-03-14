@@ -225,7 +225,7 @@ and fail-over support.
 
 Configure `Redis` adapter for `Pimcore\Cache` using these settings:
 ```yaml
-# config/cache.yaml
+# config/packages/cache.yaml
 framework:
     cache:
         pools:

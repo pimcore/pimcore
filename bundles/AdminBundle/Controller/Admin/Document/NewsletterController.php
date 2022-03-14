@@ -177,6 +177,7 @@ class NewsletterController extends DocumentControllerBase
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
+                'isAutoSave' => $version->isAutoSave(),
             ];
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);

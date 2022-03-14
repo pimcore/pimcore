@@ -494,7 +494,7 @@ pimcore.settings.translation.domain = Class.create({
                             var csvSettings = Ext.encode(this.config.csvSettings);
                             ImportForm.getForm().submit({
                                 url: this.mergeUrl,
-                                params: {importFile: this.config.tmpFile, csvSettings: csvSettings, domain: this.domain},
+                                params: {csvSettings: csvSettings, domain: this.domain},
                                 waitMsg: t("please_wait"),
                                 success: function (el, response) {
                                     try {
@@ -545,10 +545,12 @@ pimcore.settings.translation.domain = Class.create({
                     queryString += "&searchString=" + this.filterField.getValue() + "&domain=" + this.domain;
                     queryString += "&filter=" + proxy.encodeFilters(storeFilters);
                 }
+                pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
             }.bind(this));
+        } else {
+            pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
         }
 
-        pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
     },
 
     onAdd: function (btn, ev) {

@@ -135,7 +135,9 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
             }
             Ext.apply(this.datax,
                 {
+                    calculatorType: source.datax.calculatorType,
                     calculatorClass: source.datax.calculatorClass,
+                    calculatorExpression: source.datax.calculatorExpression,
                     elementType: source.datax.elementType,
                     width: source.datax.width,
                     columnLength: source.datax.columnLength

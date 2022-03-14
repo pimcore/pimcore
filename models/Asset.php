@@ -17,7 +17,6 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
@@ -29,6 +28,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
+use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
@@ -540,6 +540,8 @@ class Asset extends Element\AbstractElement
 
             $this->correctPath();
 
+            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
+
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
             // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
@@ -733,30 +735,31 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                // Write original data to temp path for writing stream
-                // as original file will be deleted before overwrite
-                $pathInfo = pathinfo($this->getFilename());
-                $tempFilePath = $this->getRealPath() . uniqid('temp_');
-                if ($pathInfo['extension'] ?? false) {
-                    $tempFilePath .= '.' . $pathInfo['extension'];
+                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                    // write stream directly if target file doesn't exist or if target is a remote storage
+                    // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    $storage->writeStream($path, $src);
+                } else {
+                    // We don't open a stream on existing files, because they could be possibly used by versions
+                    // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
+                    // also the versioning information persists. Using the stream on the existing file would overwrite the
+                    // contents of the inode and therefore leads to wrong version data
+                    $pathInfo = pathinfo($this->getFilename());
+                    $tempFilePath = $this->getRealPath() . uniqid('temp_');
+                    if ($pathInfo['extension'] ?? false) {
+                        $tempFilePath .= '.' . $pathInfo['extension'];
+                    }
+
+                    $storage->writeStream($tempFilePath, $src);
+                    $storage->delete($path);
+                    $storage->move($tempFilePath, $path);
                 }
 
-                $storage->writeStream($tempFilePath, $src);
-
+                // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
-
-                if ($storage->fileExists($path)) {
-                    // We don't open a stream on existing files, because they could be possibly used by versions
-                    // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                    // versioning information persists. Using the stream on the existing file would overwrite the
-                    // contents of the inode and therefore leads to wrong version data
-                    $storage->delete($path);
-                }
-
-                $storage->move($tempFilePath, $path);
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
@@ -1097,6 +1100,9 @@ class Asset extends Element\AbstractElement
             }
 
             $this->clearThumbnails(true);
+
+            //remove target parent folder preview thumbnails
+            $this->clearFolderThumbnails($this);
         } catch (\Exception $e) {
             try {
                 $this->rollBack();
@@ -1995,18 +2001,7 @@ class Asset extends Element\AbstractElement
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                $contents = $storage->listContents($this->getRealPath());
-
-                /** @var StorageAttributes $item */
-                foreach ($contents as $item) {
-                    if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
-                        if ($item->isDir()) {
-                            $storage->deleteDirectory($item->path());
-                        } elseif ($item->isFile()) {
-                            $storage->delete($item->path());
-                        }
-                    }
-                }
+                $storage->deleteDirectory($this->getRealPath() . $this->getId());
             }
         }
     }
@@ -2014,17 +2009,22 @@ class Asset extends Element\AbstractElement
     /**
      * @param FilesystemOperator $storage
      * @param string $oldPath
+     * @param string|null $newPath
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
     {
+        if ($newPath === null) {
+            $newPath = $this->getRealFullPath();
+        }
+
         try {
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
+                    $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
                 }
             }
@@ -2042,46 +2042,54 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldParent = dirname($oldPath);
-        $newParent = dirname($this->getRealFullPath());
-        $storage = Storage::get('thumbnail');
+        if ($this instanceof Folder) {
+            $oldThumbnailsPath = $oldPath;
+            $newThumbnailsPath = $this->getRealFullPath();
+        } else {
+            $oldThumbnailsPath = dirname($oldPath) . '/' . $this->getId();
+            $newThumbnailsPath = $this->getRealPath() . $this->getId();
+        }
 
-        try {
-            //remove source parent folder thumbnails
-            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
+        if ($oldThumbnailsPath === $newThumbnailsPath) {
+
+            //path is equal, probably file name changed - so clear all thumbnails
+            $this->clearThumbnails(true);
+        } else {
+
+            //remove source parent folder preview thumbnails
+            $sourceFolder = Asset::getByPath(dirname($oldPath));
+            if ($sourceFolder) {
+                $this->clearFolderThumbnails($sourceFolder);
             }
 
-            //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
-            }
+            //remove target parent folder preview thumbnails
+            $this->clearFolderThumbnails($this);
 
-            $contents = $storage->listContents($oldParent);
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
-                    $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
-                    if (!$storage->fileExists($replacePath)) {
-                        $storage->move($item->path(), $replacePath);
-                    }
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+
+                try {
+                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                } catch (UnableToMoveFile $e) {
+                    //update children, if unable to move parent
+                    $this->updateChildPaths($storage, $oldPath);
                 }
             }
-
-            //required in case if renaming or moving parent folder
-            try {
-                $storage->move($oldPath, $this->getRealFullPath());
-            } catch (UnableToMoveFile $e) {
-                //update children, if unable to move parent
-                $this->updateChildPaths($storage, $oldPath);
-            }
-        } catch (UnableToMoveFile $e) {
-            // noting to do
         }
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    private function clearFolderThumbnails(Asset $asset): void
+    {
+        do {
+            if ($asset instanceof Folder) {
+                $asset->clearThumbnails(true);
+            }
+
+            $asset = $asset->getParent();
+        } while ($asset !== null);
     }
 
     /**
@@ -2090,7 +2098,7 @@ class Asset extends Element\AbstractElement
     public function clearThumbnail($name)
     {
         try {
-            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . 'image-thumb__' . $this->getId() . '__' . $name);
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
         } catch (\Exception $e) {
             // noting to do
         }

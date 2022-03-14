@@ -153,7 +153,7 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
-        $thumbDir = rtrim($asset->getRealPath(), '/') . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
+        $thumbDir = rtrim($asset->getRealPath(), '/').'/'.$asset->getId().'/image-thumb__'.$asset->getId().'__'.$config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
         // add custom suffix if available
@@ -405,7 +405,7 @@ class Processor
                 $generated = true;
 
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
-                if ($optimizeContent && $isImageOptimizersEnabled) {
+                if ($optimizedFormat && $optimizeContent && $isImageOptimizersEnabled) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                       new OptimizeImageMessage($storagePath)
                     );

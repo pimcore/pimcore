@@ -308,19 +308,10 @@ final class Thumbnail
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
-                        $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
-                        foreach ($autoFormats as $autoFormat => $autoFormatConfig) {
-                            if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
-                                $thumbConfigAutoFormat = clone $thumbConfig;
-                                $thumbConfigAutoFormat->setFormat($autoFormat);
-                                if (!empty($autoFormatConfig['quality'])) {
-                                    $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
-                                }
-
-                                $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
-                                if (!empty($sourceWebP)) {
-                                    $html .= "\t" . $sourceWebP . "\n";
-                                }
+                        foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                            if (!empty($autoFormatThumbnailHtml)) {
+                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
                             }
                         }
                     }

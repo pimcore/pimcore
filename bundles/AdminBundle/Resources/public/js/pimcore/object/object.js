@@ -570,7 +570,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             //workflow management
             pimcore.elementservice.integrateWorkflowManagement('object', this.id, this, buttons);
 
-            if(this.data.draft && this.isAllowed("save")){
+            if (this.data.draft && (this.data.draft.isAutoSave || this.isAllowed("save"))) {
                 this.draftVersionNotification.show();
             }
 
@@ -754,7 +754,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 if (e instanceof pimcore.error.ActionCancelledException) {
                     this.tab.unmask();
-                    pimcore.helpers.showNotification(t("Info"), 'Object not saved: ' + e.message, 'info');
+                    pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + e.message, 'info');
                     return false;
                 }
             }
@@ -818,7 +818,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
-                    if (this.tab) {
+                    if (this.tab && (this.tab.getMaskTarget() || this.tab.el).getData()) {
                         this.tab.unmask();
                     }
 
@@ -872,7 +872,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 tabIndex: currentTabIndex,
                 uiState: uiState
             };
-            this.tab = null;
 
             window.setTimeout(function (id) {
                 pimcore.helpers.openObject(id, "object", options);

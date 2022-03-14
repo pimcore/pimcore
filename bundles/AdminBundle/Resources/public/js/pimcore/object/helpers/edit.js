@@ -298,11 +298,22 @@ pimcore.object.helpers.edit = {
 
                 // add asterisk to mandatory field
                 l.titleOriginal = l.title;
+                let icons = '';
+
                 if(l.mandatory) {
-                    l.title += ' <span style="color:red;">*</span>';
+                    icons += '<span style="color:red;">*</span>';
                 }
+
+                if (l.noteditable || noteditable) {
+                    icons += '<span class="pimcore_object_label_icon pimcore_icon_gray_lock"></span>'
+                }
+
                 if(l.tooltip) {
-                    l.title += ' <span class="pimcore_object_label_icon pimcore_icon_gray_info"></span>';
+                    icons += '<span class="pimcore_object_label_icon pimcore_icon_gray_info"></span>';
+                }
+
+                if(icons){
+                    l.title += ' ' + icons;
                 }
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);

@@ -90,7 +90,10 @@ class SettingsController extends AdminController
 
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
-        }, 200, ['Content-Type' => $mime]);
+        }, 200, [
+            'Content-Type' => $mime,
+            'Content-Security-Policy' => "script-src 'none'",
+        ]);
     }
 
     /**
@@ -107,10 +110,6 @@ class SettingsController extends AdminController
         $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
         if (!in_array($fileExt, ['svg', 'png', 'jpg'])) {
             throw new \Exception('Unsupported file format');
-        }
-
-        if ($fileExt === 'svg' && stripos(file_get_contents($_FILES['Filedata']['tmp_name']), '<script')) {
-            throw new \Exception('Scripts in SVG files are not supported');
         }
 
         $storage = Tool\Storage::get('admin');

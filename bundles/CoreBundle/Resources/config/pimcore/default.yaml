@@ -32,6 +32,7 @@ framework:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
@@ -39,10 +40,11 @@ framework:
             'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
+            'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
             'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
-            'Pimcore\Messenger\OptimizeImageMessage': pimcore_core
+            'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
         default_bus: messenger.bus.pimcore-core
         buses:

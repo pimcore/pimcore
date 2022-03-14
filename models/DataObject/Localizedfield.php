@@ -462,7 +462,10 @@ final class Localizedfield extends Model\AbstractModel implements
      * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
+     * @return mixed|null
+     *
+     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false)
     {
@@ -471,6 +474,10 @@ final class Localizedfield extends Model\AbstractModel implements
 
         $context = $this->getContext();
         $fieldDefinition = $this->getFieldDefinition($name, $context);
+
+        if (!$fieldDefinition instanceof ClassDefinition\Data) {
+            throw new Model\Exception\NotFoundException(sprintf('Field "%s" does not exist in localizedfields', $name));
+        }
 
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
@@ -555,7 +562,7 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
+        if ($fieldDefinition instanceof PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
             if (!$fieldDefinition instanceof PreGetDataInterface) {
                 trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
                     'Implement the %s interface instead.', PreGetDataInterface::class));

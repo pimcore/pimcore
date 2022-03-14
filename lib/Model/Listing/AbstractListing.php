@@ -471,7 +471,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function getConditionVariables()
     {
-        $this->getCondition();          // this will merge conditionVariablesFromSetCondition and additional params into conditionVariables
+        if (!$this->conditionVariables) {
+            $this->getCondition();
+        }
 
         return $this->conditionVariables;
     }

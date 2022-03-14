@@ -221,6 +221,7 @@ pimcore.element.abstract = Class.create({
         //do not run auto-save for types not supporting versions
         let nonVersionTypes = ['link', 'hardlink', 'folder'];
         if (this.data.type && in_array(this.data.type, nonVersionTypes)) {
+            typeof callback === 'function' && callback();
             return;
         }
 
