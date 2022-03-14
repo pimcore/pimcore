@@ -210,13 +210,11 @@ class TargetGroup extends Model\AbstractModel
      */
     public function save()
     {
-        $isUpdate = false;
         if ($this->getId()) {
             $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_UPDATE);
-            $isUpdate = true;
         }else{
             $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_ADD);
         }
-        $this->getDao()->save($isUpdate);
+        $this->getDao()->save();
     }
 }
