@@ -15,14 +15,14 @@
 
 namespace Pimcore\Model\Tool\Targeting;
 
-use Pimcore\Event\Model\TargetGroupEvent;
-use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model;
 
 /**
  * @internal
  *
  * @method TargetGroup\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class TargetGroup extends Model\AbstractModel
 {
@@ -191,25 +191,5 @@ class TargetGroup extends Model\AbstractModel
     public function getActive()
     {
         return $this->active;
-    }
-
-    /**
-     * @return void
-     */
-    public function delete(): void
-    {
-        $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_DELETE);
-    }
-
-    /**
-     * @return void
-     */
-    public function save(): void
-    {
-        if ($this->getId()) {
-            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_UPDATE);
-        }else{
-            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_ADD);
-        }
     }
 }
