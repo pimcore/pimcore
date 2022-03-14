@@ -568,7 +568,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function save()
     {
         if ($this->id instanceof Data\Id) {
-            \Pimcore::getEventDispatcher()->dispatch(new SearchBackendEvent($this), SearchBackendEvents::PRE_SAVE);
+            $this->dispatchEvent(new SearchBackendEvent($this), SearchBackendEvents::PRE_SAVE);
 
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
@@ -592,7 +592,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(new SearchBackendEvent($this), SearchBackendEvents::POST_SAVE);
+            $this->dispatchEvent(new SearchBackendEvent($this), SearchBackendEvents::POST_SAVE);
         } else {
             throw new \Exception('Search\\Backend\\Data cannot be saved - no id set!');
         }
