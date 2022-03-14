@@ -20,13 +20,13 @@ use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Event\Model\TargetGroupEvent;
 use Pimcore\Event\TargetGroupEvents;
-use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/targeting")
@@ -35,15 +35,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TargetingController extends AdminController implements KernelControllerEventInterface
 {
-    use RecursionBlockingEventDispatchHelperTrait;
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['activeDispatchingEvents'];
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
     // RULES
 
     private function correctName(string $name): string
@@ -249,7 +240,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        $this->dispatchEvent($event, TargetGroupEvents::POST_ADD);
+        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_ADD);
 
         $cache->clearTag('target_groups');
 
@@ -275,7 +266,7 @@ class TargetingController extends AdminController implements KernelControllerEve
             $targetGroup->delete();
             $success = true;
 
-            $this->dispatchEvent($event, TargetGroupEvents::POST_DELETE);
+            $eventDispatcher->dispatch($event, TargetGroupEvents::POST_DELETE);
         }
 
         $cache->clearTag('target_groups');
@@ -319,7 +310,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        $this->dispatchEvent($event, TargetGroupEvents::POST_UPDATE);
+        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_UPDATE);
 
         $cache->clearTag('target_groups');
 
