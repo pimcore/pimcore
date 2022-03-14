@@ -36,6 +36,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class TargetingController extends AdminController implements KernelControllerEventInterface
 {
     use RecursionBlockingEventDispatchHelperTrait;
+    public function __sleep()
+    {
+        $parentVars = parent::__sleep();
+        $blockedVars = ['activeDispatchingEvents'];
+
+        return array_diff($parentVars, $blockedVars);
+    }
+
     // RULES
 
     private function correctName(string $name): string
