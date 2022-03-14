@@ -175,7 +175,8 @@ class Pimcore
                 if ($container) {
                     return true;
                 }
-            } catch (\LogicException) {}
+            } catch (\LogicException) {
+            }
         }
 
         return false;
