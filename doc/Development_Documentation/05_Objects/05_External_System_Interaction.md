@@ -112,7 +112,7 @@ You can pass in a string instead of an array if you only want to supply a single
 
 ## Temporary files
 
-Temporary files which get created during processing are usually deleted when the current process finishes. In some cases this may be a problem when thousands of temporary files get created during processing of the current request. If you want to clear temporary files before the script ends, you can call
+Temporary files which get created during processing are usually deleted when the current process finishes. In some cases this may be a problem when thousands of temporary files get created within a process. If you want to clear temporary files before the script ends, you can call
 ```php
 \Pimcore::deleteTemporaryFiles();
 ```
