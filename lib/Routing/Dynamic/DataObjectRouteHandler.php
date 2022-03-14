@@ -106,7 +106,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
 
-        if($slug->getOwnertype() === 'localizedfield') {
+        if ($slug->getOwnertype() === 'localizedfield') {
             $route->setDefault('_locale', $slug->getPosition());
         }
 
