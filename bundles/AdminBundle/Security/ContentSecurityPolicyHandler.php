@@ -43,15 +43,10 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      * @var array
      */
     private array $allowedUrls = [
-        self::SCRIPT_OPT => [],
-        self::STYLE_OPT =>  [],
         self::CONNECT_OPT => [
             'https://liveupdate.pimcore.org/update-check', //AdminBundle statistics & update-check service
             'https://nominatim.openstreetmap.org/' //CoreBundle geocoding_url_template
         ],
-        self::FONT_OPT => [],
-        self::MEDIA_OPT => [],
-        self::FRAME_OPT => [],
     ];
 
     public function __construct(protected Config $config, protected array $cspHeaderOptions = [])
@@ -111,6 +106,10 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      */
     public function addAllowedUrls(string $key, array $value): self
     {
+        if(!isset($this->allowedUrls[$key])) {
+            $this->allowedUrls[$key] = [];
+        }
+
         foreach ($value as $val) {
             $this->allowedUrls[$key][] = $val;
         }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
+use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -62,22 +63,28 @@ final class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->normalizeKeys(false)
                         ->children()
-                            ->arrayNode('script-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::DEFAULT_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
-                            ->arrayNode('style-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::IMG_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
-                            ->arrayNode('connect-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::SCRIPT_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
-                            ->arrayNode('font-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::STYLE_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
-                            ->arrayNode('media-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::CONNECT_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
-                            ->arrayNode('frame-src')
+                            ->arrayNode(ContentSecurityPolicyHandler::FONT_OPT)
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode(ContentSecurityPolicyHandler::MEDIA_OPT)
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode(ContentSecurityPolicyHandler::FRAME_OPT)
                                 ->scalarPrototype()->end()
                             ->end()
                         ->end()
