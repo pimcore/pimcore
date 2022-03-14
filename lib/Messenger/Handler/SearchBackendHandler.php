@@ -46,6 +46,7 @@ class SearchBackendHandler implements BatchHandlerInterface
                 $element = Element\Service::getElementById($message->getType(), $message->getId());
                 if (!$element instanceof Element\ElementInterface) {
                     $ack->ack($message);
+
                     continue;
                 }
 
