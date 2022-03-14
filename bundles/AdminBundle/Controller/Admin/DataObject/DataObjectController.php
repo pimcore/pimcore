@@ -949,6 +949,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($request->get('id')) {
             $object = DataObject::getById($request->get('id'));
             if ($object) {
+                $parent = $object->getParent();
+
                 if (!$object->isAllowed('delete')) {
                     throw $this->createAccessDeniedHttpException();
                 }
@@ -956,6 +958,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
                 }
                 $object->delete();
+
+                if ($parent !== null && $parent->hasChildren() && $parent->getChildrenSortBy() === 'index') {
+                    $this->reindexBasedOnSortOrder($parent, $parent->getChildrenSortOrder());
+                }
             }
 
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
