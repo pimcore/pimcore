@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model;
 
+use League\Flysystem\UnableToReadFile;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
@@ -163,6 +164,14 @@ final class Version extends AbstractModel
     public static function enable()
     {
         self::$disabled = false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isEnabled(): bool
+    {
+        return !self::$disabled;
     }
 
     /**
@@ -358,7 +367,12 @@ final class Version extends AbstractModel
     public function loadData($renewReferences = true)
     {
         $storage = Storage::get('version');
-        $data = $storage->read($this->getStorageFilename());
+
+        try {
+            $data = $storage->read($this->getStorageFilename());
+        } catch (UnableToReadFile $e) {
+            $data = null;
+        }
 
         if (!$data) {
             Logger::err('Version: cannot read version data from file system.');

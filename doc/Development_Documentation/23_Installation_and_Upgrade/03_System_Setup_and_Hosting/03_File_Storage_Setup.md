@@ -210,7 +210,7 @@ flysystem:
             options:
                 client: 'assets_s3'
                 bucket: 'bucket-name'
-                prefix: asset
+                prefix: thumbnail
 ```
 
 2. Run command `pimcore:migrate:storage` with storage type argument: 

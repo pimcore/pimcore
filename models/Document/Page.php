@@ -15,8 +15,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Redirect;
-use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
@@ -82,10 +82,6 @@ class Page extends TargetingDocument
 
         foreach ($redirects->getRedirects() as $redirect) {
             $redirect->delete();
-        }
-
-        if ($site = Site::getByRootId($this->getId())) {
-            $site->delete();
         }
 
         parent::doDelete();
@@ -277,5 +273,20 @@ class Page extends TargetingDocument
     public function getPreviewImageFilesystemPath()
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '@2x.jpg';
+    }
+
+    public function save()
+    {
+        $response = parent::save();
+
+        // Dispatch page preview message, if preview is enabled.
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+        if ($documentsConfig['generate_preview'] ?? false) {
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new GeneratePagePreviewMessage($this->getId(), \Pimcore\Tool::getHostUrl())
+            );
+        }
+
+        return $response;
     }
 }

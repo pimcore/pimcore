@@ -107,7 +107,7 @@ class NotificationService
             AND (
                 roles = ?
                 OR roles LIKE ?
-                OR roles LIKE ? 
+                OR roles LIKE ?
                 OR roles LIKE ?
             )',
             [
@@ -123,7 +123,7 @@ class NotificationService
         $listing->setOrder('ASC');
         $listing->load();
 
-        $users = $listing->getUsers() ?? [];
+        $users = $listing->getUsers();
         $users = $this->userService->filterUsersWithPermission($users);
 
         foreach ($users as $user) {

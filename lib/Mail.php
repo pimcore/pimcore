@@ -228,7 +228,7 @@ class Mail extends Email
      */
     public function doRedirectMailsToDebugMailAddresses()
     {
-        if (static::$forceDebugMode) {
+        if (self::$forceDebugMode) {
             return true;
         }
 
@@ -974,8 +974,11 @@ class Mail extends Email
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
-    public function addTo(...$addresses)
+    #[\ReturnTypeWillChange]
+    public function addTo(...$addresses)//: static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -984,8 +987,11 @@ class Mail extends Email
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
-    public function addCc(...$addresses)
+    #[\ReturnTypeWillChange]
+    public function addCc(...$addresses)//: static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -994,8 +1000,11 @@ class Mail extends Email
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
-    public function addBcc(...$addresses)
+    #[\ReturnTypeWillChange]
+    public function addBcc(...$addresses)//: static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1004,8 +1013,11 @@ class Mail extends Email
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
-    public function addFrom(...$addresses)
+    #[\ReturnTypeWillChange]
+    public function addFrom(...$addresses)//: static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1014,8 +1026,11 @@ class Mail extends Email
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
-    public function addReplyTo(...$addresses)
+    #[\ReturnTypeWillChange]
+    public function addReplyTo(...$addresses)//: static
     {
         $addresses = $this->formatAddress(...$addresses);
 

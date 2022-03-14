@@ -28,6 +28,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
+    use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
     /**
      * Static type of this element
@@ -567,7 +568,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         if (!$this->visibleFields) {
             return $this;
@@ -896,5 +897,21 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return parent::addListingFilter($listing, $data, $operator);
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $name = $params['name'] ?: $this->name;
+
+        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

@@ -168,6 +168,13 @@ class FullPageCacheListener
         $requestUri = $request->getRequestUri();
         $excludePatterns = [];
 
+        // disable the output-cache if the client sends an authorization header
+        if ($request->headers->has('authorization')) {
+            $this->disable('authorization header in use');
+
+            return;
+        }
+
         // only enable GET method
         if (!$request->isMethodCacheable()) {
             $this->disable();
@@ -211,9 +218,7 @@ class FullPageCacheListener
 
                 if (!empty($conf['exclude_patterns'])) {
                     $confExcludePatterns = explode(',', $conf['exclude_patterns']);
-                    if (!empty($confExcludePatterns)) {
-                        $excludePatterns = $confExcludePatterns;
-                    }
+                    $excludePatterns = $confExcludePatterns;
                 }
 
                 if (!empty($conf['exclude_cookie'])) {
@@ -226,6 +231,12 @@ class FullPageCacheListener
                             return;
                         }
                     }
+                }
+
+                if ($this->sessionStatus->isDisabledBySession($request)) {
+                    $this->disable('Session in use');
+
+                    return;
                 }
 
                 // output-cache is always disabled when logged in at the admin ui

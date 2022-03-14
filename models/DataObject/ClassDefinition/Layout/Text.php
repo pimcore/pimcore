@@ -23,26 +23,36 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'text';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $html = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $renderingClass;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $renderingData;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $border = false;
@@ -118,7 +128,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
             $this->getRenderingClass()

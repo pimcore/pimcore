@@ -102,12 +102,12 @@ final class Redirect extends AbstractModel
     protected $expiry;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -486,7 +486,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -506,7 +506,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {

@@ -26,7 +26,7 @@ use Twig\TwigFunction;
  */
 class PimcoreToolExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_language_flag', [\Pimcore\Tool::class, 'getLanguageFlagFile']),

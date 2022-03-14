@@ -98,20 +98,17 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
                 }
                 if (!$data) {
                     return $parentValue;
-                } else {
-                    if (!empty($parentValue)) {
-                        $value = new DataObject\Fieldcollection($parentValue->getItems());
-                        if (!empty($data)) {
-                            foreach ($data as $entry) {
-                                $value->add($entry);
-                            }
-                        }
-                    } else {
-                        $value = new DataObject\Fieldcollection($data->getItems());
-                    }
-
-                    return $value;
                 }
+                if (!empty($parentValue)) {
+                    $value = new DataObject\Fieldcollection($parentValue->getItems());
+                    foreach ($data as $entry) {
+                        $value->add($entry);
+                    }
+                } else {
+                    $value = new DataObject\Fieldcollection($data->getItems());
+                }
+
+                return $value;
             }
         }
 

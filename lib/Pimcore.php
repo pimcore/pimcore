@@ -29,11 +29,6 @@ class Pimcore
     /**
      * @var bool
      */
-    private static $inShutdown = false;
-
-    /**
-     * @var bool
-     */
     private static $shutdownEnabled = true;
 
     /**
@@ -127,7 +122,7 @@ class Pimcore
      */
     public static function getKernel()
     {
-        return static::$kernel;
+        return self::$kernel;
     }
 
     /**
@@ -137,7 +132,7 @@ class Pimcore
      */
     public static function hasKernel()
     {
-        if (static::$kernel) {
+        if (self::$kernel) {
             return true;
         }
 
@@ -151,7 +146,7 @@ class Pimcore
      */
     public static function setKernel(KernelInterface $kernel)
     {
-        static::$kernel = $kernel;
+        self::$kernel = $kernel;
     }
 
     /**
@@ -175,9 +170,12 @@ class Pimcore
     public static function hasContainer()
     {
         if (static::hasKernel()) {
-            $container = static::getContainer();
-            if ($container) {
-                return true;
+            try {
+                $container = static::getContainer();
+                if ($container) {
+                    return true;
+                }
+            } catch (\LogicException) {
             }
         }
 
@@ -228,9 +226,6 @@ class Pimcore
      */
     public static function shutdown()
     {
-        // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
-        self::$inShutdown = true;
-
         try {
             self::getContainer();
         } catch (\LogicException $e) {

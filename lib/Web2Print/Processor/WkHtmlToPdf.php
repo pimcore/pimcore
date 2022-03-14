@@ -183,7 +183,7 @@ class WkHtmlToPdf extends Processor
 
     /**
      * @param string $srcUrl
-     * @param string $dstFile
+     * @param string|null $dstFile
      *
      * @return string
      *
@@ -195,8 +195,8 @@ class WkHtmlToPdf extends Processor
             $dstFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
         }
 
-        if (empty($srcUrl) || empty($dstFile) || empty($this->wkhtmltopdfBin)) {
-            throw new \Exception('srcUrl || dstFile || wkhtmltopdfBin is empty!');
+        if (empty($srcUrl) || empty($this->wkhtmltopdfBin)) {
+            throw new \Exception('srcUrl || wkhtmltopdfBin is empty!');
         }
 
         $retVal = 0;

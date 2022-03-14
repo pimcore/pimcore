@@ -24,9 +24,9 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener:
-        arguments:
-            $translator: '@Symfony\Contracts\Translation\TranslatorInterface'
+    Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\DumpTranslationEntriesListener: ~
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
@@ -57,7 +57,6 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentStackListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 
     #
@@ -148,3 +147,5 @@ services:
         arguments:
             $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
+
+    Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~

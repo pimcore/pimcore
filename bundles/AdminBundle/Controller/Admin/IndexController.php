@@ -357,7 +357,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         //mail settings
         $mailIncomplete = false;
         if (isset($config['email'])) {
-            if (empty($config['email']['debug']['email_addresses'])) {
+            if (\Pimcore::inDebugMode() && empty($config['email']['debug']['email_addresses'])) {
                 $mailIncomplete = true;
             }
             if (empty($config['email']['sender']['email'])) {

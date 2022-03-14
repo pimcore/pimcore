@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->db->fetchRow('SELECT * FROM users WHERE `id` = ?', $id);
         }
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException("user doesn't exist");
@@ -56,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException(sprintf('User with name "%s" does not exist', $name));
@@ -80,7 +80,11 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function hasChildren()
     {
-        $c = $this->db->fetchOne('SELECT id FROM users WHERE parentId = ?', $this->model->getId());
+        if (!$this->model->getId()) {
+            return false;
+        }
+
+        $c = $this->db->fetchOne('SELECT id FROM users WHERE parentId = ?', [$this->model->getId()]);
 
         return (bool) $c;
     }

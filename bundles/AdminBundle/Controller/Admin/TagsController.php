@@ -190,7 +190,7 @@ class TagsController extends AdminController
 
         if ($loadChildren) {
             $children = $tag->getChildren();
-            $loadChildren = $recursiveChildren ?? false;
+            $loadChildren = $recursiveChildren;
             foreach ($children as $child) {
                 $tagArray['children'][] = $this->convertTagToArray($child, $showSelection, $assignedTagIds, $loadChildren, $recursiveChildren);
             }

@@ -54,7 +54,7 @@ class WriteLock implements LoggerAwareInterface
      *
      * @var int|null
      */
-    protected $timestamp = 0;
+    protected $timestamp;
 
     /**
      * @var bool
@@ -176,7 +176,7 @@ class WriteLock implements LoggerAwareInterface
         }
 
         // normalize timestamp
-        $this->timestamp = 0;
+        $this->timestamp = null;
 
         return false;
     }
@@ -218,7 +218,7 @@ class WriteLock implements LoggerAwareInterface
 
                     $this->itemPool->deleteItem($this->cacheKey);
 
-                    $this->timestamp = 0;
+                    $this->timestamp = null;
 
                     return true;
                 } else {

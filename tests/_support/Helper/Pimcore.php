@@ -131,6 +131,7 @@ class Pimcore extends Module\Symfony
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -278,12 +279,19 @@ class Pimcore extends Module\Symfony
      */
     protected function purgeClassDirectory()
     {
-        $filesystem = new Filesystem();
-        if (file_exists(PIMCORE_CLASS_DIRECTORY)) {
-            $this->debug('[INIT] Purging class directory ' . PIMCORE_CLASS_DIRECTORY);
+        $directories = [
+            PIMCORE_CLASS_DIRECTORY,
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
+        ];
 
-            $filesystem->remove(PIMCORE_CLASS_DIRECTORY);
-            $filesystem->mkdir(PIMCORE_CLASS_DIRECTORY, 0755);
+        $filesystem = new Filesystem();
+        foreach ($directories as $directory) {
+            if (file_exists($directory)) {
+                $this->debug('[INIT] Purging class directory ' . $directory);
+
+                $filesystem->remove($directory);
+                $filesystem->mkdir($directory, 0755);
+            }
         }
     }
 

@@ -158,6 +158,10 @@ class SnippetController extends DocumentControllerBase
             $snippet->setPublished(true);
         }
 
+        if ($request->get('missingRequiredEditable') !== null) {
+            $snippet->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
+        }
+
         if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $snippet);
 
@@ -185,6 +189,7 @@ class SnippetController extends DocumentControllerBase
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
+                'isAutoSave' => $version->isAutoSave(),
             ];
 
             $this->handleTask($request->get('task'), $snippet);

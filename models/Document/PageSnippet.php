@@ -24,7 +24,6 @@ use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -129,13 +128,14 @@ abstract class PageSnippet extends Model\Document
      */
     protected function update($params = [])
     {
-
         // update elements
-        $this->getEditables();
+        $editables = $this->getEditables();
         $this->getDao()->deleteAllEditables();
 
-        if (is_array($this->getEditables()) && count($this->getEditables()) > 0) {
-            foreach ($this->getEditables() as $name => $editable) {
+        parent::update($params);
+
+        if (is_array($editables) && count($editables)) {
+            foreach ($editables as $editable) {
                 if (!$editable->getInherited()) {
                     $editable->setDao(null);
                     $editable->setDocumentId($this->getId());
@@ -145,12 +145,8 @@ abstract class PageSnippet extends Model\Document
         }
 
         // scheduled tasks are saved in $this->saveVersion();
-
-        // update this
-        parent::update($params);
-
         // save version if needed
-        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+        $this->saveVersion(false, false, $params['versionNote'] ?? null);
     }
 
     /**
@@ -225,7 +221,7 @@ abstract class PageSnippet extends Model\Document
     protected function doDelete()
     {
         // Dispatch Symfony Message Bus to delete versions
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new VersionDeleteMessage(Service::getElementType($this), $this->getId())
         );
 
@@ -415,7 +411,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param int|null $contentMasterDocumentId
+     * @param int|string|null $contentMasterDocumentId
      *
      * @return $this
      *
@@ -597,7 +593,12 @@ abstract class PageSnippet extends Model\Document
             }
         }
 
-        $url = $scheme . $hostname . $this->getFullPath();
+        $url = $scheme . $hostname;
+        if ($this instanceof Page && $this->getPrettyUrl()) {
+            $url .= $this->getPrettyUrl();
+        } else {
+            $url .= $this->getFullPath();
+        }
 
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
         if ($site instanceof Model\Site && $site->getMainDomain()) {

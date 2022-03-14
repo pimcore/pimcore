@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Redirect\Listing\Dao getDao()
  * @method Model\Redirect[] load()
- * @method Model\Redirect current()
+ * @method Model\Redirect|false current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing

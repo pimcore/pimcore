@@ -22,17 +22,23 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'tabpanel';
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $border = false;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
     public $tabPosition = 'top';
 
@@ -57,11 +63,11 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
      */
     public function getTabPosition(): string
     {
-        return $this->tabPosition;
+        return $this->tabPosition ?? 'top';
     }
 
     /**
-     * @param string $tabPosition
+     * @param string|null $tabPosition
      */
     public function setTabPosition($tabPosition): void
     {

@@ -113,7 +113,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 var testString = testStringEl.getValue();
 
                 try {
-                    var regexp = new RegExp(regex);
+                    var regexp = new RegExp(regex, 'u');
                     if (regexp.test(testString)) {
                         testStringEl.addCls("class-editor-validation-success");
                         testStringEl.removeCls("class-editor-validation-error");

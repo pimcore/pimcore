@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @method \Pimcore\Model\Schedule\Task\Listing\Dao getDao()
  * @method Model\Schedule\Task[] load()
- * @method Model\Schedule\Task current()
+ * @method Model\Schedule\Task|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

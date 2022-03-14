@@ -31,7 +31,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
-    public static function getSubscribedServices()
+    /**
+     * {@inheritdoc}
+     *
+     */
+    public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
         $services['translator'] = TranslatorInterface::class;
@@ -89,7 +93,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
             Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
-                    'user' => $this->getAdminUser()->getName(),
+                    'user' => $this->getAdminUser()?->getName(),
                     'permission' => $permission,
                 ]
             );

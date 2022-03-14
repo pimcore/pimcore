@@ -25,6 +25,9 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
+                },
+                extraParams: {
+                    type: 'asset'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename"]
@@ -64,10 +67,10 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         };
 
         // check for restrictions
-        var possibleRestrictions = ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"];
-        var filterStore = [];
-        var selectedStore = [];
-        for (var i=0; i<possibleRestrictions.length; i++) {
+        let possibleRestrictions = pimcore.globalmanager.get('asset_search_types');
+        let filterStore = [];
+        let selectedStore = [];
+        for (let i=0; i<possibleRestrictions.length; i++) {
             if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i],
                 this.parent.restrictions.subtype.asset )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
@@ -77,7 +80,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
         // add all to store if empty
         if(filterStore.length < 1) {
-            for (var i=0; i<possibleRestrictions.length; i++) {
+            for (let i=0; i<possibleRestrictions.length; i++) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
             }
@@ -161,6 +164,20 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                             text: t('remove'),
                             iconCls: "pimcore_icon_delete",
                             handler: function (index, item) {
+
+                                if(this.parent.multiselect) {
+                                    var resultPanelStore = this.resultPanel.getStore();
+                                    var elementId = this.selectionStore.getAt(index).id;
+                                    var record = resultPanelStore.findRecord("id", elementId);
+
+                                    if(record) {
+                                        record.set('asset-selected', false);
+                                    }
+
+                                    resultPanelStore.reload();
+                                    
+                                }
+
                                 this.selectionStore.removeAt(index);
                                 item.parentMenu.destroy();
                             }.bind(this, rowIndex)
@@ -205,7 +222,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         };
 
                         if (record.data.subtype in routes) {
-                            
                             var route = routes[record.data.subtype];
 
                             var params = {
@@ -225,6 +241,36 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
+            if (this.parent.multiselect) {
+                columns.unshift(
+                    {
+                        xtype: 'checkcolumn',
+                        fieldLabel: '',
+                        name: 'asset-select-checkbox',
+                        text: t("select"),
+                        dataIndex : 'asset-selected',
+                        sortable: false,
+                        renderer: function (value, metaData, record, rowIndex) {
+                            var currentElementId = this.resultPanel.getStore().getAt(rowIndex).id;
+                            var rec = this.selectionStore.getData().find("id", currentElementId);
+
+                            var checkbox = new Ext.grid.column.Check();
+
+                            if (typeof value ==='undefined' && rec !== null){
+                                this.resultPanel.getStore().getAt(rowIndex).set('asset-selected', true);
+                                return checkbox.renderer(true);
+                            }
+                              
+                            if (value && rec === null) {
+                                return checkbox.renderer(true);
+                            }
+                            
+                            return checkbox.renderer(false);
+                        }.bind(this)
+                    }
+                );
+            }
+
             this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
@@ -235,18 +281,38 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 columnLines: true,
                 stripeRows: true,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
+                    markDirty: false
                 },
                 plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
+                    cellclick: {
+                        fn: function(view, cellEl, colIdx, store, rowEl, rowIdx, event) {
+
+                            var data = view.getStore().getAt(rowIdx);
+
+                            if (this.parent.multiselect && colIdx == 0) {
+                                if (data.get('asset-selected')) {
+                                    this.addToSelection(data.data);
+                                } else {
+                                    this.removeFromSelection(data.data);
+                                }
+                            }
+                        }.bind(this)
+                    },
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
 
                         var data = grid.getStore().getAt(rowIndex);
 
                         if(this.parent.multiselect) {
                             this.addToSelection(data.data);
+
+                            if (!record.get('asset-selected')) {
+                                record.set('asset-selected', true);
+                            }
+
                         } else {
                             // select and close
                             this.parent.commitData(this.getData());
@@ -269,11 +335,11 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     },
 
     search: function () {
-        var formValues = this.formPanel.getForm().getFieldValues();
+        let formValues = this.formPanel.getForm().getFieldValues();
 
-        var proxy = this.store.getProxy();
-        proxy.setExtraParam("type", "asset");
-        proxy.setExtraParam("query", formValues.query);
+        let proxy = this.store.getProxy();
+        let query = Ext.util.Format.htmlEncode(formValues.query);
+        proxy.setExtraParam("query", query);
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {
@@ -281,6 +347,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         }
 
         this.pagingtoolbar.moveFirst();
-        this.updateTabTitle(formValues.query);
+        this.updateTabTitle(query);
     }
 });

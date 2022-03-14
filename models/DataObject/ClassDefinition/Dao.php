@@ -126,33 +126,36 @@ class Dao extends Model\Dao\AbstractDao
         $protectedDatastoreColumns = ['oo_id'];
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
-			  `oo_id` int(11) NOT NULL default '0',
+			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
-			  PRIMARY KEY  (`oo_id`)
-			) DEFAULT CHARSET=utf8mb4;");
+			  PRIMARY KEY  (`oo_id`),
+			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+			) DEFAULT CHARSET=utf8mb4;');
 
         // update default value of classname columns
         $this->db->query('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
-			  `oo_id` int(11) NOT NULL default '0',
-			  PRIMARY KEY  (`oo_id`)
-			) DEFAULT CHARSET=utf8mb4;");
+			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
+			  PRIMARY KEY  (`oo_id`),
+			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+			) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
               `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
-              `src_id` int(11) NOT NULL DEFAULT '0',
-              `dest_id` int(11) NOT NULL DEFAULT '0',
-              `type` varchar(50) NOT NULL DEFAULT '',
+              `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+              `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+              `type` enum('object', 'asset','document') NOT NULL,
               `fieldname` varchar(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` varchar(70) NOT NULL DEFAULT '',
               `position` varchar(70) NOT NULL DEFAULT '0',
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
-              INDEX `reverse_lookup` (`dest_id`, `type`)
-        ) DEFAULT CHARSET=utf8mb4;");
+              INDEX `reverse_lookup` (`dest_id`, `type`),
+			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4;');
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 

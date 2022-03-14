@@ -25,6 +25,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Pimcore\Tool\Session;
 use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
 use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
@@ -36,6 +37,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -57,37 +59,34 @@ class TranslationController extends AdminController
      */
     public function importAction(Request $request, LocaleServiceInterface $localeService)
     {
-        $admin = $request->get('admin');
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
+        $admin = $domain == Translation::DOMAIN_ADMIN;
+
         $dialect = $request->get('csvSettings', null);
-        $tmpFile = $request->get('importFile');
+        $session = Session::get('pimcore_importconfig');
+        $tmpFile = $session->get('translation_import_file');
 
         if ($dialect) {
             $dialect = json_decode($dialect);
         }
 
-        if (!empty($tmpFile)) {
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
-        } else {
-            $tmpFile = $_FILES['Filedata']['tmp_name'];
-        }
-
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         $merge = $request->get('merge');
+        $overwrite = !$merge;
 
-        $overwrite = $merge ? false : true;
-
+        $allowedLanguages = $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations();
         if ($admin) {
-            $delta = Translation::importTranslationsFromFile($tmpFile, Translation::DOMAIN_ADMIN, $overwrite, Tool\Admin::getLanguages(), $dialect);
-        } else {
-            $delta = Translation::importTranslationsFromFile(
-                $tmpFile,
-                Translation::DOMAIN_DEFAULT,
-                $overwrite,
-                $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations(),
-                $dialect
-            );
+            $allowedLanguages = Tool\Admin::getLanguages();
         }
+
+        $delta = Translation::importTranslationsFromFile(
+            $tmpFile,
+            $domain,
+            $overwrite,
+            $allowedLanguages,
+            $dialect
+        );
 
         if (is_file($tmpFile)) {
             @unlink($tmpFile);
@@ -135,6 +134,10 @@ class TranslationController extends AdminController
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
         File::put($importFile, $tmpData);
 
+        Session::useSession(function (AttributeBagInterface $session) use ($importFile) {
+            $session->set('translation_import_file', $importFile);
+        }, 'pimcore_importconfig');
+
         // determine csv settings
         $dialect = Tool\Admin::determineCsvDialect($importFile);
 
@@ -146,7 +149,6 @@ class TranslationController extends AdminController
         return $this->adminJson([
             'success' => true,
             'config' => [
-                'tmpFile' => $filename,
                 'csvSettings' => $dialect,
             ],
         ]);
@@ -161,13 +163,11 @@ class TranslationController extends AdminController
      */
     public function exportAction(Request $request)
     {
-        $admin = $request->get('admin');
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
+        $admin = $domain == Translation::DOMAIN_ADMIN;
+
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($admin) {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
         $translation = new Translation();
         $translation->setDomain($domain);
         $tableName = $translation->getDao()->getDatabaseTableName();
@@ -340,14 +340,10 @@ class TranslationController extends AdminController
      */
     public function translationsAction(Request $request, TranslatorInterface $translator)
     {
-        $admin = $request->get('admin');
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
+        $admin = $domain === Translation::DOMAIN_ADMIN;
 
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
-
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($admin) {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
 
         $translation = new Translation();
         $translation->setDomain($domain);
@@ -678,12 +674,7 @@ class TranslationController extends AdminController
      */
     public function cleanupAction(Request $request)
     {
-        $admin = $request->get('admin');
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($admin) {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
-
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $list = new Translation\Listing();
         $list->setDomain($domain);
         $list->cleanup();
@@ -1231,14 +1222,10 @@ class TranslationController extends AdminController
      */
     public function mergeItemAction(Request $request)
     {
-        $translationType = $request->get('translationType');
+        $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
 
         $dataList = json_decode($request->get('data'), true);
 
-        $domain = Translation::DOMAIN_DEFAULT;
-        if ($translationType == 'admin') {
-            $domain = Translation::DOMAIN_ADMIN;
-        }
         foreach ($dataList as $data) {
             $t = Translation::getByKey($data['key'], $domain, true);
             $newValue = htmlspecialchars_decode($data['current']);
@@ -1272,5 +1259,24 @@ class TranslationController extends AdminController
                 'edit' => $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations(),
             ]
         );
+    }
+
+    /**
+     * @Route("/get-translation-domains", name="pimcore_admin_translation_gettranslationdomains", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getTranslationDomainsAction(Request $request)
+    {
+        $translation = new Translation();
+
+        $domains = array_map(
+            fn ($domain) => ['name' => $domain],
+            $translation->getDao()->getAvailableDomains(),
+        );
+
+        return $this->adminJson(['domains' => $domains]);
     }
 }

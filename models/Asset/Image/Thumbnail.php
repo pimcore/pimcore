@@ -170,7 +170,7 @@ final class Thumbnail
                     $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
                     Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    Logger::error($e);
+                    Logger::error($e->getMessage());
                 }
             }
         }
@@ -209,7 +209,9 @@ final class Thumbnail
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            if (!str_starts_with($path, 'http')) {
+                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+            }
         }
 
         return $path;
@@ -306,19 +308,10 @@ final class Thumbnail
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
-                        $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
-                        foreach ($autoFormats as $autoFormat => $autoFormatConfig) {
-                            if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
-                                $thumbConfigAutoFormat = clone $thumbConfig;
-                                $thumbConfigAutoFormat->setFormat($autoFormat);
-                                if (!empty($autoFormatConfig['quality'])) {
-                                    $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
-                                }
-
-                                $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
-                                if (!empty($sourceWebP)) {
-                                    $html .= "\t" . $sourceWebP . "\n";
-                                }
+                        foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                            if (!empty($autoFormatThumbnailHtml)) {
+                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
                             }
                         }
                     }
@@ -371,8 +364,8 @@ final class Thumbnail
             }
         }
 
-        $altText = $attributes['alt'] ?? '';
-        $titleText = $attributes['title'] ?? '';
+        $altText = !empty($options['alt']) ? $options['alt'] : (!empty($attributes['alt']) ? $attributes['alt'] : '');
+        $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
             if ($image->getMetadata('title')) {

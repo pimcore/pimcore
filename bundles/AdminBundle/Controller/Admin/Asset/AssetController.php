@@ -394,6 +394,24 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
+     * @Route("/exists", name="pimcore_admin_asset_exists", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function existsAction(Request $request)
+    {
+        $parentAsset = \Pimcore\Model\Asset::getById((int)$request->get('parentId'));
+
+        return new JsonResponse([
+            'exists' => Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$request->get('filename')),
+        ]);
+    }
+
+    /**
      * @param Request $request
      * @param Config $config
      *
@@ -479,9 +497,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $parentAsset = Asset::getById((int)$parentId);
 
-        // check for duplicate filename
-        $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
-        $asset = null;
+        if (!$request->get('allowOverwrite')) {
+            // check for duplicate filename
+            $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
+        }
 
         if (!$parentAsset->isAllowed('create')) {
             throw $this->createAccessDeniedHttpException(
@@ -495,12 +514,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions of your temporary directories.');
         }
 
-        $asset = Asset::create($parentId, [
-            'filename' => $filename,
-            'sourcePath' => $sourcePath,
-            'userOwner' => $this->getAdminUser()->getId(),
-            'userModification' => $this->getAdminUser()->getId(),
-        ]);
+        if ($request->get('allowOverwrite') && Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$filename)) {
+            $asset = Asset::getByPath($parentAsset->getRealFullPath().'/'.$filename);
+            $asset->setStream(fopen($sourcePath, 'rb', false, File::getContext()));
+            $asset->save();
+        } else {
+            $asset = Asset::create($parentId, [
+                'filename' => $filename,
+                'sourcePath' => $sourcePath,
+                'userOwner' => $this->getAdminUser()->getId(),
+                'userModification' => $this->getAdminUser()->getId(),
+            ]);
+        }
 
         @unlink($sourcePath);
 
@@ -680,6 +705,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $tmpAsset = [
             'id' => $asset->getId(),
+            'key' => $element->getKey(),
             'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
@@ -696,11 +722,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             ],
         ];
 
+        $hasChildren = $asset->getDao()->hasChildren($this->getAdminUser());
+
         // set type specific settings
         if ($asset instanceof Asset\Folder) {
             $tmpAsset['leaf'] = false;
-            $tmpAsset['expanded'] = !$asset->hasChildren();
-            $tmpAsset['loaded'] = !$asset->hasChildren();
+            $tmpAsset['expanded'] = !$hasChildren;
+            $tmpAsset['loaded'] = !$hasChildren;
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
             $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
         } else {
@@ -1409,7 +1437,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $time = null;
-        if ($request->get('time')) {
+        if (is_numeric($request->get('time'))) {
             $time = (int)$request->get('time');
         }
 
@@ -2171,7 +2199,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         copy($_FILES['Filedata']['tmp_name'], $zipFile);
 
         $zip = new \ZipArchive;
-        if ($zip->open($zipFile) === true) {
+        $retCode = $zip->open($zipFile);
+        if ($retCode === true) {
             $jobAmount = ceil($zip->numFiles / $filesPerJob);
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
@@ -2187,18 +2216,23 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 ]];
             }
             $zip->close();
+
+            // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
+            // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
+            // request and not XHR where the content-type doesn't matter
+            $responseJson = $this->encodeJson([
+                'success' => true,
+                'jobs' => $jobs,
+                'jobId' => $jobId,
+            ]);
+
+            return new Response($responseJson);
+        } else {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $this->trans('could_not_open_zip_file'),
+            ]);
         }
-
-        // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
-        // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
-        // request and not XHR where the content-type doesn't matter
-        $responseJson = $this->encodeJson([
-            'success' => true,
-            'jobs' => $jobs,
-            'jobId' => $jobId,
-        ]);
-
-        return new Response($responseJson);
     }
 
     /**

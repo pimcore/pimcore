@@ -115,7 +115,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'domain' => $site ? $site->getMainDomain() : null,
                     ];
 
-                    $result[] = $resultItem;
+                    $result[$slug->getSiteId()] = $resultItem;
                 }
             }
         }
@@ -418,6 +418,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $db = Db::get();
             $db->delete(Model\DataObject\Data\UrlSlug::TABLE_NAME, ['objectId' => $object->getId()]);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return true;
     }
 
     /**

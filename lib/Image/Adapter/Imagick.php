@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 
 class Imagick extends Adapter
 {
@@ -48,11 +49,15 @@ class Imagick extends Adapter
      */
     protected static $supportedFormatsCache = [];
 
+    private ?array $initalOptions = null;
+
     /**
      * {@inheritdoc}
      */
     public function load($imagePath, $options = [])
     {
+        $this->initalOptions ??= $options;
+
         if (isset($options['preserveColor'])) {
             // set this option to TRUE to skip all color transformations during the loading process
             // this can massively improve performance if the color information doesn't matter, ...
@@ -78,9 +83,6 @@ class Imagick extends Adapter
             $this->imagePath = $imagePath;
 
             if (isset($options['resolution'])) {
-                // set the resolution to 2000x2000 for known vector formats
-                // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
-                // maybe there's a better solution but for now this fixes the problem
                 $i->setResolution($options['resolution']['x'], $options['resolution']['y']);
             }
 
@@ -88,13 +90,13 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
-            if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
+            if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
 
             $this->resource = $i;
 
-            if (!$this->isPreserveColor()) {
+            if (!$this->reinitializing && !$this->isPreserveColor()) {
                 if (method_exists($i, 'setColorspace')) {
                     $i->setColorspace(\Imagick::COLORSPACE_SRGB);
                 }
@@ -133,21 +135,25 @@ class Imagick extends Adapter
             }
 
             $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
-            if ($isClipAutoSupport) {
+            if ($isClipAutoSupport && !$this->reinitializing && $this->has8BIMClippingPath()) {
+                // the following way of determining a clipping path is very resource intensive (using Imagick),
+                // so we try with the approach in has8BIMClippingPath() instead
                 // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
-                $identifyRaw = $i->identifyImage(true)['rawOutput'];
-                if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
-                    // if there's a clipping path embedded, apply the first one
-                    try {
-                        $i->clipImage();
-                    } catch (\Exception $e) {
-                        Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
-                    }
+                //$identifyRaw = $i->identifyImage(true)['rawOutput'];
+                //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
+                // if there's a clipping path embedded, apply the first one
+                try {
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                    $i->clipImage();
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                } catch (\Exception $e) {
+                    Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
+                //}
             }
         } catch (\Exception $e) {
             Logger::error('Unable to load image: ' . $imagePath);
-            Logger::error($e);
+            Logger::error($e->getMessage());
 
             return false;
         }
@@ -155,6 +161,21 @@ class Imagick extends Adapter
         $this->setModified(false);
 
         return $this;
+    }
+
+    private function has8BIMClippingPath(): bool
+    {
+        $handle = fopen($this->imagePath, 'rb');
+        $chunk = fread($handle, 1024*1000); // read the first 1MB
+        fclose($handle);
+
+        // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
+        if (preg_match('/8BIM\x0b\xb7/', $chunk)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -344,17 +365,23 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
+        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+            // no need to process (s)RGB images
+            return $this;
+        }
+
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
-        // different from the colorspace of the embedded icc color profile
-        // If that is the case we just ignore the color profiles
-        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
-            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+        if (isset($profiles['icc'])) {
+            if (strpos($profiles['icc'], 'RGB') !== false) {
+                // no need to process (s)RGB images
                 return $this;
             }
 
-            if (strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+            // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+            // different from the colorspace of the embedded icc color profile
+            // If that is the case we just ignore the color profiles
+            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
                 return $this;
             }
         }
@@ -376,11 +403,12 @@ class Imagick extends Adapter
         } elseif (!in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else {
-            // this is to handle embedded icc profiles in the RGB/sRGB colorspace
+            // this is to handle all other embedded icc profiles
             if (isset($profiles['icc'])) {
                 try {
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
+                    $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
                 } catch (\Exception $e) {
                     Logger::warn($e);
                 }
@@ -433,7 +461,7 @@ class Imagick extends Adapter
                 $path = __DIR__ . '/../icc-profiles/ISOcoated_v2_eci.icc'; // default profile
             }
 
-            if ($path && file_exists($path)) {
+            if (file_exists($path)) {
                 self::$CMYKColorProfile = file_get_contents($path);
             }
         }
@@ -485,20 +513,29 @@ class Imagick extends Adapter
         if ($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
             $res = $this->resource->getImageResolution();
-            $x_ratio = $res['x'] / $this->getWidth();
-            $y_ratio = $res['y'] / $this->getHeight();
-            $this->resource->removeImage();
+            if ($res['x'] && $res['y']) {
+                $x_ratio = $res['x'] / $this->getWidth();
+                $y_ratio = $res['y'] / $this->getHeight();
+                $this->resource->removeImage();
 
-            $newRes = ['x' => $width * $x_ratio, 'y' => $height * $y_ratio];
+                $newRes = ['x' => $width * $x_ratio, 'y' => $height * $y_ratio];
 
-            // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
-            // this is because sometimes the quality is much better when using the "native" resolution from the metadata
-            if ($newRes['x'] > $res['x'] && $newRes['y'] > $res['y']) {
-                $this->resource->setResolution($newRes['x'], $newRes['y']);
+                // only use the calculated resolution if we need a higher one that the one we got from the metadata (getImageResolution)
+                // this is because sometimes the quality is much better when using the "native" resolution from the metadata
+                if ($newRes['x'] > $res['x'] && $newRes['y'] > $res['y']) {
+                    $res = $newRes;
+                }
             } else {
-                $this->resource->setResolution($res['x'], $res['y']);
+                // this is mostly for SVGs, it seems that getImageResolution() doesn't return a value anymore for SVGs
+                // so we calculate the density ourselves, Inkscape/ImageMagick seem to use 96ppi, so that's how we get
+                // the right values for -density (setResolution)
+                $res = [
+                    'x' => ($width / $this->getWidth()) * 96,
+                    'y' => ($height / $this->getHeight()) * 96,
+                ];
             }
 
+            $this->resource->setResolution($res['x'], $res['y']);
             $this->resource->readImage($this->imagePath);
 
             if (!$this->isPreserveColor()) {
@@ -509,15 +546,17 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        if ($this->checkPreserveAnimation()) {
-            foreach ($this->resource as $i => $frame) {
-                $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+        if ($this->getWidth() !== $width || $this->getHeight() !== $height) {
+            if ($this->checkPreserveAnimation()) {
+                foreach ($this->resource as $i => $frame) {
+                    $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+                }
+            } else {
+                $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
             }
-        } else {
-            $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+            $this->setWidth($width);
+            $this->setHeight($height);
         }
-        $this->setWidth($width);
-        $this->setHeight($height);
 
         $this->postModify();
 
@@ -761,8 +800,19 @@ class Imagick extends Adapter
         $newImage = null;
 
         if (is_string($image)) {
-            $image = ltrim($image, '/');
-            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            $asset = Asset\Image::getByPath($image);
+            if ($asset instanceof Asset\Image) {
+                $image = $asset->getTemporaryFile();
+            } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.3',
+                    'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
+                );
+
+                $image = ltrim($image, '/');
+                $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+            }
 
             $newImage = new \Imagick();
             $newImage->readimage($image);
@@ -797,8 +847,19 @@ class Imagick extends Adapter
      */
     public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
     {
-        $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $asset = Asset\Image::getByPath($image);
+        if ($asset instanceof Asset\Image) {
+            $image = $asset->getTemporaryFile();
+        } else {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.3',
+                'Using relative path for Image Thumbnail overlay is deprecated, use Asset Image path.'
+            );
+
+            $image = ltrim($image, '/');
+            $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        }
 
         $newImage = new \Imagick();
         $newImage->readimage($image);

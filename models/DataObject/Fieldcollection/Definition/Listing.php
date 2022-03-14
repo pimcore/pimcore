@@ -25,7 +25,7 @@ class Listing
     public function load()
     {
         $fields = [];
-        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
+        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
         $files = glob($fieldCollectionFolder . '/*.php');
 
         foreach ($files as $file) {

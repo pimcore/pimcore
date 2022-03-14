@@ -31,6 +31,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
+    use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
 
     /**
      * Static type of this element
@@ -964,5 +965,21 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     * @param array|string|null $value
+     * @param string            $operator
+     * @param array             $params
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $name = $params['name'] ?: $this->name;
+
+        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 }

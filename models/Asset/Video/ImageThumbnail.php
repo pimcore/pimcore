@@ -32,7 +32,7 @@ final class ImageThumbnail
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $timeOffset;
 
@@ -110,12 +110,12 @@ final class ImageThumbnail
 
             if (empty($this->pathReference)) {
                 $timeOffset = $this->timeOffset;
-                if (!$this->timeOffset && $cs) {
+                if (!is_numeric($timeOffset) && is_numeric($cs)) {
                     $timeOffset = $cs;
                 }
 
                 // fallback
-                if (!$timeOffset && $this->asset instanceof Model\Asset\Video) {
+                if (!is_numeric($timeOffset) && $this->asset instanceof Model\Asset\Video) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 
@@ -159,7 +159,7 @@ final class ImageThumbnail
                         );
                     } catch (\Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                        Logger::error($e);
+                        Logger::error($e->getMessage());
                     }
                 }
             }

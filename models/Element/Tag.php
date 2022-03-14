@@ -345,10 +345,14 @@ final class Tag extends Model\AbstractModel
     public function getChildren()
     {
         if ($this->children == null) {
-            $listing = new Tag\Listing();
-            $listing->setCondition('parentId = ?', $this->getId());
-            $listing->setOrderKey('name');
-            $this->children = $listing->load();
+            if ($this->getId()) {
+                $listing = new Tag\Listing();
+                $listing->setCondition('parentId = ?', $this->getId());
+                $listing->setOrderKey('name');
+                $this->children = $listing->load();
+            } else {
+                $this->children = [];
+            }
         }
 
         return $this->children;

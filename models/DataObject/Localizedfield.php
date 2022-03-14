@@ -67,9 +67,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var Concrete|null
+     * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object = null;
+    protected $object;
 
     /**
      * @internal
@@ -81,9 +81,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected array $context = [];
+    protected ?array $context = [];
 
     /**
      * @internal
@@ -462,7 +462,10 @@ final class Localizedfield extends Model\AbstractModel implements
      * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      *
-     * @return mixed
+     * @return mixed|null
+     *
+     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false)
     {
@@ -471,6 +474,10 @@ final class Localizedfield extends Model\AbstractModel implements
 
         $context = $this->getContext();
         $fieldDefinition = $this->getFieldDefinition($name, $context);
+
+        if (!$fieldDefinition instanceof ClassDefinition\Data) {
+            throw new Model\Exception\NotFoundException(sprintf('Field "%s" does not exist in localizedfields', $name));
+        }
 
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
@@ -527,7 +534,7 @@ final class Localizedfield extends Model\AbstractModel implements
                                 }
                             }
 
-                            if (method_exists($parentContainer, $method)) {
+                            if ($parentContainer && method_exists($parentContainer, $method)) {
                                 $localizedFields = $parentContainer->getLocalizedFields();
                                 if ($localizedFields instanceof Localizedfield) {
                                     if ($localizedFields->getObject()->getId() != $this->getObject()->getId()) {
@@ -555,7 +562,7 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof PreGetDataInterface || ($fieldDefinition && method_exists($fieldDefinition, 'preGetData'))) {
+        if ($fieldDefinition instanceof PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
             if (!$fieldDefinition instanceof PreGetDataInterface) {
                 trigger_deprecation('pimcore/pimcore', '10.1', sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
                     'Implement the %s interface instead.', PreGetDataInterface::class));
@@ -717,15 +724,15 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     public function getContext(): array
     {
-        return $this->context;
+        return $this->context ?? [];
     }
 
     /**
-     * @param array $context
+     * @param array|null $context
      */
-    public function setContext(array $context): void
+    public function setContext(?array $context): void
     {
-        $this->context = $context;
+        $this->context = $context ?? [];
     }
 
     /**

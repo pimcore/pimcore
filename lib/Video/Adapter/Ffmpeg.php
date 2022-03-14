@@ -42,11 +42,6 @@ class Ffmpeg extends Adapter
     protected $arguments = [];
 
     /**
-     * @var array
-     */
-    private $tmpFiles = [];
-
-    /**
      * @return bool
      */
     public function isAvailable()
@@ -215,7 +210,7 @@ class Ffmpeg extends Adapter
      */
     public function saveImage($file, $timeOffset = null)
     {
-        if (!$timeOffset) {
+        if (!is_numeric($timeOffset)) {
             $timeOffset = 5;
         }
 
@@ -297,18 +292,9 @@ class Ffmpeg extends Adapter
             Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
         }
-
-        foreach ($this->tmpFiles as $tmpFile) {
-            @unlink($tmpFile);
-        }
     }
 
-    public function __destruct()
-    {
-        $this->destroy();
-    }
-
-    public function deleteConversionLogFile()
+    private function deleteConversionLogFile()
     {
         @unlink($this->getConversionLogFile());
     }

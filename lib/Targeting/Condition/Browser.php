@@ -64,7 +64,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     {
         $device = $visitorInfo->get(Device::PROVIDER_KEY);
 
-        if (!$device || empty($device) || true === ($device['is_bot'] ?? false)) {
+        if (!$device || true === ($device['is_bot'] ?? false)) {
             return false;
         }
 

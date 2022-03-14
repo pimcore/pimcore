@@ -18,8 +18,10 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,7 +32,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class SearchBackendListener implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messengerBusPimcoreCore
     ) {
     }
 
@@ -40,28 +42,37 @@ class SearchBackendListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD => 'onPostAddElement',
-            DocumentEvents::POST_ADD => 'onPostAddElement',
-            AssetEvents::POST_ADD => 'onPostAddElement',
+            DataObjectEvents::POST_ADD => 'onPostAddUpdateElement',
+            DocumentEvents::POST_ADD => 'onPostAddUpdateElement',
+            AssetEvents::POST_ADD => 'onPostAddUpdateElement',
 
             DataObjectEvents::PRE_DELETE => 'onPreDeleteElement',
             DocumentEvents::PRE_DELETE => 'onPreDeleteElement',
             AssetEvents::PRE_DELETE => 'onPreDeleteElement',
 
-            DataObjectEvents::POST_UPDATE => 'onPostUpdateElement',
-            DocumentEvents::POST_UPDATE => 'onPostUpdateElement',
-            AssetEvents::POST_UPDATE => 'onPostUpdateElement',
+            DataObjectEvents::POST_UPDATE => 'onPostAddUpdateElement',
+            DocumentEvents::POST_UPDATE => 'onPostAddUpdateElement',
+            AssetEvents::POST_UPDATE => 'onPostAddUpdateElement',
         ];
     }
 
     /**
      * @param ElementEventInterface $e
      */
-    public function onPostAddElement(ElementEventInterface $e)
+    public function onPostAddUpdateElement(ElementEventInterface $e)
     {
+        //do not update index when auto save or only saving version
+        if (
+            !$e instanceof AssetEvent &&
+            (($e->hasArgument('isAutoSave') && $e->getArgument('isAutoSave')) ||
+            ($e->hasArgument('saveVersionOnly') && $e->getArgument('saveVersionOnly')))
+        ) {
+            return;
+        }
+
         $element = $e->getElement();
-        $this->messageBus->dispatch(
-            new SearchBackendMessage($element->getType(), $element->getId())
+        $this->messengerBusPimcoreCore->dispatch(
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
     }
 
@@ -74,16 +85,5 @@ class SearchBackendListener implements EventSubscriberInterface
         if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
             $searchEntry->delete();
         }
-    }
-
-    /**
-     * @param ElementEventInterface $e
-     */
-    public function onPostUpdateElement(ElementEventInterface $e)
-    {
-        $element = $e->getElement();
-        $this->messageBus->dispatch(
-            new SearchBackendMessage($element->getType(), $element->getId())
-        );
     }
 }

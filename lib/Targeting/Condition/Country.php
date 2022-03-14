@@ -67,7 +67,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     {
         $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
 
-        if (!$city) {
+        if (!$city || ! isset($city['country'])) {
             return false;
         }
 

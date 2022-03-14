@@ -46,7 +46,7 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
         $this->data = [];
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'pimcore';
     }

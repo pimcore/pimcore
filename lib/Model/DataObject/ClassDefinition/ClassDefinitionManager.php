@@ -56,11 +56,11 @@ class ClassDefinitionManager
     }
 
     /**
-     * Updates all classes from PIMCORE_CLASS_DIRECTORY
+     * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      */
     public function createOrUpdateClassDefinitions(): array
     {
-        $objectClassesFolder = PIMCORE_CLASS_DIRECTORY;
+        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
         $files = glob($objectClassesFolder.'/*.php');
 
         $changes = [];

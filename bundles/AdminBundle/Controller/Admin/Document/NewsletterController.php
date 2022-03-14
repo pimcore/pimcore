@@ -177,6 +177,7 @@ class NewsletterController extends DocumentControllerBase
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
+                'isAutoSave' => $version->isAutoSave(),
             ];
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
@@ -350,7 +351,7 @@ class NewsletterController extends DocumentControllerBase
      *
      * @throws Exception
      */
-    public function sendAction(Request $request, MessageBusInterface $messageBus): JsonResponse
+    public function sendAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
@@ -370,7 +371,7 @@ class NewsletterController extends DocumentControllerBase
             'progress' => 0,
         ], 'newsletter');
 
-        $messageBus->dispatch(
+        $messengerBusPimcoreCore->dispatch(
             new Pimcore\Messenger\SendNewsletterMessage($document->getTmpStoreId(), \Pimcore\Tool::getHostUrl())
         );
 

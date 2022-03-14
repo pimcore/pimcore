@@ -77,14 +77,14 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * timestamp of creation date
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * timestamp of modification date
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -203,7 +203,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -223,7 +223,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {

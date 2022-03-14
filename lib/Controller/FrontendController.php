@@ -29,7 +29,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class FrontendController extends Controller
 {
-    public static function getSubscribedServices()
+    /**
+     * {@inheritdoc}
+     *
+     */
+    public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
         $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;

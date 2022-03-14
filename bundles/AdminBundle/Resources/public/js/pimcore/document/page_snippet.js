@@ -301,7 +301,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.draftVersionNotification);
 
-            if (this.data.draft && this.isAllowed("save")) {
+            if (this.data.draft && (this.data.draft.isAutoSave || this.isAllowed("save"))) {
                 this.draftVersionNotification.show();
             }
 
@@ -365,6 +365,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         return {
             id: this.data.id,
             path: this.data.path + this.data.key,
+            public_url: this.data.url,
             parentid: this.data.parentId,
             type: this.data.type,
             modificationdate: this.data.modificationDate,
@@ -386,6 +387,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             {
                 name: "path",
                 value: metainfo.path
+            }, {
+                name: "public_url",
+                value: metainfo.public_url
             }, {
                 name: "parentid",
                 value: metainfo.parentid

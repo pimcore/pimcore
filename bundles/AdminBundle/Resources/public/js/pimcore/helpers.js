@@ -808,8 +808,8 @@ pimcore.helpers.loadingHide = function () {
     pimcore.globalmanager.get("loadingmask").hide();
 };
 
-pimcore.helpers.itemselector = function (muliselect, callback, restrictions, config) {
-    var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions, config);
+pimcore.helpers.itemselector = function (multiselect, callback, restrictions, config) {
+    var itemselector = new pimcore.element.selector.selector(multiselect, callback, restrictions, config);
 };
 
 
@@ -1110,28 +1110,6 @@ pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
             newList.push(data[name][i][name]);
         }
         data[name] = newList;
-    }
-};
-
-
-pimcore.helpers.generatePagePreview = function (id, path, callback) {
-
-    var cb = callback;
-
-    if (pimcore.settings.htmltoimage) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_page_generatescreenshot'),
-            method: "POST",
-            ignoreErrors: true,
-            params: {
-                id: id
-            },
-            success: function () {
-                if (typeof cb == "function") {
-                    cb();
-                }
-            }
-        });
     }
 };
 
@@ -2538,7 +2516,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (context && context['containerType'] == "batch") {
+    if (context && (context['containerType'] == "batch" || context['containerType'] == "filterByRelationWindow")) {
         return;
     }
 

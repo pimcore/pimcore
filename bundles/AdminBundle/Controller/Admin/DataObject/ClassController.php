@@ -115,14 +115,24 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $text .= ' (' . $class->getId() . ')';
             }
 
+            $hasBrickField = false;
+            foreach ($class->getFieldDefinitions() as $fieldDefinition) {
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                    $hasBrickField = true;
+
+                    break;
+                }
+            }
+
             return [
                 'id' => $class->getId(),
                 'text' => $text,
                 'leaf' => true,
-                'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
+                'icon' => $class->getIcon() ? htmlspecialchars($class->getIcon()) : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'enableGridLocking' => $class->isEnableGridLocking(),
+                'hasBrickField' => $hasBrickField,
             ];
         };
 
@@ -647,7 +657,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $customLayoutData = [
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
-                    'default' => $customLayout->getDefault() ?? 0,
+                    'default' => $customLayout->getDefault() ?: 0,
                 ];
 
                 $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
@@ -851,7 +861,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -907,9 +917,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $event = new GenericEvent($this, [
             'list' => $definitions,
             'objectId' => $request->get('object_id'),
+            'layoutDefinitions' => $layoutDefinitions,
         ]);
         $eventDispatcher->dispatch($event, AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
+        $layoutDefinitions = $event->getArgument('layoutDefinitions');
 
         if ($forObjectEditor) {
             return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
@@ -1254,7 +1266,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
-                        'text' => $item->getGroup(),
+                        'text' => htmlspecialchars($item->getGroup()),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -1824,8 +1836,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $result = [];
         foreach ($icons as $icon) {
+            $content = file_get_contents(PIMCORE_WEB_ROOT . $icon);
             $result[] = [
-                'text' => "<img src='{$icon}'>",
+                'text' => sprintf('<img src="data:%s;base64,%s"/>', mime_content_type(PIMCORE_WEB_ROOT . $icon), base64_encode($content)),
                 'value' => $icon,
             ];
         }

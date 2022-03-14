@@ -67,7 +67,7 @@ final class FileObject
      */
     public function getFilename()
     {
-        return str_replace(PIMCORE_PROJECT_ROOT.'/', '', $this->filename);
+        return preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $this->filename);
     }
 
     /**

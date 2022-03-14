@@ -395,8 +395,10 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (null === $request) {
-            return null;
+        if (null === $request || !$request->getHost()) {
+            $domain = \Pimcore\Config::getSystemConfiguration('general')['domain'];
+
+            return $domain ?: null;
         }
 
         return $request->getHost();
@@ -444,7 +446,7 @@ final class Tool
         }
 
         // get it from System settings
-        if (!$hostname || $hostname == 'localhost') {
+        if (!$hostname || $hostname === 'localhost') {
             $systemConfig = Config::getSystemConfiguration('general');
             $hostname = $systemConfig['domain'] ?? null;
 
@@ -680,6 +682,10 @@ final class Tool
             unset($dirs[$key]);
         }
         $dirs = array_map('basename', $dirs);
+        $dirs = array_filter($dirs, function ($value) {
+            // this filters out "old" build directories, which end with a ~
+            return !(bool) \preg_match('/~$/', $value);
+        });
 
         return array_values($dirs);
     }

@@ -22,6 +22,8 @@ use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
@@ -33,22 +35,22 @@ final class Translation extends AbstractModel
     const DOMAIN_ADMIN = 'admin';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $key;
 
     /**
      * @var string[]
      */
-    protected $translations;
+    protected $translations = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -60,14 +62,14 @@ final class Translation extends AbstractModel
     /**
      * @var string
      */
-    protected $type;
+    protected $type = 'simple';
 
     /**
      * @return string
      */
     public function getType()
     {
-        return $this->type;
+        return $this->type ?: 'simple';
     }
 
     /**
@@ -87,7 +89,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -139,7 +141,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDate()
     {
@@ -159,7 +161,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getModificationDate()
     {
@@ -191,7 +193,7 @@ final class Translation extends AbstractModel
      */
     public function setDomain(string $domain): void
     {
-        $this->domain = $domain;
+        $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
     /**
@@ -272,19 +274,21 @@ final class Translation extends AbstractModel
         try {
             $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
-            if (!$create) {
+            if (!$create && !$returnIdIfEmpty) {
                 return null;
-            } else {
-                $translation->setKey($id);
-                $translation->setCreationDate(time());
-                $translation->setModificationDate(time());
+            }
 
+            $translation->setKey($id);
+            $translation->setCreationDate(time());
+            $translation->setModificationDate(time());
+
+            if ($create && $e instanceof NotFoundResourceException) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
-                $translation->save();
+                TranslationEntriesDumper::addToSaveQueue($translation);
             }
         }
 
@@ -417,7 +421,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || empty($languages) || !is_array($languages)) {
+            if (!$languages || !is_array($languages)) {
                 $languages = static::getValidLanguages($domain);
             }
 

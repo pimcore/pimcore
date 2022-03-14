@@ -33,7 +33,7 @@ class Shipping implements ShippingInterface
     protected $charge;
 
     /**
-     * @var OnlineShopTaxClass
+     * @var OnlineShopTaxClass|null
      */
     protected $taxClass;
 

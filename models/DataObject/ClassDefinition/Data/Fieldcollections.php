@@ -459,10 +459,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             if ($validationExceptions) {
-                $aggregatedExceptions = new Model\Element\ValidationException();
-                $aggregatedExceptions->setSubItems($validationExceptions);
+                $errors = [];
+                /** @var Model\Element\ValidationException $e */
+                foreach ($validationExceptions as $e) {
+                    $errors[] = $e->getAggregatedMessage();
+                }
+                $message = implode(' / ', $errors);
 
-                throw $aggregatedExceptions;
+                throw new Model\Element\ValidationException($message);
             }
         }
     }

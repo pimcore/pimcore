@@ -90,6 +90,10 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             text = this.data.path;
         }
 
+        if (text.length > 100) {
+            text = text.slice(0, 99)
+            text += '…'
+        }
 
         this.displayField = new Ext.form.DisplayField({
             value: text
@@ -163,6 +167,11 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             text = this.data.text;
         } else if (this.data.path) {
             text = this.data.path;
+        }
+
+        if (text.length > 100) {
+            text = text.slice(0, 99)
+            text += '…'
         }
 
         this.displayField.setValue(text);

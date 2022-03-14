@@ -35,11 +35,11 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -65,14 +65,14 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $parentId;
 
@@ -88,40 +88,40 @@ class Asset extends Element\AbstractElement
      *
      * @var string
      */
-    protected $type;
+    protected $type = '';
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $filename;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $path;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $mimetype;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $creationDate;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $modificationDate;
 
@@ -212,14 +212,14 @@ class Asset extends Element\AbstractElement
      *
      * @var bool
      */
-    protected $_dataChanged = false;
+    protected $dataChanged = false;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $versionCount;
+    protected $versionCount = 0;
 
     /**
      *
@@ -265,8 +265,8 @@ class Asset extends Element\AbstractElement
      */
     protected static function typeMatch(Asset $asset)
     {
-        $staticType = get_called_class();
-        if ($staticType != Asset::class) {
+        $staticType = static::class;
+        if ($staticType !== Asset::class) {
             if (!$asset instanceof $staticType) {
                 return false;
             }
@@ -345,18 +345,21 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
+                    self::checkMaxPixels($tmpFile, $data);
                     $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
+                        self::checkMaxPixels($streamMeta['uri'], $data);
                         $mimeType = MimeTypes::getDefault()->guessMimeType($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
+                        self::checkMaxPixels($tmpFile, $data);
                         $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
 
                         if (!$isRewindable) {
@@ -371,6 +374,7 @@ class Asset extends Element\AbstractElement
                 if (is_dir($data['sourcePath'])) {
                     $mimeType = 'directory';
                 } else {
+                    self::checkMaxPixels($data['sourcePath'], $data);
                     $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
@@ -398,6 +402,30 @@ class Asset extends Element\AbstractElement
         }
 
         return $asset;
+    }
+
+    private static function checkMaxPixels(string $localPath, array $data): void
+    {
+        // this check is intentionally done in Asset::create() because in Asset::update() it would result
+        // in an additional download from remote storage if configured, so in terms of performance
+        // this is the more efficient way
+        $maxPixels = (int) \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        if ($size = @getimagesize($localPath)) {
+            $imagePixels = (int) ($size[0] * $size[1]);
+            if ($imagePixels > $maxPixels) {
+                Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
+
+                $diff = sqrt(1 + ($maxPixels / $imagePixels));
+                $suggestion_0 = (int) round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
+                $suggestion_1 = (int) round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
+
+                $mp = $maxPixels / 1_000_000;
+
+                throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
+<p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
+<p>Suggestion: resize to <code>{$suggestion_0}&times;{$suggestion_1}</code> pixels or smaller.</p>");
+            }
+        }
     }
 
     /**
@@ -454,7 +482,7 @@ class Asset extends Element\AbstractElement
 
         $mappings = [
             'unknown' => ["/\.stp$/"],
-            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
+            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
             'text' => ['/text/', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
@@ -511,6 +539,8 @@ class Asset extends Element\AbstractElement
             $params = $preEvent->getArguments();
 
             $this->correctPath();
+
+            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -705,28 +735,33 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                // Write original data to temp path for writing stream
-                // as original file will be deleted before overwrite
-                $pathInfo = pathinfo($this->getFilename());
-                $tempFilePath = $this->getRealPath() . uniqid('temp_') . '.' . $pathInfo['extension'];
-                $storage->writeStream($tempFilePath, $src);
+                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                    // write stream directly if target file doesn't exist or if target is a remote storage
+                    // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    $storage->writeStream($path, $src);
+                } else {
+                    // We don't open a stream on existing files, because they could be possibly used by versions
+                    // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
+                    // also the versioning information persists. Using the stream on the existing file would overwrite the
+                    // contents of the inode and therefore leads to wrong version data
+                    $pathInfo = pathinfo($this->getFilename());
+                    $tempFilePath = $this->getRealPath() . uniqid('temp_');
+                    if ($pathInfo['extension'] ?? false) {
+                        $tempFilePath .= '.' . $pathInfo['extension'];
+                    }
 
+                    $storage->writeStream($tempFilePath, $src);
+                    $storage->delete($path);
+                    $storage->move($tempFilePath, $path);
+                }
+
+                // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
                 if ($dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
 
-                if ($storage->fileExists($path)) {
-                    // We don't open a stream on existing files, because they could be possibly used by versions
-                    // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                    // versioning information persists. Using the stream on the existing file would overwrite the
-                    // contents of the inode and therefore leads to wrong version data
-                    $storage->delete($path);
-                }
-
-                $storage->move($tempFilePath, $path);
-
-                $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 $mimeType = $storage->mimeType($path);
                 $this->setMimeType($mimeType);
@@ -789,7 +824,7 @@ class Asset extends Element\AbstractElement
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
         \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        if (get_class($this) == 'Asset' || $typeChanged) {
+        if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
@@ -932,13 +967,18 @@ class Asset extends Element\AbstractElement
     public function getSiblings()
     {
         if ($this->siblings === null) {
-            $list = new Asset\Listing();
-            // string conversion because parentId could be 0
-            $list->addConditionParam('parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('id != ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
-            $this->siblings = $list->getAssets();
+            if ($this->getParentId()) {
+                $list = new Asset\Listing();
+                $list->addConditionParam('parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('id != ?', $this->getId());
+                }
+                $list->setOrderKey('filename');
+                $list->setOrder('asc');
+                $this->siblings = $list->getAssets();
+            } else {
+                $this->siblings = [];
+            }
         }
 
         return $this->siblings;
@@ -1031,18 +1071,12 @@ class Asset extends Element\AbstractElement
             }
 
             // Dispatch Symfony Message Bus to delete versions
-            \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
-            // remove permissions
-            $this->getDao()->deleteAllPermissions();
-
             // remove all properties
             $this->getDao()->deleteAllProperties();
-
-            // remove all metadata
-            $this->getDao()->deleteAllMetadata();
 
             // remove all tasks
             $this->getDao()->deleteAllTasks();
@@ -1067,7 +1101,13 @@ class Asset extends Element\AbstractElement
 
             $this->clearThumbnails(true);
         } catch (\Exception $e) {
-            $this->rollBack();
+            try {
+                $this->rollBack();
+            } catch (\Exception $er) {
+                // PDO adapter throws exceptions if rollback fails
+                Logger::info($er);
+            }
+
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
@@ -1113,15 +1153,15 @@ class Asset extends Element\AbstractElement
      */
     public function getId()
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilename()
     {
-        return (string)$this->filename;
+        return $this->filename;
     }
 
     /**
@@ -1137,7 +1177,7 @@ class Asset extends Element\AbstractElement
      */
     public function getModificationDate()
     {
-        return (int)$this->modificationDate;
+        return $this->modificationDate;
     }
 
     /**
@@ -1234,7 +1274,7 @@ class Asset extends Element\AbstractElement
      */
     public function setPath($path)
     {
-        $this->path = $path;
+        $this->path = (string)$path;
 
         return $this;
     }
@@ -1246,7 +1286,7 @@ class Asset extends Element\AbstractElement
      */
     public function setType($type)
     {
-        $this->type = $type;
+        $this->type = (string)$type;
 
         return $this;
     }
@@ -1321,7 +1361,7 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tempFile = $this->getTemporaryFile();
+                $tempFile = $this->getLocalFileFromStream($this->stream);
                 $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
@@ -1345,7 +1385,7 @@ class Asset extends Element\AbstractElement
      */
     public function getDataChanged()
     {
-        return $this->_dataChanged;
+        return $this->dataChanged;
     }
 
     /**
@@ -1355,7 +1395,7 @@ class Asset extends Element\AbstractElement
      */
     public function setDataChanged($changed = true)
     {
-        $this->_dataChanged = $changed;
+        $this->dataChanged = $changed;
 
         return $this;
     }
@@ -1571,7 +1611,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMimeType()
     {
@@ -1585,7 +1625,7 @@ class Asset extends Element\AbstractElement
      */
     public function setMimeType($mimetype)
     {
-        $this->mimetype = $mimetype;
+        $this->mimetype = (string)$mimetype;
 
         return $this;
     }
@@ -2064,7 +2104,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get(MessageBusInterface::class)->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }

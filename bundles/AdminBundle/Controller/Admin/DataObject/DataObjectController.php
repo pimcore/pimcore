@@ -152,7 +152,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($request->get('view')) {
                 $cv = Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv['classes']) {
+                if (!empty($cv['classes'])) {
                     $cvConditions = [];
                     $cvClasses = $cv['classes'];
                     foreach ($cvClasses as $key => $cvClass) {
@@ -191,7 +191,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $childsList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
-                        $object->getChildrenSortBy(), $object->getChildrenSortOrder() ?? 'ASC'
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder()
                     ),
                     false
                 );
@@ -278,12 +278,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
-        $hasChildren = $child->hasChildren($allowedTypes);
+        $hasChildren = $child->getDao()->hasChildren($allowedTypes, null, $this->getAdminUser());
 
-        $tmpObject['isTarget'] = false;
         $tmpObject['allowDrop'] = false;
-        $tmpObject['allowChildren'] = false;
-
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
@@ -433,6 +430,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $objectData['draft'] = [
                     'id' => $draftVersion->getId(),
                     'modificationDate' => $draftVersion->getDate(),
+                    'isAutoSave' => $draftVersion->isAutoSave(),
                 ];
             }
 
@@ -724,6 +722,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
+            $objectData['type'] = $object->getType();
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
@@ -969,6 +968,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
+            if (!\in_array($sortOrder, ['ASC', 'DESC'])) {
+                $sortOrder = 'ASC';
+            }
 
             $currentSortBy = $object->getChildrenSortBy();
 
@@ -1391,7 +1393,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => true]);
             }
-        } elseif ($object->isAllowed('save')) {
+        } elseif ($object->isAllowed('save') || $object->isAllowed('publish')) {
             $isAutoSave = $request->get('task') == 'autoSave';
             $draftData = [];
 
@@ -1400,6 +1402,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $draftData = [
                     'id' => $version->getId(),
                     'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
                 ];
             } else {
                 $object->save();
