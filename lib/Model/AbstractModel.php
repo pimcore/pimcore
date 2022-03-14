@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
@@ -30,7 +29,6 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
-    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @var \Pimcore\Model\Dao\AbstractDao|null

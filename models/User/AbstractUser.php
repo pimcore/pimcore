@@ -16,6 +16,7 @@
 namespace Pimcore\Model\User;
 
 use Pimcore\Event\Model\UserRoleEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
 
@@ -25,6 +26,8 @@ use Pimcore\Model;
  */
 class AbstractUser extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var int
      */

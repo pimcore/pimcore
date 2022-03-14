@@ -22,6 +22,7 @@ use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
@@ -52,6 +53,7 @@ class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * all possible types of assets

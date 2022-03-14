@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Cache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\GroupConfigEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -27,6 +28,7 @@ use Pimcore\Model;
 final class GroupConfig extends Model\AbstractModel
 {
     use Cache\RuntimeCacheTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @var int|null

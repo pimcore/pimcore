@@ -18,6 +18,7 @@ namespace Pimcore\Model\Search\Backend;
 use ForceUTF8\Encoding;
 use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -33,6 +34,8 @@ use Pimcore\Model\Search\Backend\Data\Dao;
  */
 class Data extends \Pimcore\Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     // if a word occures more often than this number it will get stripped to keep the search_backend_data table from getting too big
     const MAX_WORD_OCCURENCES = 3;
 

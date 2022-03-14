@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -24,6 +25,8 @@ use Pimcore\Model;
  */
 final class StoreConfig extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var int
      */

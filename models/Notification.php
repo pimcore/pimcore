@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -27,6 +28,8 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Notification extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @internal
      *

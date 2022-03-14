@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\QuantityValue;
 use Pimcore\Cache;
 use Pimcore\Event\DataObjectQuantityValueEvents;
 use Pimcore\Event\Model\DataObject\QuantityValueUnitEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -25,6 +26,8 @@ use Pimcore\Model;
  */
 class Unit extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     const CACHE_KEY = 'quantityvalue_units_table';
 
     /**

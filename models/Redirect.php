@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class Redirect extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     const TYPE_ENTIRE_URI = 'entire_uri';
 
     const TYPE_PATH_QUERY = 'path_query';

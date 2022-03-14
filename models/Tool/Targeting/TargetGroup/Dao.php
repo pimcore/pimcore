@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\Tool\Targeting\TargetGroup;
 
-use Pimcore\Event\Model\TargetGroupEvent;
-use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tool\Serialize;
@@ -85,7 +83,6 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
-        $this->model->dispatchEvent(new TargetGroupEvent($this->model), TargetGroupEvents::POST_DELETE);
     }
 
     public function update()
@@ -108,13 +105,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
-        $this->model->dispatchEvent(new TargetGroupEvent($this->model), TargetGroupEvents::POST_UPDATE);
     }
 
     public function create()
     {
         $this->db->insert('targeting_target_groups', []);
         $this->model->setId($this->db->lastInsertId());
-        $this->model->dispatchEvent(new TargetGroupEvent($this->model), TargetGroupEvents::POST_ADD);
     }
 }

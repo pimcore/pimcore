@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -24,6 +25,8 @@ use Pimcore\Model;
  */
 final class Tag extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @internal
      *
@@ -113,11 +116,11 @@ final class Tag extends Model\AbstractModel
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        $this->dispatchEvent($event, TagEvents::PRE_ADD_TO_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::PRE_ADD_TO_ELEMENT);
 
         $tag->getDao()->addTagToElement($cType, $cId);
 
-        $this->dispatchEvent($event, TagEvents::POST_ADD_TO_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::POST_ADD_TO_ELEMENT);
     }
 
     /**
@@ -133,11 +136,11 @@ final class Tag extends Model\AbstractModel
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        $this->dispatchEvent($event, TagEvents::PRE_REMOVE_FROM_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::PRE_REMOVE_FROM_ELEMENT);
 
         $tag->getDao()->removeTagFromElement($cType, $cId);
 
-        $this->dispatchEvent($event, TagEvents::POST_REMOVE_FROM_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::POST_REMOVE_FROM_ELEMENT);
     }
 
     /**
