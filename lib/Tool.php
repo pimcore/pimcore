@@ -395,7 +395,7 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (null === $request || !$request->getHost() || $request->getHost() === 'localhost') {
+        if (null === $request || !$request->getHost()) {
             $domain = \Pimcore\Config::getSystemConfiguration('general')['domain'];
 
             return $domain ?: null;
