@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
@@ -38,8 +38,7 @@ class AdminSecurityListener implements EventSubscriberInterface
         protected RequestHelper $requestHelper,
         protected ContentSecurityPolicyHandler $contentSecurityPolicyHandler,
         protected Config $config
-    )
-    {
+    ) {
     }
 
     /**
@@ -75,9 +74,6 @@ class AdminSecurityListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         // set CSP header with random nonce string to the response
-        $response->headers->set("Content-Security-Policy", $this->contentSecurityPolicyHandler->getCspHeader());
+        $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicyHandler->getCspHeader());
     }
-
 }
-
-

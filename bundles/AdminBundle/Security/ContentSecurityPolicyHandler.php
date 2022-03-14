@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security;
@@ -31,12 +31,19 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     private ?string $nonce = null;
 
     public const DEFAULT_OPT = 'default-src';
+
     public const IMG_OPT = 'img-src';
+
     public const SCRIPT_OPT = 'script-src';
+
     public const STYLE_OPT = 'style-src';
+
     public const CONNECT_OPT = 'connect-src';
+
     public const FONT_OPT = 'font-src';
+
     public const MEDIA_OPT = 'media-src';
+
     public const FRAME_OPT = 'frame-src';
 
     /**
@@ -45,7 +52,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     private array $allowedUrls = [
         self::CONNECT_OPT => [
             'https://liveupdate.pimcore.org/update-check', //AdminBundle statistics & update-check service
-            'https://nominatim.openstreetmap.org/' //CoreBundle geocoding_url_template
+            'https://nominatim.openstreetmap.org/', //CoreBundle geocoding_url_template
         ],
     ];
 
@@ -61,7 +68,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     {
         $resolver->setDefaults([
             self::DEFAULT_OPT => "'self'",
-            self::IMG_OPT => "* data: blob:",
+            self::IMG_OPT => '* data: blob:',
             self::MEDIA_OPT => "'self' data:",
             self::SCRIPT_OPT => "'self' 'nonce-" . $this->getNonce() . "' 'unsafe-inline' 'unsafe-eval'",
             self::STYLE_OPT => "'self' 'unsafe-inline'",
@@ -80,7 +87,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
             return "$k $v " . $this->getAllowedUrls($k);
         }, array_keys($this->cspHeaderOptions), array_values($this->cspHeaderOptions));
 
-        return implode(';' ,$cspHeaderOptions);
+        return implode(';', $cspHeaderOptions);
     }
 
     /**
@@ -106,7 +113,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      */
     public function addAllowedUrls(string $key, array $value): self
     {
-        if(!isset($this->allowedUrls[$key])) {
+        if (!isset($this->allowedUrls[$key])) {
             $this->allowedUrls[$key] = [];
         }
 
