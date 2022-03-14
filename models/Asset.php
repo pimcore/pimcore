@@ -265,8 +265,8 @@ class Asset extends Element\AbstractElement
      */
     protected static function typeMatch(Asset $asset)
     {
-        $staticType = get_called_class();
-        if ($staticType != Asset::class) {
+        $staticType = static::class;
+        if ($staticType !== Asset::class) {
             if (!$asset instanceof $staticType) {
                 return false;
             }
@@ -824,7 +824,7 @@ class Asset extends Element\AbstractElement
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
         \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        if (get_class($this) == 'Asset' || $typeChanged) {
+        if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type

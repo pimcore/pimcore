@@ -51,7 +51,7 @@ final class Boolean extends AbstractOperator
 
         $childs = $this->getChilds();
 
-        if ($this->getOperator() != 'and' && $this->getOperator() != 'or') {
+        if ($this->getOperator() !== 'and' && $this->getOperator() !== 'or') {
             return $result;
         }
 
@@ -83,9 +83,9 @@ final class Boolean extends AbstractOperator
 
             $resultValue = current($valueArray);
             foreach ($valueArray as $val) {
-                if ($this->getOperator() == 'and') {
+                if ($this->getOperator() === 'and') {
                     $resultValue = $val && $resultValue;
-                } elseif ($this->getOperator() == 'or') {
+                } else {
                     $resultValue = $val || $resultValue;
                 }
             }
