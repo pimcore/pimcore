@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -39,6 +40,8 @@ use Pimcore\Tool\Storage;
  */
 final class Version extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var int
      */
