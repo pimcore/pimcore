@@ -35,6 +35,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     public function save(int $id,
                          int $cId,
                          string $cType,
+                         string $storageType,
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
@@ -152,7 +153,8 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->getStream($metaData);
     }
 
-    public function getStorageType(string $metaData, mixed $binaryDataStream = null): string
+    public function getStorageType(int $metaDataSize = null,
+                                   int $binaryDataSize = null): string
     {
         return "db";
     }

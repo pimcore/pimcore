@@ -102,6 +102,7 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     public function save(int $id,
                          int $cId,
                          string $cType,
+                         string $storageType,
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
@@ -153,7 +154,8 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         }
     }
 
-    public function getStorageType(string $metaData, mixed $binaryDataStream = null): string
+    public function getStorageType(int $metaDataSize = null,
+                                   int $binaryDataSize = null): string
     {
         return "fs";
     }

@@ -31,7 +31,6 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\VersionStorageAdapterPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -87,6 +86,5 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new CacheFallbackPass());
         $container->addCompilerPass(new PasswordFactoryDecoratorPass());
         $container->addCompilerPass(new MessageBusPublicPass());
-        $container->addCompilerPass(new VersionStorageAdapterPass());
     }
 }

@@ -17,12 +17,13 @@ namespace Pimcore\Model\Version\Adapter;
 
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
-    public function __construct(protected array $adapters,
-                                protected int $byte_threshold,
+    private array $adapters = [];
+    public function __construct(protected int $byte_threshold,
                                 protected VersionStorageAdapterInterface $defaultAdapter,
                                 protected VersionStorageAdapterInterface $fallbackAdapter)
     {
-
+        $this->adapters[$defaultAdapter->getStorageType(null, null)] = $defaultAdapter;
+        $this->adapters[$fallbackAdapter->getStorageType(null, null)] = $fallbackAdapter;
     }
 
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
@@ -33,10 +34,10 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         else {
             $adapter = $this->adapters[$storageType] ?? null;
         }
-        if(isset($adapter) === false || isset($adapter['class']) === false) {
+        if(isset($adapter) === false) {
             throw new \Exception("no adapter for storage type " . $storageType . " found.");
         }
-        return $adapter['class'];
+        return $adapter;
     }
 
     public function loadMetaData(int $id,
@@ -65,37 +66,32 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
                                                                 $binaryFileId);
     }
 
-    public function getStorageType(string $metaData,
-                                   mixed $binaryDataStream = null): string {
+    public function getStorageType(int $metaDataSize = null,
+                                   int $binaryDataSize = null): string {
+
         if(empty($this->fallbackAdapter) === false) {
-            $binarySize = 0;
-            $metaDataSize = strlen($metaData);
-
-            if (isset($binaryDataStream) === true) {
-                $stats = fstat($binaryDataStream);
-                $binarySize = $stats['size'];
-            }
-
             if ($metaDataSize > $this->byte_threshold ||
-                $binarySize > $this->byte_threshold) {
-                return $this->fallbackAdapter->getStorageType($metaData, $binaryDataStream);
+                $binaryDataSize > $this->byte_threshold) {
+                return $this->fallbackAdapter->getStorageType($metaDataSize, $binaryDataSize);
             }
         }
-        return $this->defaultAdapter->getStorageType($metaData, $binaryDataStream);
+        return $this->defaultAdapter->getStorageType($metaDataSize, $binaryDataSize);
     }
 
     public function save(int $id,
                          int $cId,
                          string $cType,
+                         string $storageType,
                          string $metaData,
                          mixed $binaryDataStream = null,
                          string $binaryFileHash = null,
                          int $binaryFileId = null) : void {
 
-        $adapter = $this->getAdapter($this->getStorageType($metaData, $binaryDataStream));
+        $adapter = $this->getAdapter($storageType);
         $adapter->save($id,
                         $cId,
                         $cType,
+                        $storageType,
                         $metaData,
                         $binaryDataStream,
                         $binaryFileHash,

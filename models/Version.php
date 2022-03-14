@@ -245,7 +245,8 @@ final class Version extends AbstractModel
             $this->setBinaryFileHash(hash_final($ctx));
         }
 
-        $this->setStorageType($this->storageAdapter->getStorageType($dataString, $isAsset ? $data->getStream() : null));
+        $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
+                                                        $isAsset ? $data->getfileSize() : null));
 
         if($isAsset) {
             $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->binaryFileHash));
@@ -257,6 +258,7 @@ final class Version extends AbstractModel
         $this->storageAdapter->save($this->getId(),
                                     $this->getCid(),
                                     $this->getCtype(),
+                                    $this->getStorageType(),
                                     $dataString,
                                     $isAsset ? $data->getStream() : null,
                                     $this->getBinaryFileHash(),
