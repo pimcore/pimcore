@@ -116,6 +116,10 @@ class PublicServicesController extends Controller
 
                     preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
 
+                    if (empty($matches) || !isset($matches[1])) {
+                        throw $this->createNotFoundException('Requested asset does not exist');
+                    }
+
                     if (array_key_exists(2, $matches) && $matches[2]) {
                         $highResFactor = (float) str_replace(['@', 'x'], '', $matches[2]);
                         $thumbnailConfig->setHighResolution($highResFactor);
@@ -166,9 +170,7 @@ class PublicServicesController extends Controller
 
                 throw new \Exception('Unable to generate thumbnail, see logs for details.');
             } catch (\Exception $e) {
-                $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
-                Logger::error($message);
-
+                Logger::error($e->getMessage());
                 return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
             }
         }
