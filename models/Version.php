@@ -179,7 +179,7 @@ final class Version extends AbstractModel
      */
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_SAVE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
@@ -262,7 +262,7 @@ final class Version extends AbstractModel
             }
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
     /**
@@ -338,7 +338,7 @@ final class Version extends AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_DELETE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
         $storage = Storage::get('version');
 
@@ -354,7 +354,7 @@ final class Version extends AbstractModel
         }
 
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_DELETE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_DELETE);
     }
 
     /**
