@@ -137,7 +137,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         if (!isset($context['component']) || is_null($context['component'])) {
             $context['component'] = $this->component;
@@ -252,7 +252,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function emergency($message, array $context = [])
+    public function emergency ($message, array $context = []): void
     {
         $this->handleLog('emergency', $message, func_get_args());
     }
@@ -260,7 +260,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = []): void
     {
         $this->handleLog('critical', $message, func_get_args());
     }
@@ -268,7 +268,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function error($message, array $context = [])
+    public function error($message, array $context = []): void
     {
         $this->handleLog('error', $message, func_get_args());
     }
@@ -276,7 +276,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = []): void
     {
         $this->handleLog('alert', $message, func_get_args());
     }
@@ -284,7 +284,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = []): void
     {
         $this->handleLog('warning', $message, func_get_args());
     }
@@ -292,7 +292,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = []): void
     {
         $this->handleLog('notice', $message, func_get_args());
     }
@@ -300,7 +300,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function info($message, array $context = [])
+    public function info($message, array $context = []): void
     {
         $this->handleLog('info', $message, func_get_args());
     }
@@ -308,7 +308,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = []): void
     {
         $this->handleLog('debug', $message, func_get_args());
     }

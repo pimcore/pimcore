@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UnitConversionService
 {

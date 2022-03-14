@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DependencyInjection;
 
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal

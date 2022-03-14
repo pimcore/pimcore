@@ -45,9 +45,7 @@ services:
         class: Symfony\Component\Security\Core\Authorization\AuthorizationChecker
         arguments:
             - '@security.token_storage'
-            - '@security.authentication.manager'
             - '@security.access.decision_manager'
-            - '%security.access.always_authenticate_before_granting%'
             - false
 
     Pimcore\Workflow\ExpressionService:

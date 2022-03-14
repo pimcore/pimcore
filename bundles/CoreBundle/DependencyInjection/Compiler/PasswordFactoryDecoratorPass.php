@@ -31,12 +31,12 @@ final class PasswordFactoryDecoratorPass implements CompilerPassInterface
     {
         $config = $container->getParameter('pimcore.config');
 
-        if ($config['security']['factory_type'] === 'encoder') {
-            $definition = $container->findDefinition('security.authentication.provider.dao');
-            $definition->replaceArgument(3, new Reference('security.encoder_factory'));
-
-            $definition = $container->findDefinition('security.validator.user_password');
-            $definition->replaceArgument(1, new Reference('security.encoder_factory'));
-        }
+//        if ($config['security']['factory_type'] === 'encoder') {
+//            $definition = $container->findDefinition('security.authentication.provider.dao');
+//            $definition->replaceArgument(3, new Reference('security.encoder_factory'));
+//
+//            $definition = $container->findDefinition('security.validator.user_password');
+//            $definition->replaceArgument(1, new Reference('security.encoder_factory'));
+//        }
     }
 }

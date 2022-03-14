@@ -101,7 +101,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoutesByNames($names): array
+    public function getRoutesByNames(?array $names = null): iterable
     {
         // TODO needs performance optimizations
         // TODO really return all routes here as documentation states? where is this used?

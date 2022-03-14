@@ -16,8 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
-use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
+use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -46,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
+class LoginController extends AdminController implements KernelControllerEventInterface, KernelResponseEventInterface
 {
     /**
      * @var ResponseHelper
@@ -157,7 +156,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      *
      * @Route("/login/login", name="pimcore_admin_login_check")
      *
-     * @see AdminAuthenticator for the security implementation
+     * @see AdminLoginAuthenticator for the security implementation
      */
     public function loginCheckAction()
     {
@@ -168,7 +167,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
+    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -224,7 +223,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
-                $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }
 
@@ -284,23 +282,17 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
      */
-    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, Config $config)
+    public function twoFactorAuthenticationAction(Request $request, Config $config)
     {
         $params = $this->buildLoginPageViewParams($config);
 
         if ($request->hasSession()) {
-
-            // we have to call the check here manually, because BruteforceProtectionListener uses the 'username' from the request
-            $bruteforceProtectionHandler->checkProtection($this->getAdminUser()->getName(), $request);
-
             $session = $request->getSession();
             $authException = $session->get(Security::AUTHENTICATION_ERROR);
             if ($authException instanceof AuthenticationException) {
                 $session->remove(Security::AUTHENTICATION_ERROR);
 
                 $params['error'] = $authException->getMessage();
-
-                $bruteforceProtectionHandler->addEntry($this->getAdminUser()->getName(), $request);
             }
         } else {
             $params['error'] = 'No session available, it either timed out or cookies are not enabled.';

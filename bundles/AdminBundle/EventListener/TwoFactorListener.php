@@ -48,7 +48,7 @@ class TwoFactorListener
 
     public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event)
     {
-        // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
+        // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\AdminAuthenticator
         // @TODO: check if there's a nicer way of doing this, actually it feels a bit like a hack :)
         Session::useSession(function (AttributeBagInterface $adminSession) {
             $adminSession->set('2fa_required', false);
@@ -68,7 +68,7 @@ class TwoFactorListener
         }
 
         $twoFactorToken->setTwoFactorProviderPrepared($providerName);
-        $firewallName = $twoFactorToken->getProviderKey();
+        $firewallName = $twoFactorToken->getFirewallName();
 
         if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
             $this->logger->info(sprintf('Two-factor provider "%s" was already prepared.', $providerName));

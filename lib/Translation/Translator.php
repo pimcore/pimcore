@@ -21,6 +21,7 @@ use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -147,7 +148,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function getCatalogue(string $locale = null)// : MessageCatalogueInterface
+    public function getCatalogue(string $locale = null) : MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }
@@ -471,5 +472,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     private function getCacheKey(string $domain, string $locale): string
     {
         return 'translation_data_' . md5($domain . '_' . $locale);
+    }
+
+    public function getCatalogues(): array
+    {
+        return $this->translator->getCatalogues();
     }
 }

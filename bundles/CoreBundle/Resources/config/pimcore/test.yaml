@@ -1,7 +1,8 @@
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+        enabled: true
+        handler_id: 'session.handler.native_file'
     profiler: false
     mailer:
         transports:

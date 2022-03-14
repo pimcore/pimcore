@@ -99,6 +99,11 @@ class ObjectUserProvider implements UserProviderInterface
         throw new UsernameNotFoundException(sprintf('User %s was not found', $username));
     }
 
+    public function loadUserByIdentifier(string $identifier): UserInterface
+    {
+        return $this->loadUserByUsername($identifier);
+    }
+
     /**
      * {@inheritdoc}
      */

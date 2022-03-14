@@ -22,18 +22,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
 
 trait Parallelization
 {
     /** @var LockInterface|null */
     private $lock;
 
-    use WebmozartParallelization
-    {
-        WebmozartParallelization::configureParallelization as parentConfigureParallelization;
-
-    }
 
     protected static function configureParallelization(Command $command): void
     {

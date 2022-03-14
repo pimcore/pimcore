@@ -11,26 +11,38 @@ services:
     # using this user provider allows implementations to authenticate against pimcore users on every desired firewall
     Pimcore\Bundle\AdminBundle\Security\User\UserProvider: ~
 
-    # the password encoder factory builds a dedicated encoder per user
-    # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
+    # the password hasher factory builds a dedicated hasher per user
+    # as we need the user instance to hash passwords.
     # we don't specifiy this as fully qualified class name as there can be multiple factories (one for each user type)
-    pimcore_admin.security.password_encoder_factory:
-        class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+    pimcore_admin.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
         arguments:
-            - Pimcore\Bundle\AdminBundle\Security\Encoder\AdminPasswordEncoder
+            - Pimcore\Bundle\AdminBundle\Security\Hasher\AdminPasswordHasher
 
-    # guard implementation handling admin form login for the main admin firewall
-    Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator:
+    # Authenticators for handling admin login and session authentications
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator:
         public: false
-        arguments:
-            $httpUtils: '@security.http_utils'
         calls:
-            - [setLogger, ['@logger']]
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
         tags:
             - { name: monolog.logger, channel: security }
 
 
-    Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
+    Pimcore\Bundle\AdminBundle\Security\LogoutSuccessListener:
         public: false
         arguments:
             - '@security.token_storage'
@@ -47,13 +59,6 @@ services:
             - '@security.token_storage'
 
     Pimcore\Bundle\AdminBundle\Security\User\UserLoader: ~
-
-    Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler:
-        public: false
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
 
     Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler:
         public: true

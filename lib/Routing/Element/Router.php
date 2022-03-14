@@ -67,7 +67,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return RequestContext
      */
-    public function getContext()// : RequestContext
+    public function getContext() : RequestContext
     {
         return $this->context;
     }
@@ -85,7 +85,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = [])// : string
+    public function getRouteDebugMessage($name, array $parameters = []) : string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
@@ -98,7 +98,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH) : string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof Document || $element instanceof Asset) {
@@ -184,7 +184,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
@@ -192,7 +192,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function match($pathinfo)
+    public function match(string $pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }

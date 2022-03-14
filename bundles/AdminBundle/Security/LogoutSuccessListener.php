@@ -15,20 +15,23 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security;
 
-use Pimcore\Event\Admin\Login\LogoutEvent;
+use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Admin\Login\LogoutEvent as PimcoreLogoutEvent;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -36,28 +39,19 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * time in LogoutListener::handle was called. As the logout success handler is always triggered it is now implemented as
  * success handler.
  *
- * TODO: investigate why the token is empty and change to LogoutHandler
  *
  * @internal
  */
-class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
+class LogoutSuccessListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            LogoutEvent::class => 'onLogout',
+        ];
+    }
 
     /**
      * @param TokenStorageInterface $tokenStorage
@@ -65,20 +59,20 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        RouterInterface $router,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->router = $router;
-        $this->eventDispatcher = $eventDispatcher;
-    }
+        protected TokenStorageInterface $tokenStorage,
+        protected RouterInterface $router,
+        protected EventDispatcherInterface $eventDispatcher
+    ) {}
 
     /**
-     * {@inheritdoc}
+     * @param LogoutEvent $event
+     *
+     * @return mixed
      */
-    public function onLogoutSuccess(Request $request)
+    public function onLogout(LogoutEvent $event): mixed
     {
+        $request = $event->getRequest();
+
         $this->logger->debug('Logging out');
 
         $this->tokenStorage->setToken(null);
@@ -92,7 +86,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
 
             $user = $adminSession->get('user');
             if ($user && $user instanceof User) {
-                $event = new LogoutEvent($request, $user);
+                $event = new PimcoreLogoutEvent($request, $user);
                 $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOGOUT);
 
                 $adminSession->remove('user');
@@ -103,7 +97,6 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
             return $event;
         });
 
-        $response = null;
         if ($event && $event->hasResponse()) {
             $response = $event->getResponse();
         } else {

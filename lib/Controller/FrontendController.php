@@ -33,7 +33,7 @@ abstract class FrontendController extends Controller
      * {@inheritdoc}
      *
      */
-    public static function getSubscribedServices()// : array
+    public static function getSubscribedServices() : array
     {
         $services = parent::getSubscribedServices();
         $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;

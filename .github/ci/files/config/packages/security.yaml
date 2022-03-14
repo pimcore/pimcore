@@ -1,4 +1,6 @@
 security:
+    enable_authenticator_manager: true
+
     providers:
         pimcore_admin:
             id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
@@ -16,7 +18,6 @@ security:
 
         # Pimcore admin form login // DO NOT CHANGE!
         pimcore_admin:
-            anonymous: ~
             pattern: ^/admin(/.*)?$
             # admin firewall is stateless as we open the admin
             # session on demand for non-blocking parallel requests
@@ -25,11 +26,6 @@ security:
             logout:
                 path:   /admin/logout
                 target: /admin/login
-                success_handler: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
-            guard:
-                entry_point: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
-                authenticators:
-                    - Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
             two_factor:
                 auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
                 check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check
@@ -42,11 +38,11 @@ security:
 
     access_control:
         # Pimcore admin ACl  // DO NOT CHANGE!
-        - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login/2fa-verify, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
-        - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
-        - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login/(login|lostpassword|deeplink|csrf-token)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/settings/display-custom-logo, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login/2fa-verify, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/admin/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login/(login|lostpassword|deeplink|csrf-token)$, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_PIMCORE_USER }
 
     role_hierarchy:

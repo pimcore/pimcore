@@ -978,7 +978,7 @@ class Mail extends Email
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function addTo(...$addresses)//: static
+    public function addTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -991,7 +991,7 @@ class Mail extends Email
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function addCc(...$addresses)//: static
+    public function addCc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1004,7 +1004,7 @@ class Mail extends Email
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function addBcc(...$addresses)//: static
+    public function addBcc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1017,7 +1017,7 @@ class Mail extends Email
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function addFrom(...$addresses)//: static
+    public function addFrom(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -1030,7 +1030,7 @@ class Mail extends Email
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function addReplyTo(...$addresses)//: static
+    public function addReplyTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 

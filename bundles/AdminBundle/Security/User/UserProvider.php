@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 use Pimcore\Model\User as PimcoreUser;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -71,5 +72,10 @@ class UserProvider implements UserProviderInterface
     public function supportsClass($class)
     {
         return $class === User::class;
+    }
+
+    public function loadUserByIdentifier(string $identifier): UserInterface
+    {
+       return $this->loadUserByUsername($identifier);
     }
 }

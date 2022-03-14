@@ -20,7 +20,7 @@ namespace Pimcore\Extension\Document\Areabrick;
 use Pimcore\Extension;
 use Pimcore\Extension\Document\Areabrick\Exception\BrickNotFoundException;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal
