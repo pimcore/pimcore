@@ -88,7 +88,7 @@
 
     <title>{{ settings.hostname }} :: Pimcore</title>
 
-    <script>
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
@@ -98,8 +98,8 @@
         }
     </script>
 
-    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+    <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 </head>
 
 <body class="pimcore_version_10" data-app-env="{{ app.environment }}">
@@ -698,17 +698,17 @@
 
 <!-- some javascript -->
 {# pimcore constants #}
-<script>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
     pimcore.settings = {{(settings|json_encode(constant('JSON_PRETTY_PRINT'))|raw)}};
 </script>
 
-<script src="{{ path('pimcore_admin_misc_jsontranslationssystem', {'language': language, '_dc': settings.build }) }}"></script>
-<script src="{{ path('pimcore_admin_user_getcurrentuser', {'_dc': settings.build }) }}"></script>
-<script src="{{ path('pimcore_admin_misc_availablelanguages', {'_dc': settings.build }) }}"></script>
+<script src="{{ path('pimcore_admin_misc_jsontranslationssystem', {'language': language, '_dc': settings.build }) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+<script src="{{ path('pimcore_admin_user_getcurrentuser', {'_dc': settings.build }) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+<script src="{{ path('pimcore_admin_misc_availablelanguages', {'_dc': settings.build }) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 
 <!-- library scripts -->
 {% for scriptUrl in scriptLibs %}
-    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
+    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 {% endfor %}
 
 <!-- internal scripts -->
@@ -734,7 +734,7 @@
 <!-- bundle scripts -->
 {% if settings.disableMinifyJs %}
     {% for pluginJsPath in pluginJsPaths %}
-        <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
+        <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
     {% endfor %}
 {% else %}
     {{ pimcore_minimize_scripts(pluginJsPaths)|raw }}
@@ -745,6 +745,6 @@
 {% endfor %}
 
 {#  MUST BE THE LAST LINE  #}
-<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc={{ settings.build }}"></script>
+<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc={{ settings.build }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 </body>
 </html>

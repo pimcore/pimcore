@@ -76,7 +76,7 @@
         {{ pimcore_head_script() }}
     {% endblock %}
 
-    <script>
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
         var pimcore = parent.pimcore;
         var popups = document.getElementsByClassName('popup-modal');
         for (var i = 0; i < popups.length; i++) {
