@@ -158,6 +158,7 @@ final class LongRunningHelper
     }
 
     /**
+     * @internal
      * Register a temp file which will be deleted on next call of cleanUp()
      */
     public function addTmpFilePath(string $tmpFilePath) {
