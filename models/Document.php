@@ -263,8 +263,8 @@ class Document extends Element\AbstractElement
      */
     protected static function typeMatch(Document $document)
     {
-        $staticType = get_called_class();
-        if ($staticType != Document::class) {
+        $staticType = static::class;
+        if ($staticType !== Document::class) {
             if (!$document instanceof $staticType) {
                 return false;
             }
