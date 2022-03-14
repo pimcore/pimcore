@@ -342,9 +342,9 @@ class Notification extends AbstractModel
      */
     public function save(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
         $this->getDao()->save();
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::POST_SAVE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_SAVE);
     }
 
     /**
@@ -352,8 +352,8 @@ class Notification extends AbstractModel
      */
     public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::PRE_DELETE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::POST_DELETE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_DELETE);
     }
 }
