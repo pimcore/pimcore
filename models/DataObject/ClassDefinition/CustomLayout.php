@@ -199,9 +199,9 @@ class CustomLayout extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
+            $this->dispatchEvent(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
+            $this->dispatchEvent(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
         }
 
         $this->setModificationDate(time());
