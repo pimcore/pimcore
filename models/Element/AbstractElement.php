@@ -390,7 +390,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies','activeDispatchingEvents'];
+        $blockedVars = ['dependencies'];
 
         return array_diff($parentVars, $blockedVars);
     }
