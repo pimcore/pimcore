@@ -89,7 +89,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @param Site $slug
+     * @param Site $site
      *
      * @return $this
      */
