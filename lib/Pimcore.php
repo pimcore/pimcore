@@ -170,9 +170,12 @@ class Pimcore
     public static function hasContainer()
     {
         if (static::hasKernel()) {
-            $container = static::getContainer();
-            if ($container) {
-                return true;
+            try {
+                $container = static::getContainer();
+                if ($container) {
+                    return true;
+                }
+            } catch (\LogicException) {
             }
         }
 

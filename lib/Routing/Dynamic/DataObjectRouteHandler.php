@@ -106,6 +106,10 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
 
+        if ($slug->getOwnertype() === 'localizedfield') {
+            $route->setDefault('_locale', $slug->getPosition());
+        }
+
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
             $this->config['routing']['allow_processing_unpublished_fallback_document']
