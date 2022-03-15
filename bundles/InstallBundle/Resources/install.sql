@@ -273,6 +273,7 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
+  `error` text, DEFAULT NULL, 
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
