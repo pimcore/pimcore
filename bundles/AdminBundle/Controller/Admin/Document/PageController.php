@@ -454,6 +454,8 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException();
         }
 
+        $document = clone $document;
+        $document->setEditables([]);
         $documentResolver->setDocument($request, $document);
 
         $twig->addGlobal('document', $document);

@@ -217,7 +217,7 @@ abstract class AbstractModel implements ModelInterface
      */
     public function __sleep()
     {
-        $blockedVars = ['dao', 'o_dirtyFields'];
+        $blockedVars = ['dao', 'o_dirtyFields', 'activeDispatchingEvents'];
 
         $vars = get_object_vars($this);
 

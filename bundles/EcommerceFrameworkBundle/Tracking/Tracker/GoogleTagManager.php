@@ -321,7 +321,7 @@ class GoogleTagManager extends Tracker implements
 
     protected function getDeferredItems(string $dimension)
     {
-        return $this->deferred[$dimension];
+        return $this->deferred[$dimension] ?? null;
     }
 
     protected function consolidateDeferredDimensions()
