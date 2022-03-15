@@ -154,7 +154,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         var storeData = this.prepareStoreDataAndFilterLabels(field.layout.options);
         
-        if(!field.config.mandatory) {
+        if(!field.layout.mandatory) {
             storeData.unshift({'value': '', 'key': "(" + t("empty") + ")"});
         }
         
