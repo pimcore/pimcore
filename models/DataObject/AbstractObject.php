@@ -618,7 +618,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
+        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -647,7 +647,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
+            $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
             Logger::crit($e);
 
@@ -660,7 +660,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         //clear object from registry
         Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
+        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
     }
 
     /**
@@ -684,10 +684,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $preEvent = new DataObjectEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
             } else {
                 self::disableDirtyDetection();
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -790,10 +790,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
             }
 
             return $this;
@@ -801,9 +801,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $failureEvent = new DataObjectEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
             }
 
             throw $e;

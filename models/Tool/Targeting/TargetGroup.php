@@ -9,23 +9,26 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Targeting;
 
+use Pimcore\Event\Model\TargetGroupEvent;
+use Pimcore\Event\TargetGroupEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
  * @internal
  *
  * @method TargetGroup\Dao getDao()
- * @method void save()
- * @method void delete()
  */
 class TargetGroup extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var int
      */
@@ -128,7 +131,7 @@ class TargetGroup extends Model\AbstractModel
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = (int)$id;
 
         return $this;
     }
@@ -182,7 +185,7 @@ class TargetGroup extends Model\AbstractModel
      */
     public function setActive($active)
     {
-        $this->active = (bool) $active;
+        $this->active = (bool)$active;
     }
 
     /**
@@ -191,5 +194,33 @@ class TargetGroup extends Model\AbstractModel
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * @return void
+     */
+    public function delete()
+    {
+        $this->getDao()->delete();
+        $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_DELETE);
+    }
+
+    /**
+     * @return void
+     */
+    public function save()
+    {
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+        }
+
+        $this->getDao()->save();
+
+        if ($isUpdate){
+            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_UPDATE);
+        }else{
+            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_ADD);
+        }
     }
 }

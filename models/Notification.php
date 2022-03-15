@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Event\Model\NotificationEvent;
 use Pimcore\Event\NotificationEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -27,6 +28,8 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Notification extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @internal
      *
@@ -342,9 +345,9 @@ class Notification extends AbstractModel
      */
     public function save(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
         $this->getDao()->save();
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::POST_SAVE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_SAVE);
     }
 
     /**
@@ -352,8 +355,8 @@ class Notification extends AbstractModel
      */
     public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::PRE_DELETE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(new NotificationEvent($this), NotificationEvents::POST_DELETE);
+        $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_DELETE);
     }
 }
