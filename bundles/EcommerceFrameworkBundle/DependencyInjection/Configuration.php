@@ -733,8 +733,8 @@ final class Configuration implements ConfigurationInterface
                             $config = $this->tenantProcessor->mergeTenantConfig($v);
 
                             foreach ($config as $tenant => $tenantConfig) {
-                                /* merge attributes placeholders */
-                                foreach ($tenantConfig["attributes"] ?? [] as $attribute => $attributeConfig) {
+                                // merge attributes placeholders
+                                foreach ($tenantConfig['attributes'] ?? [] as $attribute => $attributeConfig) {
                                     if (isset($attributeConfig['placeholders']) && is_array($attributeConfig['placeholders']) && count($attributeConfig['placeholders']) > 0) {
                                         $placeholders = $attributeConfig['placeholders'];
 
@@ -742,15 +742,15 @@ final class Configuration implements ConfigurationInterface
                                         unset($attributeConfig['placeholders']);
 
                                         $config[$tenant]['attributes'][$attribute] = $this->placeholderProcessor->mergePlaceholders($attributeConfig, $placeholders);
-                                        
+
                                         // re-add placeholders
                                         $config[$tenant]['attributes'][$attribute]['placeholders'] = $placeholders;
                                     }
                                 }
 
                                 $tenantConfig = $config[$tenant]; // update tenantConfig by attribute placeholders
-                                
-                                /* merge tenant placeholders */
+
+                                // merge tenant placeholders
                                 if (isset($tenantConfig['placeholders']) && is_array($tenantConfig['placeholders']) && count($tenantConfig['placeholders']) > 0) {
                                     $placeholders = $tenantConfig['placeholders'];
 
