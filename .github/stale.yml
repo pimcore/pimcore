@@ -9,12 +9,13 @@ exemptLabels:
 staleLabel: "PR Welcome"
 markComment: >
     Thanks a lot for reporting the issue.
-    The issue was not considered by us as "Priority" or "Backlog",
-    so we're not gonna work on that anytime soon.
-    In case this is a bug report, please create a pull request fixing the issue,
-    we'll then review it as soon as possible.
-    If you're interested in contributing a feature, please contact us first here
-    before creating a pull request, we'll then decide whether we'd accept it or not.
+    We did not consider the issue as "Priority" or "Backlog",
+    so we're not going to work on that anytime soon.
+    Please create a pull request to fix the issue if this is a bug report.
+    We'll then review it as quickly as possible.
+    If you're interested in contributing a feature, please contact us
+    first here before creating a pull request. We'll then decide whether
+    we'd accept it or not.
     Thanks for your understanding.
 closeComment: >
     Closed due to inactivity (180 days).
