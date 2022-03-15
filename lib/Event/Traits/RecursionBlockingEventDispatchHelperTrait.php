@@ -15,6 +15,8 @@
 
 namespace Pimcore\Event\Traits;
 
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
 /**
  * @internal
  */
@@ -24,6 +26,8 @@ trait RecursionBlockingEventDispatchHelperTrait
      * @var array
      */
     private array $activeDispatchingEvents = [];
+
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
     /**
      * Dispatches an event, avoids recursion by checking if the active dispatch event is the same
@@ -38,8 +42,26 @@ trait RecursionBlockingEventDispatchHelperTrait
         $eventName ??= \get_class($event);
         if (!isset($this->activeDispatchingEvents[$eventName])) {
             $this->activeDispatchingEvents[$eventName] = true;
-            \Pimcore::getEventDispatcher()->dispatch($event, $eventName);
+            $this->getEventDispatcher()->dispatch($event, $eventName);
             unset($this->activeDispatchingEvents[$eventName]);
         }
+    }
+
+    /**
+     * @return EventDispatcherInterface|null
+     */
+    private function getEventDispatcher(): ?EventDispatcherInterface
+    {
+        return $this->eventDispatcher ?? \Pimcore::getEventDispatcher();
+    }
+
+    /**
+     * @required
+     *
+     * @param EventDispatcherInterface|null $eventDispatcher
+     */
+    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 }

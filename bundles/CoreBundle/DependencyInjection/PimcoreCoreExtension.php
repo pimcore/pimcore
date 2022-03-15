@@ -137,7 +137,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('class_builder.yaml');
 
         $this->configureImplementationLoaders($container, $config);
-        $this->configureModelFactory($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
@@ -154,23 +153,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
 
         $this->addContextRoutes($container, $config['context']);
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureModelFactory(ContainerBuilder $container, array $config)
-    {
-        $service = $container->getDefinition(Factory::class);
-
-        $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
-        $classMapLoader->setPublic(false);
-
-        $classMapLoaderId = 'pimcore.model.factory.classmap_builder';
-        $container->setDefinition($classMapLoaderId, $classMapLoader);
-
-        $service->addMethodCall('addLoader', [new Reference($classMapLoaderId)]);
     }
 
     /**

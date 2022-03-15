@@ -33,12 +33,16 @@ services:
     Pimcore\Model\Factory:
         calls:
             - [addLoader, ['@Pimcore\Model\Factory\FallbackBuilder']]
+            - [addLoader, ['@Pimcore\Model\Factory\ContainerBuilder']]
 
     # public alias which is used throughout code base
     # TODO replace with FQCN reference in wherever this is used
     pimcore.model.factory:
         alias: Pimcore\Model\Factory
         public: true
+
+    Pimcore\Model\Factory\ContainerBuilder:
+        public: false
 
     # fallback model builder for pimcore model factory
     Pimcore\Model\Factory\FallbackBuilder:
