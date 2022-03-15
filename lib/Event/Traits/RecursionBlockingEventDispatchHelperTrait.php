@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Event\Traits;
@@ -20,7 +20,6 @@ namespace Pimcore\Event\Traits;
  */
 trait RecursionBlockingEventDispatchHelperTrait
 {
-
     /**
      * @var array
      */
@@ -31,6 +30,7 @@ trait RecursionBlockingEventDispatchHelperTrait
      *
      * @param object $event
      * @param string|null $eventName
+     *
      * @return void
      */
     protected function dispatchEvent(object $event, string $eventName = null): void

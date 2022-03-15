@@ -225,7 +225,6 @@ class Asset extends Element\AbstractElement
      *
      * @return array
      */
-
     public static function getTypes()
     {
         return self::$types;

@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Targeting;
@@ -217,9 +217,9 @@ class TargetGroup extends Model\AbstractModel
 
         $this->getDao()->save();
 
-        if ($isUpdate){
+        if ($isUpdate) {
             $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_UPDATE);
-        }else{
+        } else {
             $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_ADD);
         }
     }
