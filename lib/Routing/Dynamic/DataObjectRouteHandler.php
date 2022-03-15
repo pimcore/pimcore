@@ -57,7 +57,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function getRouteByName(string $name)
     {
-        if (preg_match('/^data_object_(\d+)_(\s+)_(.*)$/', $name, $match)) {
+        if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
                 /** @var DataObject\Concrete $object * */
@@ -102,10 +102,10 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setOption('utf8', true);
         $route->setObject($object);
         $route->setSlug($slug);
+        $route->setSite($site);
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
-        $route->setDefault('site', $site ? $site->getId() : 0);
 
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
