@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\QuantityValue;
 use Pimcore\Cache;
 use Pimcore\Event\DataObjectQuantityValueEvents;
 use Pimcore\Event\Model\DataObject\QuantityValueUnitEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -25,6 +26,8 @@ use Pimcore\Model;
  */
 class Unit extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     const CACHE_KEY = 'quantityvalue_units_table';
 
     /**
@@ -166,9 +169,9 @@ class Unit extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_UPDATE);
+            $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_ADD);
+            $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_ADD);
         }
 
         $this->getDao()->save();
@@ -176,19 +179,19 @@ class Unit extends Model\AbstractModel
         Cache::remove(self::CACHE_KEY);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_UPDATE);
+            $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_ADD);
+            $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_ADD);
         }
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
+        $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
         $this->getDao()->delete();
         Cache\Runtime::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
-        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
+        $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
     }
 
     /**

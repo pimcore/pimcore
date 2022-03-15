@@ -106,14 +106,15 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 });
             }
 
-            var regexSet;
-            var checkRegex = function () {
-                var testStringEl = regexSet.getComponent("regexTestString");
-                var regex = regexSet.getComponent("regex").getValue();
-                var testString = testStringEl.getValue();
+            let regexSet;
+            let checkRegex = function () {
+                let testStringEl = regexSet.getComponent("regexTestString");
+                let regex = regexSet.getComponent("regex").getValue();
+                let regexFlag = regexSet.getComponent("regexflags").getValue().join("");
+                let testString = testStringEl.getValue();
 
                 try {
-                    var regexp = new RegExp(regex, 'u');
+                    var regexp = new RegExp(regex, regexFlag);
                     if (regexp.test(testString)) {
                         testStringEl.addCls("class-editor-validation-success");
                         testStringEl.removeCls("class-editor-validation-error");
@@ -122,7 +123,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                         testStringEl.addCls("class-editor-validation-error");
                     }
                 } catch (e) {
-                    console.log(e);
+                    Ext.MessageBox.alert(t("error"), e);
                 }
             };
 
@@ -139,7 +140,35 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     value: datax["regex"],
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: checkRegex
+                        blur: checkRegex
+                    }
+                }, {
+                    xtype: 'combobox',
+                    multiSelect: true,
+                    fieldLabel: t("regex_flags"),
+                    itemId: "regexflags",
+                    name: 'regexflags',
+                    triggerAction: "all",
+                    selectOnFocus: true,
+                    store: new Ext.data.ArrayStore({
+                        fields: [
+                            'value',
+                            'key'
+                        ],
+                        data: [
+                            ["g", t("global")],
+                            ["i", t("ignoreCase")],
+                            ["m", t("multiline")],
+                            ["u", t("unicode")],
+                            ["y", t("sticky")],
+                        ]
+                    }),
+                    value: datax.defaultValue,
+                    displayField: 'key',
+                    valueField: 'value',
+                    width: 300,
+                    listeners: {
+                        change: checkRegex
                     }
                 }, {
                     xtype: "panel",

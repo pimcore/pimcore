@@ -405,9 +405,9 @@ class Document extends Element\AbstractElement
             $preEvent = new DocumentEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -495,9 +495,9 @@ class Document extends Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_ADD);
             }
 
             return $this;
@@ -505,9 +505,9 @@ class Document extends Element\AbstractElement
             $failureEvent = new DocumentEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -824,7 +824,7 @@ class Document extends Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -851,7 +851,7 @@ class Document extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
+            $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
             Logger::error($e);
 
             throw $e;
@@ -864,7 +864,7 @@ class Document extends Element\AbstractElement
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
         \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
     /**
@@ -976,7 +976,7 @@ class Document extends Element\AbstractElement
             $event = new GenericEvent($this, [
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::DOCUMENT_PATH);
+            $this->dispatchEvent($event, FrontendEvents::DOCUMENT_PATH);
             $path = $event->getArgument('frontendPath');
         }
 

@@ -20,6 +20,7 @@ use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -33,6 +34,7 @@ final class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @internal
@@ -445,9 +447,9 @@ final class ClassDefinition extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
         }
 
         $this->setModificationDate(time());
@@ -469,9 +471,9 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
     }
 
@@ -514,7 +516,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
+        $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
         // delete all objects using this class
         $list = new Listing();
@@ -569,7 +571,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
+        $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
     private function deletePhpClasses()

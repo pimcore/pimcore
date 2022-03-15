@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Cache;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -28,6 +29,7 @@ use Pimcore\Model\DataObject;
 class CustomLayout extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @var string|null
@@ -199,9 +201,9 @@ class CustomLayout extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
+            $this->dispatchEvent(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
+            $this->dispatchEvent(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
         }
 
         $this->setModificationDate(time());
