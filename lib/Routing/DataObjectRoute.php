@@ -90,11 +90,11 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @param Site $site
+     * @param Site|null $site
      *
      * @return $this
      */
-    public function setSite(Site $site): self
+    public function setSite(?Site $site): self
     {
         $this->site = $site;
 
@@ -115,7 +115,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     public function getRouteKey(): ?string
     {
         if ($this->object) {
-            return sprintf('data_object_%d_%d_%s', $this->object->getId(), $this->site->getId(), $this->getPath());
+            return sprintf('data_object_%d_%d_%s', $this->object->getId(), $this->site?->getId(), $this->getPath());
         }
 
         return null;
