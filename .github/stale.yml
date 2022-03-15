@@ -1,4 +1,6 @@
 only: issues
+exemptProjects: true
+exemptMilestones: true
 daysUntilStale: 20
 daysUntilClose: 180
 exemptLabels:
