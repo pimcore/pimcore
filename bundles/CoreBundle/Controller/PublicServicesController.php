@@ -171,6 +171,7 @@ class PublicServicesController extends Controller
                 throw new \Exception('Unable to generate thumbnail, see logs for details.');
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
+
                 return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
             }
         }
