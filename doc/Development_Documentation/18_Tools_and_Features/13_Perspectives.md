@@ -25,7 +25,7 @@ You can define:
 
 You can define an arbitrary number of perspectives and switch between them via the File menu.
 
-![Perspectives - menu](../img/pespectives_menu.png)
+![Perspectives - menu](../img/perspectives_menu.png)
 
 You can restrict the access to certain perspectives via the user settings.
 
