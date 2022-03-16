@@ -17,7 +17,7 @@ To use the thumbnailing service of Pimcore, you have to create a transformation 
 The fields name, description, format and quality should be self-explanatory, the interesting part are now the transformations. 
 Click on *+* to add a new transformation, so that it look like that for example:
 
-![Thumbnails](../../img/thumbnails1.png)
+![Thumbnails](../../img/thumbnail_transformations.png)
 
 **Important**: The transformations are performed in the order from the top to the bottom. This is for example important 
 in the configuration above. If you first round the corners this would be performed on the original image, 
@@ -231,21 +231,6 @@ $thumbnail->getHtml([
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
 
 
-## Using ICC Color Profiles for CMYK -> RGB 
-Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
-to RGB. 
-
-Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in the download package, but 
-you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075) 
-or here: [ICC (color.org)](http://www.color.org/profiles.xalter). 
-
-After downloading the profiles put them into your project folder or anywhere else on your sever 
-(eg. `/usr/share/color/icc`). Then go to the Pimcore system settings, open the assets section and configure the 
-path to your favorite color profile.
-
-![Color Profiles](../../img/thumbnails2.png)
-
-
 ## Dynamic Generation on Request
 Pimcore auto-generates a thumbnail if requested but doesn't exist on the file system and is directly called via it's file path (not using any of 
 the `getThumbnail()` methods). 
@@ -290,7 +275,7 @@ The following is only necessary in special use-cases like Web-to-Print, in typic
 automatically adds the `srcset` attribute to `<img>` and `<picture>` tags automatically, so no manual work is necessary. 
 
 #### Use in the Thumbnail Configuration: 
-![High Resolution](../../img/thumbnails3.png)
+![High Resolution](../../img/thumbnail_high_resolution.png)
 The above configuration will generate a thumbnail with 500px width. 
 
 When using this configuration in combination with the [image editable](../../03_Documents/01_Editables/14_Image.md) 
