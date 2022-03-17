@@ -512,13 +512,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * @param string $type
-     * @param string $name
-     * @param string $filename
-     * @return int|null Modification timestamp of the thumbnail
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function hasThumbnail(string $name, string $filename): ?int
     {
         $assetId = $this->model->getId();
