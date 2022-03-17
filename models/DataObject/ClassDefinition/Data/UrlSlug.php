@@ -121,7 +121,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
         ksort($result);
 
-        return $result;
+        return array_values($result);
     }
 
     /**
