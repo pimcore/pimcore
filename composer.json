@@ -73,6 +73,7 @@
     "nesbot/carbon": "^2.27",
     "ocramius/package-versions": "^2.3",
     "pear/net_url2": "^2.2",
+    "matomo/device-detector": "^4.0",
     "presta/sitemap-bundle": "^3.3",
     "sabre/dav": "^4.1.2",
     "sensio/framework-extra-bundle": "^6.1",
