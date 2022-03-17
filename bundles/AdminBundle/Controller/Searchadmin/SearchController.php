@@ -482,6 +482,8 @@ class SearchController extends AdminController
                 $data = [
                     'id' => $element->getId(),
                     'type' => $hit->getId()->getType(),
+                    'subtype' => $element->getType(),
+                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                 ];
 
