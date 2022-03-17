@@ -540,6 +540,9 @@ final class Configuration implements ConfigurationInterface
                                             ],
                                         ])
                                     ->end()
+                                    ->booleanNode('status_cache')
+                                        ->defaultTrue()
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()

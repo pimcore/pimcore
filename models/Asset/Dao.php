@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Db;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
@@ -31,6 +32,8 @@ class Dao extends Model\Element\Dao
 {
     use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
+
+    private static array $thumbnailStatusCache = [];
 
     /**
      * Get the data for the object by id from database and assign it to the object (model)
@@ -493,5 +496,62 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    public function addThumbnail(string $name, string $filename): void
+    {
+        try {
+            $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+                'cid' => $this->model->getId(),
+                'name' => $name,
+                'filename' => $filename,
+                'modificationDate' => time(),
+            ]);
+        } catch (UniqueConstraintViolationException $e) {
+            // ignore
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param string $name
+     * @param string $filename
+     * @return int|null Modification timestamp of the thumbnail
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function hasThumbnail(string $name, string $filename): ?int
+    {
+        $assetId = $this->model->getId();
+
+        // we use a static var here, because it could be that an asset is serialized in the cache,
+        // so this runtime cache wouldn't be as efficient
+        if(!isset(self::$thumbnailStatusCache[$assetId])) {
+            self::$thumbnailStatusCache[$assetId] = [];
+            $thumbs = $this->db->fetchAll('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
+                'cid' => $this->model->getId(),
+            ]);
+
+            foreach($thumbs as $thumb) {
+                $hash = $thumb['name'] . $thumb['filename'];
+                self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
+            }
+        }
+
+        $hash = $name . $filename;
+
+        return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
+    }
+
+    public function deleteThumbnail(?string $name = null): void
+    {
+        $where = [
+            'cid' => $this->model->getId()
+        ];
+
+        if($name) {
+            $where['name'] = $name;
+        }
+
+        $this->db->delete('assets_image_thumbnail_cache', $where);
     }
 }
