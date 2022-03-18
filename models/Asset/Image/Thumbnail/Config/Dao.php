@@ -159,6 +159,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         \Pimcore\Db::get()->delete('assets_image_thumbnail_cache', [
             'name' => $this->model->getName(),
         ]);
+
+        Model\Asset\Dao::$thumbnailStatusCache = [];
     }
 
     protected function autoClearTempFiles()

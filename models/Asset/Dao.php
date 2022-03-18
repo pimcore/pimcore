@@ -31,7 +31,11 @@ class Dao extends Model\Element\Dao
     use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
 
-    private static array $thumbnailStatusCache = [];
+    /**
+     * @internal
+     * @var array
+     */
+    public static array $thumbnailStatusCache = [];
 
     /**
      * Get the data for the object by id from database and assign it to the object (model)
