@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\Asset;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Pimcore\Db;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -500,15 +498,18 @@ class Dao extends Model\Element\Dao
 
     public function addThumbnail(string $name, string $filename): void
     {
-        try {
-            $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
-                'cid' => $this->model->getId(),
-                'name' => $name,
-                'filename' => $filename,
-                'modificationDate' => time(),
-            ]);
-        } catch (UniqueConstraintViolationException $e) {
-            // ignore
+        $assetId = $this->model->getId();
+        $time = time();
+        $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+            'cid' => $assetId,
+            'name' => $name,
+            'filename' => $filename,
+            'modificationDate' => $time,
+        ]);
+
+        if(isset(self::$thumbnailStatusCache[$assetId])) {
+            $hash = $name . $filename;
+            self::$thumbnailStatusCache[$assetId][$hash] = $time;
         }
     }
 
@@ -537,8 +538,9 @@ class Dao extends Model\Element\Dao
 
     public function deleteThumbnail(?string $name = null): void
     {
+        $assetId = $this->model->getId();
         $where = [
-            'cid' => $this->model->getId()
+            'cid' => $assetId,
         ];
 
         if($name) {
@@ -546,5 +548,6 @@ class Dao extends Model\Element\Dao
         }
 
         $this->db->delete('assets_image_thumbnail_cache', $where);
+        unset(self::$thumbnailStatusCache[$assetId]);
     }
 }

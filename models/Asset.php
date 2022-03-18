@@ -2007,6 +2007,8 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
                 $storage->deleteDirectory($this->getRealPath() . $this->getId());
             }
+
+            $this->getDao()->deleteThumbnail();
         }
     }
 
@@ -2103,6 +2105,7 @@ class Asset extends Element\AbstractElement
     {
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
+            $this->getDao()->deleteThumbnail($name);
         } catch (\Exception $e) {
             // noting to do
         }
