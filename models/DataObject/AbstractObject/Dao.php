@@ -302,7 +302,33 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT 1 FROM objects o WHERE o_parentId = ?';
+        $sql = 'SELECT 1 FROM objects o';
+
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
+
+            $sql .= ' LEFT JOIN users_workspaces_object ON cid=o_id and LIST=0 ';
+
+            $sql.= ' WHERE o_parentId = ? ';
+            $sql .= ' AND
+                (
+                    (
+                        EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1)
+                        OR
+                        IF(';
+            //$sql .= '                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=0 AND cid=o_id)';
+            $sql .=     'list IS NULL';
+            $sql .= '
+                            ,'.$inheritedPermission.' = 1,0
+                        )
+                    )
+                )';
+        }else{
+            $sql.= ' WHERE o_parentId = ? ';
+        }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
@@ -312,14 +338,7 @@ class Dao extends Model\Element\Dao
             $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "')";
         }
 
-        if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-
-            $sql .= ' AND (select `list` as locate from `users_workspaces_object` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
-        }
         $sql .= ' LIMIT 1';
-
         $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
@@ -471,6 +490,16 @@ class Dao extends Model\Element\Dao
         $parentIds[] = $this->model->getId();
 
         return $parentIds;
+    }
+
+    /**
+     * @param $type
+     * @param $user
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function isInheritingPermission($type, $userIds){
+        return $this->InheritingPermission($type,$userIds,'object');
+
     }
 
     /**

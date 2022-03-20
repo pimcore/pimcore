@@ -130,7 +130,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $filteredTotalCount = 0;
         $limit = 0;
 
-        if ($object->hasChildren($objectTypes)) {
+        if ($object->hasChildren($objectTypes, null, $this->getAdminUser())) {
             $limit = (int)$request->get('limit');
             if (!is_null($filter)) {
                 if (substr($filter, -1) != '*') {
@@ -168,11 +168,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
+
+                $inheritedPermission = $object->isInheritingPermission('list',$userIds);
+
                 $condition .= ' AND
                 (
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1)
                     OR
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    '.$inheritedPermission.' = 1
                 )';
             }
 

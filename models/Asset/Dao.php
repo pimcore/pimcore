@@ -327,13 +327,32 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $query = 'SELECT `a`.`id` FROM `assets` a WHERE `parentId` = ?';
+        $query = 'SELECT `a`.`id` FROM `assets` a';
+
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $query .= ' AND (select `list` as locate from `users_workspaces_asset` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
+            $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
+
+            $query .= ' LEFT JOIN users_workspaces_asset ON cid=id and LIST=0 ';
+
+            $query .= ' WHERE parentId = ? ';
+            $query .= ' AND
+                (
+                    (
+                        EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(a.path,a.filename),cpath)=1)
+                        OR
+                        IF(
+                            list IS NULL,'.$inheritedPermission.' = 1,0
+                        )
+                    )
+                )';
+        }else{
+            $query .= ' WHERE parentId = ? ';
         }
+
+
         $query .= ' LIMIT 1;';
         $c = $this->db->fetchOne($query, $this->model->getId());
 
@@ -425,6 +444,15 @@ class Dao extends Model\Element\Dao
         return $lockIds;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function isInheritingPermission($type, $userIds){
+        return $this->InheritingPermission($type,$userIds,'asset');
+
+    }
     /**
      * @param string $type
      * @param Model\User $user

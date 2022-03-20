@@ -332,7 +332,7 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT id FROM documents d WHERE parentId = ?';
+        $sql = 'SELECT id FROM documents d';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
@@ -340,9 +340,24 @@ class Dao extends Model\Element\Dao
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
+            $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
 
-            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
+            $sql .= ' LEFT JOIN users_workspaces_document ON cid=id and LIST=0 ';
+
+            $sql.= ' WHERE parentId = ? ';
+            $sql .= ' AND
+                (
+                    (
+                        EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1)
+                        OR
+                        IF(list IS NULL,'.$inheritedPermission.' = 1,0
+                        )
+                    )
+                )';
+        }else{
+            $sql.= ' WHERE parentId = ? ';
         }
+
 
         $sql .= ' LIMIT 1';
 
@@ -466,6 +481,16 @@ class Dao extends Model\Element\Dao
         $this->db->deleteWhere('tree_locks', "type = 'document' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
+    }
+
+    /**
+     * @param $type
+     * @param $user
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function isInheritingPermission($type, $userIds){
+        return $this->InheritingPermission($type,$userIds,'document');
+
     }
 
     /**

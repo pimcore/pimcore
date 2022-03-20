@@ -502,7 +502,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null, $user)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -510,7 +510,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             return $this->o_hasChildren[$cacheKey];
         }
 
-        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
+        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished, $user);
     }
 
     /**

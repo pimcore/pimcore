@@ -163,16 +163,20 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $db = Db::get();
 
             $list = new Document\Listing();
-            if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote($document->getId());
-            } else {
+
+            $condition = 'parentId =  ' . $db->quote($document->getId());
+
+            if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $condition = 'parentId = ' . $db->quote($document->getId()) . ' AND
+
+                $inheritedPermission = $document->getDao()->isInheritingPermission('list',$userIds);
+
+                $condition .= ' AND
                 (
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                    or
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1)
+                    OR
+                    '.$inheritedPermission.' = 1
                 )';
             }
 
