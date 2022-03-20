@@ -169,7 +169,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
 
-                $inheritedPermission = $object->isInheritingPermission('list',$userIds);
+                $inheritedPermission = $object->getDao()->isInheritingPermission('list',$userIds);
 
                 $condition .= ' AND
                 (

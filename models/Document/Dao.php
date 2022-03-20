@@ -484,12 +484,12 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $userIds
+     * @param string $type
+     * @param array $userIds
      * @return int
      * @throws \Doctrine\DBAL\Exception
      */
-    public function isInheritingPermission($type, $userIds){
+    public function isInheritingPermission(string $type, array $userIds){
         return $this->InheritingPermission($type,$userIds,'document');
 
     }
