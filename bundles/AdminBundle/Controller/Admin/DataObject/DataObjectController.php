@@ -130,7 +130,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $filteredTotalCount = 0;
         $limit = 0;
 
-        if ($object->hasChildren($objectTypes, null, $this->getAdminUser())) {
+        if ($object->hasChildren($objectTypes)) {
             $limit = (int)$request->get('limit');
             if (!is_null($filter)) {
                 if (substr($filter, -1) != '*') {

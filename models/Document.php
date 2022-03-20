@@ -696,11 +696,11 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      *
-     * @param null $includingUnpublished
-     * @param $user
+     * @param bool $includingUnpublished
+     *
      * @return bool
      */
-    public function hasChildren($includingUnpublished = null, $user)
+    public function hasChildren($includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -708,7 +708,7 @@ class Document extends Element\AbstractElement
             return $this->hasChildren[$cacheKey];
         }
 
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished, $user);
+        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
