@@ -334,9 +334,6 @@ class Dao extends Model\Element\Dao
 
         $sql = 'SELECT id FROM documents d';
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
-            $sql .= ' AND published = 1';
-        }
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
@@ -358,6 +355,9 @@ class Dao extends Model\Element\Dao
             $sql.= ' WHERE parentId = ? ';
         }
 
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+            $sql .= ' AND published = 1';
+        }
 
         $sql .= ' LIMIT 1';
 
@@ -485,7 +485,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * @param $type
-     * @param $user
+     * @param $userIds
+     * @return int
      * @throws \Doctrine\DBAL\Exception
      */
     public function isInheritingPermission($type, $userIds){

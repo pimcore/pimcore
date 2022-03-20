@@ -81,14 +81,17 @@ abstract class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $type
-     * @param $user
+     * @param $userIds
+     * @param $tableSuffix
+     * @return int
      * @throws \Doctrine\DBAL\Exception
      */
-    public function InheritingPermission($type, $userIds, $tableSuffix){
+    public function InheritingPermission($type, $userIds, $tableSuffix): int
+    {
         $current = $this->model;
 
         if (!$current->getId()) {
-            return false;
+            return 0;
         }
         $fullPath = $current->getPath().$current->getKey();
 
