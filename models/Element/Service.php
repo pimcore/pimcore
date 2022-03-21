@@ -43,6 +43,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1519,6 +1520,7 @@ class Service extends Model\AbstractModel
             $copier->addFilter(new DoctrineCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Psr\Container\ContainerInterface'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
+            $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher(EventDispatcherInterface::class));
         }
 
         $event = new GenericEvent(null, [
