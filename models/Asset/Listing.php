@@ -89,7 +89,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
             $userIds[] = $user->getId();
 
             if ($this->current()) {
-                $inheritedPermission = $this->current()->isInheritingPermission('list', $userIds);
+                $inheritedPermission = $this->current()->getDao()->isInheritingPermission('list', $userIds);
 
                 $condition = '
                 (
