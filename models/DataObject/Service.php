@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use DeepCopy\Matcher\PropertyTypeMatcher;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
@@ -38,6 +39,7 @@ use Pimcore\Tool\Session;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1291,6 +1293,8 @@ class Service extends Model\Element\Service
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('fieldDefinitionsCache'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('activeDispatchingEvents'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyTypeMatcher(EventDispatcherInterface::class));
         $theCopy = $deepCopy->copy($definition);
 
         return $theCopy;

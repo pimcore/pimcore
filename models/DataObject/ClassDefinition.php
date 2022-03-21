@@ -504,7 +504,6 @@ final class ClassDefinition extends Model\AbstractModel
             $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             $clone->fieldDefinitions = [];
-            $clone->setEventDispatcher(null);
 
             self::cleanupForExport($clone->layoutDefinitions);
 
