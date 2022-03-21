@@ -340,13 +340,9 @@ class Dao extends Model\Element\Dao
             $query .= ' WHERE parentId = ? ';
             $query .= ' AND
                 (
-                    (
-                        EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(a.path,a.filename),cpath)=1)
-                        OR
-                        IF(
-                            list IS NULL,'.$inheritedPermission.' = 1,0
-                        )
-                    )
+                    EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(a.path,a.filename),cpath)=1)
+                    OR
+                    IF(list IS NULL,'.$inheritedPermission.' = 1,0)
                 )';
         }else{
             $query .= ' WHERE parentId = ? ';

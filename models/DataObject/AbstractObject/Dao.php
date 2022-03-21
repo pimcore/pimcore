@@ -308,23 +308,21 @@ class Dao extends Model\Element\Dao
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
+            //gets the permission of the ancestors, since it would be the same for each row with same o_parentId, it is done once outside the query to avoid extra subquery.
             $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
 
-            $sql .= ' LEFT JOIN users_workspaces_object ON cid=o_id and LIST=0 ';
 
+            // EXISTS() checks for current row and nested elements that are `list`=1. This is to allow the folders in between from current parent to any nested elements and for any "additive" permission on the element itself.
+            // If not found any `list`=1 rules, checks if the `list` is NULL, which means there are no `list`=0 occurrences of current row (LEFT JOIN on IDs)
+            // IF `list` IS NULL and no `list`=1 permissions, it can only mean that there are no specific rules for the current row, so the fallback is on $inheritedPermission
+
+            $sql .= ' LEFT JOIN users_workspaces_object ON cid=o_id and LIST=0 ';
             $sql.= ' WHERE o_parentId = ? ';
             $sql .= ' AND
                 (
-                    (
-                        EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1)
-                        OR
-                        IF(';
-            //$sql .= '                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=0 AND cid=o_id)';
-            $sql .=     'list IS NULL';
-            $sql .= '
-                            ,'.$inheritedPermission.' = 1,0
-                        )
-                    )
+                    EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1)
+                    OR
+                    IF(list IS NULL,'.$inheritedPermission.' = 1,0)
                 )';
         }else{
             $sql.= ' WHERE o_parentId = ? ';

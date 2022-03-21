@@ -341,15 +341,12 @@ class Dao extends Model\Element\Dao
 
             $sql .= ' LEFT JOIN users_workspaces_document ON cid=id and LIST=0 ';
 
-            $sql.= ' WHERE parentId = ? ';
+            $sql .= ' WHERE parentId = ? ';
             $sql .= ' AND
                 (
-                    (
-                        EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1)
-                        OR
-                        IF(list IS NULL,'.$inheritedPermission.' = 1,0
-                        )
-                    )
+                    EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1)
+                    OR
+                    IF(list IS NULL,'.$inheritedPermission.' = 1,0)
                 )';
         }else{
             $sql.= ' WHERE parentId = ? ';

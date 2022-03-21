@@ -88,16 +88,18 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $inheritedPermission = $this->current()->isInheritingPermission('list',$userIds);
+            if ($this->current()) {
+                $inheritedPermission = $this->current()->isInheritingPermission('list', $userIds);
 
-            $condition = '
+                $condition = '
                 (
                     EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1)
                     OR
-                    '.$inheritedPermission.' = 1
+                    ' . $inheritedPermission . ' = 1
                 )';
 
-            $this->addConditionParam($condition);
+                $this->addConditionParam($condition);
+            }
         }
 
         return $this;
