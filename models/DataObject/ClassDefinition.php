@@ -366,6 +366,10 @@ final class ClassDefinition extends Model\AbstractModel
             return;
         }
 
+        if (method_exists($data, 'setEventDispatcher')) {
+            $data->setEventDispatcher(null);
+        }
+
         if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
             $blockedVars = $data->resolveBlockedVars();
             foreach ($blockedVars as $blockedVar) {
