@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use DeepCopy\Filter\ReplaceFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
@@ -1293,7 +1294,7 @@ class Service extends Model\Element\Service
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('fieldDefinitionsCache'));
-        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('activeDispatchingEvents'));
+        $deepCopy->addFilter(new ReplaceFilter(fn($v) => []), new PropertyNameMatcher('activeDispatchingEvents'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyTypeMatcher(EventDispatcherInterface::class));
         $theCopy = $deepCopy->copy($definition);
 
