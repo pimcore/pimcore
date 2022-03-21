@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model;
 
+use DeepCopy\Filter\Filter;
+use DeepCopy\Reflection\ReflectionHelper;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
@@ -322,7 +324,16 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
 
         $copier->addFilter(
-            new \DeepCopy\Filter\SetNullFilter(),
+            new class() implements Filter
+            {
+                public function apply($object, $property, $objectCopier)
+                {
+                    $reflectionProperty = ReflectionHelper::getProperty($object, $property);
+
+                    $reflectionProperty->setAccessible(true);
+                    $reflectionProperty->setValue($object, $reflectionProperty->getDefaultValue());
+                }
+            },
             new class() implements \DeepCopy\Matcher\Matcher {
                 /**
                  * {@inheritdoc}
