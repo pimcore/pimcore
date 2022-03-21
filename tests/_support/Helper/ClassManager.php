@@ -72,6 +72,8 @@ class ClassManager extends Module
 
             $this->debug(sprintf('[CLASSMANAGER] Setting up class %s DONE', $name));
 
+            $this->debug(file_get_contents($class->getDefinitionFile()));
+
             $class = ClassDefinition::getById($class->getId());
             $class->setUserModification(1);
             $class->setModificationDate(time());
