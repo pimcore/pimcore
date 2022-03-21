@@ -296,9 +296,48 @@ final class Version extends AbstractModel
                 ),
                 new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
+
+            $copier->addFilter(
+                new \DeepCopy\Filter\KeepFilter(),
+                new class() implements \DeepCopy\Matcher\Matcher {
+                    /**
+                     * {@inheritdoc}
+                     */
+                    public function matches($object, $property)
+                    {
+                        try {
+                            $reflectionProperty = new \ReflectionProperty($object, $property);
+                        } catch (\Exception $e) {
+                            return false;
+                        }
+                        $reflectionProperty->setAccessible(true);
+                        $myValue = $reflectionProperty->getValue($object);
+
+                        return $myValue instanceof ElementInterface;
+                    }
+                }
+            );
         }
 
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+        $copier->addFilter(
+            new \DeepCopy\Filter\SetNullFilter(),
+            new class() implements \DeepCopy\Matcher\Matcher {
+                /**
+                 * {@inheritdoc}
+                 */
+                public function matches($object, $property)
+                {
+                    if (method_exists($object, '__sleep')) {
+                        return !in_array($property, $object->__sleep());
+                    }
+
+                    return false;
+                }
+            }
+        );
+
         $newData = $copier->copy($data);
 
         return $newData;
