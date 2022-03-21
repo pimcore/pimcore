@@ -48,9 +48,9 @@ trait RecursionBlockingEventDispatchHelperTrait
     }
 
     /**
-     * @return EventDispatcherInterface|null
+     * @return EventDispatcherInterface
      */
-    private function getEventDispatcher(): ?EventDispatcherInterface
+    private function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->eventDispatcher ??= \Pimcore::getEventDispatcher();
     }

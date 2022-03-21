@@ -65,14 +65,12 @@ final class EntityModelFactoryPass implements CompilerPassInterface
             $classes[] = DataObject::class . '\\' . $className;
         }
 
-        if($container->hasParameter('pimcore.config')) {
-            $config = $container->getParameter('pimcore.config');
-            foreach($config['models']['class_overrides'] as $source => $target) {
-                $source = $this->normalizeName($source);
-                $target = $this->normalizeName($target);
-                $classes[$source] = $target;
-                $classes[] = $target;
-            }
+        $config = $container->getParameter('pimcore.config');
+        foreach($config['models']['class_overrides'] as $source => $target) {
+            $source = $this->normalizeName($source);
+            $target = $this->normalizeName($target);
+            $classes[$source] = $target;
+            $classes[] = $target;
         }
 
         foreach($classes as $serviceId => $class) {
