@@ -679,6 +679,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $isUpdate = false;
         $differentOldPath = null;
+        $willBePublished  = false;
+        $willBeUnpublished = false;
 
         try {
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
@@ -686,6 +688,30 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             if ($this->getId()) {
                 $isUpdate = true;
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+
+                $versions = $this->getVersions();
+
+                if (\count($versions) === 0 && $this->isPublished() === true) {
+                    $willBePublished = true;
+                }
+                elseif (\count($versions) > 1) {
+                    $previousVersion = $versions[\count($versions) - 2]->getData();
+
+                    if ($previousVersion->isPublished() === false && $this->isPublished() === true) {
+                        $willBePublished = true;
+                    }
+                    elseif ($previousVersion->isPublished() === true && $this->isPublished() === false) {
+                        $willBeUnpublished = true;
+                    }
+                }
+
+                if ($willBePublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_PUBLISH);
+                }
+                if ($willBeUnpublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_UNPUBLISH);
+                }
+
             } else {
                 self::disableDirtyDetection();
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
@@ -792,6 +818,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
                 $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
+
+                if ($willBePublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_PUBLISH);
+                }
+                if ($willBeUnpublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_UNPUBLISH);
+                }
+
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
                 $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
@@ -803,6 +837,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+
+                if ($willBePublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_PUBLISH_FAILURE);
+                }
+                if ($willBeUnpublished) {
+                    \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UNPUBLISH_FAILURE);
+                }
+
             } else {
                 $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
             }

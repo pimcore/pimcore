@@ -150,4 +150,46 @@ final class DataObjectEvents
      * @var string
      */
     const POST_CSV_ITEM_EXPORT = 'pimcore.dataobject.postCsvItemExport';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const PRE_PUBLISH = 'pimcore.dataobject.prePublish';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const POST_PUBLISH = 'pimcore.dataobject.postPublish';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const PRE_UNPUBLISH = 'pimcore.dataobject.preUnpublish';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const POST_UNPUBLISH = 'pimcore.dataobject.postUnpublish';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const POST_PUBLISH_FAILURE = 'pimcore.dataobject.postPublishFailure';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    public const POST_UNPUBLISH_FAILURE = 'pimcore.dataobject.postUnpublishFailure';
 }
