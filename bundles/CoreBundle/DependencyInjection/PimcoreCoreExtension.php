@@ -134,6 +134,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('cache.yaml');
         $loader->load('marshaller.yaml');
         $loader->load('message_handler.yaml');
+        $loader->load('class_builder.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);

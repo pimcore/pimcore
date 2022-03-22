@@ -15,6 +15,7 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\LinkGeneratorAwareInterface;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
@@ -98,19 +99,27 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $name = $this->getCurrentRoute();
         }
 
-        if (isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
-            $object = $parameters['object'];
-            if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-                unset($parameters['object']);
-                $path = $linkGenerator->generate($object, [
-                    'route' => $name,
-                    'parameters' => $parameters,
-                    'context' => $this,
-                    'referenceType' => $referenceType,
-                ]);
+        $object = $parameters['object'] ?? null;
+        $linkGenerator = null;
 
-                return $path;
+        if ($object instanceof LinkGeneratorAwareInterface) { //e.g. Mockup
+            $linkGenerator = $object->getLinkGenerator();
+        } elseif ($object instanceof Concrete) {
+            $linkGenerator = $object->getClass()->getLinkGenerator();
+        }
+
+        if ($linkGenerator) {
+            if (array_key_exists('object', $parameters)) {
+                unset($parameters['object']);
             }
+            $path = $linkGenerator->generate($object, [
+                'route' => $name,
+                'parameters' => $parameters,
+                'context' => $this,
+                'referenceType' => $referenceType,
+            ]);
+
+            return $path;
         }
 
         if ($name !== null) {

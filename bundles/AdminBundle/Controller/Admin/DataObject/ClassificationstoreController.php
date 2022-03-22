@@ -279,8 +279,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -423,8 +427,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -564,8 +572,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $filters = json_decode($filterString);
 
             $count = 0;
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 if ($count > 0) {
                     $condition .= ' AND ';
                 }
@@ -727,8 +739,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->property];
                 $conditionParts[] = $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -837,8 +853,12 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $db = Db::get();
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -1222,14 +1242,18 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
 
         if ($storeId) {
-            $conditionParts[] = '(storeId = ' . $storeId . ')';
+            $conditionParts[] = '(storeId = '. $db->quote($storeId) . ')';
         }
 
         if ($request->get('filter')) {
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
-
+            /** @var \stdClass $f */
             foreach ($filters as $f) {
+                if (!isset($f->value)) {
+                    continue;
+                }
+
                 $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
@@ -1452,11 +1476,11 @@ class ClassificationstoreController extends AdminController implements KernelCon
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),
-                'text' => $item->getName(),
+                'text' => htmlspecialchars($item->getName(), ENT_QUOTES),
                 'expandable' => false,
                 'leaf' => true,
                 'expanded' => true,
-                'description' => $item->getDescription(),
+                'description' => htmlspecialchars($item->getDescription(), ENT_QUOTES),
                 'iconCls' => 'pimcore_icon_classificationstore',
             ];
 
@@ -1464,7 +1488,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             if ($item->getDescription()) {
             }
-            $resultItem['qtip'] = $item->getDescription() ? $item->getDescription() : ' ';
+            $resultItem['qtip'] = $item->getDescription() ? htmlspecialchars($item->getDescription(), ENT_QUOTES) : ' ';
             $result[] = $resultItem;
         }
 

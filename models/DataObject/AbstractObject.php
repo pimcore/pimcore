@@ -26,6 +26,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\DuplicateFullPathException;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -213,14 +214,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortBy;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $o_childrenSortOrder;
 
@@ -385,6 +386,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if (!$path) {
+            return null;
+        }
+
         $path = Model\Element\Service::correctPath($path);
 
         try {
@@ -472,14 +477,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            $list->setCondition('o_parentId = ?', $this->getId());
-            $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder($this->getChildrenSortOrder());
-            $list->setObjectTypes($objectTypes);
-            $this->o_children[$cacheKey] = $list->load();
-            $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            if ($this->getId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->setCondition('o_parentId = ?', $this->getId());
+                $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
+                $list->setOrder($this->getChildrenSortOrder());
+                $list->setObjectTypes($objectTypes);
+                $this->o_children[$cacheKey] = $list->load();
+                $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+            } else {
+                $this->o_children[$cacheKey] = [];
+                $this->o_hasChildren[$cacheKey] = false;
+            }
         }
 
         return $this->o_children[$cacheKey];
@@ -517,16 +527,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_siblings[$cacheKey])) {
-            $list = new Listing();
-            $list->setUnpublished($includingUnpublished);
-            // string conversion because parentId could be 0
-            $list->addConditionParam('o_parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('o_id != ?', $this->getId());
-            $list->setOrderKey('o_key');
-            $list->setObjectTypes($objectTypes);
-            $list->setOrder('asc');
-            $this->o_siblings[$cacheKey] = $list->load();
-            $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            if ($this->getParentId()) {
+                $list = new Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->addConditionParam('o_parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('o_id != ?', $this->getId());
+                }
+                $list->setOrderKey('o_key');
+                $list->setObjectTypes($objectTypes);
+                $list->setOrder('asc');
+                $this->o_siblings[$cacheKey] = $list->load();
+                $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+            } else {
+                $this->o_siblings[$cacheKey] = [];
+                $this->o_hasSiblings[$cacheKey] = false;
+            }
         }
 
         return $this->o_siblings[$cacheKey];
@@ -596,9 +612,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         // remove all properties
         $this->getDao()->deleteAllProperties();
-
-        // remove all permissions
-        $this->getDao()->deleteAllPermissions();
     }
 
     /**
@@ -606,7 +619,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
+        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -626,10 +639,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            $this->rollBack();
+            try {
+                $this->rollBack();
+            } catch (\Exception $er) {
+                // PDO adapter throws exceptions if rollback fails
+                Logger::info($er);
+            }
+
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
+            $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
             Logger::crit($e);
 
@@ -642,7 +661,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         //clear object from registry
         Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
+        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
     }
 
     /**
@@ -666,10 +685,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $preEvent = new DataObjectEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
             } else {
                 self::disableDirtyDetection();
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -772,10 +791,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DataObjectEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
             }
 
             return $this;
@@ -783,9 +802,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $failureEvent = new DataObjectEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -795,7 +814,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
     protected function correctPath()
     {
@@ -836,7 +855,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if (Service::pathExists($this->getRealFullPath())) {
             $duplicate = DataObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+
+                throw $duplicateFullPathException;
             }
         }
 

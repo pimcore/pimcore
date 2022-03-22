@@ -58,7 +58,6 @@ pimcore.element.properties = Class.create({
                 displayField:'translatedName',
                 valueField: "id",
                 store: predefinedPropertiesStore,
-                editable: false,
                 triggerAction: 'all',
                 listWidth: 300,
                 width: 250,
@@ -569,10 +568,11 @@ pimcore.element.properties = Class.create({
 
     addSetFromUserDefined: function (customKey, customType) {
         try {
-            if (in_array(customKey.getValue(), this.disallowedKeys)) {
+            let key = htmlspecialchars(customKey.getValue());
+            if (in_array(key, this.disallowedKeys)) {
                 Ext.MessageBox.alert(t("error"), t("name_is_not_allowed"));
             }
-            this.add(customKey.getValue(), customType.getValue(), false, false, false, true);
+            this.add(key, customType.getValue(), false, false, false, true);
         } catch (e) {
             console.log(e);
         }

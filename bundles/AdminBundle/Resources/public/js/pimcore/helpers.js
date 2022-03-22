@@ -808,8 +808,8 @@ pimcore.helpers.loadingHide = function () {
     pimcore.globalmanager.get("loadingmask").hide();
 };
 
-pimcore.helpers.itemselector = function (muliselect, callback, restrictions, config) {
-    var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions, config);
+pimcore.helpers.itemselector = function (multiselect, callback, restrictions, config) {
+    var itemselector = new pimcore.element.selector.selector(multiselect, callback, restrictions, config);
 };
 
 
@@ -1113,29 +1113,8 @@ pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
     }
 };
 
-
-pimcore.helpers.generatePagePreview = function (id, path, callback) {
-
-    var cb = callback;
-
-    if (pimcore.settings.htmltoimage) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_page_generatescreenshot'),
-            method: "POST",
-            ignoreErrors: true,
-            params: {
-                id: id
-            },
-            success: function () {
-                if (typeof cb == "function") {
-                    cb();
-                }
-            }
-        });
-    }
-};
-
 pimcore.helpers.treeNodeThumbnailTimeout = null;
+pimcore.helpers.treeNodeThumbnailHideTimeout = null;
 pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
 pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
@@ -1147,16 +1126,15 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
             return;
         }
 
-        var imageHtml = "";
-        var uriPrefix = window.location.protocol + "//" + window.location.host;
-
         var thumbnail = record.data["thumbnail"];
-        if (thumbnail) {
-            imageHtml = '<div class="thumb"><img src="' + uriPrefix + thumbnail
-                + '" onload="this.parentNode.className += \' complete\';" /></div>';
-        }
 
-        if (imageHtml) {
+        if (thumbnail) {
+
+            if (pimcore.helpers.treeNodeThumbnailHideTimeout) {
+                clearTimeout(pimcore.helpers.treeNodeThumbnailHideTimeout);
+                pimcore.helpers.treeNodeThumbnailHideTimeout = null;
+            }
+
             var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
             var position = treeEl.getOffsetsTo(Ext.getBody());
             position = position[0];
@@ -1169,62 +1147,33 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
 
             var container = Ext.get("pimcore_tree_preview");
             if (!container) {
-                container = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+                container = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" class="hidden"><div id="pimcore_tree_preview_thumb"></div></div>');
                 container = Ext.get(container);
-                container.addCls("hidden");
             }
 
-            // check for an existing iframe
-            var existingIframe = container.query("iframe")[0];
-            if (existingIframe) {
-                // stop loading the existing iframe (images, etc.)
-                var existingIframeWin = existingIframe.contentWindow;
-                if (typeof existingIframeWin["stop"] == "function") {
-                    existingIframeWin.stop();
-                } else if (typeof existingIframeWin.document["execCommand"] == "function") {
-                    existingIframeWin.document.execCommand('Stop');
-                }
-            }
+            var triggerTime = (new Date()).getTime();
+            var thumbContainer = Ext.get("pimcore_tree_preview_thumb");
+            thumbContainer.update('');
 
-            var styles = "left: " + position + "px";
+            pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function () {
+                let img = document.createElement("img");
+                img.src = thumbnail;
+                img.addEventListener('load', function (ev) {
 
-            // we need to create an iframe so that we can use window.stop();
-            var iframe = document.createElement("iframe");
-            iframe.setAttribute("frameborder", "0");
-            iframe.setAttribute("scrolling", "no");
-            iframe.setAttribute("marginheight", "0");
-            iframe.setAttribute("marginwidth", "0");
-            iframe.setAttribute("style", "width: 100%; height: 2500px;");
+                    if(triggerTime > pimcore.helpers.treeNodeThumbnailLastClose) {
+                        thumbContainer.addCls('complete');
+                        container.removeCls("hidden");
+                    }
+                });
 
-            imageHtml =
-                '<style type="text/css">' +
-                'body { margin:0; padding: 0; } ' +
-                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; min-height: 300px; } ' +
-                '.complete { border:none; border-radius: 0; background:none; max-width: 100%; }' +
-                '.complete img { max-width: 100%; }' +
-                '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
-                '</style>' +
-                imageHtml;
+                img.addEventListener('error', function (ev) {
+                    container.addCls("hidden");
+                });
 
-            iframe.onload = function () {
-                this.contentWindow.document.body.innerHTML = imageHtml;
-            };
+                container.applyStyles("left: " + position + "px");
+                thumbContainer.dom.appendChild(img);
 
-            container.update(""); // remove all
-            container.clean(true);
-            container.dom.appendChild(iframe);
-            container.applyStyles(styles);
-
-            var date = new Date();
-            if (pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
-                // open deferred
-                pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function () {
-                    container.removeCls("hidden");
-                }, 500);
-            } else {
-                // open immediately
-                container.removeCls("hidden");
-            }
+            }, 300);
         }
     }
 };
@@ -1236,13 +1185,12 @@ pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
         pimcore.helpers.treeNodeThumbnailTimeout = null;
     }
 
-    var container = Ext.get("pimcore_tree_preview");
+    let container = Ext.get("pimcore_tree_preview");
     if (container) {
-        if (!container.hasCls("hidden")) {
-            var date = new Date();
-            pimcore.helpers.treeNodeThumbnailLastClose = date.getTime();
-        }
-        container.addCls("hidden");
+        pimcore.helpers.treeNodeThumbnailLastClose = (new Date()).getTime();
+        pimcore.helpers.treeNodeThumbnailHideTimeout = window.setTimeout(function () {
+            container.addCls("hidden");
+        }, 50);
     }
 };
 
@@ -2173,6 +2121,31 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var posterImageSearchButton = new Ext.Button({
+        iconCls: "pimcore_icon_search",
+        handler: function () {
+            pimcore.helpers.itemselector(false, function (item) {
+                if (item) {
+                    poster.setValue(item.fullpath);
+                    return true;
+                }
+            }, {
+                type: ["asset"],
+                subtype: {
+                    asset: ["image"]
+                }
+            });
+        }
+    });
+
+    var posterImageOpenButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(poster.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
         openButton.enable();
@@ -2186,12 +2159,14 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
             poster.hide();
             poster.setValue("");
+            form.getComponent("posterContainer").hide();
             form.getComponent("title").hide();
             form.getComponent("title").setValue("");
             form.getComponent("description").hide();
             form.getComponent("description").setValue("");
         } else {
             poster.show();
+            form.getComponent("posterContainer").show();
             form.getComponent("title").show();
             form.getComponent("description").show();
         }
@@ -2235,7 +2210,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             border: false,
             itemId: "pathContainer",
             items: [fieldPath, searchButton, openButton]
-        }, poster, {
+        }, {
+            xtype: "fieldcontainer",
+            layout: 'hbox',
+            border: false,
+            itemId: "posterContainer",
+            items: [poster, posterImageSearchButton, posterImageOpenButton]
+        }, {
             xtype: "textfield",
             name: "title",
             itemId: "title",

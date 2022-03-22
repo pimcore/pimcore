@@ -67,9 +67,6 @@ class Dao extends Model\Document\PageSnippet\Dao
     {
         $this->deleteAllProperties();
 
-        $this->db->delete('documents_newsletter', ['id' => $this->model->getId()]);
-        $this->db->delete('email_log', ['documentId' => $this->model->getId()]);
-
         parent::delete();
     }
 }

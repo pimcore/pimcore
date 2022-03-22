@@ -133,10 +133,29 @@ class Service
         }
         $class->setModificationDate(time());
         $class->setUserModification($userId);
+        $importPropertyNames = [
+            'description',
+            'icon',
+            'group',
+            'allowInherit',
+            'allowVariants',
+            'showVariants',
+            'parentClass',
+            'implementsInterfaces',
+            'listingParentClass',
+            'useTraits',
+            'listingUseTraits',
+            'previewUrl',
+            'propertyVisibility',
+            'linkGeneratorReference',
+            'previewGeneratorReference',
+            'compositeIndices',
+            'generateTypeDeclarations',
+            'showFieldLookup',
+            'enableGridLocking',
+        ];
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
-                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference', 'compositeIndices', 'generateTypeDeclarations', ] as $importPropertyName) {
+        foreach ($importPropertyNames as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -177,7 +196,15 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'generateTypeDeclarations'] as $importPropertyName) {
+        $importPropertyNames = [
+            'parentClass',
+            'implementsInterfaces',
+            'title',
+            'group',
+            'generateTypeDeclarations',
+        ];
+
+        foreach ($importPropertyNames as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -254,15 +281,20 @@ class Service
         }
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
-        $objectBrick->setParentClass($importData['parentClass']);
-        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
-        $objectBrick->setGenerateTypeDeclarations($importData['generateTypeDeclarations'] ?? null);
-        if (isset($importData['title'])) {
-            $objectBrick->setTitle($importData['title']);
+        $importPropertyNames = [
+            'parentClass',
+            'implementsInterfaces',
+            'title',
+            'group',
+            'generateTypeDeclarations',
+        ];
+
+        foreach ($importPropertyNames as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $objectBrick->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
+            }
         }
-        if (isset($importData['group'])) {
-            $objectBrick->setGroup($importData['group']);
-        }
+
         $objectBrick->save();
 
         return true;
@@ -282,6 +314,12 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
     {
         if (is_array($array) && count($array) > 0) {
+            if ($name = $array['name'] ?? false) {
+                if (preg_match('/<.+?>/', $name)) {
+                    throw new \Exception('not a valid name:' . htmlentities($name));
+                }
+            }
+
             /** @var LoaderInterface $loader */
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
@@ -291,15 +329,15 @@ class Service
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
-                if (method_exists($item, 'addChild')) { // allows childs
-                    $item->setValues($array, ['childs']);
-                    $childs = $array['childs'] ?? [];
+                if (method_exists($item, 'addChild')) { // allows children
+                    $item->setValues($array, ['children', 'childs']);
+                    $children = $array['children'] ?? $array['childs'] ?? [];
 
-                    if (!empty($childs['datatype'])) {
-                        $childO = self::generateLayoutTreeFromArray($childs, $throwException, $insideLocalizedField);
+                    if (!empty($children['datatype'])) {
+                        $childO = self::generateLayoutTreeFromArray($children, $throwException, $insideLocalizedField);
                         $item->addChild($childO);
-                    } elseif (is_array($childs) && count($childs) > 0) {
-                        foreach ($childs as $child) {
+                    } elseif (is_array($children) && count($children) > 0) {
+                        foreach ($children as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);
@@ -398,7 +436,7 @@ class Service
     {
         $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
-            $colDefinition = $tableDefinition[$colName];
+            $colDefinition = $tableDefinition[$colName] ?? false;
             if ($colDefinition) {
                 if (!strlen($default) && strtolower($null) === 'null') {
                     $default = null;

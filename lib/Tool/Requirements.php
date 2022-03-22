@@ -419,7 +419,7 @@ final class Requirements
         ]);
 
         // image optimizer
-        foreach (['zopflipng', 'pngcrush', 'jpegoptim', 'pngout', 'advpng', 'cjpeg', 'exiftool'] as $optimizerName) {
+        foreach (['zopflipng', 'pngcrush', 'jpegoptim', 'cjpeg', 'exiftool'] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
             } catch (\Exception $e) {

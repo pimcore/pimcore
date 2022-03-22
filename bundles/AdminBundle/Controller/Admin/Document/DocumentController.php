@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -40,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -394,7 +396,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
@@ -414,7 +426,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $document = Document::getById($request->get('id'));
             if ($document && $document->isAllowed('delete')) {
                 try {
@@ -742,24 +755,21 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @param Request $request
      *
+     * @throws BadRequestHttpException If type is invalid
+     *
      * @return JsonResponse
      */
     public function getDocTypesAction(Request $request)
     {
         $list = new Document\DocType\Listing();
-        if ($request->get('type')) {
-            $type = $request->get('type');
-            if (Document\Service::isValidType($type)) {
-                $list->setFilter(function ($row) use ($type) {
-                    if ($row['type'] == $type) {
-                        return true;
-                    }
-
-                    return false;
-                });
+        if ($type = $request->get('type')) {
+            if (!Document\Service::isValidType($type)) {
+                throw new BadRequestHttpException('Invalid type: ' . $type);
             }
+            $list->setFilter(function (Document\DocType $docType) use ($type) {
+                return $docType->getType() === $type;
+            });
         }
-        $list->load();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
@@ -914,7 +924,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $childIds = [];
             if ($document->hasChildren()) {
-                // get amount of childs
+                // get amount of children
                 $list = new Document\Listing();
                 $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
@@ -1119,7 +1129,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
-        $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
+
+        $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
+        if (empty($prefix)) {
+            $prefix = $request->getSchemeAndHttpHost();
+        }
+
+        $prefix .= $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from;
         $toUrl = $prefix . $to;

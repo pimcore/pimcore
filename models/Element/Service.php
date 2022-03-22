@@ -222,20 +222,19 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Document|Asset|DataObject\AbstractObject $element
+     * @param ElementInterface $element
      *
      * @return array
      */
     private static function getDependencyForFrontend($element)
     {
-        if ($element instanceof ElementInterface) {
-            return [
-                'id' => $element->getId(),
-                'path' => $element->getRealFullPath(),
-                'type' => self::getElementType($element),
-                'subtype' => $element->getType(),
-            ];
-        }
+        return [
+            'id' => $element->getId(),
+            'path' => $element->getRealFullPath(),
+            'type' => self::getElementType($element),
+            'subtype' => $element->getType(),
+            'published' => self::isPublished($element),
+        ];
     }
 
     /**
@@ -883,8 +882,8 @@ class Service extends Model\AbstractModel
      */
     public static function createFolderByPath($path, $options = [])
     {
-        $calledClass = get_called_class();
-        if ($calledClass == __CLASS__) {
+        $calledClass = static::class;
+        if ($calledClass === __CLASS__) {
             throw new \Exception('This method must be called from a extended class. e.g Asset\\Service, DataObject\\Service, Document\\Service');
         }
 
@@ -1213,22 +1212,7 @@ class Service extends Model\AbstractModel
     public static function cloneMe(ElementInterface $element)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
-            /**
-             * The element to be cloned
-             *
-             * @var  ElementInterface
-             */
-            private $element;
-
-            /**
-             * @param ElementInterface $element
-             */
-            public function __construct($element)
-            {
-                $this->element = $element;
-            }
-
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
             /**
              * {@inheritdoc}
              */
@@ -1563,5 +1547,18 @@ class Service extends Model\AbstractModel
         $rowData = self::$formatter->escapeRecord($rowData);
 
         return $rowData;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $type
+     * @param int|string $id
+     *
+     * @return string
+     */
+    public static function getElementCacheTag(string $type, $id): string
+    {
+        return $type . '_' . $id;
     }
 }

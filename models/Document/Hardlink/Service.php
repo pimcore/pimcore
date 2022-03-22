@@ -134,9 +134,7 @@ class Service
             foreach ($pathParts as $pathPart) {
                 $tmpPathes[] = $pathPart;
                 $t = implode('/', $tmpPathes);
-                if (!empty($t)) {
-                    $pathes[] = $t;
-                }
+                $pathes[] = $t;
             }
 
             $pathes = array_reverse($pathes);

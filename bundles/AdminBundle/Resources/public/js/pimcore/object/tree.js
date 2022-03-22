@@ -709,7 +709,7 @@ pimcore.object.tree = Class.create({
 
                     let currentSortMethod = record.data.sortBy;
 
-                    if (currentSortMethod == "key" || user.admin) {
+                    if (currentSortMethod !== "key" || user.admin) {
                         sortByItems.push({
                             text: t('by_key'),
                             iconCls: "pimcore_icon_alphabetical_sorting_az",
@@ -722,7 +722,7 @@ pimcore.object.tree = Class.create({
                         });
                     }
 
-                    if (currentSortMethod == "index" || user.admin) {
+                    if (currentSortMethod !== "index" || user.admin) {
                         sortByItems.push({
                             text: t('by_index'),
                             iconCls: "pimcore_icon_index_sorting",

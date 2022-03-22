@@ -95,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
             Logger::warning('Error during removing old relations: ' . $e);
         }
 
-        foreach ($fieldDefinitions as $key => $fd) {
+        foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
             if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
             if ($fd instanceof CustomResourcePersistingInterface) {
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($fieldName), $dirtyRelations)) {
                         continue;
                     }
                 }
@@ -125,34 +125,33 @@ class Dao extends Model\Dao\AbstractDao
                         ],
                         'isUpdate' => $isBrickUpdate,
                         'owner' => $this->model,
-                        'fieldname' => $key,
+                        'fieldname' => $fieldName,
                     ]));
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
+                $fieldDefinitionParams = [
+                    'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                    'fieldname' => $fieldName,
+                    'isUpdate' => $isBrickUpdate,
+                    'context' => [
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $this->model->getType(),
+                        'fieldname' => $this->model->getFieldname(),
+                    ],
+                ];
                 if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'isUpdate' => $isBrickUpdate,
-                        'context' => [
-                            'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname(),
-                        ],
-                    ]);
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
                 } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'fieldname' => $key,
-                        'isUpdate' => $isBrickUpdate,
-                        'context' => [
-                            'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname(),
-                        ],
-                    ]);
-                    $data[$key] = $insertData;
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
+                    $data[$fieldName] = $insertData;
+                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
+                }
+
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    $this->model->markFieldDirty($fieldName, false);
                 }
             }
         }

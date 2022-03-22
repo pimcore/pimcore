@@ -144,7 +144,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/logout", name="pimcore_admin_logout")
+     * @Route("/logout", name="pimcore_admin_logout" , methods={"POST"})
      */
     public function logoutAction()
     {

@@ -149,7 +149,7 @@ class BundleCollection
     {
         if ($bundle instanceof BundleInterface) {
             $item = new Item($bundle, $priority, $environments);
-        } elseif (is_string($bundle) || !empty($bundle)) {
+        } elseif (is_string($bundle)) {
             $item = new LazyLoadedItem($bundle, $priority, $environments);
         } else {
             throw new \InvalidArgumentException('Bundle must be either an instance of BundleInterface or a string containing the bundle class name');

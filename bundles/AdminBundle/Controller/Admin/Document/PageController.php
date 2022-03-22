@@ -21,8 +21,9 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Logger;
+use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
@@ -31,6 +32,8 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
@@ -234,6 +237,7 @@ class PageController extends DocumentControllerBase
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
+                'isAutoSave' => $version->isAutoSave(),
             ];
 
             $treeData = $this->getTreeNodeConfig($page);
@@ -246,43 +250,26 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
+     * @Route("/generate-previews", name="pimcore_admin_document_page_generatepreviews", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getListAction(Request $request)
+    public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore)
     {
         $list = new Document\Listing();
         $list->setCondition('type = ?', ['page']);
-        $data = $list->loadIdPathList();
 
-        return $this->adminJson([
-            'success' => true,
-            'data' => $data,
-        ]);
-    }
+        foreach ($list->loadIdList() as $docId) {
+            $messengerBusPimcoreCore->dispatch(
+                new GeneratePagePreviewMessage($docId, \Pimcore\Tool::getHostUrl())
+            );
 
-    /**
-     * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function generateScreenshotAction(Request $request)
-    {
-        $success = false;
-        if ($request->get('id')) {
-            try {
-                $success = Document\Service::generatePagePreview($request->get('id'), $request);
-            } catch (\Exception $e) {
-                Logger::err($e);
-            }
+            break;
         }
 
-        return $this->adminJson(['success' => $success]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -445,6 +432,9 @@ class PageController extends DocumentControllerBase
      * @param EditmodeEditableDefinitionCollector $definitionCollector
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
+     * @param DocumentResolver $documentResolver
+     *
+     * @throws NotFoundHttpException
      *
      * @return JsonResponse
      */
@@ -453,12 +443,20 @@ class PageController extends DocumentControllerBase
         BlockStateStack $blockStateStack,
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
-        EditableRenderer $editableRenderer
+        EditableRenderer $editableRenderer,
+        DocumentResolver $documentResolver
     ) {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
         $document = Document\PageSnippet::getById($request->get('documentId'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
+
+        $document = clone $document;
+        $document->setEditables([]);
+        $documentResolver->setDocument($request, $document);
 
         $twig->addGlobal('document', $document);
         $twig->addGlobal('editmode', true);

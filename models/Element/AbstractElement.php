@@ -18,6 +18,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
@@ -29,6 +30,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 {
     use ElementDumpStateTrait;
     use DirtyIndicatorTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @internal
@@ -127,7 +129,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementType($this);
 
-        return $elementType . '_' . $this->getId();
+        return Service::getElementCacheTag($elementType, $this->getId());
     }
 
     /**
@@ -141,7 +143,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementTypeByClassName(static::class);
 
-        return $elementType . '_' . $id;
+        return Service::getElementCacheTag($elementType, $id);
     }
 
     /**

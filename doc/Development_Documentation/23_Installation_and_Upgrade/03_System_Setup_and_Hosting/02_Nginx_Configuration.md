@@ -129,12 +129,12 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
         # include fastcgi.conf if needed
-        #include fastcgi.conf;
+        include fastcgi.conf;
         # Bypass the fact that try_files resets $fastcgi_path_info
         # see: http://trac.nginx.org/nginx/ticket/321
         set $path_info $fastcgi_path_info;
@@ -404,7 +404,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;

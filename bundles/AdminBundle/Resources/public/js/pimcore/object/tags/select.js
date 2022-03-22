@@ -153,6 +153,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         var storeData = this.prepareStoreDataAndFilterLabels(field.layout.options);
+        
+        if(!field.layout.mandatory) {
+            storeData.unshift({'value': '', 'key': "(" + t("empty") + ")"});
+        }
+        
         var store = new Ext.data.Store({
             autoDestroy: true,
             fields: ['key', 'value'],
@@ -276,6 +281,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 '{[Ext.util.Format.stripTags(values.key)]}',
                 '</tpl>'
             ),
+            displayField: 'key',
             valueField: 'value',
             labelWidth: 100
         };

@@ -22,7 +22,8 @@ use Pimcore\Model;
  *
  * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
  * @method Model\User[] load()
- * @method Model\User current()
+ * @method Model\User|false current()
+ * @method int getTotalCount()
  */
 abstract class AbstractListing extends Model\Listing\AbstractListing
 {

@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotSuccessfulException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
@@ -186,6 +187,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
         if ($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
             $paymentInformationCollection = $order->getPaymentInfo();
             if ($paymentInformationCollection) {
+                /** @var AbstractPaymentInformation $paymentInfo */
                 foreach ($paymentInformationCollection as $paymentInfo) {
                     if ($paymentInfo->getInternalPaymentId() == $paymentStatus->getInternalPaymentId()) {
                         if ($paymentInfo->getPaymentState() == $paymentStatus->getStatus()) {

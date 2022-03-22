@@ -147,7 +147,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function getCatalogue(string $locale = null)
+    public function getCatalogue(string $locale = null)// : MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }
@@ -158,9 +158,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * @param string $domain
      * @param string $locale
      */
-    public function lazyInitialize($domain, $locale)
+    public function lazyInitialize(string $domain, string $locale)
     {
-        $cacheKey = 'translation_data_' . md5($domain . '_' . $locale);
+        $cacheKey = $this->getCacheKey($domain, $locale);
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
@@ -255,6 +255,28 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * Resets the initialization of a specific catalogue
+     *
+     * @param string $domain
+     * @param string $locale
+     *
+     * @return void
+     */
+    public function resetInitialization(string $domain, string $locale): void
+    {
+        $cacheKey = $this->getCacheKey($domain, $locale);
+        unset($this->initializedCatalogues[$cacheKey]);
+    }
+
+    /**
+     * Reset Catalogues initialization
+     */
+    public function resetCache()
+    {
+        $this->initializedCatalogues = [];
+    }
+
+    /**
      * @param string $id
      * @param string $translated
      * @param array $parameters
@@ -315,7 +337,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         }
                     }
 
-                    $t->save();
+                    TranslationEntriesDumper::addToSaveQueue($t);
                 }
 
                 // put it into the catalogue, otherwise when there are more calls to the same key during one process
@@ -438,5 +460,16 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     public function __call($method, $args)
     {
         return call_user_func_array([$this->translator, $method], $args);
+    }
+
+    /**
+     * @param string $domain
+     * @param string $locale
+     *
+     * @return string
+     */
+    private function getCacheKey(string $domain, string $locale): string
+    {
+        return 'translation_data_' . md5($domain . '_' . $locale);
     }
 }

@@ -21,7 +21,6 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Cookie\CookieSaveHandlerInterface;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -49,11 +48,6 @@ class CookieStorage implements TargetingStorageInterface
     private $saveHandler;
 
     /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
@@ -78,11 +72,9 @@ class CookieStorage implements TargetingStorageInterface
 
     public function __construct(
         CookieSaveHandlerInterface $saveHandler,
-        RequestStack $requestHelper,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->saveHandler = $saveHandler;
-        $this->requestStack = $requestHelper;
         $this->eventDispatcher = $eventDispatcher;
     }
 

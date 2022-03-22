@@ -40,7 +40,7 @@ class SubrequestExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         // as runtime extension classes are invokable, we can pass them directly as callable
         return [

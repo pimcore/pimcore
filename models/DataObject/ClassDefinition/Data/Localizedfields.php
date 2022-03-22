@@ -44,7 +44,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -112,7 +112,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $tabPosition = 'top';
 
@@ -256,52 +256,52 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         if ($inheritanceAllowed) {
-            // same type, iterate over all language and all fields and check if there is something missing
-            $validLanguages = Tool::getValidLanguages();
-            $foundEmptyValue = false;
+            // check if there is a parent with the same type
+            $parent = DataObject\Service::hasInheritableParentObject($object);
+            if ($parent) {
+                // same type, iterate over all language and all fields and check if there is something missing
+                $validLanguages = Tool::getValidLanguages();
+                $foundEmptyValue = false;
 
-            foreach ($validLanguages as $language) {
-                $fieldDefinitions = $this->getFieldDefinitions();
-                foreach ($fieldDefinitions as $fd) {
-                    $key = $fd->getName();
-                    $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+                foreach ($validLanguages as $language) {
+                    $fieldDefinitions = $this->getFieldDefinitions();
+                    foreach ($fieldDefinitions as $fd) {
+                        $key = $fd->getName();
 
-                    if ($parent !== null && $fd->isEmpty($fieldData[$language][$key] ?? null)) {
-                        $foundEmptyValue = true;
-                        $inherited = true;
-                        $metaData[$language][$key] = ['inherited' => true, 'objectid' => $parent->getId()];
+                        if ($fd->isEmpty($fieldData[$language][$key] ?? null)) {
+                            $foundEmptyValue = true;
+                            $inherited = true;
+                            $metaData[$language][$key] = ['inherited' => true, 'objectid' => $parent->getId()];
+                        }
                     }
                 }
-            }
 
-            if ($foundEmptyValue) {
-                $parentData = null;
-                // still some values are passing, ask the parent
-                if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'objectbrick') {
-                    $parent = DataObject\Service::hasInheritableParentObject($object, $params['fieldname']);
-                    $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
-                    $brickContainer = $parent->$brickContainerGetter();
-                    $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
-                    $brickData = $brickContainer->$brickGetter();
-                    if ($brickData) {
-                        $parentData = $brickData->getLocalizedFields();
+                if ($foundEmptyValue) {
+                    $parentData = null;
+                    // still some values are passing, ask the parent
+                    if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'objectbrick') {
+                        $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
+                        $brickContainer = $parent->$brickContainerGetter();
+                        $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
+                        $brickData = $brickContainer->$brickGetter();
+                        if ($brickData) {
+                            $parentData = $brickData->getLocalizedFields();
+                        }
+                    } else {
+                        if (method_exists($parent, 'getLocalizedFields')) {
+                            $parentData = $parent->getLocalizedFields();
+                        }
                     }
-                } else {
-                    $parent = DataObject\Service::hasInheritableParentObject($object, 'localizedfields');
-                    if (method_exists($parent, 'getLocalizedFields')) {
-                        $parentData = $parent->getLocalizedFields();
+                    if ($parentData) {
+                        $parentResult = $this->doGetDataForEditMode(
+                            $parentData,
+                            $parent,
+                            $fieldData,
+                            $metaData,
+                            $level + 1,
+                            $params
+                        );
                     }
-                }
-                if ($parentData) {
-                    $parent = DataObject\Service::hasInheritableParentObject($object);
-                    $parentResult = $this->doGetDataForEditMode(
-                        $parentData,
-                        $parent,
-                        $fieldData,
-                        $metaData,
-                        $level + 1,
-                        $params
-                    );
                 }
             }
         }
@@ -437,7 +437,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -447,7 +447,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -458,7 +458,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function hasChildren()
     {
-        return is_array($this->childs) && count($this->childs) > 0;
+        return is_array($this->children) && count($this->children) > 0;
     }
 
     /**
@@ -466,7 +466,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
     }
 
@@ -1318,11 +1318,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function getTabPosition(): string
     {
-        return $this->tabPosition;
+        return $this->tabPosition ?? 'top';
     }
 
     /**
-     * @param string $tabPosition
+     * @param string|null $tabPosition
      */
     public function setTabPosition($tabPosition): void
     {

@@ -366,7 +366,7 @@ class Model extends AbstractDefinitionHelper
 
             $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
-                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['Unittest'])
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['unittest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
                 ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
@@ -377,6 +377,47 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
+     * Set up a class used for Link Test.
+     *
+     * @param string $name
+     * @param string $filename
+     *
+     * @return ClassDefinition|null
+     *
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Link($name = 'unittestLink', $filename = 'link-import.json')
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new ClassDefinition\Layout\Panel();
+            $panel = (new ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $link = new ClassDefinition\Data\Link();
+            $link->setName('testlink');
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $llink = new ClassDefinition\Data\Link();
+            $llink->setName('ltestlink');
+
+            $lFields->addChild($llink);
+
+            $panel->addChild($link);
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true, null, false);
         }
 
         return $class;
@@ -451,6 +492,10 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
+            /** @var ClassDefinition\Data\Input $inputWithDefault */
+            $inputWithDefault = $this->createDataChild('input', 'inputWithDefault');
+            $inputWithDefault->setDefaultValue('default');
+            $panel->addChild($inputWithDefault);
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
@@ -541,7 +586,7 @@ class Model extends AbstractDefinitionHelper
             );
             $panel->addChild($this->createDataChild('fieldcollections', 'fieldcollection')
                 ->setAllowedTypes(['unittestfieldcollection']));
-            $panel->addChild($this->createDataChild('reverseObjectRelation', 'nonowner'));
+            $panel->addChild($this->createDataChild('reverseObjectRelation', 'nonowner')->setOwnerClassName($name)->setOwnerFieldName('objects'));
             $panel->addChild($this->createDataChild('fieldcollections', 'myfieldcollection')
                 ->setAllowedTypes(['unittestfieldcollection']));
 
@@ -632,6 +677,10 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($otherPanel);
             $panel->addChild($this->createDataChild('objectbricks', 'mybricks'));
 
+            $csField = $this->createDataChild('classificationstore', 'teststore');
+            $csField->setStoreId(1);
+            $panel->addChild($csField);
+
             $root->addChild($rootPanel);
             $class = $this->createClass($name, $root, $filename, true);
         }
@@ -645,10 +694,11 @@ class Model extends AbstractDefinitionHelper
      * @param string $filename
      * @param bool $inheritanceAllowed
      * @param string|null $id
+     * @param bool $generateTypeDeclarations
      *
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null)
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null, $generateTypeDeclarations = true)
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -659,7 +709,7 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
-        $def->setGenerateTypeDeclarations(true);
+        $def->setGenerateTypeDeclarations($generateTypeDeclarations);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 

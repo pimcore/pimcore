@@ -16,6 +16,7 @@
 namespace Pimcore\Model\User;
 
 use Pimcore\Event\Model\UserRoleEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
 
@@ -25,6 +26,8 @@ use Pimcore\Model;
  */
 class AbstractUser extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var int
      */
@@ -185,9 +188,9 @@ class AbstractUser extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::PRE_UPDATE);
+            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::PRE_ADD);
+            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_ADD);
         }
 
         if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
@@ -211,9 +214,9 @@ class AbstractUser extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::POST_UPDATE);
+            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::POST_ADD);
+            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_ADD);
         }
 
         return $this;
@@ -228,7 +231,7 @@ class AbstractUser extends Model\AbstractModel
             throw new \Exception('Deleting the system user is not allowed!');
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
+        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
 
         $type = $this->getType();
 
@@ -248,7 +251,7 @@ class AbstractUser extends Model\AbstractModel
         $this->getDao()->delete();
         \Pimcore\Cache::clearAll();
 
-        \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
+        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
     }
 
     /**

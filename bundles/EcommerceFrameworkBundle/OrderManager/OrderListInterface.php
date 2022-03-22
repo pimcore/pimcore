@@ -23,7 +23,7 @@ use SeekableIterator;
 /**
  * Interface OrderListInterface
  *
- * @method OrderListItemInterface current()
+ * @method OrderListItemInterface|false current()
  */
 interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateListingInterface
 {

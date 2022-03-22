@@ -117,6 +117,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         'containerType' => 'objectbrick',
                         'containerKey' => $allowedBrickType,
                     ],
+                    'owner' => $data,
                     'fieldname' => $this->getName(),
                 ];
 
@@ -140,7 +141,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $object = $data->getObject();
         if ($object) {
-            $parent = DataObject\Service::hasInheritableParentObject($object, $this->getName());
+            $parent = DataObject\Service::hasInheritableParentObject($object);
         }
 
         if (!method_exists($data, $getter)) {
@@ -217,7 +218,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         $result = new \stdClass();
         if ($baseObject) {
-            $parent = DataObject\Service::hasInheritableParentObject($baseObject, $key);
+            $parent = DataObject\Service::hasInheritableParentObject($baseObject);
         }
         $valueGetter = 'get' . ucfirst($key);
 
@@ -261,12 +262,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $result->metaData['inherited'] = $level != 0;
         } else {
             $fieldValue = null;
-            $editmodeValue = null;
-            if (!empty($item)) {
-                $fieldValue = $item->$valueGetter();
+            $fieldValue = $item->$valueGetter();
+            $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
 
-                $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
-            }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
                 $backup = DataObject::getGetInheritedValues();
                 DataObject::setGetInheritedValues(true);
@@ -619,13 +617,32 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            $key = $fd->getName();
+                            $getter = 'get' . ucfirst($key);
+
                             try {
-                                $key = $fd->getName();
-                                $getter = 'get' . ucfirst($key);
                                 $fd->checkValidity($item->$getter(), false, $params);
                             } catch (Model\Element\ValidationException $ve) {
-                                $ve->addContext($this->getName());
-                                $validationExceptions[] = $ve;
+                                if ($item->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($item->$getter())) {
+                                    //try again with parent data when inheritance is activated
+                                    try {
+                                        $getInheritedValues = DataObject::doGetInheritedValues();
+                                        DataObject::setGetInheritedValues(true);
+
+                                        $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
+
+                                        DataObject::setGetInheritedValues($getInheritedValues);
+                                    } catch (\Exception $e) {
+                                        if (!$e instanceof Model\Element\ValidationException) {
+                                            throw $e;
+                                        }
+                                        $e->addContext($this->getName());
+                                        $validationExceptions[] = $e;
+                                    }
+                                } else {
+                                    $ve->addContext($this->getName());
+                                    $validationExceptions[] = $ve;
+                                }
                             }
                         }
                     }
@@ -687,7 +704,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($data->getObject(), $this->getName());
+        $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
 
         if (!$item && !empty($parent)) {

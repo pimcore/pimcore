@@ -49,7 +49,7 @@ class DomCrawler extends Crawler
     /**
      * {@inheritDoc}
      */
-    public function html(string $default = null)
+    public function html(string $default = null): string
     {
         if ($this->wrappedHtmlFragment) {
             $html = $this->filter(self::FRAGMENT_WRAPPER_TAG)->html();

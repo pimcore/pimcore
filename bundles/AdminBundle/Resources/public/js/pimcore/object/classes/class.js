@@ -189,9 +189,9 @@ pimcore.object.classes.klass = Class.create({
     initLayoutFields: function () {
 
         if (this.data.layoutDefinitions) {
-            if (this.data.layoutDefinitions.childs) {
-                for (var i = 0; i < this.data.layoutDefinitions.childs.length; i++) {
-                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i],
+            if (this.data.layoutDefinitions.children) {
+                for (var i = 0; i < this.data.layoutDefinitions.children.length; i++) {
+                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.children[i],
                         this.tree.getRootNode()));
                 }
                 this.tree.getRootNode().expand();
@@ -213,9 +213,9 @@ pimcore.object.classes.klass = Class.create({
 
         newNode = fn();
 
-        if (con.childs) {
-            for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode);
+        if (con.children) {
+            for (var i = 0; i < con.children.length; i++) {
+                this.recursiveAddNode(con.children[i], newNode);
             }
         }
 
@@ -383,12 +383,12 @@ pimcore.object.classes.klass = Class.create({
             changeTypeAllowed = true;
         }
 
-        var childsAllowed = false;
+        var childrenAllowed = false;
         if (allowedTypes[parentType] && allowedTypes[parentType].length > 0) {
-            childsAllowed = true;
+            childrenAllowed = true;
         }
 
-        if (childsAllowed || changeTypeAllowed) {
+        if (childrenAllowed || changeTypeAllowed) {
             // get available layouts
             var layoutMenu = [];
             var layouts = Object.keys(pimcore.object.classes.layout);
@@ -457,7 +457,7 @@ pimcore.object.classes.klass = Class.create({
                 handler: this.copyNode.bind(this, tree, record)
             }));
 
-            if (childsAllowed) {
+            if (childrenAllowed) {
                 if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
                     menu.add(new Ext.menu.Item({
                         text: t('paste'),
@@ -607,7 +607,12 @@ pimcore.object.classes.klass = Class.create({
                 for (var i = 0; i < items.length; i++) {
                     var item = items[i];
                     if (typeof item.getValue == "function") {
-                        this.data[item.name] = item.getValue();
+                        let value = item.getValue();
+                        if (typeof item.config.xtype !== 'undefined' && item.config.xtype === 'textfield') {
+                            value = Ext.util.Format.htmlEncode(value);
+                        }
+
+                        this.data[item.name] = value;
                     }
                 }
 
@@ -705,6 +710,7 @@ pimcore.object.classes.klass = Class.create({
             id: "iconfield-" + this.getId(),
             name: "icon",
             width: 396,
+            renderer: Ext.util.Format.htmlEncode,
             value: this.data.icon,
             listeners: {
                 "afterrender": function (el) {
@@ -752,6 +758,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 500,
                     enableKeyEvents: true,
                     value: this.data.name,
+                    renderer: Ext.util.Format.htmlEncode,
                     listeners: {
                         keyup: function (el) {
                             this.rootPanel.getComponent("phpClassName").setValue(getPhpClassName(el.getValue()))
@@ -763,12 +770,14 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("description"),
                     name: "description",
                     width: 500,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.description
                 },
                 {
                     xtype: "textfield",
                     fieldLabel: t("unique_identifier"),
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.id,
                     width: 500
                 },
@@ -779,6 +788,7 @@ pimcore.object.classes.klass = Class.create({
                     itemId: "phpClassName",
                     width: 500,
                     disabled: true,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: getPhpClassName(this.data.name)
                 },
                 {
@@ -786,6 +796,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("parent_php_class"),
                     name: "parentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.parentClass
                 },
                 {
@@ -793,6 +804,7 @@ pimcore.object.classes.klass = Class.create({
                     width: 600,
                     name: "implementsInterfaces",
                     fieldLabel: t("implements_interfaces"),
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.implementsInterfaces
                 },
                 {
@@ -800,6 +812,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("use_traits"),
                     name: "useTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.useTraits
                 },
                 {
@@ -807,6 +820,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_parent_php_class"),
                     name: "listingParentClass",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingParentClass
                 },
                 {
@@ -814,6 +828,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("listing_use_traits"),
                     name: "listingUseTraits",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.listingUseTraits
                 },
                 {
@@ -821,6 +836,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("link_generator_reference"),
                     name: "linkGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.linkGeneratorReference
                 },
                 {
@@ -828,6 +844,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_generator_reference"),
                     name: "previewGeneratorReference",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewGeneratorReference
                 },
                 {
@@ -835,6 +852,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("preview_url"),
                     name: "previewUrl",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.previewUrl
                 },
                 {
@@ -885,6 +903,7 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("group"),
                     name: "group",
                     width: 600,
+                    renderer: Ext.util.Format.htmlEncode,
                     value: this.data.group
                 },
                 this.allowInheritance,
@@ -1176,7 +1195,7 @@ pimcore.object.classes.klass = Class.create({
         };
         newNode = this.appendChild(newNode);
 
-        //to hide or show the expanding icon depending if childs are available or not
+        //to hide or show the expanding icon depending if children are available or not
         newNode.addListener('remove', function(node, removedNode, isMove) {
             if(!node.hasChildNodes()) {
                 node.set('expandable', false);
@@ -1407,12 +1426,12 @@ pimcore.object.classes.klass = Class.create({
             }
         }
 
-        data.childs = null;
+        data.children = null;
         if (node.childNodes.length > 0) {
-            data.childs = [];
+            data.children = [];
 
             for (var i = 0; i < node.childNodes.length; i++) {
-                data.childs.push(this.getNodeData(node.childNodes[i]));
+                data.children.push(this.getNodeData(node.childNodes[i]));
             }
         }
 

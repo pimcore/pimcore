@@ -167,15 +167,23 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
         }
 
+        $preUpdateEvent = new DataObjectEvent($this, [
+            'validationExceptions' => $validationExceptions,
+            'message' => 'Validation failed: ',
+            'separator' => ' / ',
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE_VALIDATION_EXCEPTION);
+        $validationExceptions = $preUpdateEvent->getArgument('validationExceptions');
+
         if ($validationExceptions) {
-            $message = 'Validation failed: ';
+            $message = $preUpdateEvent->getArgument('message');
             $errors = [];
 
             /** @var Model\Element\ValidationException $e */
             foreach ($validationExceptions as $e) {
                 $errors[] = $e->getAggregatedMessage();
             }
-            $message .= implode(' / ', $errors);
+            $message .= implode($preUpdateEvent->getArgument('separator'), $errors);
 
             throw new Model\Element\ValidationException($message);
         }
@@ -500,7 +508,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getValueFromParent($key, $params = null)
     {
-        $parent = $this->getNextParentForInheritance($key);
+        $parent = $this->getNextParentForInheritance();
         if ($parent) {
             $method = 'get' . $key;
             if (method_exists($parent, $method)) {
@@ -516,11 +524,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param string $fieldName allows to disable inheritance for single field by overriding the corresponding data object class
-     *
      * @return AbstractObject|null
      */
-    public function getNextParentForInheritance($fieldName = null)
+    public function getNextParentForInheritance()
     {
         return $this->getClosestParentOfClass($this->getClassId());
     }
@@ -551,8 +557,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * get object relation data as array for a specific field
-     *
-     * @internal
      *
      * @param string $fieldName
      * @param bool $forOwner
@@ -663,7 +667,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             $list = static::makeList($listConfig, $objectTypes);
 
-            if ($field instanceof AbstractRelations && $field->isFilterable()) {
+            if ($field instanceof AbstractRelations) {
                 $list = $field->addListingFilter($list, $value);
             }
 

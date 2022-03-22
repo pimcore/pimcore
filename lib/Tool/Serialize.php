@@ -66,9 +66,9 @@ final class Serialize
      *
      * @param mixed $data
      *
-     * @return string
+     * @return mixed
      */
-    public static function removeReferenceLoops($data)
+    public static function removeReferenceLoops($data): mixed
     {
         self::$loopFilterProcessedObjects = []; // reset
 

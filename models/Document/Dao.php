@@ -58,7 +58,7 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT id FROM documents WHERE path = :path AND `key` = :key', $params);
+        $data = $this->db->fetchRow('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -192,7 +192,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchCol('SELECT id FROM documents WHERE path LIKE ?', $this->db->escapeLike($oldPath) . '%');
+        $documents = $this->db->fetchAll('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [$this->db->escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -235,10 +235,14 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
-        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM documents WHERE id = ? FOR UPDATE', $this->model->getId());
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
+        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM documents WHERE id = ? FOR UPDATE', [$this->model->getId()]);
 
         if ($this->model instanceof PageSnippet) {
-            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'document'", $this->model->getId());
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'document'", [$this->model->getId()]);
             $versionCount = max($versionCount, $versionCount2);
         }
 
@@ -315,26 +319,29 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Deletes all user permissions based on the document id.
-     */
-    public function deleteAllPermissions()
-    {
-        $this->db->delete('users_workspaces_document', ['cid' => $this->model->getId()]);
-    }
-
-    /**
      * Quick check if there are children.
      *
      * @param bool|null $includingUnpublished
+     * @param Model\User $user
      *
      * @return bool
      */
-    public function hasChildren($includingUnpublished = null)
+    public function hasChildren($includingUnpublished = null, $user = null)
     {
-        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+        if (!$this->model->getId()) {
+            return false;
+        }
+
+        $sql = 'SELECT id FROM documents d WHERE parentId = ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
+        }
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
+
+            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
         }
 
         $sql .= ' LIMIT 1';
@@ -353,6 +360,10 @@ class Dao extends Model\Element\Dao
      */
     public function getChildAmount($user = null)
     {
+        if (!$this->model->getId()) {
+            return 0;
+        }
+
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
@@ -362,9 +373,8 @@ class Dao extends Model\Element\Dao
         } else {
             $query = 'SELECT COUNT(*) AS count FROM documents WHERE parentId = ?';
         }
-        $c = $this->db->fetchOne($query, $this->model->getId());
 
-        return $c;
+        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
     /**
@@ -376,7 +386,17 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings($includingUnpublished = null)
     {
-        $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
+        if (!$this->model->getParentId()) {
+            return false;
+        }
+
+        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+        $params = [$this->model->getParentId()];
+
+        if ($this->model->getId()) {
+            $sql .= ' AND id != ?';
+            $params[] = $this->model->getId();
+        }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
@@ -384,7 +404,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
+        $c = $this->db->fetchOne($sql, $params);
 
         return (bool)$c;
     }

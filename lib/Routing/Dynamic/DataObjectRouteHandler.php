@@ -20,9 +20,7 @@ namespace Pimcore\Routing\Dynamic;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -33,19 +31,9 @@ use Symfony\Component\Routing\RouteCollection;
 final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
-     * @var Document\Service
-     */
-    private $documentService;
-
-    /**
      * @var SiteResolver
      */
     private $siteResolver;
-
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
 
     /**
      * @var Config
@@ -53,19 +41,14 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $config;
 
     /**
-     * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
-     * @param RequestHelper $requestHelper
+     * @param Config $config
      */
     public function __construct(
-        Document\Service $documentService,
         SiteResolver $siteResolver,
-        RequestHelper $requestHelper,
         Config $config
     ) {
-        $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
-        $this->requestHelper = $requestHelper;
         $this->config = $config;
     }
 
@@ -74,8 +57,8 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function getRouteByName(string $name)
     {
-        if (preg_match('/^data_object_(\d+)_(.*)$/', $name, $match)) {
-            $slug = DataObject\Data\UrlSlug::resolveSlug($match[2]);
+        if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
+            $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
                 /** @var DataObject\Concrete $object * */
                 $object = DataObject::getById($match[1]);
@@ -93,7 +76,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
-        $slug = null;
         $site = $this->siteResolver->getSite($context->getRequest());
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
         if ($slug) {
@@ -115,13 +97,19 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute
     {
+        $site = $this->siteResolver->getSite();
         $route = new DataObjectRoute($slug->getSlug());
         $route->setOption('utf8', true);
         $route->setObject($object);
         $route->setSlug($slug);
+        $route->setSite($site);
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
+
+        if ($slug->getOwnertype() === 'localizedfield') {
+            $route->setDefault('_locale', $slug->getPosition());
+        }
 
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,

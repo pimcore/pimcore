@@ -34,9 +34,12 @@ final class Configuration implements ConfigurationInterface
     /**
      * @var PlaceholderProcessor
      */
-    private $placeholderProcessor;
+    private PlaceholderProcessor $placeholderProcessor;
 
-    private $placeholders = [];
+    /**
+     * @var array
+     */
+    private array $placeholders = [];
 
     public function __construct()
     {
@@ -45,11 +48,9 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Generates the configuration tree builder.
-     *
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
+     * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
@@ -517,6 +518,10 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->arrayNode('image_optimizers')
+                                        ->addDefaultsIfNotSet()
+                                        ->canBeDisabled()
+                                    ->end()
                                     ->arrayNode('auto_formats')
                                         ->prototype('array')
                                             ->canBeDisabled()
@@ -855,6 +860,9 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
+                ->end()
+                ->scalarNode('preview_url_prefix')
+                    ->defaultValue('')
                 ->end()
                 ->integerNode('tree_paging_limit')
                     ->defaultValue(50)

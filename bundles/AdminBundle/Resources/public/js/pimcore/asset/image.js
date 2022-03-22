@@ -107,10 +107,10 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
                 html: '<iframe src="' + url + '" frameborder="0" ' +
-                'style="width: 100%;" id="' + frameId + '"></iframe>',
+                    'style="width: 100%;" id="' + frameId + '"></iframe>',
                 iconCls: "pimcore_material_icon_edit pimcore_material_icon"
             });
-            this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
+            this.editPanel.on("resize", function (el, width, height) {
                 Ext.get(frameId).setStyle({
                     height: (height - 7) + "px"
                 });
@@ -154,7 +154,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     handler: function () {
                         var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
                         features.forEach(function (feature) {
-                           Ext.get(feature).toggle();
+                            Ext.get(feature).toggle();
                         });
                     }.bind(this)
                 }, {
@@ -431,16 +431,11 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }]
             });
 
-            this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
+            this.displayPanel.on('resize', function () {
                 if(this.previewMode == 'vr') {
                     this.initPreviewVr();
                 } else {
                     this.initPreviewImage();
-                    var area = this.displayPanel.getEl().down('img');
-                    if(area) {
-                        area.setStyle('max-width', (width - 340) + "px");
-                        area.setStyle('max-height', (height - 40) + "px");
-                    }
                 }
             }.bind(this));
         }
@@ -467,6 +462,12 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewContainerId).setHtml(html);
 
         this.previewMode = 'image';
+
+        let area = this.displayPanel.getEl().down('img');
+        if(area) {
+            area.setStyle('max-width', (this.displayPanel.getWidth() - 340) + "px");
+            area.setStyle('max-height', (this.displayPanel.getHeight() - 40) + "px");
+        }
 
         if(this.data['customSettings']) {
             if (this.data['customSettings']['focalPointX']) {

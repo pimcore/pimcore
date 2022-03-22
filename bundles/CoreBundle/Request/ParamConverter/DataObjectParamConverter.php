@@ -33,7 +33,7 @@ class DataObjectParamConverter implements ParamConverterInterface
      *
      * @throws NotFoundHttpException When invalid data object ID given
      */
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $param = $configuration->getName();
 
@@ -50,7 +50,7 @@ class DataObjectParamConverter implements ParamConverterInterface
         }
 
         $class = $configuration->getClass();
-        $options = $configuration->getOptions() ?? [];
+        $options = $configuration->getOptions();
 
         /** @var Concrete|null $object */
         $object = $class::getById($value);
@@ -67,8 +67,9 @@ class DataObjectParamConverter implements ParamConverterInterface
 
     /**
      * {@inheritdoc}
+     *
      */
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         if (null === $configuration->getClass()) {
             return false;

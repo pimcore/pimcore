@@ -937,7 +937,7 @@ class AssetHelperController extends AdminController
         }
         $result['defaultColumns']['nodeLabel'] = 'default_metadata';
         $result['defaultColumns']['nodeType'] = 'image';
-        $result['defaultColumns']['childs'] = $defaultColumns;
+        $result['defaultColumns']['children'] = $defaultColumns;
 
         //predefined metadata
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
@@ -960,7 +960,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        $result['metadataColumns']['childs'] = $metadataItems;
+        $result['metadataColumns']['children'] = $metadataItems;
         $result['metadataColumns']['nodeLabel'] = 'predefined_metadata';
         $result['metadataColumns']['nodeType'] = 'metadata';
 
@@ -972,7 +972,7 @@ class AssetHelperController extends AdminController
         }
         $result['systemColumns']['nodeLabel'] = 'system_columns';
         $result['systemColumns']['nodeType'] = 'system';
-        $result['systemColumns']['childs'] = $systemColumns;
+        $result['systemColumns']['children'] = $systemColumns;
 
         return $this->adminJson($result);
     }

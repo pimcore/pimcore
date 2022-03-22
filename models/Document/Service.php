@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Config;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
@@ -149,6 +150,13 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         /** @var Document $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
@@ -201,6 +209,13 @@ class Service extends Model\Element\Service
         }
 
         $source->getProperties();
+
+        // triggers actions before document cloning
+        $event = new DocumentEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         /**
          * @var Document $new
@@ -356,6 +371,10 @@ class Service extends Model\Element\Service
      */
     public static function pathExists($path, $type = null)
     {
+        if (!$path) {
+            return false;
+        }
+
         $path = Element\Service::correctPath($path);
 
         try {
@@ -572,9 +591,7 @@ class Service extends Model\Element\Service
                 $tmpPaths[] = $pathPart;
 
                 $t = implode('/', $tmpPaths);
-                if (!empty($t)) {
-                    $paths[] = $t;
-                }
+                $paths[] = $t;
             }
 
             $paths = array_reverse($paths);
@@ -639,7 +656,10 @@ class Service extends Model\Element\Service
         /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
-            $hostUrl = Tool::getHostUrl(null, $request);
+            $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
+            if (empty($hostUrl)) {
+                $hostUrl = Tool::getHostUrl(null, $request);
+            }
         }
 
         $url = $hostUrl . $doc->getRealFullPath();

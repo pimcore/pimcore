@@ -105,7 +105,7 @@ class MaintenanceCommand extends AbstractCommand
             $command = $this->getApplication()->find('messenger:consume');
 
             $arguments = [
-                'receivers' => ['pimcore_core', 'pimcore_maintenance'],
+                'receivers' => ['pimcore_core', 'pimcore_maintenance', 'pimcore_image_optimize'],
                 '--time-limit' => 5 * 60,
             ];
 

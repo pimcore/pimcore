@@ -69,7 +69,7 @@ trait DocumentTreeConfigTrait
             ],
         ];
 
-        $hasChildren = (bool)$childDocument->getChildAmount(Admin::getCurrentUser());
+        $hasChildren = $childDocument->getDao()->hasChildren(null, Admin::getCurrentUser());
 
         // add icon
         $tmpDocument['expandable'] = $hasChildren;

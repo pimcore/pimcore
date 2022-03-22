@@ -953,5 +953,19 @@
     "user_unknown": "Utilisateur inconnu",
     "lost_password_email_error": "Impossible d'envoyer l'e-mail de récupération du mot de passe",
     "config_not_writeable": "Impossible d'écrire, il peut y avoir plusieurs raisons. Pour plus de détails, veuillez consulter la documentation.",
-    "collapse_children": "Collapse children"
+    "collapse_children": "Réduire les enfants",
+    "sites": "Sites",
+    "filter_by_relation": "Filtrer par relation",
+    "filter_by_relation_field": "Filtrer par champ de relation",
+    "clear_relation_filter": "Effacer le filtre de relation actif",
+    "apply_filter": "Appliquer le filtre",
+    "translation_simple": "Texte simple",
+    "translation_custom": "Format ICU",
+    "bundle_ecommerce_pricing_rule_add": "Ajouter une règle de tarification",
+    "bundle_ecommerce_pricing_rule_error": "Erreur lors de la création de la règle de tarification",
+    "file_exists": "File already exists",
+    "asset_upload_want_to_overwrite": "Do you want to overwrite file %s?",
+    "asset_upload_overwrite": "Overwrite",
+    "asset_upload_keep_both": "Keep both files",
+    "asset_upload_overwrite_all": "Overwrite all"
 }

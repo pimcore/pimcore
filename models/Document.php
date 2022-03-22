@@ -20,9 +20,9 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
-use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -209,6 +209,18 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected static function getPathCacheKey(string $path): string
+    {
+        return 'document_path_' . md5($path);
+    }
+
+    /**
      * @param string $path
      * @param bool $force
      *
@@ -216,15 +228,20 @@ class Document extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
-        $path = Element\Service::correctPath($path);
-
-        $cacheKey = 'document_path_' . md5($path);
-
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            return \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$path) {
+            return null;
         }
 
-        $doc = null;
+        $path = Element\Service::correctPath($path);
+
+        $cacheKey = self::getPathCacheKey($path);
+
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+            if ($document && static::typeMatch($document)) {
+                return $document;
+            }
+        }
 
         try {
             $helperDoc = new Document();
@@ -247,8 +264,8 @@ class Document extends Element\AbstractElement
      */
     protected static function typeMatch(Document $document)
     {
-        $staticType = get_called_class();
-        if ($staticType != Document::class) {
+        $staticType = static::class;
+        if ($staticType !== Document::class) {
             if (!$document instanceof $staticType) {
                 return false;
             }
@@ -388,9 +405,9 @@ class Document extends Element\AbstractElement
             $preEvent = new DocumentEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -422,10 +439,17 @@ class Document extends Element\AbstractElement
 
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    if ($oldPath && $oldPath !== $newPath = $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                        $updatedChildren = array_map(
+                            static function (array $doc) use ($oldPath, $newPath): array {
+                                $doc['oldPath'] = substr_replace($doc['path'], $oldPath, 0, strlen($newPath));
+
+                                return $doc;
+                            },
+                            $this->getDao()->updateChildPaths($oldPath),
+                        );
                     }
 
                     $this->commit();
@@ -455,12 +479,13 @@ class Document extends Element\AbstractElement
 
             $additionalTags = [];
             if (isset($updatedChildren) && is_array($updatedChildren)) {
-                foreach ($updatedChildren as $documentId) {
-                    $tag = 'document_' . $documentId;
+                foreach ($updatedChildren as $updatedDocument) {
+                    $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
 
-                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long-running scripts, such as CLI
                     \Pimcore\Cache\Runtime::set($tag, null);
+                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -470,9 +495,9 @@ class Document extends Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_ADD);
             }
 
             return $this;
@@ -480,9 +505,9 @@ class Document extends Element\AbstractElement
             $failureEvent = new DocumentEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -490,7 +515,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
     private function correctPath()
     {
@@ -531,7 +556,10 @@ class Document extends Element\AbstractElement
         if (Document\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+
+                throw $duplicateFullPathException;
             }
         }
 
@@ -654,12 +682,16 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->children[$cacheKey])) {
-            $list = new Document\Listing();
-            $list->setUnpublished($includingUnpublished);
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-            $this->children[$cacheKey] = $list->load();
+            if ($this->getId()) {
+                $list = new Document\Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->setCondition('parentId = ?', $this->getId());
+                $list->setOrderKey('index');
+                $list->setOrder('asc');
+                $this->children[$cacheKey] = $list->load();
+            } else {
+                $this->children[$cacheKey] = [];
+            }
         }
 
         return $this->children[$cacheKey];
@@ -695,15 +727,21 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
-            $list = new Document\Listing();
-            $list->setUnpublished($includingUnpublished);
-            // string conversion because parentId could be 0
-            $list->addConditionParam('parentId = ?', (string)$this->getParentId());
-            $list->addConditionParam('id != ?', $this->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-            $this->siblings[$cacheKey] = $list->load();
-            $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+            if ($this->getParentId()) {
+                $list = new Document\Listing();
+                $list->setUnpublished($includingUnpublished);
+                $list->addConditionParam('parentId = ?', $this->getParentId());
+                if ($this->getId()) {
+                    $list->addConditionParam('id != ?', $this->getId());
+                }
+                $list->setOrderKey('index');
+                $list->setOrder('asc');
+                $this->siblings[$cacheKey] = $list->load();
+                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+            } else {
+                $this->siblings[$cacheKey] = [];
+                $this->hasSiblings[$cacheKey] = false;
+            }
         }
 
         return $this->siblings[$cacheKey];
@@ -772,9 +810,6 @@ class Document extends Element\AbstractElement
         // remove all properties
         $this->getDao()->deleteAllProperties();
 
-        // remove permissions
-        $this->getDao()->deleteAllPermissions();
-
         // remove dependencies
         $d = $this->getDependencies();
         $d->cleanAllForElement($this);
@@ -789,7 +824,7 @@ class Document extends Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -816,7 +851,7 @@ class Document extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
+            $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
             Logger::error($e);
 
             throw $e;
@@ -827,8 +862,9 @@ class Document extends Element\AbstractElement
 
         //clear document from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
+        \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
     /**
@@ -940,7 +976,7 @@ class Document extends Element\AbstractElement
             $event = new GenericEvent($this, [
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::DOCUMENT_PATH);
+            $this->dispatchEvent($event, FrontendEvents::DOCUMENT_PATH);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -958,9 +994,9 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**
@@ -1375,10 +1411,9 @@ class Document extends Element\AbstractElement
      */
     protected function getListingCacheKey(array $args = [])
     {
-        $unpublished = (bool)($args[0] ?? false);
-        $cacheKey = (string)$unpublished;
+        $includingUnpublished = (bool)($args[0] ?? false);
 
-        return $cacheKey;
+        return 'document_list_' . ($includingUnpublished ? '1' : '0');
     }
 
     public function __clone()

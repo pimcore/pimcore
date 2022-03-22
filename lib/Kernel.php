@@ -167,8 +167,52 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($systemConfigFile);
         }
 
-        foreach (['image-thumbnails', 'video-thumbnails', 'custom-reports', 'document-types', 'web-to-print', 'predefined-properties', 'predefined-asset-metadata', 'staticroutes', 'perspectives', 'custom-views'] as $configDir) {
-            $configDir = PIMCORE_CONFIGURATION_DIRECTORY . "/$configDir/";
+        $configArray = [
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
+                'defaultStorageDirectoryName' => 'image-thumbnails',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS',
+                'defaultStorageDirectoryName' => 'video-thumbnails',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS',
+                'defaultStorageDirectoryName' => 'custom-reports',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES',
+                'defaultStorageDirectoryName' => 'document-types',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT',
+                'defaultStorageDirectoryName' => 'web-to-print',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
+                'defaultStorageDirectoryName' => 'predefined-properties',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA',
+                'defaultStorageDirectoryName' => 'predefined-asset-metadata',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES',
+                'defaultStorageDirectoryName' => 'staticroutes',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES',
+                'defaultStorageDirectoryName' => 'perspectives',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
+                'defaultStorageDirectoryName' => 'custom-views',
+            ],
+        ];
+
+        foreach ($configArray as $config) {
+            $configDir = rtrim($_SERVER[$config['storageDirectoryEnvVariableName']] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/' . $config['defaultStorageDirectoryName'], '/\\');
+            $configDir = "$configDir/";
             if (is_dir($configDir)) {
                 // @phpstan-ignore-next-line
                 $loader->import($configDir);

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\TokenParser;
 
 use Pimcore\Twig\Node\GlossaryNode;
+use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
@@ -31,7 +32,7 @@ class GlossaryTokenParser extends AbstractTokenParser
     /**
      * {@inheritdoc}
      */
-    public function parse(Token $token)
+    public function parse(Token $token): Node
     {
         trigger_deprecation(
             'pimcore/pimcore',

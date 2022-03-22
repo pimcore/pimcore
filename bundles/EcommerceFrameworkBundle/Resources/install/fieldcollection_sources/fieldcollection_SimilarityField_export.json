@@ -19,7 +19,7 @@
     "bodyStyle": null,
     "datatype": "layout",
     "permissions": null,
-    "childs": [
+    "children": [
       {
         "fieldtype": "panel",
         "layout": "",
@@ -35,7 +35,7 @@
         "bodyStyle": "",
         "datatype": "layout",
         "permissions": "",
-        "childs": [
+        "children": [
           {
             "fieldtype": "indexFieldSelectionCombo",
             "specificPriceField": false,

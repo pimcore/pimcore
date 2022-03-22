@@ -60,10 +60,6 @@ trait VersionDaoTrait
             'ctype' => Element\Service::getElementType($this->model),
         ])->setOrderKey('id')->setOrder('ASC');
 
-        $versions = $list->load();
-
-        $this->model->setVersions($versions);
-
-        return $versions;
+        return $list->load();
     }
 }

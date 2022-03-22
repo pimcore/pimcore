@@ -571,7 +571,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
     getOperatorTrees: function () {
         var operators = Object.keys(pimcore.object.gridcolumn.operator);
         var operatorGroups = [];
-        // var childs = [];
+
         for (let i = 0; i < operators.length; i++) {
             var operator = operators[i];
             if (!this.availableOperators || this.availableOperators.indexOf(operator) >= 0) {

@@ -49,8 +49,10 @@ class Image extends Model\Asset
             }
         }
 
-        $this->clearThumbnails($this->clearThumbnailsOnSave);
-        $this->clearThumbnailsOnSave = false; // reset to default
+        if ($params['isUpdate']) {
+            $this->clearThumbnails($this->clearThumbnailsOnSave);
+            $this->clearThumbnailsOnSave = false; // reset to default
+        }
 
         parent::update($params);
     }
@@ -105,38 +107,41 @@ class Image extends Model\Asset
         if ($facedetectBin) {
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $image = $thumbnail->getLocalFile();
-            $imageWidth = $thumbnail->getWidth();
-            $imageHeight = $thumbnail->getHeight();
+            $reference = $thumbnail->getPathReference();
+            if (in_array($reference['type'], ['asset', 'thumbnail'])) {
+                $image = $thumbnail->getLocalFile();
+                $imageWidth = $thumbnail->getWidth();
+                $imageHeight = $thumbnail->getHeight();
 
-            $command = [$facedetectBin, $image];
-            Console::addLowProcessPriority($command);
-            $process = new Process($command);
-            $process->run();
-            $result = $process->getOutput();
-            if (strpos($result, "\n")) {
-                $faces = explode("\n", trim($result));
+                $command = [$facedetectBin, $image];
+                Console::addLowProcessPriority($command);
+                $process = new Process($command);
+                $process->run();
+                $result = $process->getOutput();
+                if (strpos($result, "\n")) {
+                    $faces = explode("\n", trim($result));
 
-                foreach ($faces as $coordinates) {
-                    list($x, $y, $width, $height) = explode(' ', $coordinates);
+                    foreach ($faces as $coordinates) {
+                        list($x, $y, $width, $height) = explode(' ', $coordinates);
 
-                    // percentages
-                    $Px = $x / $imageWidth * 100;
-                    $Py = $y / $imageHeight * 100;
-                    $Pw = $width / $imageWidth * 100;
-                    $Ph = $height / $imageHeight * 100;
+                        // percentages
+                        $Px = (int) $x / $imageWidth * 100;
+                        $Py = (int) $y / $imageHeight * 100;
+                        $Pw = (int) $width / $imageWidth * 100;
+                        $Ph = (int) $height / $imageHeight * 100;
 
-                    $faceCoordinates[] = [
-                        'x' => $Px,
-                        'y' => $Py,
-                        'width' => $Pw,
-                        'height' => $Ph,
-                    ];
+                        $faceCoordinates[] = [
+                            'x' => $Px,
+                            'y' => $Py,
+                            'width' => $Pw,
+                            'height' => $Ph,
+                        ];
+                    }
+
+                    $this->setCustomSetting('faceCoordinates', $faceCoordinates);
+
+                    return true;
                 }
-
-                $this->setCustomSetting('faceCoordinates', $faceCoordinates);
-
-                return true;
             }
         }
 
@@ -229,8 +234,10 @@ EOT;
      */
     private function getLowQualityPreviewStoragePath()
     {
-        return sprintf('%s/image-thumb__%s__-low-quality-preview.svg',
+        return sprintf(
+            '%s/%s/image-thumb__%s__-low-quality-preview.svg',
             rtrim($this->getRealPath(), '/'),
+            $this->getId(),
             $this->getId()
         );
     }

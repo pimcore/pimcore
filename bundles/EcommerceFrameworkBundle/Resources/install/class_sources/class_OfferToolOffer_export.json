@@ -23,7 +23,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -39,7 +39,7 @@
                 "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "panel",
                         "layout": "",
@@ -55,7 +55,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": "",
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "<b>OfferToolOffer <\/b>as storage for created offers in the frontend.&nbsp;May be extended for specific use case.&nbsp;",
@@ -73,7 +73,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {
@@ -89,7 +89,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
@@ -178,7 +178,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "numeric",
                                         "width": 400,
@@ -320,7 +320,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "input",
                                         "width": "",
@@ -373,7 +373,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "manyToManyObjectRelation",
                                 "width": "",

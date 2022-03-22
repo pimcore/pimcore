@@ -20,7 +20,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\Permission\Definition\Listing\Dao getDao()
  * @method Model\User\Permission\Definition[] load()
- * @method Model\User\Permission\Definition current()
+ * @method Model\User\Permission\Definition|false current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

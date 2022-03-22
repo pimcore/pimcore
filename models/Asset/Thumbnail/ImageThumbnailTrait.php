@@ -178,6 +178,27 @@ trait ImageThumbnailTrait
         return $this->realHeight;
     }
 
+    private function readDimensionsFromFile(): array
+    {
+        $dimensions = [];
+        $pathReference = $this->getPathReference();
+        if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
+            try {
+                $info = @getimagesize($this->getLocalFile());
+                if ($info) {
+                    $dimensions = [
+                        'width' => $info[0],
+                        'height' => $info[1],
+                    ];
+                }
+            } catch (\Exception $e) {
+                // noting to do
+            }
+        }
+
+        return $dimensions;
+    }
+
     /**
      * @return array
      */
@@ -188,28 +209,19 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            // first we try to calculate the final dimensions based on the thumbnail configuration
-            if ($config && $asset instanceof Image) {
+            if ($this->exists()) {
+                $dimensions = $this->readDimensionsFromFile();
+            }
+
+            // try to calculate the final dimensions based on the thumbnail configuration
+            if (empty($dimensions) && $config && $asset instanceof Image) {
                 $dimensions = $config->getEstimatedDimensions($asset);
             }
 
             if (empty($dimensions)) {
                 // unable to calculate dimensions -> use fallback
                 // generate the thumbnail and get dimensions from the thumbnail file
-                $pathReference = $this->getPathReference();
-                if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
-                    try {
-                        $info = @getimagesize($this->getLocalFile());
-                        if ($info) {
-                            $dimensions = [
-                                'width' => $info[0],
-                                'height' => $info[1],
-                            ];
-                        }
-                    } catch (\Exception $e) {
-                        // noting to do
-                    }
-                }
+                $dimensions = $this->readDimensionsFromFile();
             }
 
             $this->width = isset($dimensions['width']) ? $dimensions['width'] : null;

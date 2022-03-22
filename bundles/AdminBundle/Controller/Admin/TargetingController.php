@@ -18,15 +18,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Event\Model\TargetGroupEvent;
-use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/targeting")
@@ -36,6 +33,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class TargetingController extends AdminController implements KernelControllerEventInterface
 {
     // RULES
+
+    private function correctName(string $name): string
+    {
+        return preg_replace('/[#?*:\\\\<>|"%&@=;+]/', '-', $name);
+    }
 
     /**
      * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
@@ -55,7 +57,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         foreach ($list->load() as $target) {
             $targets[] = [
                 'id' => $target->getId(),
-                'text' => $target->getName(),
+                'text' => htmlspecialchars($target->getName()),
                 'active' => $target->getActive(),
                 'qtip' => 'ID: ' . $target->getId(),
             ];
@@ -74,7 +76,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     public function ruleAddAction(Request $request)
     {
         $target = new Targeting\Rule();
-        $target->setName($request->get('name'));
+        $target->setName($this->correctName($request->get('name')));
         $target->save();
 
         return $this->adminJson(['success' => true, 'id' => $target->getId()]);
@@ -129,6 +131,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         /** @var Targeting\Rule|Targeting\Rule\Dao $target */
         $target = Targeting\Rule::getById($request->get('id'));
         $target->setValues($data['settings']);
+        $target->setName($this->correctName($target->getName()));
         $target->setConditions($data['conditions']);
         $target->setActions($data['actions']);
         $target->save();
@@ -208,7 +211,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         foreach ($list->load() as $targetGroup) {
             $targetGroups[] = [
                 'id' => $targetGroup->getId(),
-                'text' => $targetGroup->getName(),
+                'text' => htmlspecialchars($targetGroup->getName()),
                 'active' => $targetGroup->getActive(),
                 'qtip' => $targetGroup->getId(),
             ];
@@ -222,19 +225,15 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache)
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
-        $targetGroup->setName($request->get('name'));
+        $targetGroup->setName($this->correctName($request->get('name')));
         $targetGroup->save();
-
-        $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_ADD);
 
         $cache->clearTag('target_groups');
 
@@ -246,21 +245,17 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache)
     {
         $success = false;
 
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
-            $event = new TargetGroupEvent($targetGroup);
             $targetGroup->delete();
             $success = true;
-
-            $eventDispatcher->dispatch($event, TargetGroupEvents::POST_DELETE);
         }
 
         $cache->clearTag('target_groups');
@@ -289,21 +284,18 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache)
     {
         $data = $this->decodeJson($request->get('data'));
 
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         $targetGroup->setValues($data['settings']);
+        $targetGroup->setName($this->correctName($targetGroup->getName()));
         $targetGroup->save();
-
-        $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_UPDATE);
 
         $cache->clearTag('target_groups');
 

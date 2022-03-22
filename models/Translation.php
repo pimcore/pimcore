@@ -18,16 +18,21 @@ namespace Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
 final class Translation extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     const DOMAIN_DEFAULT = 'messages';
 
     const DOMAIN_ADMIN = 'admin';
@@ -60,14 +65,14 @@ final class Translation extends AbstractModel
     /**
      * @var string
      */
-    protected $type;
+    protected $type = 'simple';
 
     /**
      * @return string
      */
     public function getType()
     {
-        return $this->type;
+        return $this->type ?: 'simple';
     }
 
     /**
@@ -191,7 +196,7 @@ final class Translation extends AbstractModel
      */
     public function setDomain(string $domain): void
     {
-        $this->domain = $domain;
+        $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
     /**
@@ -272,19 +277,21 @@ final class Translation extends AbstractModel
         try {
             $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
-            if (!$create) {
+            if (!$create && !$returnIdIfEmpty) {
                 return null;
-            } else {
-                $translation->setKey($id);
-                $translation->setCreationDate(time());
-                $translation->setModificationDate(time());
+            }
 
+            $translation->setKey($id);
+            $translation->setCreationDate(time());
+            $translation->setModificationDate(time());
+
+            if ($create && $e instanceof NotFoundResourceException) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
-                $translation->save();
+                TranslationEntriesDumper::addToSaveQueue($translation);
             }
         }
 
@@ -369,7 +376,7 @@ final class Translation extends AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
 
         if (!$this->getCreationDate()) {
             $this->setCreationDate(time());
@@ -381,19 +388,19 @@ final class Translation extends AbstractModel
 
         $this->getDao()->save();
 
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::POST_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_SAVE);
 
         self::clearDependentCache();
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
 
         $this->getDao()->delete();
         self::clearDependentCache();
 
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::POST_DELETE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_DELETE);
     }
 
     /**
@@ -417,7 +424,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || empty($languages) || !is_array($languages)) {
+            if (!$languages || !is_array($languages)) {
                 $languages = static::getValidLanguages($domain);
             }
 

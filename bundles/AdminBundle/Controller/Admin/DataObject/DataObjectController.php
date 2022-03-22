@@ -152,7 +152,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($request->get('view')) {
                 $cv = Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv['classes']) {
+                if (!empty($cv['classes'])) {
                     $cvConditions = [];
                     $cvClasses = $cv['classes'];
                     foreach ($cvClasses as $key => $cvClass) {
@@ -191,7 +191,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $childsList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
-                        $object->getChildrenSortBy(), $object->getChildrenSortOrder() ?? 'ASC'
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder()
                     ),
                     false
                 );
@@ -278,7 +278,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
-        $hasChildren = (bool)$child->getChildAmount($allowedTypes, $this->getAdminUser());
+        $hasChildren = $child->getDao()->hasChildren($allowedTypes, null, $this->getAdminUser());
 
         $tmpObject['allowDrop'] = false;
         $tmpObject['leaf'] = !$hasChildren;
@@ -430,6 +430,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $objectData['draft'] = [
                     'id' => $draftVersion->getId(),
                     'modificationDate' => $draftVersion->getDate(),
+                    'isAutoSave' => $draftVersion->isAutoSave(),
                 ];
             }
 
@@ -559,6 +560,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
+            $data['layout'] = self::getLayoutDefinitionArray($data['layout']);
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
@@ -590,7 +592,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($object, $key);
+        $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
@@ -915,7 +917,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();
@@ -933,16 +945,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $object = DataObject::getById($request->get('id'));
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     throw $this->createAccessDeniedHttpException();
-                } elseif ($object->isLocked()) {
-                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
-                } else {
-                    $object->delete();
                 }
+                if ($object->isLocked()) {
+                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
+                }
+                $object->delete();
             }
 
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
@@ -967,6 +980,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
+            if (!\in_array($sortOrder, ['ASC', 'DESC'])) {
+                $sortOrder = 'ASC';
+            }
 
             $currentSortBy = $object->getChildrenSortBy();
 
@@ -1389,7 +1405,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => true]);
             }
-        } elseif ($object->isAllowed('save')) {
+        } elseif ($object->isAllowed('save') || $object->isAllowed('publish')) {
             $isAutoSave = $request->get('task') == 'autoSave';
             $draftData = [];
 
@@ -1398,6 +1414,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $draftData = [
                     'id' => $version->getId(),
                     'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
                 ];
             } else {
                 $object->save();
@@ -2334,5 +2351,41 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
+    }
+
+    /**
+     * @deprecated BC Layer for childs properties, can be removed in Pimcore 11
+     *
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data|null $layout
+     * @param string|null $childrenName
+     *
+     * @return array|null
+     */
+    private static function getLayoutDefinitionArray($layout, ?string $childrenName = null): ?array
+    {
+        if (!$layout) {
+            return null;
+        }
+
+        $return = (array)$layout;
+
+        if (isset($return['children']) && is_array($return['children'])) {
+            $children = $return['children'];
+            unset($return['children']);
+            if (!$childrenName || $childrenName === 'childs') {
+                $return['childs'] = [];
+                foreach ($children as $child) {
+                    $return['childs'][] = self::getLayoutDefinitionArray($child, 'childs');
+                }
+            }
+            if (!$childrenName || $childrenName === 'children') {
+                $return['children'] = [];
+                foreach ($children as $child) {
+                    $return['children'][] = self::getLayoutDefinitionArray($child, 'children');
+                }
+            }
+        }
+
+        return $return;
     }
 }

@@ -89,8 +89,10 @@ final class ImageThumbnail
             try {
                 if (!$deferred) {
                     $storage = Storage::get('asset_cache');
-                    $cacheFilePath = sprintf('%s/image-thumb__%s__document_original_image/page_%s.png',
+                    $cacheFilePath = sprintf(
+                        '%s/%s/image-thumb__%s__document_original_image/page_%s.png',
                         rtrim($this->asset->getRealPath(), '/'),
+                        $this->asset->getId(),
                         $this->asset->getId(),
                         $this->page
                     );
@@ -117,7 +119,7 @@ final class ImageThumbnail
                 }
             } catch (\Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                Logger::error($e);
+                Logger::error($e->getMessage());
             }
 
             if (empty($this->pathReference)) {

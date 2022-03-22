@@ -26,8 +26,8 @@ class PaginateListingSubscriber implements EventSubscriberInterface
         $paginationAdapter = $event->target;
 
         if ($paginationAdapter instanceof PaginateListingInterface) {
-            $event->count = $paginationAdapter->count();
             $items = $paginationAdapter->getItems($event->getOffset(), $event->getLimit());
+            $event->count = $paginationAdapter->count();
             $event->items = $items;
             $event->stopPropagation();
         }

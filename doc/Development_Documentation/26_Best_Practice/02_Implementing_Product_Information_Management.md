@@ -431,4 +431,4 @@ After that, you learned how to use Objectbricks to extend the Product class, att
 
 In the last section, you learned how to configure custom layouts for Pimcore classes and how to use them in Pimcore workflow configurations. Through a concrete example, you learned how to configure a workflow to fill in product information step by step.
 ## Learn more
-This was a sample chapter from the book _Modernizing Enterprise CMS Using Pimcore by Daniele Fontani, Marco Guiducci, Francesa Minà available at Packt Publishing (2021)_. You can purchase the full book [here](https://www.packtpub.com/product/modernizing-enterprise-cms-using-pimcore/9781801075404).
+This was a sample chapter from the book _Modernizing Enterprise CMS Using Pimcore by Daniele Fontani, Marco Guiducci, Francesco Minà available at Packt Publishing (2021)_. You can purchase the full book [here](https://www.packtpub.com/product/modernizing-enterprise-cms-using-pimcore/9781801075404).

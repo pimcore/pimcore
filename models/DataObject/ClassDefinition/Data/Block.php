@@ -104,7 +104,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -308,6 +308,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
+                    if (isset($params['owner'])) {
+                        $this->setBlockElementOwner($blockElement, $params);
+                    }
+
                     $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -540,7 +544,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -550,7 +554,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -561,7 +565,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
+        if (is_array($this->children) && count($this->children) > 0) {
             return true;
         }
 
@@ -573,7 +577,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
     }
 
