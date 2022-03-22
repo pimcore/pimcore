@@ -64,8 +64,8 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $dataExists = $this->db->fetchOne("SELECT count(*) c FROM `".$dataTable."` WHERE
-         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' ");
+        $dataExists = $this->db->fetchOne("SELECT `o_id` FROM `".$dataTable."` WHERE
+         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
         if($dataExists) {
             $this->db->delete($dataTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
         }
@@ -125,8 +125,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupsTable = $this->getGroupsTableName();
 
-        $dataExists = $this->db->fetchOne("SELECT count(*) c FROM `".$groupsTable."` WHERE
-         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' ");
+        $dataExists = $this->db->fetchOne("SELECT `o_id` FROM `".$groupsTable."` WHERE
+         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
         if($dataExists) {
             $this->db->delete($groupsTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
         }

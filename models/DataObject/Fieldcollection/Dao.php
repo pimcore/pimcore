@@ -167,8 +167,8 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $dataExists = $this->db->fetchOne("SELECT count(*) c FROM `".$tableName."` WHERE
-         `o_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' ");
+                $dataExists = $this->db->fetchOne("SELECT `o_id` FROM `".$tableName."` WHERE
+         `o_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
                 if($dataExists) {
                     $this->db->delete($tableName, [
                         'o_id' => $object->getId(),
@@ -184,8 +184,8 @@ class Dao extends Model\Dao\AbstractDao
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
-                    $dataExists = $this->db->fetchOne("SELECT count(*) c FROM `".$tableName."` WHERE
-         `ooo_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' ");
+                    $dataExists = $this->db->fetchOne("SELECT `ooo_id` FROM `".$tableName."` WHERE
+         `ooo_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1 ");
                     if($dataExists) {
                         $this->db->delete($tableName, [
                             'ooo_id' => $object->getId(),
