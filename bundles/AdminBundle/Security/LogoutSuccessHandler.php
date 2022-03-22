@@ -25,10 +25,12 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
+use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -39,7 +41,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-class LogoutSuccessListener implements EventSubscriberInterface, LoggerAwareInterface
+class LogoutSuccessHandler implements EventSubscriberInterface, LoggerAwareInterface, LogoutSuccessHandlerInterface
 {
     use LoggerAwareTrait;
 
@@ -70,6 +72,16 @@ class LogoutSuccessListener implements EventSubscriberInterface, LoggerAwareInte
     {
         $request = $event->getRequest();
 
+        return $this->onLogoutSuccess($request);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return mixed|RedirectResponse
+     */
+    public function onLogoutSuccess(Request $request)
+    {
         $this->logger->debug('Logging out');
 
         $this->tokenStorage->setToken(null);
@@ -77,7 +89,7 @@ class LogoutSuccessListener implements EventSubscriberInterface, LoggerAwareInte
         // clear open edit locks for this session
         Editlock::clearSession(Session::getSessionId());
 
-        /** @var LogoutEvent|null $event */
+        /** @var PimcoreLogoutEvent|null $event */
         $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
             $event = null;
 

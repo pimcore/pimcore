@@ -99,7 +99,7 @@ pimcore:
                 - {path: '^/admin/asset/image-editor'}
 
     security:
-        factory_type: password_hasher
+        factory_type: encoder
         password_hasher_factories:
             Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
 
