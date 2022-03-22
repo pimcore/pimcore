@@ -88,6 +88,8 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
                 name: "elementType",
                 value: this.datax.elementType,
                 labelWidth: 140,
+                forceSelection: true,
+
                 store: [
                     ['input', t('input')],
                     ['textarea', t('textarea')],
