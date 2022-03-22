@@ -1338,6 +1338,10 @@ class Asset extends Element\AbstractElement
                 $this->stream = tmpfile();
             }
         }
+        
+        if ($this->stream === null) {
+            throw new \Exception("Could not get image stream. Maybe you forgot to install imageick?");
+        }
 
         return $this->stream;
     }
