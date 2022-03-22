@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
