@@ -691,6 +691,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 $versions = $this->getVersions();
 
+                if (!$this instanceof Concrete) {
+                    throw new \Exception('Expected $this to be an instance of Pimcore\Model\DataObject\Concrete.');
+                }
+
                 if (\count($versions) === 0 && $this->isPublished() === true) {
                     $willBePublished = true;
                 }
