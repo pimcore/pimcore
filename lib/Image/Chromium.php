@@ -93,8 +93,6 @@ class Chromium
                 'captureBeyondViewport' => true,
                 'clip' => $page->getFullPageClip(),
             ])->saveToFile($outputFile);
-
-            return true;
         } finally {
             $browser->close();
 
