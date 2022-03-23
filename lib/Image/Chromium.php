@@ -81,7 +81,7 @@ class Chromium
         } finally {
             $browser->close();
 
-            return false;
+            return true;
         }
     }
 }
