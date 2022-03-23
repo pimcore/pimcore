@@ -74,6 +74,11 @@ final class EntityModelFactoryPass implements CompilerPassInterface
         }
 
         foreach($classes as $serviceId => $class) {
+
+            if(!class_exists($class)) {
+                continue;
+            }
+
             $serviceId = is_numeric($serviceId) ? $class : $serviceId;
             $definition = new Definition($class);
             $definition->setPublic(true)
