@@ -32,7 +32,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Pimcore extends Module\Symfony
+class Pimcore extends Module
 {
     /**
      * {@inheritdoc}
@@ -71,7 +71,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\Kernel|Kernel
+     * @return \Symfony\Component\HttpKernel\KernelInterface|null
      */
     public function getKernel()
     {
