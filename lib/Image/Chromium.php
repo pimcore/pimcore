@@ -74,21 +74,6 @@ class Chromium
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
 
-            if (php_sapi_name() !== 'cli') {
-                $sessionData = Session::useSession(function (AttributeBagInterface $session) {
-                    return ['name' => Session::getSessionName(), 'id' => Session::getSessionId()];
-                });
-
-                $page->setCookies([
-                    Cookie::create($sessionData['name'], (string)$sessionData['id'], [
-                        "session" => true,
-                        'secure' => false,
-                        'sameSite' => "Strict",
-                        'sameParty' => true,
-                    ])
-                ])->await();
-            }
-
             $page->screenshot([
                 'captureBeyondViewport' => true,
                 'clip' => $page->getFullPageClip(),
