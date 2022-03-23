@@ -161,6 +161,7 @@ pimcore:
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+                    numericRange: \Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
                     manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
                     advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation

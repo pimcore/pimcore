@@ -17,6 +17,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\ColumnType;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\QueryColumnType;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
@@ -25,12 +27,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
-        getColumnType as public genericGetColumnType;
-
+        ColumnType::getColumnType as public genericGetColumnType;
     }
     use Extension\QueryColumnType {
-        getQueryColumnType as public genericGetQueryColumnType;
-
+        QueryColumnType::getQueryColumnType as public genericGetQueryColumnType;
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;
