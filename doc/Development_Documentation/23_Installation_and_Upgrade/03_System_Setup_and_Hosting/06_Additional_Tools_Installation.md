@@ -34,37 +34,37 @@ Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/dow
 
 ### ZopfliPNG
 ```bash
-wget https://github.com/imagemin/zopflipng-bin/blob/main/vendor/linux/zopflipng -O /usr/local/bin/zopflipng
+wget https://github.com/imagemin/zopflipng-bin/raw/main/vendor/linux/zopflipng -O /usr/local/bin/zopflipng
 chmod 0755 /usr/local/bin/zopflipng
 ```
 
 ### PngCrush 
 ```bash
-wget https://github.com/imagemin/pngcrush-bin/blob/main/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
+wget https://github.com/imagemin/pngcrush-bin/raw/main/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
 chmod 0755 /usr/local/bin/pngcrush
 ```
 
 ### JPEGOptim
 ```bash
-wget https://github.com/imagemin/jpegoptim-bin/blob/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
+wget https://github.com/imagemin/jpegoptim-bin/raw/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
 chmod 0755 /usr/local/bin/jpegoptim
 ```
 
 ### PNGOut
 ```bash
-wget https://github.com/imagemin/pngout-bin/blob/main/vendor/linux/x64/pngout -O /usr/local/bin/pngout
+wget https://github.com/imagemin/pngout-bin/raw/main/vendor/linux/x64/pngout -O /usr/local/bin/pngout
 chmod 0755 /usr/local/bin/pngout
 ```
 
 ### AdvPNG
 ```bash
-wget https://github.com/imagemin/advpng-bin/blob/main/vendor/linux/advpng -O /usr/local/bin/advpng
+wget https://github.com/imagemin/advpng-bin/raw/main/vendor/linux/advpng -O /usr/local/bin/advpng
 chmod 0755 /usr/local/bin/advpng
 ```
 
 ### MozJPEG
 ```bash
-wget https://github.com/imagemin/mozjpeg-bin/blob/main/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
+wget https://github.com/imagemin/mozjpeg-bin/raw/main/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
 chmod 0755 /usr/local/bin/cjpeg
 ```
 
