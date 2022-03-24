@@ -46,14 +46,6 @@ class NormalizerTest extends ModelTestCase
         $this->loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function needsDb()
-    {
-        return true;
-    }
-
     public function tearDown(): void
     {
         TestHelper::cleanUp();
