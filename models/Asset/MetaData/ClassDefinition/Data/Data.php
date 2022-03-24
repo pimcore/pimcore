@@ -57,7 +57,7 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
             sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
-        return $this->denormalize($value, $params);
+        return $this->denormalize($value, array_merge($params, ['fullpath' => true]));
     }
 
     public function __toString()

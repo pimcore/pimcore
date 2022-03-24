@@ -366,7 +366,7 @@ final class Predefined extends Model\AbstractModel
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
             $instance = $loader->build($this->type);
-            $this->data = $instance->denormalize($this->data);
+            $this->data = $instance->denormalize($this->data, ['fullpath' => true]);
         } catch (UnsupportedException $e) {
             Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
