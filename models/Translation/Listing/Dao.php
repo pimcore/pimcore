@@ -102,7 +102,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             }
 
             if (empty($this->model->getConditionParams())) {
-                Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
 
