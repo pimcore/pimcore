@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
@@ -64,12 +65,16 @@ final class EntityModelFactoryPass implements CompilerPassInterface
 
                 if(
                     $class->isSubclassOf(AbstractModel::class) ||
-                    $class->isSubclassOf(AbstractDao::class)
+                    $class->isSubclassOf(DaoInterface::class)
                 ) {
                     $classes[] = $className;
                 }
             }
         }
+
+        usort($classes, function ($a, $b) {
+            return strlen($b)-strlen($a);
+        });
 
         // register all data object classes
         $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
@@ -102,6 +107,16 @@ final class EntityModelFactoryPass implements CompilerPassInterface
                 ->setShared(false)
                 ->setAutowired(true)
                 ->setAutoconfigured(true);
+
+            if(is_subclass_of($class, AbstractModel::class)) {
+                $daoClass = AbstractModel::getDoaClassFor($class);
+                if($daoClass) {
+                    $daoClass = $this->normalizeName($daoClass);
+                    if(isset($classes[$daoClass]) || in_array($daoClass, $classes)) {
+                        $definition->addMethodCall('injectDao', [new Reference($daoClass)]);
+                    }
+                }
+            }
 
             $container->setDefinition($serviceId, $definition);
             $locatorArguments[$serviceId] = new Reference($serviceId);
