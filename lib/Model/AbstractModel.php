@@ -16,7 +16,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Logger;
-use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
@@ -32,7 +32,7 @@ abstract class AbstractModel implements ModelInterface
     use ObjectVarTrait;
 
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao|null
+     * @var \Pimcore\Model\Dao\AbstractDao|DaoInterface|null
      */
     protected $dao;
 
@@ -47,7 +47,7 @@ abstract class AbstractModel implements ModelInterface
     private static $daoClassMap = null;
 
     /**
-     * @return \Pimcore\Model\Dao\AbstractDao
+     * @return \Pimcore\Model\Dao\AbstractDao|DaoInterface
      */
     public function getDao()
     {
@@ -59,7 +59,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param \Pimcore\Model\Dao\AbstractDao|null $dao
+     * @param \Pimcore\Model\Dao\AbstractDao|DaoInterface|null $dao
      *
      * @return self
      */
@@ -73,7 +73,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @internal
      */
-    public function injectDao(AbstractDao $dao) {
+    public function injectDao(DaoInterface $dao) {
         $this->dao = $dao;
         $this->dao->setModel($this);
 
