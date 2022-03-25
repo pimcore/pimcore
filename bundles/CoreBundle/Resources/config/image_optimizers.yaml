@@ -2,22 +2,26 @@ services:
     Pimcore\Image\Optimizer:
         public: true
 
-    Pimcore\Image\Optimizer\AdvancedPngOptimizer:
+#    Pimcore\Image\Optimizer\AdvancedPngOptimizer:
 
-    Pimcore\Image\Optimizer\CjpegOptimizer:
-        tags:
-            - { name: pimcore.image.optimizer }
+#    Pimcore\Image\Optimizer\CjpegOptimizer:
+#        tags:
+#            - { name: pimcore.image.optimizer }
 
-    Pimcore\Image\Optimizer\JpegoptimOptimizer:
-        tags:
-            - { name: pimcore.image.optimizer }
+#    Pimcore\Image\Optimizer\JpegoptimOptimizer:
+#        tags:
+#            - { name: pimcore.image.optimizer }
 
-    Pimcore\Image\Optimizer\PngCrushOptimizer:
-        tags:
-            - { name: pimcore.image.optimizer }
+#    Pimcore\Image\Optimizer\PngCrushOptimizer:
+#        tags:
+#            - { name: pimcore.image.optimizer }
 
-    Pimcore\Image\Optimizer\PngOutOptimizer:
+#    Pimcore\Image\Optimizer\PngOutOptimizer:
 
-    Pimcore\Image\Optimizer\ZopflipngOptimizer:
+#    Pimcore\Image\Optimizer\ZopflipngOptimizer:
+#       tags:
+#            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\SpatieImageOptimizer:
         tags:
             - { name: pimcore.image.optimizer }
