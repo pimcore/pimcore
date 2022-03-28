@@ -41,7 +41,6 @@ pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.da
         initData.fieldtype = "targetGroup";
         initData.datatype = "data";
         initData.name = "targetGroup";
-        initData.noteditable = false;
         treeNode.set("text", "targetGroup");
 
         this.initData(initData);
@@ -51,6 +50,16 @@ pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.da
 
     getTypeName: function () {
         return t("target_group");
+    },
+
+    getLayout: function ($super) {
+
+        $super();
+
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
+
+        return this.layout;
     },
 
     getGroup: function () {
