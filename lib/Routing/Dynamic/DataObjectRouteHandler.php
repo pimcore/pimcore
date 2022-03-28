@@ -57,8 +57,8 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function getRouteByName(string $name)
     {
-        if (preg_match('/^data_object_(\d+)_(.*)$/', $name, $match)) {
-            $slug = DataObject\Data\UrlSlug::resolveSlug($match[2]);
+        if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
+            $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
                 /** @var DataObject\Concrete $object * */
                 $object = DataObject::getById($match[1]);
@@ -76,7 +76,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
-        $slug = null;
         $site = $this->siteResolver->getSite($context->getRequest());
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
         if ($slug) {
@@ -98,10 +97,12 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute
     {
+        $site = $this->siteResolver->getSite();
         $route = new DataObjectRoute($slug->getSlug());
         $route->setOption('utf8', true);
         $route->setObject($object);
         $route->setSlug($slug);
+        $route->setSite($site);
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);

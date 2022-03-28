@@ -45,27 +45,22 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById(?string $id = null): void
     {
-        if (empty($id)) {
-            return null;
+        $data = null;
+        if ($id !== null) {
+            $data = $this->getDataByName($id);
         }
 
-        $this->model->setId($id);
-        $data = $this->getDataByName($this->model->getId());
-
-        if ($data && $id != null) {
-            $data['id'] = $id;
-        }
-
-        if ($data) {
-            $this->assignVariablesToModel($data);
-        } else {
+        if (empty($data)) {
             throw new Model\Exception\NotFoundException(sprintf(
                 'Document Type with ID "%s" does not exist.',
                 $this->model->getId()
             ));
         }
+
+        $data['id'] = $id;
+        $this->assignVariablesToModel($data);
     }
 
     /**

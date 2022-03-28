@@ -21,6 +21,7 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
@@ -31,6 +32,7 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
@@ -430,6 +432,9 @@ class PageController extends DocumentControllerBase
      * @param EditmodeEditableDefinitionCollector $definitionCollector
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
+     * @param DocumentResolver $documentResolver
+     *
+     * @throws NotFoundHttpException
      *
      * @return JsonResponse
      */
@@ -438,13 +443,20 @@ class PageController extends DocumentControllerBase
         BlockStateStack $blockStateStack,
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
-        EditableRenderer $editableRenderer
+        EditableRenderer $editableRenderer,
+        DocumentResolver $documentResolver
     ) {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
-        $document = clone Document\PageSnippet::getById($request->get('documentId'));
+        $document = Document\PageSnippet::getById($request->get('documentId'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
+
+        $document = clone $document;
         $document->setEditables([]);
+        $documentResolver->setDocument($request, $document);
 
         $twig->addGlobal('document', $document);
         $twig->addGlobal('editmode', true);
