@@ -247,7 +247,7 @@ class Processor
 
         }
 
-        if (!$fileExists) {
+        if ($fileExists === false) {
             $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($storagePath);
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
