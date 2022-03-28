@@ -313,6 +313,9 @@ trait ImageThumbnailTrait
             } elseif ($type === 'thumbnail') {
                 $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
                 $path = $prefix . urlencode_ignore_slash($path);
+            } elseif ($type === 'asset') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+                $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
             }
