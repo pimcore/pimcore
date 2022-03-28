@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AssetThumbnailCacheTest extends TestCase
 {
-
     /** @var Asset */
     protected $testAsset;
+
     protected string $thumbnailName;
 
     protected function setUp(): void
@@ -46,7 +46,6 @@ class AssetThumbnailCacheTest extends TestCase
         TestHelper::clearThumbnailConfigurations();
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -55,9 +54,8 @@ class AssetThumbnailCacheTest extends TestCase
         return true;
     }
 
-
-    public function testThumbnailCache() {
-
+    public function testThumbnailCache()
+    {
         $asset = $this->testAsset;
         $thumbnailName = $this->thumbnailName;
 
@@ -86,20 +84,18 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
 
-
         //load asset via public service controller
         $controller = new PublicServicesController();
         $subRequest = new Request([
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
-            'filename' => $asset->getFilename()
+            'filename' => $asset->getFilename(),
         ]);
         $response = $controller->thumbnailAction($subRequest);
 
         //check if cache is filled
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
-
 
         //delete just file on file system
         //check if cache cleared - expected to not be cleared
@@ -112,18 +108,15 @@ class AssetThumbnailCacheTest extends TestCase
         $subRequest = new Request([
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
-            'filename' => $asset->getFilename()
+            'filename' => $asset->getFilename(),
         ]);
         $response = $controller->thumbnailAction($subRequest);
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
-
 
         //delete again from file system
         $thumbnailStorage->delete($pathReference['storagePath']);
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
     }
-
-
 }

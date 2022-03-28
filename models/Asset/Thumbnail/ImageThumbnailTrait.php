@@ -357,8 +357,11 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
+     *
      * @param array|null $pathReference
+     *
      * @return bool
+     *
      * @throws \League\Flysystem\FilesystemException
      */
     public function existsOnStorage(?array $pathReference = []): bool

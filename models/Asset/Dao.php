@@ -33,6 +33,7 @@ class Dao extends Model\Element\Dao
 
     /**
      * @internal
+     *
      * @var array
      */
     public static array $thumbnailStatusCache = [];
@@ -511,7 +512,7 @@ class Dao extends Model\Element\Dao
             'modificationDate' => $time,
         ]);
 
-        if(isset(self::$thumbnailStatusCache[$assetId])) {
+        if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
             self::$thumbnailStatusCache[$assetId][$hash] = $time;
         }
@@ -523,13 +524,13 @@ class Dao extends Model\Element\Dao
 
         // we use a static var here, because it could be that an asset is serialized in the cache,
         // so this runtime cache wouldn't be as efficient
-        if(!isset(self::$thumbnailStatusCache[$assetId])) {
+        if (!isset(self::$thumbnailStatusCache[$assetId])) {
             self::$thumbnailStatusCache[$assetId] = [];
             $thumbs = $this->db->fetchAll('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
                 'cid' => $this->model->getId(),
             ]);
 
-            foreach($thumbs as $thumb) {
+            foreach ($thumbs as $thumb) {
                 $hash = $thumb['name'] . $thumb['filename'];
                 self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
             }
@@ -547,7 +548,7 @@ class Dao extends Model\Element\Dao
             'cid' => $assetId,
         ];
 
-        if($name) {
+        if ($name) {
             $where['name'] = $name;
         }
 

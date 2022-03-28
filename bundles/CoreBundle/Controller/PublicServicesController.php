@@ -100,7 +100,7 @@ class PublicServicesController extends Controller
                         }
 
                         $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
-                        if(!$imageThumbnail->existsOnStorage()) {
+                        if (!$imageThumbnail->existsOnStorage()) {
                             $asset->clearThumbnail($thumbnailConfig->getName());
                         }
 
@@ -115,7 +115,7 @@ class PublicServicesController extends Controller
                         $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
                         $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
-                        if(!$imageThumbnail->existsOnStorage()) {
+                        if (!$imageThumbnail->existsOnStorage()) {
                             $asset->clearThumbnail($thumbnailConfig->getName());
                         }
 
@@ -139,7 +139,7 @@ class PublicServicesController extends Controller
                         }
 
                         $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
-                        if(!$imageThumbnail->existsOnStorage()) {
+                        if (!$imageThumbnail->existsOnStorage()) {
                             $asset->clearThumbnail($thumbnailConfig->getName());
                         }
 

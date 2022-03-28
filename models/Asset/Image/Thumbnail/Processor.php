@@ -182,7 +182,7 @@ class Processor
 
         $modificationDate = null;
         $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
-        if($statusCacheEnabled) {
+        if ($statusCacheEnabled) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
             if ($storage->fileExists($storagePath)) {
@@ -190,7 +190,7 @@ class Processor
             }
         }
 
-        if($modificationDate) {
+        if ($modificationDate) {
             try {
                 if ($modificationDate >= $asset->getModificationDate()) {
                     return [
@@ -208,7 +208,6 @@ class Processor
                 // nothing to do
             }
         }
-
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
         // the configuration is saved for later use in
@@ -233,8 +232,8 @@ class Processor
         $image->setPreserveMetaData($config->isPreserveMetaData());
         $image->setPreserveAnimation($config->getPreserveAnimation());
 
-
         $fileExists = false;
+
         try {
             // check if file is already on the file-system and if it is still valid
             $modificationDate = $storage->lastModified($storagePath);
@@ -243,8 +242,7 @@ class Processor
             } else {
                 $fileExists = true;
             }
-        } catch(\Exception $e) {
-
+        } catch (\Exception $e) {
         }
 
         if ($fileExists === false) {
@@ -461,7 +459,7 @@ class Processor
             ];
         }
 
-        if($statusCacheEnabled) {
+        if ($statusCacheEnabled) {
             $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
         }
 
