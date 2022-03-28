@@ -64,26 +64,26 @@ class AssetThumbnailCacheTest extends TestCase
         $asset->clearThumbnails(true);
 
         $thumbnailStorage = Storage::get('thumbnail');
-        $this->assertNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
 
         //check if thumbnail exists after getting path reference deferred
         $pathReference = $asset->getThumbnail($thumbnailName)->getPathReference(true);
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
-        $this->assertNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
 
         //create thumbnail
         $asset->getThumbnail($thumbnailName)->getPath(false);
 
         //recheck if thumbnail exists
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
 
         //update asset
         $asset->setData(file_get_contents(TestHelper::resolveFilePath('assets/images/image2.jpg')));
         $asset->save();
 
         //check if cache is cleared
-        $this->assertNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
 
 
@@ -97,14 +97,14 @@ class AssetThumbnailCacheTest extends TestCase
         $response = $controller->thumbnailAction($subRequest);
 
         //check if cache is filled
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
 
 
         //delete just file on file system
         //check if cache cleared - expected to not be cleared
         $thumbnailStorage->delete($pathReference['storagePath']);
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
 
         //check via controller
@@ -115,24 +115,14 @@ class AssetThumbnailCacheTest extends TestCase
             'filename' => $asset->getFilename()
         ]);
         $response = $controller->thumbnailAction($subRequest);
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
 
 
         //delete again from file system
         $thumbnailStorage->delete($pathReference['storagePath']);
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
-
-
-        //get path via path -> thumbnail should be regenerated
-        //check if cache is refilled
-        //$asset->getThumbnail('content')->getPathReference(false);
-        $asset->getThumbnail($thumbnailName)->getPath(false);
-        $this->assertNotNull($asset->hasThumbnail($thumbnailName, $asset->getFilename()));
-        $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
-
-
     }
 
 

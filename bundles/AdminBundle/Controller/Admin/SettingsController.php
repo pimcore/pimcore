@@ -20,6 +20,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
@@ -802,6 +803,8 @@ class SettingsController extends AdminController
 
         // public files
         Tool\Storage::get('thumbnail')->deleteDirectory('/');
+        Db::get()->query('TRUNCATE TABLE assets_image_thumbnail_cache');
+
         Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
         // system files

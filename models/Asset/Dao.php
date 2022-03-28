@@ -500,7 +500,7 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addThumbnail(string $name, string $filename): void
+    public function addToThumbnailCache(string $name, string $filename): void
     {
         $assetId = $this->model->getId();
         $time = time();
@@ -517,7 +517,7 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function hasThumbnail(string $name, string $filename): ?int
+    public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
     {
         $assetId = $this->model->getId();
 
@@ -540,7 +540,7 @@ class Dao extends Model\Element\Dao
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
     }
 
-    public function deleteThumbnail(?string $name = null): void
+    public function deleteFromThumbnailCache(?string $name = null): void
     {
         $assetId = $this->model->getId();
         $where = [

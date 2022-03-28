@@ -183,7 +183,7 @@ class Processor
         $modificationDate = null;
         $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
         if($statusCacheEnabled) {
-            $modificationDate = $asset->getDao()->hasThumbnail($config->getName(), $filename);
+            $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
             if ($storage->fileExists($storagePath)) {
                 $modificationDate = $storage->lastModified($storagePath);
@@ -233,7 +233,21 @@ class Processor
         $image->setPreserveMetaData($config->isPreserveMetaData());
         $image->setPreserveAnimation($config->getPreserveAnimation());
 
-        if (!$storage->fileExists($storagePath)) {
+
+        $fileExists = false;
+        try {
+            // check if file is already on the file-system and if it is still valid
+            $modificationDate = $storage->lastModified($storagePath);
+            if ($modificationDate < $asset->getModificationDate()) {
+                $storage->delete($storagePath);
+            } else {
+                $fileExists = true;
+            }
+        } catch(\Exception $e) {
+
+        }
+
+        if (!$fileExists) {
             $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($storagePath);
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
@@ -448,7 +462,7 @@ class Processor
         }
 
         if($statusCacheEnabled) {
-            $asset->getDao()->addThumbnail($config->getName(), $filename);
+            $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
         }
 
         return [
