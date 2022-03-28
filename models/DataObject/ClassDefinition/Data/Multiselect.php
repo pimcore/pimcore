@@ -264,7 +264,7 @@ class Multiselect extends Data implements
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (strlen($data)) {
+        if (!empty($data)) {
             return explode(',', $data);
         }
 
