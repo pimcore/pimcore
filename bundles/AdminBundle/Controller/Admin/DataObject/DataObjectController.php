@@ -1365,7 +1365,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             //                }
             //            }
 
-            $object->save();
+            $object->save([
+                'versionNote' => $request->get('versionNote') ?? null
+            ]);
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject::getById($object->getId(), true);
@@ -1398,14 +1400,16 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $draftData = [];
 
             if ($object->isPublished() || $isAutoSave) {
-                $version = $object->saveVersion(true, true, null, $isAutoSave);
+                $version = $object->saveVersion(true, true,  $request->get('versionNote') ?? null, $isAutoSave);
                 $draftData = [
                     'id' => $version->getId(),
                     'modificationDate' => $version->getDate(),
                     'isAutoSave' => $version->isAutoSave(),
                 ];
             } else {
-                $object->save();
+                $object->save([
+                    'versionNote' => $request->get('versionNote') ?? null
+                ]);
             }
 
             if ($request->get('task') == 'version') {

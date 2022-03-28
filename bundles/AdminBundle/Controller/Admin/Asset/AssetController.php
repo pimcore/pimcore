@@ -1023,7 +1023,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 // save to session only
                 Asset\Service::saveElementToSession($asset);
             } else {
-                $asset->save();
+                $asset->save([
+                    'versionNote' => $request->get('versionNote') ?? null
+                ]);
             }
 
             $treeData = $this->getTreeNodeConfig($asset);
