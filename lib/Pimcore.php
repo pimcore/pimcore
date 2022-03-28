@@ -54,7 +54,15 @@ class Pimcore
      */
     public static function inDevMode(): bool
     {
-        return (bool) ($_SERVER['PIMCORE_DEV_MODE'] ?? false);
+        if(!isset($_SERVER['PIMCORE_DEV_MODE']) || !is_bool($_SERVER['PIMCORE_DEV_MODE'])) {
+            $value = $_SERVER['PIMCORE_DEV_MODE'] ?? false;
+            if(!is_bool($value)) {
+                $value = filter_var($value, \FILTER_VALIDATE_BOOLEAN);
+            }
+            $_SERVER['PIMCORE_DEV_MODE'] = (bool) $value;
+        }
+
+        return $_SERVER['PIMCORE_DEV_MODE'];
     }
 
     /**
