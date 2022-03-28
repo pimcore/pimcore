@@ -215,7 +215,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
