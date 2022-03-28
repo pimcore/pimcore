@@ -147,7 +147,7 @@ final class User extends User\UserRole
      */
     public function setPassword($password)
     {
-        if (strlen($password) > 4) {
+        if (!empty($password) && strlen($password) > 4) {
             $this->password = $password;
         }
 
