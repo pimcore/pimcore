@@ -1336,11 +1336,18 @@ class Service extends Model\Element\Service
     {
         if ($layout instanceof ClassDefinition\Data) {
             $name = $layout->getName();
-            if (empty($fieldDefinitions[$name]) || $fieldDefinitions[$name]->getInvisible()) {
+            if (empty($fieldDefinitions[$name])) {
                 return false;
             }
 
-            $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
+            if($fieldDefinitions[$name]->getInvisible()) {
+                $user = AdminTool::getCurrentUser();
+                if(!$user->isAdmin()) {
+                    return false;
+                }
+            }
+
+            $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1488,6 +1495,13 @@ class Service extends Model\Element\Service
                 $context['ownerType'] = 'localizedfield';
             }
             $context['ownerName'] = 'localizedfields';
+        }
+
+        if($layout instanceof DataObject\ClassDefinition\Data && $layout->getInvisible()) {
+            $user = AdminTool::getCurrentUser();
+            if ($user->isAdmin()) {
+                $layout->setInvisible(false);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
