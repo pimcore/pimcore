@@ -220,7 +220,7 @@ final class Thumbnail
     private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
         $sourceTagAttributes = [];
-        $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $mediaQuery, $image, $options);
+        $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
         $thumb = $image->getThumbnail($thumbConfig, true);
 
         if ($mediaQuery) {
@@ -408,8 +408,8 @@ final class Thumbnail
         }
 
         $thumbConfig = $this->getConfig();
-        if ($thumbConfig && !$thumbConfig->hasMedias()) {
-            $attributes['srcset'] = $this->getSrcset($thumbConfig, '', $image, $options);
+        if ($thumbConfig) {
+            $attributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options);
         }
 
         $htmlImgTag = '';
@@ -471,17 +471,19 @@ final class Thumbnail
     /**
      * Get value that can be directly used ina srcset HTML attribute for images.
      * @param Image\Thumbnail\Config $thumbConfig
-     * @param string $mediaQuery Can be empty string if no media queries are defined.
      * @param Image $image
      * @param array $options
+     * @param string|null $mediaQuery Can be empty string if no media queries are defined.
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution
      */
-    private function getSrcset(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
+    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
         foreach ([1, 2] as $highRes) {
             $thumbConfigRes = clone $thumbConfig;
-            $thumbConfigRes->selectMedia($mediaQuery);
+            if($mediaQuery) {
+                $thumbConfigRes->selectMedia($mediaQuery);
+            }
             $thumbConfigRes->setHighResolution($highRes);
             $thumb = $image->getThumbnail($thumbConfigRes, true);
 
