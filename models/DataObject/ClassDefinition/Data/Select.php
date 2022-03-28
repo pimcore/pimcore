@@ -384,7 +384,7 @@ class Select extends Data implements
      */
     public function isEmpty($data)
     {
-        return strlen($data) < 1;
+        return empty($data) || strlen($data) < 1;
     }
 
     /**
