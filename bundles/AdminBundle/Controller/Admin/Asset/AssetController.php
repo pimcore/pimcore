@@ -1024,7 +1024,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 Asset\Service::saveElementToSession($asset);
             } else {
                 $asset->save([
-                    'versionNote' => $request->get('versionNote') ?? null
+                    'versionNote' => $request->get('versionNote')
                 ]);
             }
 
