@@ -339,9 +339,33 @@ trait ImageThumbnailTrait
     public function exists(): bool
     {
         $pathReference = $this->getPathReference(true);
-        if ($pathReference['type'] === 'asset') {
+        if (
+            $pathReference['type'] === 'asset' ||
+            $pathReference['type'] === 'data-uri' ||
+            $pathReference['type'] === 'thumbnail'
+        ) {
             return true;
+        } elseif ($pathReference['type'] === 'deferred') {
+            return false;
         } elseif (isset($pathReference['storagePath'])) {
+            // this is probably redundant, but as it doesn't hurt we can keep it
+            return $this->existsOnStorage($pathReference);
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     * @param array|null $pathReference
+     * @return bool
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function existsOnStorage(?array $pathReference = []): bool
+    {
+        $pathReference ??= $this->getPathReference(true);
+        if (isset($pathReference['storagePath'])) {
+            // this is probably redundant, but as it doesn't hurt we can keep it
             return Storage::get('thumbnail')->fileExists($pathReference['storagePath']);
         }
 
