@@ -18,6 +18,15 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 class Date extends Data
 {
 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataFromEditMode($data, $params = [])
+    {
+        return $this->normalize($data, $params);
+    }
+
     /**
      * {@inheritdoc}
      */
