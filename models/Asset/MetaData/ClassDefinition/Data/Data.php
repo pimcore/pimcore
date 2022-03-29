@@ -34,7 +34,7 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '10.3',
+            '10.4',
             sprintf('%s is deprecated, please use normalize() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
@@ -53,11 +53,11 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
     {
         trigger_deprecation(
             'pimcore/pimcore',
-            '10.3',
+            '10.4',
             sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
-        return $this->denormalize($value, array_merge($params, ['fullpath' => true]));
+        return $this->denormalize($value, $params);
     }
 
     public function __toString()
