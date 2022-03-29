@@ -19,6 +19,9 @@ use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
+/**
+*@deprecated since 10.4 version and will be removed in Pimcore 11. use the Spatie Image Optimizer instead
+**/
 abstract class AbstractCommandOptimizer implements OptimizerInterface
 {
     /**
