@@ -35,16 +35,10 @@ final class ContentSecurityPolicyUrlsPass implements CompilerPassInterface
 
         $config = $container->getParameter('pimcore_admin.config');
 
-        $config['admin_csp_header']['additional_urls']['script-src'] = array_merge(
-            $config['admin_csp_header']['additional_urls']['script-src'],
-            [
-            'http://unpkg.com/axios/dist/',
-            'http://unpkg.com/react/umd/',
-            'http://unpkg.com/react-dom/umd/'
-        ]);
-
-        foreach ($config['admin_csp_header']['additional_urls'] as $additionalUrlsKey => $additionalUrlsArr) {
-            $definition->addMethodCall('addAllowedUrls', [$additionalUrlsKey, $additionalUrlsArr]);
+        if (count($config['admin_csp_header']['additional_urls'])) {
+            foreach ($config['admin_csp_header']['additional_urls'] as $additionalUrlsKey => $additionalUrlsArr) {
+                $definition->addMethodCall('addAllowedUrls', [$additionalUrlsKey, $additionalUrlsArr]);
+            }
         }
     }
 }
