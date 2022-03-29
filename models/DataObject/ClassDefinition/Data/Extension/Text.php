@@ -36,7 +36,7 @@ trait Text
      */
     public function isEmpty($data)
     {
-        return empty($data) || strlen($data) < 1;
+        return !is_string($data) || strlen($data) < 1;
     }
 
     /**
