@@ -561,7 +561,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function isEmpty($data)
     {
-        return is_numeric($data);
+        return !is_numeric($data);
     }
 
     /**
