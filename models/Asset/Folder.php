@@ -184,7 +184,7 @@ class Folder extends Model\Asset
                 $localFile = File::getLocalTempFilePath('jpg');
                 imagejpeg($collage, $localFile, 60);
 
-                if(filesize($localFile) > 0) {
+                if (filesize($localFile) > 0) {
                     $storage->write($cacheFilePath, file_get_contents($localFile));
                 }
                 unlink($localFile);
