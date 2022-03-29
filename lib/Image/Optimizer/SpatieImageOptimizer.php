@@ -50,7 +50,7 @@ final class SpatieImageOptimizer implements \Pimcore\Image\Optimizer\OptimizerIn
     public function supports(string $mimeType): bool
     {
         //  Implement supports() method.
-        return ($mimeType === 'image/jpeg' || $mimeType === 'image/png' || $mimeType === 'image/webp')?1:0;
+        return $mimeType === 'image/jpeg' || $mimeType === 'image/png' || $mimeType === 'image/webp';
     }
 }
 
