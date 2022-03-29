@@ -68,7 +68,7 @@ class TwoFactorListener
         }
 
         $twoFactorToken->setTwoFactorProviderPrepared($providerName);
-        $firewallName = $twoFactorToken->getFirewallName();
+        $firewallName = $twoFactorToken->getProviderKey();
 
         if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
             $this->logger->info(sprintf('Two-factor provider "%s" was already prepared.', $providerName));
