@@ -139,7 +139,7 @@ class Folder extends Model\Asset
         $list->setOrder('asc');
         $list->setLimit($limit);
 
-        $totalImages = min($limit, $list->getTotalCount());
+        $totalImages = $list->getCount();
         $count = 0;
         $gutter = 5;
         $squareDimension = 130;
