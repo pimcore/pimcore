@@ -219,8 +219,8 @@ final class Staticroute extends AbstractModel
         if (empty($defaultsString)) {
             return [];
         }
-        
-        $defaults = [];      
+
+        $defaults = [];
 
         $t = explode('|', $defaultsString);
         foreach ($t as $v) {
