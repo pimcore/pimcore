@@ -215,9 +215,14 @@ final class Staticroute extends AbstractModel
      */
     private function getDefaultsArray()
     {
-        $defaults = [];
+        $defaultsString = $this->getDefaults();
+        if (empty($defaultsString)) {
+            return [];
+        }
+        
+        $defaults = [];      
 
-        $t = explode('|', $this->getDefaults());
+        $t = explode('|', $defaultsString);
         foreach ($t as $v) {
             $d = explode('=', $v);
             if (strlen($d[0]) > 0 && strlen($d[1]) > 0) {
