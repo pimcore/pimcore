@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tests\Model\Asset\Metadata;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\Metadata\Loader\DataLoader;
@@ -52,48 +53,115 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
+    protected function doCompare(int $assetId, string $metaDataName, $originalData) {
+
+        $asset = Asset::getById($assetId, true);
+        $metaDataArray = $asset->getMetadata($metaDataName, null, false, true);
+
+        /** @var Data $instance */
+        $instance = $this->loader->build($metaDataArray['type']);
+
+        $metaData = $asset->getMetadata($metaDataName);
+
+        //normalize => denormalize and then check denormalized data should same as original
+        $normalizedData = $instance->normalize($metaData);
+        $denormalizedData = $instance->denormalize($normalizedData);
+
+        $this->assertEquals($originalData, $denormalizedData);
+    }
+
     public function testAssetMetadata()
     {
         $metadataAsset = TestHelper::createImageAsset('metadata-');
-        $this->testAsset->addMetadata('asset-metadata', 'asset', $metadataAsset);
+        $metaDataName = 'asset-metadata';
 
-        /** @var Data $instance */
-        $instance = $this->loader->build('asset');
+        $this->testAsset->addMetadata($metaDataName, 'asset', $metadataAsset);
+        $this->testAsset->save();
 
-        //normalize => denormalize and then check denormalized data should same as original
-        $normalizedData = $instance->normalize($this->testAsset->getMetadata('asset-metadata'));
-        $denormalizedData = $instance->denormalize($normalizedData);
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataAsset);
 
-        $this->assertEquals($metadataAsset, $denormalizedData);
     }
 
     public function testDocumentMetadata()
     {
         $metadataDocument = TestHelper::createEmptyDocumentPage('metadata-');
-        $this->testAsset->addMetadata('document-metadata', 'document', $metadataDocument);
+        $metaDataName = 'document-metadata';
 
-        /** @var Data $instance */
-        $instance = $this->loader->build('document');
+        $this->testAsset->addMetadata($metaDataName, 'document', $metadataDocument);
+        $this->testAsset->save();
 
-        //normalize => denormalize and then check denormalized data should same as original
-        $normalizedData = $instance->normalize($this->testAsset->getMetadata('document-metadata'));
-        $denormalizedData = $instance->denormalize($normalizedData);
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataDocument);
 
-        $this->assertEquals($metadataDocument, $denormalizedData);
     }
 
     public function testDataObjectMetadata()
     {
         $metadataObject = TestHelper::createEmptyObject('metadata-');
-        $this->testAsset->addMetadata('object-metadata', 'object', $metadataObject);
+        $metaDataName = 'object-metadata';
 
-        /** @var Data $instance */
-        $instance = $this->loader->build('object');
+        $this->testAsset->addMetadata($metaDataName, 'object', $metadataObject);
+        $this->testAsset->save();
 
-        //normalize => denormalize and then check denormalized data should same as original
-        $normalizedData = $instance->normalize($this->testAsset->getMetadata('object-metadata'));
-        $denormalizedData = $instance->denormalize($normalizedData);
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataObject);
 
-        $this->assertEquals($metadataObject, $denormalizedData);
     }
+
+    public function testInputMetadata()
+    {
+        $originalData = 'foo bar';
+        $metaDataName = 'input-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'input', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+    }
+
+    public function testTextAreaMetadata()
+    {
+        $originalData = "foo bar\nsecond line";
+        $metaDataName = 'textarea-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'textarea', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+    }
+
+    public function testDateMetadata()
+    {
+        $originalData = time();
+        $metaDataName = 'date-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'date', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+    }
+
+    public function testCheckboxMetadata()
+    {
+        $originalData = true;
+        $metaDataName = 'checkbox-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'checkbox', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+
+        $originalData = false;
+        $metaDataName = 'checkbox-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'checkbox', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+    }
+
+
+    public function testSelectMetadata()
+    {
+        $originalData = 'somevalue';
+        $metaDataName = 'select-metadata';
+        $this->testAsset->addMetadata($metaDataName, 'select', $originalData);
+        $this->testAsset->save();
+
+        $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
+    }
+
 }
