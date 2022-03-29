@@ -43,10 +43,6 @@ class Document extends Data
             $element = Service::getElementById('document', $value);
         }
 
-        if (isset($params['fullpath'])) {
-            return $element ? $element->getRealFullPath() : '';
-        }
-
         return $element;
     }
 

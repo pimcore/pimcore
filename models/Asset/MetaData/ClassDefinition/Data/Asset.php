@@ -43,10 +43,6 @@ class Asset extends Data
             $element = Service::getElementById('asset', $value);
         }
 
-        if (isset($params['fullpath'])) {
-            return $element ? $element->getRealFullPath() : '';
-        }
-
         return $element;
     }
 

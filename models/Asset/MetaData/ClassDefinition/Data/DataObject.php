@@ -44,10 +44,6 @@ class DataObject extends Data
             $element = Service::getElementById('object', $value);
         }
 
-        if (isset($params['fullpath'])) {
-            return $element ? $element->getRealFullPath() : '';
-        }
-
         return $element;
     }
 
