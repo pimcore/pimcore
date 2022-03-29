@@ -15,111 +15,15 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security;
 
-use Pimcore\Event\AdminEvents;
-use Pimcore\Event\Admin\Login\LogoutEvent as PimcoreLogoutEvent;
-use Pimcore\Model\Element\Editlock;
-use Pimcore\Model\User;
-use Pimcore\Tool\Session;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Http\Event\LogoutEvent;
+use Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Handle logout. This was originally implemented as LogoutHandler, but wasn't triggered as the token was empty at call
- * time in LogoutListener::handle was called. As the logout success handler is always triggered it is now implemented as
- * success handler.
- *
  *
  * @internal
+ *
+ * @deprecated
  */
-class LogoutSuccessHandler implements EventSubscriberInterface, LoggerAwareInterface, LogoutSuccessHandlerInterface
+class LogoutSuccessHandler extends LogoutListener implements LogoutSuccessHandlerInterface
 {
-    use LoggerAwareTrait;
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            LogoutEvent::class => 'onLogout',
-        ];
-    }
-
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param RouterInterface $router
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(
-        protected TokenStorageInterface $tokenStorage,
-        protected RouterInterface $router,
-        protected EventDispatcherInterface $eventDispatcher
-    ) {}
-
-    /**
-     * @param LogoutEvent $event
-     *
-     * @return mixed
-     */
-    public function onLogout(LogoutEvent $event): mixed
-    {
-        $request = $event->getRequest();
-
-        return $this->onLogoutSuccess($request);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return mixed|RedirectResponse
-     */
-    public function onLogoutSuccess(Request $request)
-    {
-        $this->logger->debug('Logging out');
-
-        $this->tokenStorage->setToken(null);
-
-        // clear open edit locks for this session
-        Editlock::clearSession(Session::getSessionId());
-
-        /** @var PimcoreLogoutEvent|null $event */
-        $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
-            $event = null;
-
-            $user = $adminSession->get('user');
-            if ($user && $user instanceof User) {
-                $event = new PimcoreLogoutEvent($request, $user);
-                $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOGOUT);
-
-                $adminSession->remove('user');
-            }
-
-            Session::invalidate();
-
-            return $event;
-        });
-
-        if ($event && $event->hasResponse()) {
-            $response = $event->getResponse();
-        } else {
-            $response = new RedirectResponse($this->router->generate('pimcore_admin_index'));
-        }
-
-        // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
-        $response->headers->setCookie(new Cookie('pimcore_opentabs', false, 315554400, '/'));
-        $response->headers->clearCookie('pimcore_admin_sid', '/', null, false, true);
-
-        if ($response instanceof RedirectResponse) {
-            $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
-        }
-
-        return $response;
-    }
 }

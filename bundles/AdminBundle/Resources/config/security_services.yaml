@@ -60,6 +60,8 @@ services:
             - { name: monolog.logger, channel: security }
 
 
+    Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
+
     Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
         public: false
         arguments:
