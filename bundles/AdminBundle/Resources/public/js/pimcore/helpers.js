@@ -72,6 +72,33 @@ pimcore.helpers.openWelcomePage = function (keyCode, e) {
     }
 };
 
+pimcore.helpers.unlockElementOnClose = function (id, type) {
+    var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
+    if (!elementsToBeUnlocked) {
+        elementsToBeUnlocked = [];
+    } else {
+        elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
+    }
+    elementsToBeUnlocked.push({ id: id, type: type });
+    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
+};
+
+pimcore.helpers.forgetElementToBeUnlockedOnClose = function (id, type) {
+    var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
+    if (!elementsToBeUnlocked) {
+        return;
+    }
+
+    elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
+    for (var i = 0; i < elementsToBeUnlocked.length; i++) {
+        if (elementsToBeUnlocked[i].id == id && elementsToBeUnlocked[i].type == type) {
+            elementsToBeUnlocked.splice(i, 1);
+            break;
+        }
+    }
+    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
+};
+
 pimcore.helpers.openAsset = function (id, type, options) {
 
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
@@ -109,33 +136,13 @@ pimcore.helpers.closeAsset = function (id) {
             panel.close();
         }
 
+        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'asset');
+
         pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
         pimcore.globalmanager.remove("asset_" + id);
     } catch (e) {
         console.log(e);
     }
-};
-
-pimcore.helpers.unlockElementOnClose = function (id, type) {
-    var elementsToBeUnlocked = localStorage.get('pimcore_opened_elements');
-    if(!elementsToBeUnlocked) {
-        elementsToBeUnlocked = [];
-
-        window.addEventListener('beforeunload', function () {
-            var elementsToBeUnlocked = JSON.parse(localStorage.get('pimcore_opened_elements'));
-            for(var i=0;i< elementsToBeUnlocked.length;i++) {
-                Ext.Ajax.request({
-                    method: "PUT",
-                    url: Routing.generate('pimcore_admin_element_unlockelement'),
-                    params: elementsToBeUnlocked[i]
-                });
-            }
-        });
-    } else {
-        elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-    }
-    elementsToBeUnlocked.push({id: id, type: type});
-    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
 };
 
 pimcore.helpers.openDocument = function (id, type, options) {
@@ -166,6 +173,8 @@ pimcore.helpers.closeDocument = function (id) {
         if (panel) {
             panel.close();
         }
+
+        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'document');
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
         pimcore.globalmanager.remove("document_" + id);
@@ -207,6 +216,8 @@ pimcore.helpers.closeObject = function (id) {
         if (panel) {
             panel.close();
         }
+
+        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'object');
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
         pimcore.globalmanager.remove("object_" + id);

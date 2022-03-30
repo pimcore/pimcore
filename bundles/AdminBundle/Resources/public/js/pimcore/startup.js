@@ -148,6 +148,20 @@ Ext.onReady(function () {
                 return t("do_you_really_want_to_close_pimcore");
             }
         }
+
+        var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
+        if(elementsToBeUnlocked) {
+            elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
+            for (var i = 0; i < elementsToBeUnlocked.length; i++) {
+                Ext.Ajax.request({
+                    method: "PUT",
+                    url: Routing.generate('pimcore_admin_element_unlockelement'),
+                    params: elementsToBeUnlocked[i]
+                });
+            }
+
+            localStorage.removeItem('pimcore_opened_elements');
+        }
     });
 
     Ext.QuickTips.init();
