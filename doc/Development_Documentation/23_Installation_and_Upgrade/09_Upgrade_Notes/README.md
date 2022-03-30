@@ -5,7 +5,8 @@
   instead of `pimcore_core`. If you want to handle image optimize messages, then it is required to add specific option `pimcore_image_optimize` to the command `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize`. Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that ImageOptimize messages on the queue gets consumed.
 - **Important**: [Object bricks] A call to the object brick´s getter method no longer returns object bricks marked for deletion. 
   To restore the original behavior pass "true" to the getter method´s `$includeDeletedBricks` argument. 
-- [Spatie/image-optimizer instead of custom] Custom image optimizer (for thumbnail images) is deprecated and a new image optimizer Spatie/image optimizer is introduced.
+- [Image Optimizer] Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) are deprecated and will be
+  removed in Pimcore 11. Use Pimcore\Image\Optimizer\SpatieImageOptimizer service instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
