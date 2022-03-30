@@ -152,14 +152,14 @@ Ext.onReady(function () {
         var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
         if(elementsToBeUnlocked) {
             elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-            for (var i = 0; i < elementsToBeUnlocked.length; i++) {
+            elementsToBeUnlocked.forEach(function(item) {
                 Ext.Ajax.request({
                     method: "PUT",
                     async: false,
                     url: Routing.generate('pimcore_admin_element_unlockelement'),
-                    params: elementsToBeUnlocked[i]
+                    params: item
                 });
-            }
+            });
 
             localStorage.removeItem('pimcore_opened_elements');
         }

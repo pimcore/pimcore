@@ -90,12 +90,10 @@ pimcore.helpers.forgetElementToBeUnlockedOnClose = function (id, type) {
     }
 
     elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-    for (var i = 0; i < elementsToBeUnlocked.length; i++) {
-        if (elementsToBeUnlocked[i].id == id && elementsToBeUnlocked[i].type == type) {
-            elementsToBeUnlocked.splice(i, 1);
-            break;
-        }
-    }
+    elementsToBeUnlocked = elementsToBeUnlocked.filter(function(element) {
+        return element.id != id || element.type != type;
+    });
+
     localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
 };
 
