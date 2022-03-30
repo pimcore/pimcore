@@ -105,6 +105,9 @@ class Imagick extends Adapter
                     // only for vector graphics
                     // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                     $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
+                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    $i->transparentPaintImage('',1,0,false);
                 }
 
                 $this->setColorspaceToRGB();
