@@ -67,6 +67,22 @@ class ElementController extends AdminController
     }
 
     /**
+     * @Route("/element/unlock-elements", name="pimcore_admin_element_unlockelements", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function unlockElementsAction(Request $request)
+    {
+        foreach($request->get('elements') as $elementIdentifierData) {
+            Element\Editlock::unlock($elementIdentifierData['id'], $elementIdentifierData['type']);
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
      * Returns the element data denoted by the given type and ID or path.
      *
      * @Route("/element/get-subtype", name="pimcore_admin_element_getsubtype", methods={"GET"})

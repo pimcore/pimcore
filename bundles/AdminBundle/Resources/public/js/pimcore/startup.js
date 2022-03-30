@@ -152,13 +152,11 @@ Ext.onReady(function () {
         var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
         if(elementsToBeUnlocked) {
             elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-            elementsToBeUnlocked.forEach(function(item) {
-                Ext.Ajax.request({
-                    method: "PUT",
-                    async: false,
-                    url: Routing.generate('pimcore_admin_element_unlockelement'),
-                    params: item
-                });
+            Ext.Ajax.request({
+                method: "PUT",
+                async: false,
+                url: Routing.generate('pimcore_admin_element_unlockelements'),
+                jsonData: {elements: elementsToBeUnlocked}
             });
 
             localStorage.removeItem('pimcore_opened_elements');
