@@ -18,6 +18,7 @@ parameters:
         - '**/PDFreactor.class.php'
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
         - '**/bundles/AdminBundle/Security/Authenticator/AdminAbstractAuthenticator.php'
+        - '**/bundles/AdminBundle/Security/Authentication/Token/TwoFactorRequiredToken.php'
 
     ignoreErrors:
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
