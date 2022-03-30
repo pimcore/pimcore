@@ -131,7 +131,7 @@ class Processor
         $instance->setDeleteSourceAfterFinished($sourceFile);
 
         foreach ($formats as $format) {
-            $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
+            $thumbDir = rtrim($asset->getRealPath(), '/') . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
@@ -236,9 +236,20 @@ class Processor
 
         $asset = Model\Asset::getById($instance->getAssetId());
 
+        if ($instance->getDeleteSourceAfterFinished()
+            && !file_exists($instance->getDeleteSourceAfterFinished())
+            && $asset) {
+            $workerSourceFile = $asset->getTemporaryFile(true);
+            $instance->setDeleteSourceAfterFinished($workerSourceFile);
+        } else {
+            $workerSourceFile = null;
+        }
         // start converting
         foreach ($instance->queue as $converter) {
             try {
+                if ($workerSourceFile) {
+                    $converter->load($workerSourceFile, ['asset' => $asset]);
+                }
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
