@@ -155,6 +155,7 @@ Ext.onReady(function () {
             for (var i = 0; i < elementsToBeUnlocked.length; i++) {
                 Ext.Ajax.request({
                     method: "PUT",
+                    async: false,
                     url: Routing.generate('pimcore_admin_element_unlockelement'),
                     params: elementsToBeUnlocked[i]
                 });
