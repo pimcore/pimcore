@@ -97,6 +97,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     type: "asset"
                 }
             });
+
+            pimcore.helpers.forgetElementToBeUnlockedOnClose(this.id, 'asset');
         }.bind(this));
 
         // remove this instance when the panel is closed
@@ -416,8 +418,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     saveClose: function(){
         this.save(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            pimcore.helpers.closeAsset(this.id, 'asset');
         }.bind(this));
     },
 
