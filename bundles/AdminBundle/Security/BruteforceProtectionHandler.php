@@ -42,10 +42,15 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     protected $logFile;
 
     /**
+     * @var bool
+     */
+    protected $disabled;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param string|null $logFile
      */
-    public function __construct(RequestHelper $requestHelper, $logFile = null)
+    public function __construct(RequestHelper $requestHelper, $logFile = null, $disabled = false)
     {
         $this->requestHelper = $requestHelper;
 
@@ -54,6 +59,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
         }
 
         $this->logFile = $logFile;
+        $this->disabled = $disabled;
     }
 
     /**
@@ -67,6 +73,11 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      */
     public function checkProtection($username = null, Request $request = null)
     {
+        //disabled for Authenticator system as it uses login throttling
+        if ($this->disabled) {
+            return;
+        }
+
         $username = $this->normalizeUsername($username);
         $ip = $this->requestHelper->getAnonymizedClientIp($request);
 
@@ -120,6 +131,11 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      */
     public function addEntry($username = null, Request $request = null)
     {
+        //disabled for Authenticator system as it uses login throttling
+        if ($this->disabled) {
+            return;
+        }
+
         $username = $this->normalizeUsername($username);
         $ip = $this->requestHelper->getAnonymizedClientIp($request);
 

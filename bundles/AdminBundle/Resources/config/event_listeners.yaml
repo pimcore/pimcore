@@ -8,7 +8,6 @@ services:
     # SECURITY
     #
 
-
     Pimcore\Bundle\AdminBundle\EventListener\AdminSecurityListener: ~
     Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
 

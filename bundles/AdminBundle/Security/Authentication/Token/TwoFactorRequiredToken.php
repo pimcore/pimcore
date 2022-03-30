@@ -16,10 +16,23 @@
 namespace Pimcore\Bundle\AdminBundle\Security\Authentication\Token;
 
 use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-/**
- * @internal
- */
-class TwoFactorRequiredToken extends PostAuthenticationToken
-{
+
+$authenticationManagerEnabled = \Pimcore::getContainer()->hasParameter('security.authentication.manager.enabled');
+
+if ($authenticationManagerEnabled) {
+    /**
+     * @internal
+     */
+    class TwoFactorRequiredToken extends PostAuthenticationToken
+    {
+    }
+} else {
+    /**
+     * @internal
+     */
+    class TwoFactorRequiredToken extends PostAuthenticationGuardToken
+    {
+    }
 }
