@@ -1220,11 +1220,11 @@ class Service extends Model\AbstractModel
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
-                } catch (\Exception $e) {
+                    $reflectionProperty->setAccessible(true);
+                    $myValue = $reflectionProperty->getValue($object);
+                } catch (\Throwable $e) {
                     return false;
                 }
-                $reflectionProperty->setAccessible(true);
-                $myValue = $reflectionProperty->getValue($object);
 
                 return $myValue instanceof ElementInterface;
             }
