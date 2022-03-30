@@ -418,7 +418,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     saveClose: function(){
         this.save(null, function () {
-            pimcore.helpers.closeAsset(this.id, 'asset');
+            pimcore.helpers.closeAsset(this.id);
         }.bind(this));
     },
 
