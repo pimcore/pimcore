@@ -135,8 +135,7 @@ Ext.onReady(function () {
     Ext.state.Manager.setProvider(provider);
 
     // confirmation to close pimcore
-    window.onbeforeunload = function () {
-
+    window.addEventListener('beforeunload', function () {
         // set this here as a global so that eg. the editmode can access this (edit::iframeOnbeforeunload()),
         // to prevent multiple warning messages to be shown
         pimcore.globalmanager.add("pimcore_reload_in_progress", true);
@@ -149,7 +148,7 @@ Ext.onReady(function () {
                 return t("do_you_really_want_to_close_pimcore");
             }
         }
-    };
+    });
 
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;

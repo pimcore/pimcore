@@ -85,6 +85,8 @@ pimcore.helpers.openAsset = function (id, type, options) {
 
         pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);
 
+        pimcore.helpers.unlockElementOnClose(id, 'asset');
+
         if (options != undefined) {
             if (options.ignoreForHistory) {
                 var element = pimcore.globalmanager.get("asset_" + id);
@@ -114,11 +116,35 @@ pimcore.helpers.closeAsset = function (id) {
     }
 };
 
+pimcore.helpers.unlockElementOnClose = function (id, type) {
+    var elementsToBeUnlocked = localStorage.get('pimcore_opened_elements');
+    if(!elementsToBeUnlocked) {
+        elementsToBeUnlocked = [];
+
+        window.addEventListener('beforeunload', function () {
+            var elementsToBeUnlocked = JSON.parse(localStorage.get('pimcore_opened_elements'));
+            for(var i=0;i< elementsToBeUnlocked.length;i++) {
+                Ext.Ajax.request({
+                    method: "PUT",
+                    url: Routing.generate('pimcore_admin_element_unlockelement'),
+                    params: elementsToBeUnlocked[i]
+                });
+            }
+        });
+    } else {
+        elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
+    }
+    elementsToBeUnlocked.push({id: id, type: type});
+    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
+};
+
 pimcore.helpers.openDocument = function (id, type, options) {
     if (pimcore.globalmanager.exists("document_" + id) == false) {
         if (pimcore.document[type]) {
             pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id, options));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
+
+            pimcore.helpers.unlockElementOnClose(id, 'document');
 
             if (options !== undefined) {
                 if (options.ignoreForHistory) {
@@ -132,7 +158,6 @@ pimcore.helpers.openDocument = function (id, type, options) {
         pimcore.globalmanager.get("document_" + id).activate();
     }
 };
-
 
 pimcore.helpers.closeDocument = function (id) {
     try {
@@ -159,6 +184,8 @@ pimcore.helpers.openObject = function (id, type, options) {
 
         pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id, options));
         pimcore.helpers.rememberOpenTab("object_" + id + "_" + type);
+
+        pimcore.helpers.unlockElementOnClose(id, 'object');
 
         if (options !== undefined) {
             if (options.ignoreForHistory) {
