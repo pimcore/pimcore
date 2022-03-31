@@ -337,23 +337,27 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     removeBlock: function (blockElement) {
 
-        this.closeOpenEditors();
+        Ext.Msg.confirm(t('delete'), t('delete_message_cstore'), function(btn){
+            if (btn == 'yes') {
+                this.closeOpenEditors();
 
-        var key = blockElement.key;
-        this.currentElements[key] = "deleted";
+                var key = blockElement.key;
+                this.currentElements[key] = "deleted";
 
-        this.component.remove(blockElement);
-        this.dirty = true;
+                this.component.remove(blockElement);
+                this.dirty = true;
 
-        // check for remaining elements
-        if(this.component.items.items.length < 1) {
-            this.component.removeAll();
-            this.component.add(this.getControls());
-            this.component.updateLayout();
-            this.currentElements = [];
-        }
+                // check for remaining elements
+                if (this.component.items.items.length < 1) {
+                    this.component.removeAll();
+                    this.component.add(this.getControls());
+                    this.component.updateLayout();
+                    this.currentElements = [];
+                }
 
-        this.updateBlockIndices();
+                this.updateBlockIndices();
+            }
+        }.bind(this));
     },
 
     moveBlockUp: function (blockElement) {
