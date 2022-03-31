@@ -69,7 +69,9 @@ services:
 
     Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware: ~
 
-    Pimcore\Twig\Extension\AssetHelperExtensions: ~
+    Pimcore\Twig\Extension\AssetHelperExtensions:
+        arguments:
+            - '%pimcore.config%'
 
     Pimcore\Twig\Extension\DataObjectHelperExtensions: ~
 

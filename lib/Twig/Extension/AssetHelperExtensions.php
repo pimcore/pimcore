@@ -19,6 +19,7 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Model\Asset;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 use Twig\TwigTest;
 
 /**
@@ -26,6 +27,10 @@ use Twig\TwigTest;
  */
 class AssetHelperExtensions extends AbstractExtension
 {
+    public function __construct(protected array $config)
+    {
+    }
+
     public function getTests(): array
     {
         return [
@@ -55,6 +60,21 @@ class AssetHelperExtensions extends AbstractExtension
             }),
             new TwigTest('pimcore_asset_video', static function ($object) {
                 return $object instanceof Asset\Video;
+            }),
+        ];
+    }
+
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('pimcore_asset_prefix_source', function () {
+                return $this->config['assets']['frontend_prefixes']['source'];
+            }),
+            new TwigFunction('pimcore_asset_prefix_thumbnail', function () {
+                return $this->config['assets']['frontend_prefixes']['thumbnail'];
+            }),
+            new TwigFunction('pimcore_asset_prefix_thumbnail_deferred', function () {
+                return $this->config['assets']['frontend_prefixes']['thumbnail_deferred'];
             }),
         ];
     }
