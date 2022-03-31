@@ -41,8 +41,7 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
     public function __construct(
         private UserProviderInterface $userProvider,
         private TokenStorageInterface $tokenStorage,
-        private string $firewallName,
-        private string $userKey = 'PRE_AUTHENTICATED_USER'
+        private string $firewallName
         )
     {}
 
@@ -100,7 +99,7 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
         );
     }
 
-    public function createToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
         return new PreAuthenticatedToken($passport->getUser(), $firewallName, $passport->getUser()->getRoles());
     }
@@ -131,6 +130,7 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
 
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
+        /** @var Passport $passport */
         return $this->createToken($passport, $firewallName);
     }
 }
