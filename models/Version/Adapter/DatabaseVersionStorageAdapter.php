@@ -15,20 +15,13 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL;
 
 final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     CONST versionsTableName = "versionsData";
 
-    protected function getDb() : Connection
-    {
-        return \Pimcore::getContainer()->get($this->database_connection);
-    }
-
-    public function __construct(protected string $database_connection)
+    public function __construct(protected DBAL\Connection $databaseConnection)
     {
     }
 
@@ -47,14 +40,11 @@ final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterf
             $contents = stream_get_contents($binaryDataStream);
         }
 
-        $this->getDb()->executeStatement("insert into " . self::versionsTableName . "(id, cid, ctype, metaData, binaryData) values (:id, :cid, :ctype, :metaData, :binaryData)",
-            [
-                'id' => $id,
-                'cid' => $cId,
-                'ctype' => $cType,
-                'metaData' => $metaData,
-                'binaryData' => $contents ?? null
-            ]);
+        $this->databaseConnection->insert(self::versionsTableName, ['id' => $id,
+                                    'cid' => $cId,
+                                    'ctype' => $cType,
+                                    'metaData' => $metaData,
+                                    'binaryData' => $contents ?? null]);
     }
 
     /**
@@ -71,20 +61,14 @@ final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterf
                                 string $cType,
                                 bool   $binaryData = false): mixed {
 
-        $data = null;
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
-        $resultSet = $this->getDb()->executeQuery("SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype",
+
+        return $this->databaseConnection->fetchOne("SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype",
             [
                 'id' => $id,
                 'cid' => $cId,
                 'ctype' => $cType
             ]);
-
-        if ($resultSet instanceof Result) {
-            $data = $resultSet->fetchOne();
-            $resultSet->free();
-        }
-        return $data;
     }
 
     public function loadMetaData(int $id,
@@ -127,12 +111,11 @@ final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterf
                            bool $isBinaryHashInUse,
                            int $binaryFileId = null): void
     {
-        $this->getDb()->executeStatement("delete from " . self::versionsTableName . " where id=:id and cid=:cid and ctype=:ctype",
-            [
-                'id' => $id,
-                'cid' => $cId,
-                'ctype' => $cType
-            ]);
+        $this->databaseConnection->delete(self::versionsTableName,  [
+                                                'id' => $id,
+                                                'cid' => $cId,
+                                                'ctype' => $cType
+                                            ]);
     }
 
     public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed

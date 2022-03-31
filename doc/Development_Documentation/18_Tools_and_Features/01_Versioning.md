@@ -83,7 +83,7 @@ Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
 Pimcore\Model\Version\Adapter\DelegateVersionStorageAdapter:
     public: true
     arguments:
-        $byte_threshold: 1000000
+        $byteThreshold: 1000000
         $defaultAdapter: '@Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter'
         $fallbackAdapter: '@Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter'
 
@@ -91,7 +91,7 @@ Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
 
 Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
     arguments:
-        $database_connection: doctrine.dbal.versioning
+        $databaseConnection: '@doctrine.dbal.versioning_connection'
 ```
 
 In this example the version data is stored in the database as long as neither the metadata nor the binary data exceeds 1000000 bytes in size.

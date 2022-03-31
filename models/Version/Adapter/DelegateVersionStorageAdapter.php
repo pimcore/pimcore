@@ -18,7 +18,7 @@ namespace Pimcore\Model\Version\Adapter;
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     private array $adapters = [];
-    public function __construct(protected int $byte_threshold,
+    public function __construct(protected int $byteThreshold,
                                 protected VersionStorageAdapterInterface $defaultAdapter,
                                 protected VersionStorageAdapterInterface $fallbackAdapter)
     {
@@ -70,8 +70,8 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
                                    int $binaryDataSize = null): string {
 
         if(empty($this->fallbackAdapter) === false) {
-            if ($metaDataSize > $this->byte_threshold ||
-                $binaryDataSize > $this->byte_threshold) {
+            if ($metaDataSize > $this->byteThreshold ||
+                $binaryDataSize > $this->byteThreshold) {
                 return $this->fallbackAdapter->getStorageType($metaDataSize, $binaryDataSize);
             }
         }
