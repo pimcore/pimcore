@@ -143,7 +143,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         if ($request->get('v')) {
             if ($version = Version::getById($request->get('v'))) {
-                if ($version->getPublic() || $request->get('pimcore_version')) {
+                if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
                         'document' => $document->getFullPath(),

@@ -16,6 +16,7 @@
 namespace Pimcore\Image;
 
 use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Communication\Message;
 use HeadlessChromium\Cookies\Cookie;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
@@ -71,7 +72,23 @@ class Chromium
         ]);
 
         try {
+
+            $headers = [];
+            if (php_sapi_name() !== 'cli') {
+                $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
+                    return Session::getSessionName() . '=' . Session::getSessionId();
+                });
+            }
+
             $page = $browser->createPage();
+
+            if(!empty($headers)) {
+                $page->getSession()->sendMessageSync(new Message(
+                    'Network.setExtraHTTPHeaders',
+                    ['headers' => $headers]
+                ));
+            }
+
             $page->navigate($url)->waitForNavigation();
 
             $page->screenshot([

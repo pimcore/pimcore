@@ -27,11 +27,12 @@ sudo apt-get install ffmpeg
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
-## Wkhtmltopdf
-Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
-
 ## Chromium (Chrome Headless)
 Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
+
+## Wkhtmltopdf (deprecated: use Chromium instead)
+Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
+
 
 ## Image Optimizers
 

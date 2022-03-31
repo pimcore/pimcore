@@ -1136,7 +1136,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $prefix = $request->getSchemeAndHttpHost();
         }
 
-        $prefix .= $docFrom->getRealFullPath() . '?pimcore_version=true&v=';
+        $prefix .= $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from;
         $toUrl = $prefix . $to;

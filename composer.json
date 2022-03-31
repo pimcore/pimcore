@@ -43,7 +43,6 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "ext-curl": "*",
-    "ext-sockets": "*",
     "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
@@ -179,6 +178,7 @@
     "chrome-php/chrome": "^1.4.0"
   },
   "suggest": {
+    "ext-sockets": "*",
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
     "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
