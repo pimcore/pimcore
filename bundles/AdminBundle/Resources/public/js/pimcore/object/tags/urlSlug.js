@@ -18,7 +18,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
 
-        this.data = "";
+        this.data = [];
         this.usedSiteIds = [];
         this.elements = {};
         this.dirty = false;

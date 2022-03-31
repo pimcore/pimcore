@@ -33,7 +33,7 @@ final class User extends User\UserRole
     protected $type = 'user';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $password;
 
@@ -133,7 +133,7 @@ final class User extends User\UserRole
     protected $twoFactorAuthentication;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPassword()
     {
@@ -141,13 +141,13 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $password
+     * @param string|null $password
      *
      * @return $this
      */
     public function setPassword($password)
     {
-        if (strlen($password) > 4) {
+        if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
 

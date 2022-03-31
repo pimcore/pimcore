@@ -112,6 +112,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             // thumbnail already existed
             $this->autoClearTempFiles();
         }
+
+        $this->clearDatabaseCache();
     }
 
     /**
@@ -148,6 +150,17 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         } else {
             $this->autoClearTempFiles();
         }
+
+        $this->clearDatabaseCache();
+    }
+
+    private function clearDatabaseCache(): void
+    {
+        \Pimcore\Db::get()->delete('assets_image_thumbnail_cache', [
+            'name' => $this->model->getName(),
+        ]);
+
+        Model\Asset\Dao::$thumbnailStatusCache = [];
     }
 
     protected function autoClearTempFiles()
