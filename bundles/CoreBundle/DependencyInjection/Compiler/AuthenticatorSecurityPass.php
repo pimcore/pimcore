@@ -41,9 +41,7 @@ final class AuthenticatorSecurityPass implements CompilerPassInterface
             $loader->load('authenticator_security.yaml');
         }
 
-        if ($container->hasParameter('scheb_two_factor.security_tokens')) {
-            $container->setParameter('scheb_two_factor.security_tokens', [TwoFactorRequiredToken::class]);
-        }
+        $container->setParameter('scheb_two_factor.security_tokens', [TwoFactorRequiredToken::class]);
 
         $bruteforceProtectionHandler = $container->getDefinition(BruteforceProtectionHandler::class);
         $bruteforceProtectionHandler->setArgument('$disabled', true);
