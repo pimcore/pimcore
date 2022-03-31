@@ -27,7 +27,7 @@ final class Version20220214110000 extends AbstractMigration
      */
     public function getDescription(): string
     {
-        return 'Add storageType column to database';
+        return 'Add `storageType` column to `version` database table';
     }
 
     public function up(Schema $schema): void
