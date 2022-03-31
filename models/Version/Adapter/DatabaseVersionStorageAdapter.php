@@ -19,7 +19,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\ParameterType;
 
-class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
+final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     CONST versionsTableName = "versionsData";
 
