@@ -43,6 +43,8 @@ $_ENV['PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'] = 'settings-store';
 include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();
+\Pimcore\Bootstrap::kernel();
+
 
 Autoloader::addNamespace('Pimcore\Model\DataObject', __DIR__ . '/_output/var/classes/DataObject');
 Autoloader::addNamespace('Pimcore\Tests', __DIR__);
