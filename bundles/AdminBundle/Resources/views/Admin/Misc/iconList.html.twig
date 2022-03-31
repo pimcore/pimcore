@@ -51,6 +51,9 @@
             width: 50px;
         }
 
+        .language-icon img{
+            width: 16px;
+        }
     </style>
 </head>
 <body>
@@ -126,7 +129,15 @@
     {% endfor %}
 </table>
 
+{{ pimcore_minimize_scripts(['pimcore/common.js', 'pimcore/functions.js','pimcore/helpers.js']) | raw }}
+<script>
+    [...document.getElementsByTagName('img')]
+        .forEach(el => {
+            el.addEventListener("click", () => {
+                pimcore.helpers.copyStringToClipboard(el.dataset.imgpath)
+            });
+        });
+</script>
 
 </body>
 </html>
-
