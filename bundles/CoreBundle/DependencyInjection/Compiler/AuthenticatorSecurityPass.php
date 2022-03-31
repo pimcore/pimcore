@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -37,7 +38,11 @@ final class AuthenticatorSecurityPass implements CompilerPassInterface
         );
 
         if ($container->hasDefinition('security.authentication.manager')) {
-            $loader->load('security_hasher.yaml');
+            $loader->load('authenticator_security.yaml');
+        }
+
+        if ($container->hasParameter('scheb_two_factor.security_tokens')) {
+            $container->setParameter('scheb_two_factor.security_tokens', [TwoFactorRequiredToken::class]);
         }
 
         $bruteforceProtectionHandler = $container->getDefinition(BruteforceProtectionHandler::class);

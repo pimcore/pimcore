@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
+use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
@@ -69,7 +70,11 @@ class TwoFactorListener
         }
 
         $twoFactorToken->setTwoFactorProviderPrepared($providerName);
-        $firewallName = $twoFactorToken->getProviderKey();
+        if ($twoFactorToken instanceof TwoFactorRequiredToken) {
+            $firewallName = $twoFactorToken->getFirewallName();
+        } else {
+            $firewallName = $twoFactorToken->getProviderKey();
+        }
 
         if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
             $this->logger->info(sprintf('Two-factor provider "%s" was already prepared.', $providerName));
