@@ -167,10 +167,14 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $this->db->delete($tableName, [
-                    'o_id' => $object->getId(),
-                    'fieldname' => $this->model->getFieldname(),
-                ]);
+                $dataExists = $this->db->fetchOne("SELECT `o_id` FROM `".$tableName."` WHERE
+         `o_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                if($dataExists) {
+                    $this->db->delete($tableName, [
+                        'o_id' => $object->getId(),
+                        'fieldname' => $this->model->getFieldname(),
+                    ]);
+                }
             } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
@@ -180,10 +184,14 @@ class Dao extends Model\Dao\AbstractDao
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
-                    $this->db->delete($tableName, [
-                        'ooo_id' => $object->getId(),
-                        'fieldname' => $this->model->getFieldname(),
-                    ]);
+                    $dataExists = $this->db->fetchOne("SELECT `ooo_id` FROM `".$tableName."` WHERE
+         `ooo_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1 ");
+                    if($dataExists) {
+                        $this->db->delete($tableName, [
+                            'ooo_id' => $object->getId(),
+                            'fieldname' => $this->model->getFieldname(),
+                        ]);
+                    }
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }
