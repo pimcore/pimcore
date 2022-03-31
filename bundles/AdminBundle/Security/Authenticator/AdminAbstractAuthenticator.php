@@ -60,8 +60,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         protected RouterInterface $router,
         protected TranslatorInterface $translator
     )
-    {
-    }
+    {}
 
     /**
      * {@inheritdoc}
