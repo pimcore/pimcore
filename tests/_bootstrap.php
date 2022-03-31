@@ -45,7 +45,6 @@ include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 \Pimcore\Bootstrap::bootstrap();
 \Pimcore\Bootstrap::kernel();
 
-
 Autoloader::addNamespace('Pimcore\Model\DataObject', __DIR__ . '/_output/var/classes/DataObject');
 Autoloader::addNamespace('Pimcore\Tests', __DIR__);
 Autoloader::addNamespace('Pimcore\Tests', __DIR__ . '/_support');
