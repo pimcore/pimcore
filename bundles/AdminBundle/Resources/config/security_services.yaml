@@ -69,7 +69,6 @@ services:
             $userProvider: !abstract defined by the factory
             $tokenStorage: '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
             $firewallName: !abstract defined by the factory
-            $userKey: !abstract defined by the factory
 
 
     Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~

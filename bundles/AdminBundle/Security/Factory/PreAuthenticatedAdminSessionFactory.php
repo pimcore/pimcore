@@ -37,8 +37,7 @@ class PreAuthenticatedAdminSessionFactory  implements AuthenticatorFactoryInterf
         $container
             ->setDefinition($authenticatorId, new ChildDefinition('pimcore.security.authenticator.admin_pre_auth'))
             ->replaceArgument('$userProvider', new Reference($userProviderId))
-            ->replaceArgument('$firewallName', $firewallName)
-            ->replaceArgument('$userKey', $config['provider']);
+            ->replaceArgument('$firewallName', $firewallName);
 
         return $authenticatorId;
     }
