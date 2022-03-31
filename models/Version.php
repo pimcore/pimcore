@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use GuzzleHttp\Handler\Proxy;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
