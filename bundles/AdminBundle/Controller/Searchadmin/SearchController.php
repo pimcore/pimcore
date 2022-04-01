@@ -304,7 +304,7 @@ class SearchController extends AdminController
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element->isAllowed('list')) {
+            if ($element->isAllowed('list', $this->getAdminUser())) {
                 $data = null;
                 if ($element instanceof DataObject\AbstractObject) {
                     $data = DataObject\Service::gridObjectData($element, $fields);

@@ -217,7 +217,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
 
-                if ($child->isAllowed('list')) {
+                if ($child->isAllowed('list', $this->getAdminUser())) {
                     $objects[] = $tmpObject;
                 }
             }
