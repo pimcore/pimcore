@@ -15,14 +15,16 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
-use Pimcore\Model;
+use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Tool\Serialize;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation $model
+ * @property Classificationstore\KeyGroupRelation $model
  */
-class Dao extends Model\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
@@ -40,8 +42,14 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setGroupId($groupId);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
-            . ',' . Model\DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' WHERE keyId = ? AND groupId = ?', [$this->model->getKeyId(), $this->model->getGroupId()]);
+        $data = $this->db->fetchRow(
+            sprintf(
+                'SELECT * FROM `%1$s`, `%2$s` WHERE `%1$s`.`keyId` = `%2$s`.`id` AND `%1$s`.`keyId` = ? AND `%1$s`.`groupId` = ?',
+                self::TABLE_NAME_RELATIONS,
+                Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS
+            ),
+            [$this->model->getKeyId(), $this->model->getGroupId()]
+        );
 
         $this->assignVariablesToModel($data);
     }
@@ -73,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
                     $value = (int) $value;
                 }
                 if (is_array($value) || is_object($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
+                    $value = Serialize::serialize($value);
                 }
 
                 $data[$key] = $value;
