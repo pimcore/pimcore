@@ -388,20 +388,23 @@ class UserController extends AdminController implements KernelControllerEventInt
      * @Route("/user/get", name="pimcore_admin_user_get", methods={"GET"})
      *
      * @param Request $request
-     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getAction(Request $request, Config $config)
+    public function getAction(Request $request)
     {
-        if ((int)$request->get('id') < 1) {
-            return $this->adminJson(['success' => false]);
+        $userId = (int)$request->get('id');
+        if ($userId < 1) {
+            throw $this->createNotFoundException();
         }
 
-        /** @var User $user */
-        $user = User::getById((int)$request->get('id'));
+        $user = User::getById($userId);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -465,7 +468,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         // unset confidential informations
         $userData = $user->getObjectVars();
         $userData['roles'] =  array_map('intval', $user->getRoles());
-        $userData['docTypes'] =  array_map('intval', $user->getDocTypes());
+        $userData['docTypes'] =  $user->getDocTypes();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));

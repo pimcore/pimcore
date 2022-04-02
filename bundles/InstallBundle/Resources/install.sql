@@ -622,7 +622,7 @@ CREATE TABLE `users` (
   `closeWarning` tinyint(1) DEFAULT NULL,
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
-  `docTypes` varchar(255) DEFAULT NULL,
+  `docTypes` text DEFAULT NULL,
   `classes` text DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
