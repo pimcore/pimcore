@@ -342,13 +342,14 @@ trait ImageThumbnailTrait
     public function exists(): bool
     {
         $pathReference = $this->getPathReference(true);
+        $type = $pathReference['type'] ?? '';
         if (
-            $pathReference['type'] === 'asset' ||
-            $pathReference['type'] === 'data-uri' ||
-            $pathReference['type'] === 'thumbnail'
+            $type === 'asset' ||
+            $type === 'data-uri' ||
+            $type === 'thumbnail'
         ) {
             return true;
-        } elseif ($pathReference['type'] === 'deferred') {
+        } elseif ($type === 'deferred') {
             return false;
         } elseif (isset($pathReference['storagePath'])) {
             // this is probably redundant, but as it doesn't hurt we can keep it
