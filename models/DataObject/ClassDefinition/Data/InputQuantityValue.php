@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 /**
  * TODO: Refactor - this class is very similar to the parent one so probably we can try to refactor parent and have better results here also
@@ -123,8 +124,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param string $value
-     * @param int $unitId
+     * @param string|null $value
+     * @param Unit|string|null $unitId
      *
      * @return InputQuantityValueDataObject
      */

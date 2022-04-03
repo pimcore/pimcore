@@ -56,7 +56,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float
+     * @var float|int|string|null
      */
     public $defaultValue;
 
@@ -174,7 +174,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int|null
+     * @return float|int|string|null
      */
     public function getDefaultValue()
     {
@@ -186,7 +186,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $defaultValue
+     * @param float|int|string|null $defaultValue
      *
      * @return $this
      */
@@ -565,7 +565,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      *
      * @return float|int|string
      */

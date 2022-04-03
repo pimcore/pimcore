@@ -230,7 +230,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Append
      *
-     * @param  string $value
+     * @param  \stdClass $value
      *
      * @return void
      *
@@ -249,7 +249,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * OffsetSet
      *
      * @param  string|int $index
-     * @param  string $value
+     * @param  \stdClass $value
      *
      * @return void
      *

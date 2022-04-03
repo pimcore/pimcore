@@ -185,7 +185,7 @@ class Folder extends DAV\Collection
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      *
      * @throws DAV\Exception\Forbidden
      * @throws \Exception

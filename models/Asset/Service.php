@@ -161,7 +161,7 @@ class Service extends Model\Element\Service
      * @param Asset $target
      * @param Asset $source
      *
-     * @return mixed
+     * @return Asset
      *
      * @throws \Exception
      */

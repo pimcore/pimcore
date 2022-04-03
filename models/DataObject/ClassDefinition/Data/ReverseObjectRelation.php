@@ -84,7 +84,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnerClassName()
     {
@@ -102,7 +102,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnerClassId()
     {

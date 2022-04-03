@@ -519,7 +519,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public function getNextParentForInheritance()
     {
