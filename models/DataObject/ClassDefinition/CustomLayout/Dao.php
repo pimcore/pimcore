@@ -94,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $name
      * @param string $classId
      *
-     * @return int|null
+     * @return string|null
      */
     public function getIdByNameAndClassId($name, $classId)
     {

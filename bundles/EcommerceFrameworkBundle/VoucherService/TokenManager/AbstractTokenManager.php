@@ -31,7 +31,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     public $configuration;
 
     /**
-     * @var int
+     * @var string|int|null
      */
     public $seriesId;
 

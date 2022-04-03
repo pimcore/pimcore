@@ -336,7 +336,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param string $task
-     * @param Model\Document\Snippet $page
+     * @param Model\Document $page
      */
     protected function handleTask($task, $page)
     {

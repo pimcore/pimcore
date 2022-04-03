@@ -23,9 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 class DefaultElasticSearch7 extends AbstractElasticSearch
 {
     /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return ProductListInterface
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7
      */
     public function getProductList()
     {

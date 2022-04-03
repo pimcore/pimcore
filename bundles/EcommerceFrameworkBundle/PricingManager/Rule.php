@@ -60,7 +60,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -146,9 +146,9 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
-     * @return $this|RuleInterface
+     * @return $this
      */
     public function setId($id)
     {
@@ -158,7 +158,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -169,7 +169,7 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string $label
      * @param string $locale
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setLabel($label, $locale = null)
     {
@@ -200,7 +200,7 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string $name
      * @param string|null $locale
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setName($name, $locale = null)
     {
@@ -213,7 +213,7 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string $description
      * @param string $locale
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setDescription($description, $locale = null)
     {
@@ -235,7 +235,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param string $behavior
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setBehavior($behavior)
     {
@@ -255,7 +255,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param bool $active
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setActive($active)
     {
@@ -275,7 +275,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param ConditionInterface $condition
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setCondition(ConditionInterface $condition)
     {
@@ -295,7 +295,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param ActionInterface[] $action
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setActions(array $action)
     {
@@ -315,7 +315,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param int $prio
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function setPrio($prio)
     {
@@ -333,7 +333,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return RuleInterface
+     * @return $this
      */
     public function save()
     {
@@ -402,7 +402,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param EnvironmentInterface $environment
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function executeOnProduct(EnvironmentInterface $environment)
     {
@@ -418,7 +418,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param EnvironmentInterface $environment
      *
-     * @return RuleInterface
+     * @return $this
      */
     public function executeOnCart(EnvironmentInterface $environment)
     {
@@ -437,8 +437,6 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string|null $language
      *
      * @return string
-     *
-     *
      */
     protected function getLanguage($language = null)
     {

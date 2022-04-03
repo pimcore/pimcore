@@ -55,7 +55,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection|null
+     * @return AbstractFilterDefinitionType[]|null
      */
     abstract public function getConditions();
 
@@ -64,7 +64,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection|null
+     * @return AbstractFilterDefinitionType[]|null
      */
     abstract public function getFilters();
 

@@ -130,7 +130,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @param string $getter
-     * @param Objectbrick\Data\AbstractData $data
+     * @param DataObject\Objectbrick $data
      * @param array|null $params
      * @param string $allowedBrickType
      * @param int $level
@@ -695,7 +695,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param Objectbrick\Data\AbstractData $data
+     * @param Objectbrick $data
      * @param string $getter
      * @param array $params
      * @param int $level

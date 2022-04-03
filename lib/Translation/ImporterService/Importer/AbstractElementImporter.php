@@ -46,7 +46,7 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Document|DataObject\Concrete $element
+     * @param Element\ElementInterface $element
      * @param string $targetLanguage
      * @param Attribute $attribute
      *
@@ -65,7 +65,7 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Document|DataObject\Concrete $element
+     * @param Element\ElementInterface $element
      *
      * @throws \Exception
      */

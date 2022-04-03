@@ -51,6 +51,9 @@ class CartCheckoutData extends AbstractCartCheckoutData
         return $checkoutDataItem;
     }
 
+    /**
+     * @param int $cartId
+     */
     public static function removeAllFromCart($cartId)
     {
         $checkoutDataItem = new self();

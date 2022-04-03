@@ -784,7 +784,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {

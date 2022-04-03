@@ -1031,7 +1031,6 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('context')
             ->useAttributeAsKey('name');
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry

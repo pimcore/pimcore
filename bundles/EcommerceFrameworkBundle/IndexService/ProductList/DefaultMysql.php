@@ -127,7 +127,7 @@ class DefaultMysql implements ProductListInterface
     protected $conditionPriceTo = null;
 
     /**
-     * @param string $condition
+     * @param array|string $condition
      * @param string $fieldname
      */
     public function addCondition($condition, $fieldname = '')

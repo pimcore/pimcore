@@ -659,7 +659,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
+     * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      */
     protected function updateChildren($target, $new)

@@ -71,7 +71,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\Kernel|Kernel
+     * @return \Symfony\Component\HttpKernel\KernelInterface|null
      */
     public function getKernel()
     {
