@@ -107,7 +107,7 @@ class Imagick extends Adapter
                     $i->setBackgroundColor(new \ImagickPixel('transparent'));
                     //for certain edge-cases simply setting the background-color to transparent does not seem to work
                     //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
-                    $i->transparentPaintImage('',1,0,false);
+                    $i->transparentPaintImage('', 1, 0, false);
                 }
 
                 $this->setColorspaceToRGB();
