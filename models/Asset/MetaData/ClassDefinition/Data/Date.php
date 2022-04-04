@@ -17,8 +17,6 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 class Date extends Data
 {
-
-
     /**
      * {@inheritdoc}
      */

@@ -63,7 +63,6 @@ class DataObject extends Data
             sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
         );
 
-
         $element = null;
         if (is_numeric($value)) {
             $element = Service::getElementById('object', $value);

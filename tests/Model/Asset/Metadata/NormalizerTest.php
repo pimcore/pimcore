@@ -53,8 +53,8 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function doCompare(int $assetId, string $metaDataName, $originalData) {
-
+    protected function doCompare(int $assetId, string $metaDataName, $originalData)
+    {
         $asset = Asset::getById($assetId, true);
         $metaDataArray = $asset->getMetadata($metaDataName, null, false, true);
 
@@ -79,7 +79,6 @@ class NormalizerTest extends ModelTestCase
         $this->testAsset->save();
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataAsset);
-
     }
 
     public function testDocumentMetadata()
@@ -91,7 +90,6 @@ class NormalizerTest extends ModelTestCase
         $this->testAsset->save();
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataDocument);
-
     }
 
     public function testDataObjectMetadata()
@@ -103,7 +101,6 @@ class NormalizerTest extends ModelTestCase
         $this->testAsset->save();
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataObject);
-
     }
 
     public function testInputMetadata()
@@ -153,7 +150,6 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
 
-
     public function testSelectMetadata()
     {
         $originalData = 'somevalue';
@@ -163,5 +159,4 @@ class NormalizerTest extends ModelTestCase
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
-
 }
