@@ -182,7 +182,7 @@ class Processor
 
         $modificationDate = null;
         $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
-        if ($statusCacheEnabled) {
+        if ($statusCacheEnabled && $deferred) {
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
         } else {
             if ($storage->fileExists($storagePath)) {
