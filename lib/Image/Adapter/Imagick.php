@@ -283,7 +283,7 @@ class Imagick extends Adapter
         }
 
         if (!$success) {
-            throw new \Exception('Unable to write image: ', $path);
+            throw new \Exception('Unable to write image: ' . $path);
         }
 
         if ($realTargetPath) {
