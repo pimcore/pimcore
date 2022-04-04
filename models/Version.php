@@ -236,7 +236,7 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
-        if($data instanceof Asset) {
+        if($data instanceof Asset && $data->getType() != 'folder') {
             $isAsset = true;
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
