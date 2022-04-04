@@ -205,7 +205,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }]
             });
             this.progressWindow.show();
-            this.createCsv(btn, "", 0);
+            this.createCsv(btn, "", 0, btn.getItemId() === 'exportWithHeaders' ? "1" : "");
         };
 
         topBar.push("->");
@@ -539,7 +539,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         return this.panel;
     },
 
-    createCsv: function (btn, exportFile, offset) {
+    createCsv: function (btn, exportFile, offset, withHeader) {
         let filterData = this.store.getFilters().items;
         let proxy = this.store.getProxy();
         Ext.Ajax.request({
@@ -549,7 +549,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 offset: offset,
                 name: this.config.name,
                 filter: filterData.length > 0 ? encodeURIComponent(proxy.encodeFilters(filterData)) : "",
-                headers: btn.getItemId() === 'exportWithHeaders' ? "1" : "",
+                headers: withHeader,
             },
             success: function (response) {
                 response = JSON.parse(response["responseText"]);
@@ -561,7 +561,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }else{
                     this.progressBar.updateProgress(response["progress"],Number.parseFloat(response["progress"]*100).toFixed(0)+"%");
                     if(!this.progressStop){
-                        this.createCsv(btn, response["exportFile"], response["offset"]);
+                        this.createCsv(btn, response["exportFile"], response["offset"], 0);
                     }
                 }
             }.bind(this)
