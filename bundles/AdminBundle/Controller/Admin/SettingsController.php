@@ -230,6 +230,7 @@ class SettingsController extends AdminController
 
             $properties = [];
             foreach ($list->getDefinitions() as $metadata) {
+                $metadata->expand();
                 $data = $metadata->getObjectVars();
                 $data['writeable'] = $metadata->isWriteable();
                 $properties[] = $data;
