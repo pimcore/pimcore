@@ -119,7 +119,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
                         $condition = $field . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
                         $conditionFilters[] = $condition;
                     } else {
-                        $conditionFilters[] = $field . $operator . " '" . $value . "' ";
+                        $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);
                     }
                 }
             }
