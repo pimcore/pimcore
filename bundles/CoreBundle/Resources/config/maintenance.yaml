@@ -107,3 +107,7 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: documents_static_page_generate }
+
+    Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }
