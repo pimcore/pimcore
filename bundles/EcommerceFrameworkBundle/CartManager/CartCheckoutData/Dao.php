@@ -48,7 +48,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param  string $key
-     * @param  int $cartId
+     * @param  string|int $cartId
      *
      * @throws NotFoundException
      */
@@ -107,7 +107,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param int $cartId
+     * @param string|int $cartId
      */
     public function removeAllFromCart($cartId)
     {

@@ -50,7 +50,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param int $cartId
+     * @param string|int $cartId
      * @param string $itemKey
      * @param string $parentKey
      *
@@ -115,6 +115,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->db->deleteWhere(self::TABLE_NAME, 'itemKey=' . $this->db->quote($this->model->getItemKey()) . ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
     }
 
+    /**
+     * @param string|int $cartId
+     */
     public function removeAllFromCart($cartId)
     {
         $this->db->deleteWhere(self::TABLE_NAME, 'cartId = ' . $this->db->quote($cartId));

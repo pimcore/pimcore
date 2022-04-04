@@ -144,7 +144,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     abstract public function getCart();
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getCartId()
     {
@@ -152,7 +152,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param int $cartId
+     * @param string|int $cartId
      */
     public function setCartId($cartId)
     {

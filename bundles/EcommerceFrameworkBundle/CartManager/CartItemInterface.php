@@ -119,7 +119,7 @@ interface CartItemInterface
     /**
      * @static
      *
-     * @param int $cartId
+     * @param string|int $cartId
      * @param string $itemKey
      * @param string $parentKey
      *
@@ -130,7 +130,7 @@ interface CartItemInterface
     /**
      * @static
      *
-     * @param string $cartId
+     * @param string|int $cartId
      */
     public static function removeAllFromCart($cartId);
 
