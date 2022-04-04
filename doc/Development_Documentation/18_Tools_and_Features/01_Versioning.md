@@ -54,7 +54,7 @@ Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
 
 Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
     arguments:
-        $database_connection: doctrine.dbal.versioning
+        $database_connection: '@doctrine.dbal.versioning_connection'
 ```
 
 The database needs to contain a table called `versionsData`. The following script can be used to create the table include the necessary columns.
