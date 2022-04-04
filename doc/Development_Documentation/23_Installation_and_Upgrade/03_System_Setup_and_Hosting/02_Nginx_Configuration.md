@@ -155,6 +155,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges
@@ -433,6 +434,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges
