@@ -987,7 +987,7 @@ class Imagick extends Adapter
 
         // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
         // getimageformat() onto SVG graphics, this is a workaround to avoid problems
-        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@i", $imagePath)) {
             return true;
         }
 
