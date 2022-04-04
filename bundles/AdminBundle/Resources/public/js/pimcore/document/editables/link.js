@@ -105,7 +105,15 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             text = this.data.path;
         }
         if (this.data.path) {
-            return '<a href="' + this.data.path + '" class="' + this.config["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
+            var displayHtml = Ext.util.Format.htmlEncode(text);
+            if (this.config.textPrefix !== undefined) {
+                displayHtml = this.config.textPrefix + displayHtml;
+            }
+            if (this.config.textSuffix !== undefined) {
+                displayHtml += this.config.textSuffix;
+            }
+
+            return '<a href="' + this.data.path + '" class="' + this.config["class"] + ' ' + this.data["class"] + '">' + displayHtml + '</a>';
         }
         return text;
     },

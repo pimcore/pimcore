@@ -33,17 +33,20 @@ Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/dow
 ## Image Optimizers
 
 ### JPEGOptim
+
 ```bash
-wget https://github.com/imagemin/jpegoptim-bin/blob/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
+wget https://github.com/imagemin/jpegoptim-bin/raw/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
 chmod 0755 /usr/local/bin/jpegoptim
 ```
 
 ## PngQuant
+
 ```bash
 apt-get install pngquant
 ```
 
 ## OptiPng
+
 ```bash
 apt-get install optipng
 ```

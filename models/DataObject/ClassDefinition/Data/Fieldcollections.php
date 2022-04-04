@@ -134,6 +134,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (!$fd instanceof CalculatedValue) {
                             $value = $item->{'get' . $fd->getName()}();
+                            if (isset($params['context']['containerKey']) === false) {
+                                $params['context']['containerKey'] = $idx;
+                            }
                             $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
                         }
                     }
