@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -26,32 +27,37 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends AbstractDao
 {
-    const TABLE_NAME_RELATIONS = 'classificationstore_relations';
+    public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
-     * @param int|null $keyId
-     * @param int|null $groupId
+     * @param int $keyId
+     * @param int $groupId
+     *
+     * @throws NotFoundException
      */
-    public function getById($keyId = null, $groupId = null)
+    public function getById(int $keyId, int $groupId): void
     {
-        if ($keyId != null) {
-            $this->model->setKeyId($keyId);
-        }
-
-        if ($groupId != null) {
-            $this->model->setGroupId($groupId);
-        }
+        $this->model->setKeyId($keyId);
+        $this->model->setGroupId($groupId);
 
         $data = $this->db->fetchRow(
             sprintf(
-                'SELECT * FROM `%1$s`, `%2$s` WHERE `%1$s`.`keyId` = `%2$s`.`id` AND `%1$s`.`keyId` = ? AND `%1$s`.`groupId` = ?',
+                'SELECT * FROM `%1$s` LEFT JOIN `%2$s` ON `%1$s`.`keyId` = `%2$s`.`id` WHERE `%1$s`.`keyId` = ? AND `%1$s`.`groupId` = ?',
                 self::TABLE_NAME_RELATIONS,
                 Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS
             ),
             [$this->model->getKeyId(), $this->model->getGroupId()]
         );
 
-        $this->assignVariablesToModel($data);
+        if (!empty($data['keyId'])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new NotFoundException(sprintf(
+                'KeyGroupRelation with keyId: %s and groupId: %s does not exist',
+                $this->model->getKeyId(),
+                $this->model->getGroupId()
+            ));
+        }
     }
 
     public function save()
@@ -73,10 +79,11 @@ class Dao extends AbstractDao
     public function update()
     {
         $type = $this->model->getObjectVars();
+        $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
         $data = [];
 
         foreach ($type as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {
+            if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
