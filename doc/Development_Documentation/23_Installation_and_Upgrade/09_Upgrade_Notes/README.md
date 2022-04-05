@@ -6,8 +6,21 @@
 - **Important**: [Object bricks] A call to the object brick´s getter method no longer returns object bricks marked for deletion. 
   To restore the original behavior pass "true" to the getter method´s `$includeDeletedBricks` argument. 
 - [Image Optimizer] Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) are deprecated and will be
-  removed in Pimcore 11. Use Pimcore\Image\Optimizer\SpatieImageOptimizer service instead. 
-  Currently, the existing optimizers are disabled. If you still want to use them, then please re-enable them as follows: in the `image_optimizers.yaml` file, add the tag `{ name: pimcore.image.optimizer }` under the required service definitions. For example: if you want to re-enable the `CjpegOptimizer`, you can add the tag `{ name: pimcore.image.optimizer }` under the service definition of `CjpegOptimizer` (which is: `Pimcore\Image\Optimizer\JpegoptimOptimizer`).
+  removed in Pimcore 11. Use Pimcore\Image\Optimizer\SpatieImageOptimizer service instead.
+  Currently, the existing optimizers are disabled. If you still want to use them, please re-enable them by tagging the services accordingly (in your `services.yaml`):
+```yaml
+    Pimcore\Image\Optimizer\CjpegOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\JpegoptimOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\PngCrushOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+```
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
