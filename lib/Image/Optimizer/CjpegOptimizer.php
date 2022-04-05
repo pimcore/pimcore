@@ -14,7 +14,9 @@
  */
 
 namespace Pimcore\Image\Optimizer;
-
+/**
+ * @deprecated since 10.4 version and will be removed in Pimcore 11. use the Spatie Image Optimizer instead
+ */
 final class CjpegOptimizer extends AbstractCommandOptimizer
 {
     /**

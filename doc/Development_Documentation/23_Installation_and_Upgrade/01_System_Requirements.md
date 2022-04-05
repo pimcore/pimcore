@@ -103,12 +103,9 @@ On Debian based systems, you can use the following command to install all requir
 - timeout (GNU core utils)
 - pdftotext (poppler utils)
 - inkscape
-- zopflipng
-- pngcrush
+- pngquant
+- optipng
 - jpegoptim
-- pngout 
-- advpng
-- cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
 - [facedetect](https://github.com/wavexx/facedetect) 
 - [Graphviz](https://www.graphviz.org/)
