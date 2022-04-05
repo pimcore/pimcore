@@ -60,7 +60,7 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
                     $version->setGenerateStackTrace(false);
                     $version->setStackTrace(null);
                     $version->getDao()->save();
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->debug('Unable to cleanup stack trace for version ' . $version->getId() . ', reason: ' . $e->getMessage());
                 }
             }
