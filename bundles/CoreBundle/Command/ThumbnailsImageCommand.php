@@ -52,10 +52,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
-                'filenameRegex',
+                'pathPattern',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images with filenames matching the given regex'
+                'Filter images against the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
             )
             ->addOption(
                 'thumbnails',

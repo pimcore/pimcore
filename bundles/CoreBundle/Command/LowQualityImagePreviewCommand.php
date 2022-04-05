@@ -85,9 +85,9 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        if ($regex= $input->getOption('pathPattern')) {
+        if ($regex = $input->getOption('pathPattern')) {
             $conditions[] = 'CONCAT(path, filename) REGEXP ?';
-            $conditionVariables[] = $filenameRegex;
+            $conditionVariables[] = $regex;
         }
 
         $generator = null;
