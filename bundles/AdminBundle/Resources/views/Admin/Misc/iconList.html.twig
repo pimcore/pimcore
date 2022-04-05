@@ -25,6 +25,7 @@
             float: left;
             font-size: 10px;
             word-wrap: break-word;
+            cursor: pointer;
         }
 
         .icon.black {
@@ -53,6 +54,7 @@
 
         .language-icon img{
             width: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -65,6 +67,7 @@
 </div>
 
 <div id="color_icons" class="icons">
+    <div style="margin-bottom: 20px; text-align: left">ℹ Click on icon to copy path to clipboard.</div>
     {% for icon in colorIcons %}
         {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
