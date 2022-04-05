@@ -302,6 +302,7 @@ pimcore.element.properties = Class.create({
                         dataIndex: 'predefinedName',
                         editable: false,
                         sortable: true,
+                        renderer: Ext.util.Format.htmlEncode,
                         width: 230
                     },
                     {
