@@ -47,10 +47,10 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
-                'filenameRegex',
+                'pathPattern',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images with filenames matching the given regex'
+                'Filter images against the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
             )
             ->addOption(
                 'force',
@@ -85,8 +85,8 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        if ($filenameRegex = $input->getOption('filenameRegex')) {
-            $conditions[] = '`filename` REGEXP ?';
+        if ($regex= $input->getOption('pathPattern')) {
+            $conditions[] = 'CONCAT(path, filename) REGEXP ?';
             $conditionVariables[] = $filenameRegex;
         }
 
