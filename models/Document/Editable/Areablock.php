@@ -491,6 +491,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * @param string $html
      *
      * @throws \Exception
+     *
+     * @internal
      */
     protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
     {
