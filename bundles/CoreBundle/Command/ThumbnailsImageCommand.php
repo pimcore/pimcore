@@ -52,6 +52,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
+                'pathPattern',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Filter images against the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -99,6 +105,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list->setOrder('DESC');
 
         $parentConditions = [];
+        $conditionVariables = [];
 
         // get only images
         $conditions = ["type = 'image'"];
@@ -117,11 +124,16 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
+        if ($regex = $input->getOption('pathPattern')) {
+            $conditions[] = 'CONCAT(path, filename) REGEXP ?';
+            $conditionVariables[] = $regex;
+        }
+
         if ($ids = $input->getOption('id')) {
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        $list->setCondition(implode(' AND ', $conditions));
+        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
 
         $assetIdsList = $list->loadIdList();
         $thumbnailList = [];
