@@ -384,10 +384,8 @@ class UserRole extends AbstractUser
      */
     protected function prepareArray($array)
     {
-        if (is_string($array)) {
-            if (strlen($array)) {
-                $array = explode(',', $array);
-            }
+        if (is_string($array) && strlen($array)) {
+            $array = explode(',', $array);
         }
 
         if (empty($array) || !is_array($array)) {
