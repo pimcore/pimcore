@@ -434,7 +434,7 @@
     "delete_message_dependencies": "There are dependencies, delete anyway?",
     "delete_message": "Do you really want to delete this item?",
     "delete_message_batch": "Do you really want to delete these elements?",
-    "delete_group_message": "Do you really want to delete this item? After the next save all values from this group will be empty.",
+    "delete_group_message": "Do you really want to delete this group and all of its contents?",
     "no_further_objectbricks_allowed": "No further objectbricks allowed",
     "grid_current_language": "Current language",
     "object_columns": "Object columns",
