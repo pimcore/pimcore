@@ -9,18 +9,18 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Image\Optimizer;
 
 use Pimcore\Exception\ImageOptimizationFailedException;
 use Spatie\ImageOptimizer\OptimizerChain;
-use Spatie\ImageOptimizer\Optimizers\Jpegoptim;
-use Spatie\ImageOptimizer\Optimizers\Pngquant;
-use Spatie\ImageOptimizer\Optimizers\Optipng;
 use Spatie\ImageOptimizer\Optimizers\Cwebp;
+use Spatie\ImageOptimizer\Optimizers\Jpegoptim;
+use Spatie\ImageOptimizer\Optimizers\Optipng;
+use Spatie\ImageOptimizer\Optimizers\Pngquant;
 
 final class SpatieImageOptimizer implements \Pimcore\Image\Optimizer\OptimizerInterface
 {
@@ -35,7 +35,7 @@ final class SpatieImageOptimizer implements \Pimcore\Image\Optimizer\OptimizerIn
             ->addOptimizer(new Optipng)
             ->addOptimizer(new Cwebp([
                 '-pass 10',
-                '-mt'
+                '-mt',
             ]));
 
         $optimizerChain->optimize($input, $output); // To keep original image untouched and create the optimized one as a new image
@@ -53,6 +53,3 @@ final class SpatieImageOptimizer implements \Pimcore\Image\Optimizer\OptimizerIn
         return $mimeType === 'image/jpeg' || $mimeType === 'image/png' || $mimeType === 'image/webp';
     }
 }
-
-
-
