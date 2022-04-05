@@ -337,7 +337,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     removeBlock: function (blockElement) {
 
-        Ext.Msg.confirm(t('delete'), t('delete_message_cstore'), function(btn){
+        Ext.Msg.confirm(t('delete'), t('delete_group_message'), function(btn){
             if (btn == 'yes') {
                 this.closeOpenEditors();
 
