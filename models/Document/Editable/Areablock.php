@@ -492,7 +492,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @throws \Exception
      */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
+    protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
