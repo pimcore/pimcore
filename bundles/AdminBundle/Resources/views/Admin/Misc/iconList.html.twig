@@ -25,6 +25,7 @@
             float: left;
             font-size: 10px;
             word-wrap: break-word;
+            cursor: pointer;
         }
 
         .icon.black {
@@ -51,6 +52,10 @@
             width: 50px;
         }
 
+        .language-icon img{
+            width: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -62,6 +67,7 @@
 </div>
 
 <div id="color_icons" class="icons">
+    <div style="margin-bottom: 20px; text-align: left">ℹ Click on icon to copy path to clipboard.</div>
     {% for icon in colorIcons %}
         {% set iconPath = icon|replace({(webRoot): ''}) %}
         <div class="icon">
@@ -126,7 +132,17 @@
     {% endfor %}
 </table>
 
+<script src="/bundles/pimcoreadmin/js/pimcore/common.js"></script>
+<script src="/bundles/pimcoreadmin/js/pimcore/functions.js"></script>
+<script src="/bundles/pimcoreadmin/js/pimcore/helpers.js"></script>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
+    [...document.getElementsByTagName('img')]
+        .forEach(el => {
+            el.addEventListener("click", () => {
+                pimcore.helpers.copyStringToClipboard(el.dataset.imgpath)
+            });
+        });
+</script>
 
 </body>
 </html>
-
