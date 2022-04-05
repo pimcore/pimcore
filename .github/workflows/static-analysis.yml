@@ -6,11 +6,15 @@ on:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
+        paths:
+            - '!*.md'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
+        paths:
+            - '!*.md'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
