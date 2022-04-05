@@ -485,6 +485,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * This method needs to be `protected` as it is used in other bundles such as pimcore/headless-documents
+     *
      * @param array $config
      * @param EditableRenderer $editableRenderer
      * @param string $dialogId
