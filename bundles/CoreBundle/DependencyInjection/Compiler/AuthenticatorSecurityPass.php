@@ -37,15 +37,13 @@ final class AuthenticatorSecurityPass implements CompilerPassInterface
             new FileLocator(__DIR__.'/../../Resources/config')
         );
 
-        if ($container->hasDefinition('security.authentication.manager')) {
+        if ($container->hasDefinition('security.authenticator.manager')) {
             $loader->load('authenticator_security.yaml');
+
+            $bruteforceProtectionHandler = $container->getDefinition(BruteforceProtectionHandler::class);
+            $bruteforceProtectionHandler->setArgument('$disabled', true);
+
+            $container->setParameter('security.authenticator.manager.enabled', true);
         }
-
-        $container->setParameter('scheb_two_factor.security_tokens', [TwoFactorRequiredToken::class]);
-
-        $bruteforceProtectionHandler = $container->getDefinition(BruteforceProtectionHandler::class);
-        $bruteforceProtectionHandler->setArgument('$disabled', true);
-
-        $container->setParameter('security.authentication.manager.enabled', true);
     }
 }
