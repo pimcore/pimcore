@@ -123,9 +123,9 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
-        if ($filenameRegex = $input->getOption('filenameRegex')) {
-            $conditions[] = '`filename` REGEXP ?';
-            $conditionVariables[] = $filenameRegex;
+        if ($regex = $input->getOption('pathPattern')) {
+            $conditions[] = 'CONCAT(path, filename) REGEXP ?';
+            $conditionVariables[] = $regex;
         }
 
         if ($ids = $input->getOption('id')) {
