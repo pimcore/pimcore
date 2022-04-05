@@ -17,7 +17,6 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -38,7 +37,7 @@ class FullTextIndexOptimizeTask implements TaskInterface
      */
     public function execute()
     {
-        if($this->lock->acquire(false)) {
+        if ($this->lock->acquire(false)) {
             Db::get()->exec('OPTIMIZE TABLE search_backend_data');
             Db::get()->exec('OPTIMIZE TABLE email_log');
         }
