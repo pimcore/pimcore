@@ -135,7 +135,7 @@
 <script src="/bundles/pimcoreadmin/js/pimcore/common.js"></script>
 <script src="/bundles/pimcoreadmin/js/pimcore/functions.js"></script>
 <script src="/bundles/pimcoreadmin/js/pimcore/helpers.js"></script>
-<script>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
     [...document.getElementsByTagName('img')]
         .forEach(el => {
             el.addEventListener("click", () => {
