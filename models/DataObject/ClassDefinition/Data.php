@@ -29,7 +29,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $title;
 
