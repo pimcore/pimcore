@@ -174,13 +174,16 @@
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",
     "elasticsearch/elasticsearch": "^7.11",
-    "composer/composer": "*"
+    "composer/composer": "*",
+    "chrome-php/chrome": "^1.4.0"
   },
   "suggest": {
+    "ext-sockets": "*",
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
     "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
-    "elasticsearch/elasticsearch": "Required for Elastic Search service"
+    "elasticsearch/elasticsearch": "Required for Elastic Search service",
+    "chrome-php/chrome": "Required for Documents Page Previews"
   },
   "autoload": {
     "files": [
