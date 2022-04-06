@@ -166,16 +166,23 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // custom views end
 
             if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
 
-                $inheritedPermission = $object->getDao()->isInheritingPermission('list',$userIds);
+                $roleIds = $this->getAdminUser()->getRoles();
+                $currentUserId = $this->getAdminUser()->getId();
+                $permissionIds = array_merge($roleIds ,[$currentUserId]);
+
+                $inheritedPermission = $object->getDao()->isInheritingPermission('list', $permissionIds );
+
+                $existsChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
+
+                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = o_id AND list=0)';
 
                 $condition .= ' AND
                 (
-                    EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1)
-                    OR
-                    '.$inheritedPermission.' = 1
+                    IF ('.$existsChildren.',1,
+                        IF('.$isDisallowedCurrentRow.', 0 , '.$inheritedPermission.')
+                    ) = 1
                 )';
             }
 

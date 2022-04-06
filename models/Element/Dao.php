@@ -95,7 +95,9 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
         $fullPath = $current->getPath().$current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_'.$tableSuffix.' WHERE LOCATE(cpath,"'.$fullPath.'")=1 AND userId IN (' . implode(',', $userIds) . ') AND '.$this->db->quoteIdentifier($type) .' = 1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_'.$tableSuffix.' WHERE LOCATE(cpath,"'.$fullPath.'")=1 AND
+        userId IN (' . implode(',', $userIds) . ')
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
         return (int)$this->db->fetchOne($sql);
 
