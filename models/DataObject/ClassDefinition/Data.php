@@ -217,7 +217,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
