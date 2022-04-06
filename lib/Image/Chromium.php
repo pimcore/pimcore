@@ -9,19 +9,16 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Image;
 
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Message;
-use HeadlessChromium\Cookies\Cookie;
-use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * @internal
@@ -58,6 +55,7 @@ class Chromium
      * @param string $windowSize
      *
      * @return bool
+     *
      * @throws \Exception
      */
     public static function convert(string $url, string $outputFile, string $windowSize = '1280,1024'): bool
@@ -72,7 +70,6 @@ class Chromium
         ]);
 
         try {
-
             $headers = [];
             if (php_sapi_name() !== 'cli') {
                 $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
@@ -82,7 +79,7 @@ class Chromium
 
             $page = $browser->createPage();
 
-            if(!empty($headers)) {
+            if (!empty($headers)) {
                 $page->getSession()->sendMessageSync(new Message(
                     'Network.setExtraHTTPHeaders',
                     ['headers' => $headers]

@@ -673,7 +673,7 @@ class Service extends Model\Element\Service
         $tool = false;
         if (Chromium::isSupported()) {
             $tool = Chromium::class;
-        } else if (HtmlToImage::isSupported()) {
+        } elseif (HtmlToImage::isSupported()) {
             $tool = HtmlToImage::class;
         }
 
