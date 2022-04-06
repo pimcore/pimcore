@@ -98,11 +98,12 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             $filename = urldecode($request->getPathInfo());
 
             if (Site::isSiteRequest()) {
-                $path = Site::getCurrentSite()->getRootPath();
-
                 if ($request->getPathInfo() === '/') {
                     $path = '';
                     $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
+                }
+                else {
+                    $path = Site::getCurrentSite()->getRootPath();
                 }
             }
             $filename = $path .  $filename  . '.html';
