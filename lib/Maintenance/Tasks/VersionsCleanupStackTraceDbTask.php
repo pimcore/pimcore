@@ -44,15 +44,12 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
     {
         $list = new Version\Listing();
         $list->setCondition('date < ' . (time() - 86400 * 7) . ' AND stackTrace IS NOT NULL');
-        $list->setOrderKey('date');
-        $list->setOrder('DESC');
 
         $total = $list->getTotalCount();
         $perIteration = 500;
 
-        for ($i = 0; $i < (ceil($total / $perIteration)); $i++) {
+        for ($i = 0; $i < ceil($total / $perIteration); $i++) {
             $list->setLimit($perIteration);
-            $list->setOffset($i * $perIteration);
             $versions = $list->load();
 
             foreach ($versions as $version) {
