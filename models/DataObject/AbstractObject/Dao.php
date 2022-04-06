@@ -402,10 +402,28 @@ class Dao extends Model\Element\Dao
         }
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $roleIds = $user->getRoles();
+            $currentUserId = $user->getId();
+            $permissionIds = array_merge($roleIds ,[$currentUserId]);
 
-            $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
+            //gets the permission of the ancestors, since it would be the same for each row with same o_parentId, it is done once outside the query to avoid extra subquery.
+            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds );
+
+            // $existsChildren checks for nested elements that are `list`=1. This is to allow the folders in between from current parent to any nested elements and due the "additive" permission on the element itself, we can simply ignore list=0 children
+            // unless for the same rule found is list=0 on user specific level, in that case it nullifies that entry.
+            $existsChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1 AND
+            NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
+
+            // $allowedCurrentRow checks if the current row is blocked, if found a match it "removes/ignores" the entry from object table, doesn't need to check if is list=1 on user level, since it is done in $existsChildren (NB: equal or longer cpath) so we are safe to deduce that there are no valid list=1 rules
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = o_id AND list=0)';
+
+            //If no children with list=1 (with no user-level list=0) and no specific list=0 found for the current row we are looking, we consider the inherited permission rule
+            $query .= ' AND
+                (
+                    IF ('.$existsChildren.',1,
+                        IF('.$isDisallowedCurrentRow.', 0 , '.$inheritedPermission.')
+                    ) = 1
+                )';
         }
 
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);
