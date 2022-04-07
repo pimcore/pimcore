@@ -83,6 +83,10 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
             $content = $transUnit->target->asXml();
             $content = $this->xliffEscaper->unescapeXliff($content);
 
+            if (is_string($content)) {
+                $content = html_entity_decode(trim($content));
+            }
+
             $attributeSet->addAttribute($type, $name, $content);
         }
 
