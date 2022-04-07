@@ -69,7 +69,7 @@ class DataObjectImporter extends AbstractElementImporter
 
             /** @var array $blockData */
             $blockData = $element->{'get' . $blockName}($targetLanguage);
-            $blockItem = !empty($blockData) && $blockData[$blockIndex] ? $blockData[$blockIndex] : $originalBlockItem;
+            $blockItem = !empty($blockData) && isset($blockData[$blockIndex]) ? $blockData[$blockIndex] : $originalBlockItem;
 
             /** @var DataObject\Data\BlockElement $blockItemData */
             $blockItemData = !empty($blockData) ? $blockItem[$fieldname] : clone $originalBlockItemData;
