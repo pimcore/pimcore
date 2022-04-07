@@ -128,7 +128,6 @@ class Processor
             $tmpPath = File::getLocalTempFilePath($format);
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($sourceFile, ['asset' => $asset]);
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
