@@ -157,7 +157,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
 
         if ($this->fallbackDocument && $event->isMainRequest()) {
             $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
-            $this->fallbackDocument = null
+            $this->fallbackDocument = null;
         }
     }
 }
