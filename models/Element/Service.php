@@ -1264,6 +1264,21 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param mixed $properties
+     *
+     * @return mixed
+     */
+    public static function cloneProperties(mixed $properties): mixed
+    {
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cid'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('ctype'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cpath'));
+
+        return $deepCopy->copy($properties);
+    }
+
+    /**
      * @internal
      *
      * @param Note $note
