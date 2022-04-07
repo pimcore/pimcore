@@ -104,7 +104,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
                         $filter['value'] = (int) $filter['value'];
                     }
                     // system field
-                    $value = ($filter['value'] ?? "");
+                    $value = ($filter['value'] ?? '');
                     if ($operator == 'LIKE') {
                         $value = '%' . $value . '%';
                     }
