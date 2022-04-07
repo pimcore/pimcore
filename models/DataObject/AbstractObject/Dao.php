@@ -453,12 +453,12 @@ class Dao extends Model\Element\Dao
             $classIds = [];
             do {
                 $classId = $this->db->fetchOne(
-                    "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? " AND o_classId NOT IN (".rtrim(str_repeat('?,', count($classIds)), ',').")":"")." LIMIT 1",
+                    "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
                     array_merge([$this->db->escapeLike($path).'/%'], $classIds));
-                if($classId) {
+                if ($classId) {
                     $classIds[] = $classId;
                 }
-            } while($classId);
+            } while ($classId);
 
             $classes = [];
             foreach ($classIds as $classId) {
