@@ -20,6 +20,9 @@ use League\Flysystem\UnableToReadFile;
 use Pimcore\File;
 use Pimcore\Tool\Storage;
 
+/**
+ * @internal
+ */
 class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected FilesystemOperator $storage;

@@ -17,7 +17,10 @@ namespace Pimcore\Model\Version\Adapter;
 
 use Doctrine\DBAL;
 
-final class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
+/**
+ * @internal
+ */
+class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     CONST versionsTableName = "versionsData";
 

@@ -18,6 +18,8 @@ namespace Pimcore\Tests\Service\Element;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -98,6 +100,133 @@ class VersionTest extends TestCase
         $this->assertEquals(1, count($multihref), 'expected 1 target element');
     }
 
+    /*
+     * Save a new object and check if the storagetype is set to fs
+     */
+    public function testStorageAdapterTypeFS()
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $query = 'select storageType, binaryFileId from versions where cid = ' . $object->getId() . " and ctype='object'";
+        $db = Db::get();
+        $result = $db->fetchAssociative($query);
+
+        $this->assertEquals("fs", $result['storageType'], 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEmpty($result['binaryFileId'], 'binaryFileId must be empty.');
+    }
+
+    protected function setStorageAdapter(string $class) {
+        $handler = $this->getMockBuilder($class)
+            ->setMethods(null)
+            ->setConstructorArgs([Db::get()])
+            ->getMock();
+
+        \Pimcore::getContainer()->set(VersionStorageAdapterInterface::class, $handler);
+    }
+
+    /*
+     * Save a new object and check if the storagetype is set to db
+     */
+    public function testStorageAdapterDB()
+    {
+        $this->setStorageAdapter(Version\Adapter\DatabaseVersionStorageAdapter::class);
+        $object = TestHelper::createEmptyObject();
+
+        $query = "select v.id, v.storageType, vd.metaData, vd.binaryData from versions v inner join
+                    versionsData vd on
+                    v.id = vd.id and v.cid = vd.cid and v.ctype = vd.ctype
+                    where v.cid = " . $object->getId() . " and v.ctype = 'object'";
+
+        $db = Db::get();
+        $result = $db->fetchAssociative($query);
+
+        $this->assertEquals("db", $result['storageType'], 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
+        $this->assertNotEmpty($result['metaData'], 'metaData must not be empty.');
+        $this->assertEmpty($result['binaryData'], 'metaData must not be empty.');
+    }
+
+    /*
+     * Create asset with image. After that save the same asset again.
+     * Since we do not store the same file twice, binaryFileId must be set on the second version.
+     */
+    public function testStorageAdapterFSWithBinaryFile()
+    {
+        $randomText = TestHelper::generateRandomString(100);
+        $asset = TestHelper::createImageAsset("test_binary_file_id", $randomText, true, 'assets/images/image5.jpg');
+        $cid = $asset->getId();
+
+        $query = "select id, binaryFileHash, binaryFileId from versions where cid = $cid and ctype='asset'";
+        $db = Db::get();
+        $result = $db->fetchAssociative($query);
+        $id1 = $result['id'];
+        $binaryFileId1 = $result['binaryFileId'];
+        $binaryFileHash1 = $result['binaryFileHash'];
+        $this->assertEmpty($binaryFileId1, 'binaryFileId must be empty.');
+        $this->assertNotEmpty($binaryFileHash1, 'binaryFileHash must not be empty');
+        $this->assertNotEmpty($id1, 'id must not be empty');
+        $asset->save();
+
+        $query = "select id, binaryFileHash, binaryFileId from versions where cid = $cid and ctype='asset' and versionCount = 2";
+        $result2 = $db->fetchAssociative($query);
+        $id2 = $result['id'];
+        $binaryFileId2 = $result2['binaryFileId'];
+        $binaryFileHash2 = $result2['binaryFileHash'];
+
+        $this->assertEquals($id1, $binaryFileId2, "binaryFileId must equal id on asset1");
+        $this->assertNotEmpty($binaryFileHash2, 'binaryFileHash must not be empty');
+        $this->assertNotEmpty($id2, 'id must not be empty');
+    }
+
+    /*
+    * Create asset with image. After that save the same asset again.
+    * Since we do not store the same file twice, binaryFileId must be set on the second version.
+    */
+    public function testStorageAdapterDBWithBinaryFile()
+    {
+        $this->setStorageAdapter(Version\Adapter\DatabaseVersionStorageAdapter::class);
+        $randomText = TestHelper::generateRandomString(100);
+        $asset = TestHelper::createImageAsset("test_binary_file_id", $randomText, true, 'assets/images/image5.jpg');
+        $cid = $asset->getId();
+
+        $query = "select v.id, v.storageType, v.binaryFileId, v.binaryFileHash, vd.metaData, vd.binaryData from versions v inner join
+                    versionsData vd on
+                    v.id = vd.id and v.cid = vd.cid and v.ctype = vd.ctype
+                    where v.cid = $cid and v.ctype = 'asset'";
+
+        $db = Db::get();
+        $result = $db->fetchAssociative($query);
+        $id1 = $result['id'];
+        $binaryFileId1 = $result['binaryFileId'];
+        $binaryFileHash1 = $result['binaryFileHash'];
+        $binaryData1 = $result['binaryData'];
+        $metaData1 = $result['metaData'];
+
+        $this->assertEmpty($binaryFileId1, 'binaryFileId must be empty.');
+        $this->assertNotEmpty($binaryFileHash1, 'binaryFileHash must not be empty');
+        $this->assertNotEmpty($id1, 'id must not be empty');
+        $this->assertNotEmpty($binaryData1, 'binaryData must not be empty');
+        $this->assertNotEmpty($metaData1, 'metaData must not be empty');
+        $asset->save();
+
+        $query = "select v.id, v.storageType, v.binaryFileId, v.binaryFileHash, vd.metaData, vd.binaryData from versions v inner join
+                    versionsData vd on
+                    v.id = vd.id and v.cid = vd.cid and v.ctype = vd.ctype
+                    where v.cid = $cid and v.ctype = 'asset' and versionCount = 2";
+
+        $result2 = $db->fetchAssociative($query);
+        $id2 = $result['id'];
+        $binaryFileId2 = $result2['binaryFileId'];
+        $binaryFileHash2 = $result2['binaryFileHash'];
+        $binaryData2 = $result2['binaryData'];
+        $metaData2 = $result2['metaData'];
+
+        $this->assertEquals($id1, $binaryFileId2, "binaryFileId must equal id on asset1");
+        $this->assertNotEmpty($binaryFileHash2, 'binaryFileHash must not be empty');
+        $this->assertNotEmpty($id2, 'id must not be empty');
+        $this->assertNotEmpty($metaData2, 'metaData must not be empty');
+        $this->assertEmpty($binaryData2, 'binaryData must be empty');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -108,6 +237,14 @@ class VersionTest extends TestCase
         if ($this->needsDb()) {
             $this->setUpTestClasses();
         }
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        $db = Db::get();
+        $db->executeStatement("DROP TABLE versionsData");
     }
 
     /**
@@ -123,6 +260,16 @@ class VersionTest extends TestCase
      */
     protected function setUpTestClasses()
     {
+        //Create versionsData table. Needed for tests with DatabaseVersionStorageAdapter
+        $db = Db::get();
+        $db->executeStatement("CREATE TABLE `versionsData` (
+                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                                  `cid` int(11) unsigned DEFAULT NULL,
+                                  `ctype` enum('document','asset','object') DEFAULT NULL,
+                                  `metaData` longblob DEFAULT NULL,
+                                  `binaryData` longblob DEFAULT NULL,
+                                  PRIMARY KEY (`id`)
+                                )");
     }
 
     /**

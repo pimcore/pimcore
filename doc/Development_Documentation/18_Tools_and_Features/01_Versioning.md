@@ -73,7 +73,7 @@ CREATE TABLE `versionsData` (
 ### Delegate
 
 To store the version data based on a threshold in either the default storage location or a fallback storage location use `DelegateVersionStorageAdapter` service.
-If the size of metadata or binary data information exceeds the configured `byte_threshold` value, the version data is stored using the fallback adapter.
+If the size of metadata or binary data information exceeds the configured `byteThreshold` value, the version data is stored using the fallback adapter.
 
 ```yaml
 Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:

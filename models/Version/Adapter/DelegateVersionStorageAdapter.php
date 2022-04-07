@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
+/**
+ * @internal
+ */
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     private array $adapters = [];
