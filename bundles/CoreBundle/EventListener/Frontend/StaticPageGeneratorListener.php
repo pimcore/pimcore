@@ -27,6 +27,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Site;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,7 +60,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             DocumentEvents::POST_ADD => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_DELETE => 'onPostAddUpdateDeleteDocument',
             DocumentEvents::POST_UPDATE => 'onPostAddUpdateDeleteDocument',
-            KernelEvents::REQUEST => ['onKernelRequest', 580], //this must run before targeting listener
+            KernelEvents::REQUEST => ['onKernelRequest', 510], //this must run before targeting listener
             KernelEvents::RESPONSE => ['onKernelResponse', -120], //this must run after code injection listeners
         ];
     }
@@ -93,7 +94,18 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         $storage = Storage::get('document_static');
 
         try {
-            $filename = urldecode($request->getPathInfo()) . '.html';
+            $path = '';
+            $filename = urldecode($request->getPathInfo());
+
+            if (Site::isSiteRequest()) {
+                if ($request->getPathInfo() === '/') {
+                    $filename = '/' . Site::getCurrentSite()->getRootDocument()->getKey();
+                } else {
+                    $path = Site::getCurrentSite()->getRootPath();
+                }
+            }
+            $filename = $path .  $filename  . '.html';
+
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
                 $date = date(\DateTime::ISO8601, $storage->lastModified($filename));

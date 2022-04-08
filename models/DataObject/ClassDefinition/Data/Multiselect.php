@@ -256,7 +256,7 @@ class Multiselect extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -264,7 +264,7 @@ class Multiselect extends Data implements
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (strlen($data)) {
+        if (strlen((string) $data)) {
             return explode(',', $data);
         }
 
@@ -700,7 +700,7 @@ class Multiselect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);

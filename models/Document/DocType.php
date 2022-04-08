@@ -117,6 +117,10 @@ class DocType extends Model\AbstractModel
      */
     public static function getById($id)
     {
+        if (empty($id)) {
+            return null;
+        }
+
         try {
             $docType = new self();
             $docType->getDao()->getById($id);

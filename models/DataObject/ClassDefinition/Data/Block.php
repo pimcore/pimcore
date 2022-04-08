@@ -308,6 +308,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
+                    if (isset($params['owner'])) {
+                        $this->setBlockElementOwner($blockElement, $params);
+                    }
+
                     $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed

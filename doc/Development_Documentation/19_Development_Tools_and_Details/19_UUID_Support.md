@@ -1,8 +1,12 @@
 # UUID Support
 Pimcore provides a toolkit for UUID-support. To activate the UUID-support, an instance identifier 
-has to be set in *Settings* > *System* > *General*:
+has to be set manually in the config.yaml file.
 
-![UUID Support Config](../img/uuid-support-config.jpg)
+```yaml
+general:
+   [...]
+  instance_identifier: 'your_unique_instance_identifier'
+```
 
 Once set, Pimcore automatically creates an UUID for each newly created document, asset and object. 
 With the class `Tool\UUID` you have access to the UUIDs as follows:

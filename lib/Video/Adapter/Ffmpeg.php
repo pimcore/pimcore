@@ -210,7 +210,7 @@ class Ffmpeg extends Adapter
      */
     public function saveImage($file, $timeOffset = null)
     {
-        if (!$timeOffset) {
+        if (!is_numeric($timeOffset)) {
             $timeOffset = 5;
         }
 

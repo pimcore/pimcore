@@ -384,7 +384,7 @@ class Select extends Data implements
      */
     public function isEmpty($data)
     {
-        return strlen($data) < 1;
+        return strlen((string) $data) < 1;
     }
 
     /**
@@ -461,7 +461,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/*?Concrete */ $object, /**  array */ $context = []) // : self
+    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);

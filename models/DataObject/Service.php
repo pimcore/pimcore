@@ -112,11 +112,8 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects[] = $objects;
         }
-        if ($userObjects) {
-            $userObjects = \array_merge(...$userObjects);
-        }
 
-        return $userObjects;
+        return \array_merge(...$userObjects);
     }
 
     /**
@@ -1870,7 +1867,7 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, false, $context);
                 $rowData = self::escapeCsvRecord($rowData);
                 $data[] = $rowData;
             }

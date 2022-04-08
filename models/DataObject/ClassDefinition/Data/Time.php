@@ -151,12 +151,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     private function toTime($timestamp)
     {
-        $time = @date('H:i', strtotime($timestamp));
-        if (!$time) {
+        $timestamp = strtotime($timestamp);
+        if (!$timestamp) {
             return null;
         }
 
-        return $time;
+        return date('H:i', $timestamp);
     }
 
     /**

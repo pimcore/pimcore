@@ -117,6 +117,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         'containerType' => 'objectbrick',
                         'containerKey' => $allowedBrickType,
                     ],
+                    'owner' => $data,
                     'fieldname' => $this->getName(),
                 ];
 
@@ -616,13 +617,32 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            $key = $fd->getName();
+                            $getter = 'get' . ucfirst($key);
+
                             try {
-                                $key = $fd->getName();
-                                $getter = 'get' . ucfirst($key);
                                 $fd->checkValidity($item->$getter(), false, $params);
                             } catch (Model\Element\ValidationException $ve) {
-                                $ve->addContext($this->getName());
-                                $validationExceptions[] = $ve;
+                                if ($item->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($item->$getter())) {
+                                    //try again with parent data when inheritance is activated
+                                    try {
+                                        $getInheritedValues = DataObject::doGetInheritedValues();
+                                        DataObject::setGetInheritedValues(true);
+
+                                        $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
+
+                                        DataObject::setGetInheritedValues($getInheritedValues);
+                                    } catch (\Exception $e) {
+                                        if (!$e instanceof Model\Element\ValidationException) {
+                                            throw $e;
+                                        }
+                                        $e->addContext($this->getName());
+                                        $validationExceptions[] = $e;
+                                    }
+                                } else {
+                                    $ve->addContext($this->getName());
+                                    $validationExceptions[] = $ve;
+                                }
                             }
                         }
                     }

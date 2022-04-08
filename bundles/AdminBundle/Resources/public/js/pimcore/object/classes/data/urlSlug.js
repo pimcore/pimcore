@@ -74,12 +74,6 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             fields: ['id', 'domain']
         });
 
-
-        var availableSites = null;
-        if (datax.availableSites) {
-            availableSites = datax.availableSites.join(",");
-        }
-
         var specificItems = [
             {
                 xtype: "textfield",
@@ -114,7 +108,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             new Ext.ux.form.MultiSelect({
                 fieldLabel: t("available_sites"),
                 name: "availableSites",
-                value: availableSites,
+                value: datax.availableSites,
                 displayField: "domain",
                 valueField: "id",
                 store: sitesStore,

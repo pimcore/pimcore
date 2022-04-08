@@ -18,15 +18,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Event\Model\TargetGroupEvent;
-use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/targeting")
@@ -228,19 +225,15 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache)
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
         $targetGroup->setName($this->correctName($request->get('name')));
         $targetGroup->save();
-
-        $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_ADD);
 
         $cache->clearTag('target_groups');
 
@@ -252,21 +245,17 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache)
     {
         $success = false;
 
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
-            $event = new TargetGroupEvent($targetGroup);
             $targetGroup->delete();
             $success = true;
-
-            $eventDispatcher->dispatch($event, TargetGroupEvents::POST_DELETE);
         }
 
         $cache->clearTag('target_groups');
@@ -295,11 +284,10 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache)
     {
         $data = $this->decodeJson($request->get('data'));
 
@@ -308,9 +296,6 @@ class TargetingController extends AdminController implements KernelControllerEve
         $targetGroup->setValues($data['settings']);
         $targetGroup->setName($this->correctName($targetGroup->getName()));
         $targetGroup->save();
-
-        $event = new TargetGroupEvent($targetGroup);
-        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_UPDATE);
 
         $cache->clearTag('target_groups');
 

@@ -15,19 +15,25 @@
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Translation\TranslationEntriesDumper;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
 final class Translation extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     const DOMAIN_DEFAULT = 'messages';
 
     const DOMAIN_ADMIN = 'admin';
@@ -272,19 +278,21 @@ final class Translation extends AbstractModel
         try {
             $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
-            if (!$create) {
+            if (!$create && !$returnIdIfEmpty) {
                 return null;
-            } else {
-                $translation->setKey($id);
-                $translation->setCreationDate(time());
-                $translation->setModificationDate(time());
+            }
 
+            $translation->setKey($id);
+            $translation->setCreationDate(time());
+            $translation->setModificationDate(time());
+
+            if ($create && ($e instanceof NotFoundResourceException || $e instanceof TableNotFoundException)) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
-                $translation->save();
+                TranslationEntriesDumper::addToSaveQueue($translation);
             }
         }
 
@@ -369,7 +377,7 @@ final class Translation extends AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
 
         if (!$this->getCreationDate()) {
             $this->setCreationDate(time());
@@ -381,19 +389,19 @@ final class Translation extends AbstractModel
 
         $this->getDao()->save();
 
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::POST_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_SAVE);
 
         self::clearDependentCache();
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
 
         $this->getDao()->delete();
         self::clearDependentCache();
 
-        \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::POST_DELETE);
+        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_DELETE);
     }
 
     /**

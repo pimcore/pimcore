@@ -104,13 +104,13 @@ class RecyclebinController extends AdminController implements KernelControllerEv
                         $filter['value'] = (int) $filter['value'];
                     }
                     // system field
-                    $value = $filter['value'];
+                    $value = ($filter['value'] ?? '');
                     if ($operator == 'LIKE') {
                         $value = '%' . $value . '%';
                     }
 
                     $field = '`' . $filterField . '` ';
-                    if ($filter['field'] == 'fullpath') {
+                    if (($filter['field'] ?? false) == 'fullpath') {
                         $field = 'CONCAT(path,filename)';
                     }
 
@@ -119,7 +119,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
                         $condition = $field . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
                         $conditionFilters[] = $condition;
                     } else {
-                        $conditionFilters[] = $field . $operator . " '" . $value . "' ";
+                        $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);
                     }
                 }
             }

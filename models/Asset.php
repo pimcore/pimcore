@@ -265,8 +265,8 @@ class Asset extends Element\AbstractElement
      */
     protected static function typeMatch(Asset $asset)
     {
-        $staticType = get_called_class();
-        if ($staticType != Asset::class) {
+        $staticType = static::class;
+        if ($staticType !== Asset::class) {
             if (!$asset instanceof $staticType) {
                 return false;
             }
@@ -531,14 +531,16 @@ class Asset extends Element\AbstractElement
 
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, AssetEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
 
             $this->correctPath();
+
+            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -636,9 +638,9 @@ class Asset extends Element\AbstractElement
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, AssetEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, AssetEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, AssetEvents::POST_ADD);
             }
 
             return $this;
@@ -646,9 +648,9 @@ class Asset extends Element\AbstractElement
             $failureEvent = new AssetEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, AssetEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -822,7 +824,7 @@ class Asset extends Element\AbstractElement
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
         \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        if (get_class($this) == 'Asset' || $typeChanged) {
+        if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
@@ -858,7 +860,7 @@ class Asset extends Element\AbstractElement
                 $event = new AssetEvent($this, [
                     'saveVersionOnly' => true,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_UPDATE);
+                $this->dispatchEvent($event, AssetEvents::PRE_UPDATE);
             }
 
             // set date
@@ -888,7 +890,7 @@ class Asset extends Element\AbstractElement
                 $event = new AssetEvent($this, [
                     'saveVersionOnly' => true,
                 ]);
-                \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::POST_UPDATE);
+                $this->dispatchEvent($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
@@ -897,7 +899,7 @@ class Asset extends Element\AbstractElement
                 'saveVersionOnly' => true,
                 'exception' => $e,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::POST_UPDATE_FAILURE);
+            $this->dispatchEvent($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -936,7 +938,7 @@ class Asset extends Element\AbstractElement
             'frontendPath' => $path,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_PATH);
+        $this->dispatchEvent($event, FrontendEvents::ASSET_PATH);
 
         return $event->getArgument('frontendPath');
     }
@@ -1054,7 +1056,7 @@ class Asset extends Element\AbstractElement
             throw new \Exception('root-node cannot be deleted');
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::PRE_DELETE);
+        $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -1108,7 +1110,7 @@ class Asset extends Element\AbstractElement
 
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
+            $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
 
             throw $e;
@@ -1120,7 +1122,7 @@ class Asset extends Element\AbstractElement
         // clear asset from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_DELETE);
+        $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
     /**
@@ -1775,7 +1777,7 @@ class Asset extends Element\AbstractElement
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
-        \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_GET_METADATA);
+        $this->dispatchEvent($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
         $convert = function ($metaData) {

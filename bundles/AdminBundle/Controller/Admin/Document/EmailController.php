@@ -164,6 +164,7 @@ class EmailController extends DocumentControllerBase
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
+                'isAutoSave' => $version->isAutoSave(),
             ];
 
             $this->handleTask($request->get('task'), $page);

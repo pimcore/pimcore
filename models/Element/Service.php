@@ -882,8 +882,8 @@ class Service extends Model\AbstractModel
      */
     public static function createFolderByPath($path, $options = [])
     {
-        $calledClass = get_called_class();
-        if ($calledClass == __CLASS__) {
+        $calledClass = static::class;
+        if ($calledClass === __CLASS__) {
             throw new \Exception('This method must be called from a extended class. e.g Asset\\Service, DataObject\\Service, Document\\Service');
         }
 
@@ -1220,11 +1220,11 @@ class Service extends Model\AbstractModel
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
-                } catch (\Exception $e) {
+                    $reflectionProperty->setAccessible(true);
+                    $myValue = $reflectionProperty->getValue($object);
+                } catch (\Throwable $e) {
                     return false;
                 }
-                $reflectionProperty->setAccessible(true);
-                $myValue = $reflectionProperty->getValue($object);
 
                 return $myValue instanceof ElementInterface;
             }

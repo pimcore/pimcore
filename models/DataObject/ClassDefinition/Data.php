@@ -29,7 +29,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $title;
 
@@ -117,7 +117,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var array
      */
-    protected $forbiddenNames = [
+    protected const FORBIDDEN_NAMES = [
         'id', 'key', 'path', 'type', 'index', 'classname', 'creationdate', 'userowner', 'value', 'class', 'list',
         'fullpath', 'childs', 'values', 'cachetag', 'cachetags', 'parent', 'published', 'valuefromparent',
         'userpermissions', 'dependencies', 'modificationdate', 'usermodification', 'byid', 'bypath', 'data',
@@ -217,7 +217,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
@@ -1519,6 +1519,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function isForbiddenName()
     {
-        return in_array($this->getName(), $this->forbiddenNames);
+        return in_array($this->getName(), self::FORBIDDEN_NAMES);
     }
 }
