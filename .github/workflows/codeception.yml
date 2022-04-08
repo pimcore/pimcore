@@ -7,14 +7,16 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
         paths:
-            - '!*.md'
+            - '!docs/**'
+            - '!bundles/**/Resources/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
         paths:
-            - '!*.md'
+            - '!docs/**'
+            - '!bundles/**/Resources/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
