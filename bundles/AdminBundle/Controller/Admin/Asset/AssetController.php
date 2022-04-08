@@ -1355,6 +1355,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumbnail->getStream();
+        
+        if ($stream === null) {
+            throw new \Exception("Could not generate the image thumbnail. Maybe you forgot to install the needed extension?");
+        }
+        
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
