@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -31,6 +32,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @internal
@@ -39,8 +41,18 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 {
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
+    use ElementEditLockHelperTrait;
 
-    protected function preSendDataActions(&$data, Model\Document $document, ?Version $draftVersion = null)
+    /**
+     * @param array $data
+     * @param Model\Document $document
+     * @param Version|null $draftVersion
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    protected function preSendDataActions(array &$data, Model\Document $document, ?Version $draftVersion = null): JsonResponse
     {
         $documentFromDatabase = Model\Document::getById($document->getId(), true);
 
@@ -69,6 +81,12 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
+
+        if ($document->isAllowed('view')) {
+            return $this->adminJson($data);
+        }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -125,9 +143,8 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Request $request
      * @param Model\Document $document
      */
-    protected function addSettingsToDocument(Request $request, Model\Document $document)
+    protected function addSettingsToDocument(Request $request, Model\Document $document): void
     {
-
         // settings
         if ($request->get('settings')) {
             if ($document->isAllowed('settings')) {
@@ -141,7 +158,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Request $request
      * @param Model\Document\PageSnippet $document
      */
-    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
+    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document): void
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
@@ -166,7 +183,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Model\Document $document
      * @param array $data
      */
-    protected function addTranslationsData(Model\Document $document, array &$data)
+    protected function addTranslationsData(Model\Document $document, array &$data): void
     {
         $service = new Model\Document\Service;
         $translations = $service->getTranslations($document);
@@ -178,11 +195,13 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
+     * @Route("/save-to-session", name="savetosession", methods={"POST"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function saveToSessionAction(Request $request)
+    public function saveToSessionAction(Request $request): JsonResponse
     {
         if ($request->get('id')) {
             $documentId = $request->get('id');
@@ -205,7 +224,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Model\Document $doc
      * @param bool $useForSave
      */
-    protected function saveToSession($doc, $useForSave = false)
+    protected function saveToSession(Model\Document $doc, bool $useForSave = false): void
     {
         // save to session
         Model\Document\Service::saveElementToSession($doc);
@@ -220,30 +239,30 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      *
      * @return Model\Document|null $sessionDocument
      */
-    protected function getFromSession($doc)
+    protected function getFromSession(Model\Document $doc): ?Model\Document
     {
         $sessionDocument = null;
 
-        if ($doc instanceof Model\Document) {
-            // check if there's a document in session which should be used as data-source
-            // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
-            // outdated and unused data elements in this document (eg. entries of area-blocks)
+        // check if there's a document in session which should be used as data-source
+        // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
+        // outdated and unused data elements in this document (eg. entries of area-blocks)
 
-            if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())) &&
-                ($documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave'))) {
-                Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
-            }
+        if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())) &&
+            (Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave'))) {
+            Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
         }
 
         return $sessionDocument;
     }
 
     /**
+     * @Route("/remove-from-session", name="removefromsession", methods={"DELETE"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function removeFromSessionAction(Request $request)
+    public function removeFromSessionAction(Request $request): JsonResponse
     {
         Model\Document\Service::removeElementFromSession('document', $request->get('id'));
 
@@ -254,7 +273,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @param Model\Document $document
      * @param array $data
      */
-    protected function minimizeProperties($document, array &$data)
+    protected function minimizeProperties(Model\Document $document, array &$data): void
     {
         $data['properties'] = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
     }
@@ -266,7 +285,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      *
      * @return bool
      */
-    protected function getPropertyInheritance(Model\Document $document, $propertyName, $propertyValue)
+    protected function getPropertyInheritance(Model\Document $document, string $propertyName, string $propertyValue): bool
     {
         if ($document->getParent()) {
             return $propertyValue == $document->getParent()->getProperty($propertyName);
@@ -277,11 +296,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param Model\Document\PageSnippet $document
-     * @param null|Version $draftVersion
+     * @param Version|null $draftVersion
      *
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, ?Version &$draftVersion = null): Model\Document\PageSnippet
     {
         $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
@@ -299,11 +318,15 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     /**
      * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
      *
+     * @Route("/change-master-document", name="changemasterdocument", methods={"PUT"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function changeMasterDocumentAction(Request $request)
+    public function changeMasterDocumentAction(Request $request): JsonResponse
     {
         $doc = Model\Document::getById($request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
@@ -318,7 +341,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     /**
      * @param ControllerEvent $event
      */
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -336,12 +359,30 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param string $task
-     * @param Model\Document\Snippet $page
+     * @param Model\Document\PageSnippet $page
      */
-    protected function handleTask($task, $page)
+    protected function handleTask(string $task, Model\Document\PageSnippet $page)
     {
         if ($task == 'publish' || $task == 'version') {
             $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
+    }
+
+    /**
+     * @param Model\Document $document
+     *
+     * @return bool|JsonResponse
+     */
+    protected function checkForLock(Model\Document $document): JsonResponse|bool
+    {
+        // check for lock
+        if ($document->isAllowed('save') || $document->isAllowed('publish') || $document->isAllowed('unpublish') || $document->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($document->getId(), 'document')) {
+                return $this->getEditLockResponse($document->getId(), 'document');
+            }
+            Element\Editlock::lock($document->getId(), 'document');
+        }
+
+        return true;
     }
 }

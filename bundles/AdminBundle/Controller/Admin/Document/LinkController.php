@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
@@ -27,53 +26,21 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @Route("/link")
+ * @Route("/link", name="pimcore_admin_document_link_")
  *
  * @internal
  */
 class LinkController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_link_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_link_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_link_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_link_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      * @param SerializerInterface $serializer
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request, SerializerInterface $serializer)
+    public function getDataByIdAction(Request $request, SerializerInterface $serializer): JsonResponse
     {
         $link = Document\Link::getById($request->get('id'));
 
@@ -81,12 +48,8 @@ class LinkController extends DocumentControllerBase
             throw $this->createNotFoundException('Link not found');
         }
 
-        // check for lock
-        if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
-            }
-            Element\Editlock::lock($request->get('id'), 'document');
+        if (($lock = $this->checkForLock($link)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $link = clone $link;
@@ -108,17 +71,11 @@ class LinkController extends DocumentControllerBase
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);
 
-        $this->preSendDataActions($data, $link);
-
-        if ($link->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $link);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_link_save", methods={"POST", "PUT"})
+     * @Route("/save", name="save", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -126,7 +83,7 @@ class LinkController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $link = Document\Link::getById($request->get('id'));
 

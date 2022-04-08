@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
@@ -24,46 +23,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/snippet")
+ * @Route("/snippet", name="pimcore_admin_document_snippet_")
  *
  * @internal
  */
 class SnippetController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_snippet_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_snippet_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_snippet_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_snippet_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -114,17 +81,11 @@ class SnippetController extends DocumentControllerBase
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $snippet, $draftVersion);
-
-        if ($snippet->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $snippet, $draftVersion);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_snippet_save", methods={"POST","PUT"})
+     * @Route("/save", name="save", methods={"POST","PUT"})
      *
      * @param Request $request
      *
