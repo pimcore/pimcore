@@ -119,10 +119,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var successHandler = options["success"];
         var elementType = options.elementType;
         var id = options.id;
+        const preDeleteEventName = 'preDelete' + elementType.charAt(0).toUpperCase() + elementType.slice(1);
 
         let ids = Ext.isString(id) ? id.split(',') : [id];
         ids.forEach(function (elementId) {
             pimcore.helpers.addTreeNodeLoadingIndicator(elementType, elementId);
+            pimcore.plugin.broker.fireEvent(preDeleteEventName, elementId);
         });
 
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
@@ -161,6 +163,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
                 var refreshParentNodes = [];
+                const postDeleteEventName = 'postDelete' + elementType.charAt(0).toUpperCase() + elementType.slice(1);
                 for (var index = 0; index < affectedNodes.length; index++) {
                     var node = affectedNodes[index];
                     try {
@@ -188,6 +191,10 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
                 this.deleteProgressBar = null;
                 this.deleteWindow = null;
+
+                ids.forEach(function (elementId) {
+                    pimcore.plugin.broker.fireEvent(postDeleteEventName, elementId);
+                });
 
                 if(typeof successHandler == "function") {
                     successHandler();
