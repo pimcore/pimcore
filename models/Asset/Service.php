@@ -175,13 +175,12 @@ class Service extends Model\Element\Service
      * @param Asset $target
      * @param Asset $source
      *
-     * @return mixed
+     * @return Asset
      *
      * @throws \Exception
      */
     public function copyContents($target, $source)
     {
-
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
@@ -193,8 +192,7 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $newProps = Element\Service::cloneMe($source->getProperties());
-        $target->setProperties($newProps);
+        $target->setProperties($source->getProperties());
         $target->save();
 
         return $target;

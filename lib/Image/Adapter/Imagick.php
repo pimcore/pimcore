@@ -105,6 +105,9 @@ class Imagick extends Adapter
                     // only for vector graphics
                     // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                     $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
+                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    $i->transparentPaintImage('', 1, 0, false);
                 }
 
                 $this->setColorspaceToRGB();
@@ -283,7 +286,7 @@ class Imagick extends Adapter
         }
 
         if (!$success) {
-            throw new \Exception('Unable to write image: ', $path);
+            throw new \Exception('Unable to write image: ' . $path);
         }
 
         if ($realTargetPath) {
@@ -984,7 +987,7 @@ class Imagick extends Adapter
 
         // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
         // getimageformat() onto SVG graphics, this is a workaround to avoid problems
-        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@i", $imagePath)) {
             return true;
         }
 

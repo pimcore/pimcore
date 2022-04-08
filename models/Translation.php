@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
@@ -285,7 +286,7 @@ final class Translation extends AbstractModel
             $translation->setCreationDate(time());
             $translation->setModificationDate(time());
 
-            if ($create && $e instanceof NotFoundResourceException) {
+            if ($create && ($e instanceof NotFoundResourceException || $e instanceof TableNotFoundException)) {
                 $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = '';

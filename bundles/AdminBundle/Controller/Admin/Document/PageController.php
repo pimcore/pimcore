@@ -401,7 +401,7 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+        $url = $page->getUrl();
 
         $result = Builder::create()
             ->writer(new PngWriter())

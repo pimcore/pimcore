@@ -83,6 +83,11 @@ class AdminExtension extends AbstractExtension
     {
         $content = file_get_contents($icon);
 
-        return sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type($icon), base64_encode($content), basename($icon));
+        return sprintf('<img src="data:%s;base64,%s" title="%s" data-imgpath="%s" />',
+            mime_content_type($icon),
+            base64_encode($content),
+            basename($icon),
+            str_replace(PIMCORE_WEB_ROOT, '', $icon)
+        );
     }
 }
