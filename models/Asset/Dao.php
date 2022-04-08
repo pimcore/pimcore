@@ -327,25 +327,23 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $query = 'SELECT `a`.`id` FROM `assets` a';
+        $query = 'SELECT `a`.`id` FROM `assets` a  WHERE parentId = ? ';
 
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $query .= ' LEFT JOIN users_workspaces_asset ON cid=id and LIST=0 ';
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-            $query .= ' WHERE parentId = ? ';
             $query .= ' AND
-                (
-                    EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(a.path,a.filename),cpath)=1)
-                    OR
-                    IF(list IS NULL,'.$inheritedPermission.' = 1,0)
-                )';
-        }else{
-            $query .= ' WHERE parentId = ? ';
+                IF (' . $anyAllowedRowOrChildren . ',1,
+                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+                ) = 1';
         }
 
 
@@ -394,14 +392,23 @@ class Dao extends Model\Element\Dao
             return 0;
         }
 
+        $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
+
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $query = 'select count(*) from assets a where parentId = ?
-                            and (select list as locate from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(a.path,a.filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
-        } else {
-            $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
+
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+            $query .= ' AND
+                IF (' . $anyAllowedRowOrChildren . ',1,
+                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+                ) = 1';
         }
 
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);

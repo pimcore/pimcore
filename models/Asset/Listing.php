@@ -79,29 +79,28 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @internal
      *
      * @param Model\User $user
-     *
+     * @param Model\Asset $asset
+
      * @return static
      */
-    public function filterAccessibleByUser(Model\User $user)
+    public function filterAccessibleByUser(Model\User $user, Model\Asset $asset)
     {
         if (!$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            if ($this->current()) {
-                $inheritedPermission = $this->current()->getDao()->isInheritingPermission('list', $userIds);
+            $inheritedPermission = $asset->getDao()->isInheritingPermission('list', $userIds);
 
-                $condition = '
-                (
-                    EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1)
-                    OR
-                    ' . $inheritedPermission . ' = 1
-                )';
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+            NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-                $this->addConditionParam($condition);
-            }
+            $condition = 'IF (' . $anyAllowedRowOrChildren . ',1,
+                IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+            ) = 1';
+            $this->addConditionParam($condition);
         }
-
         return $this;
     }
 }

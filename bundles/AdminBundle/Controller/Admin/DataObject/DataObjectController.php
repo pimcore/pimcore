@@ -166,24 +166,20 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // custom views end
 
             if (!$this->getAdminUser()->isAdmin()) {
-
-                $roleIds = $this->getAdminUser()->getRoles();
+                $userIds = $this->getAdminUser()->getRoles();
                 $currentUserId = $this->getAdminUser()->getId();
-                $permissionIds = array_merge($roleIds ,[$currentUserId]);
+                $userIds[] = $currentUserId;
 
-                $inheritedPermission = $object->getDao()->isInheritingPermission('list', $permissionIds );
+                $inheritedPermission = $object->getDao()->isInheritingPermission('list', $userIds );
 
-                $existsChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
-
-                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = o_id AND list=0)';
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
+                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = o_id AND list=0)';
 
                 $condition .= ' AND
-                (
-                    IF ('.$existsChildren.',1,
-                        IF('.$isDisallowedCurrentRow.', 0 , '.$inheritedPermission.')
-                    ) = 1
-                )';
+                IF (' . $anyAllowedRowOrChildren . ',1,
+                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+                ) = 1';
             }
 
             if (!is_null($filter)) {

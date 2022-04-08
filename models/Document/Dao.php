@@ -332,24 +332,23 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT id FROM documents d';
+        $sql = 'SELECT id FROM documents d WHERE parentId = ? ';
 
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-            $inheritedPermission = (int)$this->isInheritingPermission('list',$userIds);
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $sql .= ' LEFT JOIN users_workspaces_document ON cid=id and LIST=0 ';
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds );
 
-            $sql .= ' WHERE parentId = ? ';
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
             $sql .= ' AND
-                (
-                    EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1)
-                    OR
-                    IF(list IS NULL,'.$inheritedPermission.' = 1,0)
-                )';
-        }else{
-            $sql.= ' WHERE parentId = ? ';
+                IF (' . $anyAllowedRowOrChildren . ',1,
+                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+                ) = 1';
         }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
@@ -375,18 +374,25 @@ class Dao extends Model\Element\Dao
         if (!$this->model->getId()) {
             return 0;
         }
-
+        $sql = 'SELECT count(*) FROM documents d WHERE parentId = ? ';
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $query = 'select count(*) from documents d where parentId = ?
-                    and (select list as locate from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
-        } else {
-            $query = 'SELECT COUNT(*) AS count FROM documents WHERE parentId = ?';
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds );
+
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+            $sql .= ' AND
+                IF (' . $anyAllowedRowOrChildren . ',1,
+                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
+                ) = 1';
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($sql, [$this->model->getId()]);
     }
 
     /**
