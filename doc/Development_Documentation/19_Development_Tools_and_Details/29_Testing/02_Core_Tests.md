@@ -1,38 +1,35 @@
 # Core Testing
 
-Pimcore uses [Codeception](https://codeception.com/) for testing its core features.
+Pimcore uses [Codeception](https://codeception.com/) for testing its core features. 
+
+To execute core tests, Pimcore provides a `docker-compose` file to create a setup for running the tests. 
+
+> The docker images are based on the debug images, thus it is also possible to debug the tests using xdebug. 
+> Make sure, that path mappings are applied correctly though
 
 ## Requirements
+- `docker` and `docker-compose` installed on your system.
+- Pimcore git repository cloned locally 
 
-1. A Pimcore installation. Read this [guide](../../01_Getting_Started/00_Installation.md) for instructions.
-2. A **dedicated database** used only for testing. In other words, if the Pimcore installation is not only used for testing, create a separate database!
-3. Redis cache (optional, but needed for executing cache tests)
-4. Make sure that `require-dev` requirements of Pimcore's `composer.json` are installed, especially `codeception/codeception`, `codeception/module-symfony`, `codeception/phpunit-wrapper` for executing codeception tests.
+## Preparations
+- Change to `tests\bin` directory of the Pimcore repository
+- Start docker containers with `docker-compose up -d`
+  - This sets up all necessary services (like db and redis) and gets it up and running. 
+  - Pimcore source code files are mounted into docker container, so you can change files and test the changes right away.
+- Initialize test infrastructure by executing `docker-compose exec php-fpm tests/bin/init-tests.sh`
+  - This copies some files from `.github\ci\file` to prepare system for executing the tests (actually same as for github actions)
+  - Executes `composer install` to install all requirements
+  
 
 ## Executing tests
 
-#### Important notes
-
-> Read this before you start.
-
-##### Test directories
-
-Always set
-
-```
-PIMCORE_TEST=1
-```
-
-This will switch special directories used for testing (like /var/classes) and prevent that you existing installation gets messed up.
-
-##### Check Logfiles
-Don't forget to check logfiles (especially `test.log` and `php.log`) when problems occur.
+Tests are executed inside the docker containers. 
 
 #### Run all tests
 
 This will run all tests.
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore
+docker-compose exec php-fpm vendor/bin/codecept run -c . -vvv
 ```
 
 #### Only run a specific suite
@@ -40,7 +37,7 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test
 Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Model
+docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv
 ```
 
 #### Only run a specific test group
@@ -49,20 +46,27 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn
+docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
 ```
+
 
 ##### Redis Cache tests
 
-For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that does not conflict to any
-other Redis DBs on your system.
+For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. If not using the Redis provided by the docker-compose, set it 
+to a value that does not conflict to any other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache
+docker-compose exec php-fpm vendor/bin/codecept run -c . Cache
 ```
+
+
+##### Check Logfiles
+Don't forget to check logfiles (especially `test.log` and `php.log`) inside the docker container when problems occur.
 
 
 #### Important Environment Variables
+
+Meaningful default values are set in the shipped `docker-compose.yml`. Can be modified as needed. 
 
 | Env Variable           | Example          | Comment                                                     |
 |------------------------|------------------|-------------------------------------------------------------|
@@ -97,9 +101,7 @@ ones please tag them accordingly.
 | cache.core.file                    | Cache File handler tests                                               |
 | cache.core.redis                   | Cache Redis handler tests                                              |
 | cache.core.redis_lua               | Cache Redis handler tests with LUA enabled                             |
-| dataTypeIn                         | REST tests - objects are created via REST API and then fetched locally |
 | dataTypeLocal                      | Dataobject - datatype tests                                            |
-| dataTypeOut                        | REST tests - objects are created locally and fetched via REST API      |
 | model.relations.multipleassignment | Dataobject - "allow multiple assignments" tests                        |
 | ...                                |                                                                        |
 
