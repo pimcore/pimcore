@@ -340,10 +340,7 @@ class Dao extends Model\Element\Dao
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-            $query .= ' AND
-                IF (' . $anyAllowedRowOrChildren . ',1,
-                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
-                ) = 1';
+            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';;
         }
 
 
@@ -405,10 +402,7 @@ class Dao extends Model\Element\Dao
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-            $query .= ' AND
-                IF (' . $anyAllowedRowOrChildren . ',1,
-                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
-                ) = 1';
+            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';;
         }
 
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);

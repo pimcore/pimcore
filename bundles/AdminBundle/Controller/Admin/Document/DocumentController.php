@@ -177,10 +177,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
                 $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-                $condition .= ' AND
-                IF (' . $anyAllowedRowOrChildren . ',1,
-                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
-                ) = 1';
+                $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
 
 

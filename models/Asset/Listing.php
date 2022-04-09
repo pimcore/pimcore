@@ -96,9 +96,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
             NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
-            $condition = 'IF (' . $anyAllowedRowOrChildren . ',1,
-                IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
-            ) = 1';
+            $condition = 'IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+
             $this->addConditionParam($condition);
         }
         return $this;

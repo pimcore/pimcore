@@ -176,10 +176,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
                 $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = o_id AND list=0)';
 
-                $condition .= ' AND
-                IF (' . $anyAllowedRowOrChildren . ',1,
-                    IF(' . $isDisallowedCurrentRow . ', 0, ' . $inheritedPermission . ')
-                ) = 1';
+                $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
 
             if (!is_null($filter)) {
