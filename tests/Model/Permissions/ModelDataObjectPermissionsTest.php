@@ -45,6 +45,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      * /permissionbar/foo --> not allowed
      * /permissionbar/foo/hiddenobject --> ??       --> should not be found
      *
+     * /permissioncpath --> not specified
+     * /permissioncpath/a --> not specified
+     * /permissioncpath/a/b --> not specified
+     * /permissioncpath/a/b/c --> allowed
+     * /permissioncpath/abcdefghjkl --> allowed
      *
      * -- only for many elements search test
      * /manyElemnents --> not allowed
@@ -64,7 +69,10 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      * @var DataObject\Folder
      */
     protected $permissionbar;
-
+    /**
+     * @var DataObject\Folder
+     */
+    protected $permissioncpath;
     /**
      * @var DataObject\Folder
      */
@@ -107,8 +115,31 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      * @var DataObject\AbstractObject
      */
     protected $grouptestobject;
+    /**
+     * @var DataObject\AbstractObject
+     */
+    protected $a;
+    /**
+     * @var DataObject\AbstractObject
+     */
+    protected $b;
+    /**
+     * @var DataObject\AbstractObject
+     */
+    protected $c;
+    /**
+     * @var DataObject\AbstractObject
+     */
+    protected $abcdefghjkl;
 
     protected function prepareObjectTree() {
+
+        #example based on https://github.com/pimcore/pimcore/issues/11540
+        $this->permissioncpath = $this->createFolder('permissioncpath', 1);
+        $this->a = $this->createFolder('a', $this->permissioncpath->getId());
+        $this->b = $this->createFolder('b', $this->a->getId());
+        $this->c = $this->createObject('c', $this->b->getId());
+        $this->abcdefghjkl = $this->createObject('abcdefghjkl', $this->permissioncpath->getId());
 
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
@@ -172,6 +203,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             (new User\Workspace\DataObject())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\DataObject())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\DataObject())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\DataObject())->setValues(['cId' => $this->c->getId(), 'cPath' => $this->c->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\DataObject())->setValues(['cId' => $this->abcdefghjkl->getId(), 'cPath' => $this->abcdefghjkl->getFullpath(), 'list' => true, 'view' => true]),
         ]);
         $this->userPermissionTest1->save();
 
@@ -244,6 +277,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
     public function testHasChildren()
     {
+        $this->doHasChildrenTest($this->a, true, true, false); //didn't work before
         $this->doHasChildrenTest($this->permissionfoo, true, true, true); //didn't work before
         $this->doHasChildrenTest($this->bars, true, true, true);
         $this->doHasChildrenTest($this->hugo, false, false, false);
@@ -294,11 +328,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->userfolder, 'list', true, true, true);
         $this->doIsAllowedTest($this->userfolder, 'view', true, true, true);
 
-       $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
-       $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
 
-       $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
-       $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
 
         $this->doIsAllowedTest($this->permissionbar, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionbar, 'view', true, true, true);
