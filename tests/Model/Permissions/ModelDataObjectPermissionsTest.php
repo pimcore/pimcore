@@ -116,11 +116,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      */
     protected $grouptestobject;
     /**
-     * @var DataObject\AbstractObject
+     * @var DataObject\Folder
      */
     protected $a;
     /**
-     * @var DataObject\AbstractObject
+     * @var DataObject\Folder
      */
     protected $b;
     /**
