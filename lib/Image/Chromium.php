@@ -17,36 +17,36 @@ namespace Pimcore\Image;
 
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Message;
+use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
  * @internal
- *
  */
 class Chromium
 {
     /**
      * @return bool
      */
-    public static function isSupported()
+    public static function isSupported(): bool
     {
-        return (bool)self::getChromiumBinary() && class_exists(BrowserFactory::class);
+        return self::getChromiumBinary() && class_exists(BrowserFactory::class);
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
-    public static function getChromiumBinary()
+    public static function getChromiumBinary(): ?string
     {
         foreach (['chromium', 'chrome'] as $app) {
-            $chromium = \Pimcore\Tool\Console::getExecutable($app);
+            $chromium = Console::getExecutable($app);
             if ($chromium) {
                 return $chromium;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -60,13 +60,17 @@ class Chromium
      */
     public static function convert(string $url, string $outputFile, string $windowSize = '1280,1024'): bool
     {
-        $browserFactory = new BrowserFactory(self::getChromiumBinary());
+        $binary = self::getChromiumBinary();
+        if (!$binary) {
+            return false;
+        }
+        $browserFactory = new BrowserFactory($binary);
 
         // starts headless chrome
         $browser = $browserFactory->createBrowser([
-                'noSandbox' => file_exists('/.dockerenv'),
-                'startupTimeout' => 120,
-                'windowSize' => explode(',', $windowSize),
+            'noSandbox' => file_exists('/.dockerenv'),
+            'startupTimeout' => 120,
+            'windowSize' => explode(',', $windowSize),
         ]);
 
         try {
