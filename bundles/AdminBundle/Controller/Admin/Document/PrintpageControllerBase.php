@@ -116,7 +116,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         list($task, $page, $version) = $this->saveDocument($page, $request);
 
-        if ($task === self::TASK_PUBLISH || self::TASK_UNPUBLISH) {
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
