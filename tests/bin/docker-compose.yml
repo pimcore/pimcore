@@ -29,7 +29,7 @@ services:
         depends_on:
             - db
         volumes:
-            - ../../.:/var/www/html:cached
+            - ../../.:/var/www/html
             - /var/www/html/vendor
             - /var/www/html/kernel
             - /var/www/html/config
