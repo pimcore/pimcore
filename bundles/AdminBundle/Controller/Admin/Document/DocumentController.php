@@ -22,6 +22,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Image\Chromium;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -1123,7 +1124,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, $from, $to)
     {
         // return with error if prerequisites do not match
-        if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
+        if ((!Chromium::isSupported() && !HtmlToImage::isSupported()) || !class_exists('Imagick')) {
             return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
         }
 
@@ -1149,8 +1150,15 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        HtmlToImage::convert($fromUrl, $fromFile);
-        HtmlToImage::convert($toUrl, $toFile);
+        if (Chromium::isSupported()) {
+            $tool = Chromium::class;
+        } else {
+            $tool = HtmlToImage::class;
+        }
+
+        /** @var Chromium|HtmlToImage $tool */
+        $tool::convert($fromUrl, $fromFile);
+        $tool::convert($toUrl, $toFile);
 
         $image1 = new \Imagick($fromFile);
         $image2 = new \Imagick($toFile);
