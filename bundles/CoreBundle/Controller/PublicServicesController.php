@@ -100,10 +100,6 @@ class PublicServicesController extends Controller
                         }
 
                         $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
-                        if (!$imageThumbnail->existsOnStorage()) {
-                            $asset->clearThumbnail($thumbnailConfig->getName());
-                        }
-
                         $thumbnailStream = $imageThumbnail->getStream();
                     } elseif ($asset instanceof Asset\Document) {
                         $page = 1;
@@ -115,10 +111,6 @@ class PublicServicesController extends Controller
                         $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
                         $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
-                        if (!$imageThumbnail->existsOnStorage()) {
-                            $asset->clearThumbnail($thumbnailConfig->getName());
-                        }
-
                         $thumbnailStream = $imageThumbnail->getStream();
                     } elseif ($asset instanceof Asset\Image) {
                         //check if high res image is called
@@ -139,10 +131,6 @@ class PublicServicesController extends Controller
                         }
 
                         $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
-                        if (!$imageThumbnail->existsOnStorage()) {
-                            $asset->clearThumbnail($thumbnailConfig->getName());
-                        }
-
                         $thumbnailStream = $imageThumbnail->getStream();
                     }
 
