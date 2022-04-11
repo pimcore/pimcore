@@ -46,3 +46,9 @@ services:
     # AppBundle\EventListener\TestListener:
     #     tags:
     #         - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onObjectPreUpdate }
+
+    Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+        public: true
+        alias: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
+
+    Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter: ~
