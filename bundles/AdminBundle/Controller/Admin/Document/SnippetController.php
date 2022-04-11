@@ -35,6 +35,7 @@ class SnippetController extends DocumentControllerBase
      * @param Request $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getDataByIdAction(Request $request)
     {
@@ -44,12 +45,8 @@ class SnippetController extends DocumentControllerBase
             throw $this->createNotFoundException('Snippet not found');
         }
 
-        // check for lock
-        if ($snippet->isAllowed('save') || $snippet->isAllowed('publish') || $snippet->isAllowed('unpublish') || $snippet->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
-            }
-            Element\Editlock::lock($request->get('id'), 'document');
+        if (($lock = $this->checkForLock($snippet)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $snippet = clone $snippet;
@@ -96,7 +93,6 @@ class SnippetController extends DocumentControllerBase
     public function saveAction(Request $request)
     {
         $snippet = Document\Snippet::getById($request->get('id'));
-
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
         }
@@ -110,28 +106,16 @@ class SnippetController extends DocumentControllerBase
             $snippet = $this->getLatestVersion($snippet);
         }
 
-        $snippet->setUserModification($this->getAdminUser()->getId());
-
-        if ($request->get('task') == 'unpublish') {
-            $snippet->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $snippet->setPublished(true);
-        }
-
         if ($request->get('missingRequiredEditable') !== null) {
             $snippet->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
         }
 
-        if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $snippet);
+        list($task, $snippet, $version) = $this->saveDocument($snippet, $request);
 
-            $snippet->save();
+        if ($task == self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $this->saveToSession($snippet);
 
             $treeData = $this->getTreeNodeConfig($snippet);
-
-            $this->handleTask($request->get('task'), $snippet);
 
             return $this->adminJson([
                 'success' => true,
@@ -141,10 +125,7 @@ class SnippetController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($snippet->isAllowed('save')) {
-            $this->setValuesToDocument($request, $snippet);
-
-            $version = $snippet->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+        } else {
             $this->saveToSession($snippet);
 
             $draftData = [
@@ -153,11 +134,7 @@ class SnippetController extends DocumentControllerBase
                 'isAutoSave' => $version->isAutoSave(),
             ];
 
-            $this->handleTask($request->get('task'), $snippet);
-
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 

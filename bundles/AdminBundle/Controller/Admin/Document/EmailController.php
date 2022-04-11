@@ -83,30 +83,15 @@ class EmailController extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $page = Document\Email::getById($request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Email not found');
         }
 
-        $page = $this->getLatestVersion($page);
-        $page->setUserModification($this->getAdminUser()->getId());
+        list($task, $page, $version) = $this->saveDocument($page, $request);
+        $this->saveToSession($page);
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
-
-            $this->handleTask($request->get('task'), $page);
 
             return $this->adminJson([
                 'success' => true,
@@ -116,23 +101,14 @@ class EmailController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-
-            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
-            $this->saveToSession($page);
-
+        } else {
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
                 'isAutoSave' => $version->isAutoSave(),
             ];
 
-            $this->handleTask($request->get('task'), $page);
-
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 

@@ -43,6 +43,14 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     use DocumentTreeConfigTrait;
     use ElementEditLockHelperTrait;
 
+    const TASK_PUBLISH = 'publish';
+    const TASK_UNPUBLISH = 'unpublish';
+    const TASK_SAVE = 'save';
+    const TASK_VERSION = 'version';
+    const TASK_SCHEDULER = 'scheduler';
+    const TASK_AUTOSAVE = 'autosave';
+    const TASK_DELETE = 'delete';
+
     /**
      * @param array $data
      * @param Model\Document $document
@@ -363,7 +371,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function handleTask(string $task, Model\Document\PageSnippet $page)
     {
-        if ($task == 'publish' || $task == 'version') {
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION ) {
             $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
     }
@@ -376,7 +384,10 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     protected function checkForLock(Model\Document $document): JsonResponse|bool
     {
         // check for lock
-        if ($document->isAllowed('save') || $document->isAllowed('publish') || $document->isAllowed('unpublish') || $document->isAllowed('delete')) {
+        if ($document->isAllowed(self::TASK_SAVE)
+            || $document->isAllowed(self::TASK_PUBLISH)
+            || $document->isAllowed(self::TASK_UNPUBLISH)
+            || $document->isAllowed(self::TASK_DELETE)) {
             if (Element\Editlock::isLocked($document->getId(), 'document')) {
                 return $this->getEditLockResponse($document->getId(), 'document');
             }
@@ -384,5 +395,60 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
 
         return true;
+    }
+
+    /**
+     * @throws Element\ValidationException
+     * @throws \Exception
+     */
+    protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, $task = null): array
+    {
+        if ($latestVersion) {
+            /** @var Model\Document\PageSnippet $document */
+            $document = $this->getLatestVersion($document);
+        }
+
+        //update modification info
+        $document->setModificationDate(time());
+        $document->setUserModification($this->getAdminUser()->getId());
+
+        $task = $task ?? $request->get('task');
+        $version = null;
+        switch ($task) {
+            case $task === self::TASK_PUBLISH && $document->isAllowed($task):
+                $this->setValuesToDocument($request, $document);
+                $document->setPublished(true);
+                $document->save();
+
+                break;
+            case $task === self::TASK_UNPUBLISH && $document->isAllowed($task):
+                $this->setValuesToDocument($request, $document);
+                $document->setPublished(false);
+                $document->save();
+
+                break;
+            case $task === self::TASK_SAVE && $document->isAllowed($task):
+            case $task === self::TASK_VERSION && $document->isAllowed($task):
+            case $task === self::TASK_AUTOSAVE && $document->isAllowed($task):
+                if ($document instanceof Model\Document\PageSnippet) {
+                    $this->setValuesToDocument($request, $document);
+                    $version = $document->saveVersion(true, true, null, $task === self::TASK_AUTOSAVE);
+                }
+
+                break;
+            case $task === self::TASK_SCHEDULER && $document->isAllowed('settings'):
+                $this->setValuesToDocument($request, $document);
+                $document->save();
+
+                break;
+            default:
+                throw $this->createAccessDeniedHttpException();
+        }
+
+        if ($document instanceof Model\Document\PageSnippet) {
+            $this->handleTask($task, $document);
+        }
+
+        return [$task, $document, $version];
     }
 }

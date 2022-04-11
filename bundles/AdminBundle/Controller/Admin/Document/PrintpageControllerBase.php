@@ -98,42 +98,26 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $page = Document\PrintAbstract::getById($request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
 
         $page = $this->getLatestVersion($page);
-        $page->setUserModification($this->getAdminUser()->getId());
-
-        // save to session
-        $key = 'document_' . $request->get('id');
 
         Document\Service::saveElementToSession($page);
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-
+        if ($request->get('task') !== self::TASK_SAVE) {
             //check, if to cleanup existing elements of document
             $config = Config::getWeb2PrintConfig();
             if ($config->get('generalDocumentSaveMode') == 'cleanup') {
                 $page->setEditables([]);
             }
+        }
 
-            $this->setValuesToDocument($request, $page);
+        list($task, $page, $version) = $this->saveDocument($page, $request);
 
-            $page->save();
-
+        if ($task === self::TASK_PUBLISH || self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
-
-            $this->handleTask($request->get('task'), $page);
 
             return $this->adminJson([
                 'success' => true,
@@ -143,10 +127,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-
-            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+        } else {
 
             $draftData = [
                 'id' => $version->getId(),
@@ -154,11 +135,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 'isAutoSave' => $version->isAutoSave(),
             ];
 
-            $this->handleTask($request->get('task'), $page);
-
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 

@@ -39,6 +39,7 @@ class LinkController extends DocumentControllerBase
      * @param SerializerInterface $serializer
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getDataByIdAction(Request $request, SerializerInterface $serializer): JsonResponse
     {
@@ -86,44 +87,23 @@ class LinkController extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $link = Document\Link::getById($request->get('id'));
-
         if (!$link) {
             throw $this->createNotFoundException('Link not found');
         }
 
-        $this->setValuesToDocument($request, $link);
+        $result = $this->saveDocument($link, $request);
+        /** @var Document\Link $link */
+        $link = $result[1];
+        $treeData = $this->getTreeNodeConfig($link);
 
-        $link->setModificationDate(time());
-        $link->setUserModification($this->getAdminUser()->getId());
-
-        if ($request->get('task') == 'unpublish') {
-            $link->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $link->setPublished(true);
-        }
-
-        $task = $request->get('task');
-        // only save when publish or unpublish
-        if (($task == 'publish' && $link->isAllowed('publish'))
-            || ($task == 'unpublish' && $link->isAllowed('unpublish'))
-            || $task == 'scheduler' && $link->isAllowed('settings')
-        ) {
-            $link->save();
-
-            $treeData = $this->getTreeNodeConfig($link);
-
-            return $this->adminJson([
-                'success' => true,
-                'data' => [
-                    'versionDate' => $link->getModificationDate(),
-                    'versionCount' => $link->getVersionCount(),
-                ],
-                'treeData' => $treeData,
-            ]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
-        }
+        return $this->adminJson([
+            'success' => true,
+            'data' => [
+                'versionDate' => $link->getModificationDate(),
+                'versionCount' => $link->getVersionCount(),
+            ],
+            'treeData' => $treeData,
+        ]);
     }
 
     /**

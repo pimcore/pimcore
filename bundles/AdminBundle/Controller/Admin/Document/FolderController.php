@@ -33,6 +33,7 @@ class FolderController extends DocumentControllerBase
      * @param Request $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
@@ -69,24 +70,16 @@ class FolderController extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $folder = Document\Folder::getById($request->get('id'));
-
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');
         }
 
-        $folder->setModificationDate(time());
-        $folder->setUserModification($this->getAdminUser()->getId());
+        $result = $this->saveDocument($folder, $request, false, self::TASK_PUBLISH);
+        /** @var Document\Folder $folder */
+        $folder = $result[1];
+        $treeData = $this->getTreeNodeConfig($folder);
 
-        if ($folder->isAllowed('publish')) {
-            $this->setValuesToDocument($request, $folder);
-            $folder->save();
-
-            $treeData = $this->getTreeNodeConfig($folder);
-
-            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 
     /**

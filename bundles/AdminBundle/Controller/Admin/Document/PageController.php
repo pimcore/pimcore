@@ -116,7 +116,6 @@ class PageController extends DocumentControllerBase
     public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
         $page = Document\Page::getById($request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
         }
@@ -130,8 +129,6 @@ class PageController extends DocumentControllerBase
             /** @var Document\Page $page */
             $page = $this->getLatestVersion($page);
         }
-
-        $page->setUserModification($this->getAdminUser()->getId());
 
         if ($request->get('missingRequiredEditable') !== null) {
             $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
@@ -156,22 +153,10 @@ class PageController extends DocumentControllerBase
             $page->setMetaData($metaData);
         }
 
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
+        list($task, $page, $version) = $this->saveDocument($page, $request);
 
-            if ($request->get('task') == 'unpublish') {
-                $page->setPublished(false);
-            } elseif ($request->get('task') == 'publish') {
-                $page->setPublished(true);
-            }
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
-
-            $this->handleTask($request->get('task'), $page);
 
             $data = [
                 'versionDate' => $page->getModificationDate(),
@@ -188,10 +173,7 @@ class PageController extends DocumentControllerBase
                 'treeData' => $treeData,
                 'data' => $data,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-
-            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+        } else {
             $this->saveToSession($page);
 
             $draftData = [
@@ -201,11 +183,8 @@ class PageController extends DocumentControllerBase
             ];
 
             $treeData = $this->getTreeNodeConfig($page);
-            $this->handleTask($request->get('task'), $page);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 

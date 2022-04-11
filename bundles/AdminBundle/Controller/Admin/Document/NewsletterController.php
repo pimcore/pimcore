@@ -96,29 +96,14 @@ class NewsletterController extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $page = Document\Newsletter::getById($request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
 
-        $page = $this->getLatestVersion($page);
-        $page->setUserModification($this->getAdminUser()->getId());
+        list($task, $page, $version) = $this->saveDocument($page, $request);
+        $this->saveToSession($page);
 
-        if ($request->get('task') === 'unpublish') {
-            $page->setPublished(false);
-        }
-
-        if ($request->get('task') === 'publish') {
-            $page->setPublished(true);
-        }
-        // only save when publish or unpublish
-        if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
-            ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
@@ -129,11 +114,7 @@ class NewsletterController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-            $version = $page->saveVersion();
-            $this->saveToSession($page);
-
+        } else {
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
@@ -141,8 +122,6 @@ class NewsletterController extends DocumentControllerBase
             ];
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 
