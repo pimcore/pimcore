@@ -215,16 +215,32 @@
     background-color: #fff;
 }
 
+.x-grid-item.x-grid-item-over {
+    background-color: #e4e4e4;
+}
+
+.x-grid-item.x-grid-item-selected {
+    background-color: #ffefbb;
+}
+
+.x-grid-item.x-grid-item-selected.x-grid-item-over {
+    background-color: #dfcf9b;
+}
+
 .x-grid-item-alt {
     background-color: #f6f6f6;
 }
 
-.x-grid-item-alt.x-grid-item-selected {
-    background-color: #ffefbb;
+.x-grid-item-alt.x-grid-item-over {
+    background-color: #d9d9d9;
 }
 
-.x-grid-item-alt.x-grid-item-over {
-    background-color: #e4e4e4;
+.x-grid-item-alt.x-grid-item-selected {
+    background-color: #f6e6b3;
+}
+
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over {
+    background-color: #d6c693;
 }
 
 .x-grid-item-focused .x-grid-cell-inner:before {
