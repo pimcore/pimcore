@@ -967,5 +967,6 @@
     "asset_upload_want_to_overwrite": "Do you want to overwrite file %s?",
     "asset_upload_overwrite": "Overwrite",
     "asset_upload_keep_both": "Keep both files",
-    "asset_upload_overwrite_all": "Overwrite all"
+    "asset_upload_overwrite_all": "Overwrite all",
+    "change_data_objects_sort_method": "Sortiermethode für Data Objects ändern"
 }
