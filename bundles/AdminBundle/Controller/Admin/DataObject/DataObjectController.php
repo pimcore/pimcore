@@ -618,7 +618,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseObjectRelation, $refId);
 
-            if (empty($relations) && !empty($parent)) {
+            if ($fielddefinition->supportsInheritance() && empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $data = [];
