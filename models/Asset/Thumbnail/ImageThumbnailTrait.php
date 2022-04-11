@@ -15,9 +15,7 @@
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
-use League\Flysystem\UnableToReadFile;
 use Pimcore\Helper\TemporaryFileHelperTrait;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Tool;
@@ -98,33 +96,13 @@ trait ImageThumbnailTrait
      */
     public function getStream()
     {
-        try {
-            return $this->doGetStream();
-        } catch (UnableToReadFile $e) {
-            // seems that the cache information is wrong, so we clear it and try to generate the thumbnail
-            // this can happen when someone deletes thumbnails directly on the storage without using the API,
-            // so the info in the cache stays and gets invalid
-            $this->getAsset()->getDao()->deleteFromThumbnailCache($this->getConfig()->getName());
+        $pathReference = $this->getPathReference(false);
 
-            try {
-                return $this->doGetStream();
-            } catch (\Exception $e) {
-                Logger::error($e);
-                return null;
-            }
-        } catch (\Exception $e) {
-            Logger::error($e);
-            return null;
+        if (isset($pathReference['storagePath'])) {
+            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
         }
-    }
 
-    /**
-     * @return resource|null
-     */
-    private function doGetStream()
-    {
-        $pathReference = $this->getPathReference();
-        return Storage::get($pathReference['type'])->readStream($pathReference['src']);
+        return null;
     }
 
     public function getPathReference(bool $deferredAllowed = false): array
