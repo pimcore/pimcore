@@ -52,3 +52,4 @@ services:
         alias: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter: ~
+    Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~

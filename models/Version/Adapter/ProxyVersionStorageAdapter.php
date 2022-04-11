@@ -6,6 +6,11 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected VersionStorageAdapterInterface $storageAdapter;
 
+    public function __construct(FileSystemVersionStorageAdapter $storageAdapter)
+    {
+        $this->storageAdapter = $storageAdapter;
+    }
+
     /**
      * @inheritDoc
      */
