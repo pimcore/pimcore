@@ -266,18 +266,20 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
     },
 
     checkValue: function (mark) {
-
         var value = this.getValue();
+        var textarea = Ext.get(this.textarea);
 
-        if(trim(strip_tags(value)).length < 1) {
-            Ext.get(this.textarea).addCls("empty");
+        // Sync dom classname with ext js (CKEditor has set class names)
+        textarea.setCls(textarea.dom.className);
+
+        if (trim(strip_tags(value)).length < 1) {
+            textarea.addCls("empty");
         } else {
-            Ext.get(this.textarea).removeCls("empty");
+            textarea.removeCls("empty");
         }
 
-
         if (this.required) {
-            this.validateRequiredValue(value, Ext.get(this.textarea), this, mark);
+            this.validateRequiredValue(value, textarea, this, mark);
         }
     },
 
