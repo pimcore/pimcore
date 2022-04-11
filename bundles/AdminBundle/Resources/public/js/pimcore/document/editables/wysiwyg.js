@@ -269,7 +269,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         var value = this.getValue();
         var textarea = Ext.get(this.textarea);
 
-        // Sync dom classname with ext js (CKEditor has set class names)
+        // Sync DOM class names with ExtJs (CKEditor may have added classes in the meantime)
         textarea.setCls(textarea.dom.className);
 
         if (trim(strip_tags(value)).length < 1) {
