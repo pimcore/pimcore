@@ -71,6 +71,16 @@ class AdminSecurityListener implements EventSubscriberInterface
             return;
         }
 
+
+        if (!empty($this->config['admin_csp_header']['exclude_paths'])) {
+            $requestUri = $request->getRequestUri();
+            foreach ($this->config['admin_csp_header']['exclude_paths'] as $path) {
+                if (@preg_match($path, $requestUri)) {
+                    return;
+                }
+            }
+        }
+
         $response = $event->getResponse();
 
         // set CSP header with random nonce string to the response
