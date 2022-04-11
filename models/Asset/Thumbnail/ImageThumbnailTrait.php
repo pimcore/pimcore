@@ -97,8 +97,9 @@ trait ImageThumbnailTrait
     public function getStream()
     {
         $pathReference = $this->getPathReference(false);
-
-        if (isset($pathReference['storagePath'])) {
+        if ($pathReference['type'] === 'asset') {
+            return $this->asset->getStream();
+        } elseif (isset($pathReference['storagePath'])) {
             return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
         }
 
