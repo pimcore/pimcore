@@ -993,14 +993,54 @@ span.warning {
 }
 
 /* highlight error logs */
-.log-type-CRIT .x-grid-cell,
-.log-type-ALERT .x-grid-cell,
-.log-type-ERR .x-grid-cell {
+.x-grid-item .log-type-CRIT,
+.x-grid-item .log-type-ALERT,
+.x-grid-item .log-type-ERR {
     background-color: #ffe2e2;
     color: #900;
 }
 
+.x-grid-item.x-grid-item-over .log-type-CRIT,
+.x-grid-item.x-grid-item-over .log-type-ALERT,
+.x-grid-item.x-grid-item-over .log-type-ERR {
+    background-color: #f2d5d5;
+}
 
+.x-grid-item.x-grid-item-selected .log-type-CRIT,
+.x-grid-item.x-grid-item-selected .log-type-ALERT,
+.x-grid-item.x-grid-item-selected .log-type-ERR {
+    background-color: #dfc2c2;
+}
+
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-CRIT,
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-ALERT,
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-ERR {
+    background-color: #d2b5b5;
+}
+
+.x-grid-item-alt .log-type-CRIT,
+.x-grid-item-alt .log-type-ALERT,
+.x-grid-item-alt .log-type-ERR {
+    background-color: #f6d9d9;
+}
+
+.x-grid-item-alt.x-grid-item-over .log-type-CRIT,
+.x-grid-item-alt.x-grid-item-over .log-type-ALERT,
+.x-grid-item-alt.x-grid-item-over .log-type-ERR {
+    background-color: #e9cccc;
+}
+
+.x-grid-item-alt.x-grid-item-selected .log-type-CRIT,
+.x-grid-item-alt.x-grid-item-selected .log-type-ALERT,
+.x-grid-item-alt.x-grid-item-selected .log-type-ERR {
+    background-color: #d6b9b9;
+}
+
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-CRIT,
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-ALERT,
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-ERR {
+    background-color: #c5a9a9;
+}
 
 /* ------------------------------------------------------------------- */
 /*     OBJECT EDITOR STYLES                                            */
