@@ -610,6 +610,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
+            $db = Db::get();
+
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 6, 0);
 
@@ -627,7 +629,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
-                $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                $defaultCondition = $db->quoteIdentifier($localizedPropertyName) . ' = ' . $db->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition,
                 ];
@@ -640,7 +642,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 [$value, $limit, $offset, $objectTypes] = $arguments;
 
                 if (!$field instanceof AbstractRelations) {
-                    $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote($value) . ' ';
                 }
                 $listConfig = [
                     'condition' => $defaultCondition,
