@@ -518,23 +518,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param int[] $sharedUserIds
-     */
-    public function setSharedUserIds($sharedUserIds): void
-    {
-        $userNames = [];
-        if ($sharedUserIds) {
-            foreach ($sharedUserIds as $id) {
-                $user = Model\User::getById($id);
-                if ($user) {
-                    $userNames[] = $user->getName();
-                }
-            }
-        }
-        $this->sharedUserNames = $userNames;
-    }
-
-    /**
      * @return int[]
      */
     public function getSharedRoleIds()
@@ -550,23 +533,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         }
 
         return $sharedRoleIds;
-    }
-
-    /**
-     * @param int[] $sharedRoleIds
-     */
-    public function setSharedRoleIds($sharedRoleIds): void
-    {
-        $roleNames = [];
-        if ($sharedRoleIds) {
-            foreach ($sharedRoleIds as $id) {
-                $role = Model\User\Role::getById($id);
-                if ($role) {
-                    $roleNames[] = $role->getName();
-                }
-            }
-        }
-        $this->sharedRoleNames = $roleNames;
     }
 
     /**
