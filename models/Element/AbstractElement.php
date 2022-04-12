@@ -205,14 +205,19 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $ignored = ['userId', 'cid', 'cpath', 'dao'];
         $permissions = [];
 
-        foreach ($vars as $name => $defaultValue) {
-            if (!in_array($name, $ignored)) {
-                $permissions[$name] = $this->isAllowed($name);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $columns = array_diff(array_keys($vars),$ignored);
+
+        if ($user->isAdmin()) {
+            foreach ($columns as $name) {
+                $permissions[$name] = 1;
             }
+            return $permissions;
         }
 
-        return $permissions;
+        return $this->getDao()->areAllowed($columns,$user);
     }
+
 
     /**
      * {@inheritdoc}

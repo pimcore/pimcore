@@ -102,4 +102,64 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         return (int)$this->db->fetchOne($sql);
     }
+
+    public function areAllowed($columns, $user)
+    {
+        $permissions = [];
+
+        $parentIds = $this->collectParentIds();
+        $currentUserId = $user->getId();
+        $userIds = $user->getRoles();
+        $userIds[] = $currentUserId;
+
+        $parentSql = '
+            SELECT * FROM users_workspaces_object
+            WHERE cid IN (' . implode(',', $parentIds) . ')
+            AND userId IN (' . implode(',', $userIds) . ')
+            ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
+        ';
+
+        $parentRow = $this->db->fetchRow($parentSql);
+
+        if ($parentRow) {
+            if ($parentRow['userId'] == $currentUserId){
+                foreach ($columns as $type) {
+                    $permissions[$type] = $parentRow[$type];
+                }
+                return $permissions;
+            }
+
+            //if not found any workspace rules with current User Id (which has max precedence), then we scan trough the roles.
+            $roleWorkspaceSql = '
+             SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_object
+             WHERE
+             cid = ' . $parentRow['cid'] . '
+             AND userId IN (' . implode(',', $userIds) . ')
+             ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
+             ';
+            $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
+
+            if ($objectPermissions[0]['userId'] == $currentUserId){
+                foreach ($columns as $type) {
+                    $objectPermissions[0][$type] = $parentRow[$type];
+                }
+                return $permissions;
+            }
+
+            //this applies the additive rule when conflicting rules when multiple roles,
+            //breaks the loop when permission=1 to check next permission type.
+            foreach ($columns as $type) {
+                foreach ($objectPermissions as $workspace) {
+                    if ($workspace[$type] == 1) {
+                        $permissions[$type] = 1;
+                        break;
+                    }
+                    $permissions[$type] = 0;
+                }
+            }
+        }
+
+
+        return $permissions;
+    }
 }

@@ -215,10 +215,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $child) {
-                $tmpObject = $this->getTreeNodeConfig($child);
-
                 if ($child->isAllowed('list', $this->getAdminUser())) {
-                    $objects[] = $tmpObject;
+                    $objects[] = $this->getTreeNodeConfig($child);
+//                if ($tmpObject['permissions'] && $tmpObject['permissions']['list']) {
+//                    $objects[] = $tmpObject;
                 }
             }
             //pagination for custom view
