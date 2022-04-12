@@ -40,6 +40,7 @@ use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,13 +109,16 @@ class SettingsController extends AdminController
      */
     public function uploadCustomLogoAction(Request $request)
     {
-        $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
-        if (!in_array($fileExt, ['svg', 'png', 'jpg'])) {
-            throw new \Exception('Unsupported file format');
+        $logoFile = $request->files->get('Filedata');
+
+        if (!$logoFile instanceof UploadedFile
+            || !in_array($logoFile->guessExtension(), ['svg', 'png', 'jpg'])
+        ) {
+            throw new \Exception('Unsupported file format.');
         }
 
         $storage = Tool\Storage::get('admin');
-        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
+        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($logoFile->getPathname(), 'rb'));
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
