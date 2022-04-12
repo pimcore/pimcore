@@ -32,16 +32,16 @@ class ModelAssetPermissionsTest extends ModelTestCase
      *
      * /permissionfoo --> allowed
      * /permissionfoo/bars --> not allowed
-     * /permissionbar/bars/hugo.jpg --> ?? --> should not be found
+     * /permissionbar/bars/hugo.gif --> ?? --> should not be found
      * /permissionfoo/bars/userfolder --> allowed
-     * /permissionfoo/bars/userfolder/usertestobject.jpg --> ??   --> should be found
+     * /permissionfoo/bars/userfolder/usertestobject.gif --> ??   --> should be found
      * /permissionfoo/bars/groupfolder --> allowed role
      * /permissionfoo/bars/groupfolder --> not allowed user
-     * /permissionfoo/bars/groupfolder/grouptestobject.jpg --> ??   --> should NOT be found
+     * /permissionfoo/bars/groupfolder/grouptestobject.gif --> ??   --> should NOT be found
      *
      * /permissionbar --> allowed
      * /permissionbar/foo --> not allowed
-     * /permissionbar/foo/hiddenobject.jpg --> ??       --> should not be found
+     * /permissionbar/foo/hiddenobject.gif --> ??       --> should not be found
      *
      *
      * -- only for many elements search test
@@ -117,10 +117,10 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->userfolder = $this->createFolder('userfolder', $this->bars->getId());
         $this->groupfolder = $this->createFolder('groupfolder', $this->bars->getId());
 
-        $this->hiddenobject = $this->createAsset('hiddenobject,jpg', $this->foo->getId());
-        $this->hugo = $this->createAsset('hugo.jpg', $this->bars->getId());
-        $this->usertestobject = $this->createAsset('usertestobject.jpg', $this->userfolder->getId());
-        $this->grouptestobject = $this->createAsset('grouptestobject.jpg', $this->groupfolder->getId());
+        $this->hiddenobject = $this->createAsset('hiddenobject.gif', $this->foo->getId());
+        $this->hugo = $this->createAsset('hugo.gif', $this->bars->getId());
+        $this->usertestobject = $this->createAsset('usertestobject.gif', $this->userfolder->getId());
+        $this->grouptestobject = $this->createAsset('grouptestobject.gif', $this->groupfolder->getId());
     }
 
     protected function createFolder(string $key, int $parentId): Asset\Folder
@@ -143,7 +143,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $asset->setKey($key);
         $asset->setParentId($parentId);
         $asset->setType('image');
-        $asset->setData('123');
+        $asset->setData('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
         $asset->setFilename($key);
         $asset->save();
 
