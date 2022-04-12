@@ -17,18 +17,16 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Model\Search;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class ModelAssetPermissionsTest extends ModelTestCase
 {
-
     /**
      *  created object tree
      *
@@ -55,11 +53,11 @@ class ModelAssetPermissionsTest extends ModelTestCase
      *
      */
 
-
     /**
      * @var Asset\Folder
      */
     protected $permissionfoo;
+
     /**
      * @var Asset\Folder
      */
@@ -90,26 +88,28 @@ class ModelAssetPermissionsTest extends ModelTestCase
      */
     protected $groupfolder;
 
-
     /**
      * @var Asset
      */
     protected $hiddenobject;
+
     /**
      * @var Asset
      */
     protected $hugo;
+
     /**
      * @var Asset
      */
     protected $usertestobject;
+
     /**
      * @var Asset
      */
     protected $grouptestobject;
 
-    protected function prepareObjectTree() {
-
+    protected function prepareObjectTree()
+    {
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
         $this->foo = $this->createFolder('foo', $this->permissionbar->getId());
@@ -123,8 +123,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->grouptestobject = $this->createAsset('grouptestobject.jpg', $this->groupfolder->getId());
     }
 
-    protected function createFolder(string $key, int $parentId): Asset\Folder {
-
+    protected function createFolder(string $key, int $parentId): Asset\Folder
+    {
         $folder = new Asset\Folder();
         $folder->setKey($key);
         $folder->setParentId($parentId);
@@ -136,7 +136,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         return $folder;
     }
 
-    protected function createAsset(string $key, int $parentId): Asset {
+    protected function createAsset(string $key, int $parentId): Asset
+    {
         $asset = new Asset\Image();
 
         $asset->setKey($key);
@@ -152,7 +153,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         return $asset;
     }
 
-    protected function prepareUsers() {
+    protected function prepareUsers()
+    {
         //create role
         $role = new User\Role();
         $role->setName('Testrole');
@@ -198,7 +200,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
 
         $this->prepareObjectTree();
         $this->prepareUsers();
-
     }
 
     protected function tearDown(): void
@@ -209,11 +210,10 @@ class ModelAssetPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest1')->delete();
         User::getByName('Permissiontest2')->delete();
         User\Role::getByName('Testrole')->delete();
-
     }
 
-    protected function doHasChildrenTest(Asset $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doHasChildrenTest(Asset $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -233,7 +233,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $element->getDao()->hasChildren($this->userPermissionTest2),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest2'
         );
-
     }
 
     public function testHasChildren()
@@ -249,8 +248,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doHasChildrenTest($this->hiddenobject, false, false, false);
     }
 
-    protected function doIsAllowedTest(Asset $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doIsAllowedTest(Asset $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -270,12 +269,10 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $element->isAllowed($type, $this->userPermissionTest2),
             '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest2'
         );
-
     }
 
-
-    public function testIsAllowed() {
-
+    public function testIsAllowed()
+    {
         $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true);
 
@@ -288,11 +285,11 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->userfolder, 'list', true, true, true);
         $this->doIsAllowedTest($this->userfolder, 'view', true, true, true);
 
-       $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
-       $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
 
-       $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
-       $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
 
         $this->doIsAllowedTest($this->permissionbar, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionbar, 'view', true, true, true);
@@ -300,12 +297,9 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->foo, 'list', true, false, false);
         $this->doIsAllowedTest($this->foo, 'view', true, false, false);
 
-        $this->doIsAllowedTest($this->hiddenobject, 'list',true, false, false);
-        $this->doIsAllowedTest($this->hiddenobject, 'view',true, false, false);
-
+        $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false);
+        $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
-
-
 
     protected function buildController(string $classname, User $user)
     {
@@ -313,24 +307,25 @@ class ModelAssetPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function($data) {
+            'adminJson' => function ($data) {
                 return $data;
             },
-            'getThumbnailUrl' => function ($asset){
+            'getThumbnailUrl' => function ($asset) {
                 return '';
-            }
+            },
         ]);
 
         return $AssetController;
     }
 
-    protected function doTestTreeGetChildsById(Asset $element, User $user, array $expectedChildren) {
+    protected function doTestTreeGetChildsById(Asset $element, User $user, array $expectedChildren)
+    {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\Asset\\AssetController', $user);
 
         $request = new Request([
             'node' => $element->getId(),
             'limit' => 100,
-            'view' => 0
+            'view' => 0,
         ]);
         $eventDispatcher = new EventDispatcher();
 
@@ -339,17 +334,15 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
-
-
         $responsePaths = [];
-        foreach($responseData['nodes'] as $node) {
+        foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
 
         $this->assertCount(
             $responseData['total'],
             $responseData['nodes'],
-            print_r($responseData['nodes'],true).print_r($responseData['total'],true).'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
+            print_r($responseData['nodes'], true).print_r($responseData['total'], true).'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
         );
 
         $this->assertCount(
@@ -358,20 +351,18 @@ class ModelAssetPermissionsTest extends ModelTestCase
             'Assert number of expected result matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedChildren as $path) {
+        foreach ($expectedChildren as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 'Children of `' . $element->getFullpath() . '` do to not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
     }
 
-    public function testTreeGetChildsById() {
-
+    public function testTreeGetChildsById()
+    {
         $admin = User::getByName('admin');
-
 
         // test /permissionfoo
         $this->doTestTreeGetChildsById(
@@ -411,7 +402,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
             [$this->userfolder->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/userfolder
         $this->doTestTreeGetChildsById(
             $this->userfolder,
@@ -431,7 +421,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
             [$this->usertestobject->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/groupfolder
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
@@ -450,7 +439,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
 
         // test /permissionbar
         $this->doTestTreeGetChildsById(
@@ -489,8 +477,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
-
     }
 
     // Disabling these tests until the PR of https://github.com/pimcore/pimcore/issues/11822
@@ -611,6 +597,4 @@ class ModelAssetPermissionsTest extends ModelTestCase
 //
 //
 //    }
-
 }
-

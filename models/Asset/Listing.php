@@ -81,6 +81,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @param Model\User $user
      * @param Model\Asset $asset
 
+     *
      * @return static
      */
     public function filterAccessibleByUser(Model\User $user, Model\Asset $asset)
@@ -100,6 +101,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
             $this->addConditionParam($condition);
         }
+
         return $this;
     }
 }

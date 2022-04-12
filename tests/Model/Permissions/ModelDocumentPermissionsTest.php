@@ -17,19 +17,17 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Search;
-use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class ModelDocumentPermissionsTest extends ModelTestCase
 {
-
     /**
      *  created object tree
      *
@@ -56,11 +54,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      *
      */
 
-
     /**
      * @var Document\Folder
      */
     protected $permissionfoo;
+
     /**
      * @var Document\Folder
      */
@@ -91,26 +89,28 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      */
     protected $groupfolder;
 
-
     /**
      * @var Document
      */
     protected $hiddenobject;
+
     /**
      * @var Document
      */
     protected $hugo;
+
     /**
      * @var Document
      */
     protected $usertestobject;
+
     /**
      * @var Document
      */
     protected $grouptestobject;
 
-    protected function prepareObjectTree() {
-
+    protected function prepareObjectTree()
+    {
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
         $this->foo = $this->createFolder('foo', $this->permissionbar->getId());
@@ -124,8 +124,8 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->grouptestobject = $this->createPage('grouptestobject', $this->groupfolder->getId());
     }
 
-    protected function createFolder(string $key, int $parentId): Document\Folder {
-
+    protected function createFolder(string $key, int $parentId): Document\Folder
+    {
         $folder = new Document\Folder();
         $folder->setKey($key);
         $folder->setParentId($parentId);
@@ -137,7 +137,8 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         return $folder;
     }
 
-    protected function createPage(string $key, int $parentId): Document {
+    protected function createPage(string $key, int $parentId): Document
+    {
         $document =  new Page();
 
         $document->setKey($key);
@@ -152,7 +153,8 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         return $document;
     }
 
-    protected function prepareUsers() {
+    protected function prepareUsers()
+    {
         //create role
         $role = new User\Role();
         $role->setName('Testrole');
@@ -198,7 +200,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
         $this->prepareObjectTree();
         $this->prepareUsers();
-
     }
 
     protected function tearDown(): void
@@ -209,11 +210,10 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest1')->delete();
         User::getByName('Permissiontest2')->delete();
         User\Role::getByName('Testrole')->delete();
-
     }
 
-    protected function doHasChildrenTest(Document $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doHasChildrenTest(Document $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -233,7 +233,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $element->getDao()->hasChildren(true, $this->userPermissionTest2),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest2'
         );
-
     }
 
     public function testHasChildren()
@@ -249,8 +248,8 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doHasChildrenTest($this->hiddenobject, false, false, false);
     }
 
-    protected function doIsAllowedTest(Document $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doIsAllowedTest(Document $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -270,12 +269,10 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $element->isAllowed($type, $this->userPermissionTest2),
             '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest2'
         );
-
     }
 
-
-    public function testIsAllowed() {
-
+    public function testIsAllowed()
+    {
         $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true);
 
@@ -288,11 +285,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->userfolder, 'list', true, true, true);
         $this->doIsAllowedTest($this->userfolder, 'view', true, true, true);
 
-       $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
-       $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false);
+        $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false);
 
-       $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
-       $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false);
 
         $this->doIsAllowedTest($this->permissionbar, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionbar, 'view', true, true, true);
@@ -300,12 +297,9 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->foo, 'list', true, false, false);
         $this->doIsAllowedTest($this->foo, 'view', true, false, false);
 
-        $this->doIsAllowedTest($this->hiddenobject, 'list',true, false, false);
-        $this->doIsAllowedTest($this->hiddenobject, 'view',true, false, false);
-
+        $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false);
+        $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
-
-
 
     protected function buildController(string $classname, User $user)
     {
@@ -313,21 +307,22 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function($data) {
+            'adminJson' => function ($data) {
                 return $data;
-            }
+            },
         ]);
 
         return $DocumentController;
     }
 
-    protected function doTestTreeGetChildsById(Document $element, User $user, array $expectedChildren) {
+    protected function doTestTreeGetChildsById(Document $element, User $user, array $expectedChildren)
+    {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\Document\\DocumentController', $user);
 
         $request = new Request([
             'node' => $element->getId(),
             'limit' => 100,
-            'view' => 0
+            'view' => 0,
         ]);
         $eventDispatcher = new EventDispatcher();
 
@@ -336,10 +331,8 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
-
-
         $responsePaths = [];
-        foreach($responseData['nodes'] as $node) {
+        foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
 
@@ -355,20 +348,18 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             'Assert number of expected result matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedChildren as $path) {
+        foreach ($expectedChildren as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 'Children of `' . $element->getFullpath() . '` do to not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
     }
 
-    public function testTreeGetChildsById() {
-
+    public function testTreeGetChildsById()
+    {
         $admin = User::getByName('admin');
-
 
         // test /permissionfoo
         $this->doTestTreeGetChildsById(
@@ -408,7 +399,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             [$this->userfolder->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/userfolder
         $this->doTestTreeGetChildsById(
             $this->userfolder,
@@ -428,7 +418,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             [$this->usertestobject->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/groupfolder
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
@@ -447,7 +436,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
 
         // test /permissionbar
         $this->doTestTreeGetChildsById(
@@ -486,8 +474,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
-
     }
 
     // Disabling these tests until the PR of https://github.com/pimcore/pimcore/issues/11822
@@ -608,6 +594,4 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 //
 //
 //    }
-
 }
-

@@ -339,7 +339,7 @@ class Dao extends Model\Element\Dao
             $currentUserId = $user->getId();
             $userIds[] = $currentUserId;
 
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds );
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
             $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
@@ -377,7 +377,7 @@ class Dao extends Model\Element\Dao
             $currentUserId = $user->getId();
             $userIds[] = $currentUserId;
 
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds );
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
             $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
@@ -483,12 +483,14 @@ class Dao extends Model\Element\Dao
     /**
      * @param string $type
      * @param array $userIds
+     *
      * @return int
+     *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function isInheritingPermission(string $type, array $userIds){
-        return $this->InheritingPermission($type,$userIds,'document');
-
+    public function isInheritingPermission(string $type, array $userIds)
+    {
+        return $this->InheritingPermission($type, $userIds, 'document');
     }
 
     /**

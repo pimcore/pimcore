@@ -171,7 +171,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $currentUserId = $this->getAdminUser()->getId();
                 $userIds[] = $currentUserId;
 
-                $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds );
+                $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
 
                 $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
@@ -179,7 +179,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
-
 
             if ($filter) {
                 $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);

@@ -78,12 +78,13 @@ abstract class Dao extends Model\Dao\AbstractDao
      */
     abstract public function getVersionCountForUpdate(): int;
 
-
     /**
      * @param string $type
      * @param array $userIds
      * @param string $tableSuffix
+     *
      * @return int
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function InheritingPermission(string $type, array $userIds, string $tableSuffix): int
@@ -100,7 +101,5 @@ abstract class Dao extends Model\Dao\AbstractDao
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
         return (int)$this->db->fetchOne($sql);
-
     }
-
 }

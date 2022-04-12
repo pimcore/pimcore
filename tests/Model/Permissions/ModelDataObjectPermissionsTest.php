@@ -17,18 +17,16 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Model\Search;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class ModelDataObjectPermissionsTest extends ModelTestCase
 {
-
     /**
      *  created object tree
      *
@@ -60,19 +58,21 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      *
      */
 
-
     /**
      * @var DataObject\Folder
      */
     protected $permissionfoo;
+
     /**
      * @var DataObject\Folder
      */
     protected $permissionbar;
+
     /**
      * @var DataObject\Folder
      */
     protected $permissioncpath;
+
     /**
      * @var DataObject\Folder
      */
@@ -98,43 +98,50 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      */
     protected $groupfolder;
 
-
     /**
      * @var DataObject\AbstractObject
      */
     protected $hiddenobject;
+
     /**
      * @var DataObject\AbstractObject
      */
     protected $hugo;
+
     /**
      * @var DataObject\AbstractObject
      */
     protected $usertestobject;
+
     /**
      * @var DataObject\AbstractObject
      */
     protected $grouptestobject;
+
     /**
      * @var DataObject\Folder
      */
     protected $a;
+
     /**
      * @var DataObject\Folder
      */
     protected $b;
+
     /**
      * @var DataObject\AbstractObject
      */
     protected $c;
+
     /**
      * @var DataObject\AbstractObject
      */
     protected $abcdefghjkl;
 
-    protected function prepareObjectTree() {
+    protected function prepareObjectTree()
+    {
 
-        #example based on https://github.com/pimcore/pimcore/issues/11540
+        //example based on https://github.com/pimcore/pimcore/issues/11540
         $this->permissioncpath = $this->createFolder('permissioncpath', 1);
         $this->a = $this->createFolder('a', $this->permissioncpath->getId());
         $this->b = $this->createFolder('b', $this->a->getId());
@@ -154,8 +161,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->grouptestobject = $this->createObject('grouptestobject', $this->groupfolder->getId());
     }
 
-    protected function createFolder(string $key, int $parentId): DataObject\Folder {
-
+    protected function createFolder(string $key, int $parentId): DataObject\Folder
+    {
         $folder = new DataObject\Folder();
         $folder->setKey($key);
         $folder->setParentId($parentId);
@@ -167,7 +174,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         return $folder;
     }
 
-    protected function createObject(string $key, int $parentId): DataObject\AbstractObject {
+    protected function createObject(string $key, int $parentId): DataObject\AbstractObject
+    {
         $object = TestHelper::createEmptyObject();
 
         $object->setKey($key);
@@ -183,7 +191,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         return $object;
     }
 
-    protected function prepareUsers() {
+    protected function prepareUsers()
+    {
         //create role
         $role = new User\Role();
         $role->setName('Testrole');
@@ -231,7 +240,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $this->prepareObjectTree();
         $this->prepareUsers();
-
     }
 
     protected function tearDown(): void
@@ -242,17 +250,16 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest1')->delete();
         User::getByName('Permissiontest2')->delete();
         User\Role::getByName('Testrole')->delete();
-
     }
 
-    protected function doHasChildrenTest(DataObject\AbstractObject $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doHasChildrenTest(DataObject\AbstractObject $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
             $resultAdmin,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER],true, $admin
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $admin
             ),
             'Has children of `' . $element->getFullpath() . '` for user admin'
         );
@@ -260,7 +267,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest1,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER],true, $this->userPermissionTest1
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest1
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest1'
         );
@@ -268,11 +275,10 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest2,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER],true, $this->userPermissionTest2
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest2
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest2'
         );
-
     }
 
     public function testHasChildren()
@@ -289,8 +295,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doHasChildrenTest($this->hiddenobject, false, false, false);
     }
 
-    protected function doIsAllowedTest(DataObject\AbstractObject $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2) {
-
+    protected function doIsAllowedTest(DataObject\AbstractObject $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -310,12 +316,10 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $element->isAllowed($type, $this->userPermissionTest2),
             '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest2'
         );
-
     }
 
-
-    public function testIsAllowed() {
-
+    public function testIsAllowed()
+    {
         $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true);
 
@@ -340,12 +344,9 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->foo, 'list', true, false, false);
         $this->doIsAllowedTest($this->foo, 'view', true, false, false);
 
-        $this->doIsAllowedTest($this->hiddenobject, 'list',true, false, false);
-        $this->doIsAllowedTest($this->hiddenobject, 'view',true, false, false);
-
+        $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false);
+        $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
-
-
 
     protected function buildController(string $classname, User $user)
     {
@@ -353,19 +354,20 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'getAdminUser' => function () use ($user) {
                 return $user;
             },
-            'adminJson' => function($data) {
+            'adminJson' => function ($data) {
                 return $data;
-            }
+            },
         ]);
 
         return $dataObjectController;
     }
 
-    protected function doTestTreeGetChildsById(DataObject\AbstractObject $element, User $user, array $expectedChildren) {
+    protected function doTestTreeGetChildsById(DataObject\AbstractObject $element, User $user, array $expectedChildren)
+    {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\DataObject\\DataObjectController', $user);
 
         $request = new Request([
-            'node' => $element->getId()
+            'node' => $element->getId(),
         ]);
         $eventDispatcher = new EventDispatcher();
 
@@ -374,10 +376,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
-
-
         $responsePaths = [];
-        foreach($responseData['nodes'] as $node) {
+        foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
 
@@ -393,20 +393,18 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'Assert number of expected result matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedChildren as $path) {
+        foreach ($expectedChildren as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 'Children of `' . $element->getFullpath() . '` do to not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
     }
 
-    public function testTreeGetChildsById() {
-
+    public function testTreeGetChildsById()
+    {
         $admin = User::getByName('admin');
-
 
         // test /permissionfoo
         $this->doTestTreeGetChildsById(
@@ -446,7 +444,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->userfolder->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/userfolder
         $this->doTestTreeGetChildsById(
             $this->userfolder,
@@ -466,7 +463,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->usertestobject->getFullpath()]
         );
 
-
         // test /permissionfoo/bars/groupfolder
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
@@ -485,7 +481,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
 
         // test /permissionbar
         $this->doTestTreeGetChildsById(
@@ -524,8 +519,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userPermissionTest2,
             []
         );
-
-
     }
 
     // Disabling these tests until the PR of https://github.com/pimcore/pimcore/issues/11822
@@ -646,6 +639,4 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 //
 //
 //    }
-
 }
-

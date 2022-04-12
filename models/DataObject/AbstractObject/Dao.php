@@ -304,10 +304,9 @@ class Dao extends Model\Element\Dao
 
         $sql = 'SELECT 1 FROM objects o WHERE o_parentId = ? ';
         if ($user && !$user->isAdmin()) {
-
             $roleIds = $user->getRoles();
             $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds ,[$currentUserId]);
+            $permissionIds = array_merge($roleIds, [$currentUserId]);
 
             //gets the permission of the ancestors, since it would be the same for each row with same o_parentId, it is done once outside the query to avoid extra subquery.
             $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
@@ -397,9 +396,9 @@ class Dao extends Model\Element\Dao
         if ($user && !$user->isAdmin()) {
             $roleIds = $user->getRoles();
             $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds ,[$currentUserId]);
+            $permissionIds = array_merge($roleIds, [$currentUserId]);
 
-            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds );
+            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
 
             $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1 AND
             NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
@@ -496,16 +495,17 @@ class Dao extends Model\Element\Dao
         return $parentIds;
     }
 
-
     /**
      * @param string $type
      * @param array $userIds
+     *
      * @return int
+     *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function isInheritingPermission(string $type, array $userIds){
-        return $this->InheritingPermission($type,$userIds,'object');
-
+    public function isInheritingPermission(string $type, array $userIds)
+    {
+        return $this->InheritingPermission($type, $userIds, 'object');
     }
 
     /**
