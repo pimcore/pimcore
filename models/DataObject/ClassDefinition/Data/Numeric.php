@@ -437,7 +437,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $this->toNumeric($data);
         }
 
-        return $data;
+        return null;
     }
 
     /**
