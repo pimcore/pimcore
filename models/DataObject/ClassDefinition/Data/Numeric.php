@@ -431,7 +431,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource($data, $object = null, $params = []): float|int|string|null
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
