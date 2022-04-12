@@ -22,6 +22,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
+use Pimcore\Model\User;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -74,7 +75,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();
-            if ($user instanceof Model\User) {
+            if ($user instanceof User) {
                 $userId = $user->getId();
             }
             $this->setUserModification($userId);
@@ -191,11 +192,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * @param User $user
+     * @return array
+     * @throws \Exception
      * @internal
      *
-     * @return array
      */
-    public function getUserPermissions()
+    public function getUserPermissions(User $user)
     {
         $baseClass = Service::getBaseClassNameForElement($this);
         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClass;
@@ -205,7 +208,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $ignored = ['userId', 'cid', 'cpath', 'dao'];
         $permissions = [];
 
-        $user = \Pimcore\Tool\Admin::getCurrentUser();
         $columns = array_diff(array_keys($vars),$ignored);
 
         if ($user->isAdmin()) {
@@ -222,7 +224,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * {@inheritdoc}
      */
-    public function isAllowed($type, ?Model\User $user = null)
+    public function isAllowed($type, ?User $user = null)
     {
         if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();

@@ -107,13 +107,15 @@ abstract class Dao extends Model\Dao\AbstractDao
     {
         $permissions = [];
 
-        $parentIds = $this->collectParentIds();
+        $parentIds = $this->getParentIds();
+        $parentIds[] = $this->model->getId();
+
         $currentUserId = $user->getId();
         $userIds = $user->getRoles();
         $userIds[] = $currentUserId;
 
         $parentSql = '
-            SELECT * FROM users_workspaces_object
+            SELECT userId,cid,`'. implode('`,`', $columns) .'` FROM users_workspaces_object
             WHERE cid IN (' . implode(',', $parentIds) . ')
             AND userId IN (' . implode(',', $userIds) . ')
             ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1

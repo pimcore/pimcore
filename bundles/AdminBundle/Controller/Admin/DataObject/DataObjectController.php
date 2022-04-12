@@ -309,7 +309,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
         $tmpObject['expanded'] = !$hasChildren;
-        $tmpObject['permissions'] = $child->getUserPermissions();
+        $tmpObject['permissions'] = $child->getUserPermissions($this->getAdminUser());
 
         if ($child->isLocked()) {
             $tmpObject['cls'] .= 'pimcore_treenode_locked ';
@@ -464,7 +464,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
-            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
+            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions($this->getAdminUser());
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
             $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = array_map(
@@ -737,7 +737,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['general']['o_locked'] = $object->isLocked();
 
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
+            $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
