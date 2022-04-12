@@ -77,4 +77,30 @@ abstract class Dao extends Model\Dao\AbstractDao
      * @return int
      */
     abstract public function getVersionCountForUpdate(): int;
+
+
+    /**
+     * @param string $type
+     * @param array $userIds
+     * @param string $tableSuffix
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function InheritingPermission(string $type, array $userIds, string $tableSuffix): int
+    {
+        $current = $this->model;
+
+        if (!$current->getId()) {
+            return 0;
+        }
+        $fullPath = $current->getPath().$current->getKey();
+
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_'.$tableSuffix.' WHERE LOCATE(cpath,"'.$fullPath.'")=1 AND
+        userId IN (' . implode(',', $userIds) . ')
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+
+        return (int)$this->db->fetchOne($sql);
+
+    }
+
 }
