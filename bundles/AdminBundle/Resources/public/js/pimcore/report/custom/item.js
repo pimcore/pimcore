@@ -452,7 +452,7 @@ pimcore.report.custom.item = Class.create({
                 minChars: 1,
                 store: userStore,
                 displayField: 'label',
-                valueField: 'id',
+                valueField: 'label',
                 forceSelection: true,
                 filterPickList: true,
                 value: this.data.sharedUserNames ? this.data.sharedUserNames : ""
@@ -487,7 +487,7 @@ pimcore.report.custom.item = Class.create({
                 minChars: 1,
                 store: rolesStore,
                 displayField: 'label',
-                valueField: 'id',
+                valueField: 'label',
                 forceSelection: true,
                 filterPickList: true,
                 value: this.data.sharedRoleNames ? this.data.sharedRoleNames : ""
