@@ -428,6 +428,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param mixed $params
      *
      * @return float|int|string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
