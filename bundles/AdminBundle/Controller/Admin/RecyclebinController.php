@@ -109,7 +109,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
                         $value = '%' . $value . '%';
                     }
 
-                    $field = '`' . $filterField . '` ';
+                    $field = $db->quoteIdentifier($filterField);
                     if (($filter['field'] ?? false) == 'fullpath') {
                         $field = 'CONCAT(path,filename)';
                     }
