@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -103,10 +104,15 @@ abstract class Dao extends Model\Dao\AbstractDao
         return (int)$this->db->fetchOne($sql);
     }
 
-    public function areAllowed($columns, $user)
-    {
+    /**
+     * @param array $columns
+     * @param User $user
+     * @param string $tableSuffix
+     *
+     * @return array
+     */
+    public function permissionByTypes(array $columns, User $user, string $tableSuffix){
         $permissions = [];
-
         $parentIds = $this->getParentIds();
         $parentIds[] = $this->model->getId();
 
@@ -114,42 +120,40 @@ abstract class Dao extends Model\Dao\AbstractDao
         $userIds = $user->getRoles();
         $userIds[] = $currentUserId;
 
-        $parentSql = '
-            SELECT userId,cid,`'. implode('`,`', $columns) .'` FROM users_workspaces_object
-            WHERE cid IN (' . implode(',', $parentIds) . ')
-            AND userId IN (' . implode(',', $userIds) . ')
+        $highestWorkspaceQuery = '
+            SELECT userId,cid,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
+            WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ')
             ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
         ';
 
-        $parentRow = $this->db->fetchRow($parentSql);
+        $highestWorkspace = $this->db->fetchRow($highestWorkspaceQuery);
 
-        if ($parentRow) {
-            if ($parentRow['userId'] == $currentUserId){
+        if ($highestWorkspace) {
+            //if it's the current user, this is the permission that rules them all, no need to check others
+            if ($highestWorkspace['userId'] == $currentUserId){
                 foreach ($columns as $type) {
-                    $permissions[$type] = $parentRow[$type];
+                    $permissions[$type] = $highestWorkspace[$type];
                 }
                 return $permissions;
             }
 
-            //if not found any workspace rules with current User Id (which has max precedence), then we scan trough the roles.
+            //if not found, then we have role permission set, we already have the longest cpath from first query, so can use the same cid
             $roleWorkspaceSql = '
-             SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_object
-             WHERE
-             cid = ' . $parentRow['cid'] . '
-             AND userId IN (' . implode(',', $userIds) . ')
+             SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
+             WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
              ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
              ';
             $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
 
             if ($objectPermissions[0]['userId'] == $currentUserId){
                 foreach ($columns as $type) {
-                    $objectPermissions[0][$type] = $parentRow[$type];
+                    $objectPermissions[0][$type] = $highestWorkspace[$type];
                 }
                 return $permissions;
             }
 
             //this applies the additive rule when conflicting rules when multiple roles,
-            //breaks the loop when permission=1 to check next permission type.
+            //breaks the loop when permission=1 is found and move on to check next permission type.
             foreach ($columns as $type) {
                 foreach ($objectPermissions as $workspace) {
                     if ($workspace[$type] == 1) {
@@ -160,8 +164,6 @@ abstract class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-
-
         return $permissions;
     }
 }

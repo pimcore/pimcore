@@ -1419,7 +1419,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     'fullPath' => $languageDocument->getFullPath(),
                     'published' => $languageDocument->getPublished(),
                     'itemType' => 'document',
-                    'permissions' => $languageDocument->getUserPermissions(),
+                    'permissions' => $languageDocument->getUserPermissions($this->getAdminUser()),
                 ];
             } elseif (!$document instanceof Document\Folder) {
                 $config[$language] = [

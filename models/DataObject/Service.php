@@ -299,16 +299,17 @@ class Service extends Model\Element\Service
         $csvMode = $params['csvMode'] ?? false;
 
         if ($object instanceof Concrete) {
+            $user = AdminTool::getCurrentUser();
+
             $context = ['object' => $object,
                 'purpose' => 'gridview',
                 'language' => $requestedLanguage, ];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
-            $data['permissions'] = $object->getUserPermissions();
+            $data['permissions'] = $object->getUserPermissions($user);
             $data['locked'] = $object->isLocked();
 
-            $user = AdminTool::getCurrentUser();
 
             if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());

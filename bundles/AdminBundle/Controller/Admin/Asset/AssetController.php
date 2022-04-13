@@ -199,7 +199,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['filesize'] = $asset->getFileSize();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
-        $data['userPermissions'] = $asset->getUserPermissions();
+        $data['userPermissions'] = $asset->getUserPermissions($this->getAdminUser());
         $frontendPath = $asset->getFrontendFullPath();
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :

@@ -45,7 +45,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $documentFromDatabase = Model\Document::getById($document->getId(), true);
 
         $data['versionDate'] = $documentFromDatabase->getModificationDate();
-        $data['userPermissions'] = $document->getUserPermissions();
+        $data['userPermissions'] = $document->getUserPermissions($this->getAdminUser());
         $data['idPath'] = Element\Service::getIdPath($document);
 
         $data['php'] = [
