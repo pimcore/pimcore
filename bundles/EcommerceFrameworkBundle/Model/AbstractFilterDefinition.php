@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 /**
  * Abstract base class for filter definition pimcore objects
@@ -55,7 +56,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return AbstractFilterDefinitionType[]|null
+     * @return Fieldcollection<AbstractFilterDefinitionType>|null
      */
     abstract public function getConditions();
 
@@ -64,7 +65,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return AbstractFilterDefinitionType[]|null
+     * @return Fieldcollection<AbstractFilterDefinitionType>|null
      */
     abstract public function getFilters();
 
@@ -73,7 +74,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @param string $key
      *
-     * @return mixed|\Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection|null
      */
     public function preGetValue(string $key)
     {
@@ -100,12 +101,12 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
                     return $parentValue;
                 }
                 if (!empty($parentValue)) {
-                    $value = new DataObject\Fieldcollection($parentValue->getItems());
+                    $value = new Fieldcollection($parentValue->getItems());
                     foreach ($data as $entry) {
                         $value->add($entry);
                     }
                 } else {
-                    $value = new DataObject\Fieldcollection($data->getItems());
+                    $value = new Fieldcollection($data->getItems());
                 }
 
                 return $value;

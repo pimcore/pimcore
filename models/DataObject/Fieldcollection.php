@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
+ * @template TAbstractData of Model\DataObject\Fieldcollection\Data\AbstractData
+ *
  * @method array delete(Concrete $object, $saveMode = false)
  * @method Fieldcollection\Dao getDao()
  * @method array load(Concrete $object)
@@ -31,7 +33,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      *
-     * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
+     * @var TAbstractData[]
      */
     protected $items = [];
 
@@ -43,7 +45,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     protected $fieldname;
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
+     * @param TAbstractData[] $items
      * @param string|null $fieldname
      */
     public function __construct($items = [], $fieldname = null)
@@ -59,7 +61,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return Model\DataObject\Fieldcollection\Data\AbstractData[]
+     * @return TAbstractData[]
      */
     public function getItems()
     {
@@ -67,7 +69,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
+     * @param TAbstractData[] $items
      *
      * @return $this
      */
@@ -158,7 +160,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData $item
+     * @param TAbstractData $item
      */
     public function add($item)
     {
@@ -233,7 +235,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return Model\DataObject\Fieldcollection\Data\AbstractData|false
+     * @return TAbstractData|false
      */
     #[\ReturnTypeWillChange]
     public function current()// : Model\DataObject\Fieldcollection\Data\AbstractData|false
