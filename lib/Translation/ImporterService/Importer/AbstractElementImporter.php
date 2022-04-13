@@ -33,8 +33,8 @@ class AbstractElementImporter implements ImporterInterface
             return;
         }
 
+        $targetLanguage = $attributeSet->getTargetLanguages()[0];
         foreach ($attributeSet->getAttributes() as $attribute) {
-            $targetLanguage = $attributeSet->getTargetLanguages()[0];
             $this->importAttribute($element, $targetLanguage, $attribute);
         }
 
