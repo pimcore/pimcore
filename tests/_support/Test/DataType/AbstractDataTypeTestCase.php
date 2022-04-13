@@ -835,9 +835,9 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testObject->save();
 
         // test lookup
+        /** @var UrlSlug $slug */
         $slug = UrlSlug::resolveSlug('/xyz/abc');
         $this->assertTrue($slug instanceof UrlSlug, 'expected a slug');
-        /** @var $slug UrlSlug */
         $action = $slug->getAction();
         $this->assertEquals('MyController::myAction', $action, 'wrong controller/action');
 

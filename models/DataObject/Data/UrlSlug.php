@@ -163,7 +163,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSiteId(): ?int
     {
@@ -183,7 +183,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFieldname(): ?string
     {
@@ -203,7 +203,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex(): ?int
     {
@@ -243,7 +243,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnername(): ?string
     {
@@ -263,7 +263,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPosition(): ?string
     {

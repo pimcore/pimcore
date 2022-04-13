@@ -167,13 +167,16 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $condition .= ' AND
-                (
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                    OR
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                )';
+                $currentUserId = $this->getAdminUser()->getId();
+                $userIds[] = $currentUserId;
+
+                $inheritedPermission = $object->getDao()->isInheritingPermission('list', $userIds);
+
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
+                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = o_id AND list=0)';
+
+                $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
 
             if (!is_null($filter)) {
@@ -214,7 +217,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
 
-                if ($child->isAllowed('list')) {
+                if ($child->isAllowed('list', $this->getAdminUser())) {
                     $objects[] = $tmpObject;
                 }
             }
@@ -2318,10 +2321,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @template T of DataObject\Concrete
+     *
+     * @param T $object
      * @param null|Version $draftVersion
      *
-     * @return DataObject\Concrete|null
+     * @return T
      */
     protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {

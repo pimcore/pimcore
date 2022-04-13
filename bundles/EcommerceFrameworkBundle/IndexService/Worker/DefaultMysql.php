@@ -27,6 +27,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property MysqlConfigInterface $tenantConfig
+ *
+ * @method MysqlConfigInterface getTenantConfig()
  */
 class DefaultMysql extends AbstractWorker implements WorkerInterface
 {
@@ -247,9 +249,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
     }
 
     /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return mixed
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
      */
     public function getProductList()
     {

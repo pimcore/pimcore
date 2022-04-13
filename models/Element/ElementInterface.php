@@ -255,7 +255,7 @@ interface ElementInterface extends ModelInterface
     public function clearDependentCache($additionalTags = []);
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return $this
      */

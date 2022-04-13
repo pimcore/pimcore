@@ -399,7 +399,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param string $data
+     * @param bool|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *

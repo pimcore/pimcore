@@ -51,7 +51,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-        /* @var AbstractElasticSearch $productList */
+        /** @var AbstractElasticSearch $productList */
 
         $nestedPath = "attributes.my_attributes";
 

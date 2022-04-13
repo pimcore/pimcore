@@ -107,7 +107,7 @@ class Mail extends Email
     /**
      * place to store original data before modifying message when sending in debug mode
      *
-     * @var array
+     * @var array|null
      */
     private $originalData;
 
@@ -890,7 +890,7 @@ class Mail extends Email
     /**
      * @internal
      *
-     * @return array
+     * @return array|null
      */
     public function getOriginalData()
     {
@@ -900,7 +900,7 @@ class Mail extends Email
     /**
      * @internal
      *
-     * @param array $originalData
+     * @param array|null $originalData
      */
     public function setOriginalData($originalData)
     {

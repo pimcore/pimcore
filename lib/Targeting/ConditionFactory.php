@@ -30,12 +30,12 @@ class ConditionFactory implements ConditionFactoryInterface
     private $eventDispatcher;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $conditions = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     private $blacklistedKeys = ['type', 'operator', 'bracketLeft', 'bracketRight'];
 
@@ -52,7 +52,7 @@ class ConditionFactory implements ConditionFactoryInterface
      */
     public function build(array $config): ConditionInterface
     {
-        /** @var string $type */
+        /** @var string|null $type */
         $type = $config['type'] ?? null;
 
         if (empty($type)) {
@@ -82,7 +82,6 @@ class ConditionFactory implements ConditionFactoryInterface
 
     protected function buildInstance(string $type, array $config): ConditionInterface
     {
-        /** @var ConditionInterface $class */
         $class = $this->conditions[$type];
 
         if (!class_exists($class)) {
