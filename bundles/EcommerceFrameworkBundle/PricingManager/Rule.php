@@ -45,7 +45,7 @@ class Rule extends AbstractModel implements RuleInterface
             try {
                 $ruleClass = get_called_class();
                 /** @var Rule $rule */
-                $rule = new $ruleClass;
+                $rule = new $ruleClass();
                 $rule->getDao()->getById($id);
 
                 Runtime::set($cacheKey, $rule);
