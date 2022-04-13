@@ -54,7 +54,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
 
     /**
      * @param string $type
-     * @param array|string $subTypes
+     * @param array|string|null $subTypes
      *
      * @return \Pimcore\Model\Metadata\Predefined[]|null
      *

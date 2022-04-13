@@ -1018,3 +1018,47 @@ Ext.define('Pimcore.view.BoundListKeyNav', {
         });
     }
 });
+
+/**
+ * Workaround to fix the rowEditing not fully showing the buttons (Update/Cancel) when there are 2 rows.
+ *
+ * See:
+ * - https://forum.sencha.com/forum/showthread.php?305665-RowEditing-Buttons-not-visible&p=1317756&viewfull=1#post1317756
+ */
+Ext.define('Ext.overrides.grid.RowEditor', {
+    override: 'Ext.grid.RowEditor',
+
+    showTipBelowRow: true,
+
+    syncButtonPosition: function (context) {
+        var me = this,
+            scrollDelta = me.getScrollDelta(),
+            floatingButtons = me.getFloatingButtons(),
+            scrollingView = me.scrollingView,
+        // If this is negative, it means we're not scrolling so lets just ignore it
+            scrollHeight = Math.max(0, me.scroller.getSize().y - me.scroller.getClientSize().y),
+            overflow = scrollDelta - (scrollHeight - me.scroller.getPosition().y);
+        floatingButtons.show();
+        // If that's the last visible row, buttons should be at the top regardless of scrolling,
+        // but not if there is just one row which is both first and last.
+        if (overflow > 0 || (context.rowIdx > 1 && context.isLastRenderedRow())) {
+            if (!me._buttonsOnTop) {
+                floatingButtons.setButtonPosition('top');
+                me._buttonsOnTop = true;
+                me.layout.setAlign('bottom');
+                me.updateLayout();
+            }
+            scrollDelta = 0;
+        } else if (me._buttonsOnTop !== false) {
+            floatingButtons.setButtonPosition('bottom');
+            me._buttonsOnTop = false;
+            me.layout.setAlign('top');
+            me.updateLayout();
+        } else // Ensure button Y position is synced with Editor height even if button
+            // orientation doesn't change
+        {
+            floatingButtons.setButtonPosition(floatingButtons.position);
+        }
+        return scrollDelta;
+    },
+});

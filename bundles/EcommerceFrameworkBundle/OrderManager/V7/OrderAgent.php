@@ -119,7 +119,7 @@ class OrderAgent implements OrderAgentInterface
         //        $cancel = true;
         //        foreach($this->getOrder()->getItems() as $i)
         //        {
-        //            /* @var OrderItem $i */
+        //            /** @var OrderItem $i */
         //            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
         //            {
         //                $cancel = false;

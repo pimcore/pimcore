@@ -274,7 +274,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             // get assets
             $childsList = new Asset\Listing();
             $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
-            $childsList->filterAccessibleByUser($this->getAdminUser());
+            $childsList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
             if (!is_null($filter)) {
                 $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);

@@ -85,7 +85,7 @@ abstract class AbstractDefinitionHelper extends Module
         } else {
             $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
         }
-        /** @var $child Data */
+        /** @var Data $child */
         $child = new $classname();
         $child->setName($name);
         $child->setTitle($name);

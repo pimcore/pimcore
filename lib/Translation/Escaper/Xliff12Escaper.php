@@ -89,7 +89,7 @@ class Xliff12Escaper
     {
         $content = $this->parseInnerXml($content);
 
-        if (preg_match("/<\/?(bpt|ept)/", $content)) {
+        if (preg_match("/<\/?(bpt|ept|ph)/", $content)) {
             $xml = new Crawler($content);
             $els = $xml->filter('bpt, ept, ph');
             /** @var \DOMElement $el */

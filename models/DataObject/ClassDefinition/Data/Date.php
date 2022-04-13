@@ -97,7 +97,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param int $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

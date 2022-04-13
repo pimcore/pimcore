@@ -403,7 +403,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int|bool|null $locked
+     * @param bool $locked
      *
      * @return $this
      */
@@ -1250,7 +1250,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|array

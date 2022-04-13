@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
+ * @template TItem of Model\DataObject\Fieldcollection\Data\AbstractData
+ *
  * @method array delete(Concrete $object, $saveMode = false)
  * @method Fieldcollection\Dao getDao()
  * @method array load(Concrete $object)
@@ -31,7 +33,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      *
-     * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
+     * @var TItem[]
      */
     protected $items = [];
 
@@ -43,7 +45,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     protected $fieldname;
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
+     * @param TItem[] $items
      * @param string|null $fieldname
      */
     public function __construct($items = [], $fieldname = null)
@@ -59,7 +61,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return Model\DataObject\Fieldcollection\Data\AbstractData[]
+     * @return TItem[]
      */
     public function getItems()
     {
@@ -67,7 +69,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
+     * @param TItem[] $items
      *
      * @return $this
      */
@@ -158,7 +160,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param Model\DataObject\Fieldcollection\Data\AbstractData $item
+     * @param TItem $item
      */
     public function add($item)
     {
@@ -233,7 +235,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return Model\DataObject\Fieldcollection\Data\AbstractData|false
+     * @return TItem|false
      */
     #[\ReturnTypeWillChange]
     public function current()// : Model\DataObject\Fieldcollection\Data\AbstractData|false
