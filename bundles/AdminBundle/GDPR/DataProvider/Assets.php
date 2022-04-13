@@ -187,7 +187,8 @@ class Assets extends Elements implements DataProviderInterface
 
             if ($element instanceof Asset) {
                 $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
-                $data['permissions'] = $element->getUserPermissions($this->getAdminUser());
+                $user = \Pimcore\Tool\Admin::getCurrentUser();
+                $data['permissions'] = $element->getUserPermissions($user);
                 $elements[] = $data;
             }
         }
