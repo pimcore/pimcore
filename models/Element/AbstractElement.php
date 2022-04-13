@@ -192,13 +192,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      * @return array
      * @throws \Exception
      * @internal
-     *
      */
-    public function getUserPermissions(User $user)
+    public function getUserPermissions(User $user = null)
     {
         $baseClass = Service::getBaseClassNameForElement($this);
         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClass;
@@ -210,10 +209,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         $columns = array_diff(array_keys($vars),$ignored);
 
-        if ($user->isAdmin()) {
-            foreach ($columns as $name) {
-                $permissions[$name] = 1;
-            }
+        foreach ($columns as $name) {
+            $permissions[$name] = 1;
+        }
+
+        if (null === $user) {
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+        }
+        if (!$user || $user->isAdmin()) {
             return $permissions;
         }
 
