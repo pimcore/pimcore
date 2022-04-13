@@ -17,7 +17,7 @@ that ships with Pimcore and its comments.
 
 #### Additional object tree including condition filter
 The main idea for this configuration is to
-* add an additional object tree calles `Cars` having its root at `/Product Data/Cars`
+* add an additional object tree called `Articles` having its root at `/blog`
 * not showing the parent folder as its root
 * showing it at the right side in expanded state (there can be only one expanded tree on each side)
 * do NOT show all blog articles which have the text "magnis" in their English title.
