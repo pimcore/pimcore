@@ -1264,7 +1264,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $properties
+     * @template T
+     * @param T $properties
+     * @return T
      *
      * @return mixed
      */
