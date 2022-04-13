@@ -276,10 +276,12 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
-     * @param Model\Document\PageSnippet $document
+     * @template T of Model\Document\PageSnippet
+     *
+     * @param T $document
      * @param null|Version $draftVersion
      *
-     * @return Model\Document\PageSnippet
+     * @return T
      */
     protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
     {

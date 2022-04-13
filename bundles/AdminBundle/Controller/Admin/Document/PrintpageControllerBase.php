@@ -102,7 +102,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        /** @var Document\PrintAbstract $page */
         $page = $this->getLatestVersion($page);
         $page->setUserModification($this->getAdminUser()->getId());
 
