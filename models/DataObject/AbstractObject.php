@@ -29,11 +29,11 @@ use Pimcore\Model\Element;
 
 /**
  * @method AbstractObject\Dao getDao()
- * @method array|null getPermissions(string $type, Model\User $user, bool $quote = true)
+ * @method array|null getPermissions(?string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
  * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
- * @method array getChildPermissions(string $type, Model\User $user, bool $quote = true)
+ * @method array getChildPermissions(?string $type, Model\User $user, bool $quote = true)
  */
 abstract class AbstractObject extends Model\Element\AbstractElement
 {
@@ -469,7 +469,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param array $objectTypes
      * @param bool $includingUnpublished
      *
-     * @return self[]
+     * @return DataObject[]
      */
     public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
@@ -1062,7 +1062,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $o_id
+     * @param int|null $o_id
      *
      * @return $this
      */
@@ -1205,7 +1205,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array|null $children
+     * @param DataObject[]|null $children
      * @param array $objectTypes
      * @param bool $includingUnpublished
      *

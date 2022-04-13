@@ -22,7 +22,6 @@ use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -1031,7 +1030,6 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('context')
             ->useAttributeAsKey('name');
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry

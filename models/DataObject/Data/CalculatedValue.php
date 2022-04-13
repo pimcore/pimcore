@@ -28,19 +28,19 @@ class CalculatedValue implements OwnerAwareFieldInterface
     /** @var string */
     protected $ownerType = 'object';
 
-    /** @var string */
+    /** @var string|null */
     protected $ownerName;
 
-    /** @var int */
+    /** @var int|null */
     protected $index;
 
-    /** @var string */
+    /** @var string|null */
     protected $position;
 
-    /** @var int */
+    /** @var int|null */
     protected $groupId;
 
-    /** @var int */
+    /** @var int|null */
     protected $keyId;
 
     /**
@@ -63,11 +63,11 @@ class CalculatedValue implements OwnerAwareFieldInterface
      * @internal
      *
      * @param string $ownerType
-     * @param string $ownerName
-     * @param int $index
-     * @param string $position
-     * @param int $groupId
-     * @param int $keyId
+     * @param string|null $ownerName
+     * @param int|null $index
+     * @param string|null $position
+     * @param int|null $groupId
+     * @param int|null $keyId
      * @param mixed $keyDefinition
      */
     public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null)
@@ -91,7 +91,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex()
     {
@@ -99,7 +99,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOwnerName()
     {
@@ -115,7 +115,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPosition()
     {
@@ -123,7 +123,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getGroupId()
     {
@@ -139,7 +139,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getKeyId()
     {

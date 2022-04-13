@@ -136,7 +136,7 @@ class MultiCartManager implements CartManagerInterface
 
     /**
      * @param CheckoutableInterface $product
-     * @param float $count
+     * @param int $count
      * @param string|null $key
      * @param string|null $itemKey
      * @param bool $replace

@@ -48,7 +48,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param  string $key
-     * @param  int $cartId
+     * @param  string|int $cartId
      *
      * @throws NotFoundException
      */
@@ -106,6 +106,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->db->deleteWhere(self::TABLE_NAME, '`key`=' . $this->db->quote($this->model->getKey()). ' AND cartId = ' . $this->db->quote($this->model->getCartId()));
     }
 
+    /**
+     * @param string|int $cartId
+     */
     public function removeAllFromCart($cartId)
     {
         $this->db->deleteWhere(self::TABLE_NAME, 'cartId = ' . $this->db->quote($cartId));

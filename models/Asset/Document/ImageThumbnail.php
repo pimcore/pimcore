@@ -27,6 +27,9 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @property Model\Asset\Document|null $asset
+ */
 final class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
@@ -40,7 +43,7 @@ final class ImageThumbnail
     protected $page = 1;
 
     /**
-     * @param Model\Asset\Document $asset
+     * @param Model\Asset\Document|null $asset
      * @param string|array|Image\Thumbnail\Config $config
      * @param int $page
      * @param bool $deferred

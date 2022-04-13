@@ -632,7 +632,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      * @param Model\User $user
      * @param bool $quote
      *

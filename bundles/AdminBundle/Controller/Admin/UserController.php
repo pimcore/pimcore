@@ -202,7 +202,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     * @param User $node
+     * @param User\AbstractUser $node
      * @param array $currentList
      * @param bool $roleMode
      *

@@ -34,6 +34,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
 
         if ($items && $items->get(0)) {
             // name of fieldcollection class
+            /** @var AbstractVoucherTokenType $configuration */
             $configuration = $items->get(0);
 
             return Factory::getInstance()->getTokenManager($configuration);

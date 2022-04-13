@@ -133,7 +133,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
     /**
      * @param int $videoId
-     * @param string $thumbnail
+     * @param string|Asset\Video\Thumbnail\Config $thumbnail
      */
     protected function waitTillFinished($videoId, $thumbnail)
     {

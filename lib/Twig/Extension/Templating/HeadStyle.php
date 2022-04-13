@@ -80,7 +80,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Capture type and/or attributes (used for hinting during capture)
      *
-     * @var string|null
+     * @var array|null
      */
     protected $_captureAttrs = null;
 
@@ -288,7 +288,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * Start capture action
      *
      * @param string $type
-     * @param string|null $attrs
+     * @param array|null $attrs
      *
      * @return void
      */

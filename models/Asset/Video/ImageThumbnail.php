@@ -25,6 +25,9 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @property Model\Asset\Video|null $asset
+ */
 final class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
@@ -44,7 +47,7 @@ final class ImageThumbnail
     protected $imageAsset;
 
     /**
-     * @param Model\Asset\Video $asset
+     * @param Model\Asset\Video|null $asset
      * @param string|array|Image\Thumbnail\Config|null $config
      * @param int|null $timeOffset
      * @param Image|null $imageAsset
