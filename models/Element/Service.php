@@ -1265,10 +1265,10 @@ class Service extends Model\AbstractModel
 
     /**
      * @template T
-     * @param T $properties
-     * @return T
      *
-     * @return mixed
+     * @param T $properties
+     *
+     * @return T
      */
     public static function cloneProperties(mixed $properties): mixed
     {
