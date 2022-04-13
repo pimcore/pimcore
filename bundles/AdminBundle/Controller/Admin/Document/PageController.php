@@ -167,7 +167,6 @@ class PageController extends DocumentControllerBase
         if ($pageSession) {
             $page = $pageSession;
         } else {
-            /** @var Document\Page $page */
             $page = $this->getLatestVersion($page);
         }
 

@@ -2309,10 +2309,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @template T of DataObject\Concrete
+     *
+     * @param T $object
      * @param null|Version $draftVersion
      *
-     * @return DataObject\Concrete|null
+     * @return T
      */
     protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {

@@ -378,9 +378,11 @@ class WorkflowController extends AdminController implements KernelControllerEven
     }
 
     /**
-     * @param Document|Asset|DataObject $element
+     * @template T of Document|Asset|DataObject
      *
-     * @return Document|Asset|DataObject
+     * @param T $element
+     *
+     * @return T
      */
     protected function getLatestVersion($element)
     {
