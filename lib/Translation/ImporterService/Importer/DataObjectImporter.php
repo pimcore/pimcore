@@ -120,6 +120,7 @@ class DataObjectImporter extends AbstractElementImporter
     protected function saveElement(Element\ElementInterface $element)
     {
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+
         try {
             DataObject::disableDirtyDetection();
             $element->setOmitMandatoryCheck(true);
