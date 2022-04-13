@@ -232,21 +232,20 @@ class ElementController extends AdminController
                     $filter['value'] = (int) $filter['value'];
                 }
                 // system field
-                $value = $filter['value'];
+                $value = ($filter['value']??'');
                 if ($operator == 'LIKE') {
                     $value = '%' . $value . '%';
                 }
 
                 if ($filter[$propertyKey] == 'user') {
-                    $conditions[] = '`user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote('%'.$filter['value'].'%') . ')';
+                    $conditions[] = '`user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote($value) . ')';
                 } else {
                     if ($filter['type'] == 'date' && $filter[$comparisonKey] == 'eq') {
-                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                        $dateCondition = '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                        $maxTime = $value + (86400 - 1); //specifies the top point of the range used in the condition
+                        $dateCondition = '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
                         $conditions[] = $dateCondition;
                     } else {
-                        $field = '`'.$filter[$propertyKey].'` ';
-                        $conditions[] = $field.$operator.' '.$db->quote($value);
+                        $conditions[] = $db->quoteIdentifier($filter[$propertyKey]).' '.$operator.' '.$db->quote($value);
                     }
                 }
             }
