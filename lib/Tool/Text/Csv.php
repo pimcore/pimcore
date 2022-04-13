@@ -63,7 +63,7 @@ class Csv
      * @param string $data
      *
      * @return string
-     * 
+     *
      * @phpstan-return non-empty-string
      */
     protected function guessLinefeed($data)

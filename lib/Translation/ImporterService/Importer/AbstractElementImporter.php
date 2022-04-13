@@ -15,8 +15,6 @@
 
 namespace Pimcore\Translation\ImporterService\Importer;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
