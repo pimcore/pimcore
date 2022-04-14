@@ -28,7 +28,7 @@ final class Version20220411172543 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->addSql("INSERT IGNORE INTO users_permission_definitions (`key`) VALUES('change_data_objects_sort_method');");
+        $this->addSql("INSERT IGNORE INTO users_permission_definitions (`key`) VALUES('objects_sort_method');");
     }
 
     /**
@@ -36,6 +36,6 @@ final class Version20220411172543 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->addSql("DELETE FROM users_permission_definitions WHERE `key` = 'change_data_objects_sort_method'");
+        $this->addSql("DELETE FROM users_permission_definitions WHERE `key` = 'objects_sort_method'");
     }
 }
