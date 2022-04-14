@@ -110,9 +110,15 @@ abstract class Dao extends Model\Dao\AbstractDao
      * @param string $tableSuffix
      *
      * @return array
+     * @internal
      */
-    public function permissionByTypes(array $columns, User $user, string $tableSuffix){
+
+    protected function permissionByTypes(array $columns, User $user, string $tableSuffix){
         $permissions = [];
+        foreach ($columns as $type) {
+            $permissions[$type] = 0;
+        }
+
         $parentIds = $this->getParentIds();
         $parentIds[] = $this->model->getId();
 
@@ -138,19 +144,13 @@ abstract class Dao extends Model\Dao\AbstractDao
             }
 
             //if not found, then we have role permission set, we already have the longest cpath from first query, so can use the same cid
+            //or it could be a parent folder
             $roleWorkspaceSql = '
              SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
              WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
              ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
              ';
             $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
-
-            if ($objectPermissions[0]['userId'] == $currentUserId){
-                foreach ($columns as $type) {
-                    $objectPermissions[0][$type] = $highestWorkspace[$type];
-                }
-                return $permissions;
-            }
 
             //this applies the additive rule when conflicting rules when multiple roles,
             //breaks the loop when permission=1 is found and move on to check next permission type.
@@ -162,6 +162,20 @@ abstract class Dao extends Model\Dao\AbstractDao
                     }
                     $permissions[$type] = 0;
                 }
+            }
+        }
+
+        //make sure there are no children, to allow the path to that
+        if (!isset($permissions['list']) || $permissions['list']==0){
+            $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
+
+            $permissionsChildren = $this->db->fetchOne('
+                SELECT list FROM users_workspaces_object
+                WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1',
+    $this->db->escapeLike($path) . '%');
+
+            if ($permissionsChildren) {
+                $permissions['list'] = 1;
             }
         }
         return $permissions;

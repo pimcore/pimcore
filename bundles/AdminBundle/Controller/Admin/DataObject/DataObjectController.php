@@ -214,11 +214,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $childs = $childsList->load();
             $filteredTotalCount = $childsList->getTotalCount();
 
+            // this loop is actually obsolete, as long as the change with #11714 about list on line 175-179 of this class is already returning correct list=1 items.
+            // At the same time the `list` permission could be extracted from $this->getTreeNodeConfig($child)~['permissions']['list']
+            // but if is list=0 , then the isAllowed could help preventing the intensive queries in getTreeNodeConfig:getUserPermissions
+            // so, all is depending on #11714
+
             foreach ($childs as $child) {
                 if ($child->isAllowed('list', $this->getAdminUser())) {
                     $objects[] = $this->getTreeNodeConfig($child);
-//                if ($tmpObject['permissions'] && $tmpObject['permissions']['list']) {
-//                    $objects[] = $tmpObject;
                 }
             }
             //pagination for custom view
