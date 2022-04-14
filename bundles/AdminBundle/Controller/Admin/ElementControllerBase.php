@@ -32,6 +32,7 @@ use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @internal
@@ -49,6 +50,8 @@ abstract class ElementControllerBase extends AdminController
     }
 
     /**
+     * @Route("/tree-get-root", name="treegetroot", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -75,6 +78,8 @@ abstract class ElementControllerBase extends AdminController
     }
 
     /**
+     * @Route("/delete-info", name="deleteinfo", methods={"GET"})
+     *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
      *
