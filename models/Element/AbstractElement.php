@@ -220,7 +220,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return $permissions;
         }
 
-        return $this->getDao()->areAllowed($columns,$user);
+        $permissions = $this->getDao()->areAllowed($columns,$user);
+
+        foreach ($permissions as $type => $isAllowed){
+            $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+
+            $permissions[$type] = $event->getArgument('isAllowed');
+        }
+        return $permissions;
     }
 
 
