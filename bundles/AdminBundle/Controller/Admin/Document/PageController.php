@@ -213,7 +213,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image", methods={"GET"})
+     * @Route("/display-preview-image", name="display_preview_image", methods={"GET"})
      *
      * @param Request $request
      *
