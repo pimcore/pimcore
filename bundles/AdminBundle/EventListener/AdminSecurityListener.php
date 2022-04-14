@@ -71,7 +71,6 @@ class AdminSecurityListener implements EventSubscriberInterface
             return;
         }
 
-
         if (!empty($this->config['admin_csp_header']['exclude_paths'])) {
             $requestUri = $request->getRequestUri();
             foreach ($this->config['admin_csp_header']['exclude_paths'] as $path) {
