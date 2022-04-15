@@ -145,7 +145,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $offset = (int)$request->get('start');
 
-            $childsList = new DataObject\Listing();
+            $childrenList = new DataObject\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
 
             // custom views start
@@ -184,14 +184,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $condition .= ' AND CAST(objects.o_key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
-            $childsList->setCondition($condition);
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
+            $childrenList->setCondition($condition);
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
 
             if ($object->getChildrenSortBy() === 'index') {
-                $childsList->setOrderKey('objects.o_index ASC', false);
+                $childrenList->setOrderKey('objects.o_index ASC', false);
             } else {
-                $childsList->setOrderKey(
+                $childrenList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
                         $object->getChildrenSortBy(), $object->getChildrenSortOrder()
@@ -199,31 +199,29 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     false
                 );
             }
-            $childsList->setObjectTypes($objectTypes);
+            $childrenList->setObjectTypes($objectTypes);
 
-            Element\Service::addTreeFilterJoins($cv, $childsList);
+            Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var DataObject\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            /** @var DataObject\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-            $childs = $childsList->load();
-            $filteredTotalCount = $childsList->getTotalCount();
+            $children = $childrenList->load();
+            $filteredTotalCount = $childrenList->getTotalCount();
 
-            // this loop is actually obsolete, as long as the change with #11714 about list on line 175-179 of this class is already returning correct list=1 items.
-            // At the same time the `list` permission could be extracted from $this->getTreeNodeConfig($child)~['permissions']['list']
-            // but if is list=0 , then the isAllowed could help preventing the intensive queries in getTreeNodeConfig:getUserPermissions
-            // so, all is depending on #11714
-
-            foreach ($childs as $child) {
-                if ($child->isAllowed('list', $this->getAdminUser())) {
-                    $objects[] = $this->getTreeNodeConfig($child);
+            foreach ($children as $child) {
+                $objectTreeNode = $this->getTreeNodeConfig($child);
+                // this if is obsolete since as long as the change with #11714 about list on line 175-179 are working fine, we already filter the list=1 there
+                if ($objectTreeNode['permissions']['list'] == 1) {
+                    $objects[] = $objectTreeNode;
                 }
             }
+
             //pagination for custom view
             $total = $cv
                 ? $filteredTotalCount

@@ -140,11 +140,16 @@ abstract class Dao extends Model\Dao\AbstractDao
                 foreach ($columns as $type) {
                     $permissions[$type] = $highestWorkspace[$type];
                 }
+
+                if ($permissions['list'] == 0){
+                    $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix,$userIds);
+                }
                 return $permissions;
             }
 
-            //if not found, then we have role permission set, we already have the longest cpath from first query, so can use the same cid
-            //or it could be a parent folder
+            //if not found, having already the longest cpath from first query,
+            //we either have role permission for the same object, or it could be any of its parents permission.
+
             $roleWorkspaceSql = '
              SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
              WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
@@ -152,7 +157,7 @@ abstract class Dao extends Model\Dao\AbstractDao
              ';
             $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
 
-            //this applies the additive rule when conflicting rules when multiple roles,
+            //this performs the additive rule when conflicting rules with multiple roles,
             //breaks the loop when permission=1 is found and move on to check next permission type.
             foreach ($columns as $type) {
                 foreach ($objectPermissions as $workspace) {
@@ -160,24 +165,35 @@ abstract class Dao extends Model\Dao\AbstractDao
                         $permissions[$type] = 1;
                         break;
                     }
-                    $permissions[$type] = 0;
                 }
             }
         }
 
-        //make sure there are no children, to allow the path to that
-        if (!isset($permissions['list']) || $permissions['list']==0){
-            $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
-
-            $permissionsChildren = $this->db->fetchOne('
-                SELECT list FROM users_workspaces_object
-                WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1',
-    $this->db->escapeLike($path) . '%');
-
-            if ($permissionsChildren) {
-                $permissions['list'] = 1;
-            }
+        //when list=0, we look for any allowed children, so that can make possible to list the path of the folder in between
+        //to reach that children by "exceptionally" turning list=0 to list=1
+        if ($permissions['list']==0){
+            $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix,$userIds);
         }
         return $permissions;
+    }
+
+    /**
+     * for "path traversal" intending the list=1 on parent folder (with list=0) when there are nested children allowed
+     * @param string $tableSuffix
+     * @param array $userIds
+     * @return int
+     * @internal
+     */
+    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds){
+        $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
+
+        $permissionsChildren = $this->db->fetchOne('
+            SELECT list FROM users_workspaces_'.$tableSuffix.' as uw
+            WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
+            AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
+            LIMIT 1',
+            $this->db->escapeLike($path) . '%');
+
+        return (int)$permissionsChildren;
     }
 }

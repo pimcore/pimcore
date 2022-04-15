@@ -57,17 +57,26 @@ trait DocumentTreeConfigTrait
             'lockOwner' => $childDocument->getLocked() ? true : false,
             'published' => $childDocument->isPublished(),
             'elementType' => 'document',
-            'leaf' => true,
-            'permissions' => [
-                'view' => $childDocument->isAllowed('view'),
-                'remove' => $childDocument->isAllowed('delete'),
-                'settings' => $childDocument->isAllowed('settings'),
-                'rename' => $childDocument->isAllowed('rename'),
-                'publish' => $childDocument->isAllowed('publish'),
-                'unpublish' => $childDocument->isAllowed('unpublish'),
-                'create' => $childDocument->isAllowed('create'),
-            ],
+            'leaf' => true
         ];
+
+        $permissions =  $childDocument->getUserPermissions($this->getAdminUser());
+
+        $treeNodePermissionTypes = [
+            'view',
+            'remove'=>'delete',
+            'settings',
+            'rename',
+            'publish',
+            'unpublish',
+            'create',
+            'list'
+        ];
+
+        foreach ($treeNodePermissionTypes as $key => $permissionType){
+            $permissionKey = is_string($key) ? $key : $permissionType;
+            $tmpDocument['permissions'][$permissionKey] = $permissions[$permissionType];
+        }
 
         $hasChildren = $childDocument->getDao()->hasChildren(null, Admin::getCurrentUser());
 

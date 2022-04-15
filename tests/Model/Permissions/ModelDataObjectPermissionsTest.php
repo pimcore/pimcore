@@ -204,7 +204,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $role2 = new User\Role();
         $role2->setName('dummyRole');
         $role2->setWorkspacesObject([
-            (new User\Workspace\DataObject())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true, 'save'=>false, 'publish'=>false ]),
+            (new User\Workspace\DataObject())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>false, 'publish'=>false ]),
         ]);
         $role2->save();
 

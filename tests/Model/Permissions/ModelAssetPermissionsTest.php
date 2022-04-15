@@ -159,21 +159,28 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $role = new User\Role();
         $role->setName('Testrole');
         $role->setWorkspacesObject([
-            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true, 'delete'=>true, 'publish'=>false]),
         ]);
         $role->save();
+
+        $role2 = new User\Role();
+        $role2->setName('dummyRole');
+        $role2->setWorkspacesObject([
+            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'delete'=>false, 'publish'=>false ]),
+        ]);
+        $role2->save();
 
         //create user 1
         $this->userPermissionTest1 = new User();
         $this->userPermissionTest1->setName('Permissiontest1');
         $this->userPermissionTest1->setPermissions(['objects']);
-        $this->userPermissionTest1->setRoles([$role->getId()]);
+        $this->userPermissionTest1->setRoles([$role->getId(), $role2->getId()]);
         $this->userPermissionTest1->setWorkspacesObject([
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
-            (new User\Workspace\Asset())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true, 'create'=> true, 'rename'=> true]),
         ]);
         $this->userPermissionTest1->save();
 
@@ -181,14 +188,14 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->userPermissionTest2 = new User();
         $this->userPermissionTest2->setName('Permissiontest2');
         $this->userPermissionTest2->setPermissions(['objects']);
-        $this->userPermissionTest2->setRoles([$role->getId()]);
+        $this->userPermissionTest2->setRoles([$role->getId(), $role2->getId()]);
         $this->userPermissionTest2->setWorkspacesObject([
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true]),
-            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'delete'=>true, 'publish'=>true]),
         ]);
         $this->userPermissionTest2->save();
     }
@@ -210,6 +217,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest1')->delete();
         User::getByName('Permissiontest2')->delete();
         User\Role::getByName('Testrole')->delete();
+        User\Role::getByName('Dummyrole')->delete();
     }
 
     protected function doHasChildrenTest(Asset $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
@@ -299,6 +307,52 @@ class ModelAssetPermissionsTest extends ModelTestCase
 
         $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false);
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
+    }
+
+    protected function doAreAllowedTest(Asset $element, array $types, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    {
+        $admin = User::getByName('admin');
+
+        $diffAdmin = array_diff_assoc($types, $element->getUserPermissions($admin));
+        $diffPermissionTest1 = array_diff_assoc($types, $element->getUserPermissions($this->userPermissionTest1));
+        $diffPermissionTest2 = array_diff_assoc($types, $element->getUserPermissions($this->userPermissionTest2));
+
+        $this->assertEquals(
+            $resultAdmin,
+            count($diffAdmin) == 0,
+            '`' . print_r($diffAdmin, true) . '` of `' . $element->getFullpath() . '` is allowed for admin'
+        );
+
+        $this->assertEquals(
+            $resultPermissionTest1,
+            count($diffPermissionTest1) == 0,
+            '`' .  print_r($diffPermissionTest1, true). '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest1'
+        );
+
+        $this->assertEquals(
+            $resultPermissionTest2,
+            count($diffPermissionTest2) == 0,
+            '`' .  print_r($diffPermissionTest2, true) . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest2'
+        );
+    }
+    public function testAreAllowed()
+    {
+        // User 1 doesn't have publish=1 based on the inherited `Testrole`
+        $this->doAreAllowedTest($this->groupfolder, ['delete'=> 1,'publish' =>1], true, false, true);
+        // Check admin and User2 are not simply returning all true to pass the above test, confirms User2's user-level permissions getting priority over individual roles
+        $this->doAreAllowedTest($this->groupfolder, ['delete'=> 1,'publish' =>1 ,'versions' => 0], false, false, true);
+        // `Dummyrole`(0,0) is the "weakest" when conflicting, so it should never true, User 2 doesn't have user-level permission, so this confirms the additive behaviour on conflicting roles
+        $this->doAreAllowedTest($this->groupfolder, ['delete'=> 0,'publish' =>0], false, false, false);
+        // Checks User1 is correctly getting the workspace rule from roles
+        $this->doAreAllowedTest($this->groupfolder, ['delete'=> 1,'publish' =>0], false, true, false);
+
+        //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for admin and user1 to get to `c`
+//        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
+//        $this->doAreAllowedTest($this->a, ['list'=> 1, 'delete'=> 0], false, true, false);
+
+        //usertestobject should inherit the permisson from userfolder
+        $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'delete'=> 0], false, true, false);
+        $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'delete'=> 1], true, false, false); //check if there are no false positive for user1
     }
 
     protected function buildController(string $classname, User $user)

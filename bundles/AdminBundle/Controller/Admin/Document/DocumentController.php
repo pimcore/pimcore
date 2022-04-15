@@ -203,12 +203,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
-            $childsList = $list->load();
+            $childrenList = $list->load();
 
-            foreach ($childsList as $childDocument) {
-                // only display document if listing is allowed for the current user
-                if ($childDocument->isAllowed('list')) {
-                    $documents[] = $this->getTreeNodeConfig($childDocument);
+            foreach ($childrenList as $childDocument) {
+                $documentTreeNode = $this->getTreeNodeConfig($childDocument);
+                // the !isset is for printContainer case, there are no permissions sets there
+                if (!isset($documentTreeNode['permissions']['list']) || $documentTreeNode['permissions']['list'] == 1) {
+                    $documents[] = $documentTreeNode;
                 }
             }
         }

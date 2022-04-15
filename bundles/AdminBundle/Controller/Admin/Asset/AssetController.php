@@ -272,35 +272,36 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             // get assets
-            $childsList = new Asset\Listing();
-            $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
-            $childsList->filterAccessibleByUser($this->getAdminUser(), $asset);
+            $childrenList = new Asset\Listing();
+            $childrenList->addConditionParam('parentId = ?', [$asset->getId()]);
+            $childrenList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
             if (!is_null($filter)) {
-                $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
+                $childrenList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
             }
 
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
+            $childrenList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
-            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
+            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Asset\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            /** @var Asset\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-            $childs = $childsList->load();
+            $children = $childrenList->load();
 
-            $filteredTotalCount = $childsList->getTotalCount();
+            $filteredTotalCount = $childrenList->getTotalCount();
 
-            foreach ($childs as $childAsset) {
-                if ($childAsset->isAllowed('list')) {
-                    $assets[] = $this->getTreeNodeConfig($childAsset);
+            foreach ($children as $childAsset) {
+                $assetTreeNode = $this->getTreeNodeConfig($childAsset);
+                if ($assetTreeNode['permissions']['list'] == 1) {
+                    $assets[] = $assetTreeNode;
                 }
             }
         }
@@ -713,14 +714,22 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             'locked' => $asset->isLocked(),
             'lockOwner' => $asset->getLocked() ? true : false,
             'elementType' => 'asset',
-            'permissions' => [
-                'remove' => $asset->isAllowed('delete'),
-                'settings' => $asset->isAllowed('settings'),
-                'rename' => $asset->isAllowed('rename'),
-                'publish' => $asset->isAllowed('publish'),
-                'view' => $asset->isAllowed('view'),
-            ],
         ];
+
+        $permissions =  $asset->getUserPermissions($this->getAdminUser());
+
+        $treeNodePermissionTypes = [
+            'remove'=>'delete',
+            'settings',
+            'rename',
+            'publish',
+            'view',
+            'list'
+        ];
+        foreach ($treeNodePermissionTypes as $key => $permissionType){
+            $permissionKey = is_string($key) ? $key : $permissionType;
+            $tmpAsset['permissions'][$permissionKey] = $permissions[$permissionType];
+        }
 
         $hasChildren = $asset->getDao()->hasChildren($this->getAdminUser());
 
@@ -729,7 +738,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$hasChildren;
             $tmpAsset['loaded'] = !$hasChildren;
-            $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
+            $tmpAsset['permissions']['create'] = $permissions['create'];
             $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
         } else {
             $tmpAsset['leaf'] = true;
