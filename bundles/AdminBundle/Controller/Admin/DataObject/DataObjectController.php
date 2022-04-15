@@ -1706,44 +1706,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\ClassDefinition $class
-     * @param string $key
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    protected function getFieldDefinition($class, $key)
-    {
-        $fieldDefinition = $class->getFieldDefinition($key);
-        if ($fieldDefinition) {
-            return $fieldDefinition;
-        }
-
-        $localized = $class->getFieldDefinition('localizedfields');
-        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFieldDefinition($key);
-        }
-
-        return $fieldDefinition;
-    }
-
-    /**
-     * @param string $brickType
-     * @param string $key
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    protected function getFieldDefinitionFromBrick($brickType, $key)
-    {
-        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
-        $fieldDefinition = null;
-        if ($brickDefinition) {
-            $fieldDefinition = $brickDefinition->getFieldDefinition($key);
-        }
-
-        return $fieldDefinition;
-    }
-
-    /**
      * @Route("/copy-info", name="copyinfo", methods={"GET"})
      *
      * @param Request $request

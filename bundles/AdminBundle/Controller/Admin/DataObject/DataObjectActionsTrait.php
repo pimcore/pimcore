@@ -222,7 +222,7 @@ trait DataObjectActionsTrait
 
                         $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
                         if ($keyConfig) {
-                            $fieldDefinition = $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+                            $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
                                 json_decode($keyConfig->getDefinition()),
                                 $keyConfig->getType()
                             );
@@ -309,5 +309,43 @@ trait DataObjectActionsTrait
         }
 
         return $objectData;
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $class
+     * @param string $key
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getFieldDefinition(DataObject\ClassDefinition $class, string $key): ?DataObject\ClassDefinition\Data
+    {
+        $fieldDefinition = $class->getFieldDefinition($key);
+        if ($fieldDefinition) {
+            return $fieldDefinition;
+        }
+
+        $localized = $class->getFieldDefinition('localizedfields');
+        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            $fieldDefinition = $localized->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * @param string $brickType
+     * @param string $key
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getFieldDefinitionFromBrick(string $brickType, string $key): ?DataObject\ClassDefinition\Data
+    {
+        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
+        $fieldDefinition = null;
+        if ($brickDefinition) {
+            $fieldDefinition = $brickDefinition->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
     }
 }
