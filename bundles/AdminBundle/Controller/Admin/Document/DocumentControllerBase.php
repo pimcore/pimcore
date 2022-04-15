@@ -427,9 +427,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                 $document->save();
 
                 break;
-            case ($task === self::TASK_SAVE
-                || $task === self::TASK_VERSION
-                || $task === self::TASK_AUTOSAVE)
+            case in_array($task, [self::TASK_SAVE, self::TASK_VERSION, self::TASK_AUTOSAVE]) 
                 && $document->isAllowed(self::TASK_SAVE):
                 if ($document instanceof Model\Document\PageSnippet) {
                     $this->setValuesToDocument($request, $document);
