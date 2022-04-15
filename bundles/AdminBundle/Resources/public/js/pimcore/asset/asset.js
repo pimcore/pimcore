@@ -13,7 +13,7 @@
 
 pimcore.registerNS("pimcore.asset.asset");
 pimcore.asset.asset = Class.create(pimcore.element.abstract, {
-
+    willClose: false,
     getData: function () {
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_asset_getdatabyid'),
@@ -406,6 +406,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 if(typeof callback == "function") {
                     callback();
                 }
+
+                if (this.willClose){
+                    this.close();
+                }
+
             }.bind(this),
             failure: function () {
                 this.tab.unmask();
@@ -413,14 +418,14 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             params: params
         });
     },
-
-    saveClose: function(){
-        this.save(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
-        }.bind(this));
+    close: function(){
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
     },
-
+    saveClose: function(){
+        this.willClose = true;
+        this.save(null);
+    },
     remove: function () {
         var options = {
             "elementType" : "asset",
