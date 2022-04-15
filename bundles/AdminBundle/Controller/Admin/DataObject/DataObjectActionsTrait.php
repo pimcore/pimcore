@@ -36,17 +36,17 @@ trait DataObjectActionsTrait
      *
      * @return array
      */
-    private function renameObject(?DataObject\Concrete $object, $key): array
+    protected function renameObject(?DataObject\Concrete $object, $key): array
     {
         try {
             if (!$object instanceof DataObject\Concrete) {
-                $object->setKey($key);
-                $object->save();
-
-                return ['success' => true];
-            } else {
                 throw new \Exception('No Object found for given id.');
             }
+
+            $object->setKey($key);
+            $object->save();
+
+            return ['success' => true];
         } catch (\Exception $e) {
             Logger::error($e);
 
@@ -64,7 +64,7 @@ trait DataObjectActionsTrait
      *
      * @return array
      */
-    private function gridProxy(
+    protected function gridProxy(
         array $allParams,
         string $objectType,
         Request $request,
@@ -198,18 +198,14 @@ trait DataObjectActionsTrait
         foreach ($data as $key => $value) {
             $parts = explode('~', $key);
             if (substr($key, 0, 1) == '~') {
-                $type = $parts[1];
-                $field = $parts[2];
-                $keyid = $parts[3];
+                list(,$type,$field,$keyId) = $parts;
 
                 if ($type == 'classificationstore') {
-                    $groupKeyId = explode('-', $keyid);
-                    $groupId = $groupKeyId[0];
-                    $keyid = $groupKeyId[1];
+                    $groupKeyId = explode('-', $keyId);
+                    list($groupId, $keyId) = $groupKeyId;
 
                     $getter = 'get' . ucfirst($field);
                     if (method_exists($object, $getter)) {
-
                         /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                         $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                         $csLanguage = $requestedLanguage;
@@ -220,7 +216,7 @@ trait DataObjectActionsTrait
                         /** @var DataObject\Classificationstore $classificationStoreData */
                         $classificationStoreData = $object->$getter();
 
-                        $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
+                        $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
                         if ($keyConfig) {
                             $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
                                 json_decode($keyConfig->getDefinition()),
@@ -231,10 +227,10 @@ trait DataObjectActionsTrait
                             }
                         }
 
-                        $activeGroups = $classificationStoreData->getActiveGroups() ? $classificationStoreData->getActiveGroups() : [];
+                        $activeGroups = $classificationStoreData->getActiveGroups() ?: [];
                         $activeGroups[$groupId] = true;
                         $classificationStoreData->setActiveGroups($activeGroups);
-                        $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
+                        $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $value, $csLanguage);
                     }
                 }
             } elseif (count($parts) > 1) {
