@@ -650,7 +650,7 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param self[] $children
+     * @param Document[]|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
@@ -1302,7 +1302,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
+     * @return Document|null
      */
     public function getParent()
     {

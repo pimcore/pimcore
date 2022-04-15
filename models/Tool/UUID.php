@@ -198,7 +198,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param int $item
+     * @param mixed $item
      *
      * @return UUID
      *

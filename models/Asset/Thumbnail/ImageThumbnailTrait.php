@@ -96,13 +96,14 @@ trait ImageThumbnailTrait
      */
     public function getStream()
     {
-        $pathReference = $this->getPathReference();
-
-        try {
-            return Storage::get($pathReference['type'])->readStream($pathReference['src']);
-        } catch (\Exception $e) {
-            return null;
+        $pathReference = $this->getPathReference(false);
+        if ($pathReference['type'] === 'asset') {
+            return $this->asset->getStream();
+        } elseif (isset($pathReference['storagePath'])) {
+            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
         }
+
+        return null;
     }
 
     public function getPathReference(bool $deferredAllowed = false): array

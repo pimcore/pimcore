@@ -141,7 +141,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @param Request $request
-     * @param Document\PrintAbstract $page
+     * @param Document $page
      */
     protected function setValuesToDocument(Request $request, Document $page): void
     {

@@ -166,7 +166,6 @@
     "sabre/dav": "4.2.2"
   },
   "require-dev": {
-    "cache/integration-tests": "dev-master",
     "codeception/codeception": "^4.1.12",
     "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^1.5.4",

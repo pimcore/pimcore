@@ -53,10 +53,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         self::CONNECT_OPT => [
             'https://liveupdate.pimcore.org/', //AdminBundle statistics & update-check service
             'https://nominatim.openstreetmap.org/', //CoreBundle geocoding_url_template
-
-        ],
-        self::SCRIPT_OPT => [
-            'http://unpkg.com/', // For the OPCache
         ],
     ];
 

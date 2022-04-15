@@ -273,7 +273,7 @@ class Service extends Model\Element\Service
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
-        $new->setProperties($source->getProperties());
+        $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
@@ -798,7 +798,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {

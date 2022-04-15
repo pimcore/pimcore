@@ -696,7 +696,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param mixed $seriesId
+     * @param string|int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {
@@ -704,7 +704,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @return mixed
+     * @return string|int|null
      */
     public function getSeriesId()
     {

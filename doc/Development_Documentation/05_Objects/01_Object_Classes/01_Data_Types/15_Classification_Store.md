@@ -133,7 +133,7 @@ $allValues = $store->getItems();
 The `ClassificationStore::getGroups()` method returns an array of `Group` objects. In turn, the `Group::getKeys()` method returns an array of `Key` objects for that group.
 
 ```php
-/* @var $classificationStore \Pimcore\Model\DataObject\Classificationstore */
+/** @var \Pimcore\Model\DataObject\Classificationstore $classificationStore */
 $classificationStore = $dataObject->getClassificationStoreFieldName();
 
 foreach ($classificationStore->getGroups() as $group) {
@@ -162,7 +162,7 @@ foreach ($classificationStore->getGroups() as $group) {
 The `Key::getValue()` method supports the `language`, `ignoreFallbackLanguage` and `ignoreDefaultLanguage` arguments.
 
 ```php
-/* @var $key \Pimcore\Model\DataObject\Classificationstore\Key */
+/** @var \Pimcore\Model\DataObject\Classificationstore\Key $key */
 $key->getValue('en_GB', true, true);
 ```
 

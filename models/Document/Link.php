@@ -315,7 +315,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @param Model\Element\ElementInterface $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @return $this
      */

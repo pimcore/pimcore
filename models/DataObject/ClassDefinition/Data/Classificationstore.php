@@ -729,7 +729,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param string $title
      *
-     * @return $this|void
+     * @return $this
      */
     public function setTitle($title)
     {

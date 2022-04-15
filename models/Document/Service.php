@@ -306,7 +306,7 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $target->setProperties($source->getProperties());
+        $target->setProperties(self::cloneProperties($source->getProperties()));
         $target->save();
 
         return $target;
