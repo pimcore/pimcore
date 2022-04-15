@@ -17,10 +17,13 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/variants", name="pimcore_admin_dataobject_variants_")
@@ -51,73 +54,48 @@ class VariantsController extends AdminController
      * @Route("/get-variants", name="getvariants", methods={"GET", "POST"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
-     *
+     * @param LocaleServiceInterface $localeService
+     * @param CsrfProtectionHandler $csrfProtection
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getVariantsAction(Request $request, GridHelperService $gridHelperService): JsonResponse
+    public function getVariantsAction(
+        Request                  $request,
+        EventDispatcherInterface $eventDispatcher,
+        GridHelperService        $gridHelperService,
+        LocaleServiceInterface   $localeService,
+        CsrfProtectionHandler    $csrfProtection
+    ): JsonResponse
     {
-        // get list of variants
-        $requestedLanguage = $allParams['language'] ?? $request->getLocale();
-        if ($requestedLanguage !== 'default') {
-            $request->setLocale($requestedLanguage);
+        $parentObject = DataObject\Concrete::getById($request->get('objectId'));
+        if (empty($parentObject)) {
+            throw new \Exception('No Object found with id ' . $request->get('objectId'));
         }
 
-        if ($request->get('xaction') == 'update') {
-            $data = $this->decodeJson($request->get('data'));
-
-            // save
-            $object = DataObject\Concrete::getById($data['id']);
-
-            if ($object->isAllowed('publish')) {
-                try {
-                    $objectData = $this->prepareObjectData($data, $object); //new
-                    $object->setValues($objectData);
-                    $object->save();
-
-                    return $this->adminJson(['data' => DataObject\Service::gridObjectData($object, $request->get('fields')), 'success' => true]);
-                } catch (\Exception $e) {
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                }
-            } else {
-                throw new \Exception('Permission denied');
-            }
-        } else {
-            $parentObject = DataObject\Concrete::getById($request->get('objectId'));
-
-            if (empty($parentObject)) {
-                throw new \Exception('No Object found with id ' . $request->get('objectId'));
-            }
-
-            if ($parentObject->isAllowed('view')) {
-                $allParams = array_merge($request->request->all(), $request->query->all());
-
-                //specify a few special params
-                $allParams['folderId'] = $parentObject->getId();
-                $allParams['only_direct_children'] = 'true';
-                $allParams['classId'] = $parentObject->getClassId();
-
-                $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());
-
-                $list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
-
-                $list->load();
-
-                $objects = [];
-                foreach ($list->getObjects() as $object) {
-                    if ($object->isAllowed('view')) {
-                        $o = DataObject\Service::gridObjectData($object, $request->get('fields'), $requestedLanguage);
-                        $objects[] = $o;
-                    }
-                }
-
-                return $this->adminJson(['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()]);
-            } else {
-                throw new \Exception('Permission denied');
-            }
+        if (!$parentObject->isAllowed('view')) {
+            throw new \Exception('Permission denied');
         }
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
+        $allParams['folderId'] = $parentObject->getId();
+        $allParams['only_direct_children'] = 'true';
+        $allParams['classId'] = $parentObject->getClassId();
+
+        $csrfProtection->checkCsrfToken($request);
+
+        $result = $this->gridProxy(
+            $allParams,
+            DataObject::OBJECT_TYPE_VARIANT,
+            $request,
+            $eventDispatcher,
+            $gridHelperService,
+            $localeService
+        );
+
+        return $this->adminJson($result);
     }
 
     /**

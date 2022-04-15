@@ -1675,7 +1675,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         GridHelperService $gridHelperService,
         LocaleServiceInterface $localeService,
         CsrfProtectionHandler $csrfProtection
-    ) {
+    ): JsonResponse
+    {
         $allParams = array_merge($request->request->all(), $request->query->all());
         if (isset($allParams['context']) && $allParams['context']) {
             $allParams['context'] = json_decode($allParams['context'], true);
@@ -1692,7 +1693,16 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $csrfProtection->checkCsrfToken($request);
 
-        return $this->gridProxy($allParams, DataObject::OBJECT_TYPE_OBJECT, $request, $eventDispatcher, $gridHelperService, $localeService);
+        $result = $this->gridProxy(
+            $allParams,
+            DataObject::OBJECT_TYPE_OBJECT,
+            $request,
+            $eventDispatcher,
+            $gridHelperService,
+            $localeService
+        );
+
+        return $this->adminJson($result);
     }
 
     /**

@@ -54,17 +54,26 @@ trait DataObjectActionsTrait
         }
     }
 
-
+    /**
+     * @param array $allParams
+     * @param string $objectType
+     * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
+     * @param LocaleServiceInterface $localeService
+     *
+     * @return array
+     */
     private function gridProxy(
         array $allParams,
-        string $type,
+        string $objectType,
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         GridHelperService $gridHelperService,
         LocaleServiceInterface $localeService
-    )
+    ): array
     {
-        $action = $allParams['xaction'];
+        $action = $allParams['xaction'] ?? 'list';
         $csvMode = $allParams['csvMode'] ?? false;
 
         $requestedLanguage = $allParams['language'] ?? null;
@@ -97,14 +106,20 @@ trait DataObjectActionsTrait
                 }
                 $object->save();
 
-                return $this->adminJson(['data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage), 'success' => true]);
+                return [
+                    'success' => true,
+                    'data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage)
+                ];
             } catch (\Exception $e) {
-                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                return [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ];
             }
         } else { // get list of objects/variants
             $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
 
-            if ($type === DataObject::OBJECT_TYPE_OBJECT) {
+            if ($objectType === DataObject::OBJECT_TYPE_OBJECT) {
                 $beforeListLoadEvent = new GenericEvent($this, [
                     'list' => $list,
                     'context' => $allParams,
@@ -131,9 +146,13 @@ trait DataObjectActionsTrait
                 }
             }
 
-            $result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
+            $result = [
+                'success' => true,
+                'data' => $objects,
+                'total' => $list->getTotalCount(),
+            ];
 
-            if ($type === DataObject::OBJECT_TYPE_OBJECT) {
+            if ($objectType === DataObject::OBJECT_TYPE_OBJECT) {
                 $afterListLoadEvent = new GenericEvent($this, [
                     'list' => $result,
                     'context' => $allParams,
@@ -142,11 +161,26 @@ trait DataObjectActionsTrait
                 $result = $afterListLoadEvent->getArgument('list');
             }
 
-            return $this->adminJson($result);
+            return $result;
         }
     }
 
-    private function prepareObjectData($data, $object, $requestedLanguage, $local)
+    /**
+     * @param array $data
+     * @param DataObject\Concrete $object
+     * @param string $requestedLanguage
+     * @param LocaleServiceInterface $localeService
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    private function prepareObjectData(
+        array $data,
+        DataObject\Concrete $object,
+        string $requestedLanguage,
+        LocaleServiceInterface $localeService
+    ): array
     {
         $user = Tool\Admin::getCurrentUser();
         $allLanguagesAllowed = false;
@@ -274,6 +308,6 @@ trait DataObjectActionsTrait
             }
         }
 
-        return $data;
+        return $objectData;
     }
 }
