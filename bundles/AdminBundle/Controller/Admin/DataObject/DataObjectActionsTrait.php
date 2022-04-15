@@ -31,15 +31,15 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 trait DataObjectActionsTrait
 {
     /**
-     * @param DataObject\Concrete|null $object
-     * @param $key
+     * @param DataObject|null $object
+     * @param string $key
      *
      * @return array
      */
-    protected function renameObject(?DataObject\Concrete $object, $key): array
+    protected function renameObject(?DataObject $object, string $key): array
     {
         try {
-            if (!$object instanceof DataObject\Concrete) {
+            if (!$object instanceof DataObject) {
                 throw new \Exception('No Object found for given id.');
             }
 

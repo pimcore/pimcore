@@ -47,7 +47,7 @@ class VariantsController extends AdminController
         $key = $request->get('key');
         $object = DataObject\Concrete::getById($id);
 
-        $this->adminJson($this->renameObject($object, $key));
+        return $this->adminJson($this->renameObject($object, $key));
     }
 
     /**
