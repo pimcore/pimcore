@@ -81,7 +81,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $filter = $request->get('filter');
