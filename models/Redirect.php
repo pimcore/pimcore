@@ -19,6 +19,7 @@ use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
+use Pimcore\Config;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -569,6 +570,6 @@ final class Redirect extends AbstractModel
      */
     public static function getStatusCodes(): array
     {
-        return self::$statusCodes;
+        return Config::getSystemConfiguration('redirects')['status_codes'] ?: self::$statusCodes;
     }
 }
