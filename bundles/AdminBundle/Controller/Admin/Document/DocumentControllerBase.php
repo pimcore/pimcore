@@ -412,7 +412,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $document->setModificationDate(time());
         $document->setUserModification($this->getAdminUser()->getId());
 
-        $task = $task ?? $request->get('task');
+        $task = strtolower($task ?? $request->get('task'));
         $version = null;
         switch ($task) {
             case $task === self::TASK_PUBLISH && $document->isAllowed($task):
@@ -427,9 +427,10 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                 $document->save();
 
                 break;
-            case $task === self::TASK_SAVE && $document->isAllowed($task):
-            case $task === self::TASK_VERSION && $document->isAllowed($task):
-            case $task === self::TASK_AUTOSAVE && $document->isAllowed($task):
+            case ($task === self::TASK_SAVE
+                || $task === self::TASK_VERSION
+                || $task === self::TASK_AUTOSAVE)
+                && $document->isAllowed(self::TASK_SAVE):
                 if ($document instanceof Model\Document\PageSnippet) {
                     $this->setValuesToDocument($request, $document);
                     $version = $document->saveVersion(true, true, null, $task === self::TASK_AUTOSAVE);
