@@ -27,6 +27,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -49,7 +50,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     protected $dispatcher;
 
     /**
-     * @var TagAwareAdapterInterface
+     * @var TagAwareAdapterInterface|TagAwareCacheInterface
      */
     protected $pool;
 
@@ -651,6 +652,20 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @param string $key
+     *
+     * @return bool
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function delete(string $key): bool
+    {
+        CacheItem::validateKey($key);
+
+        return $this->pool->delete($key);
+    }
+
+    /**
      * Empty the cache
      *
      * @return bool
@@ -977,10 +992,5 @@ class CoreCacheHandler implements LoggerAwareInterface
     protected function isCli()
     {
         return php_sapi_name() === 'cli';
-    }
-
-    public function delete(string $key): bool
-    {
-        // TODO: Implement delete() method.
     }
 }

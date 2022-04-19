@@ -378,7 +378,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                 }
 
-                /** @var AbstractObject $object */
+                /** @var Model\DataObject $object */
                 $object = self::getModelFactory()->build($className);
                 Runtime::set(self::getCacheKey($id), $object);
                 $object->getDao()->getById($id);
