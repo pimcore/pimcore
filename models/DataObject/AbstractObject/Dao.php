@@ -464,7 +464,7 @@ class Dao extends Model\Element\Dao
     /**
      * @return array
      */
-    public function getClasses(Model\User $user = null)
+    public function getClasses()
     {
         $path = $this->model->getRealFullPath();
         if (!$this->model->getId() || $this->model->getId() == 1) {

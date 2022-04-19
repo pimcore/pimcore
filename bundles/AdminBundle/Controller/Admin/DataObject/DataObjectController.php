@@ -475,7 +475,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
-            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses(Tool\Admin::getCurrentUser()));
+            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
             $objectData['childdata']['data']['general'] = $objectData['general'];
             /** -------------------------------------------------------------
              *   Load remaining general data from latest version
@@ -739,7 +739,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions();
-            $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses(Tool\Admin::getCurrentUser()));
+            $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';
