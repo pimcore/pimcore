@@ -471,25 +471,10 @@ class Dao extends Model\Element\Dao
             $path = '';
         }
 
-        $permissionCondition = '';
-        if ($user && !$user->isAdmin()) {
-            $roleIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds, [$currentUserId]);
-
-            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN ('.implode(',', $permissionIds).') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1 AND
-            NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN ('.implode(',', $permissionIds).')  AND cid = o_id AND list=0)';
-
-            $permissionCondition .= ' AND IF('.$anyAllowedRowOrChildren.',1,IF('.$inheritedPermission.', '.$isDisallowedCurrentRow.' = 0, 0)) = 1';
-        }
-
         $classIds = [];
         do {
             $classId = $this->db->fetchOne(
-                "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').$permissionCondition.' LIMIT 1',
+                "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
                 array_merge([$this->db->escapeLike($path).'/%'], $classIds));
             if ($classId) {
                 $classIds[] = $classId;
