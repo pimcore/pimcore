@@ -466,31 +466,27 @@ class Dao extends Model\Element\Dao
      */
     public function getClasses()
     {
-        if ($this->getChildAmount()) {
-            $path = $this->model->getRealFullPath();
-            if (!$this->model->getId() || $this->model->getId() == 1) {
-                $path = '';
-            }
-
-            $classIds = [];
-            do {
-                $classId = $this->db->fetchOne(
-                    "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
-                    array_merge([$this->db->escapeLike($path).'/%'], $classIds));
-                if ($classId) {
-                    $classIds[] = $classId;
-                }
-            } while ($classId);
-
-            $classes = [];
-            foreach ($classIds as $classId) {
-                $classes[] = DataObject\ClassDefinition::getById($classId);
-            }
-
-            return $classes;
+        $path = $this->model->getRealFullPath();
+        if (!$this->model->getId() || $this->model->getId() == 1) {
+            $path = '';
         }
 
-        return [];
+        $classIds = [];
+        do {
+            $classId = $this->db->fetchOne(
+                "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
+                array_merge([$this->db->escapeLike($path).'/%'], $classIds));
+            if ($classId) {
+                $classIds[] = $classId;
+            }
+        } while ($classId);
+
+        $classes = [];
+        foreach ($classIds as $classId) {
+            $classes[] = DataObject\ClassDefinition::getById($classId);
+        }
+
+        return $classes;
     }
 
     /**
