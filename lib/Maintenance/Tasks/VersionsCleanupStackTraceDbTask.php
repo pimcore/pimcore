@@ -45,11 +45,10 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
         $list = new Version\Listing();
         $list->setCondition('date < ' . (time() - 86400 * 7) . ' AND stackTrace IS NOT NULL');
 
-        $total = $list->getTotalCount();
         $perIteration = 500;
+        $list->setLimit($perIteration);
 
-        for ($i = 0; $i < ceil($total / $perIteration); $i++) {
-            $list->setLimit($perIteration);
+        do {
             $versions = $list->load();
 
             foreach ($versions as $version) {
@@ -62,6 +61,6 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
                 }
             }
             \Pimcore::collectGarbage();
-        }
+        } while(count($versions) === $perIteration);
     }
 }
