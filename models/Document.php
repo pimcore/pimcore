@@ -292,6 +292,7 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $loaded = false;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -300,17 +301,22 @@ class Document extends Element\AbstractElement
             }
         }
 
-        if ($force) {
-            $document = static::doGetById($id);
-        } else {
-            $document = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+        if (!$force) {
+            $document = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
                 $document = static::doGetById($id);
+                $loaded = true;
                 if (!$document) {
                     $save = false;
                 }
 
                 return $document;
             });
+
+        }
+
+        //load asset if force=true or not loaded by cache
+        if (!$loaded && !$document) {
+            $document = static::doGetById($id);
         }
 
         if (!$document || !static::typeMatch($document)) {

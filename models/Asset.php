@@ -293,6 +293,7 @@ class Asset extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $loaded = false;
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
             $asset = Runtime::get($cacheKey);
@@ -301,17 +302,22 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if ($force) {
-            $asset = static::doGetById($id);
-        } else {
-            $asset = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
-                    $asset = static::doGetById($id);
-                    if (!$asset) {
-                        $save = false;
-                    }
+        if (!$force) {
+            $asset = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
+                $asset = static::doGetById($id);
+                $loaded = true;
+                if (!$asset) {
+                    $save = false;
+                }
 
-                    return $asset;
-                });
+                return $asset;
+            });
+
+        }
+
+        //load asset if force=true or not loaded by cache
+        if (!$loaded && !$asset) {
+            $asset = static::doGetById($id);
         }
 
         if (!$asset || !static::typeMatch($asset)) {

@@ -656,7 +656,6 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return bool
      *
-     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function delete(string $key): bool
     {

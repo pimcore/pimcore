@@ -329,6 +329,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $loaded = false;
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
@@ -337,17 +338,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if ($force) {
-            $object = static::doGetById($id);
-        } else {
-            $object = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+        if (!$force) {
+            $object = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
                 $object = static::doGetById($id);
+                $loaded = true;
                 if (!$object) {
                     $save = false;
                 }
 
                 return $object;
             });
+        }
+
+        //load object if force=true or not loaded by cache
+        if (!$loaded && !$object) {
+            $object = static::doGetById($id);
         }
 
         if (!$object || !static::typeMatch($object)) {
@@ -360,11 +365,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param int $id
      *
-     * @return Model\DataObject|null
+     * @return static|null
      *
      * @throws \Exception
      */
-    protected static function doGetById(int $id): ?Model\DataObject
+    protected static function doGetById(int $id): ?AbstractObject
     {
         $object = new Model\DataObject();
 
@@ -378,7 +383,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                 }
 
-                /** @var Model\DataObject $object */
+                /** @var AbstractObject $object */
                 $object = self::getModelFactory()->build($className);
                 Runtime::set(self::getCacheKey($id), $object);
                 $object->getDao()->getById($id);
