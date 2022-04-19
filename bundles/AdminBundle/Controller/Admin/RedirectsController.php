@@ -278,7 +278,7 @@ class RedirectsController extends AdminController
         foreach ($statusCodes as $statusCode => $label) {
             $codes[] = [
                 'statusCode' => $statusCode,
-                'display' => $label . " ($statusCode)",
+                'display' => "$label ($statusCode)",
             ];
         }
         $response = [
