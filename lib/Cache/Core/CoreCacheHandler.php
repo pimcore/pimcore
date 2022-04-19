@@ -336,6 +336,25 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @param string $key
+     * @param callable $callback
+     * @param float|null $beta
+     * @param array|null $metadata
+     *
+     * @return mixed
+     */
+    public function get(string $key, callable $callback, float $beta = null, array &$metadata = null): mixed
+    {
+        if (!$this->enabled) {
+            $this->logger->debug('Not loading object {key} from cache (deactivated)', ['key' => $key]);
+
+            return false;
+        }
+
+        return $this->pool->get($key, $callback, $beta, $metadata);
+    }
+
+    /**
      * Save data to cache
      *
      * @param string $key
@@ -958,5 +977,10 @@ class CoreCacheHandler implements LoggerAwareInterface
     protected function isCli()
     {
         return php_sapi_name() === 'cli';
+    }
+
+    public function delete(string $key): bool
+    {
+        // TODO: Implement delete() method.
     }
 }

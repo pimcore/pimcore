@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -42,6 +44,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Mime\MimeTypes;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -291,37 +294,55 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $asset = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force && Runtime::isRegistered($cacheKey)) {
+            $asset = Runtime::get($cacheKey);
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
 
-        if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-            $asset = new Asset();
-
-            try {
-                $asset->getDao()->getById($id);
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
-
-                /** @var Asset $asset */
-                $asset = self::getModelFactory()->build($className);
-                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
-                $asset->getDao()->getById($id);
-                $asset->__setDataVersionTimestamp($asset->getModificationDate());
-
-                $asset->resetDirtyMap();
-
-                \Pimcore\Cache::save($asset, $cacheKey);
-            } catch (NotFoundException $e) {
-                return null;
-            }
+        if ($force) {
+            $asset = static::doGetById($id);
         } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+            $asset = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+                    $asset = static::doGetById($id);
+                    if (!$asset) {
+                        $save = false;
+                    }
+
+                    return $asset;
+                });
         }
 
         if (!$asset || !static::typeMatch($asset)) {
+            return null;
+        }
+
+        return $asset;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Asset|null
+     */
+    protected static function doGetById(int $id): ?Asset
+    {
+        try {
+            $asset = new Asset();
+            $asset->getDao()->getById($id);
+            $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
+
+            /** @var Asset $asset */
+            $asset = self::getModelFactory()->build($className);
+
+            Runtime::set(self::getCacheKey($id), $asset);
+
+            $asset->getDao()->getById($id);
+            $asset->__setDataVersionTimestamp($asset->getModificationDate());
+
+            $asset->resetDirtyMap();
+        } catch (NotFoundException $e) {
             return null;
         }
 
@@ -621,7 +642,7 @@ class Asset extends Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
+                    Runtime::set($tag, null);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -827,12 +848,12 @@ class Asset extends Element\AbstractElement
 
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
-        \Pimcore\Cache\Runtime::set($cacheKey, $this);
+        Runtime::set($cacheKey, $this);
         if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
-            \Pimcore\Cache\Runtime::set($cacheKey, null);
+            Runtime::set($cacheKey, null);
             Asset::getById($this->getId()); // call it to load it to the runtime cache again
         }
 
@@ -1127,7 +1148,7 @@ class Asset extends Element\AbstractElement
         $this->clearDependentCache();
 
         // clear asset from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
+        Runtime::set(self::getCacheKey($this->getId()), null);
 
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }

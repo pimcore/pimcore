@@ -27,6 +27,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -317,6 +318,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param bool $force
      *
      * @return static|null
+     *
+     * @throws \Exception
      */
     public static function getById($id, $force = false)
     {
@@ -334,44 +337,63 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if ($force || !($object = Cache::load($cacheKey))) {
-            $object = new Model\DataObject();
-
-            try {
-                $typeInfo = $object->getDao()->getTypeById($id);
-
-                if (!empty($typeInfo['o_type']) && in_array($typeInfo['o_type'], DataObject::$types)) {
-                    if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
-                        $className = Folder::class;
-                    } else {
-                        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
-                    }
-
-                    /** @var AbstractObject $object */
-                    $object = self::getModelFactory()->build($className);
-                    Runtime::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
-
-                    Service::recursiveResetDirtyMap($object);
-
-                    // force loading of relation data
-                    if ($object instanceof Concrete) {
-                        $object->__getRawRelationData();
-                    }
-
-                    Cache::save($object, $cacheKey);
-                } else {
-                    throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
-                }
-            } catch (Model\Exception\NotFoundException $e) {
-                return null;
-            }
+        if ($force) {
+            $object = static::doGetById($id);
         } else {
-            Runtime::set($cacheKey, $object);
+            $object = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+                $object = static::doGetById($id);
+                if (!$object) {
+                    $save = false;
+                }
+
+                return $object;
+            });
         }
 
         if (!$object || !static::typeMatch($object)) {
+            return null;
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Model\DataObject|null
+     *
+     * @throws \Exception
+     */
+    protected static function doGetById(int $id): ?Model\DataObject
+    {
+        $object = new Model\DataObject();
+
+        try {
+            $typeInfo = $object->getDao()->getTypeById($id);
+
+            if (!empty($typeInfo['o_type']) && in_array($typeInfo['o_type'], DataObject::$types)) {
+                if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
+                    $className = Folder::class;
+                } else {
+                    $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
+                }
+
+                /** @var AbstractObject $object */
+                $object = self::getModelFactory()->build($className);
+                Runtime::set(self::getCacheKey($id), $object);
+                $object->getDao()->getById($id);
+                $object->__setDataVersionTimestamp($object->getModificationDate());
+
+                Service::recursiveResetDirtyMap($object);
+
+                // force loading of relation data
+                if ($object instanceof Concrete) {
+                    $object->__getRawRelationData();
+                }
+            } else {
+                throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
+            }
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
 

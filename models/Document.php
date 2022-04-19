@@ -16,6 +16,8 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -29,6 +31,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
@@ -236,8 +239,8 @@ class Document extends Element\AbstractElement
 
         $cacheKey = self::getPathCacheKey($path);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force && Runtime::isRegistered($cacheKey)) {
+            $document = Runtime::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
@@ -247,7 +250,7 @@ class Document extends Element\AbstractElement
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
-            \Pimcore\Cache\Runtime::set($cacheKey, $doc);
+            Runtime::set($cacheKey, $doc);
         } catch (NotFoundException $e) {
             $doc = null;
         }
@@ -279,6 +282,7 @@ class Document extends Element\AbstractElement
      * @param bool $force
      *
      * @return static|null
+     * @throws \Exception
      */
     public static function getById($id, $force = false)
     {
@@ -296,14 +300,38 @@ class Document extends Element\AbstractElement
             }
         }
 
-        if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $document = new Document();
+        if ($force) {
+            $document = static::doGetById($id);
+        } else {
+            $document = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+                $document = static::doGetById($id);
+                if (!$document) {
+                    $save = false;
+                }
 
-            try {
-                $document->getDao()->getById($id);
-            } catch (NotFoundException $e) {
-                return null;
-            }
+                return $document;
+            });
+        }
+
+        if (!$document || !static::typeMatch($document)) {
+            return null;
+        }
+
+        return $document;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Document|null
+     *
+     * @throws \Exception
+     */
+    protected static function doGetById(int $id): ?Document
+    {
+        try {
+            $document = new Document();
+            $document->getDao()->getById($id);
 
             $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
 
@@ -318,19 +346,13 @@ class Document extends Element\AbstractElement
 
             /** @var Document $document */
             $document = self::getModelFactory()->build($className);
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            Runtime::set(self::getCacheKey($id), $document);
 
             $document->getDao()->getById($id);
             $document->__setDataVersionTimestamp($document->getModificationDate());
 
             $document->resetDirtyMap();
-
-            \Pimcore\Cache::save($document, $cacheKey);
-        } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
-        }
-
-        if (!$document || !static::typeMatch($document)) {
+        } catch (NotFoundException $e) {
             return null;
         }
 

@@ -76,6 +76,19 @@ class Cache
     }
 
     /**
+     * @param string $key
+     * @param callable $callback
+     * @param float|null $beta
+     * @param array|null $metadata
+     *
+     * @return mixed
+     */
+    public static function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
+    {
+        return static::getHandler()->get($key, $callback, $beta, $metadata);
+    }
+
+    /**
      * Save an item to the cache (deferred to shutdown if force is false and forceImmediateWrite is not set)
      *
      * @param mixed $data
