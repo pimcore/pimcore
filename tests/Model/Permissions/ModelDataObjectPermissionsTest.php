@@ -32,7 +32,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      *
      * /permissionfoo --> allowed
      * /permissionfoo/bars --> not allowed
-     * /permissionbar/bars/hugo --> ?? --> should not be found
+     * /permissionfoo/bars/hugo --> ?? --> should not be found
      * /permissionfoo/bars/userfolder --> allowed
      * /permissionfoo/bars/userfolder/usertestobject --> ??   --> should be found
      * /permissionfoo/bars/groupfolder --> allowed role
@@ -521,122 +521,119 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
     }
 
-    // Disabling these tests until the PR of https://github.com/pimcore/pimcore/issues/11822
-//    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100) {
-//        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
-//
-//        $request = new Request([
-//            'type' => 'object',
-//            'query' => $searchText,
-//            'start' => 0,
-//            'limit' => $limit
-//        ]);
-//
-//        $responseData = $controller->findAction(
-//            $request,
-//            new EventDispatcher(),
-//            new GridHelperService()
-//        );
-//
-//        $responsePaths = [];
-//        foreach($responseData['data'] as $node) {
-//            $responsePaths[] = $node['fullpath'];
-//        }
-//
-//        $this->assertCount(
-//            $responseData['total'],
-//            $responseData['data'],
-//            'Assert total count of response matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '`'
-//        );
-//
-//        $this->assertCount(
-//            count($expectedResultPaths),
-//            $responseData['data'],
-//            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
-//        );
-//
-//        foreach($expectedResultPaths as $path) {
-//            $this->assertContains(
-//                $path,
-//                $responsePaths,
-//                'Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
-//            );
-//        }
-//
-//    }
-//
-//    public function testSearch() {
-//        $admin = User::getByName('admin');
-//
-//        //search hugo
-//        $this->doTestSearch('hugo', $admin, [$this->hugo->getFullpath()]);
-//        $this->doTestSearch('hugo', $this->userPermissionTest1, []);
-//        $this->doTestSearch('hugo', $this->userPermissionTest2, []);
-//
-//        //search bars
-//        $this->doTestSearch('bars', $admin, [
-//            $this->bars->getFullpath(),
-//            $this->hugo->getFullpath(),
-//            $this->userfolder->getFullpath(),
-//            $this->usertestobject->getFullpath(),
-//            $this->groupfolder->getFullpath(),
-//            $this->grouptestobject->getFullpath(),
-//        ]);
-//        $this->doTestSearch('bars', $this->userPermissionTest1, [
-//            $this->bars->getFullpath(),
-//            $this->userfolder->getFullpath(),
-//            $this->usertestobject->getFullpath(),
-//            $this->groupfolder->getFullpath(),
-//            $this->grouptestobject->getFullpath(),
-//        ]);
-//        $this->doTestSearch('bars', $this->userPermissionTest2, [
-//            $this->bars->getFullpath(),
-//            $this->userfolder->getFullpath(),
-//            $this->usertestobject->getFullpath(),
-//        ]);
-//
-//        //search hidden object
-//        $this->doTestSearch('hiddenobject', $admin, [$this->hiddenobject->getFullpath()]);
-//        $this->doTestSearch('hiddenobject', $this->userPermissionTest1, []);
-//        $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
-//
-//    }
-//
-//    public function testManyElementSearch() {
-//        $admin = User::getByName('admin');
-//
-//        //prepare additional data
-//        $manyElements = $this->createFolder('manyElements', 1);
-//        $manyElementList = [];
-//        $elementCount = 100;
-//
-//        for($i = 1; $i <= $elementCount; $i++) {
-//            $manyElementList[] = $this->createObject('manyelement ' . $i, $manyElements->getId());
-//        }
-//        $manyElementX = $this->createObject('manyelement X', $manyElements->getId());
-//
-//        //update role
-//        $role = User\Role::getByName('Testrole');
-//        $role->setWorkspacesObject([
-//            (new User\Workspace\DataObject())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
-//            (new User\Workspace\DataObject())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getFullpath(), 'list' => true, 'view' => true]),
-//        ]);
-//        $role->save();
-//
-//
-//        //search hugo
-//        $this->doTestSearch('manyelement', $admin, array_merge(
-//                array_map(function($item) { return $item->getFullpath(); }, $manyElementList),
-//                [ $manyElementX->getFullpath() ]
-//            ), $elementCount + 1
-//        );
-//        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount + 1);
-//        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount + 1);
-//
-//        //TODO this needs to be fixed, see issue https://github.com/pimcore/pimcore/issues/11822
-////        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount);
-////        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount);
-//
-//
-//    }
+    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100) {
+        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
+
+        $request = new Request([
+            'type' => 'object',
+            'query' => $searchText,
+            'start' => 0,
+            'limit' => $limit
+        ]);
+
+        $responseData = $controller->findAction(
+            $request,
+            new EventDispatcher(),
+            new GridHelperService()
+        );
+
+        $responsePaths = [];
+        foreach($responseData['data'] as $node) {
+            $responsePaths[] = $node['fullpath'];
+        }
+
+        $this->assertCount(
+            $responseData['total'],
+            $responseData['data'],
+            'Assert total count of response matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '`'
+        );
+
+        $this->assertCount(
+            count($expectedResultPaths),
+            $responseData['data'],
+            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
+        );
+
+        foreach($expectedResultPaths as $path) {
+            $this->assertContains(
+                $path,
+                $responsePaths,
+                'Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
+            );
+        }
+
+    }
+
+    public function testSearch() {
+        $admin = User::getByName('admin');
+
+        //search hugo
+        $this->doTestSearch('hugo', $admin, [$this->hugo->getFullpath()]);
+        $this->doTestSearch('hugo', $this->userPermissionTest1, []);
+        $this->doTestSearch('hugo', $this->userPermissionTest2, []);
+
+        //search bars
+        $this->doTestSearch('bars', $admin, [
+            $this->bars->getFullpath(),
+            $this->hugo->getFullpath(),
+            $this->userfolder->getFullpath(),
+            $this->usertestobject->getFullpath(),
+            $this->groupfolder->getFullpath(),
+            $this->grouptestobject->getFullpath(),
+        ]);
+        $this->doTestSearch('bars', $this->userPermissionTest1, [
+            $this->bars->getFullpath(),
+            $this->userfolder->getFullpath(),
+            $this->usertestobject->getFullpath(),
+            $this->groupfolder->getFullpath(),
+            $this->grouptestobject->getFullpath(),
+        ]);
+        $this->doTestSearch('bars', $this->userPermissionTest2, [
+            $this->bars->getFullpath(),
+            $this->userfolder->getFullpath(),
+            $this->usertestobject->getFullpath(),
+        ]);
+
+        //search hidden object
+        $this->doTestSearch('hiddenobject', $admin, [$this->hiddenobject->getFullpath()]);
+        $this->doTestSearch('hiddenobject', $this->userPermissionTest1, []);
+        $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
+
+    }
+
+    public function testManyElementSearch() {
+        $admin = User::getByName('admin');
+
+        //prepare additional data
+        $manyElements = $this->createFolder('manyElements', 1);
+        $manyElementList = [];
+        $elementCount = 5;
+
+        for($i = 1; $i <= $elementCount; $i++) {
+            $manyElementList[] = $this->createObject('manyelement ' . $i, $manyElements->getId());
+        }
+        $manyElementX = $this->createObject('manyelement X', $manyElements->getId());
+
+        //update role
+        $role = User\Role::getByName('Testrole');
+        $role->setWorkspacesObject([
+            (new User\Workspace\DataObject())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\DataObject())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getFullpath(), 'list' => true, 'view' => true]),
+        ]);
+        $role->save();
+
+
+        //search manyelement
+        $this->doTestSearch('manyelement', $admin, array_merge(
+                array_map(function($item) { return $item->getFullpath(); }, $manyElementList),
+                [ $manyElementX->getFullpath() ]
+            ), $elementCount + 1
+        );
+        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount + 1);
+        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount + 1);
+
+        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount);
+        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount);
+
+    }
 }

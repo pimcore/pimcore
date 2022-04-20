@@ -90,7 +90,7 @@ class SearchController extends AdminController
         $forbiddenConditions = $this->getForbiddenCondition($types);
 
         if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
+            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
         }
 
         $queryCondition = '';
@@ -304,7 +304,7 @@ class SearchController extends AdminController
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element->isAllowed('list')) {
+//            if ($element->isAllowed('list')) {
                 $data = null;
                 if ($element instanceof DataObject\AbstractObject) {
                     $data = DataObject\Service::gridObjectData($element, $fields);
@@ -317,10 +317,10 @@ class SearchController extends AdminController
                 if ($data) {
                     $elements[] = $data;
                 }
-            } else {
+//            } else {
                 //TODO: any message that view is blocked?
                 //$data = Element\Service::gridElementData($element);
-            }
+//            }
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
@@ -347,54 +347,37 @@ class SearchController extends AdminController
      *
      * @return array
      */
-    protected function getForbiddenCondition($types = ['assets', 'documents', 'objects'])
+    protected function getForbiddenCondition($types = ['asset', 'document', 'object'])
     {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
 
         $forbiddenConditions = [];
 
-        //exclude forbidden assets
-        if (in_array('assets', $types)) {
-            if (!$user->isAllowed('assets')) {
-                $forbiddenConditions[] = " maintype != 'asset' ";
+        foreach ($types as $type) {
+            if (!$user->isAllowed($type . 's')) { //the permissions are just plural
+                $forbiddenConditions[] = ' maintype != \'' . $type . '\' ';
             } else {
-                $forbiddenAssetPaths = Element\Service::findForbiddenPaths('asset', $user);
-                if (count($forbiddenAssetPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
-                        $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . '%') . ')';
-                    }
-                    $forbiddenConditions[] = implode(' AND ', $forbiddenAssetPaths) ;
-                }
-            }
-        }
+                $elementPaths = Element\Service::findForbiddenPaths($type, $user);
 
-        //exclude forbidden documents
-        if (in_array('documents', $types)) {
-            if (!$user->isAllowed('documents')) {
-                $forbiddenConditions[] = " maintype != 'document' ";
-            } else {
-                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths('document', $user);
-                if (count($forbiddenDocumentPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
-                        $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . '%') . ')';
+                $forbiddenPathSql = [];
+                $allowedPathSql = [];
+                if (count($elementPaths['forbidden']) > 0) {
+                    foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                        $exceptions = '';
+                        $folderSuffix = '';
+                        if ($allowedPaths) {
+                            $exceptionsConcat = implode('%\' OR fullpath LIKE \'', $allowedPaths);
+                            $exceptions = ' OR (fullpath LIKE \'' . $exceptionsConcat . '%\')';
+                            $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                        }
+                        $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
                     }
-                    $forbiddenConditions[] = implode(' AND ', $forbiddenDocumentPaths) ;
-                }
-            }
-        }
+                    foreach ($elementPaths['allowed'] as $allowedPaths) {
+                        $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
+                    }
 
-        //exclude forbidden objects
-        if (in_array('objects', $types)) {
-            if (!$user->isAllowed('objects')) {
-                $forbiddenConditions[] = " maintype != 'object' ";
-            } else {
-                $forbiddenObjectPaths = Element\Service::findForbiddenPaths('object', $user);
-                if (count($forbiddenObjectPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
-                        $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . '%') . ')';
-                    }
-                    $forbiddenConditions[] = implode(' AND ', $forbiddenObjectPaths);
+                    $forbiddenConditions[] = '(maintype = \'' . $type . '\' AND (( '. implode(' OR ', $allowedPathSql) . ' ) AND '. implode(' AND ', $forbiddenPathSql) . '))';
                 }
             }
         }
@@ -453,7 +436,7 @@ class SearchController extends AdminController
 
         $forbiddenConditions = $this->getForbiddenCondition();
         if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
+            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
         }
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
@@ -478,19 +461,17 @@ class SearchController extends AdminController
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element->isAllowed('list')) {
-                $data = [
-                    'id' => $element->getId(),
-                    'type' => $hit->getId()->getType(),
-                    'subtype' => $element->getType(),
-                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
-                ];
+            $data = [
+                'id' => $element->getId(),
+                'type' => $hit->getId()->getType(),
+                'subtype' => $element->getType(),
+                'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
+                'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
+            ];
 
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+            $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
 
-                $elements[] = $data;
-            }
+            $elements[] = $data;
         }
 
         $afterListLoadEvent = new GenericEvent($this, [
@@ -520,14 +501,9 @@ class SearchController extends AdminController
         $db = \Pimcore\Db::get();
         $searcherList = new Data\Listing();
 
-        $forbiddenConditions = $this->getForbiddenCondition();
-        if ($forbiddenConditions) {
-            $condition = '('.implode(' AND ', $forbiddenConditions).')';
-            $searcherList->addConditionParam($condition);
-        }
-
         $searcherList->addConditionParam('id = :id', ['id' => $id]);
         $searcherList->addConditionParam('maintype = :type', ['type' => $type]);
+        $searcherList->setLimit(1);
 
         $hits = $searcherList->load();
 
@@ -551,12 +527,12 @@ class SearchController extends AdminController
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
                 $data['preview'] = $this->renderView(
-                    '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/'.$hit->getId()->getType().'.html.twig', [
-                    'element' => $element,
-                    'iconCls' => $data['iconCls'],
-                    'config' => $config,
-                    'validLanguages' => $validLanguages,
-                ]
+                    '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/' . $hit->getId()->getType() . '.html.twig', [
+                        'element' => $element,
+                        'iconCls' => $data['iconCls'],
+                        'config' => $config,
+                        'validLanguages' => $validLanguages,
+                    ]
                 );
             }
         }
