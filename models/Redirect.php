@@ -332,7 +332,7 @@ final class Redirect extends AbstractModel
         try {
             \Pimcore\Cache::clearTag('redirect');
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 

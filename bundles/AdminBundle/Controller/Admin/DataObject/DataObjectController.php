@@ -1094,7 +1094,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 $success = true;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -1105,7 +1105,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $object->save();
                 $success = true;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }

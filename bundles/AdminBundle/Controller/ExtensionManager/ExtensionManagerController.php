@@ -301,7 +301,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
                 $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
             } catch (\Throwable $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

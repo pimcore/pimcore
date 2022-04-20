@@ -77,7 +77,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
                 return [];
             }
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
 
             return [];
         }

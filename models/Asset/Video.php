@@ -125,7 +125,7 @@ class Video extends Model\Asset
                 }
             } catch (\Exception $e) {
                 Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

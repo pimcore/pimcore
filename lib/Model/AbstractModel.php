@@ -247,7 +247,7 @@ abstract class AbstractModel implements ModelInterface
 
                 return $r;
             } catch (\Exception $e) {
-                Logger::emergency($e);
+                Logger::emergency((string) $e);
 
                 throw $e;
             }

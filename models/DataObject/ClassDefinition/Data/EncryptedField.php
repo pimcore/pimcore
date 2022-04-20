@@ -180,7 +180,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
                 return $data;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
                 if (self::isStrictMode()) {
                     throw new \Exception('encrypted field ' . $this->getName() . ' cannot be decoded');
                 }

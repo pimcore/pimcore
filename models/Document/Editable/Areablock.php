@@ -224,7 +224,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             $info->setEditable($this);
             $info->setIndex($this->current);
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
         }
 
         $params = [];

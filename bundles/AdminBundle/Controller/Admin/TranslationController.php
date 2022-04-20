@@ -305,7 +305,7 @@ class TranslationController extends AdminController
                 try {
                     $t = Translation::getByKey($translationData, Translation::DOMAIN_ADMIN);
                 } catch (\Exception $e) {
-                    Logger::log($e);
+                    Logger::log((string) $e);
                 }
                 if (!$t instanceof Translation) {
                     $t = new Translation();
@@ -321,7 +321,7 @@ class TranslationController extends AdminController
                     try {
                         $t->save();
                     } catch (\Exception $e) {
-                        Logger::log($e);
+                        Logger::log((string) $e);
                     }
                 }
             }
@@ -1137,7 +1137,7 @@ class TranslationController extends AdminController
                 }
             } catch (\Exception $e) {
                 Logger::error('Word Export: ' . $e->getMessage());
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 throw $e;
             }
