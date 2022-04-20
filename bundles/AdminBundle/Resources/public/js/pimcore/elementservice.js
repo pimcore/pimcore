@@ -130,7 +130,9 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             var node = affectedNodes[index];
             if (node) {
                 var nodeEl = Ext.fly(node.getOwnerTree().getView().getNodeByRecord(node));
-                nodeEl.addCls("pimcore_delete");
+                if(nodeEl) {
+                    nodeEl.addCls("pimcore_delete");
+                }
             }
         }
 
