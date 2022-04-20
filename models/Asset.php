@@ -293,6 +293,7 @@ class Asset extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $asset = null;
         $loaded = false;
 
         if (!$force && Runtime::isRegistered($cacheKey)) {

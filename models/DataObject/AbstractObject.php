@@ -329,6 +329,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $object = null;
         $loaded = false;
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
@@ -365,7 +366,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param int $id
      *
-     * @return static|null
+     * @return AbstractObject|null
      *
      * @throws \Exception
      */

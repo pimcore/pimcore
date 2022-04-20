@@ -292,6 +292,7 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $document = null;
         $loaded = false;
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
