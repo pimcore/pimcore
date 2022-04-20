@@ -411,10 +411,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                         $setter = 'set' . ucfirst($key);
                         $value = $element[$key] ?? null;
 
-                        if ($columnConfig['type'] === 'multiselect') {
-                            if (is_array($value) && count($value)) {
-                                $value = implode(',', $value);
-                            }
+                        if ($columnConfig['type'] === 'multiselect' && is_array($value)) {
+                            $value = implode(',', $value);
                         }
 
                         $metaData->$setter($value);
