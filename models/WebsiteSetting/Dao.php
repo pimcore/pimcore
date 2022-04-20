@@ -125,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert('website_settings', ['name' => $this->model->getName(), 'siteId' => $this->model->getSiteId()]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
 
         $this->update();
     }

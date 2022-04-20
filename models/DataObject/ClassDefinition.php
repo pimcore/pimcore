@@ -425,7 +425,8 @@ final class ClassDefinition extends Model\AbstractModel
         if (!$this->getId()) {
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
-            $this->setId($maxId ? $maxId + 1 : 1);
+            $maxId = $maxId ? $maxId + 1 : 1;
+            $this->setId((string) $maxId);
         }
 
         if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {

@@ -75,7 +75,7 @@ class Dao extends Model\Element\Dao
             'o_key' => $this->model->getKey(),
             'o_path' => $this->model->getRealPath(),
         ]);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
 
         if (!$this->model->getKey() && !is_numeric($this->model->getKey())) {
             $this->model->setKey($this->db->lastInsertId());

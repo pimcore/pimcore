@@ -1082,7 +1082,11 @@ class Document extends Element\AbstractElement
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        if ($id === null) {
+            $this->id = null;
+        } else {
+            $this->id = (int)$id;
+        }
 
         return $this;
     }
