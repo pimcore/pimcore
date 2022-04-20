@@ -351,7 +351,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         //load object if force=true or not loaded by cache
-        if (!$loaded && !$object) {
+        if ($force || !$loaded) {
             $object = static::doGetById($id);
         }
 

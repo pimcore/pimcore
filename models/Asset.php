@@ -316,7 +316,7 @@ class Asset extends Element\AbstractElement
         }
 
         //load asset if force=true or not loaded by cache
-        if (!$loaded && !$asset) {
+        if ($force || !$loaded) {
             $asset = static::doGetById($id);
         }
 

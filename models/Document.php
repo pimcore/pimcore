@@ -294,8 +294,8 @@ class Document extends Element\AbstractElement
         $cacheKey = self::getCacheKey($id);
         $loaded = false;
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force && Runtime::isRegistered($cacheKey)) {
+            $document = Runtime::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
@@ -315,7 +315,7 @@ class Document extends Element\AbstractElement
         }
 
         //load asset if force=true or not loaded by cache
-        if (!$loaded && !$document) {
+        if ($force || !$loaded) {
             $document = static::doGetById($id);
         }
 
@@ -512,8 +512,8 @@ class Document extends Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long-running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
-                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
+                    Runtime::set($tag, null);
+                    Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -646,7 +646,7 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set document to registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), $this);
+        Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -868,9 +868,9 @@ class Document extends Element\AbstractElement
 
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
+            if (Runtime::isRegistered($parentCacheKey)) {
                 /** @var Document $parent */
-                $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
+                $parent = Runtime::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
@@ -889,8 +889,8 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //clear document from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
-        \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
+        Runtime::set(self::getCacheKey($this->getId()), null);
+        Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
 
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
