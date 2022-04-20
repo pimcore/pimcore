@@ -568,9 +568,9 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $elementCount = 5;
 
         for($i = 1; $i <= $elementCount; $i++) {
-            $manyElementList[] = $this->createAsset('manyelement ' . $i, $manyElements->getId());
+            $manyElementList[] = $this->createAsset('manyelement ' . $i.'.gif', $manyElements->getId());
         }
-        $manyElementX = $this->createAsset('manyelement X', $manyElements->getId());
+        $manyElementX = $this->createAsset('manyelement X.gif', $manyElements->getId());
 
         //update role
         $role = User\Role::getByName('Testrole');
