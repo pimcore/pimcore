@@ -66,12 +66,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     /**
      * @var array
      */
-    private array $objectData;
+    private array $objectData = [];
 
     /**
      * @var array
      */
-    private array $metaData;
+    private array $metaData = [];
 
     /**
      * @Route("/tree-get-childs-by-id", name="treegetchildsbyid", methods={"GET"})
