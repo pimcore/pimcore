@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Model\DataObject\ClassDefinition\Listing;
 
 final class Version20220419120333 extends AbstractMigration
 {

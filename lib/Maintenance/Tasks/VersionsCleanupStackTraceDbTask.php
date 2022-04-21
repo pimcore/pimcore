@@ -17,8 +17,6 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\Version;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
