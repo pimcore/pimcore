@@ -284,7 +284,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $hasChildren = $child->getDao()->hasChildren($allowedTypes, null, $this->getAdminUser());
 
         $tmpObject['allowDrop'] = false;
-        $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
         if ($tmpObject['type'] != DataObject::OBJECT_TYPE_VARIANT) {
@@ -316,13 +315,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
         if ($child->getLocked()) {
             $tmpObject['cls'] .= 'pimcore_treenode_lockOwner ';
-        }
-
-        if ($tmpObject['leaf']) {
-            $tmpObject['expandable'] = false;
-            $tmpObject['expanded'] = true;
-            $tmpObject['leaf'] = false;
-            $tmpObject['loaded'] = true;
         }
 
         return $tmpObject;
