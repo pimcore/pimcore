@@ -339,7 +339,7 @@ CREATE TABLE `notes` (
   PRIMARY KEY (`id`),
   KEY `cid_ctype` (`cid`, `ctype`),
   KEY `date` (`date`),
-  KEY `user` (`user`)
+  KEY `user` (`user`),
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
@@ -744,7 +744,8 @@ CREATE TABLE `versions` (
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `autoSave` (`autoSave`)
+  KEY `autoSave` (`autoSave`),
+  KEY `stackTrace` (`stackTrace`(1))
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
