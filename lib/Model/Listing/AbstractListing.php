@@ -257,7 +257,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $condition = '('.$condition.')';
         $ignoreParameter = true;
 
-        $conditionWithoutQuotedStrings = preg_replace('/\\"|"(?:\\"|[^"])*"|(\+)/', '', $condition);
+        $conditionWithoutQuotedStrings = preg_replace('/\\\\"|"(?:\\"|[^"])*"|(\+)/', '', $condition);
         if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
             $ignoreParameter = false;
         }
