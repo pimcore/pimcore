@@ -40,7 +40,6 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildObjectsNode());
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
-        $rootNode->append($this->buildRedirectsStatusCodes());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -128,26 +127,6 @@ final class Configuration implements ConfigurationInterface
         ;
 
         return $treeBuilder;
-    }
-
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildRedirectsStatusCodes()
-    {
-        $treeBuilder = new TreeBuilder('redirects');
-        $redirects = $treeBuilder->getRootNode();
-        $redirects
-            ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('status_codes')
-                        ->info('List all redirect status codes.')
-                        ->prototype('scalar')
-                    ->end()
-                ->end()
-            ->end();
-
-        return $redirects;
     }
 
     /**
