@@ -33,13 +33,12 @@ class AssetUpdateTasksHandler
     public function __invoke(AssetUpdateTasksMessage $message)
     {
         $asset = Asset::getById($message->getId());
+        $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
-        } elseif ($asset instanceof Asset\Document && !$asset->getCustomSetting('document_page_count')) {
-            $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
-            $asset->processPageCount();
-            $this->saveAsset($asset);
+        } elseif ($asset instanceof Asset\Document) {
+           $this->processDocument($asset);
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
@@ -52,12 +51,24 @@ class AssetUpdateTasksHandler
         Version::enable();
     }
 
+    private function processDocument(Asset\Document $asset) {
+
+        if(!$asset->getCustomSetting('document_page_count')) {
+            $asset->processPageCount();
+            $this->saveAsset($asset);
+        }
+
+        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+    }
+
     private function processVideo(Asset\Video $asset): void
     {
-        try {
-            $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
-        } catch (\Exception $e) {
-            Logger::err('Unable to get duration of video: ' . $asset->getId());
+        if(!$asset->getCustomSetting('duration')) {
+            try {
+                $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
+            } catch (\Exception $e) {
+                Logger::err('Unable to get duration of video: ' . $asset->getId());
+            }
         }
 
         try {
@@ -75,6 +86,8 @@ class AssetUpdateTasksHandler
 
         $asset->handleEmbeddedMetaData(true);
         $this->saveAsset($asset);
+
+        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
     }
 
     private function processImage(Asset\Image $image): void
