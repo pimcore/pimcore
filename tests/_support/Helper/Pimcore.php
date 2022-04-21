@@ -29,11 +29,18 @@ use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module
 {
+
+    /**
+     * @var null|ContainerInterface
+     */
+    protected static $testServiceContainer = null;
+
     /**
      * {@inheritdoc}
      */
@@ -84,6 +91,19 @@ class Pimcore extends Module
     public function getContainer()
     {
         return $this->kernel->getContainer();
+    }
+
+    /**
+     * @param string $serviceId
+     * @return object|null
+     * @throws \Exception
+     */
+    public function grabService(string $serviceId) {
+        if(empty(self::$testServiceContainer)) {
+            $container = $this->getContainer();
+            self::$testServiceContainer = $container->has('test.service_container') ? $container->get('test.service_container') : $container;
+        }
+        return self::$testServiceContainer->get($serviceId);
     }
 
     public function _initialize(): void
