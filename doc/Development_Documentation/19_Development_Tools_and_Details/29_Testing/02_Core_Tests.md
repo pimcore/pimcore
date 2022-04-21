@@ -11,19 +11,22 @@ To execute core tests, Pimcore provides a `docker-compose` file to create a setu
 - `docker` and `docker-compose` installed on your system.
 - Pimcore git repository cloned locally 
 
+
 ## Preparations
 - Change to `tests\bin` directory of the Pimcore repository
-- Start docker containers with `docker-compose up -d`
-  - This sets up all necessary services (like db and redis) and gets it up and running. 
-  - Pimcore source code files are mounted into docker container, so you can change files and test the changes right away.
-- Initialize test infrastructure by executing `docker-compose exec php-fpm tests/bin/init-tests.sh`
-  - This copies some files from `.github\ci\file` to prepare system for executing the tests (actually same as for github actions)
-  - Executes `composer install` to install all requirements
-  
+- Execute `./init-tests.sh`, this does:  
+  - Running `docker-compose up -d` and setting up all necessary services (like db and redis). Pimcore source code files 
+    are mounted into docker container, so you can change files and test the changes right away.
+  - Copying some files from `.github\ci\file` to prepare system for executing the tests (actually same as for github actions)
+  - Executing `composer install` to install all dependencies
+  - Print out further instructions
+
+Now the system is ready and tests can be executed inside the docker containers (see also commands below). 
+
+After finishing, shutdown docker containers and cleanup volumes with `docker-compose down -v --remove-orphans`.
+
 
 ## Executing tests
-
-Tests are executed inside the docker containers. 
 
 #### Run all tests
 
