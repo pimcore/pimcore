@@ -339,7 +339,7 @@ CREATE TABLE `notes` (
   PRIMARY KEY (`id`),
   KEY `cid_ctype` (`cid`, `ctype`),
   KEY `date` (`date`),
-  KEY `user` (`user`),
+  KEY `user` (`user`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
