@@ -26,19 +26,6 @@ use Psr\Log\LoggerInterface;
 class VersionsCleanupStackTraceDbTask implements TaskInterface
 {
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function execute()
