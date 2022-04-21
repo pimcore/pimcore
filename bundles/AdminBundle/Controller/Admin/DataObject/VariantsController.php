@@ -58,18 +58,18 @@ class VariantsController extends AdminController
      * @param GridHelperService $gridHelperService
      * @param LocaleServiceInterface $localeService
      * @param CsrfProtectionHandler $csrfProtection
+     *
      * @return JsonResponse
      *
      * @throws \Exception
      */
     public function getVariantsAction(
-        Request                  $request,
+        Request $request,
         EventDispatcherInterface $eventDispatcher,
-        GridHelperService        $gridHelperService,
-        LocaleServiceInterface   $localeService,
-        CsrfProtectionHandler    $csrfProtection
-    ): JsonResponse
-    {
+        GridHelperService $gridHelperService,
+        LocaleServiceInterface $localeService,
+        CsrfProtectionHandler $csrfProtection
+    ): JsonResponse {
         $parentObject = DataObject\Concrete::getById($request->get('objectId'));
         if (empty($parentObject)) {
             throw new \Exception('No Object found with id ' . $request->get('objectId'));

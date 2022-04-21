@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -71,8 +71,7 @@ trait DataObjectActionsTrait
         EventDispatcherInterface $eventDispatcher,
         GridHelperService $gridHelperService,
         LocaleServiceInterface $localeService
-    ): array
-    {
+    ): array {
         $action = $allParams['xaction'] ?? 'list';
         $csvMode = $allParams['csvMode'] ?? false;
 
@@ -108,12 +107,12 @@ trait DataObjectActionsTrait
 
                 return [
                     'success' => true,
-                    'data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage)
+                    'data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage),
                 ];
             } catch (\Exception $e) {
                 return [
                     'success' => false,
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ];
             }
         } else { // get list of objects/variants
@@ -180,8 +179,7 @@ trait DataObjectActionsTrait
         DataObject\Concrete $object,
         string $requestedLanguage,
         LocaleServiceInterface $localeService
-    ): array
-    {
+    ): array {
         $user = Tool\Admin::getCurrentUser();
         $allLanguagesAllowed = false;
         $languagePermissions = [];
@@ -198,7 +196,7 @@ trait DataObjectActionsTrait
         foreach ($data as $key => $value) {
             $parts = explode('~', $key);
             if (substr($key, 0, 1) == '~') {
-                list(,$type,$field,$keyId) = $parts;
+                list(, $type, $field, $keyId) = $parts;
 
                 if ($type == 'classificationstore') {
                     $groupKeyId = explode('-', $keyId);

@@ -1079,6 +1079,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function addGroupsAction(Request $request): JsonResponse
@@ -1583,7 +1584,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             'relationsActionGet',
             'addGroupsAction',
             'addCollectionsAction',
-            'searchRelationsAction'
+            'searchRelationsAction',
         ];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }

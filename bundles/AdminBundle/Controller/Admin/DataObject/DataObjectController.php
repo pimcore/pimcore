@@ -839,7 +839,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         } catch (\Exception $e) {
             $return = [
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ];
         }
 
@@ -1675,8 +1675,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         GridHelperService $gridHelperService,
         LocaleServiceInterface $localeService,
         CsrfProtectionHandler $csrfProtection
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $allParams = array_merge($request->request->all(), $request->query->all());
         if (isset($allParams['context']) && $allParams['context']) {
             $allParams['context'] = json_decode($allParams['context'], true);
