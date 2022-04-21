@@ -48,7 +48,7 @@ trait DataObjectActionsTrait
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return ['success' => false, 'message' => $e->getMessage()];
         }
