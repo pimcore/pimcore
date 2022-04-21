@@ -294,32 +294,32 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $asset = null;
-        $loaded = false;
 
-        if (!$force && Runtime::isRegistered($cacheKey)) {
-            $asset = Runtime::get($cacheKey);
+        if (!$force) {
+            if (Runtime::isRegistered($cacheKey)) {
+                $asset = Runtime::get($cacheKey);
+            }
+
+            //load from cache
+            if (!$asset) {
+                $asset = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+                    $asset = static::doGetById($id);
+                    if (!$asset) {
+                        $save = false;
+                    }
+
+                    return $asset;
+                });
+
+            }
+
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
 
-        if (!$force) {
-            $asset = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
-                $asset = static::doGetById($id);
-                $loaded = true;
-                if (!$asset) {
-                    $save = false;
-                }
-
-                return $asset;
-            });
-
-        }
-
-        //load asset if force=true or not loaded by cache
-        if ($force || !$loaded) {
-            $asset = static::doGetById($id);
-        }
+        //load from db
+        $asset = static::doGetById($id);
 
         if (!$asset || !static::typeMatch($asset)) {
             return null;

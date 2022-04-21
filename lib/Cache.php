@@ -17,6 +17,7 @@ namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Event\CoreCacheEvents;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -86,6 +87,22 @@ class Cache
     public static function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {
         return static::getHandler()->get($key, $callback, $beta, $metadata);
+    }
+
+    /**
+     * @param string $key
+     * @param $data
+     * @param CacheItem $item
+     * @param bool $force
+     *
+     * @return bool|mixed
+     *
+     * @throws \Psr\Cache\CacheException
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public static function saveFromCallback(string $key, $data, CacheItem $item, bool $force)
+    {
+        return static::getHandler()->saveFromCallback($key, $data, $item, $force);
     }
 
     /**

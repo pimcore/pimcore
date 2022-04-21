@@ -20,9 +20,11 @@ use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
+use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -40,6 +42,7 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -1278,6 +1281,44 @@ class Service extends Model\AbstractModel
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cpath'));
 
         return $deepCopy->copy($properties);
+    }
+
+    /**
+     * @template E of ElementInterface
+     *
+     * @param E $element
+     *
+     * @return E
+     */
+    public static function cloneForCache(ElementInterface $element): ElementInterface
+    {
+        // fetch a fresh copy
+        $type = Service::getElementType($element);
+        $element = Service::getElementById($type, $element->getId(), true);
+
+        // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
+        $element->setInDumpState(false);
+
+        $copier = Service::getDeepCopyInstance($element, [
+            'source' => __METHOD__,
+            'conversion' => false,
+        ]);
+        $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof CacheMarshallerInterface) {
+                        return $currentValue->marshalForCache();
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new TypeMatcher(CacheMarshallerInterface::class)
+        );
+
+        return $copier->copy($element);
     }
 
     /**

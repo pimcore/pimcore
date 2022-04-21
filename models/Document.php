@@ -293,32 +293,31 @@ class Document extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $document = null;
-        $loaded = false;
 
-        if (!$force && Runtime::isRegistered($cacheKey)) {
-            $document = Runtime::get($cacheKey);
+        if (!$force) {
+            if (Runtime::isRegistered($cacheKey)) {
+                $document = Runtime::get($cacheKey);
+            }
+
+            //load from cache
+            if (!$document) {
+                $document = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id) {
+                    $document = static::doGetById($id);
+                    if (!$document) {
+                        $save = false;
+                    }
+
+                    return $document;
+                });
+            }
+
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
 
-        if (!$force) {
-            $document = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
-                $document = static::doGetById($id);
-                $loaded = true;
-                if (!$document) {
-                    $save = false;
-                }
-
-                return $document;
-            });
-
-        }
-
-        //load asset if force=true or not loaded by cache
-        if ($force || !$loaded) {
-            $document = static::doGetById($id);
-        }
+        //load from db
+        $document = static::doGetById($id);
 
         if (!$document || !static::typeMatch($document)) {
             return null;

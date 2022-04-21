@@ -356,23 +356,73 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * Save data to cache
-     *
      * @param string $key
-     * @param mixed $data
+     * @param $data
+     * @param CacheItem $item
+     * @param $force
      * @param array $tags
-     * @param int|\DateInterval|null $lifetime
-     * @param int|null $priority
+     * @param $lifetime
+     * @param $priority
+     *
+     * @return bool|mixed
+     *
+     * @throws \Psr\Cache\CacheException
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function saveFromCallback(string $key, $data, CacheItem $item, $force = false, array $tags = [], $lifetime = null, $priority = 0)
+    {
+        if (!$this->preValidateSave($key, $force)) {
+            return false;
+        }
+
+        if ($data instanceof ElementInterface) {
+            if (!$data->__isBasedOnLatestData()) {
+                $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
+                    'key' => $key,
+                ]);
+
+                $this->writeInProgress = false;
+
+                return false;
+            }
+
+            $data = Service::cloneForCache($data);
+        }
+
+        if ($force || $this->forceImmediateWrite) {
+            $data = $this->prepareCacheData($data);
+            if (null === $data) {
+                // logging is done in prepare method if item could not be created
+                return false;
+            }
+
+            // add cache tags to item
+            $tags = $this->prepareCacheTags($key, $data, $tags);
+            if (null === $tags) {
+                return false;
+            }
+
+            $item->expiresAfter($lifetime);
+            $item->tag($tags);
+            $item->tag($key);
+
+            return true;
+        } else {
+            $cacheQueueItem = new CacheQueueItem($key, $data, $tags, $lifetime, $priority, $force);
+            $this->addToSaveQueue($cacheQueueItem);
+
+            return false; //do not save cache item if added to the queue
+        }
+    }
+
+    /**
+     * @param string $key
      * @param bool $force
      *
      * @return bool
      */
-    public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
+    public function preValidateSave(string $key, bool $force): bool
     {
-        if ($this->writeInProgress) {
-            return false;
-        }
-
         CacheItem::validateKey($key);
 
         if (!$this->enabled) {
@@ -391,6 +441,29 @@ class CoreCacheHandler implements LoggerAwareInterface
                 return false;
             }
         }
+
+        return true;
+    }
+
+    /**
+     * Save data to cache
+     *
+     * @param string $key
+     * @param mixed $data
+     * @param array $tags
+     * @param int|\DateInterval|null $lifetime
+     * @param int|null $priority
+     * @param bool $force
+     *
+     * @return bool
+     */
+    public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
+    {
+        if ($this->writeInProgress) {
+            return false;
+        }
+
+        $this->preValidateSave($key, $force);
 
         if ($force || $this->forceImmediateWrite) {
             $data = $this->prepareCacheData($data);
@@ -559,10 +632,6 @@ class CoreCacheHandler implements LoggerAwareInterface
         $this->writeInProgress = true;
 
         if ($data instanceof ElementInterface) {
-            // fetch a fresh copy
-            $type = Service::getElementType($data);
-            $data = Service::getElementById($type, $data->getId(), true);
-
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
                     'key' => $key,
@@ -573,32 +642,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 return false;
             }
 
-            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
-            $data->setInDumpState(false);
-
-            $context = [
-                'source' => __METHOD__,
-                'conversion' => false,
-            ];
-            $copier = Service::getDeepCopyInstance($data, $context);
-            $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
-
-            $copier->addTypeFilter(
-                new \DeepCopy\TypeFilter\ReplaceFilter(
-                    function ($currentValue) {
-                        if ($currentValue instanceof CacheMarshallerInterface) {
-                            $marshalledValue = $currentValue->marshalForCache();
-
-                            return $marshalledValue;
-                        }
-
-                        return $currentValue;
-                    }
-                ),
-                new TypeMatcher(CacheMarshallerInterface::class)
-            );
-
-            $data = $copier->copy($data);
+            $data= Service::cloneForCache($data);
         }
 
         $item = $this->pool->getItem($key);

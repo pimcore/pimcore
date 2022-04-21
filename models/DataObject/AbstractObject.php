@@ -330,31 +330,34 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $object = null;
-        $loaded = false;
 
-        if (!$force && Runtime::isRegistered($cacheKey)) {
-            $object = Runtime::get($cacheKey);
+        if (!$force) {
+            if (Runtime::isRegistered($cacheKey)) {
+                $object = Runtime::get($cacheKey);
+            }
+
+            //load from cache
+            if (!$object) {
+                $object = Cache::get($cacheKey,
+                    function (ItemInterface $item, &$save) use ($id, $cacheKey, $force) {
+                    //load from db and save into cache
+                    $object = static::doGetById($id);
+
+                    if (!Cache::saveFromCallback($cacheKey, $object, $item, $force)) {
+                        $save = false;
+                    }
+
+                    return $object;
+                });
+            }
+
             if ($object && static::typeMatch($object)) {
                 return $object;
             }
         }
 
-        if (!$force) {
-            $object = Cache::get($cacheKey, function (ItemInterface $item, &$save) use ($id, &$loaded) {
-                $object = static::doGetById($id);
-                $loaded = true;
-                if (!$object) {
-                    $save = false;
-                }
-
-                return $object;
-            });
-        }
-
-        //load object if force=true or not loaded by cache
-        if ($force || !$loaded) {
-            $object = static::doGetById($id);
-        }
+        //load from db
+        $object = static::doGetById($id);
 
         if (!$object || !static::typeMatch($object)) {
             return null;
