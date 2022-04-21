@@ -338,6 +338,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
                 'preSelect' => $value->getPreSelect(),
             ];
         }
+
         return null;
     }
 
@@ -350,6 +351,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
             return new ObjectData\IndexFieldSelection($tenant, $field, $preSelect);
         }
+
         return null;
     }
 }
