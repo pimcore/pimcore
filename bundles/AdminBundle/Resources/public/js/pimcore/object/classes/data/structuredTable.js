@@ -282,6 +282,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         if(this.grids) {
             var rows = [];
             this.stores.rows.each(function(rec) {
+                delete rec.data.id;
                 rows.push(rec.data);
                 rec.commit();
             });
@@ -289,6 +290,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
             var cols = [];
             this.stores.cols.each(function(rec) {
+                delete rec.data.id;
                 cols.push(rec.data);
                 rec.commit();
             });

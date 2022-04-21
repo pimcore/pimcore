@@ -565,6 +565,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         if(this.grids) {
             var cols = [];
             this.stores.cols.each(function(rec) {
+                delete rec.data.id;
                 cols.push(rec.data);
                 rec.commit();
             });
