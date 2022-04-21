@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
@@ -42,25 +43,9 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
      */
     public function execute()
     {
-        $list = new Version\Listing();
-        $list->setCondition('date < ' . (time() - 86400 * 7) . ' AND stackTrace IS NOT NULL');
-
-        $perIteration = 500;
-        $list->setLimit($perIteration);
-
-        do {
-            $versions = $list->load();
-
-            foreach ($versions as $version) {
-                try {
-                    $version->setGenerateStackTrace(false);
-                    $version->setStackTrace(null);
-                    $version->getDao()->save();
-                } catch (\Exception $e) {
-                    $this->logger->debug('Unable to cleanup stack trace for version ' . $version->getId() . ', reason: ' . $e->getMessage());
-                }
-            }
-            \Pimcore::collectGarbage();
-        } while(count($versions) === $perIteration);
+        Db::get()->executeUpdate(
+            'UPDATE versions SET stackTrace = NULL WHERE date < ? AND stackTrace IS NOT NULL',
+            [time() - 86400 * 7]
+        );
     }
 }
