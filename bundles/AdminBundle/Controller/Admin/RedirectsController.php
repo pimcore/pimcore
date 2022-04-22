@@ -286,6 +286,7 @@ class RedirectsController extends AdminController
                 'statuscodes' => $codes,
             ],
         ];
+
         return $this->adminJson($response);
     }
 }
