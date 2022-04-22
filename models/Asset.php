@@ -17,7 +17,6 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
@@ -29,9 +28,11 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
+use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
@@ -596,7 +597,7 @@ class Asset extends Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
+                        Logger::error((string) $er);
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
@@ -660,7 +661,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
     public function correctPath()
     {
@@ -709,7 +710,10 @@ class Asset extends Element\AbstractElement
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+
+                throw $duplicateFullPathException;
             }
         }
 
@@ -1100,18 +1104,21 @@ class Asset extends Element\AbstractElement
             }
 
             $this->clearThumbnails(true);
+
+            //remove target parent folder preview thumbnails
+            $this->clearFolderThumbnails($this);
         } catch (\Exception $e) {
             try {
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -1136,7 +1143,7 @@ class Asset extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -1998,36 +2005,32 @@ class Asset extends Element\AbstractElement
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
-                $contents = $storage->listContents($this->getRealPath());
-
-                /** @var StorageAttributes $item */
-                foreach ($contents as $item) {
-                    if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
-                        if ($item->isDir()) {
-                            $storage->deleteDirectory($item->path());
-                        } elseif ($item->isFile()) {
-                            $storage->delete($item->path());
-                        }
-                    }
-                }
+                $storage->deleteDirectory($this->getRealPath() . $this->getId());
             }
+
+            $this->getDao()->deleteFromThumbnailCache();
         }
     }
 
     /**
      * @param FilesystemOperator $storage
      * @param string $oldPath
+     * @param string|null $newPath
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
     {
+        if ($newPath === null) {
+            $newPath = $this->getRealFullPath();
+        }
+
         try {
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $this->getRealFullPath(), '/' . $src);
+                    $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
                 }
             }
@@ -2045,46 +2048,54 @@ class Asset extends Element\AbstractElement
      */
     private function relocateThumbnails(string $oldPath)
     {
-        $oldParent = dirname($oldPath);
-        $newParent = dirname($this->getRealFullPath());
-        $storage = Storage::get('thumbnail');
+        if ($this instanceof Folder) {
+            $oldThumbnailsPath = $oldPath;
+            $newThumbnailsPath = $this->getRealFullPath();
+        } else {
+            $oldThumbnailsPath = dirname($oldPath) . '/' . $this->getId();
+            $newThumbnailsPath = $this->getRealPath() . $this->getId();
+        }
 
-        try {
-            //remove source parent folder thumbnails
-            $contents = $storage->listContents($oldParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
+        if ($oldThumbnailsPath === $newThumbnailsPath) {
+
+            //path is equal, probably file name changed - so clear all thumbnails
+            $this->clearThumbnails(true);
+        } else {
+
+            //remove source parent folder preview thumbnails
+            $sourceFolder = Asset::getByPath(dirname($oldPath));
+            if ($sourceFolder) {
+                $this->clearFolderThumbnails($sourceFolder);
             }
 
-            //remove destination parent folder thumbnails
-            $contents = $storage->listContents($newParent)->filter(fn (StorageAttributes $attributes) => ($attributes->isFile() && strstr($attributes['path'], 'image-thumb_')));
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                $storage->delete($item['path']);
-            }
+            //remove target parent folder preview thumbnails
+            $this->clearFolderThumbnails($this);
 
-            $contents = $storage->listContents($oldParent);
-            /** @var StorageAttributes $item */
-            foreach ($contents as $item) {
-                if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
-                    $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
-                    if (!$storage->fileExists($replacePath)) {
-                        $storage->move($item->path(), $replacePath);
-                    }
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+
+                try {
+                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                } catch (UnableToMoveFile $e) {
+                    //update children, if unable to move parent
+                    $this->updateChildPaths($storage, $oldPath);
                 }
             }
-
-            //required in case if renaming or moving parent folder
-            try {
-                $storage->move($oldPath, $this->getRealFullPath());
-            } catch (UnableToMoveFile $e) {
-                //update children, if unable to move parent
-                $this->updateChildPaths($storage, $oldPath);
-            }
-        } catch (UnableToMoveFile $e) {
-            // noting to do
         }
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    private function clearFolderThumbnails(Asset $asset): void
+    {
+        do {
+            if ($asset instanceof Folder) {
+                $asset->clearThumbnails(true);
+            }
+
+            $asset = $asset->getParent();
+        } while ($asset !== null);
     }
 
     /**
@@ -2093,7 +2104,8 @@ class Asset extends Element\AbstractElement
     public function clearThumbnail($name)
     {
         try {
-            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . 'image-thumb__' . $this->getId() . '__' . $name);
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
+            $this->getDao()->deleteFromThumbnailCache($name);
         } catch (\Exception $e) {
             // noting to do
         }

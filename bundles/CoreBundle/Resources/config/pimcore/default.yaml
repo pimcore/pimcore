@@ -32,6 +32,7 @@ framework:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
@@ -39,10 +40,11 @@ framework:
             'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
+            'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
             'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
-            'Pimcore\Messenger\OptimizeImageMessage': pimcore_core
+            'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
         default_bus: messenger.bus.pimcore-core
         buses:
@@ -57,6 +59,7 @@ twig:
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
         pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
+        pimcore_csp: '@Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler'
     paths:
         '%kernel.project_dir%/templates': App
 
@@ -269,6 +272,13 @@ pimcore:
                 enabled: true
                 priority: 100
                 generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+    redirects:
+        status_codes:
+            300: Multiple Choices
+            301: Moved Permanently
+            302: Found
+            303: See Other
+            307: Temporary Redirect
 
 presta_sitemap:
     # do not add properties by default

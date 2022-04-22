@@ -57,6 +57,16 @@ CREATE TABLE `assets_metadata` (
   CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `assets_image_thumbnail_cache`;
+CREATE TABLE `assets_image_thumbnail_cache` (
+    `cid` int(11) unsigned NOT NULL,
+    `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    PRIMARY KEY (`cid`, `name`, `filename`),
+    CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;
@@ -988,8 +998,7 @@ CREATE TABLE `object_url_slugs` (
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;
-CREATE TABLE IF NOT EXISTS webdav_locks
-(
+CREATE TABLE `webdav_locks` (
     id      INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     owner   VARCHAR(100),
     timeout INTEGER UNSIGNED,
@@ -1000,5 +1009,4 @@ CREATE TABLE IF NOT EXISTS webdav_locks
     uri     VARBINARY(1000),
     INDEX (token),
     INDEX (uri(100))
-) ENGINE = InnoDB
-DEFAULT CHARSET = utf8mb4;
+) DEFAULT CHARSET = utf8mb4;

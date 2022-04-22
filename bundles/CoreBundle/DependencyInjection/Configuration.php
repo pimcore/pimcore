@@ -178,6 +178,7 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
+        $this->buildRedirectsStatusCodes($rootNode);
 
         return $treeBuilder;
     }
@@ -204,6 +205,24 @@ final class Configuration implements ConfigurationInterface
                         ->defaultValue(1800)
                     ->end()
         ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('redirects')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('status_codes')
+                        ->info('List all redirect status codes.')
+                        ->prototype('scalar')
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -538,6 +557,9 @@ final class Configuration implements ConfigurationInterface
                                                 'quality' => null,
                                             ],
                                         ])
+                                    ->end()
+                                    ->booleanNode('status_cache')
+                                        ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()

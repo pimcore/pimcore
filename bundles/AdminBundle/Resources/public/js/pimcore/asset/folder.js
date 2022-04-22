@@ -62,6 +62,11 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             fields: ['url', "filename", "filenameDisplay", "type", "id", "idPath"],
             listeners: {
                 "load": function () {
+                    if(this.store.getCount() === 0) {
+                        this.tabbar.setActiveItem(this.listfolder.getLayout());
+                        this.tabbar.remove(this.dataview);
+                    }
+
                     try {
                         this.dataview.reload();
                     }

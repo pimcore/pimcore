@@ -472,7 +472,16 @@ class Dao extends Model\Element\Dao
             if (!$this->model->getId() || $this->model->getId() == 1) {
                 $path = '';
             }
-            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->db->escapeLike($path) . '/%');
+
+            $classIds = [];
+            do {
+                $classId = $this->db->fetchOne(
+                    "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
+                    array_merge([$this->db->escapeLike($path).'/%'], $classIds));
+                if ($classId) {
+                    $classIds[] = $classId;
+                }
+            } while ($classId);
 
             $classes = [];
             foreach ($classIds as $classId) {

@@ -209,7 +209,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
     getSelectionPanel: function () {
         if (!this.selectionPanel) {
 
-            var childs = [];
+            var children = [];
 
             for (var i = 0; i < this.config.selectedGridColumns.length; i++) {
                 var nodeConf = this.config.selectedGridColumns[i];
@@ -251,7 +251,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     child.locked = nodeConf.locked;
                 }
 
-                childs.push(child);
+                children.push(child);
             }
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -295,7 +295,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     leaf: false,
                     isTarget: true,
                     expanded: true,
-                    children: childs
+                    children: children
                 }
             });
 

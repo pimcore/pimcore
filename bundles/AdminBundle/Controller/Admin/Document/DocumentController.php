@@ -22,6 +22,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Image\Chromium;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -401,7 +402,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
@@ -421,7 +432,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $document = Document::getById($request->get('id'));
             if ($document && $document->isAllowed('delete')) {
                 try {
@@ -432,7 +444,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
-                    Logger::err($e);
+                    Logger::err((string) $e);
 
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -918,7 +930,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $childIds = [];
             if ($document->hasChildren()) {
-                // get amount of childs
+                // get amount of children
                 $list = new Document\Listing();
                 $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
@@ -1117,7 +1129,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, $from, $to)
     {
         // return with error if prerequisites do not match
-        if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
+        if ((!Chromium::isSupported() && !HtmlToImage::isSupported()) || !class_exists('Imagick')) {
             return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
         }
 
@@ -1143,8 +1155,15 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        HtmlToImage::convert($fromUrl, $fromFile);
-        HtmlToImage::convert($toUrl, $toFile);
+        if (Chromium::isSupported()) {
+            $tool = Chromium::class;
+        } else {
+            $tool = HtmlToImage::class;
+        }
+
+        /** @var Chromium|HtmlToImage $tool */
+        $tool::convert($fromUrl, $fromFile);
+        $tool::convert($toUrl, $toFile);
 
         $image1 = new \Imagick($fromFile);
         $image2 = new \Imagick($toFile);

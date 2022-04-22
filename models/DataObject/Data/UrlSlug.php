@@ -359,7 +359,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $slug = self::createFromDataRow($rawItem);
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         self::$cache[$cacheKey] = $slug;

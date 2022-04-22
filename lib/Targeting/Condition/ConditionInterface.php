@@ -34,7 +34,7 @@ interface ConditionInterface
      * Determines if the condition is able to match. E.g. if a country condition
      * does not define a value (= all countries), it does not need to query the
      * data provider for the country name as it would match everything. Returning
-     * false here will set the match result implicitely to false.
+     * false here will set the match result implicitly to false.
      *
      * @return bool
      */

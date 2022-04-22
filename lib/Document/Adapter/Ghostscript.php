@@ -201,7 +201,7 @@ class Ghostscript extends Adapter
 
             return $this;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return false;
         }
@@ -270,7 +270,7 @@ class Ghostscript extends Adapter
 
             return $text;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return false;
         }

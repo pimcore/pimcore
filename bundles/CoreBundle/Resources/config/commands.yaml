@@ -73,6 +73,6 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }
 
-    Pimcore\Bundle\CoreBundle\Command\MigrateStorageCommand:
+    Pimcore\Bundle\CoreBundle\Command\Migrate\StorageCommand:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }

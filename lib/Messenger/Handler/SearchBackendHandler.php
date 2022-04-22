@@ -18,26 +18,56 @@ namespace Pimcore\Messenger\Handler;
 use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 /**
  * @internal
  */
-class SearchBackendHandler
+class SearchBackendHandler implements BatchHandlerInterface
 {
-    public function __invoke(SearchBackendMessage $message)
-    {
-        $element = Element\Service::getElementById($message->getType(), $message->getId());
-        if (!$element instanceof Element\ElementInterface) {
-            return;
-        }
+    use BatchHandlerTrait;
+    use HandlerHelperTrait;
 
-        $searchEntry = Data::getForElement($element);
-        if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
-            $searchEntry->setDataFromElement($element);
-            $searchEntry->save();
-        } else {
-            $searchEntry = new Data($element);
-            $searchEntry->save();
+    public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null)
+    {
+        return $this->handle($message, $ack);
+    }
+
+    private function process(array $jobs): void
+    {
+        $jobs = $this->filterUnique($jobs, static function (SearchBackendMessage $message) {
+            return $message->getType() . '-' . $message->getId();
+        });
+
+        foreach ($jobs as [$message, $ack]) {
+            try {
+                $element = Element\Service::getElementById($message->getType(), $message->getId());
+                if (!$element instanceof Element\ElementInterface) {
+                    $ack->ack($message);
+
+                    continue;
+                }
+
+                $searchEntry = Data::getForElement($element);
+                if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
+                    $searchEntry->setDataFromElement($element);
+                    $searchEntry->save();
+                } else {
+                    $searchEntry = new Data($element);
+                    $searchEntry->save();
+                }
+
+                $ack->ack($message);
+            } catch (\Throwable $e) {
+                $ack->nack($e);
+            }
         }
+    }
+
+    private function shouldFlush(): bool
+    {
+        return 50 <= \count($this->jobs);
     }
 }

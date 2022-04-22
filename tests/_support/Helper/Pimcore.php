@@ -32,7 +32,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Pimcore extends Module\Symfony
+class Pimcore extends Module
 {
     /**
      * {@inheritdoc}

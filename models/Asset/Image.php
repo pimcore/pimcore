@@ -148,6 +148,11 @@ class Image extends Model\Asset
         return false;
     }
 
+    private function isLowQualityPreviewEnabled(): bool
+    {
+        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+    }
+
     /**
      * @internal
      *
@@ -159,9 +164,7 @@ class Image extends Model\Asset
      */
     public function generateLowQualityPreview($generator = null)
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
-
-        if (!$config['enabled']) {
+        if (!$this->isLowQualityPreviewEnabled()) {
             return false;
         }
 
@@ -234,8 +237,10 @@ EOT;
      */
     private function getLowQualityPreviewStoragePath()
     {
-        return sprintf('%s/image-thumb__%s__-low-quality-preview.svg',
+        return sprintf(
+            '%s/%s/image-thumb__%s__-low-quality-preview.svg',
             rtrim($this->getRealPath(), '/'),
+            $this->getId(),
             $this->getId()
         );
     }
@@ -245,6 +250,10 @@ EOT;
      */
     public function getLowQualityPreviewDataUri(): ?string
     {
+        if (!$this->isLowQualityPreviewEnabled()) {
+            return null;
+        }
+
         try {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
         } catch (\Exception $e) {

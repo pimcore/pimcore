@@ -751,7 +751,7 @@ class Mail extends Email
 
                 $content = $this->html2Text($htmlContent);
             } catch (\Exception $e) {
-                Logger::err($e);
+                Logger::err((string) $e);
                 $content = '';
             }
         }

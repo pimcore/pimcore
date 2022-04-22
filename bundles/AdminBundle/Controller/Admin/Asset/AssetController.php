@@ -29,6 +29,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -658,7 +659,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get('type') == 'childs') {
+        $type = $request->get('type');
+
+        if ($type === 'childs') {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.4',
+                'Type childs is deprecated. Use children instead'
+            );
+            $type = 'children';
+        }
+        if ($type === 'children') {
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
@@ -676,7 +687,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
-        } elseif ($request->get('id')) {
+        }
+        if ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
             if ($asset && $asset->isAllowed('delete')) {
                 if ($asset->isLocked()) {
@@ -684,11 +696,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                         'success' => false,
                         'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId(),
                     ]);
-                } else {
-                    $asset->delete();
-
-                    return $this->adminJson(['success' => true]);
                 }
+
+                $asset->delete();
+
+                return $this->adminJson(['success' => true]);
             }
         }
 
@@ -739,7 +751,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $tmpAsset['expanded'] = !$hasChildren;
             $tmpAsset['loaded'] = !$hasChildren;
             $tmpAsset['permissions']['create'] = $permissions['create'];
-            $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+            $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
         } else {
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
@@ -750,9 +762,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset instanceof Asset\Image) {
             try {
-                if ($asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->exists()) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
-                }
+                $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
 
                 // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
                 if ($asset->getCustomSetting('imageDimensionsCalculated')) {
@@ -765,7 +775,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         } elseif ($asset->getType() == 'video') {
             try {
                 if (\Pimcore\Video::isAvailable()) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -774,7 +784,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             try {
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
-                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -794,16 +804,19 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @param Asset $asset
+     * @param array $params
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset)
+    protected function getThumbnailUrl(Asset $asset, array $params = [])
     {
-        $params = [
+        $defaults = [
             'id' => $asset->getId(),
             'treepreview' => true,
             '_dc' => $asset->getModificationDate(),
         ];
+
+        $params = array_merge($defaults, $params);
 
         if ($asset instanceof Asset\Image) {
             return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
@@ -935,7 +948,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $server->start();
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         exit;
@@ -1340,6 +1353,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($request->get('treepreview')) {
             $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            if ($request->get('origin') === 'treeNode' && !$image->getThumbnail($thumbnailConfig)->exists()) {
+                \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new AssetPreviewImageMessage($image->getId())
+                );
+
+                throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $image->getId()));
+            }
         }
 
         $cropPercent = $request->get('cropPercent');
@@ -1396,7 +1416,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $stream = $folder->getPreviewImage();
                 if (!$stream) {
-                    $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/blank.png');
+                    throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $folder->getId()));
                 } else {
                     $response = new StreamedResponse(function () use ($stream) {
                         fpassthru($stream);
@@ -1469,6 +1489,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
 
+        if ($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetPreviewImageMessage($video->getId())
+            );
+
+            throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $video->getId()));
+        }
+
         $stream = $thumb->getStream();
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
@@ -1517,6 +1545,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $thumb = $document->getImageThumbnail($thumbnail, $page);
+
+        if ($request->get('origin') === 'treeNode' && !$thumb->exists()) {
+            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetPreviewImageMessage($document->getId())
+            );
+
+            throw $this->createNotFoundException(sprintf('Tree preview thumbnail not available for asset %s', $document->getId()));
+        }
 
         $stream = $thumb->getStream();
         if ($stream) {

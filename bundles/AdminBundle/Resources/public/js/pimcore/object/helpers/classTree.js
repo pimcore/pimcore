@@ -133,7 +133,7 @@ pimcore.object.helpers.classTree = Class.create({
         var keys = Object.keys(data);
         for (var i = 0; i < keys.length; i++) {
             if (data[keys[i]]) {
-                if (data[keys[i]].childs) {
+                if (data[keys[i]].children) {
 
                     var text = t(data[keys[i]].nodeLabel);
 
@@ -158,8 +158,8 @@ pimcore.object.helpers.classTree = Class.create({
                     };
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
-                    for (var j = 0; j < data[keys[i]].childs.length; j++) {
-                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, brickDescriptor, this.config));
+                    for (var j = 0; j < data[keys[i]].children.length; j++) {
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].children[j], baseNode, brickDescriptor, this.config));
                     }
                     if (data[keys[i]].nodeType == "object") {
                         baseNode.expand();
@@ -185,9 +185,9 @@ pimcore.object.helpers.classTree = Class.create({
 
         newNode = fn();
 
-        if (con.childs) {
-            for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode, brickDescriptor, config);
+        if (con.children) {
+            for (var i = 0; i < con.children.length; i++) {
+                this.recursiveAddNode(con.children[i], newNode, brickDescriptor, config);
             }
         }
 
@@ -209,7 +209,7 @@ pimcore.object.helpers.classTree = Class.create({
         var newNode = {
             type: "layout",
             expanded: true,
-            expandable: initData.childs.length,
+            expandable: initData.children.length,
             allowDrag: false,
             iconCls: "pimcore_icon_" + type,
             text: t(nodeLabel),

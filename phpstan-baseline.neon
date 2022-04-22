@@ -113,11 +113,6 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
-			path: models/Asset/Image/Thumbnail/Processor.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
