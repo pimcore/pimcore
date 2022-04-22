@@ -232,6 +232,7 @@ class PageController extends DocumentControllerBase
                 $redirect->setSource($oldPage->getPrettyUrl());
                 $redirect->setTarget($page->getPrettyUrl());
                 $redirect->setStatusCode(301);
+                $redirect->setType(Redirect::TYPE_AUTO_CREATE);
                 $redirect->save();
             }
 
