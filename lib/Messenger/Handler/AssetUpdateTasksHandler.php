@@ -63,12 +63,10 @@ class AssetUpdateTasksHandler
 
     private function processVideo(Asset\Video $asset): void
     {
-        if(!$asset->getCustomSetting('duration')) {
-            try {
-                $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
-            } catch (\Exception $e) {
-                Logger::err('Unable to get duration of video: ' . $asset->getId());
-            }
+        try {
+            $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
+        } catch (\Exception $e) {
+            Logger::err('Unable to get duration of video: ' . $asset->getId());
         }
 
         try {
