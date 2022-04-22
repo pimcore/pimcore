@@ -131,7 +131,7 @@ class ScheduledTasksTask implements TaskInterface
                 $task->save();
             } catch (\Exception $e) {
                 $this->logger->error('There was a problem with the scheduled task ID: '.$task->getId());
-                $this->logger->error($e);
+                $this->logger->error((string) $e);
             }
         }
     }

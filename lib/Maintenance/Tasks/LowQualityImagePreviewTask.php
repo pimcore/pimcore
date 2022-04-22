@@ -74,7 +74,7 @@ class LowQualityImagePreviewTask implements TaskInterface
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();
                         } catch (\Exception $e) {
-                            $this->logger->error($e);
+                            $this->logger->error((string) $e);
                         }
                     }
                 }

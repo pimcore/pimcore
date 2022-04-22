@@ -193,7 +193,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]);
                     }
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             }
 

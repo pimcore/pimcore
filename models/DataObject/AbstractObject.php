@@ -643,14 +643,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -744,7 +744,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
+                        Logger::info((string) $er);
                     }
 
                     // set "HideUnpublished" back to the value it was originally
@@ -939,7 +939,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
