@@ -1226,11 +1226,7 @@ class Asset extends Element\AbstractElement
      */
     public function setId($id)
     {
-        if ($id === null) {
-            $this->id = null;
-        } else {
-            $this->id = (int)$id;
-        }
+       $this->id = $id ? (int)$id : null;
 
         return $this;
     }
