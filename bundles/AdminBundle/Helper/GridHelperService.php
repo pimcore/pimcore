@@ -332,12 +332,13 @@ class GridHelperService
                         } elseif ($filterField == 'id') {
                             $conditionPartsFilters[] = 'oo_id ' . $operator . ' ' . $db->quote($filter['value']);
                         } else {
+                            $filterField = $db->quoteIdentifier('o_' . $filterField);
                             if ($filter['type'] == 'date' && $operator == '=') {
                                 //if the equal operator is chosen with the date type, condition has to be changed
                                 $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                                $conditionPartsFilters[] = '`o_' . $filterField . '` BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                                $conditionPartsFilters[] = $filterField . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                             } else {
-                                $conditionPartsFilters[] = '`o_' . $filterField . '` ' . $operator . ' ' . $db->quote($filter['value']);
+                                $conditionPartsFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($filter['value']);
                             }
                         }
                     }
@@ -780,6 +781,8 @@ class GridHelperService
 
                 if ($filterField == 'fullpath') {
                     $filterField = 'CONCAT(path,filename)';
+                }else {
+                    $filterField = $db->quoteIdentifier($filterField);
                 }
 
                 if (isset($filterDef[1]) && $filterDef[1] == 'system') {
