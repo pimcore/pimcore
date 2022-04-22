@@ -268,9 +268,9 @@ class RedirectsController extends AdminController
     /**
      * @Route("/get-statuscodes", name="pimcore_admin_redirects_statuscodes", methods={"GET"})
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function statusCodesAction()
+    public function statusCodesAction(): JsonResponse
     {
         $this->checkPermission('redirects');
         $statusCodes = Redirect::getStatusCodes();
