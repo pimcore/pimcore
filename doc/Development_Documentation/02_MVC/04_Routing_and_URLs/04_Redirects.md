@@ -42,9 +42,15 @@ Pimcore provides the ability to automatically create Redirects when renaming and
 
 
 #### Creating custom redirect status codes
-The redirect status codes can be overwritten by adding custom codes in a config file. (ex:redirects.yaml)
+The redirect status codes list can be extended by adding custom codes in config.yaml:
 
-![Redirect Priority](../../img/redirects6.png)
+```yaml
+pimcore:
+    redirects:
+        status_codes:
+            308: Permanent Redirect
+```
+
 
 The new status codes can be seen in admin.
 
