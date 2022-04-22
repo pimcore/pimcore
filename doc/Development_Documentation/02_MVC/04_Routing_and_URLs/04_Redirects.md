@@ -39,3 +39,13 @@ Pimcore provides the ability to automatically create Redirects when renaming and
 ![Redirect Priority](../../img/redirects4.png)
 
 ![Redirect Priority](../../img/redirects5.png)
+
+
+#### Creating custom redirect status codes
+The redirect status codes can be overwritten by adding custom codes in a config file. (ex:redirects.yaml)
+
+![Redirect Priority](../../img/redirects6.png)
+
+The new status codes can be seen in admin.
+
+![Redirect Priority](../../img/redirects7.png)

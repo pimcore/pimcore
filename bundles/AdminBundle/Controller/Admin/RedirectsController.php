@@ -264,4 +264,28 @@ class RedirectsController extends AdminController
             return $this->adminJson(['success' => false]);
         }
     }
+
+    /**
+     * @Route("/get-statuscodes", name="pimcore_admin_redirects_statuscodes", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function statusCodesAction(): JsonResponse
+    {
+        $this->checkPermission('redirects');
+        $statusCodes = Redirect::getStatusCodes();
+        $codes = [];
+        foreach ($statusCodes as $statusCode => $label) {
+            $codes[] = [
+                'statusCode' => $statusCode,
+                'display' => "$label ($statusCode)",
+            ];
+        }
+        $response = [
+            'config' => [
+                'statuscodes' => $codes,
+            ],
+        ];
+        return $this->adminJson($response);
+    }
 }
