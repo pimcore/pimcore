@@ -38,7 +38,7 @@ class AssetUpdateTasksHandler
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
         } elseif ($asset instanceof Asset\Document) {
-           $this->processDocument($asset);
+            $this->processDocument($asset);
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
@@ -51,9 +51,9 @@ class AssetUpdateTasksHandler
         Version::enable();
     }
 
-    private function processDocument(Asset\Document $asset) {
-
-        if(!$asset->getCustomSetting('document_page_count')) {
+    private function processDocument(Asset\Document $asset)
+    {
+        if (!$asset->getCustomSetting('document_page_count')) {
             $asset->processPageCount();
             $this->saveAsset($asset);
         }
