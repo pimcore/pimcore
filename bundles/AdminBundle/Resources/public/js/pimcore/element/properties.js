@@ -140,7 +140,7 @@ pimcore.element.properties = Class.create({
                         name: "predefinedName",
                         type: "string",
                         convert: function (v, rec) {
-                            return t(rec.data.predefinedName);
+                            return t(rec.data.predefinedName ? rec.data.predefinedName : 'custom');
                         }
                     },
                     {
