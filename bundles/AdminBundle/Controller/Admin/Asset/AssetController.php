@@ -1355,11 +1355,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumbnail->getStream();
-        
+
         if (!$stream) {
             return new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/filetype-not-supported.svg');
         }
-        
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
