@@ -81,7 +81,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $email = Document\Newsletter::getById($request->get('id'));
+        $emailId = (int) $request->get('id');
+        $email = Document\Newsletter::getById($emailId);
 
         if (!$email) {
             throw $this->createNotFoundException('Document not found');
@@ -89,10 +90,10 @@ class NewsletterController extends DocumentControllerBase
 
         // check for lock
         if ($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (Element\Editlock::isLocked($emailId, 'document')) {
+                return $this->getEditLockResponse($emailId, 'document');
             }
-            Element\Editlock::lock($request->get('id'), 'document');
+            Element\Editlock::lock($emailId, 'document');
         }
 
         $email = clone $email;
@@ -135,7 +136,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $page = Document\Newsletter::getById($request->get('id'));
+        $page = Document\Newsletter::getById((int) $request->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
@@ -314,8 +315,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getSendStatusAction(Request $request): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -333,8 +333,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function stopSendAction(Request $request): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -353,15 +352,11 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new RuntimeException('Newsletter sending already in progress, need to finish first.');
         }
-
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
 
         Tool\TmpStore::add($document->getTmpStoreId(), [
             'documentId' => $document->getId(),
@@ -418,7 +413,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendTestAction(Request $request): JsonResponse
     {
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
         $testMailAddress = $request->get('testMailAddress');

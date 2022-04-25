@@ -207,7 +207,7 @@ class AssetHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            $savedGridConfig = GridConfig::getById((int) $requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = null;
@@ -500,7 +500,7 @@ class AssetHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if ($asset->isAllowed('list')) {
             try {
@@ -617,7 +617,7 @@ class AssetHelperController extends AdminController
         foreach ($combinedShares as $id) {
             $share = new GridConfigShare();
             $share->setGridConfigId($gridConfig->getId());
-            $share->setSharedWithUserId($id);
+            $share->setSharedWithUserId((int) $id);
             $share->save();
         }
     }

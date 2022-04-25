@@ -70,7 +70,7 @@ class VariantsController extends AdminController
         LocaleServiceInterface $localeService,
         CsrfProtectionHandler $csrfProtection
     ): JsonResponse {
-        $parentObject = DataObject\Concrete::getById($request->get('objectId'));
+        $parentObject = DataObject\Concrete::getById((int) $request->get('objectId'));
         if (empty($parentObject)) {
             throw new \Exception('No Object found with id ' . $request->get('objectId'));
         }

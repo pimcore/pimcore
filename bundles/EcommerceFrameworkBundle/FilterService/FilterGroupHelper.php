@@ -95,7 +95,7 @@ class FilterGroupHelper
             foreach ($values as $v) {
                 $helper = explode(',', $v);
                 foreach ($helper as $h) {
-                    $obj = DataObject::getById($h);
+                    $obj = DataObject::getById((int) $h);
                     if ($obj) {
                         $name = $obj->getKey();
                         if (method_exists($obj, 'getName')) {

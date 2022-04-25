@@ -59,7 +59,7 @@ class DataObjectHelperController extends AdminController
      */
     public function loadObjectDataAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         $result = [];
         if ($object) {
             $result['success'] = true;
@@ -251,7 +251,7 @@ class DataObjectHelperController extends AdminController
             $gridType = $request->get('gridtype');
         }
 
-        $objectId = $request->get('objectId');
+        $objectId = (int) $request->get('objectId');
 
         if ($objectId) {
             $fields = DataObject\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
@@ -298,7 +298,7 @@ class DataObjectHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            $savedGridConfig = GridConfig::getById((int) $requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = false;
@@ -380,7 +380,7 @@ class DataObjectHelperController extends AdminController
                             $type = $keyParts[1];
                             //                            $field = $keyParts[2];
                             $groupAndKeyId = explode('-', $keyParts[3]);
-                            $keyId = $groupAndKeyId[1];
+                            $keyId = (int) $groupAndKeyId[1];
 
                             if ($type == 'classificationstore') {
                                 $keyDef = DataObject\Classificationstore\KeyConfig::getById($keyId);
@@ -1568,8 +1568,8 @@ class DataObjectHelperController extends AdminController
                             }
 
                             $groupKeyId = explode('-', $keyid);
-                            $groupId = $groupKeyId[0];
-                            $keyid = $groupKeyId[1];
+                            $groupId = (int) $groupKeyId[0];
+                            $keyid = (int) $groupKeyId[1];
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {

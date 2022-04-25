@@ -79,7 +79,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         if (!$object->isAllowed('view')) {
             throw new \Exception('export denied');
         }

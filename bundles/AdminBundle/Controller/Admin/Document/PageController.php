@@ -87,7 +87,8 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
-        $page = Document\Page::getById($request->get('id'));
+        $pageId = (int) $request->get('id');
+        $page = Document\Page::getById($pageId);
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
@@ -95,10 +96,10 @@ class PageController extends DocumentControllerBase
 
         // check for lock
         if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (Element\Editlock::isLocked($pageId, 'document')) {
+                return $this->getEditLockResponse($pageId, 'document');
             }
-            Element\Editlock::lock($request->get('id'), 'document');
+            Element\Editlock::lock($pageId, 'document');
         }
 
         $page = clone $page;
@@ -156,7 +157,7 @@ class PageController extends DocumentControllerBase
      */
     public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
-        $oldPage = Document\Page::getById($request->get('id'));
+        $oldPage = Document\Page::getById((int) $request->get('id'));
 
         if (!$oldPage) {
             throw $this->createNotFoundException('Page not found');
@@ -294,7 +295,7 @@ class PageController extends DocumentControllerBase
      */
     public function displayPreviewImageAction(Request $request)
     {
-        $document = Document\Page::getById($request->get('id'));
+        $document = Document\Page::getById((int) $request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
                 'Content-Type' => 'image/jpg',
@@ -408,7 +409,7 @@ class PageController extends DocumentControllerBase
      */
     public function qrCodeAction(Request $request)
     {
-        $page = Document\Page::getById($request->query->get('id'));
+        $page = Document\Page::getById((int) $request->query->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
@@ -462,7 +463,7 @@ class PageController extends DocumentControllerBase
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
-        $document = Document\PageSnippet::getById($request->get('documentId'));
+        $document = Document\PageSnippet::getById((int) $request->get('documentId'));
         if (!$document) {
             throw $this->createNotFoundException();
         }

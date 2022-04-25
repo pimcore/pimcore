@@ -71,7 +71,8 @@ class SnippetController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippetId = (int) $request->get('id');
+        $snippet = Document\Snippet::getById($snippetId);
 
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
@@ -79,10 +80,10 @@ class SnippetController extends DocumentControllerBase
 
         // check for lock
         if ($snippet->isAllowed('save') || $snippet->isAllowed('publish') || $snippet->isAllowed('unpublish') || $snippet->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (Element\Editlock::isLocked($snippetId, 'document')) {
+                return $this->getEditLockResponse($snippetId, 'document');
             }
-            Element\Editlock::lock($request->get('id'), 'document');
+            Element\Editlock::lock($snippetId, 'document');
         }
 
         $snippet = clone $snippet;
@@ -134,7 +135,7 @@ class SnippetController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippet = Document\Snippet::getById((int) $request->get('id'));
 
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');

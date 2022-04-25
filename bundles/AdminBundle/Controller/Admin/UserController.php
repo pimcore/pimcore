@@ -284,8 +284,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function updateAction(Request $request)
     {
-        /** @var User|User\Role $user */
-        $user = User\AbstractUser::getById((int)$request->get('id'));
+        $user = User\UserRole::getById((int)$request->get('id'));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -366,7 +365,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             }
         }
 
-        if ($request->get('keyBindings')) {
+        if ($user instanceof User && $request->get('keyBindings')) {
             $keyBindings = json_decode($request->get('keyBindings'), true);
             $tmpArray = [];
             foreach ($keyBindings as $action => $item) {
@@ -937,7 +936,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        $user = User::getById($request->get('id'));
+        $user = User::getById((int) $request->get('id'));
 
         if (!$user) {
             return $this->adminJson([
