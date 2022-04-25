@@ -219,7 +219,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
 
         if ($new instanceof Concrete) {

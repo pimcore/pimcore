@@ -115,11 +115,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $asset = clone $asset;
-        $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
         $asset->setStream(null);
         $data = $asset->getObjectVars();
+        $data['locked'] = $asset->isLocked();
 
         if ($asset instanceof Asset\Text) {
             if ($asset->getFileSize() < 2000000) {

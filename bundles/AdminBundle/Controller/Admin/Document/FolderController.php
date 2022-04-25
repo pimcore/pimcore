@@ -85,10 +85,10 @@ class FolderController extends DocumentControllerBase
         }
 
         $folder = clone $folder;
-        $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
         $data = $folder->getObjectVars();
+        $data['locked'] = $folder->isLocked();
 
         $this->addTranslationsData($folder, $data);
         $this->minimizeProperties($folder, $data);

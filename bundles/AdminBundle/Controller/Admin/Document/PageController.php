@@ -107,7 +107,6 @@ class PageController extends DocumentControllerBase
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->setLocked($page->isLocked());
         $page->setParent(null);
 
         // unset useless data
@@ -115,6 +114,7 @@ class PageController extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
