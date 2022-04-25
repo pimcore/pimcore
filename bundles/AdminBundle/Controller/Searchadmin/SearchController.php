@@ -90,7 +90,7 @@ class SearchController extends AdminController
         $forbiddenConditions = $this->getForbiddenCondition($types);
 
         if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
+            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
         $queryCondition = '';
@@ -304,7 +304,7 @@ class SearchController extends AdminController
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-//            if ($element->isAllowed('list')) {
+            if ($element->isAllowed('list')) {
                 $data = null;
                 if ($element instanceof DataObject\AbstractObject) {
                     $data = DataObject\Service::gridObjectData($element, $fields);
@@ -317,10 +317,10 @@ class SearchController extends AdminController
                 if ($data) {
                     $elements[] = $data;
                 }
-//            } else {
+            } else {
                 //TODO: any message that view is blocked?
                 //$data = Element\Service::gridElementData($element);
-//            }
+            }
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
@@ -436,7 +436,7 @@ class SearchController extends AdminController
 
         $forbiddenConditions = $this->getForbiddenCondition();
         if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
+            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
