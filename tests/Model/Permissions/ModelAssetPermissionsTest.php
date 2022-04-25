@@ -43,6 +43,11 @@ class ModelAssetPermissionsTest extends ModelTestCase
      * /permissionbar/foo --> not allowed
      * /permissionbar/foo/hiddenobject.gif --> ??       --> should not be found
      *
+     * /permissioncpath --> not specified
+     * /permissioncpath/a --> not specified
+     * /permissioncpath/a/b --> not specified
+     * /permissioncpath/a/b/c.gif --> allowed
+     * /permissioncpath/abcdefghjkl.gif --> allowed
      *
      * -- only for many elements search test
      * /manyElemnents --> not allowed
@@ -108,8 +113,32 @@ class ModelAssetPermissionsTest extends ModelTestCase
      */
     protected $grouptestobject;
 
+    /**
+     * @var Asset\Folder
+     */
+    protected $a;
+    /**
+     * @var Asset\Folder
+     */
+    protected $b;
+    /**
+     * @var Asset
+     */
+    protected $c;
+    /**
+     * @var Asset
+     */
+    protected $abcdefghjkl;
+
     protected function prepareObjectTree()
     {
+        //example based on https://github.com/pimcore/pimcore/issues/11540
+        $this->permissioncpath = $this->createFolder('permissioncpath', 1);
+        $this->a = $this->createFolder('a', $this->permissioncpath->getId());
+        $this->b = $this->createFolder('b', $this->a->getId());
+        $this->c = $this->createAsset('c', $this->b->getId());
+        $this->abcdefghjkl = $this->createAsset('abcdefghjkl', $this->permissioncpath->getId());
+
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
         $this->foo = $this->createFolder('foo', $this->permissionbar->getId());
@@ -158,14 +187,14 @@ class ModelAssetPermissionsTest extends ModelTestCase
         //create role
         $role = new User\Role();
         $role->setName('Testrole');
-        $role->setWorkspacesObject([
+        $role->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true, 'delete'=>true, 'publish'=>false]),
         ]);
         $role->save();
 
         $role2 = new User\Role();
         $role2->setName('dummyRole');
-        $role2->setWorkspacesObject([
+        $role2->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'delete'=>false, 'publish'=>false ]),
         ]);
         $role2->save();
@@ -173,23 +202,25 @@ class ModelAssetPermissionsTest extends ModelTestCase
         //create user 1
         $this->userPermissionTest1 = new User();
         $this->userPermissionTest1->setName('Permissiontest1');
-        $this->userPermissionTest1->setPermissions(['objects']);
+        $this->userPermissionTest1->setPermissions(['assets']);
         $this->userPermissionTest1->setRoles([$role->getId(), $role2->getId()]);
-        $this->userPermissionTest1->setWorkspacesObject([
+        $this->userPermissionTest1->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true, 'create'=> true, 'rename'=> true]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->c->getId(), 'cPath' => $this->c->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->abcdefghjkl->getId(), 'cPath' => $this->abcdefghjkl->getFullpath(), 'list' => true, 'view' => true]),
         ]);
         $this->userPermissionTest1->save();
 
         //create user 2
         $this->userPermissionTest2 = new User();
         $this->userPermissionTest2->setName('Permissiontest2');
-        $this->userPermissionTest2->setPermissions(['objects']);
+        $this->userPermissionTest2->setPermissions(['assets']);
         $this->userPermissionTest2->setRoles([$role->getId(), $role2->getId()]);
-        $this->userPermissionTest2->setWorkspacesObject([
+        $this->userPermissionTest2->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
@@ -245,6 +276,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
 
     public function testHasChildren()
     {
+        $this->doHasChildrenTest($this->a, true, true, false); //didn't work before
         $this->doHasChildrenTest($this->permissionfoo, true, true, true); //didn't work before
         $this->doHasChildrenTest($this->bars, true, true, true);
         $this->doHasChildrenTest($this->hugo, false, false, false);
@@ -347,8 +379,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doAreAllowedTest($this->groupfolder, ['delete'=> 1,'publish' =>0], false, true, false);
 
         //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for admin and user1 to get to `c`
-//        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
-//        $this->doAreAllowedTest($this->a, ['list'=> 1, 'delete'=> 0], false, true, false);
+        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
+        $this->doAreAllowedTest($this->a, ['list'=> 1, 'delete'=> 0], false, true, false);
 
         //usertestobject should inherit the permisson from userfolder
         $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'delete'=> 0], false, true, false);
@@ -396,7 +428,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->assertCount(
             $responseData['total'],
             $responseData['nodes'],
-            print_r($responseData['nodes'], true).print_r($responseData['total'], true).'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
+            'Assert total count of response matches count of nodes array for `' . $element->getFullpath() . '` for user `' . $user->getName() . '`'
         );
 
         $this->assertCount(
@@ -629,7 +661,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
 //
 //        //update role
 //        $role = User\Role::getByName('Testrole');
-//        $role->setWorkspacesObject([
+//        $role->setWorkspacesAsset([
 //            (new User\Workspace\Asset())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
 //            (new User\Workspace\Asset())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getFullpath(), 'list' => true, 'view' => true]),
 //        ]);

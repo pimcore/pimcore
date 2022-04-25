@@ -44,6 +44,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      * /permissionbar/foo --> not allowed
      * /permissionbar/foo/hiddenobject --> ??       --> should not be found
      *
+     * /permissioncpath --> not specified
+     * /permissioncpath/a --> not specified
+     * /permissioncpath/a/b --> not specified
+     * /permissioncpath/a/b/c --> allowed
+     * /permissioncpath/abcdefghjkl --> allowed
      *
      * -- only for many elements search test
      * /manyElemnents --> not allowed
@@ -109,8 +114,33 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      */
     protected $grouptestobject;
 
+    /**
+     * @var Document\Folder
+     */
+    protected $a;
+    /**
+     * @var Document\Folder
+     */
+    protected $b;
+    /**
+     * @var Document
+     */
+    protected $c;
+    /**
+     * @var Document
+     */
+    protected $abcdefghjkl;
+
+
     protected function prepareObjectTree()
     {
+        //example based on https://github.com/pimcore/pimcore/issues/11540
+        $this->permissioncpath = $this->createFolder('permissioncpath', 1);
+        $this->a = $this->createFolder('a', $this->permissioncpath->getId());
+        $this->b = $this->createFolder('b', $this->a->getId());
+        $this->c = $this->createPage('c', $this->b->getId());
+        $this->abcdefghjkl = $this->createPage('abcdefghjkl', $this->permissioncpath->getId());
+
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
         $this->foo = $this->createFolder('foo', $this->permissionbar->getId());
@@ -158,14 +188,14 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         //create role
         $role = new User\Role();
         $role->setName('Testrole');
-        $role->setWorkspacesObject([
+        $role->setWorkspacesDocument([
             (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true, 'save'=>true, 'publish'=>false]),
         ]);
         $role->save();
 
         $role2 = new User\Role();
         $role2->setName('dummyRole');
-        $role2->setWorkspacesObject([
+        $role2->setWorkspacesDocument([
             (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>false, 'publish'=>false ]),
         ]);
         $role2->save();
@@ -173,23 +203,25 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         //create user 1
         $this->userPermissionTest1 = new User();
         $this->userPermissionTest1->setName('Permissiontest1');
-        $this->userPermissionTest1->setPermissions(['objects']);
+        $this->userPermissionTest1->setPermissions(['documents']);
         $this->userPermissionTest1->setRoles([$role->getId(), $role2->getId()]);
-        $this->userPermissionTest1->setWorkspacesObject([
+        $this->userPermissionTest1->setWorkspacesDocument([
             (new User\Workspace\Document())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Document())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Document())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Document())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Document())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true, 'create'=> true, 'rename'=> true]),
+            (new User\Workspace\Document())->setValues(['cId' => $this->c->getId(), 'cPath' => $this->c->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Document())->setValues(['cId' => $this->abcdefghjkl->getId(), 'cPath' => $this->abcdefghjkl->getFullpath(), 'list' => true, 'view' => true]),
         ]);
         $this->userPermissionTest1->save();
 
         //create user 2
         $this->userPermissionTest2 = new User();
         $this->userPermissionTest2->setName('Permissiontest2');
-        $this->userPermissionTest2->setPermissions(['objects']);
+        $this->userPermissionTest2->setPermissions(['documents']);
         $this->userPermissionTest2->setRoles([$role->getId(), $role2->getId()]);
-        $this->userPermissionTest2->setWorkspacesObject([
+        $this->userPermissionTest2->setWorkspacesDocument([
             (new User\Workspace\Document())->setValues(['cId' => $this->permissionfoo->getId(), 'cPath' => $this->permissionfoo->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Document())->setValues(['cId' => $this->permissionbar->getId(), 'cPath' => $this->permissionbar->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Document())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
@@ -245,6 +277,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
     public function testHasChildren()
     {
+        $this->doHasChildrenTest($this->a, true, true, false); //didn't work before
         $this->doHasChildrenTest($this->permissionfoo, true, true, true); //didn't work before
         $this->doHasChildrenTest($this->bars, true, true, true);
         $this->doHasChildrenTest($this->hugo, false, false, false);
@@ -346,9 +379,9 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         // Checks User1 is correctly getting the workspace rule from roles
         $this->doAreAllowedTest($this->groupfolder, ['save'=> 1,'publish' =>0], false, true, false);
 
-//        //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for admin and user1 to get to `c`
-//        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
-//        $this->doAreAllowedTest($this->a, ['list'=> 1, 'save'=> 0], false, true, false);
+        //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for admin and user1 to get to `c`
+        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
+        $this->doAreAllowedTest($this->a, ['list'=> 1, 'save'=> 0], false, true, false);
 
         //usertestobject should inherit the permisson from userfolder
         $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'save'=> 0], false, true, false);
@@ -626,7 +659,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 //
 //        //update role
 //        $role = User\Role::getByName('Testrole');
-//        $role->setWorkspacesObject([
+//        $role->setWorkspacesDocument([
 //            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
 //            (new User\Workspace\Document())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getFullpath(), 'list' => true, 'view' => true]),
 //        ]);
