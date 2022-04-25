@@ -206,7 +206,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
                             foreach ($categories as $c) {
                                 $categoryIds = [];
 
-                                $currentCategory = Concrete::getById($c);
+                                $currentCategory = Concrete::getById((int) $c);
                                 while ($currentCategory instanceof AbstractCategory) {
                                     $categoryIds[$currentCategory->getId()] = $currentCategory->getId();
 

@@ -73,7 +73,7 @@ Now editors are able to put elements onto the renderlet in the editmode.
 public function myGalleryAction(Request $request)
 {
     if ('asset' === $request->get('type')) {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         if ('folder' === $asset->getType()) {
             return [
                 'assets' => $asset->getChildren()

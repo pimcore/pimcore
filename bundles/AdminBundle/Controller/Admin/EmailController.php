@@ -130,7 +130,7 @@ class EmailController extends AdminController
         }
 
         $type = $request->get('type');
-        $emailLog = Tool\Email\Log::getById($request->get('id'));
+        $emailLog = Tool\Email\Log::getById((int) $request->get('id'));
 
         if ($request->get('type') == 'text') {
             return $this->render('@PimcoreAdmin/Admin/Email/text.html.twig', ['log' => $emailLog->getTextLog()]);
@@ -259,7 +259,7 @@ class EmailController extends AdminController
         }
 
         $success = false;
-        $emailLog = Tool\Email\Log::getById($request->get('id'));
+        $emailLog = Tool\Email\Log::getById((int) $request->get('id'));
         if ($emailLog instanceof Tool\Email\Log) {
             $emailLog->delete();
             $success = true;
@@ -286,7 +286,7 @@ class EmailController extends AdminController
         }
 
         $success = false;
-        $emailLog = Tool\Email\Log::getById($request->get('id'));
+        $emailLog = Tool\Email\Log::getById((int) $request->get('id'));
 
         if ($emailLog instanceof Tool\Email\Log) {
             $mail = new Mail();

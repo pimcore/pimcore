@@ -760,8 +760,8 @@ class Service extends Model\Element\Service
                 $field = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
                 $getter = 'get' . ucfirst($field);
 
                 if (method_exists($object, $getter)) {
@@ -1913,8 +1913,8 @@ class Service extends Model\Element\Service
             if ($type == 'classificationstore') {
                 $fieldname = $fieldParts[2];
                 $groupKeyId = explode('-', $fieldParts[3]);
-                $groupId = $groupKeyId[0];
-                $keyId = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyId = (int) $groupKeyId[1];
 
                 $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
                 $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
@@ -1980,8 +1980,8 @@ class Service extends Model\Element\Service
                     if ($type == 'classificationstore') {
                         $fieldname = $fieldParts[2];
                         $groupKeyId = explode('-', $fieldParts[3]);
-                        $groupId = $groupKeyId[0];
-                        $keyId = $groupKeyId[1];
+                        $groupId = (int) $groupKeyId[0];
+                        $keyId = (int) $groupKeyId[1];
                         $getter = 'get' . ucfirst($fieldname);
                         if (method_exists($object, $getter)) {
                             $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);

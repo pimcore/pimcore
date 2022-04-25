@@ -374,15 +374,11 @@ class DefaultFindologic implements ProductListInterface
             switch ($this->getVariantMode()) {
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
-                    $id = $item['id'];
-
+                    $id = (int) $item['id'];
                     break;
-
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
-
-                    break;
             }
 
             if ($id) {

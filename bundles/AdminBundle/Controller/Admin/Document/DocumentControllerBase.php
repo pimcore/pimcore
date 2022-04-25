@@ -184,10 +184,9 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function saveToSessionAction(Request $request)
     {
-        if ($request->get('id')) {
-            $documentId = $request->get('id');
+        if ($documentId = (int) $request->get('id')) {
             if (!$document = Model\Document\Service::getElementFromSession('document', $documentId)) {
-                $document = Model\Document::getById($request->get('id'));
+                $document = Model\Document\PageSnippet::getById($documentId);
                 $document = $this->getLatestVersion($document);
             }
 
@@ -307,7 +306,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function changeMasterDocumentAction(Request $request)
     {
-        $doc = Model\Document::getById($request->get('id'));
+        $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setEditables([]);
             $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));

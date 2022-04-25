@@ -89,8 +89,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteRelationAction(Request $request): JsonResponse
     {
-        $keyId = $request->get('keyId');
-        $groupId = $request->get('groupId');
+        $keyId = (int) $request->get('keyId');
+        $groupId = (int) $request->get('groupId');
 
         $config = new Classificationstore\KeyGroupRelation();
         $config->setKeyId($keyId);
@@ -238,8 +238,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $storeIdFromDefinition = 0;
         $allowedCollectionIds = [];
-        if ($request->get('oid')) {
-            $object = DataObject\Concrete::getById($request->get('oid'));
+        if ($oid = $request->get('oid')) {
+            $object = DataObject\Concrete::getById((int) $oid);
             $class = $object->getClass();
             /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
@@ -441,8 +441,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
             }
         }
 
-        if ($request->get('oid')) {
-            $object = DataObject\Concrete::getById($request->get('oid'));
+        if ($oid = $request->get('oid')) {
+            $object = DataObject\Concrete::getById((int) $oid);
             $class = $object->getClass();
             /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
@@ -988,8 +988,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             $allowedGroupIds = null;
 
-            if ($request->get('oid')) {
-                $object = DataObject\Concrete::getById($request->get('oid'));
+            if ($oid = $request->get('oid')) {
+                $object = DataObject\Concrete::getById((int) $oid);
                 $class = $object->getClass();
                 /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));

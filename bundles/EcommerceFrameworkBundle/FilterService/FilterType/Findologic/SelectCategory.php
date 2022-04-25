@@ -87,8 +87,8 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         if (!empty($value)) {
             $value = trim($value);
-            if (AbstractCategory::getById($value)) {
-                $productList->setCategory(AbstractCategory::getById($value));
+            if ($category = AbstractCategory::getById((int) $value)) {
+                $productList->setCategory($category);
             }
         }
 

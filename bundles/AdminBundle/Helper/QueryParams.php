@@ -49,8 +49,8 @@ class QueryParams
                 $fieldname = $parts[2];
                 $groupKeyId = $parts[3];
                 $groupKeyId = explode('-', $groupKeyId);
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
 
                 return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
             }

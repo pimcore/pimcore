@@ -208,7 +208,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
-        $order = OnlineShopOrder::getById($request->get('id'));
+        $order = OnlineShopOrder::getById((int) $request->get('id'));
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -383,7 +383,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -417,7 +417,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -450,7 +450,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
