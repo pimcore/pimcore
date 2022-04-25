@@ -97,8 +97,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     type: "asset"
                 }
             });
-
-            pimcore.helpers.forgetElementToBeUnlockedOnClose(this.id, 'asset');
         }.bind(this));
 
         // remove this instance when the panel is closed

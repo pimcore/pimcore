@@ -203,8 +203,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     type: "object"
                 }
             });
-
-            pimcore.helpers.forgetElementToBeUnlockedOnClose(this.id, 'object');
         }.bind(this));
 
         // remove this instance when the panel is closed
