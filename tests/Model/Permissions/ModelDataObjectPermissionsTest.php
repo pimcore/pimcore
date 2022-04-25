@@ -263,7 +263,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         TestHelper::cleanUp();
 
         $this->prepareObjectTree();
-        $this->assetElement = $this->createAsset('assetelement', 1);
+        $this->assetElement = $this->createAsset('assetelement.gif', 1);
         $this->prepareUsers();
     }
 
