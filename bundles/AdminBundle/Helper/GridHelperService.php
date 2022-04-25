@@ -781,7 +781,7 @@ class GridHelperService
 
                 if ($filterField == 'fullpath') {
                     $filterField = 'CONCAT(path,filename)';
-                }else {
+                } else {
                     $filterField = $db->quoteIdentifier($filterField);
                 }
 
