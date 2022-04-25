@@ -1290,7 +1290,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @param Request $request
      *
-     * @return StreamedResponse|JsonResponse
+     * @return StreamedResponse|JsonResponse|BinaryFileResponse
      */
     public function getImageThumbnailAction(Request $request)
     {
