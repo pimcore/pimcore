@@ -43,7 +43,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @return array
      */
-    private function getValidObjectVars() {
+    private function getValidObjectVars()
+    {
         $data = $this->model->getObjectVars();
 
         foreach ($data as $key => $value) {
