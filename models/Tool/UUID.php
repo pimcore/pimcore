@@ -156,7 +156,9 @@ final class UUID extends Model\AbstractModel
         $uuid = Uid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
         $this->uuid = $uuid->toRfc4122();
 
-        $this->getDao()->save();
+        if (!$this->uuidExists($this->uuid)) {
+            $this->getDao()->create();
+        }
 
         return $this->uuid;
     }
@@ -223,6 +225,18 @@ final class UUID extends Model\AbstractModel
         $self = new self;
 
         return $self->getDao()->getByUuid($uuid);
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public static function uuidExists($uuid)
+    {
+        $self = new self;
+
+        return $self->getDao()->exists($uuid);
     }
 
     /**

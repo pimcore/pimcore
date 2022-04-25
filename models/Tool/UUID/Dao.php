@@ -39,6 +39,19 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insertOrUpdate(self::TABLE_NAME, $data);
     }
 
+    public function create()
+    {
+        $data = $this->model->getObjectVars();
+
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))) {
+                unset($data[$key]);
+            }
+        }
+
+        $this->db->insert(self::TABLE_NAME, $data);
+    }
+
     /**
      * @throws \Exception
      */
@@ -63,5 +76,17 @@ class Dao extends Model\Dao\AbstractDao
         $model->setValues($data);
 
         return $model;
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public function exists($uuid)
+    {
+        $result = $this->db->fetchOne('SELECT EXISTS(SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?)', [$uuid]);
+
+        return (bool)$result;
     }
 }
