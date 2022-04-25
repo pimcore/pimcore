@@ -443,7 +443,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
-                    Logger::err($e);
+                    Logger::err((string) $e);
 
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }

@@ -79,7 +79,7 @@ class Tree extends DAV\Tree
             $asset->setUserModification($user->getId());
             $asset->save();
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 }

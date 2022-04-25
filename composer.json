@@ -230,6 +230,9 @@
   "config": {
     "preferred-install": {
       "symfony/symfony": "source"
+    },
+    "allow-plugins": {
+      "eloquent/composer-npm-bridge": false
     }
   }
 }

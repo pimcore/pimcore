@@ -138,7 +138,7 @@ class ExtJSCommand extends AbstractCommand
     {
         $depth = count(debug_backtrace());
         if ($depth > 100) {
-            Logger::error($depth);
+            Logger::error('Depth: ' . $depth);
         }
 
         if (is_array($item['requires'])) {

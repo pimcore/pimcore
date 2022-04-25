@@ -140,7 +140,7 @@ class GeoLocation implements DataProviderInterface
             try {
                 return new GeoLocationModel($latitude, $longitude, $altitude);
             } catch (\Throwable $e) {
-                $this->logger->error($e);
+                $this->logger->error((string) $e);
             }
         }
     }

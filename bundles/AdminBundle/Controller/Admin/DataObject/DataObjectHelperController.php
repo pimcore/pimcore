@@ -708,7 +708,7 @@ class DataObjectHelperController extends AdminController
 
             return $calculatedColumnConfig;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 
@@ -1696,7 +1696,7 @@ class DataObjectHelperController extends AdminController
                 }
             }
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
 
             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }

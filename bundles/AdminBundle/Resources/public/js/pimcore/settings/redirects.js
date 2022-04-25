@@ -15,9 +15,40 @@ pimcore.registerNS("pimcore.settings.redirects");
 pimcore.settings.redirects = Class.create({
 
     initialize: function () {
-        this.getTabPanel();
+        this.getData();
     },
 
+    getData: function () {
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_redirects_statuscodes'),
+            success: function (response) {
+                this.data = Ext.decode(response.responseText);
+                //valid status codes
+                try {
+                    this.statusCodes = new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        data: this.data.config,
+                        proxy: {
+                            type: 'memory',
+                            reader: {
+                                rootProperty: 'statuscodes'
+                            }
+                        },
+                        fields: ['statusCode', 'display']
+                    });
+                } catch (e2) {
+                    this.statusCodes = new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        fields: ['statusCode', 'display']
+                    });
+                }
+
+
+                this.getTabPanel();
+
+            }.bind(this)
+        });
+    },
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -179,13 +210,9 @@ pimcore.settings.redirects = Class.create({
                 }
             },
             {text: t("status"), flex: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
-                store: [
-                    ["301", "Moved Permanently (301)"],
-                    ["307", "Temporary Redirect (307)"],
-                    ["300", "Multiple Choices (300)"],
-                    ["302", "Found (302)"],
-                    ["303", "See Other (303)"]
-                ],
+                store: this.statusCodes,
+                displayField: 'display',
+                valueField: 'statusCode',
                 mode: "local",
                 typeAhead: false,
                 editable: false,

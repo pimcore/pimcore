@@ -939,7 +939,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $server->start();
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         exit;

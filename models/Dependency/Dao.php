@@ -86,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $id) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $type));
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 
@@ -100,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $this->model->getSourceId()) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $this->model->getSourceType()));
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 

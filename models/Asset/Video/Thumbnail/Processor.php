@@ -273,7 +273,7 @@ class Processor
 
                 $converter->destroy();
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

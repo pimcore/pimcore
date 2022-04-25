@@ -86,7 +86,7 @@ SQL;
 
                 self::$cache[$rule->getId()] = $conn->fetchRow($query);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

@@ -109,7 +109,7 @@ class Dao extends Model\Element\Dao
             'parentId' => $this->model->getParentId(),
         ]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     public function update()

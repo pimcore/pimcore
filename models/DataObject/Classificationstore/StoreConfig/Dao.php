@@ -117,6 +117,6 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $this->db->insert(self::TABLE_NAME_STORES, []);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

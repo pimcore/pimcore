@@ -105,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
             // create in database
             $this->db->insert('redirects', []);
 
-            $this->model->setId($this->db->lastInsertId());
+            $this->model->setId((int) $this->db->lastInsertId());
         }
 
         $this->updateModificationInfos();

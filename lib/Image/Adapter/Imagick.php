@@ -413,7 +413,7 @@ class Imagick extends Adapter
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                     $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
                 } catch (\Exception $e) {
-                    Logger::warn($e);
+                    Logger::warn((string) $e);
                 }
             }
         }
@@ -1021,7 +1021,7 @@ class Imagick extends Adapter
                 }
             }
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
         }
 
         return false;

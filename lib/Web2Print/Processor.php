@@ -128,7 +128,7 @@ abstract class Processor
             $document->setLastGenerateMessage('');
             $document->save();
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
             $document->setLastGenerateMessage($e->getMessage());
             $document->save();
         }
