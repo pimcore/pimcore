@@ -136,8 +136,8 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->permissioncpath = $this->createFolder('permissioncpath', 1);
         $this->a = $this->createFolder('a', $this->permissioncpath->getId());
         $this->b = $this->createFolder('b', $this->a->getId());
-        $this->c = $this->createAsset('c', $this->b->getId());
-        $this->abcdefghjkl = $this->createAsset('abcdefghjkl', $this->permissioncpath->getId());
+        $this->c = $this->createAsset('c.gif', $this->b->getId());
+        $this->abcdefghjkl = $this->createAsset('abcdefghjkl.gif', $this->permissioncpath->getId());
 
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
