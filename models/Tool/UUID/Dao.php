@@ -85,8 +85,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function exists($uuid)
     {
-        $result = $this->db->fetchOne('SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?', [$uuid]);
-
-        return (bool)$result;
+        return (bool) $this->db->fetchOne('SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?', [$uuid]);
     }
 }
