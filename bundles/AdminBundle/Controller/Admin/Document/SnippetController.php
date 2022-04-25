@@ -91,13 +91,13 @@ class SnippetController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
-        $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
         // unset useless data
         $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
+        $data['locked'] = $snippet->isLocked();
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);

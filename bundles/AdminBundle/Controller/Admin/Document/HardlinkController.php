@@ -86,10 +86,10 @@ class HardlinkController extends DocumentControllerBase
         }
 
         $link = clone $link;
-        $link->setLocked($link->isLocked());
         $link->setParent(null);
 
         $data = $link->getObjectVars();
+        $data['locked'] = $link->isLocked();
         $data['scheduledTasks'] = array_map(
             static function (Task $task) {
                 return $task->getObjectVars();

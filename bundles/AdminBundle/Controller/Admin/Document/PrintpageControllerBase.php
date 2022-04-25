@@ -57,13 +57,13 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         $page = $this->getLatestVersion($page, $draftVersion);
 
         $page->getVersions();
-        $page->setLocked($page->isLocked());
 
         // unset useless data
         $page->setEditables(null);
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
