@@ -28,19 +28,22 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save()
     {
-        $data = $this->model->getObjectVars();
-
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))) {
-                unset($data[$key]);
-            }
-        }
+        $data = $this->getValidObjectVars();
 
         $this->db->insertOrUpdate(self::TABLE_NAME, $data);
     }
 
     public function create()
     {
+        $data = $this->getValidObjectVars();
+
+        $this->db->insert(self::TABLE_NAME, $data);
+    }
+
+    /**
+     * @return array
+     */
+    private function getValidObjectVars() {
         $data = $this->model->getObjectVars();
 
         foreach ($data as $key => $value) {
@@ -49,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insert(self::TABLE_NAME, $data);
+        return $data;
     }
 
     /**
