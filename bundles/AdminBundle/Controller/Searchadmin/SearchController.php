@@ -215,17 +215,23 @@ class SearchController extends AdminController
         //filtering for tags
         if (!empty($allParams['tagIds'])) {
             $tagIds = $allParams['tagIds'];
+
+            $tagsTypeCondition = '';
+            if (is_array($types) && !empty($types[0])) {
+                $tagsTypeCondition = 'ctype IN (\'' . implode('\',\'', $types) . '\') AND';
+            } elseif (!is_array($types)) {
+                $tagsTypeCondition = 'ctype = ' . $db->quote($types) . ' AND ';
+            }
+
             foreach ($tagIds as $tagId) {
-                foreach ($types as $type) {
-                    if (($allParams['considerChildTags'] ?? 'false') === 'true') {
-                        $tag = Element\Tag::getById($tagId);
-                        if ($tag) {
-                            $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
-                        }
-                    } else {
-                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' .(int)$tagId. ')';
+                if (($allParams['considerChildTags'] ?? 'false') === 'true') {
+                    $tag = Element\Tag::getById($tagId);
+                    if ($tag) {
+                        $tagPath = $tag->getFullIdPath();
+                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
                     }
+                } else {
+                    $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE '.$tagsTypeCondition.' tagid = ' .(int)$tagId. ')';
                 }
             }
         }

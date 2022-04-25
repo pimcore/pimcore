@@ -133,7 +133,7 @@ pimcore.settings.redirects = Class.create({
                         var input = field;
                         var proxy = this.store.getProxy();
                         proxy.extraParams.filter = input.getValue();
-                        this.store.load();
+                        this.pagingtoolbar.moveFirst();
                     }
                 }.bind(this)
             }

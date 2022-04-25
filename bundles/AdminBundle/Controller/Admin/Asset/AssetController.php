@@ -1303,7 +1303,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @param Request $request
      *
-     * @return StreamedResponse|JsonResponse
+     * @return StreamedResponse|JsonResponse|BinaryFileResponse
      */
     public function getImageThumbnailAction(Request $request)
     {
@@ -1375,6 +1375,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumbnail->getStream();
+
+        if (!$stream) {
+            return new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/filetype-not-supported.svg');
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
