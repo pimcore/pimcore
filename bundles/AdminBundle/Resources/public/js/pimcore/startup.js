@@ -150,7 +150,7 @@ Ext.onReady(function () {
         }
 
         var openTabs = pimcore.helpers.getOpenTab();
-        if(openTabs && openTabs.length > 0) {
+        if(openTabs.length > 0) {
             var elementsToBeUnlocked = [];
             for (var i = 0; i < openTabs.length; i++) {
                 var elementIdentifier = tabId.split("_");
