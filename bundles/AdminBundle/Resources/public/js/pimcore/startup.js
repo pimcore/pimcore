@@ -149,9 +149,16 @@ Ext.onReady(function () {
             }
         }
 
-        var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
-        if(elementsToBeUnlocked) {
-            elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
+        var openTabs = pimcore.helpers.getOpenTab();
+        if(openTabs) {
+            var elementsToBeUnlocked = [];
+            for (var i = 0; i < openTabs.length; i++) {
+                var elementIdentifier = tabId.split("_");
+                if(['object', 'asset', 'document'].indexOf(elementIdentifier[0]) > -1) {
+                    elementsToBeUnlocked.push({ id: elementIdentifier[1], type: elementIdentifier[0] });
+                }
+            }
+
             Ext.Ajax.request({
                 method: "PUT",
                 async: false,

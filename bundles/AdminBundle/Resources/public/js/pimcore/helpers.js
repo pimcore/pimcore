@@ -72,31 +72,6 @@ pimcore.helpers.openWelcomePage = function (keyCode, e) {
     }
 };
 
-pimcore.helpers.unlockElementOnClose = function (id, type) {
-    var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
-    if (!elementsToBeUnlocked) {
-        elementsToBeUnlocked = [];
-    } else {
-        elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-    }
-    elementsToBeUnlocked.push({ id: id, type: type });
-    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
-};
-
-pimcore.helpers.forgetElementToBeUnlockedOnClose = function (id, type) {
-    var elementsToBeUnlocked = localStorage.getItem('pimcore_opened_elements');
-    if (!elementsToBeUnlocked) {
-        return;
-    }
-
-    elementsToBeUnlocked = JSON.parse(elementsToBeUnlocked);
-    elementsToBeUnlocked = elementsToBeUnlocked.filter(function(element) {
-        return element.id != id || element.type != type;
-    });
-
-    localStorage.setItem("pimcore_opened_elements", JSON.stringify(elementsToBeUnlocked));
-};
-
 pimcore.helpers.openAsset = function (id, type, options) {
 
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
@@ -109,8 +84,6 @@ pimcore.helpers.openAsset = function (id, type, options) {
         }
 
         pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);
-
-        pimcore.helpers.unlockElementOnClose(id, 'asset');
 
         if (options != undefined) {
             if (options.ignoreForHistory) {
@@ -134,8 +107,6 @@ pimcore.helpers.closeAsset = function (id) {
             panel.close();
         }
 
-        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'asset');
-
         pimcore.helpers.removeTreeNodeLoadingIndicator("asset", id);
         pimcore.globalmanager.remove("asset_" + id);
     } catch (e) {
@@ -148,8 +119,6 @@ pimcore.helpers.openDocument = function (id, type, options) {
         if (pimcore.document[type]) {
             pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id, options));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
-
-            pimcore.helpers.unlockElementOnClose(id, 'document');
 
             if (options !== undefined) {
                 if (options.ignoreForHistory) {
@@ -172,8 +141,6 @@ pimcore.helpers.closeDocument = function (id) {
             panel.close();
         }
 
-        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'document');
-
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", id);
         pimcore.globalmanager.remove("document_" + id);
     } catch (e) {
@@ -191,8 +158,6 @@ pimcore.helpers.openObject = function (id, type, options) {
 
         pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id, options));
         pimcore.helpers.rememberOpenTab("object_" + id + "_" + type);
-
-        pimcore.helpers.unlockElementOnClose(id, 'object');
 
         if (options !== undefined) {
             if (options.ignoreForHistory) {
@@ -214,8 +179,6 @@ pimcore.helpers.closeObject = function (id) {
         if (panel) {
             panel.close();
         }
-
-        pimcore.helpers.forgetElementToBeUnlockedOnClose(id, 'object');
 
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
         pimcore.globalmanager.remove("object_" + id);
@@ -918,11 +881,6 @@ pimcore.helpers.rememberOpenTab = function (item, forceOpenTab) {
         openTabs.push(item);
     }
 
-    // limit to the latest 10
-    openTabs.reverse();
-    openTabs.splice(10, 1000);
-    openTabs.reverse();
-
     // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
     if (forceOpenTab) {
@@ -953,6 +911,12 @@ pimcore.helpers.forceOpenMemorizedTabsOnce = function () {
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
+
+    // limit to the latest 10
+    openTabs.reverse();
+    openTabs.splice(10, 1000);
+    openTabs.reverse();
+
     var openedTabs = [];
 
     for (var i = 0; i < openTabs.length; i++) {
