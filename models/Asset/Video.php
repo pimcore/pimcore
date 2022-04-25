@@ -171,6 +171,13 @@ class Video extends Model\Asset
             return new Video\ImageThumbnail(null); // returns error image
         }
 
+        if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
+            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
+            $this->addToUpdateTaskQueue();
+
+            return new Video\ImageThumbnail(null); // returns error image
+        }
+
         return new Video\ImageThumbnail($this, $thumbnailName, $timeOffset, $imageAsset);
     }
 
