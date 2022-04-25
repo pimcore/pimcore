@@ -47,9 +47,9 @@ class Dao extends Model\Dao\AbstractDao
         // requires
         $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.targetid=objects.o_id AND dependencies.targettype="object"
-            LEFT JOIN assets ON dependencies.targetid=assets.id AND dependencies.targettype="asset"
-            LEFT JOIN documents ON dependencies.targetid=documents.id AND dependencies.targettype="document"
+            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id 
+            LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
+            LEFT JOIN documents ON dependencies.targettype="document" AND dependencies.targetid=documents.id
             WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
             ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
             $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targetid = ? AND targettype = ?', [$id, $type]);
+            $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
             if (is_array($data)) {
                 foreach ($data as $row) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -187,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
             LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype="object"
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype="asset"
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype="document"
-            WHERE dependencies.targetid = ? AND dependencies.targettype = ?
+            WHERE dependencies.targettype = ? AND dependencies.targetid = ?
             ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename
         ';
 
@@ -195,7 +195,7 @@ class Dao extends Model\Dao\AbstractDao
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $data = $this->db->fetchAll($query, [$this->model->getSourceId(), $this->model->getSourceType()]);
+        $data = $this->db->fetchAll($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $requiredBy = [];
 
@@ -237,23 +237,23 @@ class Dao extends Model\Dao\AbstractDao
             $orderDirection = 'ASC';
         }
 
-        $query = '
+        $query = "
             SELECT id, type, path
             FROM (
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
                 FROM dependencies d
                 JOIN objects o ON o.o_id = d.sourceid
-                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'object'
+                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'document'
+                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'asset'
+                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'
             ) dep
             ORDER BY " . $orderBy . ' ' . $orderDirection;
 
@@ -277,6 +277,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredByTotalCount()
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targettype = ? AND targetid = ?', [$this->model->getSourceType(), $this->model->getSourceId()]);
     }
 }
