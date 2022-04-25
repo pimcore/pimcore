@@ -104,7 +104,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert(self::$dbTable, []);
 
         $date = time();
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
         $this->model->setModificationDate($date);
     }
 

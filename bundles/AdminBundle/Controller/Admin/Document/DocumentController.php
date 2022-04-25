@@ -22,6 +22,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Image\Chromium;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -163,17 +164,21 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $db = Db::get();
 
             $list = new Document\Listing();
-            if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote($document->getId());
-            } else {
+
+            $condition = 'parentId =  ' . $db->quote($document->getId());
+
+            if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $condition = 'parentId = ' . $db->quote($document->getId()) . ' AND
-                (
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                    or
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                )';
+                $currentUserId = $this->getAdminUser()->getId();
+                $userIds[] = $currentUserId;
+
+                $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
+
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+                $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
 
             if ($filter) {
@@ -438,7 +443,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
-                    Logger::err($e);
+                    Logger::err((string) $e);
 
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -1123,7 +1128,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, $from, $to)
     {
         // return with error if prerequisites do not match
-        if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
+        if ((!Chromium::isSupported() && !HtmlToImage::isSupported()) || !class_exists('Imagick')) {
             return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
         }
 
@@ -1149,8 +1154,15 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        HtmlToImage::convert($fromUrl, $fromFile);
-        HtmlToImage::convert($toUrl, $toFile);
+        if (Chromium::isSupported()) {
+            $tool = Chromium::class;
+        } else {
+            $tool = HtmlToImage::class;
+        }
+
+        /** @var Chromium|HtmlToImage $tool */
+        $tool::convert($fromUrl, $fromFile);
+        $tool::convert($toUrl, $toFile);
 
         $image1 = new \Imagick($fromFile);
         $image2 = new \Imagick($toFile);

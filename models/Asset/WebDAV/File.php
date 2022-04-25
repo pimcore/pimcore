@@ -50,7 +50,7 @@ class File extends DAV\File
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      *
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
@@ -129,7 +129,9 @@ class File extends DAV\File
             $this->asset->setStream($file);
             $this->asset->save();
 
-            fclose($file);
+            if (is_resource($file)) {
+                fclose($file);
+            }
             unlink($tmpFile);
 
             return null;

@@ -103,21 +103,6 @@ final class Thumbnail
     }
 
     /**
-     * @return null|resource
-     */
-    public function getStream()
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getStream();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
-    /**
      * @param string $eventName
      *
      * @return bool

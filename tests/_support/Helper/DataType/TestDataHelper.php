@@ -1110,7 +1110,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $this->assertTrue(is_array($value) && count($value) == 1, 'expected one item');
 
-        /** @var $value DataObject\Data\UrlSlug */
+        /** @var DataObject\Data\UrlSlug $value */
         $value = $value[0];
         $value = $value->getSlug();
 

@@ -249,7 +249,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param string $condition
+     * @param array|string $condition
      * @param string $fieldname - must be set for elastic search
      */
     public function addCondition($condition, $fieldname = '')

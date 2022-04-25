@@ -660,7 +660,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
+     * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      */
     protected function updateChildren($target, $new)
@@ -1262,6 +1262,23 @@ class Service extends Model\AbstractModel
         $theCopy->setParent(null);
 
         return $theCopy;
+    }
+
+    /**
+     * @template T
+     *
+     * @param T $properties
+     *
+     * @return T
+     */
+    public static function cloneProperties(mixed $properties): mixed
+    {
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cid'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('ctype'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cpath'));
+
+        return $deepCopy->copy($properties);
     }
 
     /**

@@ -273,7 +273,7 @@ class Service extends Model\Element\Service
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
-        $new->setProperties($source->getProperties());
+        $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
@@ -798,7 +798,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {
@@ -1006,14 +1006,14 @@ class Service extends Model\Element\Service
 
         if ($user->getAdmin()) {
             $superLayout = new ClassDefinition\CustomLayout();
-            $superLayout->setId(-1);
+            $superLayout->setId('-1');
             $superLayout->setName('Master (Admin Mode)');
             $resultList[-1] = $superLayout;
         }
 
         if ($isMasterAllowed) {
             $master = new ClassDefinition\CustomLayout();
-            $master->setId(0);
+            $master->setId('0');
             $master->setName('Master');
             $resultList[0] = $master;
         }

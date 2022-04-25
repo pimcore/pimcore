@@ -373,7 +373,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * Check if document is can be used to generate a route
      *
-     * @param Document\PageSnippet $document
+     * @param Document|null $document
      *
      * @return bool
      */

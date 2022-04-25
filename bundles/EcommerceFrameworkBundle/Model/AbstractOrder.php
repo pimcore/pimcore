@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Carbon\Carbon;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\Element\AbstractElement;
 
 /**
@@ -192,7 +191,7 @@ abstract class AbstractOrder extends Concrete
     /**
      * returns latest payment info entry
      *
-     * @return AbstractPaymentInformation
+     * @return AbstractPaymentInformation|null
      */
     public function getLastPaymentInfo(): ?AbstractPaymentInformation
     {
@@ -429,7 +428,7 @@ abstract class AbstractOrder extends Concrete
     /**
      * Get voucherTokens - Voucher Tokens
      *
-     * @return array
+     * @return \Pimcore\Model\DataObject\OnlineShopVoucherToken[]
      */
     abstract public function getVoucherTokens(): array;
 
@@ -438,7 +437,7 @@ abstract class AbstractOrder extends Concrete
      *
      * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken[]|null $voucherTokens
      *
-     * @return OnlineShopOrder
+     * @return $this
      */
     abstract public function setVoucherTokens(?array $voucherTokens);
 
@@ -461,9 +460,9 @@ abstract class AbstractOrder extends Concrete
     /**
      * Set successorOrder - Successor Order
      *
-     * @param \Pimcore\Model\DataObject\OnlineShopOrder $successorOrder
+     * @param AbstractOrder|null $successorOrder
      *
-     * @return \Pimcore\Model\DataObject\OnlineShopOrder
+     * @return $this
      */
     abstract public function setSuccessorOrder(?\Pimcore\Model\Element\AbstractElement $successorOrder);
 }

@@ -315,7 +315,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @return mixed
+     * @return string|int|null
      */
     public function getSeriesId()
     {
@@ -323,7 +323,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param mixed $seriesId
+     * @param string|int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {

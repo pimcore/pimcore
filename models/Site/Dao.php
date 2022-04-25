@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setCreationDate($ts);
         $this->model->setModificationDate($ts);
         $this->db->insert('sites', ['rootId' => $this->model->getRootId()]);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     /**

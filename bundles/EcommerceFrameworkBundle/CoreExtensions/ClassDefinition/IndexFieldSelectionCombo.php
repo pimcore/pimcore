@@ -65,7 +65,7 @@ class IndexFieldSelectionCombo extends Select
                     ];
                 }
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

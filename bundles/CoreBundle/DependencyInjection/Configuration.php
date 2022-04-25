@@ -22,7 +22,6 @@ use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -179,6 +178,7 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
+        $this->buildRedirectsStatusCodes($rootNode);
 
         return $treeBuilder;
     }
@@ -205,6 +205,24 @@ final class Configuration implements ConfigurationInterface
                         ->defaultValue(1800)
                     ->end()
         ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('redirects')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('status_codes')
+                        ->info('List all redirect status codes.')
+                        ->prototype('scalar')
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -1034,7 +1052,6 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('context')
             ->useAttributeAsKey('name');
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry

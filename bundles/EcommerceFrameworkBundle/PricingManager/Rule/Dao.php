@@ -75,7 +75,7 @@ class Dao extends AbstractDao
     public function create()
     {
         $this->db->insert(self::TABLE_NAME, []);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     /**
