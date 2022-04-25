@@ -16,8 +16,7 @@ services:
 
     php-fpm:
 #        user: '1000:1000' # set to your uid:gid
-#        image: pimcore/pimcore:PHP8.1-fpm
-        build: .
+        image: pimcore/pimcore:PHP8.1-fpm
         environment:
             PHP_IDE_CONFIG: "serverName=localhost"
             COMPOSER_HOME: /var/www/html
