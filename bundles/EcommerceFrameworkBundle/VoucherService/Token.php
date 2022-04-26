@@ -147,7 +147,7 @@ class Token extends AbstractModel
 
     public function release($cart)
     {
-        return Reservation::releaseToken($this, $cart);
+        return Reservation::releaseToken($this->getToken(), $cart);
     }
 
     public function apply()

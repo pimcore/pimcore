@@ -119,8 +119,6 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
             $indexableObject = $worker->getTenantConfig()->getObjectById($id);
             if ($indexableObject instanceof IndexableInterface) {
                 $worker->prepareDataForIndex($indexableObject);
-            } else {
-                $worker->deleteFromIndex($indexableObject);
             }
         }
     }
