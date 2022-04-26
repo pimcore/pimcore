@@ -22,6 +22,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
+use Pimcore\Model\User;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -74,7 +75,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();
-            if ($user instanceof Model\User) {
+            if ($user instanceof User) {
                 $userId = $user->getId();
             }
             $this->setUserModification($userId);
@@ -191,11 +192,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @internal
-     *
+     * @param User|null $user
      * @return array
+     * @throws \Exception
+     * @internal
      */
-    public function getUserPermissions()
+    public function getUserPermissions(User $user = null)
     {
         $baseClass = Service::getBaseClassNameForElement($this);
         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClass;
@@ -205,19 +207,35 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $ignored = ['userId', 'cid', 'cpath', 'dao'];
         $permissions = [];
 
-        foreach ($vars as $name => $defaultValue) {
-            if (!in_array($name, $ignored)) {
-                $permissions[$name] = $this->isAllowed($name);
-            }
+        $columns = array_diff(array_keys($vars),$ignored);
+
+        foreach ($columns as $name) {
+            $permissions[$name] = 1;
         }
 
+        if (null === $user) {
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+        }
+        if (!$user || $user->isAdmin()) {
+            return $permissions;
+        }
+
+        $permissions = $this->getDao()->areAllowed($columns,$user);
+
+        foreach ($permissions as $type => $isAllowed){
+            $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+
+            $permissions[$type] = $event->getArgument('isAllowed');
+        }
         return $permissions;
     }
+
 
     /**
      * {@inheritdoc}
      */
-    public function isAllowed($type, ?Model\User $user = null)
+    public function isAllowed($type, ?User $user = null)
     {
         if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();

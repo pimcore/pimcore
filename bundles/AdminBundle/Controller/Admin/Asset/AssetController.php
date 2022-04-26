@@ -201,7 +201,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['filesize'] = $asset->getFileSize();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
-        $data['userPermissions'] = $asset->getUserPermissions();
+        $data['userPermissions'] = $asset->getUserPermissions($this->getAdminUser());
         $frontendPath = $asset->getFrontendFullPath();
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :
@@ -274,35 +274,36 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             // get assets
-            $childsList = new Asset\Listing();
-            $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
-            $childsList->filterAccessibleByUser($this->getAdminUser(), $asset);
+            $childrenList = new Asset\Listing();
+            $childrenList->addConditionParam('parentId = ?', [$asset->getId()]);
+            $childrenList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
             if (!is_null($filter)) {
-                $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
+                $childrenList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
             }
 
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
+            $childrenList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
-            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
+            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Asset\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            /** @var Asset\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-            $childs = $childsList->load();
+            $children = $childrenList->load();
 
-            $filteredTotalCount = $childsList->getTotalCount();
+            $filteredTotalCount = $childrenList->getTotalCount();
 
-            foreach ($childs as $childAsset) {
-                if ($childAsset->isAllowed('list')) {
-                    $assets[] = $this->getTreeNodeConfig($childAsset);
+            foreach ($children as $childAsset) {
+                $assetTreeNode = $this->getTreeNodeConfig($childAsset);
+                if ($assetTreeNode['permissions']['list'] == 1) {
+                    $assets[] = $assetTreeNode;
                 }
             }
         }
@@ -716,6 +717,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $asset = $element;
 
+        $permissions =  $asset->getUserPermissions($this->getAdminUser());
+        
         $tmpAsset = [
             'id' => $asset->getId(),
             'key' => $element->getKey(),
@@ -727,11 +730,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             'lockOwner' => $asset->getLocked() ? true : false,
             'elementType' => 'asset',
             'permissions' => [
-                'remove' => $asset->isAllowed('delete'),
-                'settings' => $asset->isAllowed('settings'),
-                'rename' => $asset->isAllowed('rename'),
-                'publish' => $asset->isAllowed('publish'),
-                'view' => $asset->isAllowed('view'),
+                'remove' => $permissions['delete'],
+                'settings' => $permissions['settings'],
+                'rename' => $permissions['rename'],
+                'publish' => $permissions['publish'],
+                'view' => $permissions['view'],
+                'list' => $permissions['list'],
             ],
         ];
 
@@ -742,7 +746,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$hasChildren;
             $tmpAsset['loaded'] = !$hasChildren;
-            $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
+            $tmpAsset['permissions']['create'] = $permissions['create'];
             $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
         } else {
             $tmpAsset['leaf'] = true;

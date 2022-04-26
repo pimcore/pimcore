@@ -113,15 +113,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $limit = 100;
             }
 
-            $childsList = new DataObject\Listing();
-            $childsList->setCondition($this->buildChildrenCondition($object, $filter, $view));
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
+            $childrenList = new DataObject\Listing();
+            $childrenList->setCondition($this->buildChildrenCondition($object, $filter, $view));
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
 
             if ($object->getChildrenSortBy() === 'index') {
-                $childsList->setOrderKey('objects.o_index ASC', false);
+                $childrenList->setOrderKey('objects.o_index ASC', false);
             } else {
-                $childsList->setOrderKey(
+                $childrenList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
                         $object->getChildrenSortBy(), $object->getChildrenSortOrder()
@@ -129,27 +129,30 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     false
                 );
             }
-            $childsList->setObjectTypes($objectTypes);
+            $childrenList->setObjectTypes($objectTypes);
 
-            Element\Service::addTreeFilterJoins($cv, $childsList);
+            Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var DataObject\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
-            $filteredTotalCount = $childsList->getTotalCount();
-            $childs = $childsList->load();
 
-            foreach ($childs as $child) {
-                $tmpObject = $this->getTreeNodeConfig($child);
+            /** @var DataObject\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-                if ($child->isAllowed('list', $this->getAdminUser())) {
-                    $objects[] = $tmpObject;
+            $children = $childrenList->load();
+            $filteredTotalCount = $childrenList->getTotalCount();
+
+            foreach ($children as $child) {
+                $objectTreeNode = $this->getTreeNodeConfig($child);
+                // this if is obsolete since as long as the change with #11714 about list on line 175-179 are working fine, we already filter the list=1 there
+                if ($objectTreeNode['permissions']['list'] == 1) {
+                    $objects[] = $objectTreeNode;
                 }
             }
+
             //pagination for custom view
             $total = $cv
                 ? $filteredTotalCount
@@ -289,7 +292,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
         $tmpObject['expanded'] = !$hasChildren;
-        $tmpObject['permissions'] = $child->getUserPermissions();
+        $tmpObject['permissions'] = $child->getUserPermissions($this->getAdminUser());
 
         if ($child->isLocked()) {
             $tmpObject['cls'] .= 'pimcore_treenode_locked ';
@@ -436,7 +439,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
-            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
+            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions($this->getAdminUser());
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
             $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = array_map(
@@ -715,7 +718,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['general']['o_locked'] = $object->isLocked();
 
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
+            $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
