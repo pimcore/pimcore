@@ -375,6 +375,7 @@ class DefaultFindologic implements ProductListInterface
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
                     $id = (int) $item['id'];
+
                     break;
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
