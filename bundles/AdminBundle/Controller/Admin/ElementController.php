@@ -75,7 +75,8 @@ class ElementController extends AdminController
      */
     public function unlockElementsAction(Request $request)
     {
-        foreach($request->get('elements') as $elementIdentifierData) {
+        $request = json_decode($request->getContent(), true) ?? [];
+        foreach($request['elements'] as $elementIdentifierData) {
             Element\Editlock::unlock($elementIdentifierData['id'], $elementIdentifierData['type']);
         }
 

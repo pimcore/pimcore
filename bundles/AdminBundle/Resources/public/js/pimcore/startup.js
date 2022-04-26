@@ -153,20 +153,20 @@ Ext.onReady(function () {
         if(openTabs.length > 0) {
             var elementsToBeUnlocked = [];
             for (var i = 0; i < openTabs.length; i++) {
-                var elementIdentifier = tabId.split("_");
+                var elementIdentifier = openTabs[i].split("_");
                 if(['object', 'asset', 'document'].indexOf(elementIdentifier[0]) > -1) {
                     elementsToBeUnlocked.push({ id: elementIdentifier[1], type: elementIdentifier[0] });
                 }
             }
 
-            Ext.Ajax.request({
-                method: "PUT",
-                async: false,
-                url: Routing.generate('pimcore_admin_element_unlockelements'),
-                jsonData: {elements: elementsToBeUnlocked}
-            });
-
-            localStorage.removeItem('pimcore_opened_elements');
+            if(elementsToBeUnlocked.length > 0) {
+                Ext.Ajax.request({
+                    method: "PUT",
+                    async: false,
+                    url: Routing.generate('pimcore_admin_element_unlockelements'),
+                    jsonData: { elements: elementsToBeUnlocked }
+                });
+            }
         }
     });
 
