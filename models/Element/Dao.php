@@ -110,10 +110,11 @@ abstract class Dao extends Model\Dao\AbstractDao
      * @param string $tableSuffix
      *
      * @return array
+     *
      * @internal
      */
-
-    protected function permissionByTypes(array $columns, User $user, string $tableSuffix){
+    protected function permissionByTypes(array $columns, User $user, string $tableSuffix)
+    {
         $permissions = [];
         foreach ($columns as $type) {
             $permissions[$type] = 0;
@@ -136,14 +137,15 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         if ($highestWorkspace) {
             //if it's the current user, this is the permission that rules them all, no need to check others
-            if ($highestWorkspace['userId'] == $currentUserId){
+            if ($highestWorkspace['userId'] == $currentUserId) {
                 foreach ($columns as $type) {
                     $permissions[$type] = $highestWorkspace[$type];
                 }
 
-                if ($permissions['list'] == 0){
-                    $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix,$userIds);
+                if ($permissions['list'] == 0) {
+                    $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix, $userIds);
                 }
+
                 return $permissions;
             }
 
@@ -163,6 +165,7 @@ abstract class Dao extends Model\Dao\AbstractDao
                 foreach ($objectPermissions as $workspace) {
                     if ($workspace[$type] == 1) {
                         $permissions[$type] = 1;
+
                         break;
                     }
                 }
@@ -171,20 +174,25 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         //when list=0, we look for any allowed children, so that can make possible to list the path of the folder in between
         //to reach that children by "exceptionally" turning list=0 to list=1
-        if ($permissions['list']==0){
-            $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix,$userIds);
+        if ($permissions['list']==0) {
+            $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix, $userIds);
         }
+
         return $permissions;
     }
 
     /**
      * for "path traversal" intending the list=1 on parent folder (with list=0) when there are nested children allowed
+     *
      * @param string $tableSuffix
      * @param array $userIds
+     *
      * @return int
+     *
      * @internal
      */
-    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds){
+    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds)
+    {
         $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
 
         $permissionsChildren = $this->db->fetchOne('

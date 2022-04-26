@@ -511,14 +511,17 @@ class Dao extends Model\Element\Dao
 
         return false;
     }
+
     /**
      * @param array $columns
      * @param User $user
+     *
      * @return array
      *
      */
-    public function areAllowed(array $columns, User $user){
-        return $this->permissionByTypes($columns,$user,'asset');
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'asset');
     }
 
     public function updateCustomSettings()

@@ -193,8 +193,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @param User|null $user
+     *
      * @return array
+     *
      * @throws \Exception
+     *
      * @internal
      */
     public function getUserPermissions(User $user = null)
@@ -207,7 +210,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $ignored = ['userId', 'cid', 'cpath', 'dao'];
         $permissions = [];
 
-        $columns = array_diff(array_keys($vars),$ignored);
+        $columns = array_diff(array_keys($vars), $ignored);
 
         foreach ($columns as $name) {
             $permissions[$name] = 1;
@@ -220,17 +223,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return $permissions;
         }
 
-        $permissions = $this->getDao()->areAllowed($columns,$user);
+        $permissions = $this->getDao()->areAllowed($columns, $user);
 
-        foreach ($permissions as $type => $isAllowed){
+        foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
             \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
             $permissions[$type] = $event->getArgument('isAllowed');
         }
+
         return $permissions;
     }
-
 
     /**
      * {@inheritdoc}

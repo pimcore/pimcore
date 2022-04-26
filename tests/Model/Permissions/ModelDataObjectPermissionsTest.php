@@ -381,35 +381,32 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
 
-    protected function doAreAllowedTest(DataObject\AbstractObject $element, User $user, array $expectedPermissions) {
-
+    protected function doAreAllowedTest(DataObject\AbstractObject $element, User $user, array $expectedPermissions)
+    {
         $calculatedPermissions = $element->getUserPermissions($user);
 
-        foreach($expectedPermissions as $type => $expectedPermission) {
-
+        foreach ($expectedPermissions as $type => $expectedPermission) {
             $this->assertEquals(
                 $expectedPermission,
                 $calculatedPermissions[$type],
                 sprintf('Expected permission `%s` does not match for element %s for user %s', $type, $element->getFullpath(), $user->getName())
             );
         }
-
     }
-
 
     public function testAreAllowed()
     {
         $admin = User::getByName('admin');
 
         //check permissions of groupfolder (directly defined) and grouptestobject (inherited)
-        foreach([$this->groupfolder, $this->grouptestobject] as $element) {
+        foreach ([$this->groupfolder, $this->grouptestobject] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'save' => 1,
                     'delete' => 1,
                     'publish' => 1,
                     'settings' => 1,
-                    'versions' => 1
+                    'versions' => 1,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest1,
@@ -418,7 +415,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'delete' => 0,
                     'publish' => 0,
                     'settings' => 1,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest2,
@@ -427,14 +424,13 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'delete' => 0,
                     'publish' => 1,
                     'settings' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
-
         }
 
         //check permissions of userfolder (directly defined) and usertestobject (inherited)
-        foreach([$this->userfolder, $this->usertestobject] as $element) {
+        foreach ([$this->userfolder, $this->usertestobject] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'view' => 1,
@@ -465,18 +461,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'rename' => 0,
                 ]
             );
-
         }
 
         //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for
         // admin and user1 to get to `c`
-        foreach([$this->a, $this->b, $this->c] as $element) {
+        foreach ([$this->a, $this->b, $this->c] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'list' => 1,
                     'delete' => 1,
                     'publish' => 1,
-                    'versions' => 1
+                    'versions' => 1,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest1,
@@ -484,7 +479,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'list' => 1,
                     'delete' => 0,
                     'publish' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest2,
@@ -492,7 +487,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'list' => 0,
                     'delete' => 0,
                     'publish' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
         }

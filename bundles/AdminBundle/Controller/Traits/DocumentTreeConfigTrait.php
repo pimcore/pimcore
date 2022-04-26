@@ -57,7 +57,7 @@ trait DocumentTreeConfigTrait
             'lockOwner' => $childDocument->getLocked() ? true : false,
             'published' => $childDocument->isPublished(),
             'elementType' => 'document',
-            'leaf' => true
+            'leaf' => true,
         ];
 
         $permissions =  $childDocument->getUserPermissions($this->getAdminUser());
@@ -70,10 +70,10 @@ trait DocumentTreeConfigTrait
             'publish',
             'unpublish',
             'create',
-            'list'
+            'list',
         ];
 
-        foreach ($treeNodePermissionTypes as $key => $permissionType){
+        foreach ($treeNodePermissionTypes as $key => $permissionType) {
             $permissionKey = is_string($key) ? $key : $permissionType;
             $tmpDocument['permissions'][$permissionKey] = $permissions[$permissionType];
         }

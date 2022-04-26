@@ -118,19 +118,21 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      * @var Document\Folder
      */
     protected $a;
+
     /**
      * @var Document\Folder
      */
     protected $b;
+
     /**
      * @var Document
      */
     protected $c;
+
     /**
      * @var Document
      */
     protected $abcdefghjkl;
-
 
     protected function prepareObjectTree()
     {
@@ -342,19 +344,17 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
 
-    protected function doAreAllowedTest(Document $element, User $user, array $expectedPermissions) {
-
+    protected function doAreAllowedTest(Document $element, User $user, array $expectedPermissions)
+    {
         $calculatedPermissions = $element->getUserPermissions($user);
 
-        foreach($expectedPermissions as $type => $expectedPermission) {
-
+        foreach ($expectedPermissions as $type => $expectedPermission) {
             $this->assertEquals(
                 $expectedPermission,
                 $calculatedPermissions[$type],
                 sprintf('Expected permission does not match for element %s for user %s', $element->getFullpath(), $user->getName())
             );
         }
-
     }
 
     public function testAreAllowed()
@@ -362,14 +362,14 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $admin = User::getByName('admin');
 
         //check permissions of groupfolder (directly defined) and grouptestobject.gif (inherited)
-        foreach([$this->groupfolder, $this->grouptestobject] as $element) {
+        foreach ([$this->groupfolder, $this->grouptestobject] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'save' => 1,
                     'delete' => 1,
                     'publish' => 1,
                     'unpublish' => 1,
-                    'versions' => 1
+                    'versions' => 1,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest1,
@@ -378,7 +378,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                     'delete' => 0,
                     'publish' => 0,
                     'unpublish' => 1,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest2,
@@ -387,14 +387,13 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                     'delete' => 0,
                     'publish' => 1,
                     'unpublish' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
-
         }
 
         //check permissions of userfolder (directly defined) and usertestobject (inherited)
-        foreach([$this->userfolder, $this->usertestobject] as $element) {
+        foreach ([$this->userfolder, $this->usertestobject] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'view' => 1,
@@ -425,18 +424,17 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                     'rename' => 0,
                 ]
             );
-
         }
 
         //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for
         // admin and user1 to get to `c`
-        foreach([$this->a, $this->b, $this->c] as $element) {
+        foreach ([$this->a, $this->b, $this->c] as $element) {
             $this->doAreAllowedTest($element, $admin,
                 [
                     'list' => 1,
                     'delete' => 1,
                     'publish' => 1,
-                    'versions' => 1
+                    'versions' => 1,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest1,
@@ -444,7 +442,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                     'list' => 1,
                     'delete' => 0,
                     'publish' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
             $this->doAreAllowedTest($element, $this->userPermissionTest2,
@@ -452,11 +450,10 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                     'list' => 0,
                     'delete' => 0,
                     'publish' => 0,
-                    'versions' => 0
+                    'versions' => 0,
                 ]
             );
         }
-
     }
 
     protected function buildController(string $classname, User $user)

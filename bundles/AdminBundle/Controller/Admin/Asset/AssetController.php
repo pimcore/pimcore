@@ -718,7 +718,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $asset = $element;
 
         $permissions =  $asset->getUserPermissions($this->getAdminUser());
-        
+
         $tmpAsset = [
             'id' => $asset->getId(),
             'key' => $element->getKey(),

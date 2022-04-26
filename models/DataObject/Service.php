@@ -324,7 +324,6 @@ class Service extends Model\Element\Service
             $data['permissions'] = $object->getUserPermissions($user);
             $data['locked'] = $object->isLocked();
 
-
             if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
             }
