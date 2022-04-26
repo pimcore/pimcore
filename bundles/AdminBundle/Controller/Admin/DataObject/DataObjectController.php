@@ -964,7 +964,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($currentSortBy != $sortBy) {
                 $user = Tool\Admin::getCurrentUser();
 
-                if (!$user->isAdmin()) {
+                if (!$user->isAdmin() && !$user->isAllowed('objects_sort_method')) {
                     return $this->json(['success' => false, 'message' => 'Changing the sort method is only allowed for admin users']);
                 }
 

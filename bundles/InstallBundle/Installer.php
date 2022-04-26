@@ -808,6 +808,7 @@ class Installer
             ['key' => 'notifications'],
             ['key' => 'notifications_send'],
             ['key' => 'sites'],
+            ['key' => 'objects_sort_method'],
         ];
 
         foreach ($userPermissions as $up) {
