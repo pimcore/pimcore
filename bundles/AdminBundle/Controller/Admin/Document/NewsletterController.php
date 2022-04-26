@@ -316,6 +316,9 @@ class NewsletterController extends DocumentControllerBase
     public function getSendStatusAction(Request $request): JsonResponse
     {
         $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -334,6 +337,9 @@ class NewsletterController extends DocumentControllerBase
     public function stopSendAction(Request $request): JsonResponse
     {
         $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         Tool\TmpStore::delete($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -353,6 +359,9 @@ class NewsletterController extends DocumentControllerBase
     public function sendAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new RuntimeException('Newsletter sending already in progress, need to finish first.');
@@ -414,6 +423,9 @@ class NewsletterController extends DocumentControllerBase
     public function sendTestAction(Request $request): JsonResponse
     {
         $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
         $testMailAddress = $request->get('testMailAddress');

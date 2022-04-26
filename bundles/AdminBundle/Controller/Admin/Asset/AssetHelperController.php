@@ -241,7 +241,7 @@ class AssetHelperController extends AdminController
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
                 $request->get('no_system_columns'),
-                null, //maybe required for types other than metadata
+                [], //maybe required for types other than metadata
                 $context,
                 $types);
         } else {
@@ -501,6 +501,10 @@ class AssetHelperController extends AdminController
     public function gridSaveColumnConfigAction(Request $request)
     {
         $asset = Asset::getById((int) $request->get('id'));
+
+        if (!$asset) {
+            throw $this->createNotFoundException();
+        }
 
         if ($asset->isAllowed('list')) {
             try {
@@ -940,7 +944,7 @@ class AssetHelperController extends AdminController
         $result['defaultColumns']['children'] = $defaultColumns;
 
         //predefined metadata
-        $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
+        $list = Metadata\Predefined\Listing::getByTargetType('asset');
         $metadataItems = [];
         $tmp = [];
         foreach ($list as $item) {

@@ -152,6 +152,9 @@ class RecyclebinController extends AdminController implements KernelControllerEv
     public function restoreAction(Request $request)
     {
         $item = Recyclebin\Item::getById((int) $request->get('id'));
+        if (!$item) {
+            throw $this->createNotFoundException();
+        }
         $item->restore();
 
         return $this->adminJson(['success' => true]);
@@ -209,7 +212,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
         // recyclebin actions might take some time (save & restore)
         $timeout = 600; // 10 minutes
-        @ini_set('max_execution_time', $timeout);
+        @ini_set('max_execution_time', (string) $timeout);
         set_time_limit($timeout);
 
         // check permissions

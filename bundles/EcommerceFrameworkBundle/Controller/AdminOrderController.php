@@ -209,6 +209,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         // init
         $order = OnlineShopOrder::getById((int) $request->get('id'));
+        if (!$order) {
+            throw $this->createNotFoundException();
+        }
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -277,7 +280,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             $customer = $order->getCustomer();
 
             // register
-            $register = \DateTime::createFromFormat('U', $order->getCreationDate());
+            $register = \DateTime::createFromFormat('U', (string) $order->getCreationDate());
             $arrCustomerAccount['created'] = $formatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
@@ -384,6 +387,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -418,6 +424,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -451,6 +460,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

@@ -80,8 +80,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
         $object = DataObject::getById((int) $request->get('id'));
+        if (!$object) {
+            throw $this->createNotFoundException('Object not found');
+        }
         if (!$object->isAllowed('view')) {
-            throw new \Exception('export denied');
+            throw $this->createAccessDeniedException('Export denied');
         }
 
         $exportResult = $service->doExportData($object);

@@ -55,6 +55,9 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
         $this->checkPermission('emails');
 
         $sentMail = Log::getById((int) $request->get('id'));
+        if (!$sentMail) {
+            throw $this->createNotFoundException();
+        }
 
         $sentMailArray = (array)$sentMail;
         $sentMailArray['htmlBody'] = $sentMail->getHtmlLog();
