@@ -60,7 +60,8 @@ class InputQuantityValue extends AbstractQuantityValue
     {
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {
-            $value .= ' ' . $this->getUnit()->getAbbreviation();
+            $translator = \Pimcore::getContainer()->get('translator');
+            $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
         return $value;
