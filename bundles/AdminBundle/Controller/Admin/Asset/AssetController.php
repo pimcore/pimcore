@@ -716,6 +716,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $asset = $element;
 
+        $permissions =  $asset->getUserPermissions($this->getAdminUser());
+        
         $tmpAsset = [
             'id' => $asset->getId(),
             'key' => $element->getKey(),
@@ -726,22 +728,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             'locked' => $asset->isLocked(),
             'lockOwner' => $asset->getLocked() ? true : false,
             'elementType' => 'asset',
+            'permissions' => [
+                'remove' => $permissions['delete'],
+                'settings' => $permissions['settings'],
+                'rename' => $permissions['rename'],
+                'publish' => $permissions['publish'],
+                'view' => $permissions['view'],
+                'list' => $permissions['list'],
+            ],
         ];
-
-        $permissions =  $asset->getUserPermissions($this->getAdminUser());
-
-        $treeNodePermissionTypes = [
-            'remove'=>'delete',
-            'settings',
-            'rename',
-            'publish',
-            'view',
-            'list'
-        ];
-        foreach ($treeNodePermissionTypes as $key => $permissionType){
-            $permissionKey = is_string($key) ? $key : $permissionType;
-            $tmpAsset['permissions'][$permissionKey] = $permissions[$permissionType];
-        }
 
         $hasChildren = $asset->getDao()->hasChildren($this->getAdminUser());
 
