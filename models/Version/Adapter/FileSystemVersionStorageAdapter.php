@@ -18,6 +18,7 @@ namespace Pimcore\Model\Version\Adapter;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\File;
+use Pimcore\Model\Version;
 use Pimcore\Tool\Storage;
 
 /**
@@ -32,14 +33,11 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->storage = Storage::get('version');
     }
 
-    public function loadMetaData(int $id,
-                                 int $cId,
-                                 string $cType,
-                                 string $storageType = null) : ?string
+    public function loadMetaData(Version $version) : ?string
     {
 
         try {
-            $data = $this->storage->read($this->getStorageFilename($id, $cId, $cType));
+            $data = $this->storage->read($this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype()));
         } catch (UnableToReadFile $e) {
             $data = null;
         }
@@ -47,39 +45,24 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         return $data;
     }
 
-    public function loadBinaryData(int $id,
-                                   int $cId,
-                                   string $cType,
-                                   string $storageType = null,
-                                   int $binaryFileId = null): mixed
+    public function loadBinaryData(Version $version): mixed
     {
-        $binaryStoragePath = $this->getBinaryStoragePath($id,
-                                                        $cId,
-                                                        $cType,
-                                                        $binaryFileId);
+        $binaryStoragePath = $this->getBinaryStoragePath($version);
 
         if($this->storage->fileExists($binaryStoragePath)) {
-            return $this->getBinaryFileStream($id,
-                                                $cId,
-                                                $cType,
-                                                $binaryFileId);
+            return $this->getBinaryFileStream($version);
         }
         return null;
     }
 
-    public function getBinaryFileStream(int $id,
-                                        int $cId,
-                                        string $cType,
-                                        int $binaryFileId = null): mixed
+    public function getBinaryFileStream(Version $version): mixed
     {
-        return $this->storage->readStream($this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId));
+        return $this->storage->readStream($this->getBinaryStoragePath($version));
     }
 
-    public function getFileStream(int $id,
-                                  int $cId,
-                                  string $cType): mixed
+    public function getFileStream(Version $version): mixed
     {
-        return $this->storage->readStream($this->getStorageFilename($id, $cId, $cType));
+        return $this->storage->readStream($this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype()));
     }
 
     public function getStorageFilename(int $id,
@@ -91,28 +74,16 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         return $cType . '/g' . $group . '/' . $cId . '/' . $id;
     }
 
-    public function getBinaryStoragePath(int $id,
-                                          int $cId,
-                                          string $cType,
-                                          int $binaryFileId = null): string
+    public function getBinaryStoragePath(Version $version): string
     {
-        if(isset($binaryFileId) === false) {
-            $binaryFileId = $id;
-        }
-        return $this->getStorageFilename($binaryFileId, $cId, $cType) . '.bin';
+        $binaryFileId = $version->getBinaryFileId() ?? $version->getId();
+        return $this->getStorageFilename($binaryFileId, $version->getCid(), $version->getCtype()) . '.bin';
     }
 
-    public function save(int $id,
-                         int $cId,
-                         string $cType,
-                         string $storageType,
-                         string $metaData,
-                         mixed $binaryDataStream = null,
-                         string $binaryFileHash = null,
-                         int $binaryFileId = null): void {
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void {
 
-        $this->storage->write($this->getStorageFilename($id, $cId, $cType), $metaData);
-        $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId);
+        $this->storage->write($this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype()), $metaData);
+        $binaryStoragePath = $this->getBinaryStoragePath($version);
 
         // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
         if (isset($binaryDataStream) === true &&
@@ -124,8 +95,8 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             // old file first before opening a new stream -> see Asset::update()
             $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
             $this->storage->write($binaryStoragePath, '1'); // temp file to determine if stream is local or not
-            if ($useHardlinks && stream_is_local($this->getBinaryFileStream($id, $cId, $cType)) && stream_is_local($binaryDataStream)) {
-                $linkPath = stream_get_meta_data($this->getBinaryFileStream($id, $cId, $cType))['uri'];
+            if ($useHardlinks && stream_is_local($this->getBinaryFileStream($version)) && stream_is_local($binaryDataStream)) {
+                $linkPath = stream_get_meta_data($this->getBinaryFileStream($version))['uri'];
                 $this->storage->delete($binaryStoragePath);
                 $linked = @link(stream_get_meta_data($binaryDataStream)['uri'], $linkPath);
             }
@@ -136,15 +107,11 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         }
     }
 
-    public function delete(int $id,
-                           int $cId,
-                           string $cType,
-                           string $storageType,
-                           bool $isBinaryHashInUse,
-                           int $binaryFileId = null): void {
+    public function delete(Version $version,
+                           bool $isBinaryHashInUse): void {
 
-        $binaryStoragePath = $this->getBinaryStoragePath($id, $cId, $cType, $binaryFileId);
-        $storageFileName = $this->getStorageFilename($id, $cId, $cType);
+        $binaryStoragePath = $this->getBinaryStoragePath($version);
+        $storageFileName = $this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype());
 
         $storagePath = dirname($storageFileName);
         if ($this->storage->fileExists($storageFileName)) {

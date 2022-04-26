@@ -248,20 +248,13 @@ final class Version extends AbstractModel
                                                         $isAsset ? $data->getfileSize() : null));
 
         if($isAsset) {
-            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->binaryFileHash));
+            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
         }
 
         $id = $this->getDao()->save();
         $this->setId($id);
 
-        $this->storageAdapter->save($this->getId(),
-                                    $this->getCid(),
-                                    $this->getCtype(),
-                                    $this->getStorageType(),
-                                    $dataString,
-                                    $isAsset ? $data->getStream() : null,
-                                    $this->getBinaryFileHash(),
-                                    $this->getBinaryFileId());
+        $this->storageAdapter->save($this, $dataString, $isAsset ? $data->getStream() : null);
 
         \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
@@ -341,12 +334,8 @@ final class Version extends AbstractModel
     {
         \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
-        $this->storageAdapter->delete($this->getId(),
-                                $this->getCid(),
-                                $this->getCtype(),
-                                $this->getStorageType(),
-                                $this->getDao()->isBinaryHashInUse($this->getBinaryFileHash()),
-                                $this->getBinaryFileId());
+        $this->storageAdapter->delete($this,
+                                $this->getDao()->isBinaryHashInUse($this->getBinaryFileHash()));
 
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_DELETE);
@@ -361,13 +350,12 @@ final class Version extends AbstractModel
      */
     public function loadData($renewReferences = true)
     {
-        $data = $this->storageAdapter->loadMetaData($this->getId(), $this->getCid(), $this->getCtype(), $this->getStorageType());
+        $data = $this->storageAdapter->loadMetaData($this);
 
         if (!$data) {
-            Logger::err('Version: cannot read version data from file system.');
-            $this->delete();
-
-            return null;
+            $msg = "Version: cannot read version data with storage type: " . $this->getStorageType();
+            Logger::err($msg);
+            throw new \Exception($msg);
         }
 
         if ($this->getSerialized()) {
@@ -391,11 +379,7 @@ final class Version extends AbstractModel
         }
 
         if ($data instanceof Asset) {
-            $binaryStream = $this->storageAdapter->loadBinaryData($this->getId(),
-                                                                    $this->getCid(),
-                                                                    $this->getCtype(),
-                                                                    $this->getStorageType(),
-                                                                    $this->getBinaryFileId());
+            $binaryStream = $this->storageAdapter->loadBinaryData($this);
             if($binaryStream) {
                 $data->setStream($binaryStream);
             }
@@ -413,17 +397,12 @@ final class Version extends AbstractModel
 
     public function getFileStream()
     {
-        return $this->storageAdapter->getFileStream($this->getId(),
-                                                    $this->getCid(),
-                                                    $this->getCtype());
+        return $this->storageAdapter->getFileStream($this);
     }
 
     public function getBinaryFileStream()
     {
-        return $this->storageAdapter->getBinaryFileStream($this->getId(),
-                                                          $this->getCid(),
-                                                          $this->getCtype(),
-                                                          $this->getBinaryFileId());
+        return $this->storageAdapter->getBinaryFileStream($this);
     }
 
     /**

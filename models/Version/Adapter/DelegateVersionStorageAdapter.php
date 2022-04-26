@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
+use Pimcore\Model\Version;
+
 /**
  * @internal
  */
@@ -43,30 +45,14 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         return $adapter;
     }
 
-    public function loadMetaData(int $id,
-                                 int $cId,
-                                 string $cType,
-                                 string $storageType = null) : ?string {
+    public function loadMetaData(Version $version) : ?string {
 
-        $storageType = $storageType ?? $this->defaultAdapter;
-        return $this->getAdapter($storageType)->loadMetaData($id,
-                                                            $cId,
-                                                            $cType,
-                                                            $storageType);
+        return $this->getAdapter($version->getStorageType())->loadMetaData($version);
     }
 
-    public function loadBinaryData(int $id,
-                                   int $cId,
-                                   string $cType,
-                                   string $storageType = null,
-                                   int $binaryFileId = null): mixed
+    public function loadBinaryData(Version $version): mixed
     {
-        $storageType = $storageType ?? $this->defaultAdapter;
-        return $this->getAdapter($storageType)->loadBinaryData($id,
-                                                                $cId,
-                                                                $cType,
-                                                                $storageType,
-                                                                $binaryFileId);
+        return $this->getAdapter($version->getStorageType())->loadBinaryData($version);
     }
 
     public function getStorageType(int $metaDataSize = null,
@@ -81,53 +67,23 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->defaultAdapter->getStorageType($metaDataSize, $binaryDataSize);
     }
 
-    public function save(int $id,
-                         int $cId,
-                         string $cType,
-                         string $storageType,
-                         string $metaData,
-                         mixed $binaryDataStream = null,
-                         string $binaryFileHash = null,
-                         int $binaryFileId = null) : void {
+    public function save(Version $version, string $metaData, mixed $binaryDataStream) : void {
 
-        $adapter = $this->getAdapter($storageType);
-        $adapter->save($id,
-                        $cId,
-                        $cType,
-                        $storageType,
-                        $metaData,
-                        $binaryDataStream,
-                        $binaryFileHash,
-                        $binaryFileId);
+        $this->getAdapter($version->getStorageType())->save($version, $metaData, $binaryDataStream);
     }
 
-    public function delete(int $id,
-                           int $cId,
-                           string $cType,
-                           string $storageType,
-                           bool $isBinaryHashInUse,
-                           int $binaryFileId = null): void {
+    public function delete(Version $version, bool $isBinaryHashInUse): void {
 
-        $this->getAdapter($storageType)->delete($id,
-                                                $cId,
-                                                $cType,
-                                                $storageType,
-                                                $isBinaryHashInUse,
-                                                $binaryFileId);
+        $this->getAdapter($version->getStorageType())->delete($version, $isBinaryHashInUse);
     }
 
-    public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed
+    public function getBinaryFileStream(Version $version): mixed
     {
-        return $this->getAdapter()->getBinaryFileStream($id,
-                                                        $cId,
-                                                        $cType,
-                                                        $binaryFileId);
+        return $this->getAdapter($version->getStorageType())->getBinaryFileStream($version);
     }
 
-    public function getFileStream(int $id, int $cId, string $cType): mixed
+    public function getFileStream(Version $version): mixed
     {
-        return $this->getAdapter()->getFileStream($id,
-                                                  $cId,
-                                                  $cType);
+        return $this->getAdapter($version->getStorageType())->getFileStream($version);
     }
 }

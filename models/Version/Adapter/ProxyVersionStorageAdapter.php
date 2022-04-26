@@ -2,6 +2,8 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
+use Pimcore\Model\Version;
+
 class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected VersionStorageAdapterInterface $storageAdapter;
@@ -22,49 +24,49 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
     /**
      * @inheritDoc
      */
-    public function save(int $id, int $cId, string $cType, string $storageType, string $metaData, mixed $binaryDataStream = null, string $binaryFileHash = null, int $binaryFileId = null): void
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void
     {
-        $this->storageAdapter->save($id, $cId, $cType, $storageType, $metaData, $binaryDataStream, $binaryFileHash, $binaryFileId);
+        $this->storageAdapter->save($version, $metaData, $binaryDataStream);
     }
 
     /**
      * @inheritDoc
      */
-    public function loadMetaData(int $id, int $cId, string $cType, string $storageType = null): ?string
+    public function loadMetaData(Version $version): ?string
     {
-        return $this->storageAdapter->loadMetaData($id, $cId, $cType, $storageType);
+        return $this->storageAdapter->loadMetaData($version);
     }
 
     /**
      * @inheritDoc
      */
-    public function loadBinaryData(int $id, int $cId, string $cType, string $storageType = null, int $binaryFileId = null): mixed
+    public function loadBinaryData(Version $version): mixed
     {
-        return $this->storageAdapter->loadBinaryData($id, $cId, $cType, $storageType, $binaryFileId);
+        return $this->storageAdapter->loadBinaryData($version);
     }
 
     /**
      * @inheritDoc
      */
-    public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed
+    public function getBinaryFileStream(Version $version): mixed
     {
-        return $this->storageAdapter->getBinaryFileStream($id, $cId, $cType, $binaryFileId);
+        return $this->storageAdapter->getBinaryFileStream($version);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFileStream(int $id, int $cId, string $cType): mixed
+    public function getFileStream(Version $version): mixed
     {
-        return $this->storageAdapter->getFileStream($id, $cId, $cType);
+        return $this->storageAdapter->getFileStream($version);
     }
 
     /**
      * @inheritDoc
      */
-    public function delete(int $id, int $cId, string $cType, string $storageType, bool $isBinaryHashInUse, int $binaryFileId = null): void
+    public function delete(Version $version, bool $isBinaryHashInUse): void
     {
-        $this->storageAdapter->delete($id, $cId, $cType, $storageType, $isBinaryHashInUse, $binaryFileId);
+        $this->storageAdapter->delete($version, $isBinaryHashInUse);
     }
 
     public function setStorageAdapter(VersionStorageAdapterInterface $adapter) {

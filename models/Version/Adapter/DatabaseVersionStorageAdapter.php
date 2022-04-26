@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Version\Adapter;
 
 use Doctrine\DBAL;
+use Pimcore\Model\Version;
 
 /**
  * @internal
@@ -28,24 +29,17 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     {
     }
 
-    public function save(int $id,
-                         int $cId,
-                         string $cType,
-                         string $storageType,
-                         string $metaData,
-                         mixed $binaryDataStream = null,
-                         string $binaryFileHash = null,
-                         int $binaryFileId = null): void
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void
     {
 
         if(isset($binaryDataStream) === true &&
-            isset($binaryFileId) === false) {
+            empty($version->getBinaryFileId()) === true) {
             $contents = stream_get_contents($binaryDataStream);
         }
 
-        $this->databaseConnection->insert(self::versionsTableName, ['id' => $id,
-                                    'cid' => $cId,
-                                    'ctype' => $cType,
+        $this->databaseConnection->insert(self::versionsTableName, ['id' => $version->getId(),
+                                    'cid' => $version->getCid(),
+                                    'ctype' => $version->getCtype(),
                                     'metaData' => $metaData,
                                     'binaryData' => $contents ?? null]);
     }
@@ -74,12 +68,9 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
             ]);
     }
 
-    public function loadMetaData(int $id,
-                                 int $cId,
-                                 string $cType,
-                                 string $storageType = null): ?string
+    public function loadMetaData(Version $version): ?string
     {
-        return $this->loadData($id, $cId, $cType);
+        return $this->loadData($version->getId(), $version->getCid(), $version->getCtype());
     }
 
     /**
@@ -96,46 +87,31 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return null;
     }
 
-    public function loadBinaryData(int $id,
-                                   int $cId,
-                                   string $cType,
-                                   string $storageType = null,
-                                   int $binaryFileId = null): mixed
+    public function loadBinaryData(Version $version): mixed
     {
-        $binaryData = $this->loadData($binaryFileId ?? $id, $cId, $cType, true);
+        $binaryData = $this->loadData($version->getBinaryFileId() ?? $version->getId(), $version->getCid(), $version->getCtype(), true);
         return $this->getStream($binaryData);
 
     }
 
-    public function delete(int $id,
-                           int $cId,
-                           string $cType,
-                           string $storageType,
-                           bool $isBinaryHashInUse,
-                           int $binaryFileId = null): void
+    public function delete(Version $version, bool $isBinaryHashInUse): void
     {
         $this->databaseConnection->delete(self::versionsTableName,  [
-                                                'id' => $id,
-                                                'cid' => $cId,
-                                                'ctype' => $cType
+                                                'id' => $version->getId(),
+                                                'cid' => $version->getCid(),
+                                                'ctype' => $version->getCtype()
                                             ]);
     }
 
-    public function getBinaryFileStream(int $id, int $cId, string $cType, int $binaryFileId = null): mixed
+    public function getBinaryFileStream(Version $version): mixed
     {
-        return $this->loadBinaryData($id,
-                                    $cId,
-                                    $cType,
-                                    null,
-                                    $binaryFileId);
+        return $this->loadBinaryData($version);
 
     }
 
-    public function getFileStream(int $id, int $cId, string $cType): mixed
+    public function getFileStream(Version $version): mixed
     {
-        $metaData = $this->loadMetaData($id,
-                                        $cId,
-                                        $cType);
+        $metaData = $this->loadMetaData($version);
         return $this->getStream($metaData);
     }
 

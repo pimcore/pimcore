@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\Version\Adapter;
 
+use Pimcore\Model\Version;
+
 interface VersionStorageAdapterInterface
 {
     /**
@@ -26,84 +28,40 @@ interface VersionStorageAdapterInterface
                                    int  $binaryDataSize = null): string;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
+     * @param Version $version
      * @param string $metaData
-     * @param string $storageType
-     * @param mixed|null $binaryDataStream
-     * @param string|null $binaryFileHash
-     * @param int|null $binaryFileId
+     * @param resource|null $binaryDataStream
      * @return void
      */
-    public function save(int $id,
-                         int $cId,
-                         string $cType,
-                         string $storageType,
-                         string $metaData,
-                         mixed $binaryDataStream = null,
-                         string $binaryFileHash = null,
-                         int $binaryFileId = null) : void;
+    public function save(Version $version, string $metaData, mixed $binaryDataStream) : void;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
-     * @param string|null $storageType
+     * @param Version $version
      * @return ?string
      */
-    public function loadMetaData(int $id,
-                                 int $cId,
-                                 string $cType,
-                                 string $storageType = null) : ?string;
+    public function loadMetaData(Version $version) : ?string;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
-     * @param string|null $storageType
-     * @param int|null $binaryFileId
+     * @param Version $version
      * @return mixed
      */
-    public function loadBinaryData(int    $id,
-                                   int    $cId,
-                                   string $cType,
-                                   string $storageType = null,
-                                   int    $binaryFileId = null): mixed;
+    public function loadBinaryData(Version $version): mixed;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
-     * @param int|null $binaryFileId
+     * @param Version $version
      * @return mixed
      */
-    public function getBinaryFileStream(int    $id,
-                                        int    $cId,
-                                        string $cType,
-                                        int    $binaryFileId = null): mixed;
+    public function getBinaryFileStream(Version $version): mixed;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
+     * @param Version $version
      * @return mixed
      */
-    public function getFileStream(int    $id,
-                                  int    $cId,
-                                  string $cType): mixed;
+    public function getFileStream(Version $version): mixed;
 
     /**
-     * @param int $id
-     * @param int $cId
-     * @param string $cType
+     * @param Version $version
      * @param bool $isBinaryHashInUse
-     * @param int|null $binaryFileId
      */
-    public function delete(int $id,
-                           int $cId,
-                           string $cType,
-                           string $storageType,
-                           bool $isBinaryHashInUse,
-                           int $binaryFileId = null): void;
+    public function delete(Version $version, bool $isBinaryHashInUse): void;
 }
