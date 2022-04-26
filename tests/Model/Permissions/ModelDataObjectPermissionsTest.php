@@ -45,11 +45,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      * /permissionbar/foo --> not allowed
      * /permissionbar/foo/hiddenobject --> ??       --> should not be found
      *
-     * /permissioncpath --> not specified
-     * /permissioncpath/a --> not specified
-     * /permissioncpath/a/b --> not specified
-     * /permissioncpath/a/b/c --> allowed
-     * /permissioncpath/abcdefghjkl --> allowed
+     * /permission'"cpath --> not specified
+     * /permission'"cpath/a --> not specified
+     * /permission'"cpath/a/b --> not specified
+     * /permission'"cpath/a/b/c --> allowed
+     * /permission'"cpath/abcdefghjkl --> allowed
      *
      * -- only for many elements search test
      * /manyElemnents --> not allowed
@@ -149,7 +149,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
     {
 
         //example based on https://github.com/pimcore/pimcore/issues/11540
-        $this->permissioncpath = $this->createFolder('permissioncpath', 1);
+        $this->permissioncpath = $this->createFolder('permission\'"cpath', 1);
         $this->a = $this->createFolder('a', $this->permissioncpath->getId());
         $this->b = $this->createFolder('b', $this->a->getId());
         $this->c = $this->createObject('c', $this->b->getId());
