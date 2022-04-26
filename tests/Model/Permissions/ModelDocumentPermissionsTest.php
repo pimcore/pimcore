@@ -476,14 +476,15 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         );
     }
 
-    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100) {
+    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
+    {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
 
         $request = new Request([
             'type' => 'document',
             'query' => $searchText,
             'start' => 0,
-            'limit' => $limit
+            'limit' => $limit,
         ]);
 
         $responseData = $controller->findAction(
@@ -493,7 +494,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         );
 
         $responsePaths = [];
-        foreach($responseData['data'] as $node) {
+        foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }
 
@@ -509,17 +510,17 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedResultPaths as $path) {
+        foreach ($expectedResultPaths as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 'Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
     }
 
-    public function testSearch() {
+    public function testSearch()
+    {
         $admin = User::getByName('admin');
 
         //search hugo
@@ -553,10 +554,10 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doTestSearch('hiddenobject', $admin, [$this->hiddenobject->getFullpath()]);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest1, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
-
     }
 
-    public function testManyElementSearch() {
+    public function testManyElementSearch()
+    {
         $admin = User::getByName('admin');
 
         //prepare additional data
@@ -564,7 +565,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $manyElementList = [];
         $elementCount = 5;
 
-        for($i = 1; $i <= $elementCount; $i++) {
+        for ($i = 1; $i <= $elementCount; $i++) {
             $manyElementList[] = $this->createPage('manyelement ' . $i, $manyElements->getId());
         }
         $manyElementX = $this->createPage('manyelement X', $manyElements->getId());
@@ -577,10 +578,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         ]);
         $role->save();
 
-
         //search manyelement
         $this->doTestSearch('manyelement', $admin, array_merge(
-                array_map(function($item) { return $item->getFullpath(); }, $manyElementList),
+                array_map(function ($item) {
+                    return $item->getFullpath();
+                }, $manyElementList),
                 [ $manyElementX->getFullpath() ]
             ), $elementCount + 1
         );
@@ -589,7 +591,5 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
         $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount);
         $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount);
-
-
     }
 }

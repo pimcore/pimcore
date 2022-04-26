@@ -721,7 +721,7 @@ class Service extends Model\AbstractModel
         $db = Db::get();
 
         if ($user->isAdmin()) {
-            return array('forbidden' => [], 'allowed' => []);
+            return ['forbidden' => [], 'allowed' => []];
         }
 
         $currentUserId = $user->getId();
@@ -737,7 +737,7 @@ class Service extends Model\AbstractModel
 
         //this collects the array that are on user-level, which have top priority
         $userCid = [];
-        foreach ($userWorkspaces as $userWorkspace){
+        foreach ($userWorkspaces as $userWorkspace) {
             $userCid[] = $userWorkspace['cid'];
         }
 
@@ -753,7 +753,7 @@ class Service extends Model\AbstractModel
         $allWorkspaces = array_merge($userWorkspaces, $roleWorkspaces);
 
         $uniquePaths = [];
-        foreach ($allWorkspaces as $workspace){
+        foreach ($allWorkspaces as $workspace) {
             $uniquePaths[$workspace['cpath']] = $workspace['list'];
         }
         ksort($uniquePaths);
@@ -781,7 +781,7 @@ class Service extends Model\AbstractModel
                             break;
                         }
                     }
-                }else{
+                } else {
                     $allowed[] = $path;
                 }
             }
@@ -789,9 +789,8 @@ class Service extends Model\AbstractModel
             $forbidden['/'] = [];
         }
 
-        return array('forbidden' => $forbidden, 'allowed' => $allowed);
+        return ['forbidden' => $forbidden, 'allowed' => $allowed];
     }
-
 
     /**
      * renews all references, for example after unserializing an ElementInterface

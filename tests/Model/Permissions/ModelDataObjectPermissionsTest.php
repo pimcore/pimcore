@@ -546,7 +546,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
     }
 
-    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100) {
+    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
+    {
         /**
          * @var SearchController $controller
          */
@@ -556,7 +557,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'type' => 'object',
             'query' => $searchText,
             'start' => 0,
-            'limit' => $limit
+            'limit' => $limit,
         ]);
 
         $responseData = $controller->findAction(
@@ -566,7 +567,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
 
         $responsePaths = [];
-        foreach($responseData['data'] as $node) {
+        foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
         }
 
@@ -582,18 +583,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             '[Search] Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedResultPaths as $path) {
+        foreach ($expectedResultPaths as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 '[Search] Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
-
     }
 
-    public function testSearch() {
+    public function testSearch()
+    {
         $admin = User::getByName('admin');
 
         //search hugo
@@ -628,15 +628,14 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('hiddenobject', $this->userPermissionTest1, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
 
-
         //search for asset
         $this->doTestSearch('assetelement', $admin, []);
         $this->doTestSearch('assetelement', $this->userPermissionTest1, []);
         $this->doTestSearch('assetelement', $this->userPermissionTest2, []);
-
     }
 
-    public function testManyElementSearch() {
+    public function testManyElementSearch()
+    {
         $admin = User::getByName('admin');
 
         //prepare additional data
@@ -644,7 +643,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $manyElementList = [];
         $elementCount = 5;
 
-        for($i = 1; $i <= $elementCount; $i++) {
+        for ($i = 1; $i <= $elementCount; $i++) {
             $manyElementList[] = $this->createObject('manyelement ' . $i, $manyElements->getId());
         }
         $manyElementX = $this->createObject('manyelement X', $manyElements->getId());
@@ -657,10 +656,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $role->save();
 
-
         //search manyelement
         $this->doTestSearch('manyelement', $admin, array_merge(
-            array_map(function($item) { return $item->getFullpath(); }, $manyElementList),
+            array_map(function ($item) {
+                return $item->getFullpath();
+            }, $manyElementList),
             [ $manyElementX->getFullpath() ]
         ), $elementCount + 1
         );
@@ -669,11 +669,10 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
         $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount);
         $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount);
-
     }
 
-
-    protected function doTestQuickSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100) {
+    protected function doTestQuickSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
+    {
         /**
          * @var SearchController $controller
          */
@@ -682,7 +681,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $request = new Request([
             'query' => $searchText,
             'start' => 0,
-            'limit' => $limit
+            'limit' => $limit,
         ]);
 
         $responseData = $controller->quicksearchAction(
@@ -691,7 +690,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
 
         $responsePaths = [];
-        foreach($responseData['data'] as $node) {
+        foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpathList'];
         }
 
@@ -701,17 +700,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             '[Quicksearch] Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
         );
 
-        foreach($expectedResultPaths as $path) {
+        foreach ($expectedResultPaths as $path) {
             $this->assertContains(
                 $path,
                 $responsePaths,
                 '[Quicksearch] Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
             );
         }
-
     }
 
-    public function testQuickSearch() {
+    public function testQuickSearch()
+    {
         $admin = User::getByName('admin');
 
         //search hugo
@@ -742,6 +741,5 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestQuickSearch('assetelement', $admin, [$this->assetElement->getFullPath()]);
         $this->doTestQuickSearch('assetelement', $this->userPermissionTest1, []);
         $this->doTestQuickSearch('assetelement', $this->userPermissionTest2, []);
-
     }
 }
