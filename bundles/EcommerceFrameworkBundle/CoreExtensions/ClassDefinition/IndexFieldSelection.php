@@ -21,8 +21,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, NormalizerInterface
 {
     use Data\Extension\ColumnType;
     use Data\Extension\QueryColumnType;
@@ -326,5 +327,31 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . ObjectData\IndexFieldSelection::class . '|null';
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof ObjectData\IndexFieldSelection) {
+            return [
+                'tenant' => $value->getTenant(),
+                'field' => $value->getField(),
+                'preSelect' => $value->getPreSelect(),
+            ];
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $tenant = $value['tenant'];
+            $field = $value['field'];
+            $preSelect = $value['preSelect'];
+
+            return new ObjectData\IndexFieldSelection($tenant, $field, $preSelect);
+        }
+
+        return null;
     }
 }

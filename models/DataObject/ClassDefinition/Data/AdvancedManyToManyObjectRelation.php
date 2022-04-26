@@ -303,10 +303,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $setter = 'set' . ucfirst($c['key']);
                         $value = $relation[$c['key']] ?? null;
 
-                        if ($c['type'] == 'multiselect') {
-                            if (is_array($value) && count($value)) {
-                                $value = implode(',', $value);
-                            }
+                        if ($c['type'] == 'multiselect' && is_array($value)) {
+                            $value = implode(',', $value);
                         }
 
                         $metaData->$setter($value);
