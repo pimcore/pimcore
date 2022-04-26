@@ -385,7 +385,7 @@ CREATE TABLE `objects` (
   KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`),
+  KEY `type_path_classId` (`o_type`, `o_path`, `o_classId`),
   KEY `o_modificationDate` (`o_modificationDate`),
   KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
