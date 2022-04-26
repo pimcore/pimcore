@@ -229,7 +229,8 @@ class TestController
         $logger->error('my error message', [
             'fileObject'    => $fileObject,
             'relatedObject' => $myObject, 
-            'component'     => 'different component'
+            'component'     => 'different component',
+            'source'        => 'Stack trace or context-relevant information' // if empty, gets automatically filled with class:method:line from where the log got executed
         ]);
     }
 }
