@@ -50,7 +50,7 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     abstract public function getLabel(): ?string;
 
     /**
-     * @return IndexFieldSelection|null
+     * @return IndexFieldSelection|string|null
      */
     abstract public function getField();
 
