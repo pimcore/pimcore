@@ -94,12 +94,12 @@ abstract class Dao extends Model\Dao\AbstractDao
         if (!$current->getId()) {
             return 0;
         }
-        $fullPath = $current->getPath().$current->getKey();
+        $fullPath = $current->getPath() . $current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_'.$tableSuffix.' WHERE LOCATE(cpath,"'.$fullPath.'")=1 AND
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
         userId IN (' . implode(',', $userIds) . ')
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql);
+        return (int)$this->db->fetchOne($sql, $fullPath);
     }
 }
