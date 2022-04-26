@@ -230,7 +230,7 @@ class TestController
             'fileObject'    => $fileObject,
             'relatedObject' => $myObject, 
             'component'     => 'different component',
-            'source'        => 'Stack trace or context-relevant information' // if empty, gets automatically filled with class:method:line from where the log got executed
+            'source'        => 'Stack trace or context-relevant information' // optional, if empty, gets automatically filled with class:method:line from where the log got executed
         ]);
     }
 }
