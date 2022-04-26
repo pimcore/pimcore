@@ -144,7 +144,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
 
         $response = new Response($result);
         $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Content-Length', strlen($result));
+        $response->headers->set('Content-Length', (string) strlen($result));
 
         if ($download && null !== $suffix) {
             $response->headers->set('Content-Disposition', sprintf('attachment; filename="voucher-export.%s"', $suffix));

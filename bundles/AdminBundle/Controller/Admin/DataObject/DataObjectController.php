@@ -694,6 +694,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $object = DataObject::getById($objectId);
 
+        if (!$object) {
+            throw $this->createNotFoundException();
+        }
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -1529,6 +1533,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function publishVersionAction(Request $request)
     {
         $version = Model\Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
@@ -1711,7 +1718,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $pasteJobs = [];
 
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, ['idMapping' => []]);
+            $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {

@@ -616,7 +616,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $redirect = new Redirect();
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
         $redirect->setRegex(false);
-        $redirect->setTarget($targetId);
+        $redirect->setTarget((string) $targetId);
         $redirect->setSource($source);
         $redirect->setStatusCode(301);
         $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
@@ -794,6 +794,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function versionToSessionAction(Request $request)
     {
         $version = Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $document = $version->loadData();
         Document\Service::saveElementToSession($document);
 
@@ -812,6 +815,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $this->versionToSessionAction($request);
 
         $version = Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
@@ -905,7 +911,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $pasteJobs = [];
 
         Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, ['idMapping' => []]);
+            $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {
@@ -1459,6 +1465,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function convertAction(Request $request)
     {
         $document = Document::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
 
         $type = $request->get('type');
         $class = '\\Pimcore\\Model\\Document\\' . ucfirst($type);
@@ -1501,7 +1510,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $document = Document::getById((int) $request->get('id'));
         if ($document) {
-            $service = new Document\Service;
+            $service = new Document\Service();
             $document = $document->getId() === 1 ? $document : $document->getParent();
 
             $translations = $service->getTranslations($document);
@@ -1612,19 +1621,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
-        if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
-            // analyze content
-            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
+        // analyze content
+        $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
 
-            $title = $document->getTitle();
-            $description = $document->getDescription();
+        $title = $document->getTitle();
+        $description = $document->getDescription();
 
-            $nodeConfig['title'] = $title;
-            $nodeConfig['description'] = $description;
+        $nodeConfig['title'] = $title;
+        $nodeConfig['description'] = $description;
 
-            $nodeConfig['title_length'] = mb_strlen($title);
-            $nodeConfig['description_length'] = mb_strlen($description);
-        }
+        $nodeConfig['title_length'] = mb_strlen($title);
+        $nodeConfig['description_length'] = mb_strlen($description);
 
         return $nodeConfig;
     }

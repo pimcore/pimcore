@@ -199,7 +199,7 @@ trait DataObjectActionsTrait
                 list(, $type, $field, $keyId) = $parts;
 
                 if ($type == 'classificationstore') {
-                    $groupKeyId = explode('-', $keyId);
+                    $groupKeyId = array_map('intval', explode('-', $keyId));
                     list($groupId, $keyId) = $groupKeyId;
 
                     $getter = 'get' . ucfirst($field);

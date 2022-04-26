@@ -139,25 +139,27 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param Request $request
-     * @param Model\Document\PageSnippet $document
+     * @param Model\Document $document
      */
-    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
+    protected function addDataToDocument(Request $request, Model\Document $document)
     {
-        // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
-            // ensure editable are loaded
-            $document->getEditables();
-        } else {
-            // ensure no editables (e.g. from session, version, ...) are still referenced
-            $document->setEditables(null);
-        }
+        if ($document instanceof Model\Document\PageSnippet) {
+            // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
+            if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+                // ensure editable are loaded
+                $document->getEditables();
+            } else {
+                // ensure no editables (e.g. from session, version, ...) are still referenced
+                $document->setEditables(null);
+            }
 
-        if ($request->get('data')) {
-            $data = $this->decodeJson($request->get('data'));
-            foreach ($data as $name => $value) {
-                $data = $value['data'] ?? null;
-                $type = $value['type'];
-                $document->setRawEditable($name, $type, $data);
+            if ($request->get('data')) {
+                $data = $this->decodeJson($request->get('data'));
+                foreach ($data as $name => $value) {
+                    $data = $value['data'] ?? null;
+                    $type = $value['type'];
+                    $document->setRawEditable($name, $type, $data);
+                }
             }
         }
     }
@@ -187,6 +189,9 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         if ($documentId = (int) $request->get('id')) {
             if (!$document = Model\Document\Service::getElementFromSession('document', $documentId)) {
                 $document = Model\Document\PageSnippet::getById($documentId);
+                if (!$document) {
+                    throw $this->createNotFoundException();
+                }
                 $document = $this->getLatestVersion($document);
             }
 

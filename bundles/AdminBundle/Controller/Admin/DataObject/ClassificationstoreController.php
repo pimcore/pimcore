@@ -765,7 +765,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
         $condition = implode(' AND ', $conditionParts);
         $list->setCondition($condition);
-        $list->setResolveGroupName(1);
+        $list->setResolveGroupName(true);
 
         $rootElement = [];
 
@@ -1406,7 +1406,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $config->setTitle($name);
         $config->setType('input');
         $config->setStoreId($storeId);
-        $config->setEnabled(1);
+        $config->setEnabled(true);
         $config->setDefinition(json_encode($definition));
         $config->save();
 

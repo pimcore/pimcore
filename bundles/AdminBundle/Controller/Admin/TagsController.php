@@ -69,7 +69,7 @@ class TagsController extends AdminController
 
             return $this->adminJson(['success' => true]);
         } else {
-            throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
+            throw $this->createNotFoundException('Tag with ID ' . $request->get('id') . ' not found.');
         }
     }
 
@@ -98,7 +98,7 @@ class TagsController extends AdminController
 
             return $this->adminJson(['success' => true]);
         } else {
-            throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
+            throw $this->createNotFoundException('Tag with ID ' . $request->get('id') . ' not found.');
         }
     }
 

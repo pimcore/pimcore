@@ -134,6 +134,9 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     {
         if ($request->get('type') == 'document' && $request->get('id')) {
             $doc = Document::getById((int) $request->get('id'));
+            if (!$doc) {
+                throw $this->createNotFoundException();
+            }
             $path = $doc->getFullPath();
 
             if ($doc instanceof Document\Page && $doc->getPrettyUrl()) {

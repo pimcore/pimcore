@@ -915,10 +915,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
-     *
-     * @param Request $request
      */
-    public function webdavAction(Request $request)
+    public function webdavAction()
     {
         $homeDir = Asset::getById(1);
 
@@ -929,7 +927,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO(\Pimcore\Db::get()->getWrappedConnection());
+            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
+            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
@@ -1736,7 +1736,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to preview');
+            throw $this->createAccessDeniedException('Not allowed to preview');
         }
 
         return $this->render(
@@ -1887,7 +1887,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $pasteJobs = [];
 
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, []);
+            $session->set((string) $transactionId, []);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive') {
