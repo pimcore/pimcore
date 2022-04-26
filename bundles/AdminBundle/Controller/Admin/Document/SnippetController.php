@@ -147,7 +147,6 @@ class SnippetController extends DocumentControllerBase
         if ($snippetSession) {
             $snippet = $snippetSession;
         } else {
-            /** @var Document\Snippet $snippet */
             $snippet = $this->getLatestVersion($snippet);
         }
 
