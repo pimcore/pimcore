@@ -33,7 +33,7 @@ class AssetUpdateTasksHandler
     public function __invoke(AssetUpdateTasksMessage $message)
     {
         $asset = Asset::getById($message->getId());
-        $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
+        $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
