@@ -37,7 +37,7 @@ class UnitConversionService
      *
      * @throws \Exception
      */
-    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit)
+    public function convert(QuantityValue $quantityValue, Unit $toUnit)
     {
         $baseUnit = $toUnit->getBaseunit();
 
