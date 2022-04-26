@@ -15,4 +15,12 @@ to reduce test complexity and due to lack of compatibility with symfony 6.
 
 To still have the grab service functionality available, just use the 
 [`Pimcore\Tests\Helper\Pimcore`](https://github.com/pimcore/pimcore/blob/10.x/tests/_support/Helper/Pimcore.php#L101) 
-module and call `grabService` there. 
+module and call `grabService` as below: 
+
+```php
+use Pimcore\Tests\Helper\Pimcore;
+
+/** @var Pimcore $pimcoreModule */
+$pimcoreModule = $this->getModule('\\' . Pimcore::class);
+$mailerService = $pimcoreModule->grabService('mailer');
+```
