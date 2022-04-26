@@ -888,7 +888,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
-            'childs'
+            'childs',
         ];
     }
 

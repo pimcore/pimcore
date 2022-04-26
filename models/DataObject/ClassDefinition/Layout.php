@@ -23,7 +23,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     use Model\DataObject\ClassDefinition\Helper\VarExport {
         __set_state as private _VarExport__set_state;
     }
-
     use Element\ChildsCompatibilityTrait;
 
     /**

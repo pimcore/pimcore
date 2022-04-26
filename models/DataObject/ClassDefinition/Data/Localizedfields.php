@@ -1159,7 +1159,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             'blockedVarsForExport',
             'permissionView',
             'permissionEdit',
-            'childs'
+            'childs',
         ];
     }
 
