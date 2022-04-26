@@ -70,7 +70,8 @@ class FolderController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $folder = Document\Folder::getById($request->get('id'));
+        $folderId = (int) $request->get('id');
+        $folder = Document\Folder::getById($folderId);
 
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');
@@ -78,17 +79,17 @@ class FolderController extends DocumentControllerBase
 
         // check for lock
         if ($folder->isAllowed('save') || $folder->isAllowed('publish') || $folder->isAllowed('unpublish') || $folder->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (Element\Editlock::isLocked($folderId, 'document')) {
+                return $this->getEditLockResponse($folderId, 'document');
             }
-            Element\Editlock::lock($request->get('id'), 'document');
+            Element\Editlock::lock($folderId, 'document');
         }
 
         $folder = clone $folder;
-        $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
         $data = $folder->getObjectVars();
+        $data['locked'] = $folder->isLocked();
 
         $this->addTranslationsData($folder, $data);
         $this->minimizeProperties($folder, $data);
@@ -113,7 +114,7 @@ class FolderController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $folder = Document\Folder::getById($request->get('id'));
+        $folder = Document\Folder::getById((int) $request->get('id'));
 
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');

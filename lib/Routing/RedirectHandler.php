@@ -164,7 +164,7 @@ final class RedirectHandler implements LoggerAwareInterface
     {
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
-            $d = Document::getById($target);
+            $d = Document::getById((int) $target);
             if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                 $target = $d->getFullPath();
             } else {

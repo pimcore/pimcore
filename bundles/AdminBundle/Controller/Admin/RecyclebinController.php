@@ -151,7 +151,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
      */
     public function restoreAction(Request $request)
     {
-        $item = Recyclebin\Item::getById($request->get('id'));
+        $item = Recyclebin\Item::getById((int) $request->get('id'));
         $item->restore();
 
         return $this->adminJson(['success' => true]);

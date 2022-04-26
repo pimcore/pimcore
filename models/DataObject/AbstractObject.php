@@ -1072,7 +1072,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setId($o_id)
     {
-        $this->o_id = (int) $o_id;
+        $this->o_id = $o_id ? (int)$o_id : null;
 
         return $this;
     }

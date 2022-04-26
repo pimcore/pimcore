@@ -94,7 +94,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document not found');
@@ -269,8 +269,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
                     $createValues['staticGeneratorEnabled'] = $docType->getStaticGeneratorEnabled();
-                } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                } elseif ($translationsBaseDocumentId = $request->get('translationsBaseDocument')) {
+                    $translationsBaseDocument = Document::getById((int) $translationsBaseDocumentId);
                     if ($translationsBaseDocument instanceof Document\PageSnippet) {
                         $createValues['template'] = $translationsBaseDocument->getTemplate();
                         $createValues['controller'] = $translationsBaseDocument->getController();
@@ -367,8 +367,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         if ($success && $document instanceof Document) {
-            if ($request->get('translationsBaseDocument')) {
-                $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+            if ($translationsBaseDocumentId = $request->get('translationsBaseDocument')) {
+                $translationsBaseDocument = Document::getById((int) $translationsBaseDocumentId);
 
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
@@ -413,7 +413,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $type = 'children';
         }
         if ($type === 'children') {
-            $parentDocument = Document::getById($request->get('id'));
+            $parentDocument = Document::getById((int) $request->get('id'));
 
             $list = new Document\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
@@ -433,8 +433,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         }
-        if ($request->get('id')) {
-            $document = Document::getById($request->get('id'));
+        if ($id = $request->get('id')) {
+            $document = Document::getById((int) $id);
             if ($document && $document->isAllowed('delete')) {
                 try {
                     if ($document->isLocked()) {
@@ -468,7 +468,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $success = false;
         $allowUpdate = true;
 
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
 
         $oldPath = $document->getDao()->getCurrentFullPath();
         $oldDocument = Document::getById($document->getId(), true);
@@ -484,8 +484,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         if ($document->isAllowed('settings')) {
             // if the position is changed the path must be changed || also from the children
-            if ($request->get('parentId')) {
-                $parentDocument = Document::getById($request->get('parentId'));
+            if ($parentId = $request->get('parentId')) {
+                $parentDocument = Document::getById((int) $parentId);
 
                 //check if parent is changed
                 if ($document->getParentId() != $parentDocument->getId()) {
@@ -794,7 +794,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function versionToSessionAction(Request $request)
     {
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
         $document = $version->loadData();
         Document\Service::saveElementToSession($document);
 
@@ -812,7 +812,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $this->versionToSessionAction($request);
 
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
         $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
@@ -910,7 +910,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {
-            $document = Document::getById($request->get('sourceId'));
+            $document = Document::getById((int) $request->get('sourceId'));
 
             // first of all the new parent
             $pasteJobs[] = [[
@@ -1056,13 +1056,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $sessionBag = $session->get($request->get('transactionId'));
 
         if ($request->get('targetParentId')) {
-            $sourceParent = Document::getById($request->get('sourceParentId'));
+            $sourceParent = Document::getById((int) $request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
             if ($sessionBag['parentId']) {
                 $targetParent = Document::getById($sessionBag['parentId']);
             } else {
-                $targetParent = Document::getById($request->get('targetParentId'));
+                $targetParent = Document::getById((int) $request->get('targetParentId'));
             }
 
             $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
@@ -1340,9 +1340,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function languageTreeAction(Request $request)
     {
-        $document = Document::getById($request->query->get('node'));
-
-        $service = new Document\Service();
+        $document = Document::getById((int) $request->query->get('node'));
 
         $languages = explode(',', $request->get('languages'));
 
@@ -1365,7 +1363,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function languageTreeRootAction(Request $request)
     {
-        $document = Document::getById($request->query->get('id'));
+        $document = Document::getById((int) $request->query->get('id'));
 
         if (!$document) {
             return $this->adminJson([
@@ -1461,7 +1459,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function convertAction(Request $request)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
 
         $type = $request->get('type');
         $class = '\\Pimcore\\Model\\Document\\' . ucfirst($type);
@@ -1502,7 +1500,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $success = false;
         $targetDocument = null;
 
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
         if ($document) {
             $service = new Document\Service;
             $document = $document->getId() === 1 ? $document : $document->getParent();
@@ -1530,7 +1528,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function translationAddAction(Request $request)
     {
-        $sourceDocument = Document::getById($request->get('sourceId'));
+        $sourceDocument = Document::getById((int) $request->get('sourceId'));
         $targetDocument = Document::getByPath($request->get('targetPath'));
 
         if ($sourceDocument && $targetDocument) {
@@ -1563,8 +1561,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function translationRemoveAction(Request $request)
     {
-        $sourceDocument = Document::getById($request->get('sourceId'));
-        $targetDocument = Document::getById($request->get('targetId'));
+        $sourceDocument = Document::getById((int) $request->get('sourceId'));
+        $targetDocument = Document::getById((int) $request->get('targetId'));
         if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
             $service->removeTranslationLink($sourceDocument, $targetDocument);

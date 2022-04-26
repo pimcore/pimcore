@@ -93,7 +93,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         $success = false;
 
-        $target = Targeting\Rule::getById($request->get('id'));
+        $target = Targeting\Rule::getById((int) $request->get('id'));
         if ($target) {
             $target->delete();
             $success = true;
@@ -111,7 +111,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      */
     public function ruleGetAction(Request $request)
     {
-        $target = Targeting\Rule::getById($request->get('id'));
+        $target = Targeting\Rule::getById((int) $request->get('id'));
         $target = $target->getObjectVars();
 
         return $this->adminJson($target);
@@ -128,8 +128,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         $data = $this->decodeJson($request->get('data'));
 
-        /** @var Targeting\Rule|Targeting\Rule\Dao $target */
-        $target = Targeting\Rule::getById($request->get('id'));
+        $target = Targeting\Rule::getById((int) $request->get('id'));
         $target->setValues($data['settings']);
         $target->setName($this->correctName($target->getName()));
         $target->setConditions($data['conditions']);
@@ -252,7 +251,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         $success = false;
 
-        $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = TargetGroup::getById((int) $request->get('id'));
         if ($targetGroup) {
             $targetGroup->delete();
             $success = true;
@@ -272,8 +271,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      */
     public function targetGroupGetAction(Request $request)
     {
-        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
-        $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = TargetGroup::getById((int) $request->get('id'));
         $targetGroup = $targetGroup->getObjectVars();
 
         return $this->adminJson($targetGroup);
@@ -291,8 +289,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         $data = $this->decodeJson($request->get('data'));
 
-        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
-        $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = TargetGroup::getById((int) $request->get('id'));
         $targetGroup->setValues($data['settings']);
         $targetGroup->setName($this->correctName($targetGroup->getName()));
         $targetGroup->save();

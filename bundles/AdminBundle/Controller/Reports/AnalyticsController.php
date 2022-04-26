@@ -128,20 +128,20 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     /**
      * @param Request $request
      *
-     * @return mixed|string
+     * @return string
      */
     protected function getFilterPath(Request $request)
     {
         if ($request->get('type') == 'document' && $request->get('id')) {
-            $doc = Document::getById($request->get('id'));
+            $doc = Document::getById((int) $request->get('id'));
             $path = $doc->getFullPath();
 
             if ($doc instanceof Document\Page && $doc->getPrettyUrl()) {
                 $path = $doc->getPrettyUrl();
             }
 
-            if ($request->get('site')) {
-                $site = Site::getById($request->get('site'));
+            if ($siteId = $request->get('site')) {
+                $site = Site::getById((int) $siteId);
                 $path = preg_replace('@^' . preg_quote($site->getRootPath(), '@') . '/@', '/', $path);
             }
 

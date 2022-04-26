@@ -102,7 +102,7 @@ abstract class ElementControllerBase extends AdminController
 
         foreach ($ids as $id) {
             try {
-                $element = Service::getElementById($type, $id);
+                $element = Service::getElementById($type, (int) $id);
                 if (!$element) {
                     continue;
                 }
@@ -209,7 +209,7 @@ abstract class ElementControllerBase extends AdminController
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $element = Service::getElementById($type, $ids[0]);
+            $element = Service::getElementById($type, (int) $ids[0]);
 
             if ($element instanceof ElementInterface) {
                 $elementKey = $element->getKey();

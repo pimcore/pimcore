@@ -754,7 +754,8 @@ CREATE TABLE `versions` (
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `autoSave` (`autoSave`)
+  KEY `autoSave` (`autoSave`),
+  KEY `stackTrace` (`stackTrace`(1))
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;

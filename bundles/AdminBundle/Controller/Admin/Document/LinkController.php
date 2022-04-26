@@ -75,7 +75,8 @@ class LinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request, SerializerInterface $serializer)
     {
-        $link = Document\Link::getById($request->get('id'));
+        $linkId = (int) $request->get('id');
+        $link = Document\Link::getById($linkId);
 
         if (!$link) {
             throw $this->createNotFoundException('Link not found');
@@ -83,20 +84,20 @@ class LinkController extends DocumentControllerBase
 
         // check for lock
         if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (Element\Editlock::isLocked($linkId, 'document')) {
+                return $this->getEditLockResponse($linkId, 'document');
             }
-            Element\Editlock::lock($request->get('id'), 'document');
+            Element\Editlock::lock($linkId, 'document');
         }
 
         $link = clone $link;
 
         $link->setElement(null);
-        $link->setLocked($link->isLocked());
         $link->setParent(null);
 
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
+        $data['locked'] = $link->isLocked();
         $data['rawHref'] = $link->getRawHref();
         $data['scheduledTasks'] = array_map(
             static function (Task $task) {
@@ -128,7 +129,7 @@ class LinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $link = Document\Link::getById($request->get('id'));
+        $link = Document\Link::getById((int) $request->get('id'));
 
         if (!$link) {
             throw $this->createNotFoundException('Link not found');

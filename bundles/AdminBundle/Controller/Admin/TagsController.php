@@ -63,7 +63,7 @@ class TagsController extends AdminController
      */
     public function deleteAction(Request $request)
     {
-        $tag = Tag::getById($request->get('id'));
+        $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
             $tag->delete();
 
@@ -84,7 +84,7 @@ class TagsController extends AdminController
      */
     public function updateAction(Request $request)
     {
-        $tag = Tag::getById($request->get('id'));
+        $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
             $parentId = $request->get('parentId');
             if ($parentId || $parentId === '0') {

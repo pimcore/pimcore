@@ -50,7 +50,7 @@ class GeneralTest extends ModelTestCase
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
-        $one->setPublished(1);
+        $one->setPublished(true);
 
         $one->setNormalInput('parenttext');
         $one->save();
@@ -58,7 +58,7 @@ class GeneralTest extends ModelTestCase
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
-        $two->setPublished(1);
+        $two->setPublished(true);
         $two->setNormalInput('childtext');
         $two->save();
 
@@ -159,7 +159,7 @@ class GeneralTest extends ModelTestCase
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
-        $one->setPublished(1);
+        $one->setPublished(true);
 
         $one->setNormalInput('parenttext');
         $one->setRelation($target);
@@ -170,7 +170,7 @@ class GeneralTest extends ModelTestCase
         $two = new Inheritance();
         $two->setKey('one');
         $two->setParentId($one->getId());
-        $two->setPublished(1);
+        $two->setPublished(true);
 
         $two->setNormalInput('parenttext');
         $two->save();
@@ -217,7 +217,7 @@ class GeneralTest extends ModelTestCase
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
-        $one->setPublished(1);
+        $one->setPublished(true);
 
         $one->setNormalInput('parenttext');
         $one->save();
@@ -230,7 +230,7 @@ class GeneralTest extends ModelTestCase
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($folder->getId());
-        $two->setPublished(1);
+        $two->setPublished(true);
 
         $two->setNormalInput('childtext');
         $two->save();
@@ -280,7 +280,7 @@ class GeneralTest extends ModelTestCase
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
-        $one->setPublished(1);
+        $one->setPublished(true);
 
         $one->setNormalInput('parenttext');
         $one->save();
@@ -293,7 +293,7 @@ class GeneralTest extends ModelTestCase
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($objectBetween->getId());
-        $two->setPublished(1);
+        $two->setPublished(true);
 
         $two->setNormalInput('childtext');
         $two->save();

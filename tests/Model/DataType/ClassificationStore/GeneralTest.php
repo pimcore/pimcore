@@ -68,7 +68,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = new \Pimcore\Model\DataObject\Csstore();
         $o->setParentId(1);
         $o->setKey('testobject');
-        $o->setPublished(1);
+        $o->setPublished(true);
 
         $o->save();
 
@@ -163,7 +163,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = new \Pimcore\Model\DataObject\Csstore();
         $o->setParentId(1);
         $o->setKey('testobject');
-        $o->setPublished(1);
+        $o->setPublished(true);
         $o->save();
         Cache::clearAll();
 
