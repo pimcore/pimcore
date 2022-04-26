@@ -461,17 +461,19 @@ class SearchController extends AdminController
         $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            $data = [
-                'id' => $element->getId(),
-                'type' => $hit->getId()->getType(),
-                'subtype' => $element->getType(),
-                'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
-            ];
+            if ($element->isAllowed('list')) {
+                $data = [
+                    'id' => $element->getId(),
+                    'type' => $hit->getId()->getType(),
+                    'subtype' => $element->getType(),
+                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
+                ];
 
-            $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
 
-            $elements[] = $data;
+                $elements[] = $data;
+            }
         }
 
         $afterListLoadEvent = new GenericEvent($this, [
