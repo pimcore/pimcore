@@ -226,7 +226,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (value) {
-                return (value.value ? value.value : "") + " " + value.unitAbbr;
+                return (value.value ? value.value : "") + " " + t(value.unitAbbr);
             } else {
                 return "";
             }
