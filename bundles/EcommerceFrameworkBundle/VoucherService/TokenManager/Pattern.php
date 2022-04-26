@@ -239,13 +239,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                 return false;
             }
 
-            if (is_array($codeSets)) {
-                foreach ($codeSets as $query) {
-                    $db->query($this->buildInsertQuery($query));
-                }
-            } else {
-                $db->query($this->buildInsertQuery($codeSets));
-            }
+            $db->query($this->buildInsertQuery($codeSets));
 
             return $codeSets;
         } catch (\Exception $e) {
@@ -392,24 +386,21 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      */
     protected function buildInsertQuery($insertTokens)
     {
-        $query = 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
 
-        if (count($insertTokens) > 0) {
-            foreach ($insertTokens as $token) {
-                $insertParts[] =
-                    "('" .
-                    $token .
-                    "'," .
-                    $finalLength .
-                    ',' .
-                    $this->seriesId .
-                    ')';
-            }
+        foreach ($insertTokens as $token) {
+            $insertParts[] =
+                "('" .
+                $token .
+                "'," .
+                $finalLength .
+                ',' .
+                $this->seriesId .
+                ')';
         }
 
-        return $query . 'VALUES ' . implode(',', $insertParts);
+        return 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES ' . implode(',', $insertParts);
     }
 
     /**
@@ -429,7 +420,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             // Check if a max_packet_size Error is possible
             $possibleMaxQuerySizeError = ($finalTokenLength * $this->configuration->getCount() / 1024 / 1024) > 15;
             // Return Query
-            $resultTokenSet = false;
+            $resultTokenSet = [];
             // Tokens of one Insert Query
             $insertTokens = [];
             // Tokens of all Insert Queries together

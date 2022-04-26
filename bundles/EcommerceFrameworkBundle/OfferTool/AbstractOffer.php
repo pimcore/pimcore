@@ -172,7 +172,7 @@ abstract class AbstractOffer extends Concrete
             $item = $service->getNewOfferItemObject();
             $item->setParent($this);
             $item->setPublished(true);
-            $item->setCartItemKey($product->getId());
+            $item->setCartItemKey((string) $product->getId());
             $item->setKey('custom_' . $product->getId());
 
             $item->setAmount($amount);
@@ -187,7 +187,7 @@ abstract class AbstractOffer extends Concrete
         } else {
             $item->setAmount($item->getAmount() + $amount);
 
-            $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
+            $price = $product->getOSPriceInfo((int) $item->getAmount())->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());
@@ -217,7 +217,7 @@ abstract class AbstractOffer extends Concrete
             }
         }
 
-        return $groupedItems[$groupName];
+        return $groupedItems[$groupName] ?? null;
     }
 
     /**

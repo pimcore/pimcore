@@ -105,7 +105,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
     {
         $xml = $this->createXMLElement();
 
-        $xml->addAttribute('id', $objectId);
+        $xml->addAttribute('id', (string) $objectId);
         $xml->addChild('allOrdernumbers')
             ->addChild('ordernumbers');
         $xml->addChild('names');
@@ -120,7 +120,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
         // add optional fields
         if (array_key_exists('salesFrequency', $data['data'])) {
             $xml->addChild('salesFrequencies')
-                ->addChild('salesFrequency', (int)$data['data']['salesFrequency'])
+                ->addChild('salesFrequency', $data['data']['salesFrequency'])
             ;
         }
         if (array_key_exists('dateAdded', $data['data'])) {
