@@ -386,6 +386,10 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         return this.datax;
     },
 
+    applyData: function (){
+        return this.getData();
+    },
+
     applySpecialData: function(source) {
         if (source.datax) {
             if (!this.datax) {

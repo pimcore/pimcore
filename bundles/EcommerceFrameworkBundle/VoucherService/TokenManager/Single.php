@@ -240,7 +240,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
                         $orderToken->setVoucherSeries($series);
                         $orderToken->setParent($series);        // TODO set correct parent for applied tokens
                         $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
-                        $orderToken->setPublished(1);
+                        $orderToken->setPublished(true);
                         $orderToken->save();
                     }
 
@@ -315,7 +315,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @return mixed
+     * @return string|int|null
      */
     public function getSeriesId()
     {
@@ -323,7 +323,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param mixed $seriesId
+     * @param string|int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {

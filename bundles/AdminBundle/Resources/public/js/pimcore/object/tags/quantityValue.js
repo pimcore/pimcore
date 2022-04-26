@@ -19,6 +19,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
+        this.applyDefaultValue();
     },
 
     applyDefaultValue: function() {

@@ -134,7 +134,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
         try {
             $paymentStatus = $paymentProvider->handleResponse($paymentResponseParams);
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
 
             //create payment status with error message and cancelled payment
             $paymentStatus = new Status(

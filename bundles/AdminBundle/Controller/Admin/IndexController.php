@@ -231,6 +231,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
+            'chromium' => \Pimcore\Image\Chromium::isSupported(),
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],

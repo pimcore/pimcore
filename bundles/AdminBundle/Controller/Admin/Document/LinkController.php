@@ -92,11 +92,11 @@ class LinkController extends DocumentControllerBase
         $link = clone $link;
 
         $link->setElement(null);
-        $link->setLocked($link->isLocked());
         $link->setParent(null);
 
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
+        $data['locked'] = $link->isLocked();
         $data['rawHref'] = $link->getRawHref();
         $data['scheduledTasks'] = array_map(
             static function (Task $task) {

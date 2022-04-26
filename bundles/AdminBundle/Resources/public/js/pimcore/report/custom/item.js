@@ -457,7 +457,7 @@ pimcore.report.custom.item = Class.create({
                 minChars: 1,
                 store: userStore,
                 displayField: 'label',
-                valueField: 'id',
+                valueField: 'label',
                 forceSelection: true,
                 filterPickList: true,
                 value: this.data.sharedUserNames ? this.data.sharedUserNames : ""
@@ -492,7 +492,7 @@ pimcore.report.custom.item = Class.create({
                 minChars: 1,
                 store: rolesStore,
                 displayField: 'label',
-                valueField: 'id',
+                valueField: 'label',
                 forceSelection: true,
                 filterPickList: true,
                 value: this.data.sharedRoleNames ? this.data.sharedRoleNames : ""
@@ -902,7 +902,7 @@ pimcore.report.custom.item = Class.create({
         let m = this.getValues();
         let error = false;
 
-        ['group', 'groupIconClass', 'iconClass', 'niceName', 'reportClass'].forEach(function (name) {
+        ['group', 'groupIconClass', 'iconClass', 'reportClass'].forEach(function (name) {
             if(m[name].length && !m[name].match(/^[_a-zA-Z]+[_a-zA-Z0-9-.\s]*$/)) {
                 error = name;
             }

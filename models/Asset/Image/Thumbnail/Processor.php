@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use League\Flysystem\FilesystemException;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
@@ -178,18 +179,33 @@ class Processor
         $storage = Storage::get('thumbnail');
 
         // check for existing and still valid thumbnail
-        if ($storage->fileExists($storagePath)) {
-            if ($storage->lastModified($storagePath) >= $asset->getModificationDate()) {
-                return [
-                    'src' => $storagePath,
-                    'type' => 'thumbnail',
-                    'storagePath' => $storagePath,
-                ];
-            } else {
-                // delete the file if it's not valid anymore, otherwise writing the actual data from
-                // the local tmp-file to the real storage a bit further down doesn't work, as it has a
-                // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
-                $storage->delete($storagePath);
+
+        $modificationDate = null;
+        $statusCacheEnabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache'];
+        if ($statusCacheEnabled && $deferred) {
+            $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
+        } else {
+            if ($storage->fileExists($storagePath)) {
+                $modificationDate = $storage->lastModified($storagePath);
+            }
+        }
+
+        if ($modificationDate) {
+            try {
+                if ($modificationDate >= $asset->getModificationDate()) {
+                    return [
+                        'src' => $storagePath,
+                        'type' => 'thumbnail',
+                        'storagePath' => $storagePath,
+                    ];
+                } else {
+                    // delete the file if it's not valid anymore, otherwise writing the actual data from
+                    // the local tmp-file to the real storage a bit further down doesn't work, as it has a
+                    // check for race-conditions & locking, so it needs to check for the existence of the thumbnail
+                    $storage->delete($storagePath);
+                }
+            } catch (FilesystemException $e) {
+                // nothing to do
             }
         }
 
@@ -216,7 +232,20 @@ class Processor
         $image->setPreserveMetaData($config->isPreserveMetaData());
         $image->setPreserveAnimation($config->getPreserveAnimation());
 
-        if (!$storage->fileExists($storagePath)) {
+        $fileExists = false;
+
+        try {
+            // check if file is already on the file-system and if it is still valid
+            $modificationDate = $storage->lastModified($storagePath);
+            if ($modificationDate < $asset->getModificationDate()) {
+                $storage->delete($storagePath);
+            } else {
+                $fileExists = true;
+            }
+        } catch (\Exception $e) {
+        }
+
+        if ($fileExists === false) {
             $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($storagePath);
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
@@ -428,6 +457,10 @@ class Processor
                 'src' => $storagePath,
                 'type' => 'deferred',
             ];
+        }
+
+        if ($statusCacheEnabled) {
+            $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
         }
 
         return [

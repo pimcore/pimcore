@@ -34,7 +34,7 @@ class Folder extends Model\Asset
     /**
      * @internal
      *
-     * @var Asset[]
+     * @var Asset[]|null
      */
     protected $children;
 
@@ -48,7 +48,7 @@ class Folder extends Model\Asset
     /**
      * set the children of the document
      *
-     * @param Asset[] $children
+     * @param Asset[]|null $children
      *
      * @return Folder
      */
@@ -144,7 +144,7 @@ class Folder extends Model\Asset
         $list->setOrder('asc');
         $list->setLimit($limit);
 
-        $totalImages = $list->getTotalCount();
+        $totalImages = $list->getCount();
         $count = 0;
         $gutter = 5;
         $squareDimension = 130;
@@ -195,7 +195,10 @@ class Folder extends Model\Asset
             if ($count && !$skipped) {
                 $localFile = File::getLocalTempFilePath('jpg');
                 imagejpeg($collage, $localFile, 60);
-                $storage->write($cacheFilePath, file_get_contents($localFile));
+
+                if (filesize($localFile) > 0) {
+                    $storage->write($cacheFilePath, file_get_contents($localFile));
+                }
                 unlink($localFile);
 
                 return $storage->readStream($cacheFilePath);

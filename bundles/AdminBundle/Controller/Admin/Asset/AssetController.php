@@ -115,11 +115,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $asset = clone $asset;
-        $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
         $asset->setStream(null);
         $data = $asset->getObjectVars();
+        $data['locked'] = $asset->isLocked();
 
         if ($asset instanceof Asset\Text) {
             if ($asset->getFileSize() < 2000000) {
@@ -275,7 +275,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             // get assets
             $childsList = new Asset\Listing();
             $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
-            $childsList->filterAccessibleByUser($this->getAdminUser());
+            $childsList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
             if (!is_null($filter)) {
                 $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
@@ -939,7 +939,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $server->start();
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         exit;
@@ -1303,7 +1303,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @param Request $request
      *
-     * @return StreamedResponse|JsonResponse
+     * @return StreamedResponse|JsonResponse|BinaryFileResponse
      */
     public function getImageThumbnailAction(Request $request)
     {
@@ -1375,6 +1375,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumbnail->getStream();
+
+        if (!$stream) {
+            return new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/filetype-not-supported.svg');
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [

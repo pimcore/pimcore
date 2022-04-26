@@ -29,7 +29,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
+ * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -153,12 +153,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 throw $newException;
                             }
                         } else {
-                            if ($e instanceof Model\Element\ValidationException) {
-                                throw $e;
-                            }
-                            $exceptionClass = get_class($e);
-
-                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
+                            throw $e;
                         }
                     }
                 }
@@ -524,7 +519,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public function getNextParentForInheritance()
     {

@@ -232,12 +232,14 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataForResource($data, $object, $params);
 
-        $data = strip_tags($data, '<a><img>');
-        $data = str_replace("\r\n", ' ', $data);
-        $data = str_replace("\n", ' ', $data);
-        $data = str_replace("\r", ' ', $data);
-        $data = str_replace("\t", '', $data);
-        $data = preg_replace('#[ ]+#', ' ', $data);
+        if (null !== $data) {
+            $data = strip_tags($data, '<a><img>');
+            $data = str_replace("\r\n", ' ', $data);
+            $data = str_replace("\n", ' ', $data);
+            $data = str_replace("\r", ' ', $data);
+            $data = str_replace("\t", '', $data);
+            $data = preg_replace('#[ ]+#', ' ', $data);
+        }
 
         return $data;
     }

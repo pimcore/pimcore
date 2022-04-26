@@ -147,7 +147,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                 $orderToken->setVoucherSeries($series);
                 $orderToken->setParent($series);
                 $orderToken->setKey(File::getValidFilename($token->getToken()));
-                $orderToken->setPublished(1);
+                $orderToken->setPublished(true);
                 $orderToken->save();
 
                 return $orderToken;
@@ -696,7 +696,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param mixed $seriesId
+     * @param string|int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {
@@ -704,7 +704,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @return mixed
+     * @return string|int|null
      */
     public function getSeriesId()
     {

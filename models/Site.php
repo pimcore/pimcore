@@ -431,7 +431,7 @@ final class Site extends AbstractModel
         try {
             \Pimcore\Cache::clearTag('site');
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 

@@ -30,11 +30,11 @@ use Pimcore\Model\Element\DuplicateFullPathException;
 
 /**
  * @method AbstractObject\Dao getDao()
- * @method array|null getPermissions(string $type, Model\User $user, bool $quote = true)
+ * @method array|null getPermissions(?string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
  * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
- * @method array getChildPermissions(string $type, Model\User $user, bool $quote = true)
+ * @method array getChildPermissions(?string $type, Model\User $user, bool $quote = true)
  */
 abstract class AbstractObject extends Model\Element\AbstractElement
 {
@@ -470,7 +470,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param array $objectTypes
      * @param bool $includingUnpublished
      *
-     * @return self[]
+     * @return DataObject[]
      */
     public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
@@ -643,14 +643,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -744,7 +744,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
+                        Logger::info((string) $er);
                     }
 
                     // set "HideUnpublished" back to the value it was originally
@@ -939,7 +939,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -1066,13 +1066,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $o_id
+     * @param int|null $o_id
      *
      * @return $this
      */
     public function setId($o_id)
     {
-        $this->o_id = (int) $o_id;
+        $this->o_id = $o_id ? (int)$o_id : null;
 
         return $this;
     }
@@ -1209,7 +1209,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array|null $children
+     * @param DataObject[]|null $children
      * @param array $objectTypes
      * @param bool $includingUnpublished
      *

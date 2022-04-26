@@ -101,7 +101,6 @@ class NewsletterController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
-        $email->setLocked($email->isLocked());
         $email->setParent(null);
 
         // unset useless data
@@ -109,6 +108,7 @@ class NewsletterController extends DocumentControllerBase
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
+        $data['locked'] = $email->isLocked();
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);

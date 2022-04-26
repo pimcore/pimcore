@@ -671,7 +671,7 @@ class Decimal
      * @example Decimal::create(100)->toPercentage(30) = 30
      * @example Decimal::create(50)->toPercentage(50) = 25
      *
-     * @param int|float $percentage
+     * @param mixed $percentage
      * @param int|null $roundingMode
      *
      * @return Decimal
@@ -746,7 +746,7 @@ class Decimal
     /**
      * Transforms operand into a numeric value used for calculations.
      *
-     * @param int|float|Decimal $operand
+     * @param mixed $operand
      *
      * @return float
      */

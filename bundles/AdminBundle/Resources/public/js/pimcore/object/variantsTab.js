@@ -210,7 +210,11 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             tbar: tbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
-
+                    var subtype = record.get('subtype');
+                    if (record.get('type') === "object" && subtype !== "folder" && subtype !== null) {
+                        subtype = "object";
+                    }
+                    pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);
                 }.bind(this)
             }
         });

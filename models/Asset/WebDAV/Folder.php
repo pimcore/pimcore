@@ -52,7 +52,7 @@ class Folder extends DAV\Collection
 
         $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $childsList->filterAccessibleByUser($user);
+        $childsList->filterAccessibleByUser($user, $this->asset);
 
         foreach ($childsList as $child) {
             try {
@@ -60,7 +60,7 @@ class Folder extends DAV\Collection
                     $children[] = $child;
                 }
             } catch (\Exception $e) {
-                Logger::warning($e);
+                Logger::warning((string) $e);
             }
         }
 
@@ -185,7 +185,7 @@ class Folder extends DAV\Collection
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      *
      * @throws DAV\Exception\Forbidden
      * @throws \Exception

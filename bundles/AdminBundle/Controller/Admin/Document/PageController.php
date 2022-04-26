@@ -27,6 +27,7 @@ use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -106,7 +107,6 @@ class PageController extends DocumentControllerBase
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->setLocked($page->isLocked());
         $page->setParent(null);
 
         // unset useless data
@@ -114,6 +114,7 @@ class PageController extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
@@ -155,20 +156,19 @@ class PageController extends DocumentControllerBase
      */
     public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
     {
-        $page = Document\Page::getById($request->get('id'));
+        $oldPage = Document\Page::getById($request->get('id'));
 
-        if (!$page) {
+        if (!$oldPage) {
             throw $this->createNotFoundException('Page not found');
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($page);
+        $pageSession = $this->getFromSession($oldPage);
 
         if ($pageSession) {
             $page = $pageSession;
         } else {
-            /** @var Document\Page $page */
-            $page = $this->getLatestVersion($page);
+            $page = $this->getLatestVersion($oldPage);
         }
 
         $page->setUserModification($this->getAdminUser()->getId());
@@ -221,6 +221,19 @@ class PageController extends DocumentControllerBase
             if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
                 $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
                 $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+            }
+
+            if ($page->getPrettyUrl() !== $oldPage->getPrettyUrl()
+                && empty($oldPage->getPrettyUrl()) === false
+                && empty($page->getPrettyUrl()) === false
+            ) {
+                $redirect = new Redirect();
+
+                $redirect->setSource($oldPage->getPrettyUrl());
+                $redirect->setTarget($page->getPrettyUrl());
+                $redirect->setStatusCode(301);
+                $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                $redirect->save();
             }
 
             return $this->adminJson([
@@ -401,7 +414,7 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+        $url = $page->getUrl();
 
         $result = Builder::create()
             ->writer(new PngWriter())

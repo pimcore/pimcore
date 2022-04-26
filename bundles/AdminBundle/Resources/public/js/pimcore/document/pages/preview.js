@@ -12,109 +12,92 @@
  */
 
 pimcore.registerNS("pimcore.document.pages.preview");
-pimcore.document.pages.preview = Class.create({
+Ext.define('pimcore.document.pages.preview', {
+    extend: pimcore.element.abstractPreview,
 
-    initialize: function(page) {
-        this.page = page;
-        this.mode = "full";
+    initialize: function(element) {
+        this.callParent(arguments);
         this.previewTime = new Date();
         this.previewTime.setHours(0);
         this.previewTime.setMinutes(0);
         this.previewTime.setSeconds(0);
         this.previewTime.setMilliseconds(0);
-
-        this.availableHeight = null;
     },
 
-
     getLayout: function () {
-
         if (this.layout == null) {
-
             // preview switcher only for pages not for emails
             var tbar = [];
-            if(this.page.getType() == "page") {
+            if (this.element.getType() === "page") {
+                tbar = this.getToolbar().concat([
+                    "-",
+                    {
+                        text: t("qr_codes"),
+                        iconCls: "pimcore_icon_qrcode",
+                        handler: function () {
+                            var codeUrl = Routing.generate('pimcore_admin_document_page_qrcode', {id: this.element.id});
 
-                tbar = [{
-                    text: t("desktop"),
-                    iconCls: "pimcore_icon_desktop",
-                    handler: this.setFullMode.bind(this)
-                }, {
-                    text: t("tablet"),
-                    iconCls: "pimcore_icon_tablet",
-                    handler: this.setMode.bind(this, {device: "tablet", width: 1024, height: 768})
-                }, {
-                    text: t("phone"),
-                    iconCls: "pimcore_icon_mobile",
-                    handler: this.setMode.bind(this, {device: "phone", width: 375, height: 667})
-                },{
-                    text: t("phone"),
-                    iconCls: "pimcore_icon_mobile_landscape",
-                    handler: this.setMode.bind(this, {device: "phone", width: 667, height: 375})
-                }, "-", {
-                    text: t("qr_codes"),
-                    iconCls: "pimcore_icon_qrcode",
-                    handler: function () {
-                        var codeUrl = Routing.generate('pimcore_admin_document_page_qrcode', {id: this.page.id});
+                            var download = function () {
+                                var codeUrl = Routing.generate('pimcore_admin_document_page_qrcode', {id: this.element.id, download: true});
+                                pimcore.helpers.download(codeUrl);
+                            };
 
-                        var download = function () {
-                            var codeUrl = Routing.generate('pimcore_admin_document_page_qrcode', {id: this.page.id, download: true});
-                            pimcore.helpers.download(codeUrl);
-                        };
-
-                        var qrWindow = new Ext.Window({
-                            width: 280,
-                            border:false,
-                            title: t("qr_codes"),
-                            modal: true,
-                            autoScroll: true,
-                            bodyStyle: "padding: 10px; text-align:center;",
-                            items: [{
-                                    html: '<img src="' + codeUrl + '" style="padding:10px; height:250px;" />',
-                                    border: true,
-                                    height: 250
-                                }, {
-                                border: false,
-                                buttons: [{
-                                    width: "100%",
-                                    text: t("download"),
-                                    iconCls: "pimcore_icon_png",
-                                    handler: download.bind(this)
+                            var qrWindow = new Ext.Window({
+                                width: 280,
+                                border:false,
+                                title: t("qr_codes"),
+                                modal: true,
+                                autoScroll: true,
+                                bodyStyle: "padding: 10px; text-align:center;",
+                                items: [{
+                                        html: '<img src="' + codeUrl + '" style="padding:10px; height:250px;" />',
+                                        border: true,
+                                        height: 250
+                                    }, {
+                                    border: false,
+                                    buttons: [{
+                                        width: "100%",
+                                        text: t("download"),
+                                        iconCls: "pimcore_icon_png",
+                                        handler: download.bind(this)
+                                    }]
                                 }]
-                            }]
-                        });
+                            });
 
-                        qrWindow.show();
+                            qrWindow.show();
 
-                    }.bind(this)
-                }, "-", {
-                    text: t("open_in_new_window"),
-                    iconCls: "pimcore_icon_open_window",
-                    handler: function () {
-                        var date = new Date();
-                        var link = this.page.data.path + this.page.data.key;
-                        var linkParams = [];
+                        }.bind(this)
+                    },
+                    "-",
+                    {
+                        text: t("open_in_new_window"),
+                        iconCls: "pimcore_icon_open_window",
+                        handler: function () {
+                            var date = new Date();
+                            var link = this.element.data.path + this.element.data.key;
+                            var linkParams = [];
 
-                        linkParams.push("pimcore_preview=true");
-                        linkParams.push("_dc=" + date.getTime());
+                            linkParams.push("pimcore_preview=true");
+                            linkParams.push("_dc=" + date.getTime());
 
-                        // add target group parameter if available
-                        if(this["edit"] && this.page.edit["targetGroup"]) {
-                            if(this.page.edit.targetGroup && this.page.edit.targetGroup.getValue()) {
-                                linkParams.push("_ptg=" + this.page.edit.targetGroup.getValue());
+                            // add target group parameter if available
+                            if (this["edit"] && this.element.edit["targetGroup"]) {
+                                if(this.element.edit.targetGroup && this.element.edit.targetGroup.getValue()) {
+                                    linkParams.push("_ptg=" + this.element.edit.targetGroup.getValue());
+                                }
                             }
-                        }
 
-                        if(linkParams.length) {
-                            link += "?" + linkParams.join("&");
-                        }
+                            if (linkParams.length) {
+                                link += "?" + linkParams.join("&");
+                            }
 
-                        window.open(link);
-                    }.bind(this)
-                }];
+                            window.open(link);
+                        }.bind(this)
+                    }
+                ]);
             }
 
-            this.iframeName = "document_preview_iframe_" + this.page.id;
+            this.frameId = "document_preview_iframe_" + this.element.id;
 
             this.framePanel = new Ext.Panel({
                 border: false,
@@ -123,8 +106,8 @@ pimcore.document.pages.preview = Class.create({
                 bodyStyle: "background:#323232;",
                 bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" frameborder="0" ' +
-                    'style="width: 100%;background: #fff;" id="' + this.iframeName + '" ' +
-                    'name="' + this.iframeName + '"></iframe>',
+                    'style="width: 100%;background: #fff;" id="' + this.frameId + '" ' +
+                    'name="' + this.frameId + '"></iframe>',
                 listeners: {
                     afterrender: function () {
                         Ext.get(this.getIframe()).on('load', function () {
@@ -189,7 +172,6 @@ pimcore.document.pages.preview = Class.create({
                 this.refresh();
             }.bind(this));
 
-
             this.framePanel.on("resize", this.onLayoutResize.bind(this));
             this.framePanel.on("afterrender", function () {
                 this.loadMask = new Ext.LoadMask({
@@ -204,77 +186,14 @@ pimcore.document.pages.preview = Class.create({
         return this.layout;
     },
 
-    setFullMode: function () {
-        this.getIframe().applyStyles({
-            position: "relative",
-            border: "0",
-            width: "100%",
-            height: (this.availableHeight-7) + "px",
-            top: "initial",
-            left: "initial"
-        });
-
-        this.loadCurrentPreview("desktop");
-    },
-
-    setMode: function (mode) {
-        var iframe = this.getIframe();
-        var availableWidth = this.framePanel.getWidth()-10;
-        var availableHeight = this.framePanel.getHeight()-10;
-
-        if(availableWidth < mode["width"]) {
-            Ext.MessageBox.alert(t("error"), t("screen_size_to_small"));
-            return;
-        }
-
-        if(availableHeight < mode["height"]) {
-            mode["height"] = availableHeight;
-        }
-
-        var top = Math.floor((availableHeight - mode["height"])/2);
-        var left = Math.floor((availableWidth - mode["width"])/2);
-
-        iframe.applyStyles({
-            position: "absolute",
-            border: "5px solid #323232",
-            width: mode["width"] + "px",
-            height: mode["height"] + "px",
-            top: top + "px",
-            left: left + "px"
-        });
-
-        this.mode = mode["device"];
-
-        this.loadCurrentPreview();
-    },
-
-    onLayoutResize: function (el, width, height, rWidth, rHeight) {
-        if(this.mode == "full") {
-            this.setLayoutFrameDimensions(width, height);
-        }
-
-        this.availableHeight = height;
-    },
-
-    setLayoutFrameDimensions: function (width, height) {
-        this.getIframe().setStyle({
-            height: (height-7) + "px"
-        });
-    },
-
     iFrameLoaded: function () {
         if(this.loadMask && this.getIframe().getAttribute("src").indexOf("pimcore_preview") > 0){
             this.loadMask.hide();
         }
     },
 
-    getIframe: function () {
-        var iframe = Ext.get(this.iframeName);
-        return iframe;
-    },
-
     getIframeWindow: function () {
-        return window[this.iframeName];
+        return window[this.frameId];
     },
 
     getIframeDocument: function () {
@@ -304,12 +223,12 @@ pimcore.document.pages.preview = Class.create({
         var date = new Date();
         var path;
 
-        path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime() + "&forceDeviceType=" + device + "&pimcore_override_output_timestamp=" + (this.previewTime.getTime() / 1000);
+        path = this.element.data.path + this.element.data.key + "?pimcore_preview=true&time=" + date.getTime() + "&forceDeviceType=" + device + "&pimcore_override_output_timestamp=" + (this.previewTime.getTime() / 1000);
 
         // add target group parameter if available
-        if(this.page["edit"] && this.page.edit["targetGroup"]) {
-            if(this.page.edit.targetGroup && this.page.edit.targetGroup.getValue()) {
-                path += "&_ptg=" + this.page.edit.targetGroup.getValue();
+        if(this.element["edit"] && this.element.edit["targetGroup"]) {
+            if(this.element.edit.targetGroup && this.element.edit.targetGroup.getValue()) {
+                path += "&_ptg=" + this.element.edit.targetGroup.getValue();
             }
         }
 
@@ -323,18 +242,9 @@ pimcore.document.pages.preview = Class.create({
 
     onClose: function () {
         try {
-            window[this.iframeName].location.href = "about:blank";
-            Ext.get(this.iframeName).remove();
-            delete window[this.iframeName];
+            window[this.frameId].location.href = "about:blank";
+            Ext.get(this.frameId).remove();
+            delete window[this.frameId];
         } catch (e) { }
-    },
-
-    refresh: function () {
-        this.loadMask.show();
-        this.page.saveToSession(function () {
-            if (this.preview) {
-                this.preview.loadCurrentPreview();
-            }
-        }.bind(this.page));
     }
 });

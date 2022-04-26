@@ -101,6 +101,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert('glossary', []);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

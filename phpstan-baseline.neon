@@ -86,11 +86,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
 
 		-
-			message: "#^Call to function is_scalar\\(\\) with Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal will always evaluate to false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
-
-		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: lib/Db/Connection.php
@@ -114,11 +109,6 @@ parameters:
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
 			count: 1
 			path: lib/Tool/Serialize.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: models/Asset/Image/Thumbnail/Processor.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"

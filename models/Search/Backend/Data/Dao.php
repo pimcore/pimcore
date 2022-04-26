@@ -71,7 +71,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
             $this->db->insertOrUpdate('search_backend_data', $data);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 
