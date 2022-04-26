@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 class QuantityValue extends AbstractQuantityValue
@@ -54,33 +53,6 @@ class QuantityValue extends AbstractQuantityValue
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @param Unit|string $unit target unit. if string provided, unit is tried to be found by abbreviation
-     *
-     * @return self
-     *
-     * @throws \Exception
-     */
-    public function convertTo($unit)
-    {
-        if (is_string($unit)) {
-            $unitObject = Unit::getByAbbreviation($unit);
-            if (!$unitObject instanceof Unit) {
-                throw new \InvalidArgumentException('Unit with abbreviation "'.$unit.'" does not exist');
-            }
-            $unit = $unitObject;
-        }
-
-        if (!$unit instanceof Unit) {
-            throw new \InvalidArgumentException('Please provide unit as '.Unit::class.' object or as string');
-        }
-
-        /** @var UnitConversionService $converter */
-        $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
-
-        return $converter->convert($this, $unit);
     }
 
     /**
