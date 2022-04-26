@@ -534,7 +534,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
-            $data['layout'] = self::getLayoutDefinitionArray($data['layout']);
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
@@ -2081,41 +2080,5 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
-    }
-
-    /**
-     * @deprecated BC Layer for childs properties, can be removed in Pimcore 11
-     *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data|null $layout
-     * @param string|null $childrenName
-     *
-     * @return array|null
-     */
-    private static function getLayoutDefinitionArray($layout, ?string $childrenName = null): ?array
-    {
-        if (!$layout) {
-            return null;
-        }
-
-        $return = (array)$layout;
-
-        if (isset($return['children']) && is_array($return['children'])) {
-            $children = $return['children'];
-            unset($return['children']);
-            if (!$childrenName || $childrenName === 'childs') {
-                $return['childs'] = [];
-                foreach ($children as $child) {
-                    $return['childs'][] = self::getLayoutDefinitionArray($child, 'childs');
-                }
-            }
-            if (!$childrenName || $childrenName === 'children') {
-                $return['children'] = [];
-                foreach ($children as $child) {
-                    $return['children'][] = self::getLayoutDefinitionArray($child, 'children');
-                }
-            }
-        }
-
-        return $return;
     }
 }
