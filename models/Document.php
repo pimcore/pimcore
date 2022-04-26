@@ -657,7 +657,7 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children, $includingUnpublished = false)
     {
-        if (empty($children)) {
+        if ($children === null) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
