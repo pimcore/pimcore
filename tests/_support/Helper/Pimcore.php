@@ -35,7 +35,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module
 {
-
     /**
      * @var null|ContainerInterface
      */
@@ -95,14 +94,18 @@ class Pimcore extends Module
 
     /**
      * @param string $serviceId
+     *
      * @return object|null
+     *
      * @throws \Exception
      */
-    public function grabService(string $serviceId) {
-        if(empty(self::$testServiceContainer)) {
+    public function grabService(string $serviceId)
+    {
+        if (empty(self::$testServiceContainer)) {
             $container = $this->getContainer();
             self::$testServiceContainer = $container->has('test.service_container') ? $container->get('test.service_container') : $container;
         }
+
         return self::$testServiceContainer->get($serviceId);
     }
 
