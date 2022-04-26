@@ -29,11 +29,11 @@ final class Version20220425082914 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `objects` DROP INDEX `type`, ADD INDEX `type_path` (o_type, o_path)');
+        $this->addSql('ALTER TABLE `objects` DROP INDEX `type`, ADD INDEX `type_path_classId` (o_type, o_path, o_classId)');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `objects` DROP INDEX `type_path`, ADD INDEX `type` (o_type)');
+        $this->addSql('ALTER TABLE `objects` DROP INDEX `type_path_classId`, ADD INDEX `type` (o_type)');
     }
 }
