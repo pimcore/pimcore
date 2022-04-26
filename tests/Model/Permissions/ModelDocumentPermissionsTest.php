@@ -196,7 +196,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $role2 = new User\Role();
         $role2->setName('dummyRole');
         $role2->setWorkspacesDocument([
-            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>false, 'publish'=>false ]),
+            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>false, 'publish'=>false, 'unpublish' => true ]),
         ]);
         $role2->save();
 
@@ -227,7 +227,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             (new User\Workspace\Document())->setValues(['cId' => $this->foo->getId(), 'cPath' => $this->foo->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Document())->setValues(['cId' => $this->bars->getId(), 'cPath' => $this->bars->getFullpath(), 'list' => false, 'view' => false]),
             (new User\Workspace\Document())->setValues(['cId' => $this->userfolder->getId(), 'cPath' => $this->userfolder->getFullpath(), 'list' => true, 'view' => true]),
-            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>true, 'publish'=>true]),
+            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => false, 'view' => false, 'save'=>true, 'publish'=>true, 'unpublish' => false]),
         ]);
         $this->userPermissionTest2->save();
     }
@@ -342,50 +342,121 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
 
-    protected function doAreAllowedTest(Document $element, array $types, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
+    protected function doAreAllowedTest(Document $element, User $user, array $expectedPermissions) {
+
+        $calculatedPermissions = $element->getUserPermissions($user);
+
+        foreach($expectedPermissions as $type => $expectedPermission) {
+
+            $this->assertEquals(
+                $expectedPermission,
+                $calculatedPermissions[$type],
+                sprintf('Expected permission does not match for element %s for user %s', $element->getFullpath(), $user->getName())
+            );
+        }
+
+    }
+
+    public function testAreAllowed()
     {
         $admin = User::getByName('admin');
 
-        $diffAdmin = array_diff_assoc($types, $element->getUserPermissions($admin));
-        $diffPermissionTest1 = array_diff_assoc($types, $element->getUserPermissions($this->userPermissionTest1));
-        $diffPermissionTest2 = array_diff_assoc($types, $element->getUserPermissions($this->userPermissionTest2));
+        //check permissions of groupfolder (directly defined) and grouptestobject.gif (inherited)
+        foreach([$this->groupfolder, $this->grouptestobject] as $element) {
+            $this->doAreAllowedTest($element, $admin,
+                [
+                    'save' => 1,
+                    'delete' => 1,
+                    'publish' => 1,
+                    'unpublish' => 1,
+                    'versions' => 1
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest1,
+                [
+                    'save' => 1,
+                    'delete' => 0,
+                    'publish' => 0,
+                    'unpublish' => 1,
+                    'versions' => 0
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest2,
+                [
+                    'save' => 1,
+                    'delete' => 0,
+                    'publish' => 1,
+                    'unpublish' => 0,
+                    'versions' => 0
+                ]
+            );
 
-        $this->assertEquals(
-            $resultAdmin,
-            count($diffAdmin) == 0,
-            '`' . print_r($diffAdmin, true) . '` of `' . $element->getFullpath() . '` is allowed for admin'
-        );
+        }
 
-        $this->assertEquals(
-            $resultPermissionTest1,
-            count($diffPermissionTest1) == 0,
-            '`' .  print_r($diffPermissionTest1, true). '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest1'
-        );
+        //check permissions of userfolder (directly defined) and usertestobject (inherited)
+        foreach([$this->userfolder, $this->usertestobject] as $element) {
+            $this->doAreAllowedTest($element, $admin,
+                [
+                    'view' => 1,
+                    'delete' => 1,
+                    'publish' => 1,
+                    'versions' => 1,
+                    'create' => 1,
+                    'rename' => 1,
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest1,
+                [
+                    'view' => 1,
+                    'delete' => 0,
+                    'publish' => 0,
+                    'versions' => 0,
+                    'create' => 1,
+                    'rename' => 1,
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest2,
+                [
+                    'view' => 1,
+                    'delete' => 0,
+                    'publish' => 0,
+                    'versions' => 0,
+                    'create' => 0,
+                    'rename' => 0,
+                ]
+            );
 
-        $this->assertEquals(
-            $resultPermissionTest2,
-            count($diffPermissionTest2) == 0,
-            '`' .  print_r($diffPermissionTest2, true) . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest2'
-        );
-    }
-    public function testAreAllowed()
-    {
-        // User 1 doesn't have publish=1 based on the inherited `Testrole`
-        $this->doAreAllowedTest($this->groupfolder, ['save'=> 1,'publish' =>1], true, false, true);
-        // Check admin and User2 are not simply returning all true to pass the above test, confirms User2's user-level permissions getting priority over individual roles
-        $this->doAreAllowedTest($this->groupfolder, ['save'=> 1,'publish' =>1 ,'versions' => 0], false, false, true);
-        // `Dummyrole`(0,0) is the "weakest" when conflicting, so it should never true, User 2 doesn't have user-level permission, so this confirms the additive behaviour on conflicting roles
-        $this->doAreAllowedTest($this->groupfolder, ['save'=> 0,'publish' =>0], false, false, false);
-        // Checks User1 is correctly getting the workspace rule from roles
-        $this->doAreAllowedTest($this->groupfolder, ['save'=> 1,'publish' =>0], false, true, false);
+        }
 
-        //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for admin and user1 to get to `c`
-        $this->doAreAllowedTest($this->b, ['list'=> 1], true, true, false);
-        $this->doAreAllowedTest($this->a, ['list'=> 1, 'save'=> 0], false, true, false);
+        //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for
+        // admin and user1 to get to `c`
+        foreach([$this->a, $this->b, $this->c] as $element) {
+            $this->doAreAllowedTest($element, $admin,
+                [
+                    'list' => 1,
+                    'delete' => 1,
+                    'publish' => 1,
+                    'versions' => 1
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest1,
+                [
+                    'list' => 1,
+                    'delete' => 0,
+                    'publish' => 0,
+                    'versions' => 0
+                ]
+            );
+            $this->doAreAllowedTest($element, $this->userPermissionTest2,
+                [
+                    'list' => 0,
+                    'delete' => 0,
+                    'publish' => 0,
+                    'versions' => 0
+                ]
+            );
+        }
 
-        //usertestobject should inherit the permisson from userfolder
-        $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'save'=> 0], false, true, false);
-        $this->doAreAllowedTest($this->usertestobject, ['create'=> 1, 'rename'=> 1, 'save'=> 1], true, false, false); //check if there are no false positive for user1
     }
 
     protected function buildController(string $classname, User $user)
