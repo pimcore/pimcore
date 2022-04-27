@@ -13,7 +13,7 @@
 
 pimcore.registerNS("pimcore.object.object");
 pimcore.object.object = Class.create(pimcore.object.abstract, {
-
+    willClose: false,
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
@@ -666,15 +666,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     saveClose: function (only) {
-        this.save(null, only, function () {
-            this.close();
-        }.bind(this))
+        this.willClose = true;
+        this.save(null, only);
     },
 
     publishClose: function () {
-        this.publish(null, function () {
-            this.close();
-        }.bind(this))
+        this.willClose = true;
+        this.publish(null)
     },
 
     publish: function (only, callback) {
@@ -714,9 +712,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     unpublishClose: function () {
-        this.unpublish(null, function () {
-            this.close();
-        }.bind(this));
+        this.willClose = true;
+        this.unpublish(null);
     },
 
     saveToSession: function (callback) {
@@ -825,6 +822,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     if (typeof callback == "function") {
                         callback();
                     }
+
+                    if (this.willClose){
+                        this.close();
+                    }
+
                 }.bind(this),
                 failure: function (response) {
                     this.tab.unmask();
