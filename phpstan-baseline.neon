@@ -36,6 +36,11 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/Manager.php
 
 		-
+			message: "#^Parameter \\#3 \\$roles of class Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\Authentication\\\\Token\\\\PreAuthenticatedAdminToken constructor expects array\\<string\\>, string given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Firewall/PreAuthenticatedAdminSessionListener.php
+
+		-
 			message: "#^Parameter \\#2 \\$value of class Symfony\\\\Component\\\\HttpFoundation\\\\Cookie constructor expects string\\|null, false given\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
@@ -219,6 +224,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
+
+		-
+			message: "#^Parameter \\#1 \\$connOrDsn of class Symfony\\\\Component\\\\Cache\\\\Adapter\\\\PdoAdapter constructor expects PDO\\|string, Pimcore\\\\Db\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: bundles/InstallBundle/Installer.php
 
 		-
 			message: "#^Parameter \\#2 \\$driverConnection of class Symfony\\\\Component\\\\Messenger\\\\Bridge\\\\Doctrine\\\\Transport\\\\Connection constructor expects Doctrine\\\\DBAL\\\\Connection, Pimcore\\\\Db\\\\ConnectionInterface given\\.$#"
