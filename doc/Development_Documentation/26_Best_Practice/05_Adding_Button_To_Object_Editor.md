@@ -4,7 +4,7 @@ Sometimes it might be useful to add additional buttons to the object editor (or 
 Interface. In terms of product for example to add a download button for a product data sheet - like the following 
 screen shot shows. 
 
-![Button](img/button.jpg)
+![Button](../img/button.png)
 
 
 **Solution**

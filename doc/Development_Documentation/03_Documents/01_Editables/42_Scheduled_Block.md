@@ -28,13 +28,13 @@ In editmode, additional block items can be added and their timestamp can be conf
 
 ## The Block Controls
 
-| Control                                   | Operation                                |
-|-------------------------------------------|------------------------------------------|
-| ![Date Picker](../../img/scheduled_block_date.jpg)  | Select a day for the block item timestamp.|
-| ![Slider](../../img/scheduled_block_slider.jpg)          | Select the time for the block item with the slider.|
-| ![+](../../img/scheduled_block_plus.jpg) | Add new block item.                  |
-| ![Block item menu](../../img/scheduled_block_item_menu.jpg) | List of all block items with jump to function.                  |
-| ![Delete entries](../../img/scheduled_block_item_menu_delete.jpg) | Delete all block items or all block items of the past.                  |
+| Control                                                           | Operation                                |
+|-------------------------------------------------------------------|------------------------------------------|
+| ![Date Picker](../../img/scheduled_block_date.jpg)                | Select a day for the block item timestamp.|
+| ![Slider](../../img/scheduled_block_slider.jpg)                   | Select the time for the block item with the slider.|
+| ![+](../../img/scheduled_block_plus.jpg)                          | Add new block item.                  |
+| ![Block item menu](../../img/scheduled_block_item_menu.png)       | List of all block items with jump to function.                  |
+| ![Delete entries](../../img/scheduled_block_item_menu_delete.png) | Delete all block items or all block items of the past.                  |
 
 
 ## Basic Usage
