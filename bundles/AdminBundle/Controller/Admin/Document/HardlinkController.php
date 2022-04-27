@@ -15,75 +15,37 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/hardlink")
+ * @Route("/hardlink", name="pimcore_admin_document_hardlink_")
  *
  * @internal
  */
 class HardlinkController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_hardlink_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_hardlink_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_hardlink_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_hardlink_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getDataByIdAction(Request $request)
     {
-        $linkId = (int) $request->get('id');
-        $link = Document\Hardlink::getById($linkId);
+        $link = Document\Hardlink::getById((int)$request->get('id'));
 
         if (!$link) {
             throw $this->createNotFoundException('Hardlink not found');
         }
 
-        // check for lock
-        if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($linkId, 'document')) {
-                return $this->getEditLockResponse($linkId, 'document');
-            }
-            Element\Editlock::lock($linkId, 'document');
+        if (($lock = $this->checkForLock($link)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $link = clone $link;
@@ -105,17 +67,11 @@ class HardlinkController extends DocumentControllerBase
             $data['sourcePath'] = $link->getSourceDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $link);
-
-        if ($link->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $link);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_hardlink_save", methods={"POST", "PUT"})
+     * @Route("/save", name="save", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -123,43 +79,26 @@ class HardlinkController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $link = Document\Hardlink::getById((int) $request->get('id'));
-
         if (!$link) {
             throw $this->createNotFoundException('Hardlink not found');
         }
 
-        $this->setValuesToDocument($request, $link);
+        $result = $this->saveDocument($link, $request);
+        /** @var Document\Hardlink $link */
+        $link = $result[1];
+        $treeData = $this->getTreeNodeConfig($link);
 
-        $link->setModificationDate(time());
-        $link->setUserModification($this->getAdminUser()->getId());
-
-        if ($request->get('task') == 'unpublish') {
-            $link->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $link->setPublished(true);
-        }
-
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
-            $link->save();
-
-            $treeData = $this->getTreeNodeConfig($link);
-
-            return $this->adminJson([
-                'success' => true,
-                 'data' => [
-                     'versionDate' => $link->getModificationDate(),
-                     'versionCount' => $link->getVersionCount(),
-                 ],
-                'treeData' => $treeData,
-            ]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
-        }
+        return $this->adminJson([
+            'success' => true,
+            'data' => [
+                'versionDate' => $link->getModificationDate(),
+                'versionCount' => $link->getVersionCount(),
+            ],
+            'treeData' => $treeData,
+        ]);
     }
 
     /**

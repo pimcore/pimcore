@@ -34,66 +34,31 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/newsletter")
+ * @Route("/newsletter", name="pimcore_admin_document_newsletter_")
  *
  * @internal
  */
 class NewsletterController extends DocumentControllerBase
 {
-    use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_newsletter_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_newsletter_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_newsletter_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_newsletter_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws Exception
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $emailId = (int) $request->get('id');
-        $email = Document\Newsletter::getById($emailId);
+        $email = Document\Newsletter::getById((int)$request->get('id'));
 
         if (!$email) {
             throw $this->createNotFoundException('Document not found');
         }
 
-        // check for lock
-        if ($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($emailId, 'document')) {
-                return $this->getEditLockResponse($emailId, 'document');
-            }
-            Element\Editlock::lock($emailId, 'document');
+        if (($lock = $this->checkForLock($email)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $email = clone $email;
@@ -116,17 +81,11 @@ class NewsletterController extends DocumentControllerBase
 
         $data['url'] = $email->getUrl();
 
-        $this->preSendDataActions($data, $email, $draftVersion);
-
-        if ($email->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $email, $draftVersion);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_newsletter_save", methods={"PUT", "POST"})
+     * @Route("/save", name="save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -137,29 +96,14 @@ class NewsletterController extends DocumentControllerBase
     public function saveAction(Request $request): JsonResponse
     {
         $page = Document\Newsletter::getById((int) $request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
 
-        $page = $this->getLatestVersion($page);
-        $page->setUserModification($this->getAdminUser()->getId());
+        list($task, $page, $version) = $this->saveDocument($page, $request);
+        $this->saveToSession($page);
 
-        if ($request->get('task') === 'unpublish') {
-            $page->setPublished(false);
-        }
-
-        if ($request->get('task') === 'publish') {
-            $page->setPublished(true);
-        }
-        // only save when publish or unpublish
-        if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
-            ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
@@ -170,11 +114,7 @@ class NewsletterController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-            $version = $page->saveVersion();
-            $this->saveToSession($page);
-
+        } else {
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
@@ -182,8 +122,6 @@ class NewsletterController extends DocumentControllerBase
             ];
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 
@@ -205,7 +143,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/checksql", name="pimcore_admin_document_newsletter_checksql", methods={"POST"})
+     * @Route("/checksql", name="checksql", methods={"POST"})
      *
      * @param Request $request
      *
@@ -239,7 +177,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-available-classes", name="pimcore_admin_document_newsletter_getavailableclasses", methods={"GET"})
+     * @Route("/get-available-classes", name="getavailableclasses", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -267,7 +205,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-available-reports", name="pimcore_admin_document_newsletter_getavailablereports", methods={"GET"})
+     * @Route("/get-available-reports", name="getavailablereports", methods={"GET"})
      *
      * @param Request $request
      *
@@ -307,7 +245,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-send-status", name="pimcore_admin_document_newsletter_getsendstatus", methods={"GET"})
+     * @Route("/get-send-status", name="getsendstatus", methods={"GET"})
      *
      * @param Request $request
      *
@@ -328,7 +266,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/stop-send", name="pimcore_admin_document_newsletter_stopsend", methods={"POST"})
+     * @Route("/stop-send", name="stopsend", methods={"POST"})
      *
      * @param Request $request
      *
@@ -348,9 +286,10 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send", name="pimcore_admin_document_newsletter_send", methods={"POST"})
+     * @Route("/send", name="send", methods={"POST"})
      *
      * @param Request $request
+     * @param MessageBusInterface $messengerBusPimcoreCore
      *
      * @return JsonResponse
      *
@@ -383,7 +322,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
+     * @Route("/calculate", name="calculate", methods={"POST"})
      *
      * @param Request $request
      *
@@ -412,7 +351,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send-test", name="pimcore_admin_document_newsletter_sendtest", methods={"POST"})
+     * @Route("/send-test", name="sendtest", methods={"POST"})
      *
      * @param Request $request
      *

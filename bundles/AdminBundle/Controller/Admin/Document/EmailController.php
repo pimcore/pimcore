@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,64 +22,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/email")
+ * @Route("/email", name="pimcore_admin_document_email_")
  *
  * @internal
  */
 class EmailController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_email_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_email_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_email_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_email_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request): JsonResponse
     {
-        $emailId = (int) $request->get('id');
-        // check for lock
-        if (Element\Editlock::isLocked($emailId, 'document')) {
-            return $this->getEditLockResponse($emailId, 'document');
-        }
-        Element\Editlock::lock($emailId, 'document');
-
-        $email = Document\Email::getById($emailId);
+        $email = Document\Email::getById((int)$request->get('id'));
 
         if (!$email) {
             throw $this->createNotFoundException('Email not found');
+        }
+
+        if (($lock = $this->checkForLock($email)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $email = clone $email;
@@ -102,17 +68,12 @@ class EmailController extends DocumentControllerBase
         $this->minimizeProperties($email, $data);
 
         $data['url'] = $email->getUrl();
-        $this->preSendDataActions($data, $email, $draftVersion);
 
-        if ($email->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $email, $draftVersion);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_email_save", methods={"PUT", "POST"})
+     * @Route("/save", name="save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -120,33 +81,18 @@ class EmailController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $page = Document\Email::getById((int) $request->get('id'));
-
         if (!$page) {
             throw $this->createNotFoundException('Email not found');
         }
 
-        $page = $this->getLatestVersion($page);
-        $page->setUserModification($this->getAdminUser()->getId());
+        list($task, $page, $version) = $this->saveDocument($page, $request);
+        $this->saveToSession($page);
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
-
-            $this->handleTask($request->get('task'), $page);
 
             return $this->adminJson([
                 'success' => true,
@@ -156,23 +102,14 @@ class EmailController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-
-            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
-            $this->saveToSession($page);
-
+        } else {
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
                 'isAutoSave' => $version->isAutoSave(),
             ];
 
-            $this->handleTask($request->get('task'), $page);
-
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 
@@ -180,7 +117,7 @@ class EmailController extends DocumentControllerBase
      * @param Request $request
      * @param Document $page
      */
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $page): void
     {
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);

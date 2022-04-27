@@ -109,7 +109,7 @@ trait DocumentTreeConfigTrait
             $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
-                $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_page_display_preview_image', ['id' => $childDocument->getId()]);
+                $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_document_page_display_preview_image', ['id' => $childDocument->getId()]);
             }
         }
 
