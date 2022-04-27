@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM website_settings WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM website_settings WHERE id = ?', [$this->model->getId()]);
         $this->assignVariablesToModel($data);
 
         if (!empty($data['id'])) {
@@ -60,16 +60,16 @@ class Dao extends Model\Dao\AbstractDao
         }
         $data = $this->db->fetchRow(
             "SELECT *
-            FROM website_settings 
-            WHERE name = ? 
+            FROM website_settings
+            WHERE name = ?
                 AND (
-                    siteId IS NULL 
-                    OR siteId = 0 
+                    siteId IS NULL
+                    OR siteId = 0
                     OR siteId = ?
                 )
                 AND (
-                    language IS NULL 
-                    OR language = '' 
+                    language IS NULL
+                    OR language = ''
                     OR language = ?
                 )
             ORDER BY CONCAT(siteId, language) DESC, siteId DESC, language DESC",

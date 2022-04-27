@@ -162,13 +162,15 @@ class Dao extends AbstractDao {
      */
     public function getById($id = null) {
 
-        if ($id != null)
+        if ($id != null)  {
             $this->model->setId($id);
+        }
 
-        $data = $this->db->fetchRow('SELECT * FROM '.$this->tableName.' WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
-        if(!$data["id"])
+        if(!$data["id"]) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
+        }
 
         $this->assignVariablesToModel($data);
     }
