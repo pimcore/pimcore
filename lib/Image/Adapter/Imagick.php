@@ -1051,8 +1051,6 @@ class Imagick extends Adapter
             // we need a special handling for PhotoShop EPS
             $i = 0;
 
-            ini_set('auto_detect_line_endings', true); // we need to turn this on, as the damn f****** Mac has different line endings in EPS files, Prost Mahlzeit!
-
             $epsFile = fopen($this->imagePath, 'r');
             while (($eps_line = fgets($epsFile)) && ($i < 100)) {
                 if (preg_match('/%ImageData: ([0-9]+) ([0-9]+)/i', $eps_line, $matches)) {
