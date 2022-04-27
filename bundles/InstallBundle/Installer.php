@@ -600,7 +600,7 @@ class Installer
                 }
             }
 
-            $pdoCacheAdapter = new PdoAdapter($db);
+            $pdoCacheAdapter = new PdoAdapter($db); // @phpstan-ignore-line
             $pdoCacheAdapter->createTable();
 
             $doctrineTransportConn = new \Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection([], $db);
