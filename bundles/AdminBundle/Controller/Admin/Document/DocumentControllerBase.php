@@ -320,7 +320,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      *
      * @return T
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document, ?Version &$draftVersion = null): Model\Document\PageSnippet
+    protected function getLatestVersion(Model\Document $document, ?Version &$draftVersion = null): Model\Document\PageSnippet
     {
         $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
