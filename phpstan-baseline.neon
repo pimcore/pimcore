@@ -216,11 +216,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
 
 		-
-			message: "#^Parameter \\#1 \\$connOrDsn of class Symfony\\\\Component\\\\Cache\\\\Adapter\\\\PdoAdapter constructor expects PDO\\|string, Pimcore\\\\Db\\\\Connection given\\.$#"
-			count: 1
-			path: bundles/InstallBundle/Installer.php
-
-		-
 			message: "#^Parameter \\#5 \\$priority of static method Pimcore\\\\Cache\\:\\:save\\(\\) expects int, null given\\.$#"
 			count: 1
 			path: lib/Cache/Tool/Warming.php
@@ -479,11 +474,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$definition of static method Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\\\Service\\:\\:getFieldDefinitionFromJson\\(\\) expects array, Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\|null given\\.$#"
 			count: 1
 			path: models/DataObject/Classificationstore/Service.php
-
-		-
-			message: "#^Variable \\$relations on left side of \\?\\? always exists and is not nullable\\.$#"
-			count: 1
-			path: models/DataObject/Concrete.php
 
 		-
 			message: "#^Parameter \\#1 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\<Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>\\:\\:get\\(\\) expects int, string given\\.$#"
