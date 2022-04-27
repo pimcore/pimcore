@@ -460,7 +460,7 @@ class Document extends Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
+                        Logger::error((string) $er);
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
@@ -643,7 +643,7 @@ class Document extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -657,7 +657,7 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children, $includingUnpublished = false)
     {
-        if (empty($children)) {
+        if ($children === null) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
@@ -852,7 +852,7 @@ class Document extends Element\AbstractElement
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
-            Logger::error($e);
+            Logger::error((string) $e);
 
             throw $e;
         }
@@ -885,7 +885,7 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
@@ -1043,7 +1043,7 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         return $this->path;
@@ -1082,7 +1082,7 @@ class Document extends Element\AbstractElement
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id ? (int)$id : null;
 
         return $this;
     }

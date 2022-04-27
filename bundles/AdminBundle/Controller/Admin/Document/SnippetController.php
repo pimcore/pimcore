@@ -39,7 +39,8 @@ class SnippetController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippetId = (int) $request->get('id');
+        $snippet = Document\Snippet::getById($snippetId);
 
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
@@ -55,13 +56,13 @@ class SnippetController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
-        $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
         // unset useless data
         $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
+        $data['locked'] = $snippet->isLocked();
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);
@@ -92,7 +93,7 @@ class SnippetController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippet = Document\Snippet::getById((int) $request->get('id'));
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
         }

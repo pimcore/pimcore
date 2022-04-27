@@ -38,7 +38,8 @@ class HardlinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $link = Document\Hardlink::getById($request->get('id'));
+        $linkId = (int) $request->get('id');
+        $link = Document\Hardlink::getById($linkId);
 
         if (!$link) {
             throw $this->createNotFoundException('Hardlink not found');
@@ -49,10 +50,10 @@ class HardlinkController extends DocumentControllerBase
         }
 
         $link = clone $link;
-        $link->setLocked($link->isLocked());
         $link->setParent(null);
 
         $data = $link->getObjectVars();
+        $data['locked'] = $link->isLocked();
         $data['scheduledTasks'] = array_map(
             static function (Task $task) {
                 return $task->getObjectVars();
@@ -81,7 +82,7 @@ class HardlinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $link = Document\Hardlink::getById($request->get('id'));
+        $link = Document\Hardlink::getById((int) $request->get('id'));
         if (!$link) {
             throw $this->createNotFoundException('Hardlink not found');
         }

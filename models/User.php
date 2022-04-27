@@ -599,7 +599,7 @@ final class User extends User\UserRole
      */
     public function setContentLanguages($contentLanguages)
     {
-        if ($contentLanguages && is_array($contentLanguages)) {
+        if (is_array($contentLanguages)) {
             $contentLanguages = implode(',', $contentLanguages);
         }
         $this->contentLanguages = $contentLanguages;

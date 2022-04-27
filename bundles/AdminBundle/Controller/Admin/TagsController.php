@@ -63,13 +63,13 @@ class TagsController extends AdminController
      */
     public function deleteAction(Request $request)
     {
-        $tag = Tag::getById($request->get('id'));
+        $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
             $tag->delete();
 
             return $this->adminJson(['success' => true]);
         } else {
-            throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
+            throw $this->createNotFoundException('Tag with ID ' . $request->get('id') . ' not found.');
         }
     }
 
@@ -84,7 +84,7 @@ class TagsController extends AdminController
      */
     public function updateAction(Request $request)
     {
-        $tag = Tag::getById($request->get('id'));
+        $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
             $parentId = $request->get('parentId');
             if ($parentId || $parentId === '0') {
@@ -98,7 +98,7 @@ class TagsController extends AdminController
 
             return $this->adminJson(['success' => true]);
         } else {
-            throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
+            throw $this->createNotFoundException('Tag with ID ' . $request->get('id') . ' not found.');
         }
     }
 

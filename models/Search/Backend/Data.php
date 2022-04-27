@@ -448,7 +448,7 @@ class Data extends \Pimcore\Model\AbstractModel
                             $this->data .= ' ' . $contentText;
                         }
                     } catch (\Exception $e) {
-                        Logger::error($e);
+                        Logger::error((string) $e);
                     }
                 }
             } elseif ($element instanceof Asset\Text) {
@@ -460,7 +460,7 @@ class Data extends \Pimcore\Model\AbstractModel
                         $this->data .= ' ' . $contentText;
                     }
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             } elseif ($element instanceof Asset\Image) {
                 try {
@@ -473,7 +473,7 @@ class Data extends \Pimcore\Model\AbstractModel
                         }
                     }
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             }
 

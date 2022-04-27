@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
         $newId = $maxId ? $maxId + 1 : 1;
-        $this->model->setId($newId);
+        $this->model->setId((string) $newId);
 
         return $newId;
     }
@@ -163,7 +163,8 @@ class Dao extends Model\Dao\AbstractDao
     {
         if (!$this->model->getId()) {
             $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
-            $this->model->setId($maxId ? $maxId + 1 : 1);
+            $maxId = $maxId ? $maxId + 1 : 1;
+            $this->model->setId((string) $maxId);
         }
 
         if (!$isUpdate) {

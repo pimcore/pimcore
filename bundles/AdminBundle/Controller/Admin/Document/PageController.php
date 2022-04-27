@@ -26,6 +26,7 @@ use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -55,7 +56,8 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
-        $page = Document\Page::getById($request->get('id'));
+        $pageId = (int) $request->get('id');
+        $page = Document\Page::getById($pageId);
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
@@ -72,7 +74,6 @@ class PageController extends DocumentControllerBase
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->setLocked($page->isLocked());
         $page->setParent(null);
 
         // unset useless data
@@ -80,6 +81,7 @@ class PageController extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
@@ -115,18 +117,18 @@ class PageController extends DocumentControllerBase
      */
     public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
-        $page = Document\Page::getById($request->get('id'));
-        if (!$page) {
+        $oldPage = Document\Page::getById((int) $request->get('id'));
+        if (!$oldPage) {
             throw $this->createNotFoundException('Page not found');
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($page);
+        $pageSession = $this->getFromSession($oldPage);
 
         if ($pageSession) {
             $page = $pageSession;
         } else {
-            $page = $this->getLatestVersion($page);
+            $page = $this->getLatestVersion($oldPage);
         }
 
         if ($request->get('missingRequiredEditable') !== null) {
@@ -165,6 +167,19 @@ class PageController extends DocumentControllerBase
             if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
                 $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
                 $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
+            }
+
+            if ($page->getPrettyUrl() !== $oldPage->getPrettyUrl()
+                && empty($oldPage->getPrettyUrl()) === false
+                && empty($page->getPrettyUrl()) === false
+            ) {
+                $redirect = new Redirect();
+
+                $redirect->setSource($oldPage->getPrettyUrl());
+                $redirect->setTarget($page->getPrettyUrl());
+                $redirect->setStatusCode(301);
+                $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                $redirect->save();
             }
 
             return $this->adminJson([
@@ -220,7 +235,7 @@ class PageController extends DocumentControllerBase
      */
     public function displayPreviewImageAction(Request $request): BinaryFileResponse
     {
-        $document = Document\Page::getById($request->get('id'));
+        $document = Document\Page::getById((int) $request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
                 'Content-Type' => 'image/jpg',
@@ -336,7 +351,7 @@ class PageController extends DocumentControllerBase
      */
     public function qrCodeAction(Request $request): BinaryFileResponse
     {
-        $page = Document\Page::getById($request->query->get('id'));
+        $page = Document\Page::getById((int) $request->query->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
@@ -392,7 +407,7 @@ class PageController extends DocumentControllerBase
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
-        $document = Document\PageSnippet::getById($request->get('documentId'));
+        $document = Document\PageSnippet::getById((int) $request->get('documentId'));
         if (!$document) {
             throw $this->createNotFoundException();
         }

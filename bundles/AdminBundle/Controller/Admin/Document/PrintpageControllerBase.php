@@ -41,7 +41,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $page = Document\PrintAbstract::getById($request->get('id'));
+        $pageId = (int) $request->get('id');
+        $page = Document\PrintAbstract::getById($pageId);
 
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
@@ -49,10 +50,10 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         // check for lock
         if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
-            if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
+            if (\Pimcore\Model\Element\Editlock::isLocked($pageId, 'document')) {
+                return $this->getEditLockResponse($pageId, 'document');
             }
-            \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
+            \Pimcore\Model\Element\Editlock::lock($pageId, 'document');
         }
 
         $page = clone $page;
@@ -60,13 +61,13 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         $page = $this->getLatestVersion($page, $draftVersion);
 
         $page->getVersions();
-        $page->setLocked($page->isLocked());
 
         // unset useless data
         $page->setEditables(null);
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
@@ -97,7 +98,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $page = Document\PrintAbstract::getById($request->get('id'));
+        $page = Document\PrintAbstract::getById((int) $request->get('id'));
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
@@ -265,7 +266,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      */
     public function checkPdfDirtyAction(Request $request): JsonResponse
     {
-        $printDocument = Document\PrintAbstract::getById($request->get('id'));
+        $printDocument = Document\PrintAbstract::getById((int) $request->get('id'));
 
         $dirty = true;
         if ($printDocument) {

@@ -54,6 +54,26 @@ if (file_exists($startupFile)) {
     include_once $startupFile;
 }
 
+$input = new \Symfony\Component\Console\Input\ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], null, true);
+
+if ($env !== null) {
+    $putEnv = sprintf(
+        'APP_ENV=%s',
+        $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env
+    );
+
+    putenv($putEnv);
+}
+
+if ($input->hasParameterOption('--no-debug', true)) {
+    $putEnv = sprintf(
+        'APP_DEBUG=%s',
+        $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = '0'
+    );
+
+    putenv($putEnv);
+}
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);

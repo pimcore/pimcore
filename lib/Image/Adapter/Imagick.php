@@ -413,7 +413,7 @@ class Imagick extends Adapter
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                     $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
                 } catch (\Exception $e) {
-                    Logger::warn($e);
+                    Logger::warn((string) $e);
                 }
             }
         }
@@ -1021,7 +1021,7 @@ class Imagick extends Adapter
                 }
             }
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
         }
 
         return false;
@@ -1050,8 +1050,6 @@ class Imagick extends Adapter
         if (in_array($this->resource->getimageformat(), ['EPT', 'EPDF', 'EPI', 'EPS', 'EPS2', 'EPS3', 'EPSF', 'EPSI', 'EPT', 'PDF', 'PFA', 'PFB', 'PFM', 'PS', 'PS2', 'PS3'])) {
             // we need a special handling for PhotoShop EPS
             $i = 0;
-
-            ini_set('auto_detect_line_endings', true); // we need to turn this on, as the damn f****** Mac has different line endings in EPS files, Prost Mahlzeit!
 
             $epsFile = fopen($this->imagePath, 'r');
             while (($eps_line = fgets($epsFile)) && ($i < 100)) {

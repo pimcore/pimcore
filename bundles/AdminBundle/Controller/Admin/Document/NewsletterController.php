@@ -51,7 +51,8 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $email = Document\Newsletter::getById($request->get('id'));
+        $emailId = (int) $request->get('id');
+        $email = Document\Newsletter::getById($emailId);
 
         if (!$email) {
             throw $this->createNotFoundException('Document not found');
@@ -67,7 +68,6 @@ class NewsletterController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
-        $email->setLocked($email->isLocked());
         $email->setParent(null);
 
         // unset useless data
@@ -75,6 +75,7 @@ class NewsletterController extends DocumentControllerBase
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
+        $data['locked'] = $email->isLocked();
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
@@ -95,7 +96,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $page = Document\Newsletter::getById($request->get('id'));
+        $page = Document\Newsletter::getById((int) $request->get('id'));
         if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
@@ -253,8 +254,10 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getSendStatusAction(Request $request): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -272,8 +275,10 @@ class NewsletterController extends DocumentControllerBase
      */
     public function stopSendAction(Request $request): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         Tool\TmpStore::delete($document->getTmpStoreId());
 
         return $this->adminJson([
@@ -293,15 +298,14 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new RuntimeException('Newsletter sending already in progress, need to finish first.');
         }
-
-        /** @var Document\Newsletter $document */
-        $document = Document\Newsletter::getById($request->get('id'));
 
         Tool\TmpStore::add($document->getTmpStoreId(), [
             'documentId' => $document->getId(),
@@ -358,7 +362,10 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendTestAction(Request $request): JsonResponse
     {
-        $document = Document\Newsletter::getById($request->get('id'));
+        $document = Document\Newsletter::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException('Newsletter not found');
+        }
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
         $testMailAddress = $request->get('testMailAddress');

@@ -37,7 +37,8 @@ class FolderController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $folder = Document\Folder::getById($request->get('id'));
+        $folderId = (int) $request->get('id');
+        $folder = Document\Folder::getById($folderId);
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');
         }
@@ -47,10 +48,10 @@ class FolderController extends DocumentControllerBase
         }
 
         $folder = clone $folder;
-        $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
         $data = $folder->getObjectVars();
+        $data['locked'] = $folder->isLocked();
 
         $this->addTranslationsData($folder, $data);
         $this->minimizeProperties($folder, $data);
@@ -69,7 +70,7 @@ class FolderController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $folder = Document\Folder::getById($request->get('id'));
+        $folder = Document\Folder::getById((int) $request->get('id'));
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');
         }

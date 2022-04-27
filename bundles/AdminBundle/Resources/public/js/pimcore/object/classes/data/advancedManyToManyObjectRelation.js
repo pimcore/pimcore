@@ -377,6 +377,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         if(this.grids) {
             var cols = [];
             this.stores.cols.each(function(rec) {
+                delete rec.data.id;
                 cols.push(rec.data);
                 rec.commit();
             });
@@ -384,6 +385,10 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         }
 
         return this.datax;
+    },
+
+    applyData: function (){
+        return this.getData();
     },
 
     applySpecialData: function(source) {

@@ -176,7 +176,9 @@ class ApplicationLogger implements LoggerInterface
             $context['relatedObjectType'] = Service::getElementType($relatedObject);
         }
 
-        $context['source'] = $this->resolveLoggingSource();
+        if (!isset($context['source'])) {
+            $context['source'] = $this->resolveLoggingSource();
+        }
 
         foreach ($this->loggers as $logger) {
             if ($logger instanceof \Psr\Log\LoggerInterface) {

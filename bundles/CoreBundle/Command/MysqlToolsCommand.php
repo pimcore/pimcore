@@ -63,7 +63,7 @@ class MysqlToolsCommand extends AbstractCommand
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
                     $db->query('OPTIMIZE TABLE ' . $t);
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             }
         } elseif ($input->getOption('mode') == 'warmup') {
@@ -77,7 +77,7 @@ class MysqlToolsCommand extends AbstractCommand
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
                     Logger::debug('Result: ' . $res);
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             }
         }

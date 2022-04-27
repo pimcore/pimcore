@@ -113,7 +113,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         if ($input->getOption('parent')) {
             $parentIds = explode(',', $input->getOption('parent'));
             foreach ($parentIds as $parentId) {
-                $parent = Asset::getById($parentId);
+                $parent = Asset::getById((int) $parentId);
                 if ($parent instanceof Asset\Folder) {
                     $parentConditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
                 } else {
@@ -165,7 +165,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
 
-        $image = Image::getById($assetId);
+        $image = Image::getById((int) $assetId);
         if (!$image) {
             $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?');
 

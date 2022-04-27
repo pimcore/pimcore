@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $this->db->insert('schedule_tasks', []);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     /**

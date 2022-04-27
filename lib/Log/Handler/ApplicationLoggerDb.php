@@ -16,8 +16,14 @@
 namespace Pimcore\Log\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Logger;
 use Pimcore\Db;
+use Psr\Log\LogLevel;
 
+/**
+ * @phpstan-import-type Level from \Monolog\Logger
+ * @phpstan-import-type LevelName from \Monolog\Logger
+ */
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
@@ -31,10 +37,12 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * @param Db\ConnectionInterface $db
-     * @param string $level
+     * @param int|string $level
      * @param bool $bubble
+     *
+     * @phpstan-param Level|LevelName|LogLevel::* $level
      */
-    public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
+    public function __construct(Db\ConnectionInterface $db, $level = Logger::DEBUG, $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);

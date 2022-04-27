@@ -39,7 +39,15 @@ class EmailController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $email = Document\Email::getById($request->get('id'));
+        $emailId = (int) $request->get('id');
+        // check for lock
+        if (Element\Editlock::isLocked($emailId, 'document')) {
+            return $this->getEditLockResponse($emailId, 'document');
+        }
+        Element\Editlock::lock($emailId, 'document');
+
+        $email = Document\Email::getById($emailId);
+
         if (!$email) {
             throw $this->createNotFoundException('Email not found');
         }
@@ -54,7 +62,6 @@ class EmailController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
-        $email->setLocked($email->isLocked());
         $email->setParent(null);
 
         // unset useless data
@@ -62,6 +69,7 @@ class EmailController extends DocumentControllerBase
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
+        $data['locked'] = $email->isLocked();
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
@@ -82,7 +90,7 @@ class EmailController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $page = Document\Email::getById($request->get('id'));
+        $page = Document\Email::getById((int) $request->get('id'));
         if (!$page) {
             throw $this->createNotFoundException('Email not found');
         }

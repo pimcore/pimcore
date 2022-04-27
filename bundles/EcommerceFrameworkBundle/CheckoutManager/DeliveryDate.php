@@ -50,7 +50,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
             $date = $data->date->getTimestamp();
         }
 
-        $this->cart->setCheckoutData(self::DATE, $date);
+        $this->cart->setCheckoutData(self::DATE, (string) $date);
 
         return true;
     }
@@ -65,7 +65,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
 
         if ($this->cart->getCheckoutData(self::DATE)) {
             $data->date = new \DateTime();
-            $data->date->setTimestamp($this->cart->getCheckoutData(self::DATE));
+            $data->date->setTimestamp((int) $this->cart->getCheckoutData(self::DATE));
         } else {
             $data->instantly = true;
         }

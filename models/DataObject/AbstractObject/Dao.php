@@ -19,6 +19,7 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -75,7 +76,7 @@ class Dao extends Model\Element\Dao
             'o_key' => $this->model->getKey(),
             'o_path' => $this->model->getRealPath(),
         ]);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
 
         if (!$this->model->getKey() && !is_numeric($this->model->getKey())) {
             $this->model->setKey($this->db->lastInsertId());
@@ -466,31 +467,27 @@ class Dao extends Model\Element\Dao
      */
     public function getClasses()
     {
-        if ($this->getChildAmount()) {
-            $path = $this->model->getRealFullPath();
-            if (!$this->model->getId() || $this->model->getId() == 1) {
-                $path = '';
-            }
-
-            $classIds = [];
-            do {
-                $classId = $this->db->fetchOne(
-                    "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
-                    array_merge([$this->db->escapeLike($path).'/%'], $classIds));
-                if ($classId) {
-                    $classIds[] = $classId;
-                }
-            } while ($classId);
-
-            $classes = [];
-            foreach ($classIds as $classId) {
-                $classes[] = DataObject\ClassDefinition::getById($classId);
-            }
-
-            return $classes;
+        $path = $this->model->getRealFullPath();
+        if (!$this->model->getId() || $this->model->getId() == 1) {
+            $path = '';
         }
 
-        return [];
+        $classIds = [];
+        do {
+            $classId = $this->db->fetchOne(
+                "SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object'".($classIds ? ' AND o_classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
+                array_merge([$this->db->escapeLike($path).'/%'], $classIds));
+            if ($classId) {
+                $classIds[] = $classId;
+            }
+        } while ($classId);
+
+        $classes = [];
+        foreach ($classIds as $classId) {
+            $classes[] = DataObject\ClassDefinition::getById($classId);
+        }
+
+        return $classes;
     }
 
     /**
@@ -555,6 +552,18 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    /**
+     * @param array $columns
+     * @param User $user
+     *
+     * @return array
+     *
+     */
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'object');
     }
 
     /**

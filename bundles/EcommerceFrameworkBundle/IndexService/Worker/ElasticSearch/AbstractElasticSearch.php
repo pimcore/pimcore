@@ -732,7 +732,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return null;
         }

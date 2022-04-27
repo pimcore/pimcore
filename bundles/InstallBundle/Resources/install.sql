@@ -385,7 +385,7 @@ CREATE TABLE `objects` (
   KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`),
+  KEY `type_path_classId` (`o_type`, `o_path`, `o_classId`),
   KEY `o_modificationDate` (`o_modificationDate`),
   KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -749,12 +749,14 @@ CREATE TABLE `versions` (
   `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   `autoSave` TINYINT(4) NOT NULL DEFAULT 0,
+  `storageType` VARCHAR(5) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `autoSave` (`autoSave`)
+  KEY `autoSave` (`autoSave`),
+  KEY `stackTrace` (`stackTrace`(1))
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;

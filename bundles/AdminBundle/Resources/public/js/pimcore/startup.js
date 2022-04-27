@@ -135,8 +135,7 @@ Ext.onReady(function () {
     Ext.state.Manager.setProvider(provider);
 
     // confirmation to close pimcore
-    window.onbeforeunload = function () {
-
+    window.addEventListener('beforeunload', function () {
         // set this here as a global so that eg. the editmode can access this (edit::iframeOnbeforeunload()),
         // to prevent multiple warning messages to be shown
         pimcore.globalmanager.add("pimcore_reload_in_progress", true);
@@ -149,7 +148,22 @@ Ext.onReady(function () {
                 return t("do_you_really_want_to_close_pimcore");
             }
         }
-    };
+
+        var openTabs = pimcore.helpers.getOpenTab();
+        if(openTabs.length > 0) {
+            var elementsToBeUnlocked = [];
+            for (var i = 0; i < openTabs.length; i++) {
+                var elementIdentifier = openTabs[i].split("_");
+                if(['object', 'asset', 'document'].indexOf(elementIdentifier[0]) > -1) {
+                    elementsToBeUnlocked.push({ id: elementIdentifier[1], type: elementIdentifier[0] });
+                }
+            }
+
+            if(elementsToBeUnlocked.length > 0) {
+                navigator.sendBeacon(Routing.generate('pimcore_admin_element_unlockelements')+'?csrfToken='+ pimcore.settings['csrfToken'], JSON.stringify({ elements: elementsToBeUnlocked }));
+            }
+        }
+    });
 
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;

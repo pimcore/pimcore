@@ -176,7 +176,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
                     $this->staticPageGenerator->remove($document);
                 }
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 return;
             }

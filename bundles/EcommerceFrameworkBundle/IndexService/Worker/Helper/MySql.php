@@ -146,7 +146,7 @@ class MySql
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');
             } catch (\Exception $e) {
-                Logger::info($e);
+                Logger::info((string) $e);
             }
 
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = InnoDB;');

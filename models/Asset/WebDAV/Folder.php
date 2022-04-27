@@ -60,7 +60,7 @@ class Folder extends DAV\Collection
                     $children[] = $child;
                 }
             } catch (\Exception $e) {
-                Logger::warning($e);
+                Logger::warning((string) $e);
             }
         }
 

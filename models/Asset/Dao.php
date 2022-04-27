@@ -19,6 +19,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -109,7 +110,7 @@ class Dao extends Model\Element\Dao
             'parentId' => $this->model->getParentId(),
         ]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     public function update()
@@ -127,6 +128,7 @@ class Dao extends Model\Element\Dao
 
         // metadata
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        /** @var array $metadata */
         $metadata = $this->model->getMetadata(null, null, false, true);
 
         $data['hasMetaData'] = 0;
@@ -508,6 +510,18 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    /**
+     * @param array $columns
+     * @param User $user
+     *
+     * @return array
+     *
+     */
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'asset');
     }
 
     public function updateCustomSettings()

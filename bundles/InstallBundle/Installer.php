@@ -287,7 +287,7 @@ class Installer
                 ]
             );
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
 
             return [
                 $e->getMessage(),
@@ -624,7 +624,7 @@ class Installer
                     $this->createOrUpdateUser($userCredentials);
                 }
             } catch (\Exception $e) {
-                $this->logger->error($e);
+                $this->logger->error((string) $e);
                 $errors[] = $e->getMessage();
             }
         }
@@ -808,6 +808,7 @@ class Installer
             ['key' => 'notifications'],
             ['key' => 'notifications_send'],
             ['key' => 'sites'],
+            ['key' => 'objects_sort_method'],
         ];
 
         foreach ($userPermissions as $up) {

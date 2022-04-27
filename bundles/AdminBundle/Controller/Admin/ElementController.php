@@ -67,6 +67,23 @@ class ElementController extends AdminController
     }
 
     /**
+     * @Route("/element/unlock-elements", name="pimcore_admin_element_unlockelements", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function unlockElementsAction(Request $request)
+    {
+        $request = json_decode($request->getContent(), true) ?? [];
+        foreach ($request['elements'] as $elementIdentifierData) {
+            Element\Editlock::unlock($elementIdentifierData['id'], $elementIdentifierData['type']);
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
      * Returns the element data denoted by the given type and ID or path.
      *
      * @Route("/element/get-subtype", name="pimcore_admin_element_getsubtype", methods={"GET"})
@@ -661,7 +678,7 @@ class ElementController extends AdminController
      */
     public function deleteDraftAction(Request $request)
     {
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
         if ($version) {
             $version->delete();
         }
@@ -678,7 +695,7 @@ class ElementController extends AdminController
      */
     public function deleteVersionAction(Request $request)
     {
-        $version = Model\Version::getById($request->get('id'));
+        $version = Model\Version::getById((int) $request->get('id'));
         $version->delete();
 
         return $this->adminJson(['success' => true]);

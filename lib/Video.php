@@ -79,7 +79,7 @@ class Video
                         return $adapter;
                     }
                 } catch (\Exception $e) {
-                    Logger::warning($e);
+                    Logger::warning((string) $e);
                 }
             }
         }

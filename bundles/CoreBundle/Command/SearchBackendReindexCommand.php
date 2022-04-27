@@ -90,7 +90,7 @@ class SearchBackendReindexCommand extends AbstractCommand
 
                         $searchEntry->save();
                     } catch (\Exception $e) {
-                        Logger::err($e);
+                        Logger::err((string) $e);
                     }
                 }
                 \Pimcore::collectGarbage();

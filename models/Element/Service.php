@@ -648,6 +648,7 @@ class Service extends Model\AbstractModel
 
                 if ($predefined && $predefined->getType() == $p->getType()) {
                     $properties[$key]['config'] = $predefined->getConfig();
+                    $properties[$key]['predefinedName'] = $predefined->getName();
                     $properties[$key]['description'] = $predefined->getDescription();
                 }
             }
@@ -718,29 +719,78 @@ class Service extends Model\AbstractModel
      */
     public static function findForbiddenPaths($type, $user)
     {
+        $db = Db::get();
+
         if ($user->isAdmin()) {
-            return [];
+            return ['forbidden' => [], 'allowed' => []];
         }
 
-        // get workspaces
-        $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
-        foreach ($user->getRoles() as $roleId) {
-            $role = Model\User\Role::getById($roleId);
-            $workspaces = array_merge($workspaces, $role->{'getWorkspaces' . ucfirst($type)}());
+        $currentUserId = $user->getId();
+        $userIds = $user->getRoles();
+        $userIds[] = $currentUserId;
+
+        $userWorkspacesSql = '
+            SELECT cpath, cid, list
+            FROM users_workspaces_'.$type.'
+            WHERE userId = '.$currentUserId.'
+        ';
+        $userWorkspaces = $db->fetchAll($userWorkspacesSql);
+
+        //this collects the array that are on user-level, which have top priority
+        $userCid = [];
+        foreach ($userWorkspaces as $userWorkspace) {
+            $userCid[] = $userWorkspace['cid'];
         }
+
+        $roleWorkspacesSql = '
+            SELECT
+                cpath, userid, max(list) as list
+            FROM users_workspaces_'.$type.'
+            WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN ('.implode(',', $userCid).')
+            GROUP BY cpath
+        ';
+        $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+
+        $allWorkspaces = array_merge($userWorkspaces, $roleWorkspaces);
+
+        $uniquePaths = [];
+        foreach ($allWorkspaces as $workspace) {
+            $uniquePaths[$workspace['cpath']] = $workspace['list'];
+        }
+        ksort($uniquePaths);
+
+        //TODO: above this should be all in one query (eg. instead of ksort, use sql sort) but had difficulties making the `group by` working properly to let user permissions take precedence
+
+        $totalPaths = count($uniquePaths);
+
+        $uniquePathsKeys = array_keys($uniquePaths);
 
         $forbidden = [];
-        if (count($workspaces) > 0) {
-            foreach ($workspaces as $workspace) {
-                if (!$workspace->getList()) {
-                    $forbidden[] = $workspace->getCpath();
+        $allowed = [];
+        if ($totalPaths > 0) {
+            for ($index = 0; $index < $totalPaths; $index++) {
+                $path = $uniquePathsKeys[$index];
+                if ($uniquePaths[$path] == 0) {
+                    $forbidden[$path] = [];
+                    for ($findIndex = $index + 1; $findIndex < $totalPaths; $findIndex++) { //NB: the starting index is the last index we got
+                        $findPath = $uniquePathsKeys[$findIndex];
+                        if (str_contains($findPath, $path)) { //it means that we found a children
+                            if ($uniquePaths[$findPath] == 1) {
+                                array_push($forbidden[$path], $findPath); //adding list=1 children
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    $allowed[] = $path;
                 }
             }
         } else {
-            $forbidden[] = '/';
+            $forbidden['/'] = [];
         }
 
-        return $forbidden;
+        return ['forbidden' => $forbidden, 'allowed' => $allowed];
     }
 
     /**
