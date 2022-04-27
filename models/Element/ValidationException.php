@@ -22,11 +22,11 @@ class ValidationException extends \Exception
      */
     protected $contextStack = [];
 
-    /** @var \Exception[] */
+    /** @var ValidationException[] */
     protected $subItems = [];
 
     /**
-     * @return \Exception[]
+     * @return ValidationException[]
      */
     public function getSubItems()
     {
@@ -34,7 +34,7 @@ class ValidationException extends \Exception
     }
 
     /**
-     * @param \Exception[] $subItems
+     * @param ValidationException[] $subItems
      */
     public function setSubItems(array $subItems = [])
     {
@@ -87,14 +87,10 @@ class ValidationException extends \Exception
             $subItemParts = [];
 
             foreach ($subItems as $subItem) {
-                if ($subItem instanceof self) {
-                    $subItemMessage = $subItem->getAggregatedMessage();
-                    $contextStack = $subItem->getContextStack();
-                    if ($contextStack) {
-                        $subItemMessage .= '[ '.$contextStack[0].' ]';
-                    }
-                } else {
-                    $subItemMessage = $subItem->getMessage();
+                $subItemMessage = $subItem->getAggregatedMessage();
+                $contextStack = $subItem->getContextStack();
+                if ($contextStack) {
+                    $subItemMessage .= '[ '.$contextStack[0].' ]';
                 }
                 $subItemParts[] = $subItemMessage;
             }
