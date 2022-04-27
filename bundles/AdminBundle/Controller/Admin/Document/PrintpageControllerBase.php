@@ -41,8 +41,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $pageId = (int) $request->get('id');
-        $page = Document\PrintAbstract::getById($pageId);
+        $page = Document\PrintAbstract::getById((int)$request->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Document not found');

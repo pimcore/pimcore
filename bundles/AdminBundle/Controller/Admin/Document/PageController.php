@@ -56,8 +56,7 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
-        $pageId = (int) $request->get('id');
-        $page = Document\Page::getById($pageId);
+        $page = Document\Page::getById((int)$request->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');

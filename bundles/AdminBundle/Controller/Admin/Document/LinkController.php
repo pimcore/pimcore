@@ -43,8 +43,7 @@ class LinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request, SerializerInterface $serializer): JsonResponse
     {
-        $linkId = (int) $request->get('id');
-        $link = Document\Link::getById($linkId);
+        $link = Document\Link::getById((int)$request->get('id'));
 
         if (!$link) {
             throw $this->createNotFoundException('Link not found');

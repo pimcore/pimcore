@@ -51,8 +51,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $emailId = (int) $request->get('id');
-        $email = Document\Newsletter::getById($emailId);
+        $email = Document\Newsletter::getById((int)$request->get('id'));
 
         if (!$email) {
             throw $this->createNotFoundException('Document not found');

@@ -37,8 +37,7 @@ class FolderController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $folderId = (int) $request->get('id');
-        $folder = Document\Folder::getById($folderId);
+        $folder = Document\Folder::getById((int)$request->get('id'));
         if (!$folder) {
             throw $this->createNotFoundException('Folder not found');
         }

@@ -39,14 +39,7 @@ class EmailController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $emailId = (int) $request->get('id');
-        // check for lock
-        if (Element\Editlock::isLocked($emailId, 'document')) {
-            return $this->getEditLockResponse($emailId, 'document');
-        }
-        Element\Editlock::lock($emailId, 'document');
-
-        $email = Document\Email::getById($emailId);
+        $email = Document\Email::getById((int)$request->get('id'));
 
         if (!$email) {
             throw $this->createNotFoundException('Email not found');

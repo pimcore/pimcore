@@ -39,8 +39,7 @@ class SnippetController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $snippetId = (int) $request->get('id');
-        $snippet = Document\Snippet::getById($snippetId);
+        $snippet = Document\Snippet::getById((int)$request->get('id'));
 
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');

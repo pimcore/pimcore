@@ -38,8 +38,7 @@ class HardlinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $linkId = (int) $request->get('id');
-        $link = Document\Hardlink::getById($linkId);
+        $link = Document\Hardlink::getById((int)$request->get('id'));
 
         if (!$link) {
             throw $this->createNotFoundException('Hardlink not found');
