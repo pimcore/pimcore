@@ -16,11 +16,6 @@ parameters:
 			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php
 
 		-
-			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int\\<0, max\\>\\|false given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/Assets.php
-
-		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
@@ -69,11 +64,6 @@ parameters:
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
-
-		-
-			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int given\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/Frontend/FullPageCacheListener.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -319,11 +309,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"
 			count: 1
 			path: lib/Navigation/Container.php
-
-		-
-			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int given\\.$#"
-			count: 1
-			path: lib/Routing/RedirectHandler.php
 
 		-
 			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"

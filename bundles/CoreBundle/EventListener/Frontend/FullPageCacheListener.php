@@ -305,7 +305,7 @@ class FullPageCacheListener
             $response = $cacheItem;
             $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
             $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));
-            $response->headers->set('Age', (time() - $cacheItemDate));
+            $response->headers->set('Age', (string) (time() - $cacheItemDate));
 
             $event->setResponse($response);
             $this->stopResponsePropagation = true;
