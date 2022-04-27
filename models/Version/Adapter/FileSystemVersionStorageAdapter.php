@@ -33,9 +33,8 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->storage = Storage::get('version');
     }
 
-    public function loadMetaData(Version $version) : ?string
+    public function loadMetaData(Version $version): ?string
     {
-
         try {
             $data = $this->storage->read($this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype()));
         } catch (UnableToReadFile $e) {
@@ -49,9 +48,10 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     {
         $binaryStoragePath = $this->getBinaryStoragePath($version);
 
-        if($this->storage->fileExists($binaryStoragePath)) {
+        if ($this->storage->fileExists($binaryStoragePath)) {
             return $this->getBinaryFileStream($version);
         }
+
         return null;
     }
 
@@ -77,11 +77,12 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     public function getBinaryStoragePath(Version $version): string
     {
         $binaryFileId = $version->getBinaryFileId() ?? $version->getId();
+
         return $this->getStorageFilename($binaryFileId, $version->getCid(), $version->getCtype()) . '.bin';
     }
 
-    public function save(Version $version, string $metaData, mixed $binaryDataStream): void {
-
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void
+    {
         $this->storage->write($this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype()), $metaData);
         $binaryStoragePath = $this->getBinaryStoragePath($version);
 
@@ -108,8 +109,8 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     public function delete(Version $version,
-                           bool $isBinaryHashInUse): void {
-
+                           bool $isBinaryHashInUse): void
+    {
         $binaryStoragePath = $this->getBinaryStoragePath($version);
         $storageFileName = $this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype());
 
@@ -127,6 +128,6 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
     public function getStorageType(int $metaDataSize = null,
                                    int $binaryDataSize = null): string
     {
-        return "fs";
+        return 'fs';
     }
 }

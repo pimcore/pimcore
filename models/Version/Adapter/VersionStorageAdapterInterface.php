@@ -22,39 +22,45 @@ interface VersionStorageAdapterInterface
     /**
      * @param int|null $metaDataSize
      * @param int|null $binaryDataSize
+     *
      * @return string
      */
     public function getStorageType(int $metaDataSize = null,
-                                   int  $binaryDataSize = null): string;
+                                   int $binaryDataSize = null): string;
 
     /**
      * @param Version $version
      * @param string $metaData
      * @param resource|null $binaryDataStream
+     *
      * @return void
      */
-    public function save(Version $version, string $metaData, mixed $binaryDataStream) : void;
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void;
 
     /**
      * @param Version $version
+     *
      * @return ?string
      */
-    public function loadMetaData(Version $version) : ?string;
+    public function loadMetaData(Version $version): ?string;
 
     /**
      * @param Version $version
+     *
      * @return mixed
      */
     public function loadBinaryData(Version $version): mixed;
 
     /**
      * @param Version $version
+     *
      * @return mixed
      */
     public function getBinaryFileStream(Version $version): mixed;
 
     /**
      * @param Version $version
+     *
      * @return mixed
      */
     public function getFileStream(Version $version): mixed;

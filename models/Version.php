@@ -239,7 +239,7 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
-        if($data instanceof Asset && $data->getType() != 'folder') {
+        if ($data instanceof Asset && $data->getType() != 'folder') {
             $isAsset = true;
             $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
@@ -250,7 +250,7 @@ final class Version extends AbstractModel
         $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
                                                         $isAsset ? $data->getfileSize() : null));
 
-        if($isAsset) {
+        if ($isAsset) {
             $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
         }
 
@@ -356,8 +356,9 @@ final class Version extends AbstractModel
         $data = $this->storageAdapter->loadMetaData($this);
 
         if (!$data) {
-            $msg = "Version: cannot read version data with storage type: " . $this->getStorageType();
+            $msg = 'Version: cannot read version data with storage type: ' . $this->getStorageType();
             Logger::err($msg);
+
             throw new \Exception($msg);
         }
 
@@ -383,7 +384,7 @@ final class Version extends AbstractModel
 
         if ($data instanceof Asset) {
             $binaryStream = $this->storageAdapter->loadBinaryData($this);
-            if($binaryStream) {
+            if ($binaryStream) {
                 $data->setStream($binaryStream);
             }
         }
@@ -396,7 +397,6 @@ final class Version extends AbstractModel
 
         return $data;
     }
-
 
     public function getFileStream()
     {

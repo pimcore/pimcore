@@ -23,7 +23,7 @@ use Pimcore\Model\Version;
  */
 class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 {
-    CONST versionsTableName = "versionsData";
+    const versionsTableName = 'versionsData';
 
     public function __construct(protected DBAL\Connection $databaseConnection)
     {
@@ -31,8 +31,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 
     public function save(Version $version, string $metaData, mixed $binaryDataStream): void
     {
-
-        if(isset($binaryDataStream) === true &&
+        if (isset($binaryDataStream) === true &&
             empty($version->getBinaryFileId()) === true) {
             $contents = stream_get_contents($binaryDataStream);
         }
@@ -41,7 +40,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
                                     'cid' => $version->getCid(),
                                     'ctype' => $version->getCtype(),
                                     'metaData' => $metaData,
-                                    'binaryData' => $contents ?? null]);
+                                    'binaryData' => $contents ?? null, ]);
     }
 
     /**
@@ -49,22 +48,24 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
      * @param int $cId
      * @param string $cType
      * @param bool $binaryData
+     *
      * @return mixed
+     *
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    protected function loadData(int    $id,
-                                int    $cId,
+    protected function loadData(int $id,
+                                int $cId,
                                 string $cType,
-                                bool   $binaryData = false): mixed {
-
+                                bool $binaryData = false): mixed
+    {
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
 
-        return $this->databaseConnection->fetchOne("SELECT " . $dataColumn . " FROM " . self::versionsTableName . " WHERE id = :id AND cid = :cid and ctype = :ctype",
+        return $this->databaseConnection->fetchOne('SELECT ' . $dataColumn . ' FROM ' . self::versionsTableName . ' WHERE id = :id AND cid = :cid and ctype = :ctype',
             [
                 'id' => $id,
                 'cid' => $cId,
-                'ctype' => $cType
+                'ctype' => $cType,
             ]);
     }
 
@@ -75,49 +76,52 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
 
     /**
      * @param string $data
+     *
      * @return mixed
      */
     protected function getStream(string $data): mixed
     {
-        if($data) {
+        if ($data) {
             $fileName = tmpfile();
             fwrite($fileName, $data);
+
             return $fileName;
         }
+
         return null;
     }
 
     public function loadBinaryData(Version $version): mixed
     {
         $binaryData = $this->loadData($version->getBinaryFileId() ?? $version->getId(), $version->getCid(), $version->getCtype(), true);
-        return $this->getStream($binaryData);
 
+        return $this->getStream($binaryData);
     }
 
     public function delete(Version $version, bool $isBinaryHashInUse): void
     {
-        $this->databaseConnection->delete(self::versionsTableName,  [
+        $this->databaseConnection->delete(self::versionsTableName, [
                                                 'id' => $version->getId(),
                                                 'cid' => $version->getCid(),
-                                                'ctype' => $version->getCtype()
+                                                'ctype' => $version->getCtype(),
                                             ]);
     }
 
     public function getBinaryFileStream(Version $version): mixed
     {
         return $this->loadBinaryData($version);
-
     }
 
     public function getFileStream(Version $version): mixed
     {
         $metaData = $this->loadMetaData($version);
+
         return $this->getStream($metaData);
     }
 
     public function getStorageType(int $metaDataSize = null,
                                    int $binaryDataSize = null): string
     {
-        return "db";
+        return 'db';
     }
 }

@@ -23,6 +23,7 @@ use Pimcore\Model\Version;
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     private array $adapters = [];
+
     public function __construct(protected int $byteThreshold,
                                 protected VersionStorageAdapterInterface $defaultAdapter,
                                 protected VersionStorageAdapterInterface $fallbackAdapter)
@@ -33,20 +34,20 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 
     protected function getAdapter(string $storageType = null): VersionStorageAdapterInterface
     {
-        if(empty($storageType) === true) {
+        if (empty($storageType) === true) {
             return $this->defaultAdapter;
-        }
-        else {
+        } else {
             $adapter = $this->adapters[$storageType] ?? null;
         }
-        if(isset($adapter) === false) {
-            throw new \Exception("no adapter for storage type " . $storageType . " found.");
+        if (isset($adapter) === false) {
+            throw new \Exception('no adapter for storage type ' . $storageType . ' found.');
         }
+
         return $adapter;
     }
 
-    public function loadMetaData(Version $version) : ?string {
-
+    public function loadMetaData(Version $version): ?string
+    {
         return $this->getAdapter($version->getStorageType())->loadMetaData($version);
     }
 
@@ -56,24 +57,25 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     public function getStorageType(int $metaDataSize = null,
-                                   int $binaryDataSize = null): string {
-
-        if(empty($this->fallbackAdapter) === false) {
+                                   int $binaryDataSize = null): string
+    {
+        if (empty($this->fallbackAdapter) === false) {
             if ($metaDataSize > $this->byteThreshold ||
                 $binaryDataSize > $this->byteThreshold) {
                 return $this->fallbackAdapter->getStorageType($metaDataSize, $binaryDataSize);
             }
         }
+
         return $this->defaultAdapter->getStorageType($metaDataSize, $binaryDataSize);
     }
 
-    public function save(Version $version, string $metaData, mixed $binaryDataStream) : void {
-
+    public function save(Version $version, string $metaData, mixed $binaryDataStream): void
+    {
         $this->getAdapter($version->getStorageType())->save($version, $metaData, $binaryDataStream);
     }
 
-    public function delete(Version $version, bool $isBinaryHashInUse): void {
-
+    public function delete(Version $version, bool $isBinaryHashInUse): void
+    {
         $this->getAdapter($version->getStorageType())->delete($version, $isBinaryHashInUse);
     }
 

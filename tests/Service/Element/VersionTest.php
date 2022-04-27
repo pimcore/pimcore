@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tests\Service\Element;
 
-use Google\Service\Gmail\Delegate;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Version;
@@ -56,7 +55,8 @@ class VersionTest extends TestCase
             ->getMock();
     }
 
-    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter) {
+    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter)
+    {
         $proxy = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
         $proxy->setStorageAdapter($adapter);
     }
@@ -70,6 +70,7 @@ class VersionTest extends TestCase
         where v.cid = $id and v.ctype = '$cType' and v.versionCount = $versionCount";
 
         $db = Db::get();
+
         return $db->fetchAssociative($query);
     }
 
@@ -144,41 +145,35 @@ class VersionTest extends TestCase
         $this->assertEquals(1, count($multihref), 'expected 1 target element');
     }
 
-    /*
-     * Save a new object and check if the storagetype is set to fs
-     */
+    // Save a new object and check if the storagetype is set to fs
     public function testStorageAdapterTypeFS()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $object = TestHelper::createEmptyObject();
 
-        $result = $this->getVersionDataFromDb($object->getId(), "object", 1);
+        $result = $this->getVersionDataFromDb($object->getId(), 'object', 1);
 
-        $this->assertEquals("fs", $result['storageType'], 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('fs', $result['storageType'], 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
         $this->assertEmpty($result['binaryFileId'], 'binaryFileId must be empty.');
         $this->assertEmpty($result['binaryData'], 'metaData must be empty.');
         $this->assertEmpty($result['metaData'], 'metaData must be empty.');
     }
 
-    /*
-     * Save a new object and check if the storagetype is set to db
-     */
+    // Save a new object and check if the storagetype is set to db
     public function testStorageAdapterDB()
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $object = TestHelper::createEmptyObject();
 
-        $result = $this->getVersionDataFromDb($object->getId(), "object", 1);
+        $result = $this->getVersionDataFromDb($object->getId(), 'object', 1);
 
-        $this->assertEquals("db", $result['storageType'], 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('db', $result['storageType'], 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
         $this->assertNotEmpty($result['metaData'], 'metaData must not be empty.');
         $this->assertEmpty($result['binaryFileId'], 'binaryFileId must be empty.');
         $this->assertEmpty($result['binaryData'], 'binaryData must be empty.');
     }
 
-    /*
-     * Size of metadata exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-     */
+    // Size of metadata exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
     public function testStorageAdapterDelegate()
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
@@ -187,42 +182,41 @@ class VersionTest extends TestCase
         $object->setLastname($randomText);
         $object->save();
 
-        $result = $this->getVersionDataFromDb($object->getId(), "object", 1);
+        $result = $this->getVersionDataFromDb($object->getId(), 'object', 1);
 
-        $this->assertEquals("fs", $result['storageType'], 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('fs', $result['storageType'], 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
         $this->assertEmpty($result['binaryFileId'], 'binaryFileId must be empty.');
         $this->assertEmpty($result['binaryData'], 'metaData must be empty.');
         $this->assertEmpty($result['metaData'], 'metaData must be empty.');
     }
 
-
     public function testStorageAdapterFSWithBinaryFile()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
-        $asset = TestHelper::createImageAsset("test_binary_file_id", $randomText, true, 'assets/images/image5.jpg');
+        $asset = TestHelper::createImageAsset('test_binary_file_id', $randomText, true, 'assets/images/image5.jpg');
         $cid = $asset->getId();
 
-        $result = $this->getVersionDataFromDb($cid, "asset", 1);
+        $result = $this->getVersionDataFromDb($cid, 'asset', 1);
         $id1 = $result['id'];
         $binaryFileId1 = $result['binaryFileId'];
         $binaryFileHash1 = $result['binaryFileHash'];
         $storageType = $result['storageType'];
 
-        $this->assertEquals("fs", $storageType, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('fs', $storageType, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
         $this->assertEmpty($binaryFileId1, 'binaryFileId must be empty.');
         $this->assertNotEmpty($binaryFileHash1, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id1, 'id must not be empty');
         $asset->save();
 
-        $result2 = $this->getVersionDataFromDb($cid, "asset", 2);
+        $result2 = $this->getVersionDataFromDb($cid, 'asset', 2);
         $id2 = $result2['id'];
         $binaryFileId2 = $result2['binaryFileId'];
         $binaryFileHash2 = $result2['binaryFileHash'];
         $storageType2 = $result2['storageType'];
 
-        $this->assertEquals("fs", $storageType2, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
-        $this->assertEquals($id1, $binaryFileId2, "binaryFileId must equal id on asset1");
+        $this->assertEquals('fs', $storageType2, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals($id1, $binaryFileId2, 'binaryFileId must equal id on asset1');
         $this->assertNotEmpty($binaryFileHash2, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id2, 'id must not be empty');
     }
@@ -231,10 +225,10 @@ class VersionTest extends TestCase
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
-        $asset = TestHelper::createImageAsset("test_binary_file_id", $randomText, true, 'assets/images/image5.jpg');
+        $asset = TestHelper::createImageAsset('test_binary_file_id', $randomText, true, 'assets/images/image5.jpg');
         $cid = $asset->getId();
 
-        $result = $this->getVersionDataFromDb($cid, "asset", 1);
+        $result = $this->getVersionDataFromDb($cid, 'asset', 1);
         $id1 = $result['id'];
         $binaryFileId1 = $result['binaryFileId'];
         $binaryFileHash1 = $result['binaryFileHash'];
@@ -242,7 +236,7 @@ class VersionTest extends TestCase
         $metaData1 = $result['metaData'];
         $storageType = $result['storageType'];
 
-        $this->assertEquals("db", $storageType, 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('db', $storageType, 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
         $this->assertEmpty($binaryFileId1, 'binaryFileId must be empty.');
         $this->assertNotEmpty($binaryFileHash1, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id1, 'id must not be empty');
@@ -250,7 +244,7 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($metaData1, 'metaData must not be empty');
         $asset->save();
 
-        $result2 = $this->getVersionDataFromDb($cid, "asset", 2);
+        $result2 = $this->getVersionDataFromDb($cid, 'asset', 2);
         $id2 = $result2['id'];
         $binaryFileId2 = $result2['binaryFileId'];
         $binaryFileHash2 = $result2['binaryFileHash'];
@@ -258,30 +252,28 @@ class VersionTest extends TestCase
         $metaData2 = $result2['metaData'];
         $storageType2 = $result2['storageType'];
 
-        $this->assertEquals("db", $storageType2, 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
-        $this->assertEquals($id1, $binaryFileId2, "binaryFileId must equal id on asset1");
+        $this->assertEquals('db', $storageType2, 'expected storagetype db, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals($id1, $binaryFileId2, 'binaryFileId must equal id on asset1');
         $this->assertNotEmpty($binaryFileHash2, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id2, 'id must not be empty');
         $this->assertNotEmpty($metaData2, 'metaData must not be empty');
         $this->assertEmpty($binaryData2, 'binaryData must be empty');
     }
 
-    /*
-     * Size of binary file exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-     */
+    // Size of binary file exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
     public function testStorageAdapterDelegateWithBinaryFile()
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
         $randomText = TestHelper::generateRandomString(100);
-        $asset = TestHelper::createImageAsset("test_binary_file_id", $randomText, true, 'assets/images/image5.jpg');
+        $asset = TestHelper::createImageAsset('test_binary_file_id', $randomText, true, 'assets/images/image5.jpg');
         $cid = $asset->getId();
 
-        $result = $this->getVersionDataFromDb($cid, "asset", 1);
+        $result = $this->getVersionDataFromDb($cid, 'asset', 1);
         $id = $result['id'];
         $binaryFileHash = $result['binaryFileHash'];
         $storageType = $result['storageType'];
 
-        $this->assertEquals("fs", $storageType, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
+        $this->assertEquals('fs', $storageType, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
         $this->assertNotEmpty($binaryFileHash, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id, 'id must not be empty');
     }
@@ -303,7 +295,7 @@ class VersionTest extends TestCase
         parent::tearDown();
 
         $db = Db::get();
-        $db->executeStatement("DROP TABLE versionsData");
+        $db->executeStatement('DROP TABLE versionsData');
     }
 
     /**
