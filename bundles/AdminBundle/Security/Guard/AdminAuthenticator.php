@@ -134,10 +134,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $perspective = $request->get('perspective');
-        $perspective = ($perspective !== null)? strip_tags($perspective): [];
-
-        $event = new LoginRedirectEvent('pimcore_admin_login', ['perspective' => $perspective ]);
+        $event = new LoginRedirectEvent('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective', ''))]);
         $this->dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
         $url = $this->router->generate($event->getRouteName(), $event->getRouteParams());
