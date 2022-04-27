@@ -22,6 +22,18 @@
             - { name: pimcore.image.optimizer }
 ```
 
+- [Elements] Fixed the behavior of `setId()` method, so not to cast null Id to 0 as explained below:
+```php
+$object = new \Pimcore\Model\DataObject();
+$object->setId(null);
+
+//before:
+$oldId = $object->getId(); //returns 0
+
+//after:
+$newId = $object->getId(); //returns null
+```
+
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
   required to run command `bin/console messenger:consume pimcore_core pimcore_maintenance` before the upgrade, so that
