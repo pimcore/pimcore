@@ -102,7 +102,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $headers = $exception->getHeaders();
         } else {
             // only log exception if it's not intentional (like a NotFoundHttpException)
-            $this->logger->error($exception);
+            $this->logger->error((string) $exception);
         }
 
         $errorPath = $this->determineErrorPath($request);

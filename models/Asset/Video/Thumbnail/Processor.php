@@ -63,11 +63,6 @@ class Processor
     protected $status;
 
     /**
-     * @var null|string
-     */
-    protected $deleteSourceAfterFinished;
-
-    /**
      * @param Model\Asset\Video $asset
      * @param Config $config
      * @param array $onlyFormats
@@ -126,18 +121,13 @@ class Processor
             }
         }
 
-        //generate tmp file only for new jobs
-        $sourceFile = $asset->getTemporaryFile(true);
-        $instance->setDeleteSourceAfterFinished($sourceFile);
-
         foreach ($formats as $format) {
-            $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
+            $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($sourceFile, ['asset' => $asset]);
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
@@ -235,10 +225,13 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
+        $workerSourceFile = $asset->getTemporaryFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
             try {
+                $converter->load($workerSourceFile, ['asset' => $asset]);
+
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
@@ -273,7 +266,7 @@ class Processor
 
                 $converter->destroy();
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 
@@ -300,27 +293,9 @@ class Processor
             Model\Version::enable();
         }
 
-        if ($instance->getDeleteSourceAfterFinished()) {
-            @unlink($instance->getDeleteSourceAfterFinished());
-        }
+        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getDeleteSourceAfterFinished(): ?string
-    {
-        return $this->deleteSourceAfterFinished;
-    }
-
-    /**
-     * @param string|null $deleteSourceAfterFinished
-     */
-    public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
-    {
-        $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
     }
 
     /**

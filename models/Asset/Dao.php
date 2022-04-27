@@ -15,11 +15,11 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Db;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -31,6 +31,13 @@ class Dao extends Model\Element\Dao
 {
     use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public static array $thumbnailStatusCache = [];
 
     /**
      * Get the data for the object by id from database and assign it to the object (model)
@@ -103,7 +110,7 @@ class Dao extends Model\Element\Dao
             'parentId' => $this->model->getParentId(),
         ]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     public function update()
@@ -121,6 +128,7 @@ class Dao extends Model\Element\Dao
 
         // metadata
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        /** @var array $metadata */
         $metadata = $this->model->getMetadata(null, null, false, true);
 
         $data['hasMetaData'] = 0;
@@ -504,6 +512,18 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @param array $columns
+     * @param User $user
+     *
+     * @return array
+     *
+     */
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'asset');
+    }
+
     public function updateCustomSettings()
     {
         $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
@@ -521,5 +541,60 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    public function addToThumbnailCache(string $name, string $filename): void
+    {
+        $assetId = $this->model->getId();
+        $time = time();
+        $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+            'cid' => $assetId,
+            'name' => $name,
+            'filename' => $filename,
+            'modificationDate' => $time,
+        ]);
+
+        if (isset(self::$thumbnailStatusCache[$assetId])) {
+            $hash = $name . $filename;
+            self::$thumbnailStatusCache[$assetId][$hash] = $time;
+        }
+    }
+
+    public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
+    {
+        $assetId = $this->model->getId();
+
+        // we use a static var here, because it could be that an asset is serialized in the cache,
+        // so this runtime cache wouldn't be as efficient
+        if (!isset(self::$thumbnailStatusCache[$assetId])) {
+            self::$thumbnailStatusCache[$assetId] = [];
+            $thumbs = $this->db->fetchAll('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
+                'cid' => $this->model->getId(),
+            ]);
+
+            foreach ($thumbs as $thumb) {
+                $hash = $thumb['name'] . $thumb['filename'];
+                self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
+            }
+        }
+
+        $hash = $name . $filename;
+
+        return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
+    }
+
+    public function deleteFromThumbnailCache(?string $name = null): void
+    {
+        $assetId = $this->model->getId();
+        $where = [
+            'cid' => $assetId,
+        ];
+
+        if ($name) {
+            $where['name'] = $name;
+        }
+
+        $this->db->delete('assets_image_thumbnail_cache', $where);
+        unset(self::$thumbnailStatusCache[$assetId]);
     }
 }

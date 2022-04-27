@@ -75,6 +75,9 @@ final class Executor implements ExecutorInterface
         }
 
         try {
+            $this->logger->info('Starting job with ID {id}', [
+                'id' => $name,
+            ]);
             $task->execute();
 
             $this->logger->info('Finished job with ID {id}', [

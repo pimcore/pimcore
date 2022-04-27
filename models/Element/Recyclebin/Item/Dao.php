@@ -61,9 +61,9 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->insert('recyclebin', $data);
-            $this->model->setId($this->db->lastInsertId());
+            $this->model->setId((int) $this->db->lastInsertId());
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         return true;

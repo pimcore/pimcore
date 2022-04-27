@@ -8,7 +8,7 @@ We gladly accept community pull requests. This is the preferred way to contribut
 There are a few necessary steps before we can accept a pull request:
 
 * [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. `main`(e.g. `10.x`) for features and improvements or latest maintenance branch for bug fixes (e.g. `10.1`)
+* Select the right branch. `main`(`10.x`) for features and improvements or latest maintenance branch for bug fixes (`10.3`)
 * Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/10.x/.php-cs-fixer.dist.php) and [here](https://github.com/pimcore/pimcore/blob/10.x/doc/Development_Documentation/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
 * [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our repo branch.
 * [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
@@ -25,6 +25,15 @@ If you've created a pull request, it's not necessary anymore to create an issue 
 * Please be patient as not all items will be tested immediately - remember, pimcore is open source and free of charge. 
 * Occasionally we'll close issues if they appear stale or are too vague - please don't take this personally! 
 Please feel free to re-open issues we've closed if there's something we've missed and they still need to be addressed.
+
+### Inactive Issue Closing Policy
+Pimcore uses a bot that closes abandoned issues after a period of inactivity.
+If an issue was not labeled as "Priority" or "Backlog" by us, 
+this means that we're not going to work on that anytime soon.
+In case of a bug report, you can create a pull request fixing the issue instead,
+which will be then reviewed as soon as possible.
+If you're interested in contributing a feature, please contact us first,
+before creating a pull request, we'll then decide whether we'd accept it or not.
 
 ### Contributor License Agreement
 The following terms are used throughout this agreement:

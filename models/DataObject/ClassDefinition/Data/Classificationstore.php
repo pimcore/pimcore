@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -42,7 +42,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var array
      */
-    public $childs = [];
+    public $children = [];
 
     /**
      * @internal
@@ -495,7 +495,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -505,7 +505,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -516,7 +516,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
+        if (is_array($this->children) && count($this->children) > 0) {
             return true;
         }
 
@@ -528,7 +528,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function addChild($child)
     {
-        $this->childs[] = $child;
+        $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
     }
 
@@ -882,14 +882,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return array
      */
-    public function __sleep()
+    public function getBlockedVarsForExport(): array
     {
-        $vars = get_object_vars($this);
-        $blockedVars = [
+        return [
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
+            'childs',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        $blockedVars = $this->getBlockedVarsForExport();
 
         foreach ($blockedVars as $blockedVar) {
             unset($vars[$blockedVar]);
@@ -1417,5 +1426,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    public static function __set_state($data)
+    {
+        $obj = new static();
+        $obj->setValues($data);
+
+        $obj->childs = $obj->children;  // @phpstan-ignore-line
+
+        return $obj;
     }
 }

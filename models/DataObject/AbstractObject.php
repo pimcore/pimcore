@@ -26,6 +26,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\DuplicateFullPathException;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -642,14 +643,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -743,7 +744,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
+                        Logger::info((string) $er);
                     }
 
                     // set "HideUnpublished" back to the value it was originally
@@ -813,7 +814,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
     protected function correctPath()
     {
@@ -854,7 +855,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if (Service::pathExists($this->getRealFullPath())) {
             $duplicate = DataObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+
+                throw $duplicateFullPathException;
             }
         }
 
@@ -935,7 +939,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -1068,7 +1072,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setId($o_id)
     {
-        $this->o_id = (int) $o_id;
+        $this->o_id = $o_id ? (int)$o_id : null;
 
         return $this;
     }

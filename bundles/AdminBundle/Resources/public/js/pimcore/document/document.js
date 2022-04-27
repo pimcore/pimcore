@@ -13,7 +13,7 @@
 
 pimcore.registerNS("pimcore.document.document");
 pimcore.document.document = Class.create(pimcore.element.abstract, {
-
+    willClose: false,
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
@@ -162,6 +162,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     if (typeof callback == "function") {
                         callback();
                     }
+
+                    if (this.willClose){
+                        this.close();
+                    }
+
                 }.bind(this),
                 failure: function () {
                     this.tab.unmask();
@@ -190,15 +195,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     saveClose: function (only) {
-        this.save('version', only, function () {
-            this.close();
-        }.bind(this));
+        this.willClose = true;
+        this.save('version', only);
     },
 
     publishClose: function () {
-        this.publish(null, function () {
-            this.close();
-        }.bind(this));
+        this.willClose = true;
+        this.publish(null);
     },
 
     publish: function (only, callback) {
@@ -244,9 +247,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     unpublishClose: function () {
-        this.unpublish(null, function () {
-            this.close();
-        }.bind(this));
+        this.willClose = true;
+        this.unpublish(null);
     },
 
     reload: function () {

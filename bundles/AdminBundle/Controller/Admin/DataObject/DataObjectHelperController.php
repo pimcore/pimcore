@@ -42,7 +42,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/object-helper")
+ * @Route("/object-helper", name="pimcore_admin_dataobject_dataobjecthelper_")
  *
  * @internal
  */
@@ -51,7 +51,7 @@ class DataObjectHelperController extends AdminController
     const SYSTEM_COLUMNS = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
-     * @Route("/load-object-data", name="pimcore_admin_dataobject_dataobjecthelper_loadobjectdata", methods={"GET"})
+     * @Route("/load-object-data", name="loadobjectdata", methods={"GET"})
      *
      * @param Request $request
      *
@@ -59,7 +59,7 @@ class DataObjectHelperController extends AdminController
      */
     public function loadObjectDataAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         $result = [];
         if ($object) {
             $result['success'] = true;
@@ -75,11 +75,11 @@ class DataObjectHelperController extends AdminController
     /**
      * @param int $userId
      * @param string $classId
-     * @param string $searchType
+     * @param string|null $searchType
      *
      * @return array
      */
-    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
+    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType = null)
     {
         $db = Db::get();
         $configListingConditionParts = [];
@@ -150,7 +150,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-configs", name="pimcore_admin_dataobject_dataobjecthelper_getexportconfigs", methods={"GET"})
+     * @Route("/get-export-configs", name="getexportconfigs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -159,11 +159,11 @@ class DataObjectHelperController extends AdminController
     public function getExportConfigsAction(Request $request)
     {
         $classId = $request->get('classId');
-        $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId, null);
+        $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId);
         if (!is_array($list)) {
             $list = [];
         }
-        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, null));
+        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId));
         $result = [];
 
         $result[] = [
@@ -185,7 +185,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-delete-column-config", name="pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig", methods={"DELETE"})
+     * @Route("/grid-delete-column-config", name="griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
      * @param Config $config
@@ -213,7 +213,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-get-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig", methods={"GET"})
+     * @Route("/grid-get-column-config", name="gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      * @param Config $config
@@ -251,7 +251,7 @@ class DataObjectHelperController extends AdminController
             $gridType = $request->get('gridtype');
         }
 
-        $objectId = $request->get('objectId');
+        $objectId = (int) $request->get('objectId');
 
         if ($objectId) {
             $fields = DataObject\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
@@ -298,7 +298,7 @@ class DataObjectHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            $savedGridConfig = GridConfig::getById((int) $requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = false;
@@ -380,7 +380,7 @@ class DataObjectHelperController extends AdminController
                             $type = $keyParts[1];
                             //                            $field = $keyParts[2];
                             $groupAndKeyId = explode('-', $keyParts[3]);
-                            $keyId = $groupAndKeyId[1];
+                            $keyId = (int) $groupAndKeyId[1];
 
                             if ($type == 'classificationstore') {
                                 $keyDef = DataObject\Classificationstore\KeyConfig::getById($keyId);
@@ -499,10 +499,6 @@ class DataObjectHelperController extends AdminController
 
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
-        }
-
-        if (!empty($gridConfig) && !empty($gridConfig['pageSize'])) {
-            $pageSize = $gridConfig['pageSize'];
         }
 
         $availableConfigs = $class ? $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType) : [];
@@ -708,12 +704,12 @@ class DataObjectHelperController extends AdminController
 
             return $calculatedColumnConfig;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 
     /**
-     * @Route("/prepare-helper-column-configs", name="pimcore_admin_dataobject_dataobjecthelper_preparehelpercolumnconfigs", methods={"POST"})
+     * @Route("/prepare-helper-column-configs", name="preparehelpercolumnconfigs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -747,7 +743,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-config-apply-to-all", name="pimcore_admin_dataobject_dataobjecthelper_gridconfigapplytoall", methods={"POST"})
+     * @Route("/grid-config-apply-to-all", name="gridconfigapplytoall", methods={"POST"})
      *
      * @param Request $request
      *
@@ -776,7 +772,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-mark-favourite-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridmarkfavouritecolumnconfig", methods={"POST"})
+     * @Route("/grid-mark-favourite-column-config", name="gridmarkfavouritecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -869,7 +865,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-save-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridsavecolumnconfig", methods={"POST"})
+     * @Route("/grid-save-column-config", name="gridsavecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -995,7 +991,7 @@ class DataObjectHelperController extends AdminController
         foreach ($combinedShares as $id) {
             $share = new GridConfigShare();
             $share->setGridConfigId($gridConfig->getId());
-            $share->setSharedWithUserId($id);
+            $share->setSharedWithUserId((int) $id);
             $share->save();
         }
     }
@@ -1185,7 +1181,7 @@ class DataObjectHelperController extends AdminController
      */
 
     /**
-     * @Route("/import-upload", name="pimcore_admin_dataobject_dataobjecthelper_importupload", methods={"POST"})
+     * @Route("/import-upload", name="importupload", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1275,7 +1271,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getexportjobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="getexportjobs", methods={"GET"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
@@ -1309,7 +1305,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/do-export", name="pimcore_admin_dataobject_dataobjecthelper_doexport", methods={"POST"})
+     * @Route("/do-export", name="doexport", methods={"POST"})
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
@@ -1418,7 +1414,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-csv-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadcsvfile", methods={"GET"})
+     * @Route("/download-csv-file", name="downloadcsvfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1441,7 +1437,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-xlsx-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile", methods={"GET"})
+     * @Route("/download-xlsx-file", name="downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1484,10 +1480,7 @@ class DataObjectHelperController extends AdminController
     {
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
-            //exclude remote owner fields
-            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
-                $o[$key] = $value->getForCsvExport($object);
-            }
+            $o[$key] = $value->getForCsvExport($object);
         }
 
         $o['id (system)'] = $object->getId();
@@ -1500,7 +1493,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getbatchjobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="getbatchjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1521,7 +1514,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/batch", name="pimcore_admin_dataobject_dataobjecthelper_batch", methods={"PUT"})
+     * @Route("/batch", name="batch", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1558,7 +1551,7 @@ class DataObjectHelperController extends AdminController
                     if (substr($name, 0, 1) == '~') {
                         $type = $parts[1];
                         $field = $parts[2];
-                        $keyid = $parts[3];
+                        $keyId = $parts[3];
 
                         if ($type == 'classificationstore') {
                             $requestedLanguage = $params['language'];
@@ -1570,9 +1563,9 @@ class DataObjectHelperController extends AdminController
                                 $requestedLanguage = $request->getLocale();
                             }
 
-                            $groupKeyId = explode('-', $keyid);
-                            $groupId = $groupKeyId[0];
-                            $keyid = $groupKeyId[1];
+                            $groupKeyId = explode('-', $keyId);
+                            $groupId = (int) $groupKeyId[0];
+                            $keyId = (int) $groupKeyId[1];
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
@@ -1586,14 +1579,14 @@ class DataObjectHelperController extends AdminController
 
                                 /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                                 $fd = $class->getFieldDefinition($field);
-                                $keyConfig = $fd->getKeyConfiguration($keyid);
+                                $keyConfig = $fd->getKeyConfiguration($keyId);
                                 $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                                 /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
-                                    $keyid,
+                                    $keyId,
                                     $dataDefinition->getDataFromEditmode($value),
                                     $csLanguage
                                 );
@@ -1699,7 +1692,7 @@ class DataObjectHelperController extends AdminController
                 }
             }
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
 
             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1708,7 +1701,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-available-visible-vields", name="pimcore_admin_dataobject_dataobjecthelper_getavailablevisiblefields", methods={"GET"})
+     * @Route("/get-available-visible-vields", name="getavailablevisiblefields", methods={"GET"})
      *
      * @param Request $request
      *

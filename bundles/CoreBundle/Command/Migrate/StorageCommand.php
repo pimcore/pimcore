@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
-class MigrateStorageCommand extends AbstractCommand
+class StorageCommand extends AbstractCommand
 {
     /**
      * @param ContainerInterface $locator

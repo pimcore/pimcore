@@ -23,7 +23,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "tabpanel",
                 "border": false,
@@ -39,7 +39,7 @@
                 "bodyStyle": "",
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "panel",
                         "layout": "",
@@ -55,7 +55,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "<b>OnlineShopOrderItem <\/b>for storage of order items.&nbsp;<div>\u200bMay be extended for specific use case.&nbsp;<br><\/div>",
@@ -73,7 +73,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {
@@ -125,7 +125,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "manyToOneRelation",
                                         "width": 400,
@@ -226,7 +226,7 @@
                                 "bodyStyle": "",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [
+                                "children": [
                                     {
                                         "fieldtype": "numeric",
                                         "width": 400,
@@ -450,7 +450,7 @@
                         "bodyStyle": "",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [
+                        "children": [
                             {
                                 "fieldtype": "text",
                                 "html": "<b>Customized<\/b>&nbsp;gives you the possibility to add object bricks with&nbsp;additional data to your order items.",
@@ -468,7 +468,7 @@
                                 "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                                 "datatype": "layout",
                                 "permissions": null,
-                                "childs": [],
+                                "children": [],
                                 "locked": false
                             },
                             {

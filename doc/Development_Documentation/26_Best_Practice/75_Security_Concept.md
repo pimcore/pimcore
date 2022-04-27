@@ -25,6 +25,42 @@ it easy and comfortable to keep all dependencies of Pimcore and your project up-
 Since Pimcore is a Symfony application, it can utilize all Symfony tools, like the 
 [Symfony Security Checker](https://symfony.com/doc/5.2/security/security_checker.html). 
 
+### Content Security Policy
+Pimcore provides a Content Security Policy handler, which enables an additional security layer to protect from certain attacks like Cross-Site Scripting (XSS) and data injection and so on, by adding `Content-Security-Policy` HTTP response header with [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to every request in Admin interface. The generated nonce encoded string is matched with the one provided in link or inline javascript, which allows them to be executed safely. 
+
+Read more about [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
+
+To enable CSP, add a custom configuration in `config/config.yaml`:
+```yaml
+# config/config.yaml
+pimcore_admin:
+    admin_csp_header:
+        enabled: true
+```
+
+And to allow external urls for each directive, you can provide a list in the configuration:
+```yaml
+# config/config.yaml
+pimcore_admin:
+    admin_csp_header:
+        additional_urls:
+            script_src:
+                - 'https://oreo.cat/scripts/meow.js' 
+                - 'https://bagheera.cat/*'
+            style-src:
+                - 'https://oreo.cat/scripts/meow.css'
+```
+
+In case, you are using third party bundles or custom implementation that extends the admin backend interface with custom views then you would need to use generated nonce string in your scripts.
+If a script does not contain valid a nonce, then it is stopped from being executed wih a warning in console like:
+
+`Refused to execute inline script because it violates the following Content Security Policy directive: ...`
+
+This issue can be resolved either by using Pimcore [Headscript extension](../02_MVC/02_Template/02_Template_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
+
+```twig
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
+```
 
 ### Handling Security Issues
 In the case of a security issue/vulnerability in the Pimcore core framework, we handle them with the following procedure: 

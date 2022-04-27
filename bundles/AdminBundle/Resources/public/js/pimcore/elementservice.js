@@ -82,7 +82,7 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
             message += "<br />" + t('delete_message_dependencies');
         }
 
-        if(res["childs"] > 100) {
+        if (res['children'] > 100) {
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 
@@ -130,7 +130,9 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             var node = affectedNodes[index];
             if (node) {
                 var nodeEl = Ext.fly(node.getOwnerTree().getView().getNodeByRecord(node));
-                nodeEl.addCls("pimcore_delete");
+                if(nodeEl) {
+                    nodeEl.addCls("pimcore_delete");
+                }
             }
         }
 

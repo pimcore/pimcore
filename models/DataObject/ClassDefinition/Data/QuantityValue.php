@@ -487,7 +487,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     Runtime::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
 
             if (is_array($table)) {

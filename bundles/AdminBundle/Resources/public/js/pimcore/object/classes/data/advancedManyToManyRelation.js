@@ -433,7 +433,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
 
                 if (value.length > 1 && regresult == value
                     && in_array(value.toLowerCase(), ["id","key","path","type","index","classname",
-                    "creationdate","userowner","value","class","list","fullpath","childs","values","cachetag",
+                    "creationdate","userowner","value","class","list","fullpath","childs","children","values","cachetag",
                     "cachetags","parent","published","valuefromparent","userpermissions","dependencies",
                     "modificationdate","usermodification","byid","bypath","data","versions","properties",
                     "permissions","permissionsforuser","childamount","apipluginbroker","resource",
@@ -565,6 +565,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         if(this.grids) {
             var cols = [];
             this.stores.cols.each(function(rec) {
+                delete rec.data.id;
                 cols.push(rec.data);
                 rec.commit();
             });
@@ -572,6 +573,10 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         }
 
         return this.datax;
+    },
+
+    applyData: function (){
+        return this.getData();
     },
 
     applySpecialData: function(source) {

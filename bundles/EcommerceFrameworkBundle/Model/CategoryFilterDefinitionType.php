@@ -33,7 +33,7 @@ abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
     public function getIncludeParentCategories(): ?bool
     {

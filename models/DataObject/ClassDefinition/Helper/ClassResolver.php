@@ -43,7 +43,7 @@ abstract class ClassResolver
 
                 return self::$cache[$class];
             } catch (\Throwable $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 

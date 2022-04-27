@@ -27,7 +27,7 @@ trait ClearTempFilesTrait
     {
         $storage = Storage::get('thumbnail');
         $contents = $storage->listContents('/', true)->filter(function (StorageAttributes $item) {
-            return $item->isDir() && preg_match('@(image|video|pdf)\-thumb__[\d]+__' . preg_quote($this->getName(), '@') . '(?:_auto_.+)?$@', $item->path());
+            return $item->isDir() && preg_match('@(image|video|pdf)-thumb__[\d]+__'.preg_quote($this->getName(), '@').'(?:_auto_.+)?$@', $item->path());
         })->map(fn (StorageAttributes $attributes) => $attributes->path())->toArray();
 
         foreach ($contents as $item) {

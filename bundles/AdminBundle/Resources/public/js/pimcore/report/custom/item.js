@@ -98,6 +98,11 @@ pimcore.report.custom.item = Class.create({
             plugins: [
                 this.cellEditing
             ],
+            viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop'
+                }
+            },
             columns: [
                 {text: t("name"), sortable: false, dataIndex: 'name', editable: false, width: 200},
                 checkDisplay,

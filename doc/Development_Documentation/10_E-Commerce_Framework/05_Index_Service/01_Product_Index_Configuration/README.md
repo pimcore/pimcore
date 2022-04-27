@@ -63,7 +63,33 @@ pimcore_ecommerce_framework:
                     seoname:
                         type: varchar(255)
                         filter_group: string
-                        
+            INT:
+                attributes:
+                    name_en: &name_en
+                        locale: '%%locale%%'
+                        filter_group: string
+                        placeholders:
+                            '%%locale%%': en
+            BE:
+                attributes:
+                    name_fr:
+                        <<: *name_en
+                        # placeholders will be replaced with the value defined here
+                        # attribute level placeholders will be processed before tenant level placeholders
+                        #
+                        # in this example, the "BE" (belgium) tenant will have the attributes "name_fr", "name_de" 
+                        # and "name_nl" referencing the same attribute config as tenant "INT" (international) 
+                        # with attribute "name_en", but using use "fr", "de" and "nl" as locale 
+                        placeholders:
+                            '%%locale%%': fr
+                    name_de:
+                        <<: *name_en
+                        placeholders:
+                            '%%locale%%': de
+                    name_nl:
+                        <<: *name_en
+                        placeholders:
+                            '%%locale%%': nl
             example_tenant:
                 attributes:                          
                     rucksacksLoad:

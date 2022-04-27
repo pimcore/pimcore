@@ -141,7 +141,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
                 if (value.length > 1 && regresult == value && in_array(value.toLowerCase(),
                                     ["id","key","path","type","index","classname","creationdate","userowner",
-                                     "value","class","list","fullpath","childs","values","cachetag","cachetags",
+                                     "value","class","list","fullpath","childs","children","values","cachetag","cachetags",
                                      "parent","published","valuefromparent","userpermissions","dependencies",
                                      "modificationdate","usermodification","byid","bypath","data","versions",
                                      "properties","permissions","permissionsforuser","childamount","apipluginbroker",
@@ -282,6 +282,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         if(this.grids) {
             var rows = [];
             this.stores.rows.each(function(rec) {
+                delete rec.data.id;
                 rows.push(rec.data);
                 rec.commit();
             });
@@ -289,6 +290,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
             var cols = [];
             this.stores.cols.each(function(rec) {
+                delete rec.data.id;
                 cols.push(rec.data);
                 rec.commit();
             });
@@ -296,6 +298,10 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         }
 
         return this.datax;
+    },
+
+    applyData: function (){
+        return this.getData();
     },
 
     applySpecialData: function(source) {

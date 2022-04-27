@@ -119,7 +119,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     protected const FORBIDDEN_NAMES = [
         'id', 'key', 'path', 'type', 'index', 'classname', 'creationdate', 'userowner', 'value', 'class', 'list',
-        'fullpath', 'childs', 'values', 'cachetag', 'cachetags', 'parent', 'published', 'valuefromparent',
+        'fullpath', 'childs', 'children', 'values', 'cachetag', 'cachetags', 'parent', 'published', 'valuefromparent',
         'userpermissions', 'dependencies', 'modificationdate', 'usermodification', 'byid', 'bypath', 'data',
         'versions', 'properties', 'permissions', 'permissionsforuser', 'childamount', 'apipluginbroker', 'resource',
         'parentClass', 'definition', 'locked', 'language', 'omitmandatorycheck', 'idpath', 'object', 'fieldname',

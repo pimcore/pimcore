@@ -907,12 +907,18 @@ span.warning {
 }
 
 #pimcore_tree_preview.hidden {
-    display:none;
+    position: absolute;
+    left: -2000px !important;
 }
 
-#pimcore_tree_preview iframe {
-    padding: 0;
-    margin:0;
+#pimcore_tree_preview_thumb {
+    box-sizing: border-box;
+    min-height: 300px;
+    max-width: 100%;
+}
+
+#pimcore_tree_preview_thumb img {
+    max-width: 100%;
 }
 
 .password_valid .x-form-trigger-wrap {

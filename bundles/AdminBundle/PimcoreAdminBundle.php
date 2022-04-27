@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle;
 
+use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ContentSecurityPolicyUrlsPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\GDPRDataProviderPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocatorsPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
@@ -44,6 +45,7 @@ class PimcoreAdminBundle extends Bundle
         $container->addCompilerPass(new GDPRDataProviderPass());
         $container->addCompilerPass(new ImportExportLocatorsPass());
         $container->addCompilerPass(new TranslationServicesPass());
+        $container->addCompilerPass(new ContentSecurityPolicyUrlsPass());
 
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');

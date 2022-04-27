@@ -153,7 +153,6 @@ class MyAssetController extends FrontendController
                 'Content-Type' => 'application/pdf',
             ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
-
             $storage = Storage::get('thumbnail');
             $storagePath = urldecode($pathInfo);
             if($storage->fileExists($storagePath)){

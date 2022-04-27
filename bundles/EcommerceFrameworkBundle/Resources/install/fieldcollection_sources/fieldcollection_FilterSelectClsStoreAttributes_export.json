@@ -20,7 +20,7 @@
         "bodyStyle": null,
         "datatype": "layout",
         "permissions": null,
-        "childs": [
+        "children": [
             {
                 "fieldtype": "panel",
                 "labelWidth": 100,
@@ -38,7 +38,7 @@
                 "bodyStyle": "",
                 "datatype": "layout",
                 "permissions": null,
-                "childs": [
+                "children": [
                     {
                         "fieldtype": "text",
                         "html": "<b style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, helvetica, arial, verdana, sans-serif; font-size: 13px;\">Filter Classification Store Attributes<\/b><div style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, helvetica, arial, verdana, sans-serif; font-size: 13px;\"><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\">- Elastic Search Only !<\/font><\/div><div style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, helvetica, arial, verdana, sans-serif; font-size: 13px;\"><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\">- Creates filters for all indexed Classification Store Attributes&nbsp;<\/font><\/div><div style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, helvetica, arial, verdana, sans-serif; font-size: 13px;\"><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\" style=\"\"><span style=\"font-size: 13px;\">- Excluded KeyIDs (CSV): CSV list of KeyIDs that should be excluded<\/span><\/font><\/div><div style=\"\"><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\" style=\"color: rgb(0, 0, 0); font-family: &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, helvetica, arial, verdana, sans-serif; font-size: 13px;\">-&nbsp;<\/font><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\">KeyID Priority Order (CSV): CSV list of KeyIDs that should be listed first<\/span><\/font><\/div>",
@@ -56,7 +56,7 @@
                         "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
                         "datatype": "layout",
                         "permissions": null,
-                        "childs": [],
+                        "children": [],
                         "locked": false
                     },
                     {

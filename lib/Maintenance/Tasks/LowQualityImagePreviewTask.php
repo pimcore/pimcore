@@ -74,11 +74,12 @@ class LowQualityImagePreviewTask implements TaskInterface
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();
                         } catch (\Exception $e) {
-                            $this->logger->error($e);
+                            $this->logger->error((string) $e);
                         }
                     }
                 }
                 \Pimcore::collectGarbage();
+                \Pimcore::deleteTemporaryFiles();
             }
         } else {
             $this->logger->debug('Skip low quality image preview execution, was done within the last 24 hours');

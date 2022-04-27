@@ -668,8 +668,9 @@
     "drag_object_preview": "Objekt für Vorschau ziehen",
     "sites": "Seiten",
     "admin_interface_background": "Hintergrund zur Admin-Oberfläche",
-    "show_hide_areablock": "Show or Hide on frontend",
-    "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
-    "success_generating_previews": "Generating page previews in the background. Please reload the admin interface after some time to take effect.",
-    "error_generating_previews": "Error generating page previews."
+    "show_hide_areablock": "Zeigen oder verstecken im Frontend",
+    "asset_type_changed": "Asset Typ wurde in der Zwischenzeit geändert. Bitte laden Sie das Admin Interface neu, um die letzten Änderungen zu sehen.",
+    "success_generating_previews": "Seitenvorschau wird im Hintergrund generiert. Bitte laden Sie das Admin Interface nach einer Weile neu, um die Änderungen sehen zu können.",
+    "error_generating_previews": "Fehler beim generieren der Seitenvorschau",
+    "regex_flags": "RegEx Flags"
 }

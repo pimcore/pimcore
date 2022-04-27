@@ -255,7 +255,7 @@ class Page extends TargetingDocument
         $targetGroups = array_map(function ($id) {
             $id = trim($id);
             if (!empty($id)) {
-                $targetGroup = TargetGroup::getById($id);
+                $targetGroup = TargetGroup::getById((int) $id);
                 if ($targetGroup) {
                     return $targetGroup;
                 }

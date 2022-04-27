@@ -15,7 +15,9 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
+use Pimcore\Model\Exception\UnsupportedException;
 use Psr\Container\ContainerInterface;
 
 class UnitConversionService
@@ -29,15 +31,21 @@ class UnitConversionService
     }
 
     /**
-     * @param QuantityValue $quantityValue
-     * @param Unit          $toUnit
+     * @template T of AbstractQuantityValue
      *
-     * @return QuantityValue
+     * @param T $quantityValue
+     * @param Unit $toUnit
      *
+     * @return T
+     *
+     * @throws UnsupportedException If $quantityValue is no QuantityValue
      * @throws \Exception
      */
-    public function convert(QuantityValue $quantityValue, Unit $toUnit)
+    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit)
     {
+        if (!$quantityValue instanceof QuantityValue) {
+            throw new UnsupportedException('Only QuantityValue is supported.');
+        }
         $baseUnit = $toUnit->getBaseunit();
 
         if ($baseUnit === null) {

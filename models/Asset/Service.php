@@ -78,6 +78,13 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setObjectVar('id', null);
@@ -90,7 +97,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();
@@ -127,6 +134,13 @@ class Service extends Model\Element\Service
     {
         $source->getProperties();
 
+        // triggers actions before asset cloning
+        $event = new AssetEvent($source, [
+            'target_element' => $target,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
+
         /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
@@ -139,7 +153,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();

@@ -228,6 +228,18 @@ class Pimcore
     }
 
     /**
+     * Deletes temporary files which got created during the runtime of current process
+     *
+     * @static
+     */
+    public static function deleteTemporaryFiles()
+    {
+        /** @var \Pimcore\Helper\LongRunningHelper $longRunningHelper */
+        $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
+        $longRunningHelper->deleteTemporaryFiles();
+    }
+
+    /**
      * this method is called with register_shutdown_function() and writes all data queued into the cache
      *
      * @internal

@@ -661,7 +661,7 @@ class ElementController extends AdminController
      */
     public function deleteDraftAction(Request $request)
     {
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
         if ($version) {
             $version->delete();
         }
@@ -678,7 +678,7 @@ class ElementController extends AdminController
      */
     public function deleteVersionAction(Request $request)
     {
-        $version = Model\Version::getById($request->get('id'));
+        $version = Model\Version::getById((int) $request->get('id'));
         $version->delete();
 
         return $this->adminJson(['success' => true]);

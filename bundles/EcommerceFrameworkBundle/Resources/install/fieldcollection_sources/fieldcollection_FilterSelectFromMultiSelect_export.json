@@ -19,7 +19,7 @@
     "bodyStyle": null,
     "datatype": "layout",
     "permissions": null,
-    "childs": [
+    "children": [
       {
         "fieldtype": "panel",
         "layout": "",
@@ -35,7 +35,7 @@
         "bodyStyle": "",
         "datatype": "layout",
         "permissions": "",
-        "childs": [
+        "children": [
           {
             "fieldtype": "text",
             "html": "<div><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\"><b>Filter SelectFromMultiSelect<\/b><\/span><\/font><br><\/div><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\">\u200bSingle selection filter for multi select fields.&nbsp;<\/span><\/font>",
@@ -53,7 +53,7 @@
             "bodyStyle": "padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
             "datatype": "layout",
             "permissions": null,
-            "childs": [],
+            "children": [],
             "locked": false
           },
           {

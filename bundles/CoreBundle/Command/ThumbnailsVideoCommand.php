@@ -65,8 +65,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         // get only videos
         $conditions = ["type = 'video'"];
-        if ($input->getOption('parent')) {
-            $parent = Asset::getById($input->getOption('parent'));
+        if ($parentId = $input->getOption('parent')) {
+            $parent = Asset::getById((int) $parentId);
             if ($parent instanceof Asset\Folder) {
                 $conditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
@@ -106,7 +106,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
 
-        $video = Asset\Video::getById($assetId);
+        $video = Asset\Video::getById((int) $assetId);
         if (!$video) {
             $this->writeError('No video with ID=' . $assetId . ' found. Has the video been deleted or is the asset of another type?');
 

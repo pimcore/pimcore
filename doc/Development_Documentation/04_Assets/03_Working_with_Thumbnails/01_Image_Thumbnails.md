@@ -24,8 +24,8 @@ in the configuration above. If you first round the corners this would be perform
 and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
-an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example: 
-`/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813.jpg`
+an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example:
+`/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
 **Important**: The function `getThumbnail()` does not generate the Thumbnail itself. It just returns the path were the thumbnail file will be stored.
 If you want to generate the Thumbnail directly have a look at [Deferred Rendering of Thumbnails](#deferred-rendering-of-thumbnails)
@@ -34,7 +34,7 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 ```php
 $image = Asset::getById(1234);
 
-// get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp 
+// get path to thumbnail, e.g. `/foo/bar/362/image-thumb__362__content/foo.webp 
 $pathToThumbnail = $image->getThumbnail("myThumbnailName");
 
 // preferred alternative - let Pimcore create the whole image tag
@@ -47,7 +47,7 @@ Same in Twig:
 ```twig 
 {% set image = pimcore_asset(1234) %}
 
-{# get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp #}
+{# get path to thumbnail, e.g. `/foo/bar/362/image-thumb__362__content/foo.webp #}
 <img src="{{ image.thumbnail('myThumbnailName') }}">
 
 {# preferred alternative - let Pimcore create the whole image tag #}
@@ -76,7 +76,8 @@ For thumbnails in action also have a look at our [Live Demo](https://demo.pimcor
 
 ## Generating HTML for Thumbnails
 
-Pimcore offers the method `getHTML(array $options)` to get a ready to use `<picture>` tag for your thumbnail. 
+Pimcore offers the method `getHTML(array $options)` to get a ready to use `<picture>` tag for your thumbnail. When a `<picture>` element is not needed or desired an `<img />` element can used by calling `getImageTag(array $options)` instead.
+
 You can configure the generated markup with the following options: 
 
 | Name                           | Type     | Description                                                                                                                                                                                                                              |
@@ -94,8 +95,6 @@ You can configure the generated markup with the following options:
 | `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.   |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.   |
-
-
 
 ## Usage Examples
 ```twig
@@ -226,10 +225,29 @@ $thumbnail->getHtml([
 {{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'}) }}
 /* OR */
 {{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'}) }}
+    
+
+/* Output only <img> element wihout <picture> and <source> around it */
+{{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}    
 ```
 
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
 
+## Lazy Loading 
+
+By default, the images are lazy loading. This can be changed by setting the value to "eager" in the imgAttribute:
+    
+```twig
+
+{{ image.thumbnail('example').html({
+    'imgAttributes': {
+        'loading': 'eager',
+    }
+}) }}
+    
+
+````  
+ 
 ## Using ICC Color Profiles for CMYK -> RGB
 Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile)
 to RGB.
@@ -255,9 +273,9 @@ pimcore:
 
 ## Dynamic Generation on Request
 Pimcore auto-generates a thumbnail if requested but doesn't exist on the file system and is directly called via it's file path (not using any of 
-the `getThumbnail()` methods). 
-For example: Call `https://example.com/examples/panama/image-thumb__6644__contentimages/img_0037.jpeg` 
- (`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now pimcore checks 
+the `getThumbnail()` methods).
+For example: Call `https://example.com/examples/panama/6644/image-thumb__6644__contentimages/img_0037.jpeg`
+(`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now pimcore checks 
  if the asset with the ID 6644 and the thumbnail with the key "contentimages" exists, if yes the thumbnail is 
  generated on-the-fly and delivered to the client. When requesting the images again the image is directly served by 
  the webserver (Apache, Nginx), because the file already exists (just the same way it works with the getThumbnail() methods). 
@@ -307,7 +325,7 @@ using the following code
 ```
 this will create the following output: 
 ```php
-<img src="/Car%20Images/ac%20cars/image-thumb__68__contentimages/automotive-car-classic-149813@2x.png" width="250" height="190" />
+<img src="/Car%20Images/ac%20cars/68/image-thumb__68__contentimages/automotive-car-classic-149813@2x.png" width="250" height="190" />
 ```
 It's also possible to add the high-res dynamically: 
 ```twig
@@ -332,17 +350,17 @@ So again, this feature is only useful in some edge-cases.
 ```
 this generates the followinig ouput: 
 ```php
-/Car%20Images/ac%20cars/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
+/Car%20Images/ac%20cars/68/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
 ```
 
 To get an high-res version of the thumbnail, you can just add `@2x` before the file extension: 
 ```
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@2x.png
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@5x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@2x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@5x.png
 ``` 
 Using float is possible too:
 ```
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@3.2x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@3.2x.png
 ```
 
 Pimcore will then dynamically generate the thumbnails accordingly. 

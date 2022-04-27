@@ -129,7 +129,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
@@ -155,6 +155,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges
@@ -404,7 +405,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
@@ -433,6 +434,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges

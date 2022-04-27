@@ -967,5 +967,9 @@
     "asset_upload_want_to_overwrite": "Do you want to overwrite file %s?",
     "asset_upload_overwrite": "Overwrite",
     "asset_upload_keep_both": "Keep both files",
-    "asset_upload_overwrite_all": "Overwrite all"
+    "asset_upload_overwrite_all": "Overwrite all",
+    "could_not_open_zip_file": "The uploaded zip file could not be opened.",
+    "delete_group_message": "Do you really want to delete this group and all of its contents?",
+    "custom": "Custom",
+    "objects_sort_method": "Change data objects sort method"
 }

@@ -245,7 +245,7 @@ class Dao extends Model\Dao\AbstractDao
                         $this->db->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
+                        Logger::info((string) $er);
                     }
 
                     $this->createUpdateTable();
@@ -290,7 +290,7 @@ class Dao extends Model\Dao\AbstractDao
                             $this->db->rollBack();
                         } catch (\Exception $er) {
                             // PDO adapter throws exceptions if rollback fails
-                            Logger::info($er);
+                            Logger::info((string) $er);
                         }
 
                         // this creates the missing table
@@ -520,14 +520,14 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
                 try {
                     $this->db->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    Logger::info($er);
+                    Logger::info((string) $er);
                 }
 
                 $this->createUpdateTable();
@@ -795,7 +795,7 @@ QUERY;
                 // execute
                 $this->db->query($viewQuery);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
     }

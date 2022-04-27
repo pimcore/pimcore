@@ -278,6 +278,20 @@ final class CollectionConfig extends Model\AbstractModel
     }
 
     /**
+     * Returns all groups belonging to this collection
+     *
+     * @return CollectionGroupRelation[]
+     */
+    public function getRelations()
+    {
+        $list = new CollectionGroupRelation\Listing();
+        $list->setCondition('colId = ' . $this->id);
+        $list = $list->load();
+
+        return $list;
+    }
+
+    /**
      * @return int
      */
     public function getStoreId()
