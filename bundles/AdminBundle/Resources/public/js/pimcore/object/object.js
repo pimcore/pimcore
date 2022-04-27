@@ -661,8 +661,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     close: function() {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        pimcore.helpers.closeObject(this.id);
     },
 
     saveClose: function (only) {

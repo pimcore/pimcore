@@ -419,8 +419,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         });
     },
     close: function(){
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        pimcore.helpers.closeAsset(this.id);
     },
     saveClose: function(){
         this.willClose = true;
