@@ -62,7 +62,6 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-
         if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
             return $lock;
         }
@@ -401,8 +400,7 @@ class PageController extends DocumentControllerBase
         Environment $twig,
         EditableRenderer $editableRenderer,
         DocumentResolver $documentResolver
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 

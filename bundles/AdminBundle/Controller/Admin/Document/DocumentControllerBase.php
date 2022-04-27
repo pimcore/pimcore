@@ -44,11 +44,17 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     use ElementEditLockHelperTrait;
 
     const TASK_PUBLISH = 'publish';
+
     const TASK_UNPUBLISH = 'unpublish';
+
     const TASK_SAVE = 'save';
+
     const TASK_VERSION = 'version';
+
     const TASK_SCHEDULER = 'scheduler';
+
     const TASK_AUTOSAVE = 'autosave';
+
     const TASK_DELETE = 'delete';
 
     /**
@@ -378,7 +384,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function handleTask(string $task, Model\Document\PageSnippet $page)
     {
-        if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION ) {
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION) {
             $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
     }

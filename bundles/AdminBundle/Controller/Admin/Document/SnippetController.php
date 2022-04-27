@@ -35,6 +35,7 @@ class SnippetController extends DocumentControllerBase
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getDataByIdAction(Request $request)

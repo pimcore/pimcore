@@ -39,6 +39,7 @@ class LinkController extends DocumentControllerBase
      * @param SerializerInterface $serializer
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getDataByIdAction(Request $request, SerializerInterface $serializer): JsonResponse

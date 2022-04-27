@@ -124,7 +124,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 'treeData' => $treeData,
             ]);
         } else {
-
             $draftData = [
                 'id' => $version->getId(),
                 'modificationDate' => $version->getDate(),
