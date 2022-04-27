@@ -47,12 +47,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        // check for lock
-        if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
-            if (\Pimcore\Model\Element\Editlock::isLocked($pageId, 'document')) {
-                return $this->getEditLockResponse($pageId, 'document');
-            }
-            \Pimcore\Model\Element\Editlock::lock($pageId, 'document');
+        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $page = clone $page;
