@@ -71,11 +71,6 @@ parameters:
 			path: bundles/CoreBundle/EventListener/ResponseExceptionListener.php
 
 		-
-			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\:\\:get\\(\\) expects string\\|null, false given\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/TranslationDebugListener.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
@@ -246,11 +241,6 @@ parameters:
 			path: lib/Google/Cse.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of method Symfony\\\\Component\\\\HttpFoundation\\\\HeaderBag\\:\\:addCacheControlDirective\\(\\) expects bool\\|string, int given\\.$#"
-			count: 1
-			path: lib/Http/ResponseHelper.php
-
-		-
 			message: "#^Parameter \\#1 \\$x of method Pimcore\\\\Image\\\\Adapter\\:\\:crop\\(\\) expects int, float given\\.$#"
 			count: 1
 			path: lib/Image/Adapter.php
@@ -314,11 +304,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
 			count: 1
 			path: lib/Targeting/ConditionMatcher.php
-
-		-
-			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\:\\:get\\(\\) expects string\\|null, false given\\.$#"
-			count: 1
-			path: lib/Targeting/EventListener/ToolbarListener.php
 
 		-
 			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int\\|null given\\.$#"
