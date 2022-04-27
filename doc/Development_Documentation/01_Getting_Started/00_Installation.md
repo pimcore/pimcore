@@ -69,6 +69,12 @@ have a look at the logs as a starting point when debugging installation issues.
 
 ## 5. Maintenance Cron Job
 
+Maintenance tasks are handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance
+messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent
+workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g.
+`Supervisor`) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process
+the queue directly.
+
 ```bash
 # this command needs anyway executed via cron or similar task scheduler
 # it fills the message queue with the necessary tasks, which are then processed by messenger:consume

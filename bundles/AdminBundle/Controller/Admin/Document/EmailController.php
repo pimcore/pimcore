@@ -70,13 +70,14 @@ class EmailController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
+        $emailId = (int) $request->get('id');
         // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->getEditLockResponse($request->get('id'), 'document');
+        if (Element\Editlock::isLocked($emailId, 'document')) {
+            return $this->getEditLockResponse($emailId, 'document');
         }
-        Element\Editlock::lock($request->get('id'), 'document');
+        Element\Editlock::lock($emailId, 'document');
 
-        $email = Document\Email::getById($request->get('id'));
+        $email = Document\Email::getById($emailId);
 
         if (!$email) {
             throw $this->createNotFoundException('Email not found');
@@ -121,7 +122,7 @@ class EmailController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $page = Document\Email::getById($request->get('id'));
+        $page = Document\Email::getById((int) $request->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Email not found');

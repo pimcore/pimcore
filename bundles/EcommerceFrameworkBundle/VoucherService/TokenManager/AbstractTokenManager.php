@@ -178,7 +178,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
             $data = $this->getExportData($params);
         } catch (\Exception $e) {
             fputcsv($stream, [$e->getMessage()]);
-            fputcsv($stream, '');
+            fputcsv($stream, ['']);
         }
 
         if (null !== $data && is_array($data)) {

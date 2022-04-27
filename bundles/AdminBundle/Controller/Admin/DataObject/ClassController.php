@@ -224,6 +224,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $class->setFieldDefinitions([]);
         $isWriteable = $class->isWritable();
         $class = $class->getObjectVars();
@@ -242,6 +245,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
+        if (!$customLayout) {
+            throw $this->createNotFoundException();
+        }
         $isWriteable = $customLayout->isWritable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
@@ -323,7 +329,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function deleteAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
-        $class->delete();
+        if ($class) {
+            $class->delete();
+        }
 
         return new Response();
     }
@@ -355,7 +363,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function saveCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
-        $class = DataObject\ClassDefinition::getById($customLayout->getClassId());
+        if (!$customLayout) {
+            throw $this->createNotFoundException();
+        }
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -397,6 +407,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function saveAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -485,6 +498,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function importClassAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json, false, true);
@@ -846,7 +862,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if ($request->query->has('allowedTypes')) {
             $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
-        $object = DataObject::getById($request->get('object_id'));
+        $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
         $currentLayoutId = $request->get('layoutId', null);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -961,7 +977,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         'outerFieldname' => $request->get('field_name'),
                     ];
 
-                    $object = DataObject::getById($request->get('object_id'));
+                    $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -994,6 +1010,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $objectId = (int)$request->get('oid');
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
@@ -1236,7 +1255,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $fieldname = null;
         $className = null;
 
-        $object = DataObject::getById($request->get('object_id'));
+        $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1390,7 +1409,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     'outerFieldname' => $request->get('field_name'),
                 ];
 
-                $object = DataObject::getById($request->get('object_id'));
+                $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
                 DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);

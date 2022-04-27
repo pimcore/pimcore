@@ -85,7 +85,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $filter = $request->get('filter');
-        $object = DataObject::getById($request->get('node'));
+        $object = DataObject::getById((int) $request->get('node'));
         $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         $objects = [];
         $cv = false;
@@ -113,15 +113,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $limit = 100;
             }
 
-            $childsList = new DataObject\Listing();
-            $childsList->setCondition($this->buildChildrenCondition($object, $filter, $view));
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
+            $childrenList = new DataObject\Listing();
+            $childrenList->setCondition($this->buildChildrenCondition($object, $filter, $view));
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
 
             if ($object->getChildrenSortBy() === 'index') {
-                $childsList->setOrderKey('objects.o_index ASC', false);
+                $childrenList->setOrderKey('objects.o_index ASC', false);
             } else {
-                $childsList->setOrderKey(
+                $childrenList->setOrderKey(
                     sprintf(
                         'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
                         $object->getChildrenSortBy(), $object->getChildrenSortOrder()
@@ -129,27 +129,30 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     false
                 );
             }
-            $childsList->setObjectTypes($objectTypes);
+            $childrenList->setObjectTypes($objectTypes);
 
-            Element\Service::addTreeFilterJoins($cv, $childsList);
+            Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-            /** @var DataObject\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
-            $filteredTotalCount = $childsList->getTotalCount();
-            $childs = $childsList->load();
 
-            foreach ($childs as $child) {
-                $tmpObject = $this->getTreeNodeConfig($child);
+            /** @var DataObject\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-                if ($child->isAllowed('list', $this->getAdminUser())) {
-                    $objects[] = $tmpObject;
+            $children = $childrenList->load();
+            $filteredTotalCount = $childrenList->getTotalCount();
+
+            foreach ($children as $child) {
+                $objectTreeNode = $this->getTreeNodeConfig($child);
+                // this if is obsolete since as long as the change with #11714 about list on line 175-179 are working fine, we already filter the list=1 there
+                if ($objectTreeNode['permissions']['list'] == 1) {
+                    $objects[] = $objectTreeNode;
                 }
             }
+
             //pagination for custom view
             $total = $cv
                 ? $filteredTotalCount
@@ -289,7 +292,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
         $tmpObject['expanded'] = !$hasChildren;
-        $tmpObject['permissions'] = $child->getUserPermissions();
+        $tmpObject['permissions'] = $child->getUserPermissions($this->getAdminUser());
 
         if ($child->isLocked()) {
             $tmpObject['cls'] .= 'pimcore_treenode_locked ';
@@ -312,7 +315,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $path = $request->get('path');
         $pathParts = explode('/', $path);
-        $id = array_pop($pathParts);
+        $id = (int) array_pop($pathParts);
 
         $limit = $request->get('limit');
 
@@ -362,7 +365,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $objectFromDatabase = DataObject\Concrete::getById((int)$request->get('id'));
+        $objectId = (int)$request->get('id');
+        $objectFromDatabase = DataObject\Concrete::getById($objectId);
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -374,8 +378,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-                return $this->getEditLockResponse($request->get('id'), 'object');
+            if (Element\Editlock::isLocked($objectId, 'object')) {
+                return $this->getEditLockResponse($objectId, 'object');
             }
 
             Element\Editlock::lock($request->get('id'), 'object');
@@ -435,7 +439,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
-            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
+            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions($this->getAdminUser());
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
             $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = array_map(
@@ -534,7 +538,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
-            $data['layout'] = self::getLayoutDefinitionArray($data['layout']);
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
@@ -685,13 +688,19 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getFolderAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
+        $objectId = (int)$request->get('id');
         // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->getEditLockResponse($request->get('id'), 'object');
+        if (Element\Editlock::isLocked($objectId, 'object')) {
+            return $this->getEditLockResponse($objectId, 'object');
         }
-        Element\Editlock::lock($request->get('id'), 'object');
+        Element\Editlock::lock($objectId, 'object');
 
-        $object = DataObject::getById((int)$request->get('id'));
+        $object = DataObject::getById($objectId);
+
+        if (!$object) {
+            throw $this->createNotFoundException();
+        }
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -709,7 +718,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['general']['o_locked'] = $object->isLocked();
 
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
+            $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
@@ -774,7 +783,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function addAction(Request $request, Model\FactoryInterface $modelFactory): JsonResponse
     {
         $message = '';
-        $parent = DataObject::getById($request->get('parentId'));
+        $parent = DataObject::getById((int) $request->get('parentId'));
 
         if (!$parent->isAllowed('create')) {
             $message = 'prevented adding object because of missing permissions';
@@ -849,7 +858,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $success = false;
 
-        $parent = DataObject::getById($request->get('parentId'));
+        $parent = DataObject::getById((int) $request->get('parentId'));
         if ($parent->isAllowed('create')) {
             if (!DataObject\Service::pathExists($parent->getRealFullPath() . '/' . $request->get('key'))) {
                 $folder = DataObject\Folder::create([
@@ -901,7 +910,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $type = 'children';
         }
         if ($type === 'children') {
-            $parentObject = DataObject::getById($request->get('id'));
+            $parentObject = DataObject::getById((int) $request->get('id'));
 
             $list = new DataObject\Listing();
             $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
@@ -919,8 +928,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         }
-        if ($request->get('id')) {
-            $object = DataObject::getById($request->get('id'));
+        if ($id = $request->get('id')) {
+            $object = DataObject::getById((int) $id);
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     throw $this->createAccessDeniedHttpException();
@@ -949,7 +958,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function changeChildrenSortByAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         if ($object) {
             $sortBy = $request->get('sortBy');
             $sortOrder = $request->get('childrenSortOrder');
@@ -965,7 +974,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($currentSortBy != $sortBy) {
                 $user = Tool\Admin::getCurrentUser();
 
-                if (!$user->isAdmin()) {
+                if (!$user->isAdmin() && !$user->isAllowed('objects_sort_method')) {
                     return $this->json(['success' => false, 'message' => 'Changing the sort method is only allowed for admin users']);
                 }
 
@@ -995,7 +1004,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $success = false;
 
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         if ($object instanceof DataObject\Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
@@ -1243,7 +1252,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function saveAction(Request $request)
     {
-        $objectFromDatabase = DataObject\Concrete::getById($request->get('id'));
+        $objectFromDatabase = DataObject\Concrete::getById((int) $request->get('id'));
 
         // set the latest available version for editmode
         $object = $this->getLatestVersion($objectFromDatabase);
@@ -1452,7 +1461,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function saveFolderAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
 
         if (!$object) {
             throw $this->createNotFoundException('Object not found');
@@ -1526,7 +1535,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById($request->get('id'));
+        $version = Model\Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
@@ -1709,11 +1721,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $pasteJobs = [];
 
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, ['idMapping' => []]);
+            $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {
-            $object = DataObject::getById($request->get('sourceId'));
+            $object = DataObject::getById((int) $request->get('sourceId'));
 
             // first of all the new parent
             $pasteJobs[] = [[
@@ -1847,13 +1859,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
-            $sourceParent = DataObject::getById($request->get('sourceParentId'));
+            $sourceParent = DataObject::getById((int) $request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
             if ($sessionBag['parentId']) {
                 $targetParent = DataObject::getById($sessionBag['parentId']);
             } else {
-                $targetParent = DataObject::getById($request->get('targetParentId'));
+                $targetParent = DataObject::getById((int) $request->get('targetParentId'));
             }
 
             $targetPath = preg_replace('@^' . preg_quote($sourceParent->getRealFullPath(), '@') . '@', $targetParent . '/', $source->getRealPath());
@@ -2081,41 +2093,5 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
-    }
-
-    /**
-     * @deprecated BC Layer for childs properties, can be removed in Pimcore 11
-     *
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data|null $layout
-     * @param string|null $childrenName
-     *
-     * @return array|null
-     */
-    private static function getLayoutDefinitionArray($layout, ?string $childrenName = null): ?array
-    {
-        if (!$layout) {
-            return null;
-        }
-
-        $return = (array)$layout;
-
-        if (isset($return['children']) && is_array($return['children'])) {
-            $children = $return['children'];
-            unset($return['children']);
-            if (!$childrenName || $childrenName === 'childs') {
-                $return['childs'] = [];
-                foreach ($children as $child) {
-                    $return['childs'][] = self::getLayoutDefinitionArray($child, 'childs');
-                }
-            }
-            if (!$childrenName || $childrenName === 'children') {
-                $return['children'] = [];
-                foreach ($children as $child) {
-                    $return['children'][] = self::getLayoutDefinitionArray($child, 'children');
-                }
-            }
-        }
-
-        return $return;
     }
 }

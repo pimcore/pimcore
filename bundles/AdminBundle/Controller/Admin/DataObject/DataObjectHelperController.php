@@ -59,7 +59,7 @@ class DataObjectHelperController extends AdminController
      */
     public function loadObjectDataAction(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject::getById((int) $request->get('id'));
         $result = [];
         if ($object) {
             $result['success'] = true;
@@ -75,11 +75,11 @@ class DataObjectHelperController extends AdminController
     /**
      * @param int $userId
      * @param string $classId
-     * @param string $searchType
+     * @param string|null $searchType
      *
      * @return array
      */
-    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
+    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType = null)
     {
         $db = Db::get();
         $configListingConditionParts = [];
@@ -159,11 +159,11 @@ class DataObjectHelperController extends AdminController
     public function getExportConfigsAction(Request $request)
     {
         $classId = $request->get('classId');
-        $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId, null);
+        $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId);
         if (!is_array($list)) {
             $list = [];
         }
-        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, null));
+        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId));
         $result = [];
 
         $result[] = [
@@ -251,7 +251,7 @@ class DataObjectHelperController extends AdminController
             $gridType = $request->get('gridtype');
         }
 
-        $objectId = $request->get('objectId');
+        $objectId = (int) $request->get('objectId');
 
         if ($objectId) {
             $fields = DataObject\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
@@ -298,7 +298,7 @@ class DataObjectHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            $savedGridConfig = GridConfig::getById((int) $requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = false;
@@ -380,7 +380,7 @@ class DataObjectHelperController extends AdminController
                             $type = $keyParts[1];
                             //                            $field = $keyParts[2];
                             $groupAndKeyId = explode('-', $keyParts[3]);
-                            $keyId = $groupAndKeyId[1];
+                            $keyId = (int) $groupAndKeyId[1];
 
                             if ($type == 'classificationstore') {
                                 $keyDef = DataObject\Classificationstore\KeyConfig::getById($keyId);
@@ -499,10 +499,6 @@ class DataObjectHelperController extends AdminController
 
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
-        }
-
-        if (!empty($gridConfig) && !empty($gridConfig['pageSize'])) {
-            $pageSize = $gridConfig['pageSize'];
         }
 
         $availableConfigs = $class ? $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType) : [];
@@ -995,7 +991,7 @@ class DataObjectHelperController extends AdminController
         foreach ($combinedShares as $id) {
             $share = new GridConfigShare();
             $share->setGridConfigId($gridConfig->getId());
-            $share->setSharedWithUserId($id);
+            $share->setSharedWithUserId((int) $id);
             $share->save();
         }
     }
@@ -1555,7 +1551,7 @@ class DataObjectHelperController extends AdminController
                     if (substr($name, 0, 1) == '~') {
                         $type = $parts[1];
                         $field = $parts[2];
-                        $keyid = $parts[3];
+                        $keyId = $parts[3];
 
                         if ($type == 'classificationstore') {
                             $requestedLanguage = $params['language'];
@@ -1567,9 +1563,9 @@ class DataObjectHelperController extends AdminController
                                 $requestedLanguage = $request->getLocale();
                             }
 
-                            $groupKeyId = explode('-', $keyid);
-                            $groupId = $groupKeyId[0];
-                            $keyid = $groupKeyId[1];
+                            $groupKeyId = explode('-', $keyId);
+                            $groupId = (int) $groupKeyId[0];
+                            $keyId = (int) $groupKeyId[1];
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
@@ -1583,14 +1579,14 @@ class DataObjectHelperController extends AdminController
 
                                 /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                                 $fd = $class->getFieldDefinition($field);
-                                $keyConfig = $fd->getKeyConfiguration($keyid);
+                                $keyConfig = $fd->getKeyConfiguration($keyId);
                                 $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                                 /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
-                                    $keyid,
+                                    $keyId,
                                     $dataDefinition->getDataFromEditmode($value),
                                     $csLanguage
                                 );

@@ -359,7 +359,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         $db = \Pimcore\Db::get();
 
         $days = 31;
-        $startDate = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
+        $startDate = mktime(23, 59, 59, (int) date('m'), (int) date('d'), (int) date('Y'));
 
         $data = [];
 

@@ -19,6 +19,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -509,6 +510,18 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    /**
+     * @param array $columns
+     * @param User $user
+     *
+     * @return array
+     *
+     */
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'asset');
     }
 
     public function updateCustomSettings()

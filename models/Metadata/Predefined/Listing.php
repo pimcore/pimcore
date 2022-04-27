@@ -60,7 +60,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
      *
      * @throws \Exception
      */
-    public static function getByTargetType($type, $subTypes)
+    public static function getByTargetType($type, $subTypes = null)
     {
         if ($type !== 'asset') {
             throw new \Exception('other types than assets are currently not supported');

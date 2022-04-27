@@ -102,8 +102,8 @@ class GridHelperService
                         $language = 'default';
                     }
 
-                    $groupId = $groupKeyId[0];
-                    $keyid = $groupKeyId[1];
+                    $groupId = (int) $groupKeyId[0];
+                    $keyid = (int) $groupKeyId[1];
 
                     $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
                     $type = $keyConfig->getType();
@@ -494,7 +494,7 @@ class GridHelperService
 
     public function prepareListingForGrid(array $requestParams, string $requestedLanguage, $adminUser): DataObject\Listing\Concrete
     {
-        $folder = Model\DataObject::getById($requestParams['folderId']);
+        $folder = Model\DataObject::getById((int) $requestParams['folderId']);
         $class = ClassDefinition::getById($requestParams['classId']);
         $className = $class->getName();
 

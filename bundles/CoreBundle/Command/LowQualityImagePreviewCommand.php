@@ -72,7 +72,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         $conditions = ["type = 'image'"];
 
         if ($input->getOption('parent')) {
-            $parent = Asset::getById($input->getOption('parent'));
+            $parent = Asset::getById((int) $input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
                 $conditions[] = "path LIKE '" . Db::get()->escapeLike($parent->getRealFullPath()) . "/%'";
             } else {

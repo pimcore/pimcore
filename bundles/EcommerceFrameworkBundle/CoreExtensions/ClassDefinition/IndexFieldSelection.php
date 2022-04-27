@@ -351,6 +351,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
             return new ObjectData\IndexFieldSelection($tenant, $field, $preSelect);
         }
+        if ($value instanceof ObjectData\IndexFieldSelection) {
+            return $value;
+        }
 
         return null;
     }

@@ -446,7 +446,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
                 if ($i === $maxTries) {
                     throw $e;
                 }
-                usleep($sleep * 1000000);
+                usleep((int) ($sleep * 1000000));
             }
         }
 

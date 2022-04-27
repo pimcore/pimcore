@@ -281,7 +281,7 @@ class TranslationController extends AdminController
         $response->headers->set('Content-Encoding', 'UTF-8');
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', 'attachment; filename="export_' . $domain . '_translations.csv"');
-        ini_set('display_errors', false); //to prevent warning messages in csv
+        ini_set('display_errors', '0'); //to prevent warning messages in csv
 
         return $response;
     }

@@ -48,9 +48,9 @@ public function setToken(?string $token)
 
 /**
 * Get usages - Usage count
-* @return string|null
+* @return int|null
 */
-public function getUsages(): ?string
+public function getUsages(): ?int
 {
 	$data = $this->usages;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
@@ -62,10 +62,10 @@ public function getUsages(): ?string
 
 /**
 * Set usages - Usage count
-* @param string|null $usages
+* @param int|null $usages
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
 */
-public function setUsages(?string $usages)
+public function setUsages(?int $usages)
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("usages");

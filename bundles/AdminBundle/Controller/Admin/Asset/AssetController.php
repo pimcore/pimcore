@@ -100,15 +100,16 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $asset = Asset::getById((int)$request->get('id'));
+        $assetId = (int)$request->get('id');
+        $asset = Asset::getById($assetId);
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
         // check for lock
         if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'asset')) {
-                return $this->getEditLockResponse($request->get('id'), 'asset');
+            if (Element\Editlock::isLocked($assetId, 'asset')) {
+                return $this->getEditLockResponse($assetId, 'asset');
             }
 
             Element\Editlock::lock($request->get('id'), 'asset');
@@ -200,7 +201,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['filesize'] = $asset->getFileSize();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
-        $data['userPermissions'] = $asset->getUserPermissions();
+        $data['userPermissions'] = $asset->getUserPermissions($this->getAdminUser());
         $frontendPath = $asset->getFrontendFullPath();
         $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $frontendPath) ?
             $frontendPath :
@@ -273,35 +274,36 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             // get assets
-            $childsList = new Asset\Listing();
-            $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
-            $childsList->filterAccessibleByUser($this->getAdminUser(), $asset);
+            $childrenList = new Asset\Listing();
+            $childrenList->addConditionParam('parentId = ?', [$asset->getId()]);
+            $childrenList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
             if (!is_null($filter)) {
-                $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
+                $childrenList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
             }
 
-            $childsList->setLimit($limit);
-            $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
+            $childrenList->setLimit($limit);
+            $childrenList->setOffset($offset);
+            $childrenList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
-            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
+            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childrenList);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $childrenList,
                 'context' => $allParams,
             ]);
             $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-            /** @var Asset\Listing $childsList */
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            /** @var Asset\Listing $childrenList */
+            $childrenList = $beforeListLoadEvent->getArgument('list');
 
-            $childs = $childsList->load();
+            $children = $childrenList->load();
 
-            $filteredTotalCount = $childsList->getTotalCount();
+            $filteredTotalCount = $childrenList->getTotalCount();
 
-            foreach ($childs as $childAsset) {
-                if ($childAsset->isAllowed('list')) {
-                    $assets[] = $this->getTreeNodeConfig($childAsset);
+            foreach ($children as $childAsset) {
+                $assetTreeNode = $this->getTreeNodeConfig($childAsset);
+                if ($assetTreeNode['permissions']['list'] == 1) {
+                    $assets[] = $assetTreeNode;
                 }
             }
         }
@@ -442,7 +444,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
             // param "dir" contains the relative path of the file
-            $parent = Asset::getById($request->get('parentId'));
+            $parent = Asset::getById((int) $request->get('parentId'));
             $dir = $request->get('dir');
             if (strpos($dir, '..') !== false) {
                 throw new \Exception('not allowed');
@@ -574,7 +576,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function replaceAssetAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
         $mimetype = MimeTypes::getDefault()->guessMimeType($_FILES['Filedata']['tmp_name']);
@@ -669,7 +671,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $type = 'children';
         }
         if ($type === 'children') {
-            $parentAsset = Asset::getById($request->get('id'));
+            $parentAsset = Asset::getById((int) $request->get('id'));
 
             $list = new Asset\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
@@ -688,7 +690,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         }
         if ($request->get('id')) {
-            $asset = Asset::getById($request->get('id'));
+            $asset = Asset::getById((int) $request->get('id'));
             if ($asset && $asset->isAllowed('delete')) {
                 if ($asset->isLocked()) {
                     return $this->adminJson([
@@ -715,6 +717,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $asset = $element;
 
+        $permissions =  $asset->getUserPermissions($this->getAdminUser());
+
         $tmpAsset = [
             'id' => $asset->getId(),
             'key' => $element->getKey(),
@@ -726,11 +730,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             'lockOwner' => $asset->getLocked() ? true : false,
             'elementType' => 'asset',
             'permissions' => [
-                'remove' => $asset->isAllowed('delete'),
-                'settings' => $asset->isAllowed('settings'),
-                'rename' => $asset->isAllowed('rename'),
-                'publish' => $asset->isAllowed('publish'),
-                'view' => $asset->isAllowed('view'),
+                'remove' => $permissions['delete'],
+                'settings' => $permissions['settings'],
+                'rename' => $permissions['rename'],
+                'publish' => $permissions['publish'],
+                'view' => $permissions['view'],
+                'list' => $permissions['list'],
             ],
         ];
 
@@ -741,7 +746,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$hasChildren;
             $tmpAsset['loaded'] = !$hasChildren;
-            $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
+            $tmpAsset['permissions']['create'] = $permissions['create'];
             $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset, ['origin' => 'treeNode']);
         } else {
             $tmpAsset['leaf'] = true;
@@ -844,13 +849,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $updateData = array_merge($request->request->all(), $request->query->all());
 
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         if ($asset->isAllowed('settings')) {
             $asset->setUserModification($this->getAdminUser()->getId());
 
             // if the position is changed the path must be changed || also from the children
-            if ($request->get('parentId')) {
-                $parentAsset = Asset::getById($request->get('parentId'));
+            if ($parentId = $request->get('parentId')) {
+                $parentAsset = Asset::getById((int) $parentId);
 
                 //check if parent is changed i.e. asset is moved
                 if ($asset->getParentId() != $parentAsset->getId()) {
@@ -914,10 +919,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
-     *
-     * @param Request $request
      */
-    public function webdavAction(Request $request)
+    public function webdavAction()
     {
         $homeDir = Asset::getById(1);
 
@@ -928,7 +931,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO(\Pimcore\Db::get()->getWrappedConnection());
+            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
+            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
@@ -957,7 +962,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
@@ -1063,7 +1068,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById($request->get('id'));
+        $version = Model\Version::getById((int) $request->get('id'));
         $asset = $version->loadData();
 
         $currentAsset = Asset::getById($asset->getId());
@@ -1123,7 +1128,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function downloadAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
@@ -1153,7 +1158,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function downloadImageThumbnailAction(Request $request)
     {
-        $image = Asset\Image::getById($request->get('id'));
+        $image = Asset\Image::getById((int) $request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1590,7 +1595,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getPreviewDocumentAction(Request $request)
     {
-        $asset = Asset\Document::getById($request->get('id'));
+        $asset = Asset\Document::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1646,7 +1651,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getPreviewVideoAction(Request $request)
     {
-        $asset = Asset\Video::getById($request->get('id'));
+        $asset = Asset\Video::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1692,7 +1697,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function serveVideoPreviewAction(Request $request)
     {
-        $asset = Asset\Video::getById($request->get('id'));
+        $asset = Asset\Video::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1732,10 +1737,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function imageEditorAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to preview');
+            throw $this->createAccessDeniedException('Not allowed to preview');
         }
 
         return $this->render(
@@ -1753,7 +1758,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function imageEditorSaveAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
@@ -1886,11 +1891,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $pasteJobs = [];
 
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, []);
+            $session->set((string) $transactionId, []);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive') {
-            $asset = Asset::getById($request->get('sourceId'));
+            $asset = Asset::getById((int) $request->get('sourceId'));
 
             if (!$asset) {
                 throw $this->createNotFoundException('Source not found');
@@ -1970,13 +1975,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
-            $sourceParent = Asset::getById($request->get('sourceParentId'));
+            $sourceParent = Asset::getById((int) $request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
             if ($sessionBag['parentId']) {
                 $targetParent = Asset::getById($sessionBag['parentId']);
             } else {
-                $targetParent = Asset::getById($request->get('targetParentId'));
+                $targetParent = Asset::getById((int) $request->get('targetParentId'));
             }
 
             $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
@@ -2033,7 +2038,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $jobId = uniqid();
         $filesPerJob = 5;
         $jobs = [];
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
@@ -2108,7 +2113,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function downloadAsZipAddFilesAction(Request $request)
     {
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         $success = false;
 
         if (!$asset) {
@@ -2188,7 +2193,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function downloadAsZipAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
         }
@@ -2218,7 +2223,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $jobId = uniqid();
         $filesPerJob = 5;
         $jobs = [];
-        $asset = Asset::getById($request->get('parentId'));
+        $asset = Asset::getById((int) $request->get('parentId'));
 
         if (!is_file($_FILES['Filedata']['tmp_name'])) {
             return $this->adminJson([
@@ -2288,7 +2293,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $jobId = $request->get('jobId');
         $limit = (int)$request->get('limit');
         $offset = (int)$request->get('offset');
-        $importAsset = Asset::getById($request->get('parentId'));
+        $importAsset = Asset::getById((int) $request->get('parentId'));
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $jobId . '.zip';
         $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/zip-import';
 
@@ -2402,7 +2407,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function importServerFilesAction(Request $request)
     {
-        $assetFolder = Asset::getById($request->get('parentId'));
+        $assetFolder = Asset::getById((int) $request->get('parentId'));
         if (!$assetFolder) {
             throw $this->createNotFoundException('Parent asset not found');
         }
@@ -2504,7 +2509,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $success = false;
 
-        if ($asset = Asset::getById($request->get('id'))) {
+        if ($asset = Asset::getById((int) $request->get('id'))) {
             if (method_exists($asset, 'clearThumbnails')) {
                 if (!$asset->isAllowed('publish')) {
                     throw $this->createAccessDeniedException('not allowed to publish');
@@ -2710,7 +2715,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getTextAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('Asset not found');
