@@ -230,6 +230,28 @@ $thumbnail->getHtml([
 
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
 
+## Using ICC Color Profiles for CMYK -> RGB
+Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile)
+to RGB.
+
+Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in the download package, but
+you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075)
+or here: [ICC (color.org)](http://www.color.org/profiles.xalter).
+
+After downloading the profiles put them into your project folder or anywhere else on your sever
+(eg. `/usr/share/color/icc`). Then configure the path in the pimcore config file:
+
+```yaml
+pimcore:
+
+    assets:
+
+        # Absolute path to default ICC RGB profile (if no embedded profile is given)
+        icc_rgb_profile:      null
+
+        # Absolute path to default ICC CMYK profile (if no embedded profile is given)
+        icc_cmyk_profile:     null
+```
 
 ## Dynamic Generation on Request
 Pimcore auto-generates a thumbnail if requested but doesn't exist on the file system and is directly called via it's file path (not using any of 
