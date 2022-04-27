@@ -890,7 +890,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $type = $elementData['type'];
                 $id = $elementData['id'];
                 $target = Element\Service::getElementById($type, $id);
-                if ($target) {
+                if ($target instanceof DataObject\Concrete) {
                     $columns = $elementMetadata['columns'];
                     $fieldname = $elementMetadata['fieldname'];
                     $data = $elementMetadata['data'];

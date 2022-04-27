@@ -53,6 +53,7 @@ class ListCommand extends AbstractBundleCommand
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
                 'Priority',
             ],
+            'rows' => [],
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {

@@ -202,7 +202,7 @@ final class DefaultValue extends AbstractValue
         }
 
         if ($this->attribute && method_exists($element, $getter)) {
-            if ($element instanceof AbstractObject) {
+            if ($element instanceof Concrete) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);
                 } catch (\Exception $e) {

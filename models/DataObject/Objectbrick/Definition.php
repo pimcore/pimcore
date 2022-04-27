@@ -137,7 +137,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        array_multisort(array_map('strlen', $tables), $tables);
+        $tablesLen = array_map('strlen', $tables);
+        array_multisort($tablesLen, $tables);
         $longestTablename = end($tables);
 
         $length = strlen($longestTablename);
@@ -596,7 +597,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @internal
      * @internal
      *
      * @return string

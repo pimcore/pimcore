@@ -30,7 +30,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * @param Hotspotimage[] $items
      */
-    public function __construct($items)
+    public function __construct($items = [])
     {
         $this->setItems($items);
         $this->markMeDirty();
