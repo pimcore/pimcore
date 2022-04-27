@@ -160,12 +160,7 @@ Ext.onReady(function () {
             }
 
             if(elementsToBeUnlocked.length > 0) {
-                Ext.Ajax.request({
-                    method: "PUT",
-                    async: false,
-                    url: Routing.generate('pimcore_admin_element_unlockelements'),
-                    jsonData: { elements: elementsToBeUnlocked }
-                });
+                navigator.sendBeacon(Routing.generate('pimcore_admin_element_unlockelements')+'?csrfToken='+ pimcore.settings['csrfToken'], JSON.stringify({ elements: elementsToBeUnlocked }));
             }
         }
     });

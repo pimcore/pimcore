@@ -67,7 +67,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/unlock-elements", name="pimcore_admin_element_unlockelements", methods={"PUT"})
+     * @Route("/element/unlock-elements", name="pimcore_admin_element_unlockelements", methods={"POST"})
      *
      * @param Request $request
      *
