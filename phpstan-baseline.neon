@@ -31,11 +31,6 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/Manager.php
 
 		-
-			message: "#^Parameter \\#3 \\$roles of class Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\Authentication\\\\Token\\\\PreAuthenticatedAdminToken constructor expects array\\<string\\>, string given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/Firewall/PreAuthenticatedAdminSessionListener.php
-
-		-
 			message: "#^Parameter \\#1 \\$class of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importClassDefinitionFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Command/Definition/Import/ClassCommand.php
