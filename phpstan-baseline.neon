@@ -1,6 +1,26 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Parameter \\#1 \\$target of method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:copyContents\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\|null given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
+
+		-
+			message: "#^Parameter \\#1 \\$document of method Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\Admin\\\\Document\\\\DocumentController\\:\\:getSeoNodeConfig\\(\\) expects Pimcore\\\\Model\\\\Document\\\\Page, Pimcore\\\\Model\\\\Document given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
+
+		-
+			message: "#^Parameter \\#1 \\$items of method Pimcore\\\\Bundle\\\\AdminBundle\\\\EventListener\\\\AdminExceptionListener\\:\\:recursiveAddValidationExceptionSubItems\\(\\) expects array\\<Pimcore\\\\Model\\\\Element\\\\ValidationException\\>, array\\<Exception\\> given\\.$#"
+			count: 2
+			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/GDPR/DataProvider/Assets.php
+
+		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
@@ -11,14 +31,64 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
 
 		-
+			message: "#^Parameter \\#2 \\$callback of function usort expects callable\\(mixed, mixed\\)\\: int, Closure\\(Pimcore\\\\Bundle\\\\AdminBundle\\\\GDPR\\\\DataProvider\\\\DataProviderInterface, Pimcore\\\\Bundle\\\\AdminBundle\\\\GDPR\\\\DataProvider\\\\DataProviderInterface\\)\\: bool given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/GDPR/DataProvider/Manager.php
+
+		-
+			message: "#^Parameter \\#3 \\$roles of class Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\Authentication\\\\Token\\\\PreAuthenticatedAdminToken constructor expects array\\<string\\>, string given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Firewall/PreAuthenticatedAdminSessionListener.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of class Symfony\\\\Component\\\\HttpFoundation\\\\Cookie constructor expects string\\|null, false given\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
+
+		-
+			message: "#^Parameter \\#1 \\$class of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importClassDefinitionFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/ClassCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$fieldCollection of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importFieldCollectionFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Definition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/FieldCollectionCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectBrick of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importObjectBrickFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\\\Definition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/ObjectBrickCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$messages of method Symfony\\\\Component\\\\Console\\\\Output\\\\OutputInterface\\:\\:write\\(\\) expects iterable\\|string, int given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/InternalMigrationHelpersCommand.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
 
 		-
+			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/Frontend/FullPageCacheListener.php
+
+		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: bundles/CoreBundle/EventListener/Frontend/RoutingListener.php
+
+		-
+			message: "#^Parameter \\#1 \\$document of method Pimcore\\\\Document\\\\Renderer\\\\DocumentRenderer\\:\\:render\\(\\) expects Pimcore\\\\Model\\\\Document\\\\PageSnippet, Pimcore\\\\Model\\\\Document\\|null given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/ResponseExceptionListener.php
+
+		-
+			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\:\\:get\\(\\) expects string\\|null, false given\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/TranslationDebugListener.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
@@ -36,6 +106,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php
 
 		-
+			message: "#^Parameter \\#1 \\$provider of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CheckoutManager\\\\V7\\\\CheckoutManager\\:\\:verifyRecurringPayment\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\RecurringPaymentInterface, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\PaymentInterface given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CheckoutManager/V7/CheckoutManager.php
+
+		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Controller/VoucherController.php
@@ -44,6 +119,16 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
+
+		-
+			message: "#^Parameter \\#2 \\$condition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:addRelationCondition\\(\\) expects string, array\\<string, array\\<string, array\\<int, mixed\\>\\>\\> given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\#1 \\$fieldname of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:getGroupByValues\\(\\) expects string, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection\\|null given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
 
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
@@ -61,6 +146,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/ListHelper.php
 
 		-
+			message: "#^Parameter \\#1 \\$condition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:addCondition\\(\\) expects array\\|string, int given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Config/ElasticSearch.php
+
+		-
 			message: "#^Comparison operation \"\\<\\=\" between int\\<1, max\\> and 0 is always false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
@@ -76,9 +166,89 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
 
 		-
+			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OfferTool\\\\AbstractOfferItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
+
+		-
 			message: "#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:addCondition\\(\\) expects string\\|null, int\\|null given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Filter/CustomerObject.php
+
+		-
+			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+
+		-
+			message: "#^Parameter \\#4 \\$orderId of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\V7\\\\OrderManager\\:\\:getRecurringPaymentSourceOrderList\\(\\) expects string, int\\|null given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$categories of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogCategory\\:\\:setCategories\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractCategory\\>, array\\<int, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogCategory.php
+
+		-
+			message: "#^Parameter \\#1 \\$products of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogProduct\\:\\:setProducts\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\>, array\\<int, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/CatalogProduct.php
+
+		-
+			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\EnvironmentInterface\\:\\:setProduct\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface, null given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$id of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Tracking\\\\AbstractData\\:\\:setId\\(\\) expects string, int given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingItemBuilder.php
+
+		-
+			message: "#^Parameter \\#1 \\$amount of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal\\:\\:validateIntegerBounds\\(\\) expects int, float given\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
+
+		-
+			message: "#^Parameter \\#3 \\$mode of function round expects 1\\|2\\|3\\|4, int given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
+
+		-
+			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
+
+		-
+			message: "#^Parameter \\#1 \\$connOrDsn of class Symfony\\\\Component\\\\Cache\\\\Adapter\\\\PdoAdapter constructor expects PDO\\|string, Pimcore\\\\Db\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: bundles/InstallBundle/Installer.php
+
+		-
+			message: "#^Parameter \\#2 \\$driverConnection of class Symfony\\\\Component\\\\Messenger\\\\Bridge\\\\Doctrine\\\\Transport\\\\Connection constructor expects Doctrine\\\\DBAL\\\\Connection, Pimcore\\\\Db\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: bundles/InstallBundle/Installer.php
+
+		-
+			message: "#^Parameter \\#5 \\$priority of static method Pimcore\\\\Cache\\:\\:save\\(\\) expects int, null given\\.$#"
+			count: 1
+			path: lib/Cache/Tool/Warming.php
+
+		-
+			message: "#^Parameter \\#1 \\$translator of class Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Operator\\\\TranslateValue constructor expects Pimcore\\\\Translation\\\\Translator, Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface given\\.$#"
+			count: 1
+			path: lib/DataObject/GridColumnConfig/Operator/Factory/TranslateValueFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$object of method Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Value\\\\DefaultValue\\:\\:getValueForObject\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\\\AbstractObject given\\.$#"
+			count: 1
+			path: lib/DataObject/GridColumnConfig/Value/DefaultValue.php
 
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
@@ -86,7 +256,52 @@ parameters:
 			path: lib/Db/Connection.php
 
 		-
+			message: "#^Parameter \\#2 \\$replace of function str_replace expects array\\|string, int\\<1, 5\\> given\\.$#"
+			count: 3
+			path: lib/Google/Api.php
+
+		-
+			message: "#^Parameter \\#1 \\$raw of method Pimcore\\\\Google\\\\Cse\\:\\:setRaw\\(\\) expects array, Google\\\\Service\\\\CustomSearchAPI\\\\Search given\\.$#"
+			count: 1
+			path: lib/Google/Cse.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method Symfony\\\\Component\\\\HttpFoundation\\\\HeaderBag\\:\\:addCacheControlDirective\\(\\) expects bool\\|string, int given\\.$#"
+			count: 1
+			path: lib/Http/ResponseHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method Pimcore\\\\Image\\\\Adapter\\:\\:crop\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Image/Adapter.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method Pimcore\\\\Image\\\\Adapter\\:\\:crop\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Image/Adapter.php
+
+		-
+			message: "#^Parameter \\#3 \\$width of method Pimcore\\\\Image\\\\Adapter\\:\\:crop\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Image/Adapter.php
+
+		-
+			message: "#^Parameter \\#4 \\$height of method Pimcore\\\\Image\\\\Adapter\\:\\:crop\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Image/Adapter.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: lib/Image/Adapter/Imagick.php
+
+		-
+			message: "#^Parameter \\#1 \\$matte of method Imagick\\:\\:setImageMatte\\(\\) expects bool, int given\\.$#"
+			count: 1
+			path: lib/Image/Adapter/Imagick.php
+
+		-
+			message: "#^Parameter \\#2 \\$profile of method Imagick\\:\\:profileImage\\(\\) expects string, null given\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
 
@@ -96,9 +311,59 @@ parameters:
 			path: lib/Mail.php
 
 		-
+			message: "#^Parameter \\#1 \\$documentId of method Pimcore\\\\Web2Print\\\\Processor\\:\\:startPdfGeneration\\(\\) expects int, string given\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/GenerateWeb2PrintPdfHandler.php
+
+		-
+			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"
+			count: 1
+			path: lib/Navigation/Builder.php
+
+		-
+			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"
+			count: 1
+			path: lib/Navigation/Container.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string\\|null, int given\\.$#"
+			count: 1
+			path: lib/Routing/RedirectHandler.php
+
+		-
+			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
+			count: 1
+			path: lib/Targeting/ConditionMatcher.php
+
+		-
+			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
+			count: 1
+			path: lib/Targeting/ConditionMatcher.php
+
+		-
+			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\:\\:get\\(\\) expects string\\|null, false given\\.$#"
+			count: 1
+			path: lib/Targeting/EventListener/ToolbarListener.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int\\|null given\\.$#"
+			count: 1
+			path: lib/Templating/Renderer/IncludeRenderer.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(mixed, mixed, mixed, mixed\\)\\: void given\\.$#"
+			count: 1
+			path: lib/Tool.php
+
+		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Parameter \\#2 \\$flags of function htmlentities expects int, null given\\.$#"
+			count: 2
+			path: lib/Tool/Glossary/Processor.php
 
 		-
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
@@ -106,9 +371,104 @@ parameters:
 			path: lib/Tool/Serialize.php
 
 		-
+			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
+			count: 1
+			path: lib/Tool/Text/Csv.php
+
+		-
+			message: "#^Parameter \\#2 \\$flags of function html_entity_decode expects int, null given\\.$#"
+			count: 1
+			path: lib/Translation/Escaper/Xliff12Escaper.php
+
+		-
+			message: "#^Parameter \\#1 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\<Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>\\:\\:get\\(\\) expects int, string given\\.$#"
+			count: 1
+			path: lib/Translation/ImporterService/Importer/DataObjectImporter.php
+
+		-
+			message: "#^Parameter \\#2 \\$id of class Pimcore\\\\Translation\\\\TranslationItemCollection\\\\TranslationItem constructor expects string, int\\|null given\\.$#"
+			count: 1
+			path: lib/Translation/TranslationItemCollection/TranslationItemCollection.php
+
+		-
+			message: "#^Parameter \\#1 \\$audioBitrate of method Pimcore\\\\Video\\\\Adapter\\:\\:setAudioBitrate\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Video/Adapter/Ffmpeg.php
+
+		-
+			message: "#^Parameter \\#1 \\$videoBitrate of method Pimcore\\\\Video\\\\Adapter\\:\\:setVideoBitrate\\(\\) expects int, float given\\.$#"
+			count: 1
+			path: lib/Video/Adapter/Ffmpeg.php
+
+		-
+			message: "#^Parameter \\#1 \\$processId of class Pimcore\\\\Messenger\\\\GenerateWeb2PrintPdfMessage constructor expects string, int given\\.$#"
+			count: 1
+			path: lib/Web2Print/Processor.php
+
+		-
+			message: "#^Parameter \\#3 \\$limit of function explode expects int, string given\\.$#"
+			count: 1
+			path: lib/helper-functions.php
+
+		-
+			message: "#^Parameter \\#2 \\$height of function imagecreatetruecolor expects int, float given\\.$#"
+			count: 1
+			path: models/Asset/Folder.php
+
+		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^Parameter \\#3 \\$object of class Pimcore\\\\Model\\\\DataObject\\\\Data\\\\ObjectMetadata constructor expects Pimcore\\\\Model\\\\DataObject\\\\Concrete\\|null, Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\|Pimcore\\\\Model\\\\Document given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^Parameter \\#2 \\$object of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Block\\:\\:getDataFromResource\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete\\|null, Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^Parameter \\#2 \\$object of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Block\\:\\:getDataFromResource\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete\\|null, Pimcore\\\\Model\\\\DataObject\\\\Localizedfield given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^Parameter \\#2 \\$object of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Block\\:\\:getDataFromResource\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete\\|null, Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\\\Data\\\\AbstractData given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^Parameter \\#1 \\$mandatory of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:setMandatory\\(\\) expects bool, int given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
+
+		-
+			message: "#^Parameter \\#1 \\$items of class Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection constructor expects array\\<TItem of Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>, null given\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/Fieldcollections.php
+
+		-
+			message: "#^Parameter \\#1 \\$image of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\:\\:setImage\\(\\) expects Pimcore\\\\Model\\\\Asset\\\\Image\\|null, Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\|Pimcore\\\\Model\\\\Document\\|null given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
+
+		-
+			message: "#^Parameter \\#1 \\$image of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\:\\:setImage\\(\\) expects Pimcore\\\\Model\\\\Asset\\\\Image\\|null, Pimcore\\\\Model\\\\Asset\\|null given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
+
+		-
+			message: "#^Parameter \\#1 \\$node of function object2array expects object, array given\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
+
+		-
+			message: "#^Parameter \\#1 \\$items of class Pimcore\\\\Model\\\\DataObject\\\\Data\\\\ImageGallery constructor expects array\\<Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\>, null given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ImageGallery.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -119,4 +479,129 @@ parameters:
 			message: "#^Left side of && is always true\\.$#"
 			count: 2
 			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+
+		-
+			message: "#^Parameter \\#3 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\CalculatedValue\\:\\:setContextualData\\(\\) expects int\\|null, string given\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^Parameter \\#1 \\$node of function object2array expects object, array given\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/Video.php
+
+		-
+			message: "#^Parameter \\#1 \\$data of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:__set_state\\(\\) expects array, Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data given\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$definition of static method Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\\\Service\\:\\:getFieldDefinitionFromJson\\(\\) expects array, Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\|null given\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\<Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>\\:\\:get\\(\\) expects int, string given\\.$#"
+			count: 1
+			path: models/DataObject/Data/UrlSlug.php
+
+		-
+			message: "#^Parameter \\#1 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\<Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>\\:\\:get\\(\\) expects int, string\\|null given\\.$#"
+			count: 1
+			path: models/DataObject/Data/UrlSlug.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_multisort is passed by reference, so it expects variables only\\.$#"
+			count: 1
+			path: models/DataObject/Objectbrick/Definition.php
+
+		-
+			message: "#^Parameter \\#1 \\$container of static method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:doResetDirtyMap\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\Element\\\\DirtyIndicatorInterface given\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$noteditable of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:setNoteditable\\(\\) expects bool, int given\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Parameter \\#3 \\$object of static method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:getCsvFieldData\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\\\AbstractObject given\\.$#"
+			count: 2
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Parameter \\#4 \\$insideDataType of static method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:extractFieldDefinitions\\(\\) expects bool, int given\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$node of function object2array expects object, array given\\.$#"
+			count: 2
+			path: models/Document/Editable/Image.php
+
+		-
+			message: "#^Parameter \\#1 \\$asset of method Pimcore\\\\Model\\\\Document\\\\Editable\\\\Video\\:\\:getPosterThumbnailImage\\(\\) expects Pimcore\\\\Model\\\\Asset\\\\Video, Pimcore\\\\Model\\\\Asset given\\.$#"
+			count: 1
+			path: models/Document/Editable/Video.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Email.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Folder.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Hardlink.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Link.php
+
+		-
+			message: "#^Parameter \\#1 \\$doc of static method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Service\\:\\:wrap\\(\\) expects Pimcore\\\\Model\\\\Document, Pimcore\\\\Model\\\\Element\\\\ElementInterface\\|null given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Link.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Page.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Printcontainer.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Printpage.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Snippet.php
+
+		-
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\DataObject\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
+			count: 1
+			path: models/Element/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$element of static method Pimcore\\\\Model\\\\Element\\\\Service\\:\\:loadAllFields\\(\\) expects Pimcore\\\\Model\\\\Element\\\\ElementInterface, Pimcore\\\\Model\\\\Element\\\\ElementDumpStateInterface given\\.$#"
+			count: 1
+			path: models/Element/Service.php
+
+		-
+			message: "#^Parameter \\#1 \\$date of method Pimcore\\\\Model\\\\Translation\\:\\:setCreationDate\\(\\) expects int, \\(array\\|string\\) given\\.$#"
+			count: 1
+			path: models/Translation.php
 
