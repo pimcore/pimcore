@@ -313,14 +313,14 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
-     * @template T of Model\Document
+     * @template T of Model\Document\PageSnippet
      *
      * @param T $document
      * @param null|Version $draftVersion
      *
      * @return T
      */
-    protected function getLatestVersion(Model\Document $document, ?Version &$draftVersion = null): Model\Document
+    protected function getLatestVersion(Model\Document\PageSnippet $document, ?Version &$draftVersion = null): Model\Document\PageSnippet
     {
         $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
@@ -416,8 +416,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, $task = null): array
     {
-        if ($latestVersion) {
-            /** @var Model\Document\PageSnippet $document */
+        if ($latestVersion && $document instanceof  Model\Document\PageSnippet) {
             $document = $this->getLatestVersion($document);
         }
 
