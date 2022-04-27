@@ -67,6 +67,7 @@
     "lcobucci/jwt": "^4.0",
     "league/csv": "^9.7",
     "mjaschen/phpgeo": "^3.0",
+    "monolog/monolog": "^2.3",
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.10.1",
     "neitanod/forceutf8": "^2.0.4",
