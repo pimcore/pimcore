@@ -546,7 +546,7 @@ trait PimcoreExtensionsTrait
      */
     protected function prepareParams($params)
     {
-        if (is_scalar($params)) {
+        if (!is_array($params)) {
             $params = [$params];
         }
 
