@@ -218,19 +218,15 @@ CSS;
 
     /**
      * @param string $string
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      * @param string|null $hostUrl
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function setAbsolutePaths($string, $document = null, $hostUrl = null)
+    public static function setAbsolutePaths($string, ?Model\Document $document = null, $hostUrl = null)
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $replacePrefix = '';
 
         if (!$hostUrl && $document) {
@@ -300,18 +296,14 @@ CSS;
 
     /**
      * @param string $string
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function embedAndModifyCss($string, $document = null)
+    public static function embedAndModifyCss($string, ?Model\Document $document = null)
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $css = null;
 
         //matches all <link> Tags
@@ -394,18 +386,14 @@ CSS;
 
     /**
      * @param string $path
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      *
      * @return array
      *
      * @throws \Exception
      */
-    public static function getNormalizedFileInfo($path, $document = null)
+    public static function getNormalizedFileInfo($path, ?Model\Document $document = null)
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $fileInfo = [];
         $hostUrl = Tool::getHostUrl();
         if ($path[0] != '/') {
