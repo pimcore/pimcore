@@ -14,7 +14,6 @@
 pimcore.registerNS("pimcore.settings.thumbnail.item");
 pimcore.settings.thumbnail.item = Class.create({
 
-
     initialize: function (data, parentPanel) {
         this.parentPanel = parentPanel;
         this.data = data;
@@ -22,7 +21,6 @@ pimcore.settings.thumbnail.item = Class.create({
         this.medias = {};
 
         this.addLayout();
-
 
         // add default panel
         this.addMediaPanel("default", this.data.items, false, true);
@@ -34,7 +32,6 @@ pimcore.settings.thumbnail.item = Class.create({
             }.bind(this));
         }
     },
-
 
     addLayout: function () {
         var panelButtons = [];
@@ -85,6 +82,131 @@ pimcore.settings.thumbnail.item = Class.create({
             renderer: Ext.util.Format.htmlEncode,
             width: 450
         });
+
+        this.store = new Ext.data.JsonStore({
+            data: this.data.excludePaths
+        });
+
+        var toolbarItems = [{
+            xtype: "tbspacer",
+            width: 24,
+            height: 24,
+            cls: "pimcore_icon_droptarget"
+        }, {
+            xtype: "tbtext",
+            text: "<b>" + t("exclude_paths") + "</b>"
+        }];
+
+        var columns = [
+            {text: 'ID', dataIndex: 'id', width: 80},
+            {text: t("reference"), dataIndex: 'fullpath', flex: 200},
+            {
+                xtype: 'actioncolumn',
+                menuText: t('open'),
+                width: 40,
+                hideable: false,
+                items: [{
+                    tooltip: t('open'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openElement(data.data.id, "asset", "folder");
+                    }.bind(this)
+                }]
+            }, {
+                xtype: 'actioncolumn',
+                menuText: t('show_in_tree'),
+                width: 40,
+                hideable: false,
+                items: [{
+                    tooltip: t('show_in_tree'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/target.svg",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.treenodelocator.showInTree(data.data.id, "asset");
+                    }.bind(this)
+                }]
+            }, {
+                xtype: 'actioncolumn',
+                menuText: t('remove'),
+                width: 40,
+                hideable: false,
+                items: [{
+                    tooltip: t('remove'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }]
+            }
+        ];
+
+        this.component = new Ext.grid.GridPanel({
+            store: this.store,
+            border: true,
+            style: "margin-bottom: 10px",
+            multiSelect: true,
+            name: "excludePaths",
+            viewConfig: {
+                markDirty: false,
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    draggroup: 'element'
+                }
+            },
+            columns: {
+                defaults: {
+                    sortable: false
+                },
+                items: columns
+            },
+            tbar: {
+                items: toolbarItems,
+                ctCls: "pimcore_force_auto_width",
+                cls: "pimcore_force_auto_width"
+            },
+            bodyCssClass: "pimcore_object_tag_multihref"
+        });
+
+        this.component.on("afterrender", function () {
+            try {
+                new Ext.dd.DropZone(this.component.getEl(), {
+                    ddGroup: 'element',
+                    getTargetFromEvent: function (e) {
+                        return this.component.getEl().dom;
+                    }.bind(this),
+
+                    onNodeOver: function (target, dd, e, data) {
+                        var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+
+                        data.records.forEach(function (record) {
+                            if (record.data.elementType != 'asset' || record.data.type != 'folder') {
+                                returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }
+                        });
+
+                        return returnValue;
+                    },
+
+                    onNodeDrop: function (target, dd, e, data) {
+                        data.records.forEach(function (record) {
+                            if (record.data.elementType == 'asset' && record.data.type == 'folder') {
+                                var item = {
+                                    id: record.data.id,
+                                    fullpath: record.data.path,
+                                    type: "asset",
+                                    subtype: "folder"
+                                };
+
+                                this.store.add(item);
+                            }
+                        }.bind(this));
+                    }.bind(this)
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
 
         this.settings = new Ext.form.FormPanel({
             border: false,
@@ -176,6 +298,7 @@ pimcore.settings.thumbnail.item = Class.create({
                     }, {
                         xtype: "checkbox",
                         name: "preserveAnimation",
+                        style: "margin-bottom:0",
                         boxLabel: t("preserve_animation") + " (Imagick)",
                         checked: this.data.preserveAnimation
                     }, {
@@ -185,9 +308,13 @@ pimcore.settings.thumbnail.item = Class.create({
                     }, {
                         xtype: "checkbox",
                         name: "downloadable",
-                        style: "margin-bottom:0",
+                        style: "margin-bottom:20px",
                         boxLabel: t("list_thumbnail_in_download_section_on_image_detail_view"),
                         checked: this.data.downloadable
+                    }, this.component, {
+                        xtype: "container",
+                        html: "<small>(" + t("exclude_paths_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
                     }]
                 }]
         });
@@ -305,8 +432,15 @@ pimcore.settings.thumbnail.item = Class.create({
             }
         }.bind(this));
 
+        var settings = this.settings.getForm().getFieldValues();
+        settings["excludePaths"] = [];
+
+        Ext.iterate(this.store.data.items, function (value, key) {
+            settings.excludePaths.push(value.data);
+        });
+
         return {
-            settings: Ext.encode(this.settings.getForm().getFieldValues()),
+            settings: Ext.encode(settings),
             medias: Ext.encode(mediaData),
             mediaOrder: Ext.encode(mediaOrder),
             name: this.data.name

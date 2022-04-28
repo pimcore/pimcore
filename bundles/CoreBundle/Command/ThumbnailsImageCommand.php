@@ -172,6 +172,26 @@ class ThumbnailsImageCommand extends AbstractCommand
             return;
         }
 
+        $thumbnail = Image\Thumbnail\Config::getByName($thumbnailConfigName);
+        $excludePaths = $thumbnail->getExcludePaths() ?: [];
+
+        foreach ($excludePaths as $path) {
+            if (str_starts_with($image->getFullPath(), $path["fullpath"])) {
+                if ($output->isVerbose()) {
+                    $output->writeln(
+                        sprintf(
+                            'skipped thumbnail [%s] for image [%d] because of excludePaths [%s]',
+                            $thumbnailConfigName,
+                            $image->getId(),
+                            $path["fullpath"]
+                        )
+                    );
+                }
+
+                return;
+            }
+        }
+
         $thumbnailsToGenerate = $this->fetchThumbnailConfigs($input, $thumbnailConfigName);
 
         if ($input->getOption('force')) {

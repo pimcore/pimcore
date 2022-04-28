@@ -178,6 +178,8 @@
   "rasterize_svg_info_text": "SVGs get automatically rasterized when a transformation other than resize or scale by width\/height is used.",
   "preserve_animation": "Preserve animations for GIF",
   "preserve_animation_info_text": "Supported transformations are: Frame, Cover, Contain, Resize, ScaleByWidth, ScaleByHeight",
+  "exclude_paths": "Exclude paths",
+  "exclude_paths_info_text": "Thumbnail for asset from paths listed above will be NOT generated in background with pimcore:thumbnails:image command",
   "valid_languages_frontend_description": "These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, for shared translations, ... simply everywhere the editor can choose or use a language for the content.<br \/>Fallback languages are currently used in object's localized fields and shared translations.",
   "delete_language_note": "Note: Removing language from the list will not delete its respective data. Please use console command 'pimcore:locale:delete-unused-tables' for cleanup.",
   "maximum_items": "max. items",

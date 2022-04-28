@@ -157,6 +157,13 @@ final class Config extends Model\AbstractModel
      * @var bool
      */
     protected $preserveAnimation = false;
+    
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    protected $excludePaths = [];
 
     /**
      * @internal
@@ -909,6 +916,22 @@ final class Config extends Model\AbstractModel
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;
+    }
+
+    /**
+     * @param array $excludePaths
+     */
+    public function setExcludePaths(array $excludePaths): void
+    {
+        $this->excludePaths = $excludePaths;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludePaths(): array
+    {
+        return $this->excludePaths;
     }
 
     public function __clone()
