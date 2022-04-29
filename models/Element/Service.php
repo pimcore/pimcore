@@ -767,11 +767,10 @@ class Service extends Model\AbstractModel
 
         $totalPaths = count($uniquePaths);
 
-        $uniquePathsKeys = array_keys($uniquePaths);
-
         $forbidden = [];
         $allowed = [];
         if ($totalPaths > 0) {
+            $uniquePathsKeys = array_keys($uniquePaths);
             for ($index = 0; $index < $totalPaths; $index++) {
                 $path = $uniquePathsKeys[$index];
                 if ($uniquePaths[$path] == 0) {
