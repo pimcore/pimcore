@@ -746,7 +746,7 @@ class Service extends Model\AbstractModel
             $roleWorkspacesSql = 'SELECT
                     cpath, userid, max(list) as list
                 FROM users_workspaces_'.$type.'
-                WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN (' . implode(',', $userCid) . '
+                WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN (' . implode(',', $userCid) . ')
                 GROUP BY cpath';
 
             $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
