@@ -725,28 +725,18 @@ class Service extends Model\AbstractModel
             return ['forbidden' => [], 'allowed' => []];
         }
 
-        $currentUserId = $user->getId();
-        $userIds = $user->getRoles();
-        $userIds[] = $currentUserId;
-
-        $userWorkspacesSql = '
-            SELECT cpath, cid, list
-            FROM users_workspaces_'.$type.'
-            WHERE userId = '.$currentUserId.'
-        ';
-        $userWorkspaces = $db->fetchAll($userWorkspacesSql);
-
+        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_'.$type.' WHERE userId = ?', [$user->getId()]);
         if (!empty($userWorkspaces)) {
             //this collects the array that are on user-level, which have top priority
-            $userCid = [];
+            $workspaceCids = [];
             foreach ($userWorkspaces as $userWorkspace) {
-                $userCid[] = $userWorkspace['cid'];
+                $workspaceCids[] = $userWorkspace['cid'];
             }
 
             $roleWorkspacesSql = 'SELECT
                     cpath, userid, max(list) as list
                 FROM users_workspaces_'.$type.'
-                WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN (' . implode(',', $userCid) . ')
+                WHERE userId IN (' . implode(',', $user->getRoles()) . ') AND cid NOT IN (' . implode(',', $workspaceCids) . ')
                 GROUP BY cpath';
 
             $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
