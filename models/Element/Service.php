@@ -736,29 +736,24 @@ class Service extends Model\AbstractModel
         ';
         $userWorkspaces = $db->fetchAll($userWorkspacesSql);
 
-        //this collects the array that are on user-level, which have top priority
-        $userCid = [];
-        foreach ($userWorkspaces as $userWorkspace) {
-            $userCid[] = $userWorkspace['cid'];
+        if (!empty($userWorkspaces)) {
+            //this collects the array that are on user-level, which have top priority
+            $userCid = [];
+            foreach ($userWorkspaces as $userWorkspace) {
+                $userCid[] = $userWorkspace['cid'];
+            }
+
+            $roleWorkspacesSql = 'SELECT
+                    cpath, userid, max(list) as list
+                FROM users_workspaces_'.$type.'
+                WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN (' . implode(',', $userCid) . '
+                GROUP BY cpath';
+
+            $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
         }
-
-        $roleWorkspacesSql = 'SELECT
-                cpath, userid, max(list) as list
-            FROM users_workspaces_'.$type.'
-            WHERE userId IN (' . implode(',', $userIds) . ')';
-
-        if (!empty($userCid)) {
-            $roleWorkspacesSql .= ' AND cid NOT IN ('.implode(',', $userCid).')';
-        }
-
-        $roleWorkspacesSql .= ' GROUP BY cpath';
-
-        $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
-
-        $allWorkspaces = array_merge($userWorkspaces, $roleWorkspaces);
 
         $uniquePaths = [];
-        foreach ($allWorkspaces as $workspace) {
+        foreach (array_merge($userWorkspaces, $roleWorkspaces ?? []) as $workspace) {
             $uniquePaths[$workspace['cpath']] = $workspace['list'];
         }
         ksort($uniquePaths);
