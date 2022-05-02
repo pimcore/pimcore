@@ -202,7 +202,7 @@ CREATE TABLE `documents_page` (
   `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `targetGroupIds` varchar(255) DEFAULT NULL,
+  `targetGroupIds` varchar(255) NOT NULL DEFAULT '',
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorLifetime` int(11) DEFAULT NULL,
