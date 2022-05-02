@@ -366,7 +366,6 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertEquals('abc', $newValue->getPlain());
-        $this->assertNull($newValue->getEncrypted());
     }
 
     public function testInput()
