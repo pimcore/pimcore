@@ -716,7 +716,7 @@ class Service extends Model\AbstractModel
      * @param string $type asset|object|document
      * @param Model\User $user
      *
-     * @return array
+     * @return array{forbidden: array, allowed: array}
      */
     public static function findForbiddenPaths($type, $user)
     {
@@ -726,16 +726,16 @@ class Service extends Model\AbstractModel
             return ['forbidden' => [], 'allowed' => []];
         }
 
-        if ($userRoleIds = $user->getRoles()) {
-            $workspaceCids = [];
-            $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
-            if ($userWorkspaces) {
-                // this collects the array that are on user-level, which have top priority
-                foreach ($userWorkspaces as $userWorkspace) {
-                    $workspaceCids[] = $userWorkspace['cid'];
-                }
+        $workspaceCids = [];
+        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        if ($userWorkspaces) {
+            // this collects the array that are on user-level, which have top priority
+            foreach ($userWorkspaces as $userWorkspace) {
+                $workspaceCids[] = $userWorkspace['cid'];
             }
+        }
 
+        if ($userRoleIds = $user->getRoles()) {
             $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
             if ($workspaceCids) {
                 $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
