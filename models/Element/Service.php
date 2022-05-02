@@ -708,7 +708,8 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * find all elements which the user may not list and therefore may never be shown to the user
+     * find all elements which the user may not list and therefore may never be shown to the user.
+     * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
      * @internal
      *
@@ -725,19 +726,21 @@ class Service extends Model\AbstractModel
             return ['forbidden' => [], 'allowed' => []];
         }
 
-        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_'.$type.' WHERE userId = ?', [$user->getId()]);
-        if (!empty($userWorkspaces)) {
-            //this collects the array that are on user-level, which have top priority
+        if ($userRoleIds = $user->getRoles()) {
             $workspaceCids = [];
-            foreach ($userWorkspaces as $userWorkspace) {
-                $workspaceCids[] = $userWorkspace['cid'];
+            $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getWorkspacesAsset()]);
+            if ($userWorkspaces) {
+                // this collects the array that are on user-level, which have top priority
+                foreach ($userWorkspaces as $userWorkspace) {
+                    $workspaceCids[] = $userWorkspace['cid'];
+                }
             }
 
-            $roleWorkspacesSql = 'SELECT
-                    cpath, userid, max(list) as list
-                FROM users_workspaces_'.$type.'
-                WHERE userId IN (' . implode(',', $user->getRoles()) . ') AND cid NOT IN (' . implode(',', $workspaceCids) . ')
-                GROUP BY cpath';
+            $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
+            if ($workspaceCids) {
+                $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
+            }
+            $roleWorkspacesSql .= ' GROUP BY cpath';
 
             $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
         }
