@@ -70,17 +70,14 @@ class BundleConfigLocator
         $result = [];
         foreach ($this->kernel->getBundles() as $bundle) {
             $bundlePath = $bundle->getPath();
-            $configDir = is_dir($bundlePath.'/Resources/config') ? $bundlePath.'/Resources/config' : $bundlePath.'/config';
-            $pimcoreConfigDir = $configDir. '/pimcore';
-
-            if (!is_dir($pimcoreConfigDir)) {
+            if (!is_dir($dir = $bundlePath.'/Resources/config/pimcore') && !is_dir($dir = $bundlePath.'/config/pimcore')) {
                 continue;
             }
 
             // try to find environment specific file first, fall back to generic one if none found (e.g. config_dev.yaml > config.yaml)
-            $finder = $this->buildContainerConfigFinder($name, $pimcoreConfigDir, true);
+            $finder = $this->buildContainerConfigFinder($name, $dir, true);
             if (!$finder->hasResults()) {
-                $finder = $this->buildContainerConfigFinder($name, $pimcoreConfigDir, false);
+                $finder = $this->buildContainerConfigFinder($name, $dir, false);
             }
 
             foreach ($finder as $file) {
