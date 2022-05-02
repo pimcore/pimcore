@@ -708,14 +708,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * find all elements which the user may not list and therefore may never be shown to the user
+     * find all elements which the user may not list and therefore may never be shown to the user.
+     * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
      * @internal
      *
      * @param string $type asset|object|document
      * @param Model\User $user
      *
-     * @return array
+     * @return array{forbidden: array, allowed: array}
      */
     public static function findForbiddenPaths($type, $user)
     {
@@ -725,36 +726,27 @@ class Service extends Model\AbstractModel
             return ['forbidden' => [], 'allowed' => []];
         }
 
-        $currentUserId = $user->getId();
-        $userIds = $user->getRoles();
-        $userIds[] = $currentUserId;
-
-        $userWorkspacesSql = '
-            SELECT cpath, cid, list
-            FROM users_workspaces_'.$type.'
-            WHERE userId = '.$currentUserId.'
-        ';
-        $userWorkspaces = $db->fetchAll($userWorkspacesSql);
-
-        //this collects the array that are on user-level, which have top priority
-        $userCid = [];
-        foreach ($userWorkspaces as $userWorkspace) {
-            $userCid[] = $userWorkspace['cid'];
+        $workspaceCids = [];
+        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        if ($userWorkspaces) {
+            // this collects the array that are on user-level, which have top priority
+            foreach ($userWorkspaces as $userWorkspace) {
+                $workspaceCids[] = $userWorkspace['cid'];
+            }
         }
 
-        $roleWorkspacesSql = '
-            SELECT
-                cpath, userid, max(list) as list
-            FROM users_workspaces_'.$type.'
-            WHERE userId IN (' . implode(',', $userIds) . ') AND cid NOT IN ('.implode(',', $userCid).')
-            GROUP BY cpath
-        ';
-        $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+        if ($userRoleIds = $user->getRoles()) {
+            $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
+            if ($workspaceCids) {
+                $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
+            }
+            $roleWorkspacesSql .= ' GROUP BY cpath';
 
-        $allWorkspaces = array_merge($userWorkspaces, $roleWorkspaces);
+            $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+        }
 
         $uniquePaths = [];
-        foreach ($allWorkspaces as $workspace) {
+        foreach (array_merge($userWorkspaces, $roleWorkspaces ?? []) as $workspace) {
             $uniquePaths[$workspace['cpath']] = $workspace['list'];
         }
         ksort($uniquePaths);
@@ -763,11 +755,10 @@ class Service extends Model\AbstractModel
 
         $totalPaths = count($uniquePaths);
 
-        $uniquePathsKeys = array_keys($uniquePaths);
-
         $forbidden = [];
         $allowed = [];
         if ($totalPaths > 0) {
+            $uniquePathsKeys = array_keys($uniquePaths);
             for ($index = 0; $index < $totalPaths; $index++) {
                 $path = $uniquePathsKeys[$index];
                 if ($uniquePaths[$path] == 0) {
