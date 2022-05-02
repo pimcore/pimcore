@@ -875,15 +875,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
 
         $this->doTestSearch('bars', $this->userPermissionTest3, [
-        $this->bars->getFullpath(),
-        $this->userfolder->getFullpath(),
-        $this->usertestobject->getFullpath(),
+            $this->usertestobject->getFullpath(),
         ]);
 
         $this->doTestSearch('bars', $this->userPermissionTest4, [
-        $this->bars->getFullpath(),
-        $this->groupfolder->getFullpath(),
-        $this->grouptestobject->getFullpath(),
+            $this->groupfolder->getFullpath(),
+            $this->grouptestobject->getFullpath(),
         ]);
 
         //search hidden object
