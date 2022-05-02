@@ -365,7 +365,8 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), true);
 
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($originalValue, $newValue);
+        $this->assertEquals('abc', $newValue->getPlain());
+        $this->assertNull($newValue->getEncrypted());
     }
 
     public function testInput()
