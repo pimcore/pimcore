@@ -199,7 +199,8 @@ class EditableHandler implements LoggerAwareInterface
                     $bundle = $this->bundleLocator->getBundle($brick);
 
                     // check if file exists
-                    $iconPath = sprintf('%s/Resources/public/areas/%s/icon.png', $bundle->getPath(), $brick->getId());
+                    $publicDir = is_dir($bundle->getPath().'/Resources/public') ? $bundle->getPath().'/Resources/public' : $bundle->getPath().'/public';
+                    $iconPath = sprintf('%s/areas/%s/icon.png', $publicDir, $brick->getId());
                     if (file_exists($iconPath)) {
                         // build URL to icon
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
