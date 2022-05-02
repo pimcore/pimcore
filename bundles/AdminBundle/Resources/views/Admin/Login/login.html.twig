@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block below_footer %}
-<script>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
     {% if deeplink is not defined %}
     // clear opened tabs store
     localStorage.removeItem("pimcore_opentabs");

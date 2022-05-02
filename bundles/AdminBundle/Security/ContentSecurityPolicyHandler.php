@@ -51,9 +51,12 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
      */
     private array $allowedUrls = [
         self::CONNECT_OPT => [
-            'https://liveupdate.pimcore.org/', //AdminBundle statistics & update-check service
-            'https://nominatim.openstreetmap.org/', //CoreBundle geocoding_url_template
+            'https://liveupdate.pimcore.org/', // AdminBundle statistics & update-check service
+            'https://nominatim.openstreetmap.org/', // CoreBundle geocoding_url_template
         ],
+        self::SCRIPT_OPT => [
+            'https://buttons.github.io/buttons.js', // GitHub star button on login page
+        ]
     ];
 
     public function __construct(protected Config $config, protected array $cspHeaderOptions = [])
