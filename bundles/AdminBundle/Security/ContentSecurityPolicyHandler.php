@@ -56,7 +56,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         ],
         self::SCRIPT_OPT => [
             'https://buttons.github.io/buttons.js', // GitHub star button on login page
-        ]
+        ],
     ];
 
     public function __construct(protected Config $config, protected array $cspHeaderOptions = [])
