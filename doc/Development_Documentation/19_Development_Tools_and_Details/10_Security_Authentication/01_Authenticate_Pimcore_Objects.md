@@ -94,7 +94,7 @@ on the Symfony docs.
 
 
 ## Password hashing (Former called Password encoding)
-The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to to a `PasswordHasherInterface` (former. `PasswordEncodingInterface`)
+The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to a `PasswordHasherInterface` (former. `PasswordEncodingInterface`)
 which is responsible for calculating and verifying password hashes. As Pimcore's `Password` field definition already provides
 this logic, the password encoder needs to be configured to delegate the logic to the user object.
 
