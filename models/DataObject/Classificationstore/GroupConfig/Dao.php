@@ -140,6 +140,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

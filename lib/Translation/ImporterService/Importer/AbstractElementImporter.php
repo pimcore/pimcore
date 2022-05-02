@@ -15,8 +15,6 @@
 
 namespace Pimcore\Translation\ImporterService\Importer;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
@@ -35,8 +33,8 @@ class AbstractElementImporter implements ImporterInterface
             return;
         }
 
+        $targetLanguage = $attributeSet->getTargetLanguages()[0];
         foreach ($attributeSet->getAttributes() as $attribute) {
-            $targetLanguage = $attributeSet->getTargetLanguages()[0];
             $this->importAttribute($element, $targetLanguage, $attribute);
         }
 
@@ -46,7 +44,7 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Document|DataObject\Concrete $element
+     * @param Element\ElementInterface $element
      * @param string $targetLanguage
      * @param Attribute $attribute
      *
@@ -65,7 +63,7 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Document|DataObject\Concrete $element
+     * @param Element\ElementInterface $element
      *
      * @throws \Exception
      */

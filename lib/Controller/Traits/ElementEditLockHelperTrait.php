@@ -23,7 +23,7 @@ use Pimcore\Model\User;
  */
 trait ElementEditLockHelperTrait
 {
-    protected function getEditLockResponse(string $id, string $type)
+    protected function getEditLockResponse(int $id, string $type)
     {
         $editLock = Editlock::getByElement($id, $type);
         $user = User::getById($editLock->getUserId());

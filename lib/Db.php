@@ -39,13 +39,11 @@ class Db
     }
 
     /**
-     * @return \Pimcore\Db\ConnectionInterface|Connection
+     * @return Connection
      */
     public static function get()
     {
-        /**
-         * @var \Pimcore\Db\ConnectionInterface $db
-         */
+        /** @var Connection $db */
         $db = \Pimcore::getContainer()->get('database_connection');
 
         return $db;

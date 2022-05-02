@@ -208,7 +208,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
-        $order = OnlineShopOrder::getById($request->get('id'));
+        $order = OnlineShopOrder::getById((int) $request->get('id'));
+        if (!$order) {
+            throw $this->createNotFoundException();
+        }
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -277,7 +280,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             $customer = $order->getCustomer();
 
             // register
-            $register = \DateTime::createFromFormat('U', $order->getCreationDate());
+            $register = \DateTime::createFromFormat('U', (string) $order->getCreationDate());
             $arrCustomerAccount['created'] = $formatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
@@ -383,7 +386,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -417,7 +423,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -450,7 +459,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

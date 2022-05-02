@@ -50,11 +50,10 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
      */
     protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
     {
+        /** @var AbstractOrder $order */
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 
-        /* @var AbstractOrder $order*/
-
-        $checkout = Factory::getInstance()->getCheckoutManager( $cart );
+        $checkout = Factory::getInstance()->getCheckoutManager($cart);
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress') ? $checkout->getCheckoutStep('deliveryaddress')->getData() : null;
         $confirm = $checkout->getCheckoutStep('confirm') ? $checkout->getCheckoutStep('confirm')->getData() : null;
 

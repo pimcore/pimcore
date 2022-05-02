@@ -164,7 +164,7 @@ final class RedirectHandler implements LoggerAwareInterface
     {
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
-            $d = Document::getById($target);
+            $d = Document::getById((int) $target);
             if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                 $target = $d->getFullPath();
             } else {
@@ -229,7 +229,7 @@ final class RedirectHandler implements LoggerAwareInterface
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
         $response = new RedirectResponse($url, $statusCode);
-        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, $redirect->getId());
+        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(

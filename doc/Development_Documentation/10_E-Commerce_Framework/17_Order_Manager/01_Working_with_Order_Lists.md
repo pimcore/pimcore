@@ -16,9 +16,8 @@ $orderList->setOrder( 'order.orderDate desc' );
 $orderList->setLimit( 10, 0 );
 
 // iterate
-foreach($orderList as $order)
-{
-    /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface $order */
+/** @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface $order */
+foreach($orderList as $order) {
     echo $order->getOrdernumber();
 }
 

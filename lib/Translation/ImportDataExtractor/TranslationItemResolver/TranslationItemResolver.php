@@ -22,7 +22,7 @@ class TranslationItemResolver implements TranslationItemResolverInterface
 {
     public function resolve(string $type, string $id): ?TranslationItem
     {
-        if (!$element = Element\Service::getElementById($type, $id)) {
+        if (!$element = Element\Service::getElementById($type, (int) $id)) {
             return null;
         }
 

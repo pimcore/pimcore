@@ -10,16 +10,16 @@ See following examples for how Order Agent can be used:
 <?php
 
 // load order item
-$orderItem = DataObject\OnlineShopOrderItem::getById( $this->getParam('id') );
+$orderItem = DataObject\OnlineShopOrderItem::getById($this->getParam('id'));
 $order = $orderItem->getOrder();
 
 // create new order agent
 $orderManager = Factory::getInstance()->getOrderManager();
-$orderAgent = $orderManager->createOrderAgent( $order );
+$orderAgent = $orderManager->createOrderAgent($order);
 
 // change amount to 5
-$log = $orderAgent->itemChangeAmount( $orderItem, 5 );
-/* @var \Pimcore\Model\Element\Note $log */
+/** @var \Pimcore\Model\Element\Note $log */
+$log = $orderAgent->itemChangeAmount($orderItem, 5);
 
 // add user comment
 $log->addData('message', 'text', 'customer has changed the order by phone');
@@ -32,16 +32,15 @@ $log->save();
 <?php
 
 // load order
-$order = DataObject\OnlineShopOrder::getById( $this->getParam('id') );
+$order = DataObject\OnlineShopOrder::getById($this->getParam('id'));
 
 // create new order agent
 $orderManager = Factory::getInstance()->getOrderManager();
-$orderAgent = $orderManager->createOrderAgent( $order );
+$orderAgent = $orderManager->createOrderAgent($order);
 
 // get changelog
-foreach($orderAgent->getFullChangeLog() as $log)
-{
-    /* @var \Pimcore\Model\Element\Note $log */
+/** @var \Pimcore\Model\Element\Note $log */
+foreach($orderAgent->getFullChangeLog() as $log) {
     ...
 }
 ```

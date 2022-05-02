@@ -170,7 +170,7 @@ class Item extends Model\AbstractModel
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
             if ($dummy) {
                 $dummy->delete();
             }

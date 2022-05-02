@@ -382,16 +382,16 @@ final class Requirements
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        // WKHTMLTOIMAGE BIN
+        // Chromium BIN
         try {
-            $wkhtmltopdfBin = (bool) \Pimcore\Image\HtmlToImage::getWkhtmltoimageBinary();
+            $chromiumBin = (bool) \Pimcore\Image\Chromium::getChromiumBinary();
         } catch (\Exception $e) {
-            $wkhtmltopdfBin = false;
+            $chromiumBin = false;
         }
 
         $checks[] = new Check([
-            'name' => 'wkhtmltoimage',
-            'state' => $wkhtmltopdfBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'name' => 'Chromium',
+            'state' => $chromiumBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         // ghostscript BIN
@@ -419,7 +419,7 @@ final class Requirements
         ]);
 
         // image optimizer
-        foreach (['zopflipng', 'pngcrush', 'jpegoptim', 'cjpeg', 'exiftool'] as $optimizerName) {
+        foreach (['jpegoptim', 'pngquant', 'optipng', 'exiftool'] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
             } catch (\Exception $e) {

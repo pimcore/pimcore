@@ -22,6 +22,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Image\Chromium;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -93,7 +94,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document not found');
@@ -163,17 +164,21 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $db = Db::get();
 
             $list = new Document\Listing();
-            if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote($document->getId());
-            } else {
+
+            $condition = 'parentId =  ' . $db->quote($document->getId());
+
+            if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $condition = 'parentId = ' . $db->quote($document->getId()) . ' AND
-                (
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                    or
-                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
-                )';
+                $currentUserId = $this->getAdminUser()->getId();
+                $userIds[] = $currentUserId;
+
+                $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
+
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+                $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+                $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
             }
 
             if ($filter) {
@@ -199,12 +204,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
-            $childsList = $list->load();
+            $childrenList = $list->load();
 
-            foreach ($childsList as $childDocument) {
-                // only display document if listing is allowed for the current user
-                if ($childDocument->isAllowed('list')) {
-                    $documents[] = $this->getTreeNodeConfig($childDocument);
+            foreach ($childrenList as $childDocument) {
+                $documentTreeNode = $this->getTreeNodeConfig($childDocument);
+                // the !isset is for printContainer case, there are no permissions sets there
+                if (!isset($documentTreeNode['permissions']['list']) || $documentTreeNode['permissions']['list'] == 1) {
+                    $documents[] = $documentTreeNode;
                 }
             }
         }
@@ -263,8 +269,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
                     $createValues['staticGeneratorEnabled'] = $docType->getStaticGeneratorEnabled();
-                } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                } elseif ($translationsBaseDocumentId = $request->get('translationsBaseDocument')) {
+                    $translationsBaseDocument = Document::getById((int) $translationsBaseDocumentId);
                     if ($translationsBaseDocument instanceof Document\PageSnippet) {
                         $createValues['template'] = $translationsBaseDocument->getTemplate();
                         $createValues['controller'] = $translationsBaseDocument->getController();
@@ -361,8 +367,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         if ($success && $document instanceof Document) {
-            if ($request->get('translationsBaseDocument')) {
-                $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+            if ($translationsBaseDocumentId = $request->get('translationsBaseDocument')) {
+                $translationsBaseDocument = Document::getById((int) $translationsBaseDocumentId);
 
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
@@ -407,7 +413,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $type = 'children';
         }
         if ($type === 'children') {
-            $parentDocument = Document::getById($request->get('id'));
+            $parentDocument = Document::getById((int) $request->get('id'));
 
             $list = new Document\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
@@ -427,8 +433,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         }
-        if ($request->get('id')) {
-            $document = Document::getById($request->get('id'));
+        if ($id = $request->get('id')) {
+            $document = Document::getById((int) $id);
             if ($document && $document->isAllowed('delete')) {
                 try {
                     if ($document->isLocked()) {
@@ -438,7 +444,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
-                    Logger::err($e);
+                    Logger::err((string) $e);
 
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -462,7 +468,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $success = false;
         $allowUpdate = true;
 
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
 
         $oldPath = $document->getDao()->getCurrentFullPath();
         $oldDocument = Document::getById($document->getId(), true);
@@ -478,8 +484,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         if ($document->isAllowed('settings')) {
             // if the position is changed the path must be changed || also from the children
-            if ($request->get('parentId')) {
-                $parentDocument = Document::getById($request->get('parentId'));
+            if ($parentId = $request->get('parentId')) {
+                $parentDocument = Document::getById((int) $parentId);
 
                 //check if parent is changed
                 if ($document->getParentId() != $parentDocument->getId()) {
@@ -611,7 +617,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $redirect = new Redirect();
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
         $redirect->setRegex(false);
-        $redirect->setTarget($targetId);
+        $redirect->setTarget((string) $targetId);
         $redirect->setSource($source);
         $redirect->setStatusCode(301);
         $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
@@ -788,7 +794,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function versionToSessionAction(Request $request)
     {
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $document = $version->loadData();
         Document\Service::saveElementToSession($document);
 
@@ -806,7 +815,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $this->versionToSessionAction($request);
 
-        $version = Version::getById($request->get('id'));
+        $version = Version::getById((int) $request->get('id'));
+        if (!$version) {
+            throw $this->createNotFoundException();
+        }
         $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
@@ -900,11 +912,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $pasteJobs = [];
 
         Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, ['idMapping' => []]);
+            $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
         if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {
-            $document = Document::getById($request->get('sourceId'));
+            $document = Document::getById((int) $request->get('sourceId'));
 
             // first of all the new parent
             $pasteJobs[] = [[
@@ -1050,13 +1062,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $sessionBag = $session->get($request->get('transactionId'));
 
         if ($request->get('targetParentId')) {
-            $sourceParent = Document::getById($request->get('sourceParentId'));
+            $sourceParent = Document::getById((int) $request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
             if ($sessionBag['parentId']) {
                 $targetParent = Document::getById($sessionBag['parentId']);
             } else {
-                $targetParent = Document::getById($request->get('targetParentId'));
+                $targetParent = Document::getById((int) $request->get('targetParentId'));
             }
 
             $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
@@ -1123,7 +1135,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, $from, $to)
     {
         // return with error if prerequisites do not match
-        if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
+        if ((!Chromium::isSupported() && !HtmlToImage::isSupported()) || !class_exists('Imagick')) {
             return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
         }
 
@@ -1149,8 +1161,15 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        HtmlToImage::convert($fromUrl, $fromFile);
-        HtmlToImage::convert($toUrl, $toFile);
+        if (Chromium::isSupported()) {
+            $tool = Chromium::class;
+        } else {
+            $tool = HtmlToImage::class;
+        }
+
+        /** @var Chromium|HtmlToImage $tool */
+        $tool::convert($fromUrl, $fromFile);
+        $tool::convert($toUrl, $toFile);
 
         $image1 = new \Imagick($fromFile);
         $image2 = new \Imagick($toFile);
@@ -1327,9 +1346,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function languageTreeAction(Request $request)
     {
-        $document = Document::getById($request->query->get('node'));
-
-        $service = new Document\Service();
+        $document = Document::getById((int) $request->query->get('node'));
 
         $languages = explode(',', $request->get('languages'));
 
@@ -1352,7 +1369,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function languageTreeRootAction(Request $request)
     {
-        $document = Document::getById($request->query->get('id'));
+        $document = Document::getById((int) $request->query->get('id'));
 
         if (!$document) {
             return $this->adminJson([
@@ -1426,7 +1443,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     'fullPath' => $languageDocument->getFullPath(),
                     'published' => $languageDocument->getPublished(),
                     'itemType' => 'document',
-                    'permissions' => $languageDocument->getUserPermissions(),
+                    'permissions' => $languageDocument->getUserPermissions($this->getAdminUser()),
                 ];
             } elseif (!$document instanceof Document\Folder) {
                 $config[$language] = [
@@ -1448,7 +1465,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function convertAction(Request $request)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
 
         $type = $request->get('type');
         $class = '\\Pimcore\\Model\\Document\\' . ucfirst($type);
@@ -1489,9 +1509,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $success = false;
         $targetDocument = null;
 
-        $document = Document::getById($request->get('id'));
+        $document = Document::getById((int) $request->get('id'));
         if ($document) {
-            $service = new Document\Service;
+            $service = new Document\Service();
             $document = $document->getId() === 1 ? $document : $document->getParent();
 
             $translations = $service->getTranslations($document);
@@ -1517,7 +1537,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function translationAddAction(Request $request)
     {
-        $sourceDocument = Document::getById($request->get('sourceId'));
+        $sourceDocument = Document::getById((int) $request->get('sourceId'));
         $targetDocument = Document::getByPath($request->get('targetPath'));
 
         if ($sourceDocument && $targetDocument) {
@@ -1550,8 +1570,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function translationRemoveAction(Request $request)
     {
-        $sourceDocument = Document::getById($request->get('sourceId'));
-        $targetDocument = Document::getById($request->get('targetId'));
+        $sourceDocument = Document::getById((int) $request->get('sourceId'));
+        $targetDocument = Document::getById((int) $request->get('targetId'));
         if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
             $service->removeTranslationLink($sourceDocument, $targetDocument);
@@ -1602,19 +1622,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
-        if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
-            // analyze content
-            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
+        // analyze content
+        $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
 
-            $title = $document->getTitle();
-            $description = $document->getDescription();
+        $title = $document->getTitle();
+        $description = $document->getDescription();
 
-            $nodeConfig['title'] = $title;
-            $nodeConfig['description'] = $description;
+        $nodeConfig['title'] = $title;
+        $nodeConfig['description'] = $description;
 
-            $nodeConfig['title_length'] = mb_strlen($title);
-            $nodeConfig['description_length'] = mb_strlen($description);
-        }
+        $nodeConfig['title_length'] = mb_strlen($title);
+        $nodeConfig['description_length'] = mb_strlen($description);
 
         return $nodeConfig;
     }

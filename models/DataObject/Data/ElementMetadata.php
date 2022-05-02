@@ -27,12 +27,12 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     use DataObject\Traits\OwnerAwareFieldTrait;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $elementType;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $elementId;
 
@@ -66,8 +66,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param string $elementType
-     * @param int $elementId
+     * @param string|null $elementType
+     * @param int|null $elementId
      */
     public function setElementTypeAndId($elementType, $elementId)
     {

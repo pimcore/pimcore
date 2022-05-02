@@ -74,7 +74,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         var storeData = this.prepareStoreDataAndFilterLabels(field.layout);
 
         var store = Ext.create('Ext.data.JsonStore', {
-            fields: ['id', 'text'],
+            fields: [{name: 'id', type: 'string'}, 'text'],
             data: storeData
         });
 
@@ -120,7 +120,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         }
 
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'text'],
+            fields: [{name: 'id', type: 'string'}, 'text'],
             data: storeData
         });
 

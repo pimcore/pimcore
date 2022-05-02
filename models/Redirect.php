@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Config;
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -127,17 +128,6 @@ final class Redirect extends AbstractModel
      * @var int
      */
     protected $userModification;
-
-    /**
-     * StatusCodes
-     */
-    protected static $statusCodes = [
-        '300' => 'Multiple Choices',
-        '301' => 'Moved Permanently',
-        '302' => 'Found',
-        '303' => 'See Other',
-        '307' => 'Temporary Redirect',
-    ];
 
     /**
      * @param int $id
@@ -322,7 +312,7 @@ final class Redirect extends AbstractModel
             $statusCode = '301';
         }
 
-        return 'HTTP/1.1 ' . $statusCode . ' ' . self::$statusCodes[$statusCode];
+        return 'HTTP/1.1 ' . $statusCode . ' ' . $this->getStatusCodes()[$statusCode];
     }
 
     public function clearDependentCache()
@@ -332,7 +322,7 @@ final class Redirect extends AbstractModel
         try {
             \Pimcore\Cache::clearTag('redirect');
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -569,6 +559,6 @@ final class Redirect extends AbstractModel
      */
     public static function getStatusCodes(): array
     {
-        return self::$statusCodes;
+        return Config::getSystemConfiguration('redirects')['status_codes'];
     }
 }

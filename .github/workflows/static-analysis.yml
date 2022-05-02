@@ -1,7 +1,10 @@
 
-name: "Static Analysis"
+name: "PHPStan Static Analysis"
 
 on:
+    workflow_dispatch:
+    schedule:
+        -   cron: '0 3 * * *'
     pull_request:
         branches:
             - "[0-9]+.[0-9]+"
@@ -62,8 +65,13 @@ jobs:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "${{ matrix.composer-options }}"
 
-            - name: "Run a static analysis with phpstan/phpstan"
+            - name: "Run a static analysis with phpstan/phpstan (highest)"
+              if: ${{ matrix.dependencies == 'highest' }}
               run: "vendor/bin/phpstan analyse --memory-limit=-1"
+
+            - name: "Run a static analysis with phpstan/phpstan (lowest)"
+              if: ${{ matrix.dependencies == 'lowest' }}
+              run: "vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan-lowest.neon"
 
             - name: "Generate baseline file"
               if: ${{ failure() }}

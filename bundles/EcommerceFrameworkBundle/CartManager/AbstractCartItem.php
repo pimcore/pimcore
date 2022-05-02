@@ -64,6 +64,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     protected $cart;
 
+    /**
+     * @var string|int|null
+     */
     protected $cartId;
 
     /**
@@ -144,7 +147,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     abstract public function getCart();
 
     /**
-     * @return int
+     * @return string|int|null
      */
     public function getCartId()
     {
@@ -152,7 +155,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param int $cartId
+     * @param string|int|null $cartId
      */
     public function setCartId($cartId)
     {
@@ -332,7 +335,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
-            $datetime = \DateTime::createFromFormat('U', intval($this->addedDateTimestamp / 1000000));
+            $datetime = \DateTime::createFromFormat('U', (string) intval($this->addedDateTimestamp / 1000000));
         }
 
         return $datetime;

@@ -108,7 +108,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = Crypto::encrypt($data, $key, true);
                 $this->encrypted = $data;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 throw new \Exception('could not load key');
             }
@@ -138,7 +138,7 @@ class EncryptedField implements OwnerAwareFieldInterface
 
                 $this->plain = $data;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 throw new \Exception('could not load key');
             }

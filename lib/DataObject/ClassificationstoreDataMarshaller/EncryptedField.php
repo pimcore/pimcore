@@ -196,7 +196,7 @@ class EncryptedField implements MarshallerInterface
 
                 return $data;
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 throw new \Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');
             }

@@ -597,7 +597,7 @@ class Asset extends Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
+                        Logger::error((string) $er);
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
@@ -1112,13 +1112,13 @@ class Asset extends Element\AbstractElement
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -1143,7 +1143,7 @@ class Asset extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
@@ -1226,7 +1226,7 @@ class Asset extends Element\AbstractElement
      */
     public function setId($id)
     {
-        $this->id = (int)$id;
+        $this->id = $id ? (int)$id : null;
 
         return $this;
     }
@@ -2007,6 +2007,8 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
                 $storage->deleteDirectory($this->getRealPath() . $this->getId());
             }
+
+            $this->getDao()->deleteFromThumbnailCache();
         }
     }
 
@@ -2103,6 +2105,7 @@ class Asset extends Element\AbstractElement
     {
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
+            $this->getDao()->deleteFromThumbnailCache($name);
         } catch (\Exception $e) {
             // noting to do
         }

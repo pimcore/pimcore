@@ -256,7 +256,7 @@ class Multiselect extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -264,7 +264,7 @@ class Multiselect extends Data implements
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (strlen($data)) {
+        if (strlen((string) $data)) {
             return explode(',', $data);
         }
 

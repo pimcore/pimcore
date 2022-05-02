@@ -356,7 +356,7 @@ class CustomLayout extends Model\AbstractModel
 
             return $identifier;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return null;
         }

@@ -153,6 +153,7 @@ class Service
             'generateTypeDeclarations',
             'showFieldLookup',
             'enableGridLocking',
+            'showAppLoggerTab',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {

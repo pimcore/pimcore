@@ -10,19 +10,19 @@ I've created the really simple product class (sku, localized name, localized pic
 
 Next, I added four custom layouts which later I will assign to the specific statuses.
 
-* `new_product` layout with ID = 3
+* `newProduct` layout with ID = 1
 
 ![The new product custom layout](../img/workflow_example_product_cl_1.png)
 
-* `fill_contents` layout with ID = 4 
+* `fillContents` layout with ID = 2
 
 ![The fill contents custom layout](../img/workflow_example_product_cl_2.png)
 
-* `update_picture` layout with ID = 5
+* `updatePicture` layout with ID = 3
 
 ![The update picture custom layout](../img/workflow_example_product_cl_3.png)
 
-* `validate_qty_price` layout with ID = 6
+* `validateQtyPrice` layout with ID = 4
 
 ![The validate qty and price custom layout](../img/workflow_example_product_cl_4.png)
 
@@ -70,7 +70,7 @@ To achieve that requirement, I have to make (at least) three places.
             label: 'New product'
             color: '#377ea9'
             permissions:
-                - objectLayout: 3
+                - objectLayout: 1
         rejected:
             label: 'Rejected product'
             color: '#28a013'
@@ -79,7 +79,7 @@ To achieve that requirement, I have to make (at least) three places.
             title: 'Updating content step'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 4            
+                - objectLayout: 2            
 
 (...)
 ```
@@ -138,13 +138,13 @@ Let's add few new rows in the configuration file
             title: 'Update the product picture'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 5            
+                - objectLayout: 3            
         validate_stock_and_price:
             label: 'Validate Stock + Price'
             title: 'Check the quantity and the price'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 6            
+                - objectLayout: 4            
         content_prepared:
             label: 'Content Prepared'
             title: 'Content ready to publish'
@@ -233,10 +233,12 @@ And, the transition with a *"timeWorked"* field.
         publish:
             from: content_prepared
             to: accepted
-            guard: "is_fully_authenticated() and has_role('ROLE_PIMCORE_SUPERUSER')"
+            guard: "is_fully_authenticated() and is_granted('ROLE_PIMCORE_SUPERUSER')"
             options:
                 label: 'Publish the product'
                 notes:
+                    commentEnabled: true
+                    commentRequired: true
                     additionalFields:
                         - name: 'timeWorked'
                           fieldType: 'input'
@@ -250,14 +252,14 @@ And, the transition with a *"timeWorked"* field.
 
 Below, you can find showcase of the workflow I've just prepared.
 
-| Status                                                  | Screenshot  |
-| ------------------------------------------------------- | ----------- |
-| Initial status when new object comes into the system    | ![Initial Place](../img/workflow_editmode_1.jpg) |
-| Update Content                                          | ![Update Content](../img/workflow_editmode_2.jpg)|
-| Update Picture                                          | ![Update Picture](../img/workflow_editmode_3.jpg)|
-| Validate Price and Stock                                | ![Validate](../img/workflow_editmode_4.jpg)|
-| Content is ready                                        | ![Content Ready](../img/workflow_editmode_5.jpg)|
-| Publish the Product                                     | ![Publish Product](../img/workflow_editmode_6.jpg) |
+| Status                                                  | Screenshot                                         |
+| ------------------------------------------------------- |----------------------------------------------------|
+| Initial status when new object comes into the system    | ![Initial Place](../img/workflow_editmode_1.png)   |
+| Update Content                                          | ![Update Content](../img/workflow_editmode_2.png)  |
+| Update Picture                                          | ![Update Picture](../img/workflow_editmode_3.png)  |
+| Validate Price and Stock                                | ![Validate](../img/workflow_editmode_4.png)        |
+| Content is ready                                        | ![Content Ready](../img/workflow_editmode_5.png)   |
+| Publish the Product                                     | ![Publish Product](../img/workflow_editmode_6.png) |
 
 
 ### Check the history
