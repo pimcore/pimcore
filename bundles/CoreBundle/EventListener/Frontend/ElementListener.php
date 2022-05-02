@@ -141,8 +141,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
      */
     protected function handleVersion(Request $request, Document $document)
     {
-        if ($request->get('v')) {
-            if ($version = Version::getById($request->get('v'))) {
+        if ($v = $request->get('v')) {
+            if ($version = Version::getById((int) $v)) {
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
@@ -219,7 +219,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // for version preview
         if ($request->get('pimcore_version')) {
             // TODO there was a check with a registry flag here - check if the master request handling is sufficient
-            if ($version = Version::getById($request->get('pimcore_version'))) {
+            if ($version = Version::getById((int) $request->get('pimcore_version'))) {
                 $document = $version->getData();
 
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [

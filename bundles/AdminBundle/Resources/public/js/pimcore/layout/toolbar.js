@@ -968,7 +968,7 @@ pimcore.layout.toolbar = Class.create({
                 }
 
                 if (perspectiveCfg.inToolbar("settings.cache.generatePreviews")) {
-                    if (pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
+                    if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.htmltoimage)) {
                         cacheItems.push({
                             text: t("generate_page_previews"),
                             iconCls: "pimcore_nav_icon_page_previews",

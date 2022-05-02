@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
-            $this->model->setId($lastInsertId);
+            $this->model->setId((int) $lastInsertId);
         }
 
         return $this->model->getId();
@@ -101,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getBinaryFileIdForHash(string $hash): ?int
     {
-        $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
+        $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid(), $this->model->getStorageType()]);
         if (!$id) {
             return null;
         }

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -77,4 +78,130 @@ abstract class Dao extends Model\Dao\AbstractDao
      * @return int
      */
     abstract public function getVersionCountForUpdate(): int;
+
+    /**
+     * @param string $type
+     * @param array $userIds
+     * @param string $tableSuffix
+     *
+     * @return int
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function InheritingPermission(string $type, array $userIds, string $tableSuffix): int
+    {
+        $current = $this->model;
+
+        if (!$current->getId()) {
+            return 0;
+        }
+        $fullPath = $current->getPath() . $current->getKey();
+
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
+        userId IN (' . implode(',', $userIds) . ')
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+
+        return (int)$this->db->fetchOne($sql, $fullPath);
+    }
+
+    /**
+     * @param array $columns
+     * @param User $user
+     * @param string $tableSuffix
+     *
+     * @return array
+     *
+     * @internal
+     */
+    protected function permissionByTypes(array $columns, User $user, string $tableSuffix)
+    {
+        $permissions = [];
+        foreach ($columns as $type) {
+            $permissions[$type] = 0;
+        }
+
+        $parentIds = $this->getParentIds();
+        $parentIds[] = $this->model->getId();
+
+        $currentUserId = $user->getId();
+        $userIds = $user->getRoles();
+        $userIds[] = $currentUserId;
+
+        $highestWorkspaceQuery = '
+            SELECT userId,cid,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
+            WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ')
+            ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
+        ';
+
+        $highestWorkspace = $this->db->fetchRow($highestWorkspaceQuery);
+
+        if ($highestWorkspace) {
+            //if it's the current user, this is the permission that rules them all, no need to check others
+            if ($highestWorkspace['userId'] == $currentUserId) {
+                foreach ($columns as $type) {
+                    $permissions[$type] = $highestWorkspace[$type];
+                }
+
+                if ($permissions['list'] == 0) {
+                    $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix, $userIds);
+                }
+
+                return $permissions;
+            }
+
+            //if not found, having already the longest cpath from first query,
+            //we either have role permission for the same object, or it could be any of its parents permission.
+
+            $roleWorkspaceSql = '
+             SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
+             WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
+             ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
+             ';
+            $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
+
+            //this performs the additive rule when conflicting rules with multiple roles,
+            //breaks the loop when permission=1 is found and move on to check next permission type.
+            foreach ($columns as $type) {
+                foreach ($objectPermissions as $workspace) {
+                    if ($workspace[$type] == 1) {
+                        $permissions[$type] = 1;
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        //when list=0, we look for any allowed children, so that can make possible to list the path of the folder in between
+        //to reach that children by "exceptionally" turning list=0 to list=1
+        if ($permissions['list']==0) {
+            $permissions['list'] = $this->checkChildrenForPathTraversal($tableSuffix, $userIds);
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * for "path traversal" intending the list=1 on parent folder (with list=0) when there are nested children allowed
+     *
+     * @param string $tableSuffix
+     * @param array $userIds
+     *
+     * @return int
+     *
+     * @internal
+     */
+    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds)
+    {
+        $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
+
+        $permissionsChildren = $this->db->fetchOne('
+            SELECT list FROM users_workspaces_'.$tableSuffix.' as uw
+            WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
+            AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
+            LIMIT 1',
+            $this->db->escapeLike($path) . '%');
+
+        return (int)$permissionsChildren;
+    }
 }

@@ -96,13 +96,14 @@ trait ImageThumbnailTrait
      */
     public function getStream()
     {
-        $pathReference = $this->getPathReference();
-
-        try {
-            return Storage::get($pathReference['type'])->readStream($pathReference['src']);
-        } catch (\Exception $e) {
-            return null;
+        $pathReference = $this->getPathReference(false);
+        if ($pathReference['type'] === 'asset') {
+            return $this->asset->getStream();
+        } elseif (isset($pathReference['storagePath'])) {
+            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
         }
+
+        return null;
     }
 
     public function getPathReference(bool $deferredAllowed = false): array
@@ -313,6 +314,9 @@ trait ImageThumbnailTrait
             } elseif ($type === 'thumbnail') {
                 $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
                 $path = $prefix . urlencode_ignore_slash($path);
+            } elseif ($type === 'asset') {
+                $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+                $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
             }
@@ -339,9 +343,37 @@ trait ImageThumbnailTrait
     public function exists(): bool
     {
         $pathReference = $this->getPathReference(true);
-        if ($pathReference['type'] === 'asset') {
+        $type = $pathReference['type'] ?? '';
+        if (
+            $type === 'asset' ||
+            $type === 'data-uri' ||
+            $type === 'thumbnail'
+        ) {
             return true;
+        } elseif ($type === 'deferred') {
+            return false;
         } elseif (isset($pathReference['storagePath'])) {
+            // this is probably redundant, but as it doesn't hurt we can keep it
+            return $this->existsOnStorage($pathReference);
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array|null $pathReference
+     *
+     * @return bool
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function existsOnStorage(?array $pathReference = []): bool
+    {
+        $pathReference ??= $this->getPathReference(true);
+        if (isset($pathReference['storagePath'])) {
+            // this is probably redundant, but as it doesn't hurt we can keep it
             return Storage::get('thumbnail')->fileExists($pathReference['storagePath']);
         }
 

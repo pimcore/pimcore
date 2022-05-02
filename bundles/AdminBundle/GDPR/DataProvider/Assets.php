@@ -97,7 +97,7 @@ class Assets extends Elements implements DataProviderInterface
 
         $response = new Response($content);
         $response->headers->set('Content-Type', 'application/zip');
-        $response->headers->set('Content-Length', $size);
+        $response->headers->set('Content-Length', (string) $size);
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $asset->getFilename() . '.zip"');
 
         return $response;

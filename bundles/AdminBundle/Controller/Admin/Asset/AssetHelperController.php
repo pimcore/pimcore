@@ -207,7 +207,7 @@ class AssetHelperController extends AdminController
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
-            $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            $savedGridConfig = GridConfig::getById((int) $requestedGridConfigId);
 
             if ($savedGridConfig) {
                 $shared = null;
@@ -241,7 +241,7 @@ class AssetHelperController extends AdminController
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
                 $request->get('no_system_columns'),
-                null, //maybe required for types other than metadata
+                [], //maybe required for types other than metadata
                 $context,
                 $types);
         } else {
@@ -500,7 +500,11 @@ class AssetHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
+
+        if (!$asset) {
+            throw $this->createNotFoundException();
+        }
 
         if ($asset->isAllowed('list')) {
             try {
@@ -617,7 +621,7 @@ class AssetHelperController extends AdminController
         foreach ($combinedShares as $id) {
             $share = new GridConfigShare();
             $share->setGridConfigId($gridConfig->getId());
-            $share->setSharedWithUserId($id);
+            $share->setSharedWithUserId((int) $id);
             $share->save();
         }
     }
@@ -940,7 +944,7 @@ class AssetHelperController extends AdminController
         $result['defaultColumns']['children'] = $defaultColumns;
 
         //predefined metadata
-        $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
+        $list = Metadata\Predefined\Listing::getByTargetType('asset');
         $metadataItems = [];
         $tmp = [];
         foreach ($list as $item) {

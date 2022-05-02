@@ -1,5 +1,4 @@
 # CKEDITOR (use builder: http://ckeditor.com/builder);
-current version: 4.17.1
 upload build-config.js
 
 OR:

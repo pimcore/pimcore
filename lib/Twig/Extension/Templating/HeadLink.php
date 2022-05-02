@@ -231,7 +231,7 @@ class HeadLink extends CacheBusterAware
     /**
      * append()
      *
-     * @param  array $value
+     * @param  \stdClass $value
      *
      * @return void
      */
@@ -265,7 +265,7 @@ class HeadLink extends CacheBusterAware
     /**
      * prepend()
      *
-     * @param array $value
+     * @param \stdClass $value
      */
     public function prepend($value)
     {
@@ -279,7 +279,7 @@ class HeadLink extends CacheBusterAware
     /**
      * set()
      *
-     * @param array $value
+     * @param \stdClass $value
      */
     public function set($value)
     {

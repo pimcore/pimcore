@@ -53,7 +53,7 @@ class Ffmpeg extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::warning((string) $e);
         }
 
         return false;

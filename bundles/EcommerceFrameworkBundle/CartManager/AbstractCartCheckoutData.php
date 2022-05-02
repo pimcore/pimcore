@@ -48,6 +48,9 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         throw new \Exception('Not implemented.');
     }
 
+    /**
+     * @param string|int $cartId
+     */
     public static function removeAllFromCart($cartId)
     {
         throw new \Exception('Not implemented.');

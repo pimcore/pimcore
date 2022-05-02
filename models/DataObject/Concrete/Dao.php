@@ -148,7 +148,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             return;
         }
 
-        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())) {
+        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
             return;
         }
 
@@ -231,7 +231,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
         }
 
-        $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
+        $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
+        WHERE '.$condition .' LIMIT 1');
+        if ($dataExists) {
+            $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
+        }
 
         $inheritedValues = DataObject::doGetInheritedValues();
         DataObject::setGetInheritedValues(false);
@@ -289,7 +293,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get data for query table
         $data = [];
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
+        $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
 
         $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
         $parentData = null;

@@ -582,6 +582,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("query", query);
+        proxy.setExtraParam("type", 'object');
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
 

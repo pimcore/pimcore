@@ -251,7 +251,7 @@ class FullPageCacheListener
                 return;
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             $this->disable('ERROR: Exception (see log files in /var/log)');
 
@@ -305,7 +305,7 @@ class FullPageCacheListener
             $response = $cacheItem;
             $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
             $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));
-            $response->headers->set('Age', (time() - $cacheItemDate));
+            $response->headers->set('Age', (string) (time() - $cacheItemDate));
 
             $event->setResponse($response);
             $this->stopResponsePropagation = true;
@@ -398,7 +398,7 @@ class FullPageCacheListener
 
                 Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
 
                 return;
             }

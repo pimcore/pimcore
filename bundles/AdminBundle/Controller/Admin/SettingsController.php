@@ -20,6 +20,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
@@ -39,6 +40,7 @@ use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -107,13 +109,16 @@ class SettingsController extends AdminController
      */
     public function uploadCustomLogoAction(Request $request)
     {
-        $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
-        if (!in_array($fileExt, ['svg', 'png', 'jpg'])) {
-            throw new \Exception('Unsupported file format');
+        $logoFile = $request->files->get('Filedata');
+
+        if (!$logoFile instanceof UploadedFile
+            || !in_array($logoFile->guessExtension(), ['svg', 'png', 'jpg'])
+        ) {
+            throw new \Exception('Unsupported file format.');
         }
 
         $storage = Tool\Storage::get('admin');
-        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($_FILES['Filedata']['tmp_name'], 'rb'));
+        $storage->writeStream(self::CUSTOM_LOGO_PATH, fopen($logoFile->getPathname(), 'rb'));
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -229,6 +234,7 @@ class SettingsController extends AdminController
 
             $properties = [];
             foreach ($list->getDefinitions() as $metadata) {
+                $metadata->expand();
                 $data = $metadata->getObjectVars();
                 $data['writeable'] = $metadata->isWriteable();
                 $properties[] = $data;
@@ -802,6 +808,8 @@ class SettingsController extends AdminController
 
         // public files
         Tool\Storage::get('thumbnail')->deleteDirectory('/');
+        Db::get()->query('TRUNCATE TABLE assets_image_thumbnail_cache');
+
         Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
         // system files

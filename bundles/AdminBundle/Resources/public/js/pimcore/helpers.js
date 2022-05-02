@@ -133,7 +133,6 @@ pimcore.helpers.openDocument = function (id, type, options) {
     }
 };
 
-
 pimcore.helpers.closeDocument = function (id) {
     try {
         var tabId = "document_" + id;
@@ -882,11 +881,6 @@ pimcore.helpers.rememberOpenTab = function (item, forceOpenTab) {
         openTabs.push(item);
     }
 
-    // limit to the latest 10
-    openTabs.reverse();
-    openTabs.splice(10, 1000);
-    openTabs.reverse();
-
     // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
     if (forceOpenTab) {
@@ -917,6 +911,12 @@ pimcore.helpers.forceOpenMemorizedTabsOnce = function () {
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
+
+    // limit to the latest 10
+    openTabs.reverse();
+    openTabs.splice(10, 1000);
+    openTabs.reverse();
+
     var openedTabs = [];
 
     for (var i = 0; i < openTabs.length; i++) {

@@ -2,7 +2,7 @@
 Pricing Rules are supported by the E-Commerce Framework out of the box. The pricing rules themselves can be configured 
 in the Pimcore Backend UI by putting conditions and actions together. 
 
-![Pricing Rules](../../img/pricing-rules.jpg)
+![Pricing Rules](../../img/pricing-rules.png)
 
 Once active, all rules are checked and applied automatically by the system - including reducing product prices, adding 
 price modificators to reduce cart totals, removing shipping costs and adding gift items to the cart. 

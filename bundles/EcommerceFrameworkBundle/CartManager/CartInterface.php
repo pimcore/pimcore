@@ -40,12 +40,12 @@ interface CartInterface
     const COUNT_MAIN_AND_SUB_ITEMS = 'main_and_sub';
 
     /**
-     * @return int|null
+     * @return string|int|null
      */
     public function getId();
 
     /**
-     * @param int $id
+     * @param string|int $id
      */
     public function setId($id);
 

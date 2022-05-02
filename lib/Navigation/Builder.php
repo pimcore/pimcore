@@ -294,7 +294,7 @@ class Builder
      * @param array $parents
      * @param int|null $maxDepth
      *
-     * @return array
+     * @return Page[]
      *
      * @throws \Exception
      */

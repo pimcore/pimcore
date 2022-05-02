@@ -23,9 +23,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ContentController extends FrontendController
 {
+    /**
+     * @Template
+     */
     public function defaultAction(Request $request)
     {
-
+        return [];
     }
 }
 ```
@@ -75,20 +78,106 @@ Then we can also put some HTML and template code into it:
 <head>
     <meta charset="UTF-8">
     <title>Example</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/global.css" />
 </head>
 <body>
+    <style type="text/css">
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: "Lucida Sans Unicode", Arial;
+            font-size: 14px;
+        }
+    
+        #site {
+            margin: 0 auto;
+            width: 600px;
+            padding: 30px 0 0 0;
+            color: #65615E;
+        }
+    
+        h1, h2, h3 {
+            font-size: 18px;
+            padding: 0 0 5px 0;
+            border-bottom: 1px solid #001428;
+            margin-bottom: 5px;
+        }
+    
+        h3 {
+            font-size: 14px;
+            padding: 15px 0 5px 0;
+            margin-bottom: 5px;
+            border-color: #cccccc;
+        }
+    
+        img {
+            border: 0;
+        }
+    
+        p {
+            padding: 0 0 5px 0;
+        }
+    
+        a {
+            color: #000;
+        }
+    
+        #logo {
+            text-align: center;
+            padding: 50px 0;
+        }
+    
+        #logo hr {
+            display: block;
+            height: 1px;
+            overflow: hidden;
+            background: #BBB;
+            border: 0;
+            padding: 0;
+            margin: 30px 0 20px 0;
+        }
+    
+        .claim {
+            text-transform: uppercase;
+            color: #BBB;
+        }
+    
+        #site ul {
+            padding: 10px 0 10px 20px;
+            list-style: circle;
+        }
+    
+        .buttons {
+            margin-bottom: 100px;
+            text-align: center;
+        }
+    
+        .buttons a {
+            display: inline-block;
+            background: #6428b4;
+            color: #fff;
+            padding: 5px 10px;
+            margin-right: 10px;
+            width: 40%;
+            border-radius: 2px;
+            text-decoration: none;
+        }
+    
+        .buttons a:hover {
+            background: #1C8BC1;
+        }
+    
+        .buttons a:last-child {
+            margin: 0;
+        }
+    
+    </style>
     <div id="site">
         <div id="logo">
-            <a href="http://www.pimcore.org/"><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 200px;" /></a>
-            <hr />
-            <div class="claim">
-                THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
-            </div>
+            <a href="http://www.pimcore.com/"><img src="/bundles/pimcoreadmin/img/logo-claim-gray.svg"
+                                                   style="width: 400px;"/></a>
+            <hr/>
         </div>
-        <div class="info">
-            {{ block('content') }}
-        </div>
+        {{ block('content') }}
     </div>
 </body>
 </html>
@@ -231,15 +320,17 @@ Then we also need a new template for our product action: `templates/content/prod
 ```twig
 {% extends 'layout.html.twig' %}
 
-<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
+{% block content %}
+    <h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-<div class="product-info">
-    {% if editmode %}
-        {{ pimcore_relation("product") }}
-    {% else %}
-        <!-- Product information-->
-    {% endif %}
-</div>
+    <div class="product-info">
+        {% if editmode %}
+            {{ pimcore_relation("product") }}
+        {% else %}
+            <!-- Product information-->
+        {% endif %}
+    </div>
+{% endblock %}
 ```
 
 `{{ editmode }}` is a standard variable (it's always set), that checks if the view is called from the Pimcore admin backend and gives you the 
@@ -283,7 +374,7 @@ Add a few lines in the template file (`templates/content/product.html.twig`):
         {% if product %} 
             <h2>{{ product.name }}</h2>
             <div class="content">
-                {{ product.description }}
+                {{ product.description|raw }}
             </div>
         {% endif %}
     {% endif %}
@@ -307,10 +398,10 @@ Last but not least, we would like to show the product picture:
 ```twig
 <div class="content">
     {% if product.picture %}
-        {{ product.picture.thumbnail("content").html }}
+        {{ product.picture.thumbnail("content").html|raw }}
     {% endif %}
 
-    {{ product.description }}
+    {{ product.description|raw }}
 </div>
 ```
 As you can see, Image is an additional class with useful attributes and functions.

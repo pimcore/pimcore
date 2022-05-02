@@ -73,7 +73,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         }
 
         // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
-        $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY, false);
+        $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY);
         if ($flashBagCookie && $this->session instanceof Session) {
             $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
@@ -106,8 +106,8 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
             $this->session->isStarted() &&
             $this->session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)
         ) {
-            $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, true));
-            $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed', true);
+            $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, '1'));
+            $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed');
         } elseif ($request->cookies->has(self::FLASH_MESSAGE_BAG_KEY)) {
             $response->headers->clearCookie(self::FLASH_MESSAGE_BAG_KEY);
         }

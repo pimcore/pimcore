@@ -916,126 +916,6 @@ Ext.define('EXTJS-17231.ext.dom.Element.validIdRe', {
     }
 });
 
-/**
- * Fieldtype date is not able to save the correct value (before 1951) #1329
- *
- * When saving a date before the year 1951 (e.g. 01/01/1950) with the fieldtype "date" inside a object ...
- *
- * Expected behavior
- *
- * ... the timestamp saved into the database should contain the date 01/01/1950.
- *
- * Actual behavior
- *
- * ... but it actually contains the value of 01/01/2050.
- *
- *
- */
-Ext.define('pimcore.Ext.form.field.Date', {
-    override: 'Ext.form.field.Date',
-
-    initValue: function() {
-        var value = this.value;
-
-        if (Ext.isString(value)) {
-            this.value = this.rawToValue(value);
-            this.rawDate = this.value;
-            this.rawDateText = this.parseDate(this.value);
-        }
-        else {
-            this.value = value || null;
-            this.rawDate = this.value;
-            this.rawDateText = this.value ? this.parseDate(this.value) : '';
-        }
-
-        this.callParent();
-    },
-
-    rawToValue: function(rawValue) {
-        if (rawValue === this.rawDateText) {
-            return this.rawDate;
-        }
-        return this.parseDate(rawValue) || rawValue || null;
-    },
-
-    setValue: function(v) {
-        var utilDate = Ext.Date,
-            rawDate;
-
-        this.lastValue = this.rawDateText;
-        this.lastDate = this.rawDate;
-        if (Ext.isDate(v)) {
-            rawDate = this.rawDate  = v;
-            this.rawDateText = this.formatDate(v);
-        }
-        else {
-            rawDate = this.rawDate = this.rawToValue(v);
-            this.rawDateText = this.formatDate(v);
-            if (rawDate === v) {
-                rawDate = this.rawDate = null;
-                this.rawDateText = '';
-            }
-        }
-        if (rawDate && !utilDate.formatContainsHourInfo(this.format)) {
-            this.rawDate = utilDate.clearTime(rawDate, true);
-        }
-        this.callParent(arguments);
-    },
-
-    checkChange: function() {
-        var  newVal, oldVal, lastDate;
-
-        if (!this.suspendCheckChange) {
-            newVal = this.getRawValue();
-            oldVal = this.lastValue;
-            lastDate = this.lastDate;
-
-            if (!this.destroyed && this.didValueChange(newVal, oldVal)) {
-                this.rawDate = this.rawToValue(newVal);
-                this.rawDateText = this.formatDate(newVal);
-                this.lastValue = newVal;
-                this.lastDate = this.rawDate;
-                this.fireEvent('change', this, this.getValue(), lastDate);
-                this.onChange(newVal, oldVal);
-            }
-        }
-    },
-
-    getSubmitValue: function() {
-        var format = this.submitFormat || this.format,
-            value = this.rawDate;
-
-        return value ? Ext.Date.format(value, format) : '';
-    },
-
-    getValue: function() {
-        return this.rawDate || null;
-    },
-
-    setRawValue: function(value) {
-        this.callParent([value]);
-        this.rawDate = Ext.isDate(value) ? value : this.rawToValue(value);
-        this.rawDateText = this.formatDate(value);
-    },
-
-    onSelect: function(m, d) {
-        this.setValue(d);
-        this.rawDate = d;
-        this.fireEvent('select', this, d);
-        this.onTabOut(m);
-    },
-
-    onTabOut: function(picker) {
-        this.inputEl.focus();
-        this.collapse();
-    },
-
-    onExpand: function() {
-        var value = this.rawDate;
-        this.picker.setValue(Ext.isDate(value) ? value : null);
-    }
-});
-
 //Fix - Date picker does not align to component in scrollable container and breaks view layout randomly.
 Ext.override(Ext.picker.Date, {
         afterComponentLayout: function (width, height, oldWidth, oldHeight) {
@@ -1137,4 +1017,48 @@ Ext.define('Pimcore.view.BoundListKeyNav', {
             scope: me
         });
     }
+});
+
+/**
+ * Workaround to fix the rowEditing not fully showing the buttons (Update/Cancel) when there are 2 rows.
+ *
+ * See:
+ * - https://forum.sencha.com/forum/showthread.php?305665-RowEditing-Buttons-not-visible&p=1317756&viewfull=1#post1317756
+ */
+Ext.define('Ext.overrides.grid.RowEditor', {
+    override: 'Ext.grid.RowEditor',
+
+    showTipBelowRow: true,
+
+    syncButtonPosition: function (context) {
+        var me = this,
+            scrollDelta = me.getScrollDelta(),
+            floatingButtons = me.getFloatingButtons(),
+            scrollingView = me.scrollingView,
+        // If this is negative, it means we're not scrolling so lets just ignore it
+            scrollHeight = Math.max(0, me.scroller.getSize().y - me.scroller.getClientSize().y),
+            overflow = scrollDelta - (scrollHeight - me.scroller.getPosition().y);
+        floatingButtons.show();
+        // If that's the last visible row, buttons should be at the top regardless of scrolling,
+        // but not if there is just one row which is both first and last.
+        if (overflow > 0 || (context.rowIdx > 1 && context.isLastRenderedRow())) {
+            if (!me._buttonsOnTop) {
+                floatingButtons.setButtonPosition('top');
+                me._buttonsOnTop = true;
+                me.layout.setAlign('bottom');
+                me.updateLayout();
+            }
+            scrollDelta = 0;
+        } else if (me._buttonsOnTop !== false) {
+            floatingButtons.setButtonPosition('bottom');
+            me._buttonsOnTop = false;
+            me.layout.setAlign('top');
+            me.updateLayout();
+        } else // Ensure button Y position is synced with Editor height even if button
+            // orientation doesn't change
+        {
+            floatingButtons.setButtonPosition(floatingButtons.position);
+        }
+        return scrollDelta;
+    },
 });

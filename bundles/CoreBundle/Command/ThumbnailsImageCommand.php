@@ -52,6 +52,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
+                'pathPattern',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Filter images against the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -99,6 +105,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         $list->setOrder('DESC');
 
         $parentConditions = [];
+        $conditionVariables = [];
 
         // get only images
         $conditions = ["type = 'image'"];
@@ -106,7 +113,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         if ($input->getOption('parent')) {
             $parentIds = explode(',', $input->getOption('parent'));
             foreach ($parentIds as $parentId) {
-                $parent = Asset::getById($parentId);
+                $parent = Asset::getById((int) $parentId);
                 if ($parent instanceof Asset\Folder) {
                     $parentConditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
                 } else {
@@ -117,11 +124,16 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
+        if ($regex = $input->getOption('pathPattern')) {
+            $conditions[] = 'CONCAT(path, filename) REGEXP ?';
+            $conditionVariables[] = $regex;
+        }
+
         if ($ids = $input->getOption('id')) {
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        $list->setCondition(implode(' AND ', $conditions));
+        $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
 
         $assetIdsList = $list->loadIdList();
         $thumbnailList = [];
@@ -153,7 +165,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
 
-        $image = Image::getById($assetId);
+        $image = Image::getById((int) $assetId);
         if (!$image) {
             $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?');
 

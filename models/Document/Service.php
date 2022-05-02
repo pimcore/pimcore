@@ -21,6 +21,8 @@ use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\File;
+use Pimcore\Image\Chromium;
+use Pimcore\Image\HtmlToImage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
@@ -166,7 +168,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         if (method_exists($new, 'setPrettyUrl')) {
             $new->setPrettyUrl(null);
@@ -228,7 +230,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
 
         if ($resetIndex) {
@@ -304,7 +306,7 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $target->setProperties($source->getProperties());
+        $target->setProperties(self::cloneProperties($source->getProperties()));
         $target->save();
 
         return $target;
@@ -668,7 +670,16 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-        if (\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
+        $tool = false;
+        if (Chromium::isSupported()) {
+            $tool = Chromium::class;
+        } elseif (HtmlToImage::isSupported()) {
+            $tool = HtmlToImage::class;
+        }
+
+        if ($tool) {
+            /** @var Chromium|HtmlToImage $tool */
+            $tool::convert($url, $tmpFile);
             $im = \Pimcore\Image::getInstance();
             $im->load($tmpFile);
             $im->scaleByWidth(800);

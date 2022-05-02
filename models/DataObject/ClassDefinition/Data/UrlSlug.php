@@ -121,7 +121,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
         ksort($result);
 
-        return $result;
+        return array_values($result);
     }
 
     /**
@@ -259,7 +259,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 try {
                     $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                     if ($e instanceof UniqueConstraintViolationException) {
 
                         // check if the slug action can be resolved.

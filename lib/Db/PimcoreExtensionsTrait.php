@@ -265,7 +265,7 @@ trait PimcoreExtensionsTrait
      * @param array|scalar $params
      * @param array $types
      *
-     * @return mixed
+     * @return array
      *
      * @throws DBALException
      * @throws DriverException
@@ -546,7 +546,7 @@ trait PimcoreExtensionsTrait
      */
     protected function prepareParams($params)
     {
-        if (is_scalar($params)) {
+        if (!is_array($params)) {
             $params = [$params];
         }
 

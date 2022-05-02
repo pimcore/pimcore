@@ -70,7 +70,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $modificationDateTimestamp;
 
     /**
-     * @var int|null
+     * @var string|int|null
      */
     protected $id;
 
@@ -573,7 +573,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param int $id
+     * @param string|int $id
      */
     public function setId($id)
     {
@@ -581,7 +581,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return int|null
+     * @return string|int|null
      */
     public function getId()
     {
@@ -602,7 +602,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param \DateTime $creationDate
+     * @param \DateTime|null $creationDate
      */
     public function setCreationDate(\DateTime $creationDate = null)
     {
