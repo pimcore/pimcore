@@ -191,7 +191,7 @@ class EditableHandler implements LoggerAwareInterface
 
             $hasDialogBoxConfiguration = $brick instanceof EditableDialogBoxInterface;
 
-            // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
+            // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png or <bundleName>/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
 
