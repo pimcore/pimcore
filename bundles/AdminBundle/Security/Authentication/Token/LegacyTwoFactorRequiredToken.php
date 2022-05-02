@@ -13,18 +13,13 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller;
+namespace Pimcore\Bundle\AdminBundle\Security\Authentication\Token;
 
-use Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
  * @internal
- * Tagging interface used to protect certain controllers from brute force attacks
- *
- * @see BruteforceProtectionListener
- *
- * @deprecated
  */
-interface BruteforceProtectedControllerInterface
+class LegacyTwoFactorRequiredToken extends PostAuthenticationGuardToken
 {
 }

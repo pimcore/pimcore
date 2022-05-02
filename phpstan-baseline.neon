@@ -36,11 +36,6 @@ parameters:
 			path: bundles/AdminBundle/Security/Firewall/PreAuthenticatedAdminSessionListener.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of class Symfony\\\\Component\\\\HttpFoundation\\\\Cookie constructor expects string\\|null, false given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
-
-		-
 			message: "#^Parameter \\#1 \\$class of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importClassDefinitionFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Command/Definition/Import/ClassCommand.php

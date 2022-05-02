@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Security\Factory;
 
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -24,8 +25,23 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
+class PreAuthenticatedAdminSessionFactory  implements AuthenticatorFactoryInterface, SecurityFactoryInterface
 {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
+    {
+        $authenticatorId = 'pimcore.security.authenticator.admin_pre_auth.' . $firewallName;
+        $container
+            ->setDefinition($authenticatorId, new ChildDefinition('pimcore.security.authenticator.admin_pre_auth'))
+            ->replaceArgument('$userProvider', new Reference($userProviderId))
+            ->replaceArgument('$firewallName', $firewallName);
+
+        return $authenticatorId;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -55,6 +71,14 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function getPriority(): int
+    {
+        return 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPosition(): string
     {
         return 'pre_auth';
@@ -69,7 +93,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @param NodeDefinition|ArrayNodeDefinition $builder
+     * @param NodeDefinition $builder
      */
     public function addConfiguration(NodeDefinition $builder)
     {
