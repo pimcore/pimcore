@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -146,7 +147,12 @@ class Bootstrap
 
     private static function prepareEnvVariables()
     {
-        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        $finder = new Finder();
+        $finder->files()->name('.env*')->in(PIMCORE_PROJECT_ROOT)->depth('== 0');
+
+        if ($finder->hasResults()) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT.'/.env');
+        }
     }
 
     public static function defineConstants()
