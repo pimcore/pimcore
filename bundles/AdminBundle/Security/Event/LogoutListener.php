@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Event;
 
-use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Admin\Login\LogoutEvent as PimcoreLogoutEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;
@@ -61,7 +61,8 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
         protected TokenStorageInterface $tokenStorage,
         protected RouterInterface $router,
         protected EventDispatcherInterface $eventDispatcher
-    ) {}
+    ) {
+    }
 
     /**
      * @param LogoutEvent $event

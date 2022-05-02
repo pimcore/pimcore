@@ -16,8 +16,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;

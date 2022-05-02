@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
@@ -46,6 +46,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, LoggerAwareInterface
 {
     public const PIMCORE_ADMIN_LOGIN = 'pimcore_admin_login';
+
     public const PIMCORE_ADMIN_LOGIN_CHECK = 'pimcore_admin_login_check';
 
     use LoggerAwareTrait;
@@ -59,8 +60,8 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         protected EventDispatcherInterface $dispatcher,
         protected RouterInterface $router,
         protected TranslatorInterface $translator
-    )
-    {}
+    ) {
+    }
 
     /**
      * {@inheritdoc}

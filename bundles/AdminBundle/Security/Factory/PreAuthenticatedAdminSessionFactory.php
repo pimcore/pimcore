@@ -25,9 +25,8 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PreAuthenticatedAdminSessionFactory  implements AuthenticatorFactoryInterface, SecurityFactoryInterface
+class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterface, SecurityFactoryInterface
 {
-
     /**
      * {@inheritdoc}
      */

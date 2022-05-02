@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
@@ -42,8 +42,8 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
         private UserProviderInterface $userProvider,
         private TokenStorageInterface $tokenStorage,
         private string $firewallName
-        )
-    {}
+        ) {
+    }
 
     public function isInteractive(): bool
     {
@@ -59,12 +59,10 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
             if ($user) {
                 $username = $user->getUsername();
             }
-
         } catch (\Exception $e) {
             if ($e instanceof AuthenticationException) {
                 $this->clearToken($e);
             }
-
 
             if (null !== $this->logger) {
                 $this->logger->debug('Skipping pre-authenticated authenticator as a BadCredentialsException is thrown.', ['exception' => $e, 'authenticator' => static::class]);

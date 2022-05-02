@@ -9,16 +9,16 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +76,7 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
 
         $passport = new Passport(
             new UserBadge($username),
-            new CustomCredentials (function ($credentials) {
+            new CustomCredentials(function ($credentials) {
                 $pimcoreUser = Authentication::authenticatePlaintext($credentials['username'], $credentials['password']);
 
                 if ($pimcoreUser) {
@@ -104,7 +104,6 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
         }
 
         return $passport;
-
     }
 
     /**
