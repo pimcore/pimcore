@@ -108,12 +108,9 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getReadOnlyAttributeBag(string $name = 'pimcore_admin'): AttributeBagInterface
     {
-        if (isset($this->readOnlySessionBagsCache[$name])) {
-            $bag = $this->readOnlySessionBagsCache[$name];
-        } else {
-            $bag = $this->useSessionAttributeBag(function (AttributeBagInterface $bag) {
-                return $bag;
-            }, $name);
+        if (!$bag = $this->readOnlySessionBagsCache[$name] ?? false) {
+            $session = $this->loadSession();
+            $bag = $this->loadAttributeBag($name, $session);
         }
 
         if ($bag instanceof LockableAttributeBagInterface) {
