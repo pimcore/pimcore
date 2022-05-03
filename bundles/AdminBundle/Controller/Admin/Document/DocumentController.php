@@ -1618,15 +1618,22 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return array
      */
-     private function getSeoNodeConfig($document)
+    private function getSeoNodeConfig($document)
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
-        // analyze content
-        $nodeConfig['prettyUrl'] = method_exists($document, 'getPrettyUrl') ? $document->getPrettyUrl() : '';
+        $title = '';
+        $description = '';
+        $prettyUrl = '';
 
-        $title = method_exists($document, 'getTitle') ? $document->getTitle() : '';
-        $description = method_exists($document, 'getDescription') ? $document->getDescription() : '';
+        if ($document instanceof Document\Page) {
+            $title = $document->getTitle();
+            $description = $document->getDescription();
+            $prettyUrl = $document->getPrettyUrl();
+        }
+
+        // analyze content
+        $nodeConfig['prettyUrl'] = $prettyUrl;
 
         $nodeConfig['title'] = $title;
         $nodeConfig['description'] = $description;
