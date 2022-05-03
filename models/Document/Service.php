@@ -170,7 +170,7 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        if (method_exists($new, 'setPrettyUrl')) {
+        if ($new instanceof Page) {
             $new->setPrettyUrl(null);
         }
 
@@ -238,7 +238,7 @@ class Service extends Model\Element\Service
             $new->setIndex($new->getDao()->getNextIndex());
         }
 
-        if (method_exists($new, 'setPrettyUrl')) {
+        if ($new instanceof Page) {
             $new->setPrettyUrl(null);
         }
 
