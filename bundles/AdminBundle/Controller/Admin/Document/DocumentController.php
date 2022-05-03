@@ -1614,7 +1614,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @param Document\Page $document
+     * @param Document $document
      *
      * @return array
      */
