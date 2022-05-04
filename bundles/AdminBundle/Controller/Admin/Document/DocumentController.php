@@ -1622,24 +1622,19 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
-        $title = '';
-        $description = '';
-        $prettyUrl = '';
-
         if ($document instanceof Document\Page) {
+            // analyze content
+            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
+
             $title = $document->getTitle();
             $description = $document->getDescription();
-            $prettyUrl = $document->getPrettyUrl();
+
+            $nodeConfig['title'] = $title;
+            $nodeConfig['description'] = $description;
+
+            $nodeConfig['title_length'] = mb_strlen($title);
+            $nodeConfig['description_length'] = mb_strlen($description);
         }
-
-        // analyze content
-        $nodeConfig['prettyUrl'] = $prettyUrl;
-
-        $nodeConfig['title'] = $title;
-        $nodeConfig['description'] = $description;
-
-        $nodeConfig['title_length'] = mb_strlen($title);
-        $nodeConfig['description_length'] = mb_strlen($description);
 
         return $nodeConfig;
     }
