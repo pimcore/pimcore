@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -91,5 +92,49 @@ class LocalizedFieldTest extends ModelTestCase
 
         //new value (de): index 0
         $this->assertEquals('textDE', $loadedItem->getLinput('de'), 'New localized value inside fieldcollection not saved or loaded properly');
+    }
+
+    public function testLocalizedFieldFallback()
+    {
+        $configuration = Config::getSystemConfiguration();
+        $configuration['general']['fallback_languages']['de'] = 'en';
+        Config::setSystemConfiguration($configuration);
+
+        $object = TestHelper::createEmptyObject();
+
+        //en values
+        $object->setLinput('TestEN', 'en');
+        $object->setLcheckbox(true, 'en');
+        $object->setLnumber(123, 'en');
+
+        //de values
+        $object->setLinput('TestDE', 'de');
+        $object->setLcheckbox(true, 'de');
+        $object->setLnumber(0, 'de');
+
+        $object->save();
+
+        //empty de values check fallback
+        $object->setLinput('', 'de');
+        $object->setLcheckbox(false, 'de');
+        $object->save();
+
+        $object = DataObject\Unittest::getById($object->getId(), true);
+
+        $this->assertEquals('TestEN', $object->getLinput('de'));
+        $this->assertEquals(0, $object->getLnumber('de')); //fallback should not return, num 0 is set
+
+        //fallback for checkbox is not supported anymore
+        //$this->assertEquals(true, $object->getLcheckbox('de'));
+
+        //asset listing works with fallback value
+        $listing = new DataObject\Unittest\Listing();
+        $listing->setLocale('de');
+
+        $listing->setCondition("linput = 'TestEN'");
+        $this->assertEquals(1, count($listing->load()), 'Expected 1 item for fallback en condition');
+
+        $listing->setCondition("lcheckbox = '1'");
+        $this->assertEquals(0, count($listing->load()), 'Expected 0 item for fallback en condition');
     }
 }
