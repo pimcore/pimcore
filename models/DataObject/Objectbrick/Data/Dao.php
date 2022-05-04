@@ -156,7 +156,11 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate($storetable, $data);
+        if ($isBrickUpdate) {
+            $this->db->update($storetable, $data, ['o_id'=> $object->getId()]);
+        }else{
+            $this->db->insert($storetable, $data);
+        }
 
         // get data for query table
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
