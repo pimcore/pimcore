@@ -156,6 +156,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        /** @var bool $isBrickUpdate */
         if ($isBrickUpdate) {
             $this->db->update($storetable, $data, ['o_id'=> $object->getId()]);
         }else{
