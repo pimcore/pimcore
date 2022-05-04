@@ -50,7 +50,7 @@ trait ElementWithMetadataComparisonTrait
             if ((!$container1 && $container2) || ($container1 && !$container2)) {
                 return false;
             }
-            if (!$container1 && !$container2) {
+            if (!$container1) {
                 return true;
             }
 
