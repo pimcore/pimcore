@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Model\User;
+
 /**
  * @internal
  */
@@ -29,13 +31,17 @@ class Service
      *
      * @return string|null
      */
-    public static function getClassNameForType($type)
+    public static function getClassNameForType($type): ?string
     {
         switch ($type) {
-            case 'user': return '\\Pimcore\\Model\\User';
-            case 'userfolder': return '\\Pimcore\\Model\\User\\Folder';
-            case 'role': return '\\Pimcore\\Model\\User\\Role';
-            case 'rolefolder': return '\\Pimcore\\Model\\User\\Role\\Folder';
+            case 'user':
+                return User::class;
+            case 'userfolder':
+                return User\Folder::class;
+            case 'role':
+                return User\Role::class;
+            case 'rolefolder':
+                return User\Role\Folder::class;
             default:
                 return null;
         }
