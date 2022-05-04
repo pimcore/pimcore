@@ -33,17 +33,12 @@ class Service
      */
     public static function getClassNameForType($type): ?string
     {
-        switch ($type) {
-            case 'user':
-                return User::class;
-            case 'userfolder':
-                return User\Folder::class;
-            case 'role':
-                return User\Role::class;
-            case 'rolefolder':
-                return User\Role\Folder::class;
-            default:
-                return null;
-        }
+        return match ($type) {
+            'user' => User::class,
+            'userfolder' => User\Folder::class,
+            'role' => User\Role::class,
+            'rolefolder' => User\Role\Folder::class,
+            default => null,
+        };
     }
 }

@@ -66,6 +66,7 @@ class AbstractUser extends Model\AbstractModel
                 $className = Service::getClassNameForType($user->getType());
 
                 if (get_class($user) !== $className) {
+                    /** @var AbstractUser $user */
                     $user = $className::getById($user->getId());
                 }
 
