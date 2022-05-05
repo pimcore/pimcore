@@ -146,10 +146,10 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals(1, count($listing->load()), 'Expected 1 item for fallback en condition');
 
         //special case checkbox: set value to false and test fallback should not work
-        $object->setLcheckbox(false, 'de'); //should not take the fallback
+        $object->setLcheckbox(false, 'de');
         $object->save();
 
-        //todo check getter
+        $this->assertEquals(false, $object->getLcheckbox('de')); //should not take the fallback
 
         $listing = new DataObject\Unittest\Listing();
         $listing->setLocale('de');
@@ -158,10 +158,10 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals(0, count($listing->load()), 'Expected 0 item for fallback en condition as locale set to "de"');
 
         //special case number: set value to 0 and test fallback should not work
-        $object->setLnumber(0, 'de');  //should not take the fallback
+        $object->setLnumber(0, 'de');
         $object->save();
 
-        //todo check getter
+        $this->assertEquals(0, $object->getLnumber('de')); //should not take the fallback
 
         $listing = new DataObject\Unittest\Listing();
         $listing->setLocale('de');
