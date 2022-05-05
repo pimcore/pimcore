@@ -33,7 +33,7 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\PdoAdapter;
+use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -600,8 +600,8 @@ class Installer
                 }
             }
 
-            $pdoCacheAdapter = new PdoAdapter($db);
-            $pdoCacheAdapter->createTable();
+            $cacheAdapter = new DoctrineDbalAdapter($db);
+            $cacheAdapter->createTable();
 
             $doctrineTransportConn = new \Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection([], $db);
             $doctrineTransportConn->setup();

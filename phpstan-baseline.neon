@@ -31,16 +31,6 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/Manager.php
 
 		-
-			message: "#^Parameter \\#3 \\$roles of class Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\Authentication\\\\Token\\\\PreAuthenticatedAdminToken constructor expects array\\<string\\>, string given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/Firewall/PreAuthenticatedAdminSessionListener.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of class Symfony\\\\Component\\\\HttpFoundation\\\\Cookie constructor expects string\\|null, false given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
-
-		-
 			message: "#^Parameter \\#1 \\$class of static method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Service\\:\\:importClassDefinitionFromJson\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition, Pimcore\\\\Model\\\\AbstractModel given\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Command/Definition/Import/ClassCommand.php
@@ -214,11 +204,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
-
-		-
-			message: "#^Parameter \\#1 \\$connOrDsn of class Symfony\\\\Component\\\\Cache\\\\Adapter\\\\PdoAdapter constructor expects PDO\\|string, Pimcore\\\\Db\\\\Connection given\\.$#"
-			count: 1
-			path: bundles/InstallBundle/Installer.php
 
 		-
 			message: "#^Parameter \\#5 \\$priority of static method Pimcore\\\\Cache\\:\\:save\\(\\) expects int, null given\\.$#"
@@ -479,11 +464,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$definition of static method Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\\\Service\\:\\:getFieldDefinitionFromJson\\(\\) expects array, Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\|null given\\.$#"
 			count: 1
 			path: models/DataObject/Classificationstore/Service.php
-
-		-
-			message: "#^Variable \\$relations on left side of \\?\\? always exists and is not nullable\\.$#"
-			count: 1
-			path: models/DataObject/Concrete.php
 
 		-
 			message: "#^Parameter \\#1 \\$index of method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\<Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\>\\:\\:get\\(\\) expects int, string given\\.$#"

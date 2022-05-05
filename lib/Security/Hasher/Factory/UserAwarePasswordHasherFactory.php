@@ -72,14 +72,14 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
             throw new ConfigurationException('An encoder built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
         }
 
-        $encoder = $this->buildPasswordHasher($reflector);
+        $hasher = $this->buildPasswordHasher($reflector);
 
-        if ($encoder instanceof UserAwarePasswordHasherInterface) {
-            $encoder->setUser($user);
+        if ($hasher instanceof UserAwarePasswordHasherInterface) {
+            $hasher->setUser($user);
         }
 
-        $this->hashers[$username] = $encoder;
+        $this->hashers[$username] = $hasher;
 
-        return $encoder;
+        return $hasher;
     }
 }

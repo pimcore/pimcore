@@ -1,7 +1,8 @@
 
-name: "Static Analysis"
+name: "PHPStan Static Analysis"
 
 on:
+    workflow_dispatch:
     schedule:
         -   cron: '0 3 * * *'
     pull_request:

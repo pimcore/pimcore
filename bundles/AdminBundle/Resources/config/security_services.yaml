@@ -29,6 +29,49 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    # the password hasher factory builds a dedicated hasher per user
+    # as we need the user instance to hash passwords.
+    # we don't specifiy this as fully qualified class name as there can be multiple factories (one for each user type)
+    pimcore_admin.security.password_hasher_factory:
+        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+        arguments:
+            - Pimcore\Bundle\AdminBundle\Security\Hasher\AdminPasswordHasher
+
+    # Authenticators for handling admin login and session authentications
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    pimcore.security.authenticator.admin_pre_auth:
+        class: Pimcore\Bundle\AdminBundle\Security\Authenticator\PreAuthenticatedAdminSessionAuthenticator
+        public: false
+        abstract: true
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        arguments:
+            $userProvider: !abstract defined by the factory
+            $tokenStorage: '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
+            $firewallName: !abstract defined by the factory
+
+
+    Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
 
     Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
         public: false
