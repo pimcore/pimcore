@@ -167,15 +167,19 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @param string $prettyUrl
+     * @param string|null $prettyUrl
      *
      * @return $this
      */
     public function setPrettyUrl($prettyUrl)
     {
-        $this->prettyUrl = '/' . trim($prettyUrl, ' /');
-        if (strlen($this->prettyUrl) < 2) {
+        if (!$prettyUrl) {
             $this->prettyUrl = null;
+        } else {
+            $this->prettyUrl = '/' . trim($prettyUrl, ' /');
+            if (strlen($this->prettyUrl) < 2) {
+                $this->prettyUrl = null;
+            }
         }
 
         return $this;
