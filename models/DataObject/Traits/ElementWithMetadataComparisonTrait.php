@@ -47,11 +47,8 @@ trait ElementWithMetadataComparisonTrait
             /** @var ElementMetadata|null $container2 */
             $container2 = $values2[$i];
 
-            if ((!$container1 && $container2) || ($container1 && !$container2)) {
-                return false;
-            }
-            if (!$container1 && !$container2) {
-                return true;
+            if (!$container1 || !$container2) {
+                return !$container1 && !$container2;
             }
 
             /** @var ElementInterface $el1 */
