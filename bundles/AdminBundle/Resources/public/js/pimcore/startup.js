@@ -586,6 +586,10 @@ Ext.onReady(function () {
     }, 5000);
 
 
+    Ext.get("pimcore_logout").on('click', function () {
+        document.getElementById('pimcore_logout_form').submit();
+    })
+
     // remove loading
     Ext.get("pimcore_loading").addCls("loaded");
     Ext.get("pimcore_loading").hide();
