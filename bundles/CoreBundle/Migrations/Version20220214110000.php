@@ -33,7 +33,7 @@ final class Version20220214110000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if ($schema->getTable('versions')->hasColumn('storageType') === false) {
-            $this->addSql('ALTER TABLE `versions` ADD COLUMN `storageType` varchar(5) DEFAULT NULL;');
+            $this->addSql('ALTER TABLE `versions` ADD COLUMN `storageType` varchar(5) NOT NULL;');
             $this->addSql("update `versions` set storageType = 'fs'");
         }
     }
