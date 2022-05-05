@@ -160,7 +160,7 @@ class RecyclebinTest extends ModelTestCase
 
         //load relation and check if relation loads correctly
         $restoredSourceObject = DataObject::getById($sourceObjectId);
-        $restoredRelation = $restoredSourceObject->getLobjects();
+        $restoredRelation = $restoredSourceObject->getObjects();
         $restoredLocalizedRelation = $restoredSourceObject->getLobjects();
 
         $this->assertEquals($inputText, $restoredSourceObject->getInput(), 'Input data not restored properly');
