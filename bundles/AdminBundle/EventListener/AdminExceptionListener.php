@@ -119,7 +119,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param ValidationException[] $items
+     * @param \Exception[] $items
      * @param string $message
      * @param string $detailedInfo
      */
@@ -141,7 +141,9 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
             }
 
-            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+            if ($e instanceof ValidationException) {
+                $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+            }
         }
     }
 
