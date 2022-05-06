@@ -19,12 +19,28 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\AdminStyle;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Translation\Translator;
 
 /**
  * @internal
  */
 trait AdminStyleTrait
 {
+
+    /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
+     * 
+     * @param Translator $translator
+     */
+    public function __construct(Translator $translator) 
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @param ElementInterface $element
      * @param null|int $context
@@ -34,7 +50,7 @@ trait AdminStyleTrait
      */
     protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
     {
-        $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
+        $event = new ElementAdminStyleEvent($element, new AdminStyle($element, $this->translator), $context);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();
 
