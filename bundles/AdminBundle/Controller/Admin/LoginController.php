@@ -43,13 +43,12 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 /**
  * @internal
- *
- * @property TranslatorInterface $translator
  */
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
@@ -76,7 +75,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $this->translator->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
     }
 
     /**

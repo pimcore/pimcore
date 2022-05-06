@@ -44,6 +44,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -52,7 +53,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @Route("/admin-order")
  *
- * @property TranslatorInterface $translator
  */
 class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
@@ -72,7 +72,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $user = $this->tokenResolver->getUser();
 
         if ($user) {
-            $this->translator->setLocale($user->getLanguage());
+            if ($this->translator instanceof LocaleAwareInterface) {
+                $this->translator->setLocale($user->getLanguage());
+            }
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
