@@ -45,21 +45,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+
 /**
  * @internal
+ *
+ * @property TranslatorInterface $translator
  */
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
-    /**
-     * @var ResponseHelper
-     */
-    protected $reponseHelper;
-    protected $bundleManager;
-
-    public function __construct(ResponseHelper $responseHelper, PimcoreBundleManager $bundleManager)
-    {
-        $this->reponseHelper = $responseHelper;
-        $this->bundleManager = $bundleManager;
+    public function __construct(
+        protected ResponseHelper $responseHelper,
+        protected PimcoreBundleManager $bundleManager
+    ) {
     }
 
     /**
@@ -89,7 +86,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
-        $this->reponseHelper->disableCache($response, true);
+        $this->responseHelper->disableCache($response, true);
     }
 
     /**
