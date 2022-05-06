@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ConfigController extends AdminController
 {
     /**
-     * @var Router
+     * @var RouterInterface
      */
     private $router;
 

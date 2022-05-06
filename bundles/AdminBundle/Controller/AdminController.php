@@ -90,7 +90,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @param false $proxyUser
+     * @param bool $proxyUser
      * @return UserProxy|User|null
      */
     protected function getAdminUser($proxyUser = false)
