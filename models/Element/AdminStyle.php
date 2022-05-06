@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Pimcore\Translation\Translator;
 
 class AdminStyle
 {
@@ -49,7 +49,7 @@ class AdminStyle
     /**
      * @param AbstractObject|Asset|Document|ElementInterface $element
      */
-    public function __construct(ElementInterface $element)
+    public function __construct(ElementInterface $element, Translator $translator)
     {
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
@@ -97,7 +97,6 @@ class AdminStyle
                 $site = Site::getByRootId($element->getId());
 
                 if ($site instanceof Site) {
-                    $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
