@@ -37,6 +37,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
+    protected $translator;
+    protected $tokenResolver;
+    /**
+     * AdminController constructor.
+     * @param TranslatorInterface $trans
+     * @param TokenStorageUserResolver $tokenStorageUserResolver
+     */
+    public function __construct(TranslatorInterface $trans, TokenStorageUserResolver $tokenStorageUserResolver)
+    {
+        $this->translator = $trans;
+        $this->tokenResolver = $tokenStorageUserResolver;
+    }
     /**
      * @return string[]
      */
