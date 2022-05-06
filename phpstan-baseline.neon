@@ -11,11 +11,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
 
 		-
-			message: "#^Parameter \\#1 \\$items of method Pimcore\\\\Bundle\\\\AdminBundle\\\\EventListener\\\\AdminExceptionListener\\:\\:recursiveAddValidationExceptionSubItems\\(\\) expects array\\<Pimcore\\\\Model\\\\Element\\\\ValidationException\\>, array\\<Exception\\> given\\.$#"
-			count: 2
-			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php
-
-		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
