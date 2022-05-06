@@ -21,6 +21,7 @@ use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -29,6 +30,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class FrontendController extends Controller
 {
+    /**
+     * @var ResponseHeaderResolver
+     */
+    protected $responseResolver;
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+    /**
+     * @var DocumentResolver
+     */
+    protected $documentResolver;
+    /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
     /**
      * {@inheritdoc}
      *
@@ -53,11 +70,11 @@ abstract class FrontendController extends Controller
     public function __get($name)
     {
         if ('document' === $name) {
-            return $this->get(DocumentResolver::class)->getDocument();
+            return $this->documentResolver->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->get(EditmodeResolver::class)->isEditmode();
+            return $this->editmodeResolver->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
@@ -80,6 +97,42 @@ abstract class FrontendController extends Controller
     }
 
     /**
+     * @required
+     * @param ResponseHeaderResolver $responseResolver
+     */
+    public function setResponseResolver(ResponseHeaderResolver $responseResolver): void
+    {
+        $this->responseResolver = $responseResolver;
+    }
+
+    /**
+     * @required
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
+    }
+
+    /**
+     * @required
+     * @param DocumentResolver $documentResolver
+     */
+    public function setDocumentResolver(DocumentResolver $documentResolver): void
+    {
+        $this->documentResolver = $documentResolver;
+    }
+
+    /**
+     * @required
+     * @param EditmodeResolver $editmodeResolver
+     */
+    public function setEditmodeResolver(EditmodeResolver $editmodeResolver): void
+    {
+        $this->editmodeResolver = $editmodeResolver;
+    }
+
+    /**
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
@@ -91,10 +144,10 @@ abstract class FrontendController extends Controller
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
         if (null === $request) {
-            $request = $this->get('request_stack')->getCurrentRequest();
+            $request = $this->requestStack->getCurrentRequest();
         }
 
-        $this->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
+        $this->responseResolver->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**

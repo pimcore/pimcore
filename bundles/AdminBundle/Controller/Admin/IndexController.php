@@ -54,11 +54,18 @@ class IndexController extends AdminController implements KernelResponseEventInte
     private $eventDispatcher;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var PimcoreBundleManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    private $bundleManager;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param PimcoreBundleManager $pimcoreBundleManager
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher, PimcoreBundleManager $pimcoreBundleManager)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->bundleManager = $pimcoreBundleManager;
     }
 
     /**
@@ -183,10 +190,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $bundleManager = $this->get(PimcoreBundleManager::class);
-
-        $templateParams['pluginJsPaths'] = $bundleManager->getJsPaths();
-        $templateParams['pluginCssPaths'] = $bundleManager->getCssPaths();
+        $templateParams['pluginJsPaths'] = $this->bundleManager->getJsPaths();
+        $templateParams['pluginCssPaths'] = $this->bundleManager->getCssPaths();
 
         return $this;
     }

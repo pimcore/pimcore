@@ -67,10 +67,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
-        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+        $user = $this->tokenResolver->getUser();
 
         if ($user) {
-            $this->get('translator')->setLocale($user->getLanguage());
+            $this->translator->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());
         }
 

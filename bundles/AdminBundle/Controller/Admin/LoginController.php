@@ -43,6 +43,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @internal
@@ -53,10 +54,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @var ResponseHelper
      */
     protected $reponseHelper;
+    protected $bundleManager;
 
-    public function __construct(ResponseHelper $responseHelper)
+    public function __construct(ResponseHelper $responseHelper, PimcoreBundleManager $bundleManager)
     {
         $this->reponseHelper = $responseHelper;
+        $this->bundleManager = $bundleManager;
     }
 
     /**
@@ -76,7 +79,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $this->get('translator')->setLocale($locale);
+        $this->translator->setLocale($locale);
     }
 
     /**
@@ -275,11 +278,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     protected function buildLoginPageViewParams(Config $config): array
     {
-        $bundleManager = $this->get(PimcoreBundleManager::class);
-
         return [
             'config' => $config,
-            'pluginCssPaths' => $bundleManager->getCssPaths(),
+            'pluginCssPaths' => $this->bundleManager->getCssPaths(),
         ];
     }
 

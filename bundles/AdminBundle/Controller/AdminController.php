@@ -32,6 +32,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
     /**
+     * @var TokenStorageUserResolver
+     */
+    protected $tokenResolver;
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * {@inheritdoc}
      *
      */
@@ -69,15 +78,29 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @return UserProxy|User|null
      */
+
+
+    /**
+     * @required
+     * @param TokenStorageUserResolver $tokenResolver
+     */
+    public function setTokenResolver(TokenStorageUserResolver $tokenResolver)
+    {
+        $this->tokenResolver = $tokenResolver;
+    }
+
+    /**
+     * @param false $proxyUser
+     * @return UserProxy|User|null
+     */
     protected function getAdminUser($proxyUser = false)
     {
-        $resolver = $this->get(TokenStorageUserResolver::class);
 
         if ($proxyUser) {
-            return $resolver->getUserProxy();
+            return $this->tokenResolver->getUserProxy();
         }
 
-        return $resolver->getUser();
+        return $this->tokenResolver->getUser();
     }
 
     /**
@@ -240,6 +263,15 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
+     * @required
+     */
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
+
+    /**
      * Translates the given message.
      *
      * @param string $id The message id (may also be an object that can be cast to string)
@@ -253,8 +285,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        $translator = $this->get('translator');
-
-        return $translator->trans($id, $parameters, $domain, $locale);
+        return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 }
