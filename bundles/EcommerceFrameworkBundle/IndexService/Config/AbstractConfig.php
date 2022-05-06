@@ -344,11 +344,16 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface|array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId)
     {
-        return $this->getObjectById($objectId);
+        $object = $this->getObjectById($objectId);
+        if ($object instanceof IndexableInterface) {
+            return $object;
+        }
+
+        return null;
     }
 
     /**

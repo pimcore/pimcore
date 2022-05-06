@@ -359,7 +359,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId)
     {

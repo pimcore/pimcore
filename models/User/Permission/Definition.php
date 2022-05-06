@@ -111,7 +111,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $permission
      *
-     * @return static
+     * @return self|static
      *
      * @throws \Exception
      */

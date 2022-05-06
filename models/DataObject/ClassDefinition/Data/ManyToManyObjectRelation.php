@@ -800,7 +800,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

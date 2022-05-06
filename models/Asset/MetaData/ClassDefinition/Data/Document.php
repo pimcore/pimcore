@@ -109,7 +109,7 @@ class Document extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return int|null
+     * @return int|string|null
      */
     public function getDataFromEditMode($data, $params = [])
     {

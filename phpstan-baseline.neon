@@ -141,6 +141,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\>\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
+
+		-
 			message: "#^Call to function is_array\\(\\) with mixed will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/DefaultFindologic.php
@@ -294,6 +299,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$documentId of method Pimcore\\\\Web2Print\\\\Processor\\:\\:startPdfGeneration\\(\\) expects int, string given\\.$#"
 			count: 1
 			path: lib/Messenger/Handler/GenerateWeb2PrintPdfHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:save\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SanityCheckHandler.php
 
 		-
 			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"

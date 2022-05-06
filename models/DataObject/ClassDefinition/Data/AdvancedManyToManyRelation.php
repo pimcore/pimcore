@@ -900,6 +900,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -986,7 +988,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

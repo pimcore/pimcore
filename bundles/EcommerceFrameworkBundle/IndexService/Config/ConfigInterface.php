@@ -170,7 +170,7 @@ interface ConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId);
 

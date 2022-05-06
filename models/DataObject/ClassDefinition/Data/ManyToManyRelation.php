@@ -907,7 +907,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

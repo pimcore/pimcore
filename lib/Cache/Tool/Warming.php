@@ -107,9 +107,9 @@ class Warming
     }
 
     /**
-     * @param AbstractListing $list
+     * @param Document\Listing|Asset\Listing|DataObject\Listing $list
      */
-    protected static function loadToCache(AbstractListing $list)
+    protected static function loadToCache(Document\Listing|Asset\Listing|DataObject\Listing $list)
     {
         $totalCount = $list->getTotalCount();
         $iterations = ceil($totalCount / self::getPerIteration());
