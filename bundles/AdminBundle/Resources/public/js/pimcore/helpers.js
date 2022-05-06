@@ -649,14 +649,14 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             if (el.document.data.published) {
                 el.document.publish();
             } else {
-                el.document.unpublish();
+                el.document.save('version');
             }
         }
         else if (el.object) {
             if (el.object.data.general.o_published) {
                 el.object.publish();
             } else {
-                el.object.unpublish();
+                el.object.save('version');
             }
         }
         else if (el.asset) {
