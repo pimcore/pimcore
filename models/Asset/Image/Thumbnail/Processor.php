@@ -186,7 +186,7 @@ class Processor
             $modificationDate = $asset->getDao()->getCachedThumbnailModificationDate($config->getName(), $filename);
             if ($modificationDate === null && $storage->fileExists($storagePath)) {
                 $modificationDate = $storage->lastModified($storagePath);
-                $modificationDate = $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
+                $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
             }
         } else {
             if ($storage->fileExists($storagePath)) {
