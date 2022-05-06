@@ -210,7 +210,7 @@
     {% endif %}
 
     <!--Script for tab view-->
-    <script>
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
         document.addEventListener("DOMContentLoaded", function(event) {
             var documentBody = document.getElementsByTagName("body")[0];
             /**
