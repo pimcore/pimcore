@@ -131,7 +131,9 @@ class AdminExceptionListener implements EventSubscriberInterface
         foreach ($items as $e) {
             if ($e->getMessage()) {
                 $message .= '<b>' . $e->getMessage() . '</b>';
-                $this->addContext($e, $message);
+                if ($e instanceof ValidationException) {
+                    $this->addContext($e, $message);
+                }
                 $message .= '<br>';
 
                 $detailedInfo .= '<br><b>Message:</b><br>';
