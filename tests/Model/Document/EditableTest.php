@@ -172,7 +172,7 @@ class EditableTest extends ModelTestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete $object
+     * @param Page $document
      * @param array|string $fields
      * @param array $returnData
      */

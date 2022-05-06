@@ -31,8 +31,10 @@ trait Timeout
     /** @var int */
     private $timeout = -1;
 
+    /** @var int|null */
     private $startTimeCurrentStep = null;
 
+    /** @var int|null */
     private $startTime = null;
 
     /**
@@ -125,7 +127,7 @@ trait Timeout
     /**
      * Get the start time of the current step in seconds (unixtime).
      *
-     * @return null
+     * @return int|null
      */
     public function getStartTimeCurrentStep(): ?int
     {

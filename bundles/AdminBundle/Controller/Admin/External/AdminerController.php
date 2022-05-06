@@ -266,7 +266,7 @@ namespace {
                 }
 
                 /**
-                 * @return mixed
+                 * @return string
                  */
                 public function database()
                 {

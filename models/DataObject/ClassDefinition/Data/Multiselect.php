@@ -68,7 +68,7 @@ class Multiselect extends Data implements
     /**
      * @internal
      *
-     * @var int
+     * @var string|int
      */
     public $height = 0;
 
@@ -532,7 +532,7 @@ class Multiselect extends Data implements
      * @param array|null $existingData
      * @param array $additionalData
      *
-     * @return mixed
+     * @return array
      */
     public function appendData($existingData, $additionalData)
     {
@@ -645,8 +645,6 @@ class Multiselect extends Data implements
      *
      * @param mixed $containerDefinition
      * @param array $params
-     *
-     * @return mixed
      */
     public function preSave($containerDefinition, $params = [])
     {
@@ -678,8 +676,6 @@ class Multiselect extends Data implements
     /**
      * @param mixed $containerDefinition
      * @param array $params
-     *
-     * @return mixed
      */
     public function postSave($containerDefinition, $params = [])
     {

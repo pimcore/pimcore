@@ -26,7 +26,7 @@ class PaymentNotAllowedException extends AbstractEcommerceException
     protected $order;
 
     /**
-     * @var CartInterface
+     * @var CartInterface|null
      */
     protected $cart;
 
@@ -40,7 +40,7 @@ class PaymentNotAllowedException extends AbstractEcommerceException
      *
      * @param string $message
      * @param AbstractOrder $order
-     * @param CartInterface $cart
+     * @param CartInterface|null $cart
      * @param bool $orderNeedsUpdate
      */
     public function __construct(string $message, AbstractOrder $order, CartInterface $cart = null, bool $orderNeedsUpdate = null)

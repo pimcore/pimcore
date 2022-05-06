@@ -59,7 +59,7 @@ class SanityCheckHandler implements BatchHandlerInterface
     }
 
     /**
-     * @param PageSnippet|Asset|Concrete $element
+     * @param ElementInterface $element
      *
      * @throws \Exception
      */

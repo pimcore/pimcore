@@ -27,27 +27,27 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AdminStyle
 {
     /**
-     * @var string
+     * @var string|bool|null
      */
     protected $elementCssClass = '';
 
     /**
-     * @var string
+     * @var string|bool|null
      */
     protected $elementIcon;
 
     /**
-     * @var string
+     * @var string|bool|null
      */
     protected $elementIconClass;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $elementQtipConfig;
 
     /**
-     * @param AbstractObject|Asset|Document|ElementInterface $element
+     * @param ElementInterface $element
      */
     public function __construct(ElementInterface $element)
     {
@@ -120,7 +120,7 @@ class AdminStyle
     }
 
     /**
-     * @param null|string $elementCssClass
+     * @param string|bool|null $elementCssClass
      *
      * @return $this
      */
@@ -144,7 +144,7 @@ class AdminStyle
     }
 
     /**
-     * @return string
+     * @return string|bool|null
      */
     public function getElementCssClass()
     {
@@ -152,7 +152,7 @@ class AdminStyle
     }
 
     /**
-     * @param null|string $elementIcon
+     * @param string|bool|null $elementIcon
      *
      * @return $this
      */
@@ -172,7 +172,7 @@ class AdminStyle
     }
 
     /**
-     * @param null|string $elementIconClass
+     * @param string|bool|null $elementIconClass
      *
      * @return $this
      */

@@ -25,7 +25,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return array
      */
     public function getChilds()
     {
@@ -47,7 +47,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return $this
      */
     public function setChilds()
     {
@@ -69,7 +69,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return bool
      */
     public function hasChilds()
     {

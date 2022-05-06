@@ -109,7 +109,7 @@ class Document extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getDataFromEditMode($data, $params = [])
     {
@@ -198,7 +198,7 @@ class Document extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getDataFromListfolderGrid($data, $params = [])
     {

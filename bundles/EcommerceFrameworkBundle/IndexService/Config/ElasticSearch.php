@@ -346,7 +346,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @param mixed $data
      * @param array $relations
      *
-     * @return mixed
+     * @return DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations)
     {

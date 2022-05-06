@@ -529,7 +529,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
@@ -777,11 +777,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /** See parent class.
+     *
      * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

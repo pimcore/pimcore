@@ -107,7 +107,7 @@ class Warming
     }
 
     /**
-     * @param Document\Listing|Asset\Listing|DataObject\Listing $list
+     * @param AbstractListing $list
      */
     protected static function loadToCache(AbstractListing $list)
     {

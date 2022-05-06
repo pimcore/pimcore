@@ -55,7 +55,7 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Default title rendering order (i.e. order in which each title attached)
      *
-     * @var string
+     * @var string|null
      */
     protected $_defaultAttachOrder = null;
 
@@ -113,7 +113,7 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Get the default attach order, if any.
      *
-     * @return mixed
+     * @return string|null
      */
     public function getDefaultAttachOrder()
     {

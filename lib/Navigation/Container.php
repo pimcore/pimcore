@@ -532,7 +532,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return mixed
+     * @return int|string|null
      */
     #[\ReturnTypeWillChange]
     public function key()// : mixed

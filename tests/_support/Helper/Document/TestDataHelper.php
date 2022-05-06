@@ -44,7 +44,7 @@ use Pimcore\Tests\Util\TestHelper;
 class TestDataHelper extends AbstractTestDataHelper
 {
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -82,7 +82,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -98,7 +98,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -115,7 +115,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param Page $page
      * @param string $field
      * @param int $seed
      */
@@ -130,7 +130,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
@@ -148,7 +148,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -163,7 +163,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -186,7 +186,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -202,7 +202,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -217,7 +217,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
@@ -235,7 +235,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -253,7 +253,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -275,7 +275,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param Page $page
      * @param string $field
      * @param int $seed
      */
@@ -311,7 +311,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -327,7 +327,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -350,7 +350,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
@@ -381,7 +381,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
@@ -391,7 +391,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */

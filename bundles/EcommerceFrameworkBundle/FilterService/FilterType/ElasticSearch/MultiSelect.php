@@ -36,7 +36,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
     /**
      * @param FilterMultiSelect $filterDefinition
-     * @param ProductListInterface|AbstractElasticSearch $productList
+     * @param ProductListInterface $productList
      * @param array $currentFilter
      * @param array $params
      * @param bool $isPrecondition

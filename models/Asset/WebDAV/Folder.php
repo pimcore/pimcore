@@ -70,7 +70,7 @@ class Folder extends DAV\Collection
     /**
      * @param Asset|string $name
      *
-     * @return DAV\INode|void
+     * @return File|Folder
      *
      * @throws DAV\Exception\NotFound
      */

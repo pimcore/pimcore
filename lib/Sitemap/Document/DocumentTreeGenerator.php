@@ -134,7 +134,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
      * @param Document $document
      * @param DocumentGeneratorContext $context
      *
-     * @return \Generator|Document[]
+     * @return \Generator
      *
      * @throws \Exception
      */

@@ -1402,7 +1402,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse|StreamedResponse
+     * @return StreamedResponse
      */
     public function getFolderThumbnailAction(Request $request)
     {
