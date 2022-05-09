@@ -285,6 +285,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->userPermissionTest5->setPermissions(['assets', 'objects']);
         $this->userPermissionTest5->setWorkspacesObject([
             (new User\Workspace\DataObject())->setValues(['cId' => $this->usertestobject->getId(), 'cPath' => $this->usertestobject->getFullpath(), 'list' => true, 'view' => true]),
+        ]);
+        $this->userPermissionTest5->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->assetElement->getId(), 'cPath' => $this->assetElement->getFullpath(), 'list' => true, 'view' => true]),
         ]);
         $this->userPermissionTest5->save();
@@ -295,8 +297,11 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->userPermissionTest6->setPermissions([]);
         $this->userPermissionTest6->setWorkspacesObject([
             (new User\Workspace\DataObject())->setValues(['cId' => $this->usertestobject->getId(), 'cPath' => $this->usertestobject->getFullpath(), 'list' => true, 'view' => true]),
+        ]);
+        $this->userPermissionTest6->setWorkspacesAsset([
             (new User\Workspace\Asset())->setValues(['cId' => $this->assetElement->getId(), 'cPath' => $this->assetElement->getFullpath(), 'list' => true, 'view' => true]),
         ]);
+
         $this->userPermissionTest6->save();
     }
 
