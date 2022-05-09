@@ -575,7 +575,8 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         return this.datax;
     },
 
-    applyData: function (){
+    applyData: function ($super){
+        $super();
         return this.getData();
     },
 

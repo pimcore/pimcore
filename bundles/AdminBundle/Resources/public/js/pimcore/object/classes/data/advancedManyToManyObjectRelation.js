@@ -383,11 +383,11 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             });
             this.datax.columns = cols;
         }
-
         return this.datax;
     },
 
-    applyData: function (){
+    applyData: function ($super){
+        $super();
         return this.getData();
     },
 

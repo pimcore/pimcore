@@ -300,7 +300,8 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         return this.datax;
     },
 
-    applyData: function (){
+    applyData: function ($super){
+        $super();
         return this.getData();
     },
 
