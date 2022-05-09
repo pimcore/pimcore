@@ -56,6 +56,7 @@ class Manager
             if ($left->getSortPriority() === $right->getSortPriority()) {
                 return 0;
             }
+
             return ($left->getSortPriority() < $right->getSortPriority()) ? -1 : 1;
         });
 
