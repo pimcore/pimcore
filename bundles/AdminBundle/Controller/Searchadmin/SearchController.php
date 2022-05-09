@@ -87,11 +87,7 @@ class SearchController extends AdminController
         $conditionParts = [];
         $db = \Pimcore\Db::get();
 
-        $forbiddenConditions = $this->getForbiddenCondition($types);
-
-        if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
-        }
+        $conditionParts[] = $this->getPermittedPaths($types);
 
         $queryCondition = '';
         if (!empty($query)) {
@@ -353,15 +349,18 @@ class SearchController extends AdminController
      *
      * @return array
      */
-    protected function getForbiddenCondition($types = ['asset', 'document', 'object'])
+    protected function getPermittedPaths($types = ['asset', 'document', 'object'])
     {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
 
-        $forbiddenConditions = [];
+
+        $allowedTypes = [];
 
         foreach ($types as $type) {
-            if ($user->isAllowed($type . 's')) { //the permissions are just plural
+            if (!$user->isAllowed($type . 's')) { //the permissions are just plural
+                $allowedTypes[] = '(maintype != \'' . $type . '\' AND 1 = 0)'; //hacky, always false
+            }else{
                 $elementPaths = Element\Service::findForbiddenPaths($type, $user);
 
                 $forbiddenPathSql = [];
@@ -380,10 +379,8 @@ class SearchController extends AdminController
                     $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
                 }
 
-
                 // this is to avoid query error when implode is empty.
                 // the result would be like `(maintype = type AND ((path1 OR path2) AND (not_path3 AND not_path4)))`
-
                 $forbiddenAndAllowedSql = '(maintype = \'' . $type . '\'';
 
                 if ($allowedPathSql || $forbiddenPathSql) {
@@ -400,11 +397,11 @@ class SearchController extends AdminController
 
                 $forbiddenAndAllowedSql.= ' )';
 
-                $forbiddenConditions[] = $forbiddenAndAllowedSql;
+                $allowedTypes[] = $forbiddenAndAllowedSql;
             }
         }
 
-        return $forbiddenConditions;
+        return '('.implode(' OR ', $allowedTypes) .')';
     }
 
     /**
@@ -456,10 +453,7 @@ class SearchController extends AdminController
 
         $conditionParts = [];
 
-        $forbiddenConditions = $this->getForbiddenCondition();
-        if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' OR ', $forbiddenConditions) . ')';
-        }
+        $conditionParts[] = $this->getPermittedPaths();
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
         $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";
