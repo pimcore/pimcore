@@ -34,7 +34,7 @@ class Image extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'image';
+    protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 

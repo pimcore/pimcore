@@ -29,7 +29,7 @@ class Folder extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'folder';
+    protected string $type = 'folder';
 
     /**
      * @internal

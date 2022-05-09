@@ -89,7 +89,7 @@ class Asset extends Element\AbstractElement
      *
      * @var string
      */
-    protected $type = '';
+    protected string $type = '';
 
     /**
      * @internal
