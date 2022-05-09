@@ -278,6 +278,16 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->userPermissionTest4->setPermissions(['objects']);
         $this->userPermissionTest4->setRoles([$role->getId(), $role2->getId()]);
         $this->userPermissionTest4->save();
+
+        //create user 5, with no roles, assets and data objects allowed in parallel
+        $this->userPermissionTest5 = new User();
+        $this->userPermissionTest5->setName('Permissiontest5');
+        $this->userPermissionTest5->setPermissions(['objects', 'assets']);
+        $this->userPermissionTest5->setWorkspacesObject([
+            (new User\Workspace\DataObject())->setValues(['cId' => $this->usertestobject->getId(), 'cPath' => $this->usertestobject->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Asset())->setValues(['cId' => $this->assetElement->getId(), 'cPath' => $this->assetElement->getFullpath(), 'list' => true, 'view' => true]),
+        ]);
+        $this->userPermissionTest5->save();
     }
 
     public function setUp(): void
@@ -299,6 +309,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest2')->delete();
         User::getByName('Permissiontest3')->delete();
         User::getByName('Permissiontest4')->delete();
+        User::getByName('Permissiontest5')->delete();
         User\Role::getByName('Testrole')->delete();
         User\Role::getByName('Dummyrole')->delete();
     }
@@ -639,6 +650,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->bars->getFullpath()]
         );
 
+        $this->doTestTreeGetChildsById(
+            $this->permissionfoo,
+            $this->userPermissionTest5,
+            [$this->bars->getFullpath()]
+        );
+
         // test /permissionfoo/bars
         $this->doTestTreeGetChildsById(
             $this->bars,
@@ -668,6 +685,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->bars,
             $this->userPermissionTest4,
             [$this->groupfolder->getFullpath()]
+        );
+
+        $this->doTestTreeGetChildsById(
+            $this->bars,
+            $this->userPermissionTest5,
+            [$this->userfolder->getFullpath()]
         );
 
         // test /permissionfoo/bars/userfolder
@@ -701,6 +724,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             []
         );
 
+        $this->doTestTreeGetChildsById(
+            $this->userfolder,
+            $this->userPermissionTest5,
+            [$this->usertestobject->getFullpath()]
+        );
+
         // test /permissionfoo/bars/groupfolder
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
@@ -730,6 +759,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->groupfolder,
             $this->userPermissionTest4,
             [$this->grouptestobject->getFullpath()]
+        );
+
+        $this->doTestTreeGetChildsById(
+            $this->groupfolder,
+            $this->userPermissionTest5,
+            []
         );
 
         // test /permissionbar
@@ -762,6 +797,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userPermissionTest4,
             []
         );
+
+        $this->doTestTreeGetChildsById(
+            $this->permissionbar,
+            $this->userPermissionTest5,
+            []
+        );
         // test /permissionbar/foo
         $this->doTestTreeGetChildsById(
             $this->foo,
@@ -782,14 +823,20 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
 
         $this->doTestTreeGetChildsById(
-            $this->permissionbar,
+            $this->foo,
             $this->userPermissionTest3,
             []
         );
 
         $this->doTestTreeGetChildsById(
-            $this->permissionbar,
+            $this->foo,
             $this->userPermissionTest4,
+            []
+        );
+
+        $this->doTestTreeGetChildsById(
+            $this->foo,
+            $this->userPermissionTest5,
             []
         );
 
@@ -851,6 +898,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('hugo', $this->userPermissionTest2, []);
         $this->doTestSearch('hugo', $this->userPermissionTest3, []);
         $this->doTestSearch('hugo', $this->userPermissionTest4, []);
+        $this->doTestSearch('hugo', $this->userPermissionTest5, []);
 
         //search bars
         $this->doTestSearch('bars', $admin, [
@@ -883,12 +931,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->grouptestobject->getFullpath(),
         ]);
 
+        $this->doTestSearch('bars', $this->userPermissionTest5, [
+            $this->usertestobject->getFullpath(),
+        ]);
+
         //search hidden object
         $this->doTestSearch('hiddenobject', $admin, [$this->hiddenobject->getFullpath()]);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest1, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest3, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest4, []);
+        $this->doTestSearch('hiddenobject', $this->userPermissionTest5, []);
 
 
         //search for asset
@@ -897,6 +950,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('assetelement', $this->userPermissionTest2, []);
         $this->doTestSearch('assetelement', $this->userPermissionTest3, []);
         $this->doTestSearch('assetelement', $this->userPermissionTest4, []);
+        $this->doTestSearch('assetelement', $this->userPermissionTest5, []);
     }
 
     public function testManyElementSearch()
@@ -988,6 +1042,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestQuickSearch('hugo', $this->userPermissionTest2, []);
         $this->doTestQuickSearch('hugo', $this->userPermissionTest3, []);
         $this->doTestQuickSearch('hugo', $this->userPermissionTest4, []);
+        $this->doTestQuickSearch('hugo', $this->userPermissionTest5, []);
 
         //search bars
         $this->doTestQuickSearch('bars', $admin, [
@@ -1008,6 +1063,9 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestQuickSearch('bars', $this->userPermissionTest4, [
             $this->grouptestobject->getFullpath(),
         ]);
+        $this->doTestQuickSearch('bars', $this->userPermissionTest5, [
+            $this->usertestobject->getFullpath(),
+        ]);
 
         //search hidden object
         $this->doTestQuickSearch('hiddenobject', $admin, [$this->hiddenobject->getFullpath()]);
@@ -1022,5 +1080,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestQuickSearch('assetelement', $this->userPermissionTest2, []);
         $this->doTestQuickSearch('assetelement', $this->userPermissionTest3, []);
         $this->doTestQuickSearch('assetelement', $this->userPermissionTest4, []);
+        $this->doTestQuickSearch('assetelement', $this->userPermissionTest5, [$this->assetElement->getFullPath()]);
     }
 }
