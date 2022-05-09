@@ -297,7 +297,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             (new User\Workspace\DataObject())->setValues(['cId' => $this->usertestobject->getId(), 'cPath' => $this->usertestobject->getFullpath(), 'list' => true, 'view' => true]),
             (new User\Workspace\Asset())->setValues(['cId' => $this->assetElement->getId(), 'cPath' => $this->assetElement->getFullpath(), 'list' => true, 'view' => true]),
         ]);
-        $this->userPermissionTest5->save();
+        $this->userPermissionTest6->save();
     }
 
     public function setUp(): void
@@ -320,6 +320,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         User::getByName('Permissiontest3')->delete();
         User::getByName('Permissiontest4')->delete();
         User::getByName('Permissiontest5')->delete();
+        User::getByName('Permissiontest6')->delete();
         User\Role::getByName('Testrole')->delete();
         User\Role::getByName('Dummyrole')->delete();
     }
