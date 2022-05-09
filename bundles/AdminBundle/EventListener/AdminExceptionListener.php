@@ -94,8 +94,6 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
-
-            return;
         }
     }
 

@@ -168,7 +168,7 @@ class Cse implements PaginateListingInterface
     {
         $items = [];
 
-        $this->setRaw($googleResponse);
+        $this->setRaw($googleResponse->getItems());
 
         // set search results
         $total = (int)$googleResponse->getSearchInformation()->getTotalResults();

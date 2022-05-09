@@ -115,11 +115,11 @@ class ResponseExceptionListener implements EventSubscriberInterface
             return;
         }
 
-        $document = Document::getByPath($errorPath);
+        $document = Document\Page::getByPath($errorPath);
 
-        if (!$document instanceof Document\Page) {
+        if (!$document) {
             // default is home
-            $document = Document::getById(1);
+            $document = Document\Page::getById(1);
         }
 
         try {

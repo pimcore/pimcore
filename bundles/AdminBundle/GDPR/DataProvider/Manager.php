@@ -52,8 +52,11 @@ class Manager
 
         $this->sortedServices = $this->services->all();
 
-        usort($this->sortedServices, function (DataProviderInterface $left, DataProviderInterface $right) {
-            return $left->getSortPriority() > $right->getSortPriority();
+        usort($this->sortedServices, function (DataProviderInterface $left, DataProviderInterface $right): int {
+            if ($left->getSortPriority() === $right->getSortPriority()) {
+                return 0;
+            }
+            return ($left->getSortPriority() < $right->getSortPriority()) ? -1 : 1;
         });
 
         return $this->sortedServices;

@@ -37,7 +37,6 @@ class Csv
         // threshold is ten, so add one to account for extra linefeed that is supposed to be at the end
         if ($count < 10) {
             throw new \Exception('You must provide at least ten lines in your sample data');
-        } else {
         }
         list($quote, $delim) = $this->guessQuoteAndDelim($data);
         if (!$quote) {

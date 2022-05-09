@@ -88,13 +88,13 @@ class Service
         $className = get_class($dataDefinition);
 
         if (method_exists($className, '__set_state')) {
-            $dataDefinition = $className::__set_state($dataDefinition);
+            $dataDefinition = $className::__set_state((array) $dataDefinition);
         }
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
-            $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);
+            $delegateDefinition = self::getFieldDefinitionFromJson((array) $delegateDefinitionRaw, $delegateDataType);
             $dataDefinition->setDelegate($delegateDefinition);
         }
 
