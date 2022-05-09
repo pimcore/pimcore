@@ -1,6 +1,6 @@
 # Upgrade Notes
-## 11.0.0
-- [Sitemap] Presta/Sitemap bundle bumped to `^3.3`, the yaml config path needs to be changed (by removing `Resources`) to follow the [new folder tree structure](https://github.com/prestaconcept/PrestaSitemapBundle/releases/tag/v3.0.0),
+## 10.5.0
+- [Sitemap] Presta/Sitemap bundle bumped to `^3.0`, if in use the yaml config path should be changed (by removing `/Resources`) to follow the [new folder tree structure](https://github.com/prestaconcept/PrestaSitemapBundle/releases/tag/v3.0.0),
   eg. "@PrestaSitemapBundle/~~Resources/~~config/routing.yaml".
   
 ## 10.4.0
