@@ -15,10 +15,13 @@
 
 namespace Pimcore\Bundle\AdminBundle\Session\Handler;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -29,6 +32,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * Contains how many sessions are currently open, this is important, because writeClose() must not be called if
@@ -44,9 +48,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
     protected $readOnlySessionBagsCache = [];
 
-    public function __construct(SessionInterface $session)
+    /**
+     * @var null|RequestStack
+     */
+    protected $requestStack;
+
+    public function __construct(SessionInterface $session, RequestStack $requestStack)
     {
         $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -98,7 +108,12 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         $result = call_user_func_array($callable, [$attributeBag, $session]);
 
-        $this->writeClose();
+        // write & close session when in admin context
+        // https://github.com/pimcore/pimcore/pull/12022#issuecomment-1119451897
+        $request = $this->requestStack->getCurrentRequest();
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
+            $this->writeClose();
+        }
 
         return $result;
     }
@@ -108,9 +123,12 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getReadOnlyAttributeBag(string $name = 'pimcore_admin'): AttributeBagInterface
     {
-        if (!$bag = $this->readOnlySessionBagsCache[$name] ?? false) {
-            $session = $this->loadSession();
-            $bag = $this->loadAttributeBag($name, $session);
+        if (isset($this->readOnlySessionBagsCache[$name])) {
+            $bag = $this->readOnlySessionBagsCache[$name];
+        } else {
+            $bag = $this->useSessionAttributeBag(function (AttributeBagInterface $bag) {
+                return $bag;
+            }, $name);
         }
 
         if ($bag instanceof LockableAttributeBagInterface) {
