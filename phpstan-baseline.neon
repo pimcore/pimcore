@@ -6,11 +6,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
 
 		-
-			message: "#^Parameter \\#1 \\$document of method Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\Admin\\\\Document\\\\DocumentController\\:\\:getSeoNodeConfig\\(\\) expects Pimcore\\\\Model\\\\Document\\\\Page, Pimcore\\\\Model\\\\Document given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
 			message: "#^Parameter \\#1 \\$items of method Pimcore\\\\Bundle\\\\AdminBundle\\\\EventListener\\\\AdminExceptionListener\\:\\:recursiveAddValidationExceptionSubItems\\(\\) expects array\\<Pimcore\\\\Model\\\\Element\\\\ValidationException\\>, array\\<Exception\\> given\\.$#"
 			count: 2
 			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php

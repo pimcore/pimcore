@@ -1614,7 +1614,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @param Document\Page $document
+     * @param Document $document
      *
      * @return array
      */
@@ -1622,17 +1622,19 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
-        // analyze content
-        $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
+        if ($document instanceof Document\Page) {
+            // analyze content
+            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
 
-        $title = $document->getTitle();
-        $description = $document->getDescription();
+            $title = $document->getTitle();
+            $description = $document->getDescription();
 
-        $nodeConfig['title'] = $title;
-        $nodeConfig['description'] = $description;
+            $nodeConfig['title'] = $title;
+            $nodeConfig['description'] = $description;
 
-        $nodeConfig['title_length'] = mb_strlen($title);
-        $nodeConfig['description_length'] = mb_strlen($description);
+            $nodeConfig['title_length'] = mb_strlen($title);
+            $nodeConfig['description_length'] = mb_strlen($description);
+        }
 
         return $nodeConfig;
     }
