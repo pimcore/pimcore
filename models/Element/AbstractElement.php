@@ -15,12 +15,15 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 
@@ -49,6 +52,542 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
+     * @var int|null
+     */
+    protected  $id;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected  $parentId;
+
+    /**
+     * @internal
+     *
+     * @var ElementInterface|null
+     */
+    protected $parent;
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
+    protected string $type = 'object';
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected  $key;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected  $path;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $index = 0;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected  $creationDate;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected  $modificationDate;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $userModification = null;
+
+    /**
+     * @internal
+     *
+     * @var array|null
+     */
+    protected $properties = null;
+
+    /**
+     * @internal
+     *
+     * @var bool[]
+     */
+    protected $hasChildren = [];
+
+    /**
+     * Contains a list of sibling documents
+     *
+     * @internal
+     *
+     * @var array
+     */
+    protected $siblings = [];
+
+    /**
+     * Indicator if object has siblings or not
+     *
+     * @internal
+     *
+     * @var bool[]
+     */
+    protected $hasSiblings = [];
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    protected $children = [];
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
+    protected $locked;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected  $childrenSortBy;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected  $childrenSortOrder;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    protected $versionCount = 0;
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return ElementInterface
+     */
+    public function setVersionCount(?int $versionCount): ElementInterface
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildrenSortOrder(): string
+    {
+        return $this->childrenSortOrder ?? AbstractObject::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+    }
+
+    /**
+     * @param string | null $reverseSort
+     *
+     * @return ElementInterface
+     */
+    public function setChildrenSortOrder(?string $reverseSort): ElementInterface
+    {
+        $this->childrenSortOrder = $reverseSort;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildrenSortBy(): string
+    {
+        return $this->childrenSortBy ?? AbstractObject::OBJECT_CHILDREN_SORT_BY_DEFAULT;
+    }
+
+    /**
+     * @param string|null $childrenSortBy
+     */
+    public function setChildrenSortBy(?string $childrenSortBy)
+    {
+        if ($this->childrenSortBy !== $childrenSortBy) {
+            $this->children = [];
+            $this->hasChildren = [];
+        }
+        $this->childrenSortBy = $childrenSortBy;
+    }
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @return string|null
+     */
+    public function getLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
+     *
+     * @return $this
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     *
+     * @return $this
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = (int) $creationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     *
+     * @return $this
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->markFieldDirty('modificationDate');
+        $this->markFieldDirty('o_modificationDate');
+
+        $this->modificationDate = (int) $modificationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserOwner()
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int $userOwner
+     *
+     * @return $this
+     */
+    public function setUserOwner($userOwner)
+    {
+        $this->userOwner = (int) $userOwner;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserModification()
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $userModification
+     *
+     * @return $this
+     */
+    public function setUserModification($userModification)
+    {
+        $this->markFieldDirty('userModification');
+        $this->markFieldDirty('o_userModification');
+
+        $this->userModification = (int) $userModification;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return $this
+     */
+    public function setIndex($index)
+    {
+        $this->index = (int) $index;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getKey() {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        $this->key = (string)$key;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int|null $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id ? (int)$id : null;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getParentId()
+    {
+        // fall back to parent if no ID is set but we have a parent object
+        if (!$this->parentId && $this->parent) {
+            return $this->parent->getId();
+        }
+
+        return $this->parentId;
+    }
+
+    /**
+     * @param int $parentId
+     *
+     * @return $this
+     */
+    public function setParentId($parentId)
+    {
+        $parentId = (int) $parentId;
+        if ($parentId != $this->parentId) {
+            $this->markFieldDirty('parentId');
+            $this->markFieldDirty('o_parentId');
+        }
+        $this->parentId = $parentId;
+        $this->parent = null;
+        $this->siblings = [];
+        $this->hasSiblings = [];
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return ElementInterface|null
+     */
+    public function getParent()
+    {
+        if ($this->parent === null) {
+            $this->setParent(DataObject::getById($this->getParentId()));
+        }
+
+        return $this->parent;
+    }
+
+    /**
+     * @param self|null $parent
+     *
+     * @return $this
+     */
+    public function setParent($parent)
+    {
+        $newParentId = $parent instanceof self ? $parent->getId() : 0;
+        $this->setParentId($newParentId);
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Model\Property[]
+     */
+    public function getProperties()
+    {
+        if ($this->properties === null) {
+            // try to get from cache
+            $cacheKey = 'object_properties_' . $this->getId();
+            $properties = Cache::load($cacheKey);
+            if (!is_array($properties)) {
+                $properties = $this->getDao()->getProperties();
+                $elementCacheTag = $this->getCacheTag();
+                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
+                Cache::save($properties, $cacheKey, $cacheTags);
+            }
+
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProperties(?array $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     * @param bool $inherited
+     * @param bool $inheritable
+     *
+     * @return $this
+     */
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
+    {
+        $this->getProperties();
+
+        $property = new Model\Property();
+        $property->setType($type);
+        $property->setCid($this->getId());
+        $property->setName($name);
+        $property->setCtype('object');
+        $property->setData($data);
+        $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
+
+        $this->properties[$name] = $property;
+
+        return $this;
+    }
+
+
+
+
+
+
+    /**
+     * @internal
      */
     protected function updateModificationInfos()
     {
@@ -60,7 +599,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->setVersionCount(1);
         }
 
-        $modificationDateKey = $this instanceof AbstractObject ? 'o_modificationDate' : 'modificationDate';
+        $modificationDateKey = $this instanceof AbstractObject ? 'modificationDate' : 'modificationDate';
         if (!$this->isFieldDirty($modificationDateKey)) {
             $updateTime = time();
             $this->setModificationDate($updateTime);
@@ -71,7 +610,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
-        $userModificationKey = $this instanceof AbstractObject ? 'o_userModification' : 'userModification';
+        $userModificationKey = $this instanceof AbstractObject ? 'userModification' : 'userModification';
         if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -411,7 +950,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies'];
+        $blockedVars = ['dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+
+        if ($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
+            $this->removeInheritedProperties();
+        } else {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
+        }
 
         return array_diff($parentVars, $blockedVars);
     }
@@ -423,6 +971,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         parent::__clone();
         $this->dependencies = null;
+        $this->parent = null;
+        // note that o_children is currently needed for the recycle bin
+        $this->hasSiblings = [];
+        $this->siblings = [];
     }
 
     /**
