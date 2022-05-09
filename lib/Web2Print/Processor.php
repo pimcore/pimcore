@@ -82,7 +82,7 @@ abstract class Processor
 
         if (!$disableBackgroundExecution) {
             \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new GenerateWeb2PrintPdfMessage((string) $jobConfig->documentId)
+                new GenerateWeb2PrintPdfMessage($jobConfig->documentId)
             );
 
             return true;

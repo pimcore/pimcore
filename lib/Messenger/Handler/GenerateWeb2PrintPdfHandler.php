@@ -31,7 +31,7 @@ class GenerateWeb2PrintPdfHandler
 
     public function __invoke(GenerateWeb2PrintPdfMessage $message)
     {
-        $documentId = (int) $message->getProcessId();
+        $documentId = $message->getProcessId();
 
         // check for memory limit
         $memoryLimit = ini_get('memory_limit');
