@@ -153,7 +153,7 @@ class Folder extends Model\Asset
         $skipped = false;
 
         if ($totalImages) {
-            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
+            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), (int) ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
             $background = imagecolorallocate($collage, 12, 15, 18);
             imagefill($collage, 0, 0, $background);
 

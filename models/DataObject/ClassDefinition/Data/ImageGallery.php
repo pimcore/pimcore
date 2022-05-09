@@ -301,7 +301,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     private function createEmptyImageGallery($params = [])
     {
-        $imageGallery = new DataObject\Data\ImageGallery(null);
+        $imageGallery = new DataObject\Data\ImageGallery();
 
         if (isset($params['owner'])) {
             $imageGallery->_setOwner($params['owner']);
