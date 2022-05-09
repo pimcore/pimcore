@@ -521,6 +521,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class'),
             region: "west",
             autoScroll: true,
+            rootVisible: false,
             split: true,
             disabled: true,
             root: {
@@ -597,7 +598,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     baseNode.appendChild(this.recursiveAddNode(child, baseNode, attributePrefix, isCustom));
                 }
                 rootNode.expand();
-                baseNode.expand();
             }
         }
     },
