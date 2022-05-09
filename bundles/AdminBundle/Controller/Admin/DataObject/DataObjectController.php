@@ -301,6 +301,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $tmpObject['cls'] .= 'pimcore_treenode_lockOwner ';
         }
 
+        if ($tmpObject['leaf']) {
+            $tmpObject['expandable'] = false;
+            $tmpObject['expanded'] = true;
+            $tmpObject['leaf'] = false;
+            $tmpObject['loaded'] = true;
+        }
+        
         return $tmpObject;
     }
 
