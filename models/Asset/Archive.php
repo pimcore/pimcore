@@ -25,5 +25,5 @@ class Archive extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'archive';
+    protected string $type = 'archive';
 }

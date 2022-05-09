@@ -27,7 +27,7 @@ class Document extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'document';
+    protected string $type = 'document';
 
     /**
      * {@inheritdoc}

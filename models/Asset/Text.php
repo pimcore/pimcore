@@ -25,5 +25,5 @@ class Text extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'text';
+    protected string $type = 'text';
 }

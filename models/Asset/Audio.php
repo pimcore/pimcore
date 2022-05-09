@@ -25,5 +25,5 @@ class Audio extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'audio';
+    protected string $type = 'audio';
 }

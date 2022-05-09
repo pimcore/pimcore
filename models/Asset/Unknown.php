@@ -25,5 +25,5 @@ class Unknown extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'unknown';
+    protected string $type = 'unknown';
 }

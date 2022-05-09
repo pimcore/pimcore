@@ -32,7 +32,7 @@ class Video extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'video';
+    protected string $type = 'video';
 
     /**
      * {@inheritdoc}
