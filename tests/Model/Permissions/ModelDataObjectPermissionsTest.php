@@ -672,13 +672,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->bars->getFullpath()]
         );
 
-        //Normally it would return an "Access Denied" by AdminController
-//        $this->doTestTreeGetChildsById(
-//            $this->permissionfoo,
-//            $this->userPermissionTest6,
-//            []
-//        );
-
         // test /permissionfoo/bars
         $this->doTestTreeGetChildsById(
             $this->bars,
@@ -716,12 +709,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->userfolder->getFullpath()]
         );
 
-//        $this->doTestTreeGetChildsById(
-//            $this->bars,
-//            $this->userPermissionTest6,
-//            []
-//        );
-
         // test /permissionfoo/bars/userfolder
         $this->doTestTreeGetChildsById(
             $this->userfolder,
@@ -758,12 +745,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userPermissionTest5,
             [$this->usertestobject->getFullpath()]
         );
-
-//        $this->doTestTreeGetChildsById(
-//            $this->userfolder,
-//            $this->userPermissionTest6,
-//            []
-//        );
 
         // test /permissionfoo/bars/groupfolder
         $this->doTestTreeGetChildsById(
