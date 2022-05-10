@@ -148,13 +148,6 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
-     */
-    protected $properties = null;
-
-    /**
-     * @internal
-     *
      * @var array
      */
     protected $children = [];

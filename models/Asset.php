@@ -150,13 +150,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
-     */
-    protected $properties = null;
-
-    /**
-     * @internal
-     *
      * @var array|null
      */
     protected $versions = null;

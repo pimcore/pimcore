@@ -49,9 +49,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected $__dataVersionTimestamp = null;
 
     /**
+     * @internal
      * @var array|null
      */
-    protected $properties = null;
+    protected ?array $properties = null;
 
 
     /**
