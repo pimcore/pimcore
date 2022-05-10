@@ -18,9 +18,6 @@ Ext.define('pimcore.object.preview', {
     getLayout: function () {
         if (this.framePanel == null) {
 
-            var iframeOnLoad = "pimcore.globalmanager.get('object_"
-                                        + this.element.data.general.o_id + "').preview.iFrameLoaded()";
-
             this.frameId = 'object_preview_iframe_' + this.element.id;
             var toolbar = this.getToolbar();
 
@@ -36,8 +33,14 @@ Ext.define('pimcore.object.preview', {
                 iconCls: "pimcore_material_icon_devices pimcore_material_icon",
                 tbar: toolbar,
                 bodyStyle: "background:#323232;",
-                html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
-                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
+                html: '<iframe src="about:blank" style="width: 100%;" frameborder="0" id="' + this.frameId + '"></iframe>',
+                listeners: {
+                    afterrender: function () {
+                        Ext.get(this.getIframe()).on('load', function () {
+                            this.iFrameLoaded();
+                        }.bind(this));
+                    }.bind(this)
+                }
             });
 
             this.framePanel.on("resize", this.onLayoutResize.bind(this));

@@ -1,5 +1,5 @@
 {% if usage is iterable %}
-    <script>
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
         var lineChartData = {
             labels: [
                 {% for date, count in usage %}
