@@ -59,14 +59,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function getProperties()
     {
+        $type = Service::getElementType($this);
+
         if ($this->properties === null) {
             // try to get from cache
-            $cacheKey = 'object_properties_' . $this->getId();
+            $cacheKey = $type . '_properties_' . $this->getId();
             $properties = Cache::load($cacheKey);
             if (!is_array($properties)) {
                 $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
+                $cacheTags = [$type . '_properties' => $type . '_properties', $elementCacheTag => $elementCacheTag];
                 Cache::save($properties, $cacheKey, $cacheTags);
             }
 
