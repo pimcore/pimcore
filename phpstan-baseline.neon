@@ -6,11 +6,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
 
 		-
-			message: "#^Parameter \\#1 \\$document of method Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\Admin\\\\Document\\\\DocumentController\\:\\:getSeoNodeConfig\\(\\) expects Pimcore\\\\Model\\\\Document\\\\Page, Pimcore\\\\Model\\\\Document given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
