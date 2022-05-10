@@ -544,7 +544,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'rename' => 0,
                 ]
             );
-
         }
 
         //check when no parent workspace is found, it should be allow list=1 when children are found, in this case for
@@ -873,7 +872,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userPermissionTest6,
             []
         );
-
     }
 
     protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
@@ -980,7 +978,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('hiddenobject', $this->userPermissionTest4, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest5, []);
         $this->doTestSearch('hiddenobject', $this->userPermissionTest6, []);
-
 
         //search for asset
         $this->doTestSearch('assetelement', $admin, []);

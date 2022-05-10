@@ -346,6 +346,7 @@ class SearchController extends AdminController
 
     /**
      * @internal
+     *
      * @param array $types
      *
      * @return string
@@ -354,7 +355,6 @@ class SearchController extends AdminController
     {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
-
 
         $allowedTypes = [];
 
@@ -399,10 +399,10 @@ class SearchController extends AdminController
                 $allowedTypes[] = $forbiddenAndAllowedSql;
             }
         }
-        
+
         //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
         // by setting a `false` condition in the query makes sure that nothing would be displayed.
-        if (!$allowedTypes){
+        if (!$allowedTypes) {
             $allowedTypes = ['false'];
         }
 
