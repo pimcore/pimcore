@@ -246,7 +246,26 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
-            throw $this->createNotFoundException();
+            $brickLayoutSeparator = strpos($request->get('id'), '.');
+            if($brickLayoutSeparator !== false) {
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById(substr($request->get('id'), 0, $brickLayoutSeparator));
+                if($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                    $customLayout = DataObject\ClassDefinition\CustomLayout::create(
+                        [
+                            'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+1),
+                            'userOwner' => $this->getAdminUser()->getId(),
+                            'classId' => $customLayout->getClassId(),
+                        ]
+                    );
+
+                    $customLayout->setId($request->get('id'));
+                    $customLayout->save();
+                }
+            }
+
+            if (!$customLayout) {
+                throw $this->createNotFoundException();
+            }
         }
         $isWriteable = $customLayout->isWritable();
         $customLayout = $customLayout->getObjectVars();
@@ -562,10 +581,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function getCustomLayoutDefinitionsAction(Request $request)
     {
-        $classId = $request->get('classId');
+        $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition('classId = ' . $list->quote($classId));
+        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.%\'', $classIds);
         $list = $list->load();
         $result = [];
         foreach ($list as $item) {
