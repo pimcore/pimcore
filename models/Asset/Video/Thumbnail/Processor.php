@@ -225,40 +225,37 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
-        $workerSourceFile = $asset->getTemporaryFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
             try {
-                $converter->load($workerSourceFile, ['asset' => $asset]);
-
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
-                $source = fopen($converter->getDestinationFile(), 'rb');
-                Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
-                fclose($source);
-                unlink($converter->getDestinationFile());
-
-                if ($converter->getFormat() === 'mpd') {
-                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
-                    $streams = glob($streamFilesPath);
-                    $parentPath = dirname($converter->getStorageFile());
-
-                    foreach ($streams as $steam) {
-                        $storagePath = $parentPath . '/' . basename($steam);
-                        $source = fopen($steam, 'rb');
-                        Storage::get('thumbnail')->writeStream($storagePath, $source);
-                        fclose($source);
-                        unlink($steam);
-
-                        // set proper permissions
-                        @chmod($storagePath, File::getDefaultMode());
-                    }
-                }
-
                 if ($success) {
+                    $source = fopen($converter->getDestinationFile(), 'rb');
+                    Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
+                    fclose($source);
+                    unlink($converter->getDestinationFile());
+
+                    if ($converter->getFormat() === 'mpd') {
+                        $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
+                        $streams = glob($streamFilesPath);
+                        $parentPath = dirname($converter->getStorageFile());
+
+                        foreach ($streams as $steam) {
+                            $storagePath = $parentPath.'/'.basename($steam);
+                            $source = fopen($steam, 'rb');
+                            Storage::get('thumbnail')->writeStream($storagePath, $source);
+                            fclose($source);
+                            unlink($steam);
+
+                            // set proper permissions
+                            @chmod($storagePath, File::getDefaultMode());
+                        }
+                    }
+
                     $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
                 } else {
                     $conversionStatus = 'error';
@@ -266,7 +263,7 @@ class Processor
 
                 $converter->destroy();
             } catch (\Exception $e) {
-                Logger::error((string) $e);
+                Logger::error($e);
             }
         }
 
@@ -293,7 +290,9 @@ class Processor
             Model\Version::enable();
         }
 
-        @unlink($workerSourceFile);
+        if ($instance->getDeleteSourceAfterFinished()) {
+            @unlink($instance->getDeleteSourceAfterFinished());
+        }
 
         TmpStore::delete($instance->getJobStoreId());
     }
