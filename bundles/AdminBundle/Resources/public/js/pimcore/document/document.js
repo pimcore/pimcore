@@ -209,7 +209,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.published = true;
 
                 // toggle buttons
-                this.toolbarButtons.unpublish.show();
+                if(this.toolbarButtons.unpublish) {
+                    this.toolbarButtons.unpublish.show();
+                }
 
                 if (this.toolbarButtons.save) {
                     this.toolbarButtons.save.hide();
@@ -230,7 +232,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.published = false;
 
                 // toggle buttons
-                this.toolbarButtons.unpublish.hide();
+                if(this.toolbarButtons.unpublish) {
+                    this.toolbarButtons.unpublish.hide();
+                }
 
                 if (this.toolbarButtons.save) {
                     this.toolbarButtons.save.show();
