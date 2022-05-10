@@ -17,6 +17,9 @@ namespace Pimcore\Routing;
 
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Event\Model\RedirectEvent;
+use Pimcore\Event\RedirectEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -38,6 +41,7 @@ use Symfony\Component\Lock\LockInterface;
 final class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
@@ -228,6 +232,7 @@ final class RedirectHandler implements LoggerAwareInterface
         }
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
+        $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $response = new RedirectResponse($url, $statusCode);
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 

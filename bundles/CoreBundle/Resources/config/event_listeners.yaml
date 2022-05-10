@@ -80,6 +80,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\UUIDListener: ~
 
+    Pimcore\Bundle\CoreBundle\EventListener\RedirectsListener: ~
 
     #
     # EXCEPTION HANDLING
