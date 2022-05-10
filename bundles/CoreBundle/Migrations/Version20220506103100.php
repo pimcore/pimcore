@@ -20,28 +20,25 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20220214110000 extends AbstractMigration
+final class Version20220506103100 extends AbstractMigration
 {
     /**
      * {@inheritDoc}
      */
     public function getDescription(): string
     {
-        return 'Add `storageType` column to `version` database table';
+        return 'Modify `storageType` column in `version` database table';
     }
 
     public function up(Schema $schema): void
     {
-        if ($schema->getTable('versions')->hasColumn('storageType') === false) {
-            $this->addSql('ALTER TABLE `versions` ADD COLUMN `storageType` varchar(5) NOT NULL;');
-            $this->addSql("update `versions` set storageType = 'fs'");
+        if ($schema->getTable('versions')->hasColumn('storageType') === true) {
+            $this->addSql('ALTER TABLE `versions` MODIFY COLUMN `storageType` varchar(5) NOT NULL;');
         }
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->getTable('versions')->hasColumn('storageType')) {
-            $this->addSql('ALTER TABLE `versions` DROP COLUMN `storageType`;');
-        }
+
     }
 }
