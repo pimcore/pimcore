@@ -722,7 +722,7 @@ class Dao extends Model\Dao\AbstractDao
 
             // create query
             $sql = sprintf(
-                'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
+                'IF(`%s`.`%s` IS NULL OR STRCMP(`%s`.`%s`, "") = 0, %s, `%s`.`%s`)',
                 $lang,
                 $field,
                 $lang,
