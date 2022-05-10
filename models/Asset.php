@@ -248,7 +248,7 @@ class Asset extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         try {
-            $asset = new Asset();
+            $asset = new static();
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
@@ -299,16 +299,19 @@ class Asset extends Element\AbstractElement
         }
 
         if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-            $asset = new Asset();
+            $asset = new static();
 
             try {
                 $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                /** @var Asset $asset */
-                $asset = self::getModelFactory()->build($className);
+                if (get_class($asset) !== $className) {
+                    /** @var Asset $asset */
+                    $asset = self::getModelFactory()->build($className);
+                    $asset->getDao()->getById($id);
+                }
+
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
-                $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 $asset->resetDirtyMap();
