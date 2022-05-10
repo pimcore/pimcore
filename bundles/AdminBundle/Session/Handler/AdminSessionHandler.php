@@ -17,11 +17,11 @@ namespace Pimcore\Bundle\AdminBundle\Session\Handler;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -49,14 +49,14 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     protected $readOnlySessionBagsCache = [];
 
     /**
-     * @var null|RequestStack
+     * @var RequestHelper
      */
-    protected $requestStack;
+    protected $requestHelper;
 
-    public function __construct(SessionInterface $session, RequestStack $requestStack)
+    public function __construct(SessionInterface $session, RequestHelper $requestHelper)
     {
         $this->session = $session;
-        $this->requestStack = $requestStack;
+        $this->requestHelper = $requestHelper;
     }
 
     /**
@@ -110,8 +110,11 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         // write & close session when in admin context
         // https://github.com/pimcore/pimcore/pull/12022#issuecomment-1119451897
-        $request = $this->requestStack->getCurrentRequest();
-        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
+        $request = $this->requestHelper->getCurrentRequest();
+        if (
+            $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN) &&
+            $this->requestHelper->isFrontendRequestByAdmin($request)
+        ) {
             $this->writeClose();
         }
 
