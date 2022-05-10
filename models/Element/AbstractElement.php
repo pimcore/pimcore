@@ -85,6 +85,34 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     * @param bool $inherited
+     * @param bool $inheritable
+     *
+     * @return $this
+     */
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
+    {
+        $this->getProperties();
+
+        $property = new Model\Property();
+        $property->setType($type);
+        $property->setCid($this->getId());
+        $property->setName($name);
+        $property->setCtype('object');
+        $property->setData($data);
+        $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
+
+        $this->properties[$name] = $property;
+
+        return $this;
+    }
+
     /**
      * @internal
      */

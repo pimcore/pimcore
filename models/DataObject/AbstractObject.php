@@ -167,14 +167,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     * @deprecated
-     *
-     * @var array|null
-     */
-    protected ?array $o_properties = null;
-
-    /**
-     * @internal
      *
      * @var bool[]
      */
@@ -232,11 +224,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var int
      */
     protected $o_versionCount = 0;
-
-    public function __construct()
-    {
-        $this->o_properties = & $this->properties;
-    }
 
     /**
      * @static
@@ -1264,34 +1251,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
 
-
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Model\Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('object');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->o_properties[$name] = $property;
-
-        return $this;
-    }
-
     /**
      * @return string
      */
@@ -1312,7 +1271,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties']);
         }
 
         return array_diff($parentVars, $blockedVars);
@@ -1329,7 +1288,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if ($this->isInDumpState() && $this->o_properties !== null) {
+        if ($this->isInDumpState() && $this->properties !== null) {
             $this->renewInheritedProperties();
         }
 
