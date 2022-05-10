@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
@@ -46,6 +47,43 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int
      */
     protected $__dataVersionTimestamp = null;
+
+    /**
+     * @var array|null
+     */
+    protected $properties = null;
+
+
+    /**
+     * @return Model\Property[]
+     */
+    public function getProperties()
+    {
+        if ($this->properties === null) {
+            // try to get from cache
+            $cacheKey = 'object_properties_' . $this->getId();
+            $properties = Cache::load($cacheKey);
+            if (!is_array($properties)) {
+                $properties = $this->getDao()->getProperties();
+                $elementCacheTag = $this->getCacheTag();
+                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
+                Cache::save($properties, $cacheKey, $cacheTags);
+            }
+
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function setProperties(?array $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
 
     /**
      * @internal

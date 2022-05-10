@@ -167,6 +167,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     * @deprecated
      *
      * @var array|null
      */
@@ -231,6 +232,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var int
      */
     protected $o_versionCount = 0;
+
+    public function __construct()
+    {
+        $this->o_properties = & $this->properties;
+    }
 
     /**
      * @static
@@ -1257,37 +1263,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return Model\Property[]
-     */
-    public function getProperties()
-    {
-        if ($this->o_properties === null) {
-            // try to get from cache
-            $cacheKey = 'object_properties_' . $this->getId();
-            $properties = Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
-                Cache::save($properties, $cacheKey, $cacheTags);
-            }
 
-            $this->setProperties($properties);
-        }
-
-        return $this->o_properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->o_properties = $properties;
-
-        return $this;
-    }
 
     /**
      * @param string $name
