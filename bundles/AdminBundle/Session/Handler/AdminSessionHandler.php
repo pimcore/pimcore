@@ -49,6 +49,11 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     protected $readOnlySessionBagsCache = [];
 
     /**
+     * @var bool|null
+     */
+    private $canWriteAndClose;
+
+    /**
      * @var RequestHelper
      */
     protected $requestHelper;
@@ -107,17 +112,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $attributeBag = $this->loadAttributeBag($name, $session);
 
         $result = call_user_func_array($callable, [$attributeBag, $session]);
-
-        // write & close session when in admin context
-        // https://github.com/pimcore/pimcore/pull/12022#issuecomment-1119451897
-        $request = $this->requestHelper->getCurrentRequest();
-        if (
-            $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN) &&
-            $this->requestHelper->isFrontendRequestByAdmin($request)
-        ) {
-            $this->writeClose();
-        }
-
+        $this->writeClose();
         return $result;
     }
 
@@ -258,6 +253,10 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function writeClose()
     {
+        if (!$this->shouldWriteAndClose()) {
+            return;
+        }
+
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
@@ -272,5 +271,24 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
                 'count' => $this->openedSessions,
             ]);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldWriteAndClose(): bool
+    {
+        if ($this->canWriteAndClose === null) {
+            $this->canWriteAndClose = false;
+            $request = $this->requestHelper->getMainRequest();
+            if (
+                $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN) ||
+                $this->requestHelper->isFrontendRequestByAdmin($request)
+            ) {
+                $this->canWriteAndClose = true;
+            }
+        }
+
+        return $this->canWriteAndClose;
     }
 }
