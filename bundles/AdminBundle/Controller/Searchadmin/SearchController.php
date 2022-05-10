@@ -359,9 +359,7 @@ class SearchController extends AdminController
         $allowedTypes = [];
 
         foreach ($types as $type) {
-            if (!$user->isAllowed($type . 's')) { //the permissions are just plural
-                $allowedTypes[] = '(maintype != \'' . $type . '\' AND 1 = 0)'; //hacky, always false
-            }else{
+            if ($user->isAllowed($type . 's')) { //the permissions are just plural
                 $elementPaths = Element\Service::findForbiddenPaths($type, $user);
 
                 $forbiddenPathSql = [];
@@ -400,6 +398,12 @@ class SearchController extends AdminController
 
                 $allowedTypes[] = $forbiddenAndAllowedSql;
             }
+        }
+        
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        // by setting a `false` condition in the query makes sure that nothing would be displayed.
+        if (!$allowedTypes){
+            $allowedTypes = ['false'];
         }
 
         return '('.implode(' OR ', $allowedTypes) .')';
