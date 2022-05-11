@@ -323,7 +323,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $tmpObject['leaf'] = false;
             $tmpObject['loaded'] = true;
         }
-        
+
         return $tmpObject;
     }
 
