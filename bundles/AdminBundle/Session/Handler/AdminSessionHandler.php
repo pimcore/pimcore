@@ -113,6 +113,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         $result = call_user_func_array($callable, [$attributeBag, $session]);
         $this->writeClose();
+
         return $result;
     }
 
