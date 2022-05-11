@@ -723,7 +723,7 @@ class Service extends Model\AbstractModel
         $db = Db::get();
 
         if ($user->isAdmin()) {
-            return ['forbidden' => [], 'allowed' => []];
+            return ['forbidden' => [], 'allowed' => ['/']];
         }
 
         $workspaceCids = [];

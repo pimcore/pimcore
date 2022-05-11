@@ -63,19 +63,24 @@ class AbstractUser extends Model\AbstractModel
             } else {
                 $user = new static();
                 $user->getDao()->getById($id);
+                $className = Service::getClassNameForType($user->getType());
 
-                if (get_class($user) == 'Pimcore\\Model\\User\\AbstractUser') {
-                    $className = Service::getClassNameForType($user->getType());
+                if (get_class($user) !== $className) {
+                    /** @var AbstractUser $user */
                     $user = $className::getById($user->getId());
                 }
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $user);
             }
-
-            return $user;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
+
+        if (!$user || !static::typeMatch($user)) {
+            return null;
+        }
+
+        return $user;
     }
 
     /**
@@ -297,5 +302,22 @@ class AbstractUser extends Model\AbstractModel
     protected function update()
     {
         $this->getDao()->update();
+    }
+
+    /**
+     * @internal
+     *
+     * @param AbstractUser $user
+     *
+     * @return bool
+     */
+    protected static function typeMatch(AbstractUser $user): bool
+    {
+        $staticType = static::class;
+        if ($staticType !== AbstractUser::class && !$user instanceof $staticType) {
+            return false;
+        }
+
+        return true;
     }
 }

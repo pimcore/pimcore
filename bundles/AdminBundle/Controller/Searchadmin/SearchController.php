@@ -87,11 +87,7 @@ class SearchController extends AdminController
         $conditionParts = [];
         $db = \Pimcore\Db::get();
 
-        $forbiddenConditions = $this->getForbiddenCondition($types);
-
-        if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
-        }
+        $conditionParts[] = $this->getPermittedPaths($types);
 
         $queryCondition = '';
         if (!empty($query)) {
@@ -349,46 +345,68 @@ class SearchController extends AdminController
     }
 
     /**
+     * @internal
+     *
      * @param array $types
      *
-     * @return array
+     * @return string
      */
-    protected function getForbiddenCondition($types = ['asset', 'document', 'object'])
+    protected function getPermittedPaths($types = ['asset', 'document', 'object'])
     {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
 
-        $forbiddenConditions = [];
+        $allowedTypes = [];
 
         foreach ($types as $type) {
-            if (!$user->isAllowed($type . 's')) { //the permissions are just plural
-                $forbiddenConditions[] = ' maintype != \'' . $type . '\' ';
-            } else {
+            if ($user->isAllowed($type . 's')) { //the permissions are just plural
                 $elementPaths = Element\Service::findForbiddenPaths($type, $user);
 
                 $forbiddenPathSql = [];
                 $allowedPathSql = [];
-                if (count($elementPaths['forbidden']) > 0) {
-                    foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
-                        $exceptions = '';
-                        $folderSuffix = '';
-                        if ($allowedPaths) {
-                            $exceptionsConcat = implode('%\' OR fullpath LIKE \'', $allowedPaths);
-                            $exceptions = ' OR (fullpath LIKE \'' . $exceptionsConcat . '%\')';
-                            $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
-                        }
-                        $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
+                foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                    $exceptions = '';
+                    $folderSuffix = '';
+                    if ($allowedPaths) {
+                        $exceptionsConcat = implode("%' OR fullpath LIKE '", $allowedPaths);
+                        $exceptions = " OR (fullpath LIKE '" . $exceptionsConcat . "%')";
+                        $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
                     }
-                    foreach ($elementPaths['allowed'] as $allowedPaths) {
-                        $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
-                    }
-
-                    $forbiddenConditions[] = '(maintype = \'' . $type . '\' AND (( '. implode(' OR ', $allowedPathSql) . ' ) AND '. implode(' AND ', $forbiddenPathSql) . '))';
+                    $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
                 }
+                foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
+                }
+
+                // this is to avoid query error when implode is empty.
+                // the result would be like `(maintype = type AND ((path1 OR path2) AND (not_path3 AND not_path4)))`
+                $forbiddenAndAllowedSql = '(maintype = \'' . $type . '\'';
+
+                if ($allowedPathSql || $forbiddenPathSql) {
+                    $forbiddenAndAllowedSql .= ' AND (';
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? '( ' . implode(' OR ', $allowedPathSql) . ' )' : '';
+
+                    if ($forbiddenPathSql) {
+                        //if $allowedPathSql "implosion" is present, we need `AND` in between
+                        $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                        $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                    }
+                    $forbiddenAndAllowedSql .= ' )';
+                }
+
+                $forbiddenAndAllowedSql.= ' )';
+
+                $allowedTypes[] = $forbiddenAndAllowedSql;
             }
         }
 
-        return $forbiddenConditions;
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        // by setting a `false` condition in the query makes sure that nothing would be displayed.
+        if (!$allowedTypes) {
+            $allowedTypes = ['false'];
+        }
+
+        return '('.implode(' OR ', $allowedTypes) .')';
     }
 
     /**
@@ -440,10 +458,7 @@ class SearchController extends AdminController
 
         $conditionParts = [];
 
-        $forbiddenConditions = $this->getForbiddenCondition();
-        if ($forbiddenConditions) {
-            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
-        }
+        $conditionParts[] = $this->getPermittedPaths();
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
         $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";

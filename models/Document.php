@@ -244,7 +244,7 @@ class Document extends Element\AbstractElement
         }
 
         try {
-            $helperDoc = new Document();
+            $helperDoc = new static();
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
@@ -297,7 +297,7 @@ class Document extends Element\AbstractElement
         }
 
         if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $document = new Document();
+            $document = new static();
 
             try {
                 $document->getDao()->getById($id);
@@ -316,11 +316,13 @@ class Document extends Element\AbstractElement
                 }
             }
 
-            /** @var Document $document */
-            $document = self::getModelFactory()->build($className);
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            if (get_class($document) !== $className) {
+                /** @var Document $document */
+                $document = self::getModelFactory()->build($className);
+                $document->getDao()->getById($id);
+            }
 
-            $document->getDao()->getById($id);
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
             $document->__setDataVersionTimestamp($document->getModificationDate());
 
             $document->resetDirtyMap();
