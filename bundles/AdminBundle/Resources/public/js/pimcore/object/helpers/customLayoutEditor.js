@@ -200,8 +200,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         if(typeof this.klass.id !== 'undefined') {
             classId = [this.klass.id];
         } else if(typeof this.klass.classDefinitions !== 'undefined') {
-            for(var i=0;i< this.klass.classDefinitions.length;i++) {
-                classId.push(this.klass.classDefinitions[i].classname);
+            for(var i in this.klass.availableClasses) {
+                classId.push(this.klass.availableClasses[i].id);
             }
         }
         this.layoutComboStore = new Ext.data.Store({
