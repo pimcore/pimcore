@@ -74,17 +74,17 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
                 fieldLabel: t("allowed_bricks"),
                 name: "allowedTypes",
                 value: this.datax.allowedTypes,
-                displayField: "text",
-                valueField: "text",
+                displayField: "title",
+                valueField: "key",
                 store: Ext.create('Ext.data.JsonStore', {
                     fields: ['text'],
                     proxy: {
                         type: 'ajax',
-                        url: Routing.generate('pimcore_admin_dataobject_class_objectbricktree'),
+                        url: Routing.generate('pimcore_admin_dataobject_class_objectbricklist'),
                         reader: {
-                            type: 'json'
+                            type: 'json',
+                            rootProperty: 'objectbricks'
                         }
-
                     },
                     autoLoad: true
                 }),
