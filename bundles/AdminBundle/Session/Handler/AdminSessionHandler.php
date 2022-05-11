@@ -15,6 +15,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Session\Handler;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -29,6 +32,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * Contains how many sessions are currently open, this is important, because writeClose() must not be called if
@@ -44,9 +48,20 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
     protected $readOnlySessionBagsCache = [];
 
-    public function __construct(SessionInterface $session)
+    /**
+     * @var bool|null
+     */
+    private $canWriteAndClose;
+
+    /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    public function __construct(SessionInterface $session, RequestHelper $requestHelper)
     {
         $this->session = $session;
+        $this->requestHelper = $requestHelper;
     }
 
     /**
@@ -97,9 +112,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $attributeBag = $this->loadAttributeBag($name, $session);
 
         $result = call_user_func_array($callable, [$attributeBag, $session]);
-
         $this->writeClose();
-
         return $result;
     }
 
@@ -240,6 +253,10 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function writeClose()
     {
+        if (!$this->shouldWriteAndClose()) {
+            return;
+        }
+
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
@@ -254,5 +271,22 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
                 'count' => $this->openedSessions,
             ]);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldWriteAndClose(): bool
+    {
+        return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAdminRequest(Request $request): bool
+    {
+        return $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)
+            || $this->requestHelper->isFrontendRequestByAdmin($request);
     }
 }
