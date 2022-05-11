@@ -245,6 +245,13 @@ class SearchController extends AdminController
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
+            // Order by key column instead of filename
+            $orderKeyQuote = true;
+            if ($sortingSettings['orderKey'] === 'filename') {
+                $sortingSettings['orderKey'] = 'CAST(`key` AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            }
+
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
                 'classname' => 'subtype',
@@ -254,7 +261,7 @@ class SearchController extends AdminController
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
+            $searcherList->setOrderKey($sort, $orderKeyQuote);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);

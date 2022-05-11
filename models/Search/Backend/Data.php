@@ -44,6 +44,10 @@ class Data extends \Pimcore\Model\AbstractModel
      */
     protected ?Data\Id $id = null;
 
+    protected ?string $key = null;
+
+    protected ?int $index = null;
+
     /**
      * @var string
      */
@@ -142,6 +146,28 @@ class Data extends \Pimcore\Model\AbstractModel
     {
         $this->id = $id;
 
+        return $this;
+    }
+
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    public function setKey(?string $key): static
+    {
+        $this->key = $key;
+        return $this;
+    }
+
+    public function getIndex(): ?int
+    {
+        return $this->index;
+    }
+
+    public function setIndex(?int $index): static
+    {
+        $this->index = $index;
         return $this;
     }
 
@@ -363,6 +389,7 @@ class Data extends \Pimcore\Model\AbstractModel
         $this->data = null;
 
         $this->id = new Data\Id($element);
+        $this->key = $element->getKey();
         $this->fullPath = $element->getRealFullPath();
         $this->creationDate = $element->getCreationDate();
         $this->modificationDate = $element->getModificationDate();
@@ -372,8 +399,12 @@ class Data extends \Pimcore\Model\AbstractModel
         $this->type = $element->getType();
         if ($element instanceof DataObject\Concrete) {
             $this->subtype = $element->getClassName();
+            $this->index = $element->getIndex();
         } else {
             $this->subtype = $this->type;
+            if ($element instanceof Document) {
+                $this->index = $element->getIndex();
+            }
         }
 
         $this->properties = '';
