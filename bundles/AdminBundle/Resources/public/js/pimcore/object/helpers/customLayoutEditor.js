@@ -218,7 +218,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         if (data.data) {
                             Ext.each(data.data, function (data) {
                                 if(typeof this.klass.key !== 'undefined') {
-                                    data.id = data.id+'.'+this.klass.key;
+                                    data.id = data.id+'.brick.'+this.klass.key;
                                 }
                             }.bind(this));
                         }

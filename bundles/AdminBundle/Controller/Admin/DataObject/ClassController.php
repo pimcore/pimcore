@@ -246,13 +246,13 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
-            $brickLayoutSeparator = strpos($request->get('id'), '.');
+            $brickLayoutSeparator = strpos($request->get('id'), '.brick.');
             if($brickLayoutSeparator !== false) {
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById(substr($request->get('id'), 0, $brickLayoutSeparator));
                 if($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
                     $customLayout = DataObject\ClassDefinition\CustomLayout::create(
                         [
-                            'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+1),
+                            'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+strlen('.brick.')),
                             'userOwner' => $this->getAdminUser()->getId(),
                             'classId' => $customLayout->getClassId(),
                         ]
@@ -364,8 +364,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
-        if ($customLayout) {
+        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->addConditionParam('id=?', $request->get('id'));
+        $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
+        foreach($customLayouts as $customLayout) {
             $customLayout->delete();
         }
 
@@ -1315,7 +1317,19 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
                 }
                 if ($forObjectEditor) {
-                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    $layoutId = $request->get('layoutId');
+                    $itemLayoutDefinitions = null;
+                    if($layoutId) {
+                        $layout = DataObject\ClassDefinition\CustomLayout::getByName($layoutId.'.'.$item->getKey());
+                        if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $itemLayoutDefinitions = $layout->getLayoutDefinitions();
+                        }
+                    }
+
+                    if($itemLayoutDefinitions === null) {
+                        $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    }
+
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
 
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
@@ -1331,14 +1345,23 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
             } else {
                 if ($forObjectEditor) {
-                    $layout = $item->getLayoutDefinitions();
+                    $layoutId = $request->get('layoutId');
+                    $itemLayoutDefinitions = null;
+
+                    if ($itemLayoutDefinitions === null) {
+                        $layout = $item->getLayoutDefinitions();
+                    }
 
                     $currentLayoutId = $request->get('layoutId', null);
 
                     $user = $this->getAdminUser();
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
                         DataObject\Service::createSuperLayout($layout);
-                        $objectData['layout'] = $layout;
+                    } elseif ($currentLayoutId) {
+                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
+                        if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $layout = $customLayout->getLayoutDefinitions();
+                        }
                     }
 
                     $context = [
