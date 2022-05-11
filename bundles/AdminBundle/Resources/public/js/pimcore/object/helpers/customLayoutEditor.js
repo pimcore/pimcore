@@ -228,7 +228,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }
             },
             fields: ['id', 'name'],
-            autoLoad: true,
             forceSelection:true,
             listeners: {
                 load: function() {
