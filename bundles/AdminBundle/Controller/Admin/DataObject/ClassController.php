@@ -1320,7 +1320,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     $layoutId = $request->get('layoutId');
                     $itemLayoutDefinitions = null;
                     if($layoutId) {
-                        $layout = DataObject\ClassDefinition\CustomLayout::getByName($layoutId.'.'.$item->getKey());
+                        $layout = DataObject\ClassDefinition\CustomLayout::getByName($layoutId.'.brick.'.$item->getKey());
                         if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
                             $itemLayoutDefinitions = $layout->getLayoutDefinitions();
                         }
@@ -1345,7 +1345,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
             } else {
                 if ($forObjectEditor) {
-                    $layoutId = $request->get('layoutId');
                     $itemLayoutDefinitions = null;
 
                     if ($itemLayoutDefinitions === null) {
@@ -1358,7 +1357,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
                         DataObject\Service::createSuperLayout($layout);
                     } elseif ($currentLayoutId) {
-                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
+                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId.'.brick.'.$item->getKey());
                         if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
                             $layout = $customLayout->getLayoutDefinitions();
                         }
