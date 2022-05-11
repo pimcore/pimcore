@@ -278,17 +278,15 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     private function shouldWriteAndClose(): bool
     {
-        if ($this->canWriteAndClose === null) {
-            $this->canWriteAndClose = false;
-            $request = $this->requestHelper->getMainRequest();
-            if (
-                $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN) ||
-                $this->requestHelper->isFrontendRequestByAdmin($request)
-            ) {
-                $this->canWriteAndClose = true;
-            }
-        }
+        return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
+    }
 
-        return $this->canWriteAndClose;
+    /**
+     * @return bool
+     */
+    private function isAdminRequest(Request $request): bool
+    {
+        return $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)
+            || $this->requestHelper->isFrontendRequestByAdmin($request);
     }
 }
