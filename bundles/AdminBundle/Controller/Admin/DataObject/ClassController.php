@@ -1345,11 +1345,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
             } else {
                 if ($forObjectEditor) {
-                    $itemLayoutDefinitions = null;
-
-                    if ($itemLayoutDefinitions === null) {
-                        $layout = $item->getLayoutDefinitions();
-                    }
+                    $layout = $item->getLayoutDefinitions();
 
                     $currentLayoutId = $request->get('layoutId', null);
 
