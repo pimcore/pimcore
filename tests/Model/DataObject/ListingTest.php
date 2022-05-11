@@ -153,6 +153,11 @@ class ListingTest extends ModelTestCase
         $listing->addConditionParam('firstname = "first?name 11" AND lastname="last:name 11"');
 
         $this->assertEquals(1, $listing->getTotalCount(), 'AddConditionParam Result Published Objects');
+
+        $listing = new Unittest\Listing();
+        $listing->addConditionParam('firstname = \'first?name 11\' AND lastname = ?', 'last:name 11');
+
+        $this->assertEquals(1, $listing->getTotalCount(), 'AddConditionParam Result Published Objects');
     }
 
     public function testArrayCondition()
