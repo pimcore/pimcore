@@ -1320,7 +1320,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     $layoutId = $request->get('layoutId');
                     $itemLayoutDefinitions = null;
                     if($layoutId) {
-                        $layout = DataObject\ClassDefinition\CustomLayout::getByName($layoutId.'.brick.'.$item->getKey());
+                        $layout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
                         if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
                             $itemLayoutDefinitions = $layout->getLayoutDefinitions();
                         }
