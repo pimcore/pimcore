@@ -586,7 +586,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.%\'', $classIds);
+        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.brick.%\'', $classIds);
         $list = $list->load();
         $result = [];
         foreach ($list as $item) {
