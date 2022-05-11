@@ -75,8 +75,6 @@ pimcore.document.editable = Class.create({
             var mask = el.mask();
             new Ext.ToolTip({
                 target: mask,
-                showDelay: 100,
-                trackMouse:true,
                 html: t("click_right_to_overwrite")
             });
             mask.on("contextmenu", function (e) {
