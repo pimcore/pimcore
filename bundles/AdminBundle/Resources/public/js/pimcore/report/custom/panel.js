@@ -206,7 +206,7 @@ pimcore.report.custom.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'customreport', record.data.text), function (btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_reports_customreport_delete'),

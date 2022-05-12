@@ -161,7 +161,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
     },
 
     deleteTargetGroup: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'targetgroup', record.data.text), function (btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('target_group'), record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_targeting_targetgroupdelete'),

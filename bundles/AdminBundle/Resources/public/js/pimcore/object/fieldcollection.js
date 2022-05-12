@@ -223,7 +223,7 @@ pimcore.object.fieldcollection = Class.create({
 
     deleteField: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'fieldcollection', record.data.text), function(btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('field_collection'), record.data.text), function(btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectiondelete'),
