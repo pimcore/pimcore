@@ -43,6 +43,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1344,7 +1345,7 @@ class Service extends Model\AbstractModel
             'ctype' => $note->getCtype(),
             'cpath' => $cpath,
             'date' => $note->getDate(),
-            'title' => $note->getTitle(),
+            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(),[],'admin'),
             'description' => $note->getDescription(),
         ];
 
