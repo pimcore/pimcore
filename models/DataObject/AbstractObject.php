@@ -1250,7 +1250,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-
     /**
      * @return string
      */

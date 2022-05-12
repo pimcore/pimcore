@@ -50,10 +50,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected ?array $properties = null;
-
 
     /**
      * @return Model\Property[]
@@ -78,6 +78,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $this->properties;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -87,7 +88,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $this;
     }
-
 
     /**
      * @param string $name
