@@ -137,6 +137,23 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     },
 
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
+        e.stopEvent();
+        tree.select();
+
+        var menu = Ext.menu.Menu();
+        menu.add(new Ext.menu.Item({
+            text: t('delete'),
+            iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_delete",
+            handler: this.deleteField.bind(this, tree, record)
+        }));
+
+        menu.showAt(e.pageX, e.pageY);
+    },
 
     addField: function () {
         Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
