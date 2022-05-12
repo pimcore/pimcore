@@ -106,7 +106,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $property->setType($type);
         $property->setCid($this->getId());
         $property->setName($name);
-        $property->setCtype('object');
+        $property->setCtype(Service::getElementType($this));
         $property->setData($data);
         $property->setInherited($inherited);
         $property->setInheritable($inheritable);
