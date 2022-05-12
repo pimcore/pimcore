@@ -932,7 +932,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var id = this.layoutChangeCombo.getValue();
 
         Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
-            if (btn == 'yes'){
+            if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_deletecustomlayout'),
                     method: 'DELETE',
