@@ -945,6 +945,7 @@
     "delete_classificationstore_relation_message": "Do you really want to delete relation '%s' ?",
     "delete_fieldcollection_message": "Do you really want to delete fieldcollection '%s' ?",
     "delete_objectbrick_message": "Do you really want to delete objectbrick '%s' ?",
+    "delete_staticroute_message": "Do you really want to delete staticroute '%s' ?",
     "delete_tag_message": "Do you really want to delete tag '%s' ?",
     "delete_targeting_targetgroup_message": "Do you really want to delete targetgroup '%s' ?",
     "delete_targeting_rule_message": "Do you really want to delete rule '%s' ?",
