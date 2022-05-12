@@ -385,7 +385,9 @@ final class Thumbnail
 
         $thumbConfig = $this->getConfig();
         if ($thumbConfig) {
-            $attributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options);
+            $srcsetAttribute = isset($options['previewDataUri']) ? 'data-srcset' : 'srcset';
+
+            $attributes[$srcsetAttribute] = $this->getSrcset($thumbConfig, $image, $options);
         }
 
         $htmlImgTag = '';
