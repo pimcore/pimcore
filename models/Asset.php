@@ -150,13 +150,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
-     */
-    protected $properties = null;
-
-    /**
-     * @internal
-     *
      * @var array|null
      */
     protected $versions = null;
@@ -1406,59 +1399,6 @@ class Asset extends Element\AbstractElement
     public function setDataChanged($changed = true)
     {
         $this->dataChanged = $changed;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
-    {
-        if ($this->properties === null) {
-            // try to get from cache
-            $cacheKey = 'asset_properties_' . $this->getId();
-            $properties = \Pimcore\Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['asset_properties' => 'asset_properties', $elementCacheTag => $elementCacheTag];
-                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
-            }
-
-            $this->setProperties($properties);
-        }
-
-        return $this->properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('asset');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->properties[$name] = $property;
 
         return $this;
     }

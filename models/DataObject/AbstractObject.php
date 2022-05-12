@@ -168,13 +168,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
-     */
-    protected ?array $o_properties = null;
-
-    /**
-     * @internal
-     *
      * @var bool[]
      */
     protected $o_hasChildren = [];
@@ -1257,64 +1250,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return Model\Property[]
-     */
-    public function getProperties()
-    {
-        if ($this->o_properties === null) {
-            // try to get from cache
-            $cacheKey = 'object_properties_' . $this->getId();
-            $properties = Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
-                Cache::save($properties, $cacheKey, $cacheTags);
-            }
-
-            $this->setProperties($properties);
-        }
-
-        return $this->o_properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->o_properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Model\Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('object');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->o_properties[$name] = $property;
-
-        return $this;
-    }
 
     /**
      * @return string
@@ -1336,7 +1271,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties']);
         }
 
         return array_diff($parentVars, $blockedVars);
@@ -1353,7 +1288,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if ($this->isInDumpState() && $this->o_properties !== null) {
+        if ($this->isInDumpState() && $this->properties !== null) {
             $this->renewInheritedProperties();
         }
 

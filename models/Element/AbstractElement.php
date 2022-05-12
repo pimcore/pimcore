@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
@@ -46,6 +47,74 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int
      */
     protected $__dataVersionTimestamp = null;
+
+    /**
+     * @internal
+     * @var array|null
+     */
+    protected ?array $properties = null;
+
+
+    /**
+     * @return Model\Property[]
+     */
+    public function getProperties()
+    {
+        $type = Service::getElementType($this);
+
+        if ($this->properties === null) {
+            // try to get from cache
+            $cacheKey = $type . '_properties_' . $this->getId();
+            $properties = Cache::load($cacheKey);
+            if (!is_array($properties)) {
+                $properties = $this->getDao()->getProperties();
+                $elementCacheTag = $this->getCacheTag();
+                $cacheTags = [$type . '_properties' => $type . '_properties', $elementCacheTag => $elementCacheTag];
+                Cache::save($properties, $cacheKey, $cacheTags);
+            }
+
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function setProperties(?array $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     * @param bool $inherited
+     * @param bool $inheritable
+     *
+     * @return $this
+     */
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
+    {
+        $this->getProperties();
+
+        $property = new Model\Property();
+        $property->setType($type);
+        $property->setCid($this->getId());
+        $property->setName($name);
+        $property->setCtype(Service::getElementType($this));
+        $property->setData($data);
+        $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
+
+        $this->properties[$name] = $property;
+
+        return $this;
+    }
 
     /**
      * @internal
