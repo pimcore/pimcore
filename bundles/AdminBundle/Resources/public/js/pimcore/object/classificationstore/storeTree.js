@@ -293,7 +293,23 @@ pimcore.object.classificationstore.storeTree = Class.create({
     deleteConfig: function (tree, record) {
 
         Ext.Msg.confirm(t('delete'), sprintf(t('delete_storeconfig_message'), record.data.text), function (btn) {
-            alert(record.data)
+            if (btn == 'yes') {
+                Ext.Ajax.request({
+                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletestore'),
+                    method: 'POST',
+                    params: {
+                        id: record.data.id
+                    },
+                    success: function (response) {
+                        var data = Ext.decode(response.responseText);
+
+                        console.log(data);
+                    }.bind(this)
+                });
+
+                this.getEditContainer().removeAll();
+                record.remove();
+            }
         }.bind(this))
     }
 

@@ -34,6 +34,50 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
+     * Delete store
+     *
+     * @Route("/delete-store", name="deletestore", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteStoreAction(Request $request): JsonResponse
+    {
+        $id = $request->get('id');
+
+        $db = Db::get();
+
+        $tableList = $db->fetchAll("show tables like 'object_classificationstore_data_%'");
+        foreach ($tableList as $table) {
+            $theTable = current($table);
+            $sql = 'delete from ' . $theTable . ' where keyId In (select id from classificationstore_keys where storeId = ' . $db->quote($storeId) . ')';
+            $db->query($sql);
+        }
+
+        $tableList = $db->fetchAll("show tables like 'object_classificationstore_groups_%'");
+        foreach ($tableList as $table) {
+            $theTable = current($table);
+            $sql = 'delete from ' . $theTable . ' where groupId In (select id from classificationstore_groups where storeId = ' . $db->quote($storeId) . ')';
+            $db->query($sql);
+        }
+
+        $sql = 'delete from classificationstore_keys where storeId = ' . $db->quote($storeId);
+        $db->query($sql);
+
+        $sql = 'delete from classificationstore_groups where storeId = ' . $db->quote($storeId);
+        $db->query($sql);
+
+        $sql = 'delete from classificationstore_collections where storeId = ' . $db->quote($storeId);
+        $db->query($sql);
+
+        $sql = 'delete from classificationstore_stores where id = ' . $db->quote($storeId);
+        $db->query($sql);
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
      * Delete collection with the group-relations
      *
      * @Route("/delete-collection", name="deletecollection", methods={"DELETE"})
