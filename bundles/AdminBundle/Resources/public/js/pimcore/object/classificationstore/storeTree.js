@@ -175,6 +175,12 @@ pimcore.object.classificationstore.storeTree = Class.create({
             }
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('delete_configuration'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.deleteConfig.bind(this, tree, record)
+        }));
+
         menu.showAt(e.pageX, e.pageY);
         e.stopEvent();
 
@@ -282,9 +288,14 @@ pimcore.object.classificationstore.storeTree = Class.create({
         else {
             Ext.Msg.alert(t("classificationstore_configuration"), t("classificationstore_invalidname"));
         }
+    },
+
+    deleteConfig: function (tree, record) {
+
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_storeconfig_message'), record.data.text), function (btn) {
+            alert(record.data)
+        }.bind(this))
     }
-
-
 
 });
 
