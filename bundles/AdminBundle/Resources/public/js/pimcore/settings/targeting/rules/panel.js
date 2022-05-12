@@ -192,15 +192,19 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
 
     deleteTarget: function (tree, record) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_targeting_ruledelete'),
-            method: 'DELETE',
-            params: {
-                id: record.data.id
-            },
-            success: function () {
-                this.tree.getStore().load();
-            }.bind(this)
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_targeting_rule_message'), record.data.text), function (btn) {
+            if (btn == 'yes') {
+                Ext.Ajax.request({
+                    url: Routing.generate('pimcore_admin_targeting_ruledelete'),
+                    method: 'DELETE',
+                    params: {
+                        id: record.data.id
+                    },
+                    success: function () {
+                        this.tree.getStore().load();
+                    }.bind(this)
+                });
+            }
         });
     },
 
