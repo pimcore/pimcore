@@ -141,7 +141,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         var colId = data.data.colId;
                         var groupId = data.data.groupId;
 
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_classificationstore_collectionrelation_message'), data.data.text), function(btn) {
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'collectionrelation', data.data.text), function(btn) {
                             if (btn == 'yes') {
                                 Ext.Ajax.request({
                                     url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollectionrelation'),
@@ -315,7 +315,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         this.relationsGrid.hide();
                         this.relationsPanel.disable();
 
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_classificationstore_collection_message'), data.data.text), function(btn) {
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'collection', data.data.text), function(btn) {
                             if (btn == 'yes') {
                                 Ext.Ajax.request({
                                     url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollection'),

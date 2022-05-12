@@ -175,7 +175,7 @@ pimcore.object.fieldcollection = Class.create({
         var menu = new Ext.menu.Menu();
         menu.add(new Ext.menu.Item({
             text: t('delete'),
-            iconCls: "pimcore_icon_delete",
+            iconCls: "pimcore_icon_fieldcollection pimcore_icon_overlay_delete",
             handler: this.deleteField.bind(this, tree, record)
         }));
 
@@ -223,7 +223,7 @@ pimcore.object.fieldcollection = Class.create({
 
     deleteField: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_fieldcollection_message'), record.data.text), function(btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'fieldcollection', record.data.text), function(btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectiondelete'),

@@ -233,7 +233,7 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_thumbnail_message'), record.data.text), function (btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'imagethumbnail', record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_settings_thumbnaildelete'),

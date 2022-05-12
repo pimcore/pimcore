@@ -179,7 +179,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     deleteField: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_objectbrick_message'), record.data.text), function(btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), 'objectbrick', record.data.text), function(btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_objectbrickdelete'),
