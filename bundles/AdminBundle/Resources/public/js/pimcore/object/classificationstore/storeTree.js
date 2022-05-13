@@ -296,14 +296,9 @@ pimcore.object.classificationstore.storeTree = Class.create({
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletestore'),
-                    method: 'POST',
+                    method: 'DELETE',
                     params: {
-                        id: record.data.id
-                    },
-                    success: function (response) {
-                        var data = Ext.decode(response.responseText);
-
-                        console.log(data);
+                        storeId: record.data.id
                     }.bind(this)
                 });
 

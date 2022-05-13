@@ -44,34 +44,34 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteStoreAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $storeId = $request->get('storeId');
 
         $db = Db::get();
 
-        $tableList = $db->fetchAll("show tables like 'object_classificationstore_data_%'");
+        $tableList = $db->fetchAll("SHOW tables LIKE 'object_classificationstore_data_%'");
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where keyId In (select id from classificationstore_keys where storeId = ' . $db->quote($storeId) . ')';
+            $sql = 'DELETE FROM ' . $theTable . ' WHERE keyId IN (SELECT id FROM classificationstore_keys WHERE storeId = ' . $db->quote($storeId) . ')';
             $db->query($sql);
         }
 
-        $tableList = $db->fetchAll("show tables like 'object_classificationstore_groups_%'");
+        $tableList = $db->fetchAll("SHOW tables LIKE 'object_classificationstore_groups_%'");
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where groupId In (select id from classificationstore_groups where storeId = ' . $db->quote($storeId) . ')';
+            $sql = 'DELETE FROM ' . $theTable . ' WHERE groupId IN (SELECT id FROM classificationstore_groups WHERE storeId = ' . $db->quote($storeId) . ')';
             $db->query($sql);
         }
 
-        $sql = 'delete from classificationstore_keys where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_keys WHERE storeId = ' . $db->quote($storeId);
         $db->query($sql);
 
-        $sql = 'delete from classificationstore_groups where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_groups WHERE storeId = ' . $db->quote($storeId);
         $db->query($sql);
 
-        $sql = 'delete from classificationstore_collections where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_collections WHERE storeId = ' . $db->quote($storeId);
         $db->query($sql);
 
-        $sql = 'delete from classificationstore_stores where id = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_stores WHERE id = ' . $db->quote($storeId);
         $db->query($sql);
 
         return $this->adminJson(['success' => true]);
