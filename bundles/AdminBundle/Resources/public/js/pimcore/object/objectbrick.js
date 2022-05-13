@@ -145,7 +145,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         e.stopEvent();
         tree.select();
 
-        var menu = Ext.menu.Menu();
+        var menu = new Ext.menu.Menu();
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_delete",
