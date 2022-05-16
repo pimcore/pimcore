@@ -1272,22 +1272,6 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
     public function __wakeup()
     {
         if ($this->isInDumpState()) {

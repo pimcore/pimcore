@@ -21,6 +21,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
@@ -54,6 +55,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var array|null
      */
     protected ?array $properties = null;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public static $doNotRestoreKeyAndPath = false;
 
     /**
      * @return Model\Property[]
@@ -479,10 +487,49 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function __sleep()
     {
+
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies'];
+
+        $type = Service::getElementType($this);
+
+        // this should be removed when the o_ prefix will be removed from data objects
+        $hasPrefix = in_array($type, ['document', 'asset']);
+
+        $blockedVars = match ($type) {
+            'document' => ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'],
+            'asset' => ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'],
+            'object' => ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'dependencies'],
+            default => [],
+        };
+
+        if ($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $blockedVars = array_merge($blockedVars, [$hasPrefix ? 'o_dirtyFields' : 'dirtyFields']);
+            $this->removeInheritedProperties();
+        } else {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, [$hasPrefix ? 'o_children' : 'children', 'properties']);
+        }
 
         return array_diff($parentVars, $blockedVars);
+    }
+
+    public function __wakeup()
+    {
+        if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
+            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
+            $originalElement = static::getById($this->getId());
+            if ($originalElement) {
+                $this->setKey($originalElement->getKey());
+                $this->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($this->isInDumpState() && $this->properties !== null) {
+            $this->renewInheritedProperties();
+        }
+
+        $this->setInDumpState(false);
     }
 
     /**
