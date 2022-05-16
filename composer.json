@@ -57,7 +57,7 @@
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.0.2",
     "doctrine/inflector": "^1.4.2 || ^2",
-    "symfony/doctrine-messenger": "^5.2.0",
+    "symfony/doctrine-messenger": "^5.2.0 || ^6.0",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
     "friendsofsymfony/jsrouting-bundle": "^2.7",
