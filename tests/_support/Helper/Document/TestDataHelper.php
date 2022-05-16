@@ -734,7 +734,11 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function fillWysiwyg(Page $page, $field, $seed = 1)
     {
-        $this->fillTextarea($page, $field, $seed);
+        //$this->fillTextarea($page, $field, $seed);
+        $editable = new Wysiwyg();
+        $editable->setName($field);
+        $editable->setDataFromEditmode('wysiwyg' . $seed);
+        $page->setEditable($editable);
     }
 
     /**
