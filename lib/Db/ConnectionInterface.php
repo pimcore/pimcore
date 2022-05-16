@@ -26,6 +26,8 @@ use Pimcore\Model\Element\ValidationException;
 
 /**
  * @method \Doctrine\DBAL\Schema\AbstractSchemaManager getSchemaManager()
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 interface ConnectionInterface extends Connection
 {

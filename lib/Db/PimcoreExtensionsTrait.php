@@ -25,6 +25,8 @@ use Pimcore\Model\Element\ValidationException;
 
 /**
  * @property \Doctrine\DBAL\Driver\Connection $_conn
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 trait PimcoreExtensionsTrait
 {
