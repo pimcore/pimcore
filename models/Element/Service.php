@@ -23,6 +23,7 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
