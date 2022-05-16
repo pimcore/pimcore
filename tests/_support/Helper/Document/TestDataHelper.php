@@ -753,4 +753,19 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable->setDataFromEditmode('content<br>' . $seed);
         $page->setEditable($editable);
     }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillBlock(Page $page, $field, $seed = 1)
+    {
+        $editable = new Block();
+        $editable->setName($field);
+        $data = $this->createBlockData();
+        $editable->setDataFromEditmode($data);
+        $page->setEditable($editable);
+    }
+
 }
