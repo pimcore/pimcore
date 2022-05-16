@@ -36,6 +36,8 @@ use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Editable\Video;
+use Pimcore\Model\Document\Editable\Block;
+use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
@@ -387,8 +389,15 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function assertWysiwyg(PageSnippet $pagesnippet, $field, $seed = 1)
     {
-        $this->assertTextarea($pagesnippet, $field, $seed);
+        /** @var Wysiwyg $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Wysiwyg::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals('content<br>' . $seed, $value);
+        //$this->assertTextarea($pagesnippet, $field, $seed);
     }
+
 
     /**
      * @param PageSnippet $object
@@ -404,6 +413,40 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $this->assertEquals('content<br>' . $seed, $value);
     }
+
+    /**
+     * @param PageSnippet $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertBlock(PageSnippet $pagesnippet, $field, $seed = 1)
+    {
+        /** @var Block $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Block::class, $editable);
+        $value = $editable->getValue();
+
+        $expected = $this->createBlockData();
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     *
+     * @return array[]
+     */
+    public function createBlockData()
+    {
+        return [
+            [
+                'type' => 'input',
+            ],
+            [
+                'type' => 'image',
+            ],
+        ];
+    }
+
 
     /**
      * @param Page $page
