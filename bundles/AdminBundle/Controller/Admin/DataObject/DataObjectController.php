@@ -202,8 +202,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if (!empty($cv['classes'])) {
                 $cvConditions = [];
                 $cvClasses = $cv['classes'];
+                $isAssociative = array_keys($cvClasses) !== range(0, count($cvClasses) - 1);
                 foreach ($cvClasses as $key => $cvClass) {
-                    $cvConditions[] = "objects.o_classId = '" . $key . "'";
+                    $cvConditions[] = "objects.o_classId = '" . ($isAssociative ? $key : $cvClass) . "'";
                 }
 
                 $cvConditions[] = "objects.o_type = 'folder'";
