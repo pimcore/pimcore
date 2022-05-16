@@ -26,7 +26,6 @@ use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -44,7 +43,6 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 /**

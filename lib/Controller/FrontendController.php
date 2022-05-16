@@ -136,7 +136,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param EditableRenderer $editableRenderer
      */
-    public function setEditableRenderer(EditmodeResolver $editableRenderer): void
+    public function setEditableRenderer(EditableRenderer $editableRenderer): void
     {
         $this->editableRenderer = $editableRenderer;
     }

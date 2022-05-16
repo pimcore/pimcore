@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * Class VoucherController
@@ -66,7 +67,9 @@ class VoucherController extends FrontendController implements KernelControllerEv
         $user = $this->tokenResolver->getUser();
 
         if ($user) {
-            $this->translator->setLocale($user->getLanguage());
+            if ($this->translator instanceof LocaleAwareInterface) {
+                $this->translator->setLocale($user->getLanguage());
+            }
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
