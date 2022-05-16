@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class VoucherController
@@ -37,16 +36,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
-    protected $translator;
+
     protected $tokenResolver;
     /**
      * AdminController constructor.
-     * @param TranslatorInterface $trans
      * @param TokenStorageUserResolver $tokenStorageUserResolver
      */
-    public function __construct(TranslatorInterface $trans, TokenStorageUserResolver $tokenStorageUserResolver)
+    public function __construct(TokenStorageUserResolver $tokenStorageUserResolver)
     {
-        $this->translator = $trans;
         $this->tokenResolver = $tokenStorageUserResolver;
     }
     /**
@@ -55,7 +52,6 @@ class VoucherController extends FrontendController implements KernelControllerEv
     public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
 
         return $services;

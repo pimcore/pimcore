@@ -54,7 +54,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 {
     public function __construct(
         protected ResponseHelper $responseHelper,
-        protected PimcoreBundleManager $bundleManager
     ) {
     }
 

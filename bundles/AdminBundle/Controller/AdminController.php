@@ -39,6 +39,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @var TranslatorInterface
      */
     protected $translator;
+    /**
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
 
     /**
      * {@inheritdoc}
@@ -47,9 +51,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
-        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
-        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
         $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
@@ -71,13 +72,21 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
+
     /**
-     * Get user from user proxy object which is registered on security component
-     *
-     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
-     *
-     * @return UserProxy|User|null
+     * @required
      */
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * @required
+     */
+    public function setBundleManager(PimcoreBundleManager $bundleManager){
+        $this->bundleManager = $bundleManager;
+    }
 
 
     /**
@@ -90,7 +99,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @param bool $proxyUser
+     * Get user from user proxy object which is registered on security component
+     *
+     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
+     *
      * @return UserProxy|User|null
      */
     protected function getAdminUser($proxyUser = false)
@@ -261,15 +273,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
         return new JsonResponse($json, $status, $headers, true);
     }
-
-    /**
-     * @required
-     */
-    public function setTranslator(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
 
     /**
      * Translates the given message.

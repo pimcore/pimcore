@@ -24,7 +24,6 @@ use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Document\DocType;
@@ -54,18 +53,11 @@ class IndexController extends AdminController implements KernelResponseEventInte
     private $eventDispatcher;
 
     /**
-     * @var PimcoreBundleManager
-     */
-    private $bundleManager;
-
-    /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param PimcoreBundleManager $pimcoreBundleManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, PimcoreBundleManager $pimcoreBundleManager)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->bundleManager = $pimcoreBundleManager;
     }
 
     /**

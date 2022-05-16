@@ -23,6 +23,7 @@ use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @property Document\PageSnippet $document
@@ -43,22 +44,21 @@ abstract class FrontendController extends Controller
      */
     protected $documentResolver;
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+    /**
      * @var EditmodeResolver
      */
     protected $editmodeResolver;
     /**
-     * {@inheritdoc}
-     *
+     * @var EditableRenderer
      */
+    protected $editableRenderer;
+
     public static function getSubscribedServices()// : array
     {
-        $services = parent::getSubscribedServices();
-        $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
-        $services[DocumentResolver::class] = '?'.DocumentResolver::class;
-        $services[ResponseHeaderResolver::class] = '?'.ResponseHeaderResolver::class;
-        $services[EditableRenderer::class] = '?'.EditableRenderer::class;
-
-        return $services;
+        return parent::getSubscribedServices();
     }
 
     /**
@@ -133,6 +133,25 @@ abstract class FrontendController extends Controller
     }
 
     /**
+     * @required
+     * @param EditableRenderer $editableRenderer
+     */
+    public function setEditableRenderer(EditmodeResolver $editableRenderer): void
+    {
+        $this->editableRenderer = $editableRenderer;
+    }
+
+    /**
+     * @required
+     * @param TranslatorInterface $translator
+     */
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+
+    /**
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
@@ -161,6 +180,7 @@ abstract class FrontendController extends Controller
      * @param Document\PageSnippet|null $document
      *
      * @return Document\Editable\EditableInterface
+     * @throws \Exception
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
@@ -168,9 +188,7 @@ abstract class FrontendController extends Controller
             $document = $this->document;
         }
 
-        $editableRenderer = $this->container->get(EditableRenderer::class);
-
-        return $editableRenderer->getEditable($document, $type, $inputName, $options);
+        return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
     }
 
     /**

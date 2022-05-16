@@ -43,20 +43,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @var PimcoreBundleManager
-     */
-    private $bundleManager;
-
-    /**
      * @var AreabrickManagerInterface
      */
     private $areabrickManager;
 
     public function __construct(
-        PimcoreBundleManager $bundleManager,
         AreabrickManagerInterface $areabrickManager
     ) {
-        $this->bundleManager = $bundleManager;
         $this->areabrickManager = $areabrickManager;
     }
 
