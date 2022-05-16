@@ -428,23 +428,63 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $expected = $this->createBlockData();
 
-        $this->assertEquals($expected, $value);
+        $this->assertEquals(array_keys($expected), $value);
+
+        $blockElements = $editable->getElements();
+
+        //assert editables at index 1
+        /** @var Input $blockInput1 */
+        $blockInput1 = $blockElements["1"]->getEditable('input');
+        $this->assertEquals($expected["1"]['input'], $blockInput1->getValue());
+
+        /** @var Image $blockImage1 */
+        $blockImage1 = $blockElements["1"]->getEditable('image');
+        $this->assertEquals($expected["1"]['image'], $blockImage1->getImage()->getId());
+
+        //asset editables at index 2
+        /** @var Input $blockInput2 */
+        $blockInput2 = $blockElements["2"]->getEditable('input');
+        $this->assertEquals($expected["2"]['input'], $blockInput2->getValue());
+
+        /** @var Image $blockImage2 */
+        $blockImage2 = $blockElements["2"]->getEditable('image');
+        $this->assertEquals($expected["2"]['image'], $blockImage2->getImage());
     }
 
     /**
      *
      * @return array[]
      */
-    public function createBlockData()
+    public function createBlockData($page = null, $blockName = null): array
     {
-        return [
-            [
-                'type' => 'input',
+        $asset = TestHelper::createImageAsset();
+        $blockIndices =  [
+            "1" => [
+                'input' => 'block text 1',
+                'image' => $asset->getId()
             ],
-            [
-                'type' => 'image',
-            ],
+            "2" => [
+                'input' => 'block text 2',
+                'image' => null
+            ]
         ];
+
+        if ($page && $blockName) {
+            foreach ($blockIndices as $blockIdx => $blockVal) {
+                //Add editable on each block index
+                $input = new Input();
+                $input->setName($blockName . ':' . $blockIdx . '.input');
+                $input->setDataFromResource($blockVal['input']);
+                $page->setEditable($input);
+
+                $image = new Image();
+                $image->setName($blockName . ':' . $blockIdx . '.image');
+                $image->setDataFromEditmode(['id' => $blockVal['image']]);
+                $page->setEditable($image);
+            }
+        }
+
+        return $blockIndices;
     }
 
 
@@ -763,8 +803,8 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Block();
         $editable->setName($field);
-        $data = $this->createBlockData();
-        $editable->setDataFromEditmode($data);
+        $data = $this->createBlockData($page, $field);
+        $editable->setDataFromEditmode(array_keys($data));
         $page->setEditable($editable);
     }
 
