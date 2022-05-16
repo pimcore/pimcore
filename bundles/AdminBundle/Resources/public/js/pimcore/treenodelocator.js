@@ -464,7 +464,7 @@ pimcore.treenodelocator = function()
          * Returns the direction (-1/+1/0) for elements sorted by key.
          */
         getDirectionForElementsSortedByKey: function (elementKey, elementType, firstElementChild, lastElementChild) {
-            if(elementType === 'asset' && lastElementChild && lastElementChild.get('type') === 'folder') {
+            if(elementType === 'asset' && firstElementChild && firstElementChild.get('type') === 'folder') {
                 return 1;
             }
 
