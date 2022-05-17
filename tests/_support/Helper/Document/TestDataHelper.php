@@ -395,7 +395,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $editable->getValue();
 
         $this->assertEquals('content<br>' . $seed, $value);
-        //$this->assertTextarea($pagesnippet, $field, $seed);
     }
 
 
@@ -773,7 +772,6 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function fillWysiwyg(Page $page, $field, $seed = 1)
     {
-        //$this->fillTextarea($page, $field, $seed);
         $editable = new Wysiwyg();
         $editable->setName($field);
         $editable->setDataFromEditmode('content<br>' . $seed);
