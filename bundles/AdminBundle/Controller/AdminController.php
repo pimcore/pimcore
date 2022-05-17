@@ -43,6 +43,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @var PimcoreBundleManager
      */
     protected $bundleManager;
+    /**
+     * @var SerializerInterface|null
+     */
+    protected $adminSerializer;
 
     /**
      * {@inheritdoc}
@@ -50,10 +54,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public static function getSubscribedServices()// : array
     {
-        $services = parent::getSubscribedServices();
-        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
-
-        return $services;
+        return parent::getSubscribedServices();
     }
 
     /**
@@ -96,6 +97,11 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public function setTokenResolver(TokenStorageUserResolver $tokenResolver)
     {
         $this->tokenResolver = $tokenResolver;
+    }
+
+    public function setAdminSerializer(SerializerInterface $adminSerializer)
+    {
+        $this->adminSerializer = $adminSerializer;
     }
 
     /**
@@ -218,7 +224,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $serializer = null;
 
         if ($useAdminSerializer) {
-            $serializer = $this->container->get('pimcore_admin.serializer');
+            $serializer = $this->adminSerializer;
         } else {
             $serializer = $this->container->get('serializer');
         }
@@ -244,7 +250,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $serializer = null;
 
         if ($useAdminSerializer) {
-            $serializer = $this->container->get('pimcore_admin.serializer');
+            $serializer = $this->adminSerializer;
         } else {
             $serializer = $this->container->get('serializer');
         }
