@@ -48,6 +48,7 @@ use Symfony\Component\Mime\MimeTypes;
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string|null getCurrentFullPath()
+ *  * @method ?Asset getParent()
  */
 class Asset extends Element\AbstractElement
 {
@@ -76,13 +77,6 @@ class Asset extends Element\AbstractElement
      * @var int|null
      */
     protected $parentId;
-
-    /**
-     * @internal
-     *
-     * @var self|null
-     */
-    protected $parent;
 
     /**
      * @internal
@@ -1813,18 +1807,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $bytes;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        if ($this->parent === null) {
-            $this->setParent(Asset::getById($this->getParentId()));
-        }
-
-        return $this->parent;
     }
 
     /**

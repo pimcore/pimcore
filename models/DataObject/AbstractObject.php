@@ -105,7 +105,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
+     * @var Element\ElementInterface|null
      */
     protected $o_parent;
 
@@ -224,6 +224,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var int
      */
     protected $o_versionCount = 0;
+
+    public function __construct()
+    {
+        $this->o_parent = & $this->parent;
+    }
 
     /**
      * @static
@@ -1225,27 +1230,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return self|null
-     */
-    public function getParent()
-    {
-        if ($this->o_parent === null) {
-            $this->setParent(DataObject::getById($this->getParentId()));
-        }
-
-        return $this->o_parent;
-    }
-
-    /**
-     * @param self|null $o_parent
+     * @param Element\AbstractElement|null $parent
      *
      * @return $this
      */
-    public function setParent($o_parent)
+    public function setParent($parent)
     {
-        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
-        $this->o_parent = $o_parent;
+        $this->parent = $parent;
 
         return $this;
     }

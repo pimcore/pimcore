@@ -35,6 +35,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string getCurrentFullPath()
+ * @method ?Document getParent()
  */
 class Document extends Element\AbstractElement
 {
@@ -74,13 +75,6 @@ class Document extends Element\AbstractElement
      * @var int|null
      */
     protected $parentId;
-
-    /**
-     * @internal
-     *
-     * @var self|null
-     */
-    protected $parent;
 
     /**
      * @internal
@@ -1241,18 +1235,6 @@ class Document extends Element\AbstractElement
         $this->published = (bool) $published;
 
         return $this;
-    }
-
-    /**
-     * @return Document|null
-     */
-    public function getParent()
-    {
-        if ($this->parent === null) {
-            $this->setParent(Document::getById($this->getParentId()));
-        }
-
-        return $this->parent;
     }
 
     /**

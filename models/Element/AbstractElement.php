@@ -56,6 +56,26 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?array $properties = null;
 
     /**
+     * @var self|null
+     */
+    protected $parent = null;
+
+    /**
+     * @return self|null
+     */
+    public function getParent()
+    {
+        if ($this->parent === null) {
+            $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
+            $this->setParent($parent);
+        }
+
+        return $this->parent;
+    }
+
+    abstract function setParentId($parentId);
+
+    /**
      * @return Model\Property[]
      */
     public function getProperties()
@@ -480,7 +500,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies'];
+        $blockedVars = ['dependencies', 'parent'];
 
         return array_diff($parentVars, $blockedVars);
     }
