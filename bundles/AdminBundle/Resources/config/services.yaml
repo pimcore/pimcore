@@ -37,8 +37,6 @@ services:
     Pimcore\Bundle\AdminBundle\Controller\:
         resource: '../../Controller'
         public: true
-        calls:
-            - [ setAdminSerializer, [ '@?Pimcore\Admin\Serializer' ] ]
         tags: ['controller.service_arguments']
 
     #

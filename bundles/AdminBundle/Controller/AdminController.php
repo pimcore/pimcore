@@ -43,14 +43,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @var PimcoreBundleManager
      */
     protected $bundleManager;
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
-    /**
-     * @var SerializerInterface|null
-     */
-    protected $adminSerializer;
 
     /**
      * {@inheritdoc}
@@ -59,6 +51,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public static function getSubscribedServices()// : array
     {
         return parent::getSubscribedServices();
+        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
+
+        return $services;
     }
 
     /**
@@ -99,18 +94,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public function setTokenResolver(TokenStorageUserResolver $tokenResolver)
     {
         $this->tokenResolver = $tokenResolver;
-    }
-
-    /**
-     * @required
-     */
-    public function setSerializer(SerializerInterface $serializer){
-        $this->serializer = $serializer;
-    }
-
-    public function setAdminSerializer(SerializerInterface $adminSerializer)
-    {
-        $this->adminSerializer = $adminSerializer;
     }
 
     /**
@@ -233,12 +216,12 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $serializer = null;
 
         if ($useAdminSerializer) {
-            $serializer = $this->adminSerializer;
+            $serializer = $this->container->get('pimcore_admin.serializer');
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
-        return $serializer?->serialize($data, 'json', array_merge([
+        return $serializer->serialize($data, 'json', array_merge([
             'json_encode_options' => $options,
         ], $context));
     }
@@ -259,16 +242,16 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $serializer = null;
 
         if ($useAdminSerializer) {
-            $serializer = $this->adminSerializer;
+            $serializer = $this->container->get('pimcore_admin.serializer');
         } else {
-            $serializer = $this->serializer;
+            $serializer = $this->container->get('serializer');
         }
 
         if ($associative) {
             $context['json_decode_associative'] = true;
         }
 
-        return $serializer?->decode($json, 'json', $context);
+        return $serializer->decode($json, 'json', $context);
     }
 
     /**
@@ -286,7 +269,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     {
         $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
 
-        return new JsonResponse($json ?? '', $status, $headers, true);
+        return new JsonResponse($json, $status, $headers, true);
     }
 
     /**
