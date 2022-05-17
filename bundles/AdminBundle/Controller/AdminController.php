@@ -44,6 +44,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected $bundleManager;
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+    /**
      * @var SerializerInterface|null
      */
     protected $adminSerializer;
@@ -73,7 +77,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
-
     /**
      * @required
      */
@@ -89,7 +92,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $this->bundleManager = $bundleManager;
     }
 
-
     /**
      * @required
      * @param TokenStorageUserResolver $tokenResolver
@@ -97,6 +99,13 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public function setTokenResolver(TokenStorageUserResolver $tokenResolver)
     {
         $this->tokenResolver = $tokenResolver;
+    }
+
+    /**
+     * @required
+     */
+    public function setSerializer(SerializerInterface $serializer){
+        $this->serializer = $serializer;
     }
 
     public function setAdminSerializer(SerializerInterface $adminSerializer)
@@ -226,10 +235,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
         if ($useAdminSerializer) {
             $serializer = $this->adminSerializer;
         } else {
-            $serializer = $this->container->get('serializer');
+            $serializer = $this->serializer;
         }
 
-        return $serializer->serialize($data, 'json', array_merge([
+        return $serializer?->serialize($data, 'json', array_merge([
             'json_encode_options' => $options,
         ], $context));
     }
@@ -252,14 +261,14 @@ abstract class AdminController extends Controller implements AdminControllerInte
         if ($useAdminSerializer) {
             $serializer = $this->adminSerializer;
         } else {
-            $serializer = $this->container->get('serializer');
+            $serializer = $this->serializer;
         }
 
         if ($associative) {
             $context['json_decode_associative'] = true;
         }
 
-        return $serializer->decode($json, 'json', $context);
+        return $serializer?->decode($json, 'json', $context);
     }
 
     /**
@@ -277,7 +286,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     {
         $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
 
-        return new JsonResponse($json, $status, $headers, true);
+        return new JsonResponse($json ?? '', $status, $headers, true);
     }
 
     /**
