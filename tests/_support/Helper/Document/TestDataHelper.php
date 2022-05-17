@@ -452,6 +452,8 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
+     * @param Page|null $page
+     * @param string|null $blockName
      *
      * @return array[]
      */
