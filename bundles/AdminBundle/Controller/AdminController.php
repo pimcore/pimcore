@@ -50,7 +50,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public static function getSubscribedServices()// : array
     {
-        return parent::getSubscribedServices();
+        $services = parent::getSubscribedServices();
         $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
