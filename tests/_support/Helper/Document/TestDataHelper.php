@@ -414,7 +414,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param PageSnippet $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
