@@ -66,13 +66,6 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $id;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $parentId;
 
     /**
@@ -1004,14 +997,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getKey()
     {
         return $this->key;
@@ -1083,16 +1068,6 @@ class Document extends Element\AbstractElement
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
-    {
-        $this->id = $id ? (int)$id : null;
 
         return $this;
     }

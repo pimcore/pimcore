@@ -51,6 +51,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
+     * @internal
+     *
+     * @var bool
+     */
+    public static $doNotRestoreKeyAndPath = false;
+
+    /**
      * possible types of a document
      *
      * @var array
@@ -83,6 +90,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     * @deprecated
      *
      * @var int|null
      */
@@ -218,6 +226,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+    public function __construct()
+    {
+        $this->o_id = & $this->id;
+    }
 
     /**
      * @return array
@@ -988,14 +1000,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return int|null
      */
-    public function getId()
-    {
-        return $this->o_id;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getParentId()
     {
         // fall back to parent if no ID is set but we have a parent object
@@ -1068,18 +1072,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getUserModification()
     {
         return $this->o_userModification;
-    }
-
-    /**
-     * @param int|null $o_id
-     *
-     * @return $this
-     */
-    public function setId($o_id)
-    {
-        $this->o_id = $o_id ? (int)$o_id : null;
-
-        return $this;
     }
 
     /**

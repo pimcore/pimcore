@@ -68,13 +68,6 @@ class Asset extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $id;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $parentId;
 
     /**
@@ -1169,14 +1162,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
      * @return string|null
      */
     public function getFilename()
@@ -1230,16 +1215,6 @@ class Asset extends Element\AbstractElement
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int)$creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
-    {
-        $this->id = $id ? (int)$id : null;
 
         return $this;
     }

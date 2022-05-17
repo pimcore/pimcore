@@ -21,7 +21,6 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
@@ -68,6 +67,33 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var bool
      */
     public static $doNotRestoreKeyAndPath = false;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $id = null;
+
+    /**
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int|null $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id ? (int)$id : null;
+
+        return $this;
+    }
 
     /**
      * @return Model\Property[]
