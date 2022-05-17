@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document\Editable\Areablock;
+use Pimcore\Model\Document\Editable\Block;
 use Pimcore\Model\Document\Editable\Checkbox;
 use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Embed;
@@ -36,7 +37,6 @@ use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Editable\Video;
-use Pimcore\Model\Document\Editable\Block;
 use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
@@ -397,7 +397,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('content<br>' . $seed, $value);
     }
 
-
     /**
      * @param PageSnippet $pagesnippet
      * @param string $field
@@ -461,12 +460,12 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $asset = TestHelper::createImageAsset('blockimage-');
         $blockIndices =  [
-            "1" => [
+            '1' => [
                 'input' => 'block text 1',
             ],
-            "2" => [
+            '2' => [
                 'input' => 'block text 2',
-            ]
+            ],
         ];
 
         if ($page && $blockName) {
@@ -486,7 +485,6 @@ class TestDataHelper extends AbstractTestDataHelper
 
         return $blockIndices;
     }
-
 
     /**
      * @param Page $page
@@ -806,5 +804,4 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable->setDataFromEditmode(array_keys($data));
         $page->setEditable($editable);
     }
-
 }
