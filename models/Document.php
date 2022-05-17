@@ -190,9 +190,19 @@ class Document extends Element\AbstractElement
     protected $versionCount = 0;
 
     /**
-     * @var array
+     * @return array
      */
-    protected array $blockedVars = ['hasChildren', 'parent', 'scheduledTasks', 'versions', 'fullPathCache'];
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+
+        if (!$this->isInDumpState()) {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+        }
+
+        return $blockedVars;
+    }
 
     /**
      * get possible types

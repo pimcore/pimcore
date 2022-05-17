@@ -218,10 +218,24 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+
     /**
-     * @var array
+     * @return array
      */
-    protected array $blockedVars = ['o_hasChildren', 'o_parent', 'scheduledTasks', 'o_versions', 'omitMandatoryCheck', 'dependencies'];
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+
+        if ($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
+        } else {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties']);
+        }
+
+        return $blockedVars;
+    }
 
     /**
      * @static

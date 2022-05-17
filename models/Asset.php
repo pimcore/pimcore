@@ -216,9 +216,21 @@ class Asset extends Element\AbstractElement
     protected $versionCount = 0;
 
     /**
-     * @var array
+     * @return array
      */
-    protected array $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream', 'children', 'properties'];
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream', 'children', 'properties'];
+
+        if(!$this->isInDumpState()) {
+
+            // for caching asset
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+
+        }
+
+        return $blockedVars;
+    }
 
     /**
      *
