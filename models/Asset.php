@@ -216,6 +216,11 @@ class Asset extends Element\AbstractElement
     protected $versionCount = 0;
 
     /**
+     * @var array
+     */
+    protected array $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream', 'children', 'properties'];
+
+    /**
      *
      * @return array
      */
@@ -1840,24 +1845,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
-            $originalElement = Asset::getById($this->getId());
-            if ($originalElement) {
-                $this->setParentId($originalElement->getParentId());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 
     public function __destruct()

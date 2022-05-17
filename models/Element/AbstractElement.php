@@ -58,6 +58,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     * @var array
+     */
+    protected array $blockedVars = [];
+
+    /**
+     * @internal
      *
      * @var bool
      */
@@ -483,35 +489,30 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * @return array
+     */
+    protected function getBlockedVars(): array
+    {
+
+        $hasPrefix = in_array(Service::getElementType($this), ['asset', 'document']);
+
+        if($this->isInDumpState()) {
+            $blockedVars = [...$this->blockedVars, $hasPrefix ? 'o_dirtyFields' : 'dirtyFields'];
+            $this->removeInheritedProperties();
+
+            return $blockedVars;
+        }
+
+        return [...$this->blockedVars, $hasPrefix ? 'o_children' : 'children', 'properties'];
+
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __sleep()
     {
-
-        $parentVars = parent::__sleep();
-
-        $type = Service::getElementType($this);
-
-        // this should be removed when the o_ prefix will be removed from data objects
-        $hasPrefix = in_array($type, ['document', 'asset']);
-
-        $blockedVars = match ($type) {
-            'document' => ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'],
-            'asset' => ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'],
-            'object' => ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'dependencies'],
-            default => [],
-        };
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, [$hasPrefix ? 'o_dirtyFields' : 'dirtyFields']);
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, [$hasPrefix ? 'o_children' : 'children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
+        return array_diff(parent::__sleep(), $this->getBlockedVars());
     }
 
     public function __wakeup()

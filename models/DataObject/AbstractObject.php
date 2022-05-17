@@ -219,6 +219,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected $o_versionCount = 0;
 
     /**
+     * @var array
+     */
+    protected array $blockedVars = ['o_hasChildren', 'o_parent', 'scheduledTasks', 'o_versions', 'omitMandatoryCheck', 'dependencies'];
+
+    /**
      * @static
      *
      * @return bool

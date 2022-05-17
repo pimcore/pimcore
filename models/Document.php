@@ -190,6 +190,11 @@ class Document extends Element\AbstractElement
     protected $versionCount = 0;
 
     /**
+     * @var array
+     */
+    protected array $blockedVars = ['hasChildren', 'parent', 'scheduledTasks', 'versions', 'fullPathCache'];
+
+    /**
      * get possible types
      *
      * @return array
@@ -1270,24 +1275,6 @@ class Document extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = Document::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 
     /**
