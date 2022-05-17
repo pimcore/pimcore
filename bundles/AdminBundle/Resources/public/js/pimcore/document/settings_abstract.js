@@ -140,6 +140,7 @@ pimcore.document.settings_abstract = Class.create({
                                                     "contentMasterDocumentPath_" + this.document.id).getValue()
                                             },
                                             success:function () {
+                                                this.document.resetChanges();
                                                 this.document.reload();
                                             }.bind(this)
                                         });
