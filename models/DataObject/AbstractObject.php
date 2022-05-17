@@ -90,6 +90,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @deprecated
      *
      * @var int|null
@@ -225,7 +226,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var int
      */
     protected $o_versionCount = 0;
-
 
     public function __construct()
     {
