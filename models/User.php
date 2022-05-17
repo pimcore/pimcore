@@ -686,7 +686,7 @@ final class User extends User\UserRole
                 $userRole = User\UserRole::getById($role);
                 $this->mergedWebsiteTranslationLanguagesEdit = array_merge($this->mergedWebsiteTranslationLanguagesEdit, $userRole->getWebsiteTranslationLanguagesEdit());
             }
-            $this->mergedWebsiteTranslationLanguagesEdit = array_values($this->mergedWebsiteTranslationLanguagesEdit);
+            $this->mergedWebsiteTranslationLanguagesEdit = array_values(array_unique($this->mergedWebsiteTranslationLanguagesEdit));
         }
 
         return $this->mergedWebsiteTranslationLanguagesEdit;
@@ -727,7 +727,8 @@ final class User extends User\UserRole
                 $userRole = User\UserRole::getById($role);
                 $this->mergedWebsiteTranslationLanguagesView = array_merge($this->mergedWebsiteTranslationLanguagesView, $userRole->getWebsiteTranslationLanguagesView());
             }
-            $this->mergedWebsiteTranslationLanguagesView = array_values($this->mergedWebsiteTranslationLanguagesView);
+
+            $this->mergedWebsiteTranslationLanguagesView = array_values(array_unique($this->mergedWebsiteTranslationLanguagesView));
         }
 
         return $this->mergedWebsiteTranslationLanguagesView;
