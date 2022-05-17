@@ -440,7 +440,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         /** @var Image $blockImage1 */
         $blockImage1 = $blockElements[0]->getEditable('image');
-        $this->assertEquals($expected[1]['image'], $blockImage1->getImage()->getId());
+        $this->assertInstanceOf(Asset\Image::class, $blockImage1->getImage());
 
         //assert editables at index 2
         /** @var Input $blockInput2 */
@@ -449,7 +449,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         /** @var Image $blockImage2 */
         $blockImage2 = $blockElements[1]->getEditable('image');
-        $this->assertEquals($expected[2]['image'], $blockImage2->getImage()->getId());
+        $this->assertInstanceOf(Asset\Image::class, $blockImage2->getImage());
     }
 
     /**
@@ -458,18 +458,13 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function createBlockData($page = null, $blockName = null): array
     {
-        $asset = TestHelper::createImageAsset('blockimage-', null, false);
-        $asset->setId(2);
-        $asset->save();
-
+        $asset = TestHelper::createImageAsset('blockimage-');
         $blockIndices =  [
             "1" => [
                 'input' => 'block text 1',
-                'image' => $asset->getId()
             ],
             "2" => [
                 'input' => 'block text 2',
-                'image' => $asset->getId()
             ]
         ];
 
@@ -483,7 +478,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
                 $image = new Image();
                 $image->setName($blockName . ':' . $blockIdx . '.image');
-                $image->setDataFromEditmode(['id' => $blockVal['image']]);
+                $image->setDataFromEditmode(['id' => $asset->getId()]);
                 $page->setEditable($image);
             }
         }
