@@ -115,9 +115,9 @@ trait Timeout
      *
      * @param int $timeout
      *
-     * @return self
+     * @return $this
      */
-    public function setTimeout(int $timeout): self
+    public function setTimeout(int $timeout): static
     {
         $this->timeout = $timeout;
 
