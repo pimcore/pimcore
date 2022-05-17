@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document\Editable\Areablock;
+use Pimcore\Model\Document\Editable\Block;
 use Pimcore\Model\Document\Editable\Checkbox;
 use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Embed;
@@ -36,6 +37,7 @@ use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Editable\Video;
+use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
@@ -387,7 +389,12 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function assertWysiwyg(PageSnippet $pagesnippet, $field, $seed = 1)
     {
-        $this->assertTextarea($pagesnippet, $field, $seed);
+        /** @var Wysiwyg $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Wysiwyg::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals('content<br>' . $seed, $value);
     }
 
     /**
@@ -403,6 +410,80 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $editable->getValue();
 
         $this->assertEquals('content<br>' . $seed, $value);
+    }
+
+    /**
+     * @param PageSnippet $pagesnippet
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertBlock(PageSnippet $pagesnippet, $field, $seed = 1)
+    {
+        /** @var Block $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Block::class, $editable);
+        $value = $editable->getValue();
+
+        $expected = $this->createBlockData();
+
+        //assert block indices data
+        $this->assertEquals(array_keys($expected), $value);
+
+        $blockElements = $editable->getElements();
+
+        //assert editables at index 1
+        /** @var Input $blockInput1 */
+        $blockInput1 = $blockElements[0]->getEditable('input');
+        $this->assertEquals($expected[1]['input'], $blockInput1->getValue());
+
+        /** @var Image $blockImage1 */
+        $blockImage1 = $blockElements[0]->getEditable('image');
+        $this->assertInstanceOf(Asset\Image::class, $blockImage1->getImage());
+
+        //assert editables at index 2
+        /** @var Input $blockInput2 */
+        $blockInput2 = $blockElements[1]->getEditable('input');
+        $this->assertEquals($expected[2]['input'], $blockInput2->getValue());
+
+        /** @var Image $blockImage2 */
+        $blockImage2 = $blockElements[1]->getEditable('image');
+        $this->assertInstanceOf(Asset\Image::class, $blockImage2->getImage());
+    }
+
+    /**
+     * @param Page|null $page
+     * @param string|null $blockName
+     *
+     * @return array[]
+     */
+    public function createBlockData($page = null, $blockName = null): array
+    {
+        $asset = TestHelper::createImageAsset('blockimage-');
+        $blockIndices =  [
+            '1' => [
+                'input' => 'block text 1',
+            ],
+            '2' => [
+                'input' => 'block text 2',
+            ],
+        ];
+
+        if ($page && $blockName) {
+            foreach ($blockIndices as $blockIdx => $blockVal) {
+                //Add editable on each block index
+                $input = new Input();
+                $input->setName($blockName . ':' . $blockIdx . '.input');
+                $input->setDataFromResource($blockVal['input']);
+                $page->setEditable($input);
+
+                $image = new Image();
+                $image->setName($blockName . ':' . $blockIdx . '.image');
+                $image->setDataFromEditmode(['id' => $asset->getId()]);
+                $page->setEditable($image);
+            }
+        }
+
+        return $blockIndices;
     }
 
     /**
@@ -691,7 +772,10 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function fillWysiwyg(Page $page, $field, $seed = 1)
     {
-        $this->fillTextarea($page, $field, $seed);
+        $editable = new Wysiwyg();
+        $editable->setName($field);
+        $editable->setDataFromEditmode('content<br>' . $seed);
+        $page->setEditable($editable);
     }
 
     /**
@@ -704,6 +788,20 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Textarea();
         $editable->setName($field);
         $editable->setDataFromEditmode('content<br>' . $seed);
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillBlock(Page $page, $field, $seed = 1)
+    {
+        $editable = new Block();
+        $editable->setName($field);
+        $data = $this->createBlockData($page, $field);
+        $editable->setDataFromEditmode(array_keys($data));
         $page->setEditable($editable);
     }
 }

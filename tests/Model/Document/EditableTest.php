@@ -261,4 +261,12 @@ class EditableTest extends ModelTestCase
         $this->reloadPage();
         $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
     }
+
+    public function testBlock()
+    {
+        $this->createTestPage('block');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertBlock($this->testPage, 'block', $this->seed);
+    }
 }
