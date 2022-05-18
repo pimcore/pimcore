@@ -495,7 +495,7 @@ abstract class Kernel extends SymfonyKernel
     {
         // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.2
         // @TODO to be removed in Pimcore 11
-        if($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
+        if ($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
             try {
                 // try the new location of v3 first, as most probably this is used
                 return parent::locateResource('@PrestaSitemapBundle/config/routing.yml');
