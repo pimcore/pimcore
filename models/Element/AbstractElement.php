@@ -63,6 +63,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $id = null;
 
     /**
+     * @internal
+     *
+     * @var int
+     */
+    protected $versionCount = 0;
+
+    /**
      * @return int|null
      */
     public function getId()
@@ -217,6 +224,26 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $properties = $this->getProperties();
         unset($properties[$name]);
         $this->setProperties($properties);
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return ElementInterface
+     */
+    public function setVersionCount(?int $versionCount): ElementInterface
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 
     /**

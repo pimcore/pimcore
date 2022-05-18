@@ -222,7 +222,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
+     * @deprecated
      * @var int
      */
     protected $o_versionCount = 0;
@@ -230,6 +230,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __construct()
     {
         $this->o_id = & $this->id;
+        $this->o_versionCount = & $this->versionCount;
     }
 
     /**
@@ -1390,26 +1391,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection()
     {
         self::setDisableDirtyDetection(false);
-    }
-
-    /**
-     * @return int
-     */
-    public function getVersionCount(): int
-    {
-        return $this->o_versionCount ? $this->o_versionCount : 0;
-    }
-
-    /**
-     * @param int|null $o_versionCount
-     *
-     * @return AbstractObject
-     */
-    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
-    {
-        $this->o_versionCount = (int) $o_versionCount;
-
-        return $this;
     }
 
     /**

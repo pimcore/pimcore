@@ -176,13 +176,6 @@ class Document extends Element\AbstractElement
     protected $locked = null;
 
     /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
-
-    /**
      * get possible types
      *
      * @return array
@@ -1299,24 +1292,6 @@ class Document extends Element\AbstractElement
     public static function doHideUnpublished()
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int) $versionCount;
-
-        return $this;
     }
 
     /**
