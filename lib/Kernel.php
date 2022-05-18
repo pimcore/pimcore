@@ -493,7 +493,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function locateResource(string $name)
     {
-        // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.0
+        // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.2
         // @TODO to be removed in Pimcore 11
         if($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
             try {

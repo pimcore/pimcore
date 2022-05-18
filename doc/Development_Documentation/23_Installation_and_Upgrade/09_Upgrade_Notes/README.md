@@ -1,7 +1,8 @@
 # Upgrade Notes
 ## 10.5.0
-- [Sitemap] Presta/Sitemap bundle bumped to `^3.0`, if in use the yaml config path should be changed (by removing `/Resources`) to follow the [new folder tree structure](https://github.com/prestaconcept/PrestaSitemapBundle/releases/tag/v3.0.0),
-  eg. "@PrestaSitemapBundle/~~Resources/~~config/routing.yaml".
+- [Sitemap] Pimcore is now also supporting Presta/Sitemap `^3.2` (which supports Symfony 6 and uses max level of PHPStan).
+  Please note, if the routing import config is in use, it is recommended to correct the config path (by removing `/Resources`) to follow the [new folder tree structure](https://github.com/prestaconcept/PrestaSitemapBundle/releases/tag/v3.0.0),
+  eg. "@PrestaSitemapBundle/~~Resources/~~config/routing.yaml", to ensure a smoother upgrade to upcoming major release.
   
 ## 10.4.0
 - **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
