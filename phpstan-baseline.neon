@@ -306,16 +306,6 @@ parameters:
 			path: lib/Messenger/Handler/SanityCheckHandler.php
 
 		-
-			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"
-			count: 1
-			path: lib/Navigation/Builder.php
-
-		-
-			message: "#^Parameter \\#1 \\$pages of method Pimcore\\\\Navigation\\\\Container\\:\\:addPages\\(\\) expects iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Container, array\\<Pimcore\\\\Navigation\\\\Page\\> given\\.$#"
-			count: 1
-			path: lib/Navigation/Container.php
-
-		-
 			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
 			count: 1
 			path: lib/Targeting/ConditionMatcher.php
