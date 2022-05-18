@@ -15,7 +15,6 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
@@ -56,10 +55,6 @@ abstract class FrontendController extends Controller
      * @var EditableRenderer
      */
     protected $editableRenderer;
-    /**\
-     * @var TokenStorageUserResolver
-     */
-    protected $tokenResolver;
 
     /**
      * document and editmode as properties and proxy them to request attributes through
@@ -148,15 +143,6 @@ abstract class FrontendController extends Controller
     public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
-    }
-
-    /**
-     * @required
-     * @param TokenStorageUserResolver $tokenStorageUserResolver
-     */
-    public function setTokenResolver(TokenStorageUserResolver $tokenStorageUserResolver)
-    {
-        $this->tokenResolver = $tokenStorageUserResolver;
     }
 
 
