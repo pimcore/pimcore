@@ -100,7 +100,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->parent;
     }
 
-    function setParentId($parentId) {
+    public function setParentId($parentId) {
         return $this;
     }
 
