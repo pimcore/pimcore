@@ -57,12 +57,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     * @var array
-     */
-    protected array $blockedVars = [];
-
-    /**
-     * @internal
      *
      * @var bool
      */
@@ -514,7 +508,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return [];
     }
 
-    abstract protected function getBlockedVars(): array;
+    protected function getBlockedVars(): array
+    {
+        return ['dependencies'];
+    }
 
     /**
      * {@inheritdoc}
