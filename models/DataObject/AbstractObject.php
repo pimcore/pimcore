@@ -90,6 +90,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     * @deprecated
      *
      * @var int|null
      */
@@ -105,7 +106,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var Element\ElementInterface|null
+     * @var self|null
      */
     protected $o_parent;
 
@@ -227,6 +228,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public function __construct()
     {
+        $this->o_id = & $this->id;
         $this->o_parent = & $this->parent;
     }
 
@@ -981,14 +983,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return int|null
      */
-    public function getId()
-    {
-        return $this->o_id;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getParentId()
     {
         // fall back to parent if no ID is set but we have a parent object
@@ -1061,18 +1055,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getUserModification()
     {
         return $this->o_userModification;
-    }
-
-    /**
-     * @param int|null $o_id
-     *
-     * @return $this
-     */
-    public function setId($o_id)
-    {
-        $this->o_id = $o_id ? (int)$o_id : null;
-
-        return $this;
     }
 
     /**
