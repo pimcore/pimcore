@@ -110,7 +110,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page|array $page  page to add
      *
-     * @return Container fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception if page is invalid
      */
@@ -147,9 +147,9 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Adds several pages at once
      *
-     * @param  Page[]|Container  $pages  pages to add
+     * @param  iterable<Page>  $pages  pages to add
      *
-     * @return Container fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception if $pages is not array or Container
      */
@@ -172,7 +172,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page[] $pages pages to set
      *
-     * @return Container  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function setPages(array $pages)
     {
@@ -236,7 +236,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Removes all pages in container
      *
-     * @return Container  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function removePages()
     {
