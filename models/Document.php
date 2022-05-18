@@ -1212,6 +1212,14 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @return Document|null
+     */
+    public function getParent() : ?Document
+    {
+        return parent::getParent();
+    }
+
+    /**
      * Set the parent document instance.
      *
      * @param Document|null $parent
@@ -1242,14 +1250,6 @@ class Document extends Element\AbstractElement
         }
 
         return array_diff($parentVars, $blockedVars);
-    }
-
-    /**
-     * @return Document|null
-     */
-    public function getParent() : ?Document
-    {
-        return parent::getParent();
     }
 
     public function __wakeup()
