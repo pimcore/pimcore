@@ -63,6 +63,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $id = null;
 
     /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected $key;
+
+    /**
      * @return int|null
      */
     public function getId()
@@ -81,6 +88,27 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        $this->key = (string)$key;
+
+        return $this;
+    }
+
 
     /**
      * @return Model\Property[]

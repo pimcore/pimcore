@@ -87,13 +87,6 @@ class Document extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected $key;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
     protected $path;
 
     /**
@@ -982,14 +975,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getModificationDate()
     {
         return $this->modificationDate;
@@ -1053,16 +1038,6 @@ class Document extends Element\AbstractElement
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setKey($key)
-    {
-        $this->key = (string)$key;
 
         return $this;
     }

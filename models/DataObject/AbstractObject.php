@@ -122,6 +122,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      *
      * @var string|null
+     *
+     * @deprecated
      */
     protected $o_key;
 
@@ -230,6 +232,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __construct()
     {
         $this->o_id = & $this->id;
+        $this->o_key = & $this->key;
     }
 
     /**
@@ -1004,14 +1007,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return string|null
      */
-    public function getKey()
-    {
-        return $this->o_key;
-    }
-
-    /**
-     * @return string|null
-     */
     public function getPath()
     {
         return $this->o_path;
@@ -1084,18 +1079,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function setType($o_type)
     {
         $this->o_type = $o_type;
-
-        return $this;
-    }
-
-    /**
-     * @param string $o_key
-     *
-     * @return $this
-     */
-    public function setKey($o_key)
-    {
-        $this->o_key = (string)$o_key;
 
         return $this;
     }
