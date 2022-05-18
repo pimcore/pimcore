@@ -35,7 +35,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string getCurrentFullPath()
- * @method ?Document getParent()
  */
 class Document extends Element\AbstractElement
 {

@@ -48,7 +48,6 @@ use Symfony\Component\Mime\MimeTypes;
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string|null getCurrentFullPath()
- *  * @method ?Asset getParent()
  */
 class Asset extends Element\AbstractElement
 {
