@@ -1346,7 +1346,7 @@ class Service extends Model\AbstractModel
             'ctype' => $note->getCtype(),
             'cpath' => $cpath,
             'date' => $note->getDate(),
-            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(),[],'admin'),
+            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
             'description' => $note->getDescription(),
         ];
 
