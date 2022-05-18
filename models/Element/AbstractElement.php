@@ -63,6 +63,34 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $id = null;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $userOwner = null;
+
+
+    /**
+     * @return int|null
+     */
+    public function getUserOwner()
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int $userOwner
+     *
+     * @return $this
+     */
+    public function setUserOwner($userOwner)
+    {
+        $this->userOwner = (int) $userOwner;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getId()

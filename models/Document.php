@@ -129,13 +129,6 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected ?int $userModification = null;
 
     /**
@@ -1163,29 +1156,11 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setUserModification($userModification)
     {
         $this->markFieldDirty('userModification');
 
         $this->userModification = (int) $userModification;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int) $userOwner;
 
         return $this;
     }
