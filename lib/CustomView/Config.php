@@ -70,6 +70,25 @@ final class Config
     }
 
     /**
+     * @param mixed $data
+     * @return array
+     */
+    protected static function flipArray(mixed $data): array {
+        if(empty($data['classes'])) {
+            return [];
+        }
+        else {
+            $flipArray = [];
+            $tempClasses = explode(',', $data['classes']);
+
+            foreach ($tempClasses as $tempClass) {
+                $flipArray[$tempClass] = null;
+            }
+            return $flipArray;
+        }
+    }
+
+    /**
      * @return array|bool
      *
      * @internal
@@ -87,15 +106,8 @@ final class Config
                     $configId = $configKey['id'];
                     if (!isset($config[$configId])) {
                         $configKey['writeable'] = $repository->isWriteable($key, $dataSource);
-
                         if (!is_array($configKey['classes'] ?? [])) {
-                            $flipArray = [];
-                            $tempClasses = explode(',', $configKey['classes']);
-
-                            foreach ($tempClasses as $tempClass) {
-                                $flipArray[$tempClass] = null;
-                            }
-                            $configKey['classes'] = $flipArray;
+                            $configKey['classes'] = self::flipArray($configKey);
                         }
 
                         if (!empty($configKey['hidden'])) {
@@ -108,15 +120,8 @@ final class Config
             } else {
                 $data['writeable'] = $repository->isWriteable($key, $dataSource);
                 $data['id'] = $data['id'] ?? $key;
-
                 if (!is_array($data['classes'] ?? [])) {
-                    $flipArray = [];
-                    $tempClasses = explode(',', $data['classes']);
-
-                    foreach ($tempClasses as $tempClass) {
-                        $flipArray[$tempClass] = null;
-                    }
-                    $data['classes'] = $flipArray;
+                    $data['classes'] = self::flipArray($data);
                 }
 
                 $config[$data['id']] = $data;
