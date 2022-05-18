@@ -105,8 +105,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var self|null
+     * @deprecated
      */
     protected $o_parent;
 

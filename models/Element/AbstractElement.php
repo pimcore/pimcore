@@ -88,9 +88,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected $parent = null;
 
     /**
-     * @return self|null
+     * @return static|null
      */
-    public function getParent()
+    public function getParent(): ?self
     {
         if ($this->parent === null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());

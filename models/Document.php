@@ -1244,6 +1244,14 @@ class Document extends Element\AbstractElement
         return array_diff($parentVars, $blockedVars);
     }
 
+    /**
+     * @return Document|null
+     */
+    public function getParent() : ?Document
+    {
+        return parent::getParent();
+    }
+
     public function __wakeup()
     {
         if ($this->isInDumpState()) {
