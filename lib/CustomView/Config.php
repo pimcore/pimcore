@@ -78,13 +78,8 @@ final class Config
             return [];
         }
         else {
-            $flipArray = [];
             $tempClasses = explode(',', $data['classes']);
-
-            foreach ($tempClasses as $tempClass) {
-                $flipArray[$tempClass] = null;
-            }
-            return $flipArray;
+            return array_fill_keys($tempClasses, null);
         }
     }
 
