@@ -107,7 +107,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
+     * @deprecated
      */
     protected $o_parent;
 
@@ -230,6 +230,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __construct()
     {
         $this->o_id = & $this->id;
+        $this->o_parent = & $this->parent;
     }
 
     /**
@@ -1069,7 +1070,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->markFieldDirty('o_parentId');
         }
         $this->o_parentId = $o_parentId;
-        $this->o_parent = null;
+        $this->parent = null;
         $this->o_siblings = [];
         $this->o_hasSiblings = [];
 
@@ -1230,11 +1231,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParent($o_parent)
     {
-        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
-        $this->setParentId($newParentId);
-        $this->o_parent = $o_parent;
-
-        return $this;
+        return parent::setParent($o_parent);
     }
 
     /**
@@ -1249,7 +1246,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1459,7 +1456,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __clone()
     {
         parent::__clone();
-        $this->o_parent = null;
+        $this->parent = null;
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];

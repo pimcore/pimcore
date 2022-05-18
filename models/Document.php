@@ -1239,12 +1239,7 @@ class Document extends Element\AbstractElement
      */
     public function setParent($parent)
     {
-        $this->parent = $parent;
-        if ($parent instanceof Document) {
-            $this->parentId = $parent->getId();
-        }
-
-        return $this;
+        return parent::setParent($parent);
     }
 
     public function __sleep()
