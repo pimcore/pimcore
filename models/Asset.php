@@ -96,13 +96,6 @@ class Asset extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected $path;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
     protected $mimetype;
 
     /**
@@ -1179,14 +1172,6 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
@@ -1243,16 +1228,6 @@ class Asset extends Element\AbstractElement
     {
         $this->parentId = (int)$parentId;
         $this->parent = null;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = (string)$path;
 
         return $this;
     }

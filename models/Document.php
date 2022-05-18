@@ -1097,16 +1097,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    /**
      * Returns the document index.
      *
      * @return int|null
