@@ -90,7 +90,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return self|null
      */
-    public function getParent(): ?self
+    public function getParent() /** :?self  */
     {
         if ($this->parent === null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
@@ -100,7 +100,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->parent;
     }
 
-    abstract function setParentId($parentId);
+    function setParentId($parentId) {
+        return $this;
+    }
 
     /**
      * @return Model\Property[]
@@ -527,7 +529,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'parent'];
+        $blockedVars = ['dependencies'];
 
         return array_diff($parentVars, $blockedVars);
     }
