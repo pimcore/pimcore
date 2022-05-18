@@ -88,7 +88,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected $parent = null;
 
     /**
-     * @return static|null
+     * @return self|null
      */
     public function getParent(): ?self
     {

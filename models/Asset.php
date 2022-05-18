@@ -1784,11 +1784,12 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
+     * @return Asset|null
      */
     public function getParent() : ?Asset
     {
-        return parent::getParent();
+        $parent = parent::getParent();
+        return $parent instanceof Asset ? $parent : null;
     }
 
     /**

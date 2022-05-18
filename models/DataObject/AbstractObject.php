@@ -1211,7 +1211,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param Element\AbstractElement|null $parent
+     * @return AbstractObject|null
+     */
+    public function getParent(): ?self
+    {
+        $parent = parent::getParent();
+        return $parent instanceof AbstractObject ? $parent : null;
+    }
+
+    /**
+     * @param self|null $parent
      *
      * @return $this
      */
