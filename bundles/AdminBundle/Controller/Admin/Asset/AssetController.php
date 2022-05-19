@@ -2306,6 +2306,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
 
+                if (str_starts_with($path, '__MACOSX/')) {
+                    continue;
+                }
+
                 if ($path !== false) {
                     if ($zip->extractTo($tmpDir . '/', $path)) {
                         $tmpFile = $tmpDir . '/' . preg_replace('@^/@', '', $path);
