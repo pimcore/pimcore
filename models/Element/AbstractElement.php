@@ -83,7 +83,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $userOwner = null;
 
-
     /**
      * @return int|null
      */
@@ -100,7 +99,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
-      
+
         return $this;
     }
 
