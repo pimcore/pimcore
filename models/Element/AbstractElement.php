@@ -113,9 +113,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $locked;
+    protected ?string $locked = null;
 
     /**
      * @return int|null
@@ -165,6 +165,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function getLocked()
     {
+        if (empty($this->locked)) {
+            return null;
+        }
+
         return $this->locked;
     }
 

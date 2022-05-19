@@ -208,6 +208,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var string
      */
     protected $o_locked;
@@ -242,6 +244,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
+        $this->o_locked = & $this->locked;
     }
 
     /**
