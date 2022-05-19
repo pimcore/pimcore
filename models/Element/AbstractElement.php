@@ -51,6 +51,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
+     * @var string|null
+     */
+    protected $path;
+
+    /**
+     * @internal
+     *
      * @var array|null
      */
     protected ?array $properties = null;
@@ -61,6 +68,27 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int|null
      */
     protected ?int $id = null;
+
+
+    /**
+     * @return string|null
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setPath($path)
+    {
+        $this->path = (string) $path;
+
+        return $this;
+    }
 
     /**
      * @internal

@@ -128,6 +128,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var string|null
      */
     protected $o_path;
@@ -236,6 +238,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __construct()
     {
         $this->o_id = & $this->id;
+        $this->o_path = & $this->path;
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
@@ -1019,14 +1022,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string|null
-     */
-    public function getPath()
-    {
-        return $this->o_path;
-    }
-
-    /**
      * @return int
      */
     public function getIndex()
@@ -1089,18 +1084,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function setKey($o_key)
     {
         $this->o_key = (string)$o_key;
-
-        return $this;
-    }
-
-    /**
-     * @param string $o_path
-     *
-     * @return $this
-     */
-    public function setPath($o_path)
-    {
-        $this->o_path = $o_path;
 
         return $this;
     }
