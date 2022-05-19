@@ -69,7 +69,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $id = null;
 
-
     /**
      * @return string|null
      */
