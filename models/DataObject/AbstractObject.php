@@ -222,7 +222,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @deprecated
+     *
      * @var int
      */
     protected $o_versionCount = 0;
