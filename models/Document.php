@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
@@ -167,13 +166,6 @@ class Document extends Element\AbstractElement
      * @var string|null
      */
     protected $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
 
     /**
      * get possible types
@@ -1274,24 +1266,6 @@ class Document extends Element\AbstractElement
     public static function doHideUnpublished()
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int) $versionCount;
-
-        return $this;
     }
 
     /**
