@@ -157,6 +157,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setKey(?string $key): static
     {
         $this->key = $key;
+
         return $this;
     }
 
@@ -168,6 +169,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setIndex(?int $index): static
     {
         $this->index = $index;
+
         return $this;
     }
 
