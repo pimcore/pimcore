@@ -68,14 +68,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int
      */
     protected $versionCount = 0;
-     
+
     /**
      * @internal
      *
      * @var int|null
      */
     protected ?int $userOwner = null;
-
 
     /**
      * @return int|null
