@@ -103,13 +103,6 @@ class Asset extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $modificationDate;
 
     /**
@@ -118,13 +111,6 @@ class Asset extends Element\AbstractElement
      * @var resource|null
      */
     protected $stream;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
 
     /**
      * @internal
@@ -193,13 +179,6 @@ class Asset extends Element\AbstractElement
      * @var bool
      */
     protected $dataChanged = false;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
 
     /**
      *
@@ -1130,14 +1109,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
      * @return string|null
      */
     public function getFilename()
@@ -1175,16 +1146,6 @@ class Asset extends Element\AbstractElement
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int)$creationDate;
-
-        return $this;
     }
 
     /**
@@ -1356,27 +1317,9 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getUserModification()
     {
         return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int)$userOwner;
-
-        return $this;
     }
 
     /**
@@ -1830,24 +1773,6 @@ class Asset extends Element\AbstractElement
     {
         // close open streams
         $this->closeStream();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int)$versionCount;
-
-        return $this;
     }
 
     /**

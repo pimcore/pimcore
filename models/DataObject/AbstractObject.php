@@ -144,6 +144,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_creationDate;
@@ -157,6 +159,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
+     * @deprecated
      *
      * @var int|null
      */
@@ -225,6 +229,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int
      */
     protected $o_versionCount = 0;
@@ -233,6 +239,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $this->o_id = & $this->id;
         $this->o_path = & $this->path;
+        $this->o_creationDate = & $this->creationDate;
+        $this->o_userOwner = & $this->userOwner;
+        $this->o_versionCount = & $this->versionCount;
     }
 
     /**
@@ -1023,25 +1032,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return int|null
      */
-    public function getCreationDate()
-    {
-        return $this->o_creationDate;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getModificationDate()
     {
         return $this->o_modificationDate;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getUserOwner()
-    {
-        return $this->o_userOwner;
     }
 
     /**
@@ -1120,18 +1113,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $o_creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($o_creationDate)
-    {
-        $this->o_creationDate = (int) $o_creationDate;
-
-        return $this;
-    }
-
-    /**
      * @param int $o_modificationDate
      *
      * @return $this
@@ -1141,18 +1122,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->markFieldDirty('o_modificationDate');
 
         $this->o_modificationDate = (int) $o_modificationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($o_userOwner)
-    {
-        $this->o_userOwner = (int) $o_userOwner;
 
         return $this;
     }
@@ -1373,26 +1342,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection()
     {
         self::setDisableDirtyDetection(false);
-    }
-
-    /**
-     * @return int
-     */
-    public function getVersionCount(): int
-    {
-        return $this->o_versionCount ? $this->o_versionCount : 0;
-    }
-
-    /**
-     * @param int|null $o_versionCount
-     *
-     * @return AbstractObject
-     */
-    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
-    {
-        $this->o_versionCount = (int) $o_versionCount;
-
-        return $this;
     }
 
     /**
