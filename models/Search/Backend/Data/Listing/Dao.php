@@ -46,6 +46,8 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             if ($element) {
                 $entry = new Search\Backend\Data();
                 $entry->setId(new Search\Backend\Data\Id($element));
+                $entry->setKey($entryData['key']);
+                $entry->setIndex((int)$entryData['index']);
                 $entry->setFullPath($entryData['fullpath']);
                 $entry->setType($entryData['type']);
                 $entry->setSubtype($entryData['subtype']);

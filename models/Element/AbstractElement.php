@@ -51,6 +51,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
+     * @var string|null
+     */
+    protected $path;
+
+    /**
+     * @internal
+     *
      * @var array|null
      */
     protected ?array $properties = null;
@@ -68,6 +75,87 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int|null
      */
     protected ?int $id = null;
+
+    /**
+     * @return string|null
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setPath($path)
+    {
+        $this->path = (string) $path;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $creationDate = null;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    protected $versionCount = 0;
+
+    /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * @return int|null
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     *
+     * @return $this
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = (int) $creationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserOwner()
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int $userOwner
+     *
+     * @return $this
+     */
+    public function setUserOwner($userOwner)
+    {
+        $this->userOwner = (int) $userOwner;
+
+        return $this;
+    }
 
     /**
      * @return int|null
@@ -224,6 +312,26 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $properties = $this->getProperties();
         unset($properties[$name]);
         $this->setProperties($properties);
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return ElementInterface
+     */
+    public function setVersionCount(?int $versionCount): ElementInterface
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 
     /**
