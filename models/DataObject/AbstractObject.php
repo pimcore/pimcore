@@ -158,6 +158,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected ?int $o_userOwner = null;
@@ -225,6 +227,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int
      */
     protected $o_versionCount = 0;
@@ -233,6 +237,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $this->o_id = & $this->id;
         $this->o_creationDate = & $this->creationDate;
+        $this->o_userOwner = & $this->userOwner;
+        $this->o_versionCount = & $this->versionCount;
     }
 
     /**
@@ -1037,14 +1043,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int|null
-     */
-    public function getUserOwner()
-    {
-        return $this->o_userOwner;
-    }
-
-    /**
      * @return int
      */
     public function getUserModification()
@@ -1141,18 +1139,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->markFieldDirty('o_modificationDate');
 
         $this->o_modificationDate = (int) $o_modificationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($o_userOwner)
-    {
-        $this->o_userOwner = (int) $o_userOwner;
 
         return $this;
     }
@@ -1373,26 +1359,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection()
     {
         self::setDisableDirtyDetection(false);
-    }
-
-    /**
-     * @return int
-     */
-    public function getVersionCount(): int
-    {
-        return $this->o_versionCount ? $this->o_versionCount : 0;
-    }
-
-    /**
-     * @param int|null $o_versionCount
-     *
-     * @return AbstractObject
-     */
-    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
-    {
-        $this->o_versionCount = (int) $o_versionCount;
-
-        return $this;
     }
 
     /**
