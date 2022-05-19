@@ -161,13 +161,6 @@ class Document extends Element\AbstractElement
     protected $locked = null;
 
     /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
-
-    /**
      * @return array
      */
     protected function getBlockedVars(): array

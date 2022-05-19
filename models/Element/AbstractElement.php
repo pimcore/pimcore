@@ -108,7 +108,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @var int
      */
-    protected $versionCount = 0;
+    protected int $versionCount = 0;
 
     /**
      * @internal
