@@ -99,6 +99,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
+     * @var int|null
+     */
+    protected $modificationDate;
+
+    /**
+     * @internal
+     *
      * @var int
      */
     protected $versionCount = 0;
@@ -126,6 +133,28 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     *
+     * @return $this
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->markFieldDirty('modificationDate');
+
+        $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
@@ -244,7 +273,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->setVersionCount(1);
         }
 
-        $modificationDateKey = $this instanceof AbstractObject ? 'o_modificationDate' : 'modificationDate';
+        $modificationDateKey = 'modificationDate';
         if (!$this->isFieldDirty($modificationDateKey)) {
             $updateTime = time();
             $this->setModificationDate($updateTime);
