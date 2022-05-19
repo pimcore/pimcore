@@ -580,30 +580,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * enum('self','propagate') nullable
-     *
-     * @return string|null
-     */
-    public function getLocked()
-    {
-        return $this->o_locked;
-    }
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @param string|null $o_locked
-     *
-     * @return $this
-     */
-    public function setLocked($o_locked)
-    {
-        $this->o_locked = $o_locked;
-
-        return $this;
-    }
-
-    /**
      * @internal
      *
      * @throws \Exception
