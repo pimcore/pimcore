@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
@@ -108,21 +107,7 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $modificationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
 
     /**
      * @internal
@@ -167,13 +152,6 @@ class Document extends Element\AbstractElement
      * @var string|null
      */
     protected $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
 
     /**
      * get possible types
@@ -967,14 +945,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getKey()
     {
         return $this->key;
@@ -1043,16 +1013,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int) $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setKey($key)
     {
         $this->key = (string)$key;
@@ -1085,16 +1045,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->siblings = [];
         $this->hasSiblings = [];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
 
         return $this;
     }
@@ -1156,29 +1106,11 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setUserModification($userModification)
     {
         $this->markFieldDirty('userModification');
 
         $this->userModification = (int) $userModification;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int) $userOwner;
 
         return $this;
     }
@@ -1289,24 +1221,6 @@ class Document extends Element\AbstractElement
     public static function doHideUnpublished()
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int) $versionCount;
-
-        return $this;
     }
 
     /**
