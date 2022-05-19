@@ -142,6 +142,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_creationDate;
@@ -230,6 +232,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __construct()
     {
         $this->o_id = & $this->id;
+        $this->o_creationDate = & $this->creationDate;
     }
 
     /**
@@ -1028,14 +1031,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return int|null
      */
-    public function getCreationDate()
-    {
-        return $this->o_creationDate;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getModificationDate()
     {
         return $this->o_modificationDate;
@@ -1134,18 +1129,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         }
         $this->o_childrenSortBy = $childrenSortBy;
-    }
-
-    /**
-     * @param int $o_creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($o_creationDate)
-    {
-        $this->o_creationDate = (int) $o_creationDate;
-
-        return $this;
     }
 
     /**

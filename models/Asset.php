@@ -110,13 +110,6 @@ class Asset extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $modificationDate;
 
     /**
@@ -1137,14 +1130,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
      * @return string|null
      */
     public function getFilename()
@@ -1190,16 +1175,6 @@ class Asset extends Element\AbstractElement
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int)$creationDate;
-
-        return $this;
     }
 
     /**

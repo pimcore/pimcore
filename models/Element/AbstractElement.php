@@ -63,6 +63,33 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $id = null;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $creationDate = null;
+
+    /**
+     * @return int|null
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     *
+     * @return $this
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = (int) $creationDate;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getId()

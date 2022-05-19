@@ -115,13 +115,6 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $modificationDate;
 
     /**
@@ -974,14 +967,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getKey()
     {
         return $this->key;
@@ -1045,16 +1030,6 @@ class Document extends Element\AbstractElement
         $path = $this->getRealPath() . $this->getKey();
 
         return $path;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int) $creationDate;
-
-        return $this;
     }
 
     /**
