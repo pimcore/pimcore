@@ -169,6 +169,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected ?int $o_userModification = null;
@@ -242,6 +244,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
+        $this->o_userModification = & $this->userModification;
     }
 
     /**
@@ -1038,14 +1041,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
-     */
-    public function getUserModification()
-    {
-        return $this->o_userModification;
-    }
-
-    /**
      * @param int $o_parentId
      *
      * @return $this
@@ -1122,20 +1117,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->markFieldDirty('o_modificationDate');
 
         $this->o_modificationDate = (int) $o_modificationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($o_userModification)
-    {
-        $this->markFieldDirty('o_userModification');
-
-        $this->o_userModification = (int) $o_userModification;
 
         return $this;
     }
