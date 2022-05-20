@@ -21,9 +21,7 @@ use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @property Document\PageSnippet $document
@@ -32,29 +30,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class FrontendController extends Controller
 {
     /**
-     * @var ResponseHeaderResolver
+     * {@inheritdoc}
+     *
      */
-    protected $responseResolver;
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-    /**
-     * @var EditableRenderer
-     */
-    protected $editableRenderer;
+    public static function getSubscribedServices()// : array
+    {
+        $services = parent::getSubscribedServices();
+        $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
+        $services[DocumentResolver::class] = '?'.DocumentResolver::class;
+        $services[ResponseHeaderResolver::class] = '?'.ResponseHeaderResolver::class;
+        $services[EditableRenderer::class] = '?'.EditableRenderer::class;
+
+        return $services;
+    }
 
     /**
      * document and editmode as properties and proxy them to request attributes through
@@ -91,60 +79,30 @@ abstract class FrontendController extends Controller
         throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
-    /**
-     * @required
-     * @param ResponseHeaderResolver $responseResolver
-     */
-    public function setResponseResolver(ResponseHeaderResolver $responseResolver)
+    final protected function getResponseResolver()
     {
-        $this->responseResolver = $responseResolver;
+        return $this->container->get(ResponseHeaderResolver::class);
     }
 
-    /**
-     * @required
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack(RequestStack $requestStack)
+    final protected function getRequestStack()
     {
-        $this->requestStack = $requestStack;
+        return $this->container->get('request_stack');
     }
 
-    /**
-     * @required
-     * @param DocumentResolver $documentResolver
-     */
-    public function setDocumentResolver(DocumentResolver $documentResolver)
+    final protected function getDocumentResolver()
     {
-        $this->documentResolver = $documentResolver;
+        return $this->container->get(DocumentResolver::class);
     }
 
-    /**
-     * @required
-     * @param EditmodeResolver $editmodeResolver
-     */
-    public function setEditmodeResolver(EditmodeResolver $editmodeResolver)
+    final protected function getEditmodeResolver()
     {
-        $this->editmodeResolver = $editmodeResolver;
+        return $this->container->get(EditmodeResolver::class);
     }
 
-    /**
-     * @required
-     * @param EditableRenderer $editableRenderer
-     */
-    public function setEditableRenderer(EditableRenderer $editableRenderer)
+    final protected function getEditableRenderer()
     {
-        $this->editableRenderer = $editableRenderer;
+        return $this->container->get(EditableRenderer::class);
     }
-
-    /**
-     * @required
-     * @param TranslatorInterface $translator
-     */
-    public function setTranslator(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
 
     /**
      * We don't have a response object at this point, but we can add headers here which will be
@@ -158,10 +116,10 @@ abstract class FrontendController extends Controller
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
         if (null === $request) {
-            $request = $this->requestStack->getCurrentRequest();
+            $request = $this->getRequestStack()->getCurrentRequest();
         }
 
-        $this->responseResolver->addResponseHeader($request, $key, $values, $replace);
+        $this->getResponseResolver()->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
@@ -183,7 +141,7 @@ abstract class FrontendController extends Controller
             $document = $this->document;
         }
 
-        return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
+        return $this->getEditableRenderer()->getEditable($document, $type, $inputName, $options);
     }
 
     /**

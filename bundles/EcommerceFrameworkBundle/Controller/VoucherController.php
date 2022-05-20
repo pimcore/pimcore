@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class VoucherController
@@ -37,15 +38,24 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
-
+    /**
+     * @var TokenStorageUserResolver
+     */
     protected $tokenResolver;
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     /**
      * AdminController constructor.
      * @param TokenStorageUserResolver $tokenStorageUserResolver
+     * @param TranslatorInterface $translator
      */
-    public function __construct(TokenStorageUserResolver $tokenStorageUserResolver)
+    public function __construct(TokenStorageUserResolver $tokenStorageUserResolver, TranslatorInterface $translator)
     {
         $this->tokenResolver = $tokenStorageUserResolver;
+        $this->translator = $translator;
     }
 
     /**
