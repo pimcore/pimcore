@@ -70,13 +70,6 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected string $type = '';
@@ -143,15 +136,6 @@ class Document extends Element\AbstractElement
      * @var bool[]
      */
     protected $hasSiblings = [];
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $locked = null;
 
     /**
      * get possible types
@@ -725,28 +709,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        if (empty($this->locked)) {
-            return null;
-        }
-
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
      * @internal
      *
      * @throws \Exception
@@ -1126,13 +1088,11 @@ class Document extends Element\AbstractElement
     /**
      * @return Document|null
      */
-    public function getParent()
+    public function getParent() /** : ?Document */
     {
-        if ($this->parent === null) {
-            $this->setParent(Document::getById($this->getParentId()));
-        }
+        $parent = parent::getParent();
 
-        return $this->parent;
+        return $parent instanceof Document ? $parent : null;
     }
 
     /**
