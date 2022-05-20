@@ -1149,6 +1149,7 @@ class Document extends Element\AbstractElement
     public function getParent() /** : ?Document */
     {
         $parent = parent::getParent();
+
         return $parent instanceof Document ? $parent : null;
     }
 

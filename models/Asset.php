@@ -1707,6 +1707,7 @@ class Asset extends Element\AbstractElement
     public function getParent() /** : ?Asset */
     {
         $parent = parent::getParent();
+
         return $parent instanceof Asset ? $parent : null;
     }
 
