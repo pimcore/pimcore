@@ -95,7 +95,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param ResponseHeaderResolver $responseResolver
      */
-    public function setResponseResolver(ResponseHeaderResolver $responseResolver): void
+    public function setResponseResolver(ResponseHeaderResolver $responseResolver)
     {
         $this->responseResolver = $responseResolver;
     }
@@ -104,7 +104,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param RequestStack $requestStack
      */
-    public function setRequestStack(RequestStack $requestStack): void
+    public function setRequestStack(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
@@ -113,7 +113,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param DocumentResolver $documentResolver
      */
-    public function setDocumentResolver(DocumentResolver $documentResolver): void
+    public function setDocumentResolver(DocumentResolver $documentResolver)
     {
         $this->documentResolver = $documentResolver;
     }
@@ -122,7 +122,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param EditmodeResolver $editmodeResolver
      */
-    public function setEditmodeResolver(EditmodeResolver $editmodeResolver): void
+    public function setEditmodeResolver(EditmodeResolver $editmodeResolver)
     {
         $this->editmodeResolver = $editmodeResolver;
     }
@@ -131,7 +131,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param EditableRenderer $editableRenderer
      */
-    public function setEditableRenderer(EditableRenderer $editableRenderer): void
+    public function setEditableRenderer(EditableRenderer $editableRenderer)
     {
         $this->editableRenderer = $editableRenderer;
     }
@@ -140,7 +140,7 @@ abstract class FrontendController extends Controller
      * @required
      * @param TranslatorInterface $translator
      */
-    public function setTranslator(TranslatorInterface $translator): void
+    public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
