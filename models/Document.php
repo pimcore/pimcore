@@ -145,15 +145,6 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * enum('self','propagate') nullable
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $locked = null;
-
-    /**
      * get possible types
      *
      * @return array
@@ -722,28 +713,6 @@ class Document extends Element\AbstractElement
         }
 
         return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        if (empty($this->locked)) {
-            return null;
-        }
-
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
     }
 
     /**

@@ -127,15 +127,6 @@ class Asset extends Element\AbstractElement
     protected $metadata = [];
 
     /**
-     * @internal
-     *
-     * enum('self','propagate') nullable
-     *
-     * @var string|null
-     */
-    protected $locked;
-
-    /**
      * List of some custom settings  [key] => value
      * Here there can be stored some data, eg. the video thumbnail files, ...  of the asset, ...
      *
@@ -972,24 +963,6 @@ class Asset extends Element\AbstractElement
     public function getChildren()
     {
         return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
     }
 
     /**

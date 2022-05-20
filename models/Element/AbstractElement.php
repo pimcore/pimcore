@@ -111,6 +111,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $userOwner = null;
 
     /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $locked = null;
+
+    /**
      * @return int|null
      */
     public function getCreationDate()
@@ -146,6 +153,35 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function setUserOwner($userOwner)
     {
         $this->userOwner = (int) $userOwner;
+
+        return $this;
+    }
+
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @return string|null
+     */
+    public function getLocked()
+    {
+        if (empty($this->locked)) {
+            return null;
+        }
+
+        return $this->locked;
+    }
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
+     *
+     * @return $this
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
 
         return $this;
     }

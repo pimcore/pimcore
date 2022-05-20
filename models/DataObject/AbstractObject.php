@@ -208,6 +208,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var string
      */
     protected $o_locked;
@@ -242,6 +244,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
+        $this->o_locked = & $this->locked;
         $this->o_parent = & $this->parent;
     }
 
@@ -578,30 +581,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
-    }
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @return string|null
-     */
-    public function getLocked()
-    {
-        return $this->o_locked;
-    }
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @param string|null $o_locked
-     *
-     * @return $this
-     */
-    public function setLocked($o_locked)
-    {
-        $this->o_locked = $o_locked;
-
-        return $this;
     }
 
     /**
