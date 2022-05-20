@@ -73,13 +73,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected $type = '';
@@ -132,15 +125,6 @@ class Asset extends Element\AbstractElement
      * @var array
      */
     protected $metadata = [];
-
-    /**
-     * @internal
-     *
-     * enum('self','propagate') nullable
-     *
-     * @var string|null
-     */
-    protected $locked;
 
     /**
      * List of some custom settings  [key] => value
@@ -999,24 +983,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
      * @throws \League\Flysystem\FilesystemException
      */
     private function deletePhysicalFile()
@@ -1726,15 +1692,13 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
+     * @return Asset|null
      */
-    public function getParent()
+    public function getParent() /** : ?Asset */
     {
-        if ($this->parent === null) {
-            $this->setParent(Asset::getById($this->getParentId()));
-        }
+        $parent = parent::getParent();
 
-        return $this->parent;
+        return $parent instanceof Asset ? $parent : null;
     }
 
     /**

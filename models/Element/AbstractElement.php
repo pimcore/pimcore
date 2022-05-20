@@ -65,13 +65,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @var bool
-     */
-    public static $doNotRestoreKeyAndPath = false;
-
-    /**
-     * @internal
-     *
      * @var int|null
      */
     protected ?int $id = null;
@@ -108,7 +101,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @var int
      */
-    protected int $versionCount = 0;
+    protected $versionCount = 0;
 
     /**
      * @internal
@@ -116,6 +109,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @var int|null
      */
     protected ?int $userOwner = null;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $locked = null;
 
     /**
      * @return int|null
@@ -158,6 +158,34 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * enum('self','propagate') nullable
+     *
+     * @return string|null
+     */
+    public function getLocked()
+    {
+        if (empty($this->locked)) {
+            return null;
+        }
+
+        return $this->locked;
+    }
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
+     *
+     * @return $this
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getId()
@@ -175,6 +203,24 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->id = $id ? (int)$id : null;
 
         return $this;
+    }
+
+    /**
+     * @var self|null
+     */
+    protected $parent = null;
+
+    /**
+     * @return self|null
+     */
+    public function getParent() /** :?self  */
+    {
+        if ($this->parent === null) {
+            $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
+            $this->setParent($parent);
+        }
+
+        return $this->parent;
     }
 
     /**
