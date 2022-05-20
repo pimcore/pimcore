@@ -107,7 +107,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
+     * @deprecated
      */
     protected $o_parent;
 
@@ -242,6 +242,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
+        $this->o_parent = & $this->parent;
     }
 
     /**
@@ -1166,25 +1167,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return self|null
      */
-    public function getParent()
+    public function getParent() /** : ?self **/
     {
-        if ($this->o_parent === null) {
-            $this->setParent(DataObject::getById($this->getParentId()));
-        }
-
-        return $this->o_parent;
+        $parent = parent::getParent();
+        return $parent instanceof AbstractObject ? $parent : null;
     }
 
     /**
-     * @param self|null $o_parent
+     * @param self|null $parent
      *
      * @return $this
      */
-    public function setParent($o_parent)
+    public function setParent($parent)
     {
-        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
-        $this->o_parent = $o_parent;
+        $this->parent = $parent;
 
         return $this;
     }

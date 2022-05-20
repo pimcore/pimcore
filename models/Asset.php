@@ -73,13 +73,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected $type = '';
@@ -1709,15 +1702,12 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
+     * @return Asset|null
      */
-    public function getParent()
+    public function getParent() /** : ?Asset */
     {
-        if ($this->parent === null) {
-            $this->setParent(Asset::getById($this->getParentId()));
-        }
-
-        return $this->parent;
+        $parent = parent::getParent();
+        return $parent instanceof Asset ? $parent : null;
     }
 
     /**

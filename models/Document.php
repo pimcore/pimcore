@@ -70,13 +70,6 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected string $type = '';
@@ -1153,13 +1146,10 @@ class Document extends Element\AbstractElement
     /**
      * @return Document|null
      */
-    public function getParent()
+    public function getParent() /** : ?Document */
     {
-        if ($this->parent === null) {
-            $this->setParent(Document::getById($this->getParentId()));
-        }
-
-        return $this->parent;
+        $parent = parent::getParent();
+        return $parent instanceof Document ? $parent : null;
     }
 
     /**
