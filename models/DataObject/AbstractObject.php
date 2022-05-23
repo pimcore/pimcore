@@ -249,6 +249,78 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        if ($this->id === null) {
+            $this->id = $this->o_id;
+            $this->o_id = & $this->id;
+        }
+        return parent::getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        if ($this->path === null) {
+            $this->path = $this->o_path;
+            $this->o_path = & $this->path;
+        }
+        return parent::getPath();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCreationDate()
+    {
+        if ($this->creationDate === null) {
+            $this->creationDate = $this->o_creationDate;
+            $this->o_creationDate = & $this->creationDate;
+        }
+        return parent::getCreationDate();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserOwner()
+    {
+        if ($this->userOwner === null) {
+            $this->userOwner = $this->o_userOwner;
+            $this->o_userOwner = & $this->userOwner;
+        }
+        return parent::getUserOwner();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLocked()
+    {
+        if ($this->locked === null) {
+            $this->locked = $this->o_locked;
+            $this->o_locked = & $this->locked;
+        }
+        return parent::getLocked();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVersionCount(): int
+    {
+        if ($this->versionCount === null) {
+            $this->versionCount = $this->o_versionCount;
+            $this->o_versionCount = & $this->versionCount;
+        }
+        return parent::getVersionCount();
+    }
+
+    /**
      * @static
      *
      * @return bool
