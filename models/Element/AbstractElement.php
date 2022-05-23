@@ -70,6 +70,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $id = null;
 
     /**
+     * @internal
+     *
+     * @var bool
+     */
+    public static $doNotRestoreKeyAndPath = false;
+
+    /**
      * @return string|null
      */
     public function getPath()
@@ -664,7 +671,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     protected function getBlockedVars(): array
     {
-        return ['dependencies'];
+        return ['dependencies', 'parent'];
     }
 
     /**
