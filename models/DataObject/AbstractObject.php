@@ -1416,7 +1416,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_parent' => 'parent',
             'o_properties' => 'properties',
             'o_userModification' => 'userModification',
-            'o_modificationDate' => 'modificationDate'
+            'o_modificationDate' => 'modificationDate',
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {
