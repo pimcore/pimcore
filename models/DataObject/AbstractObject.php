@@ -1048,10 +1048,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParentId($parentId)
     {
+        $parentId = (int) $parentId;
         if ($parentId != $this->parentId) {
             $this->markFieldDirty('parentId');
         }
+
         parent::setParentId($parentId);
+
         $this->o_siblings = [];
         $this->o_hasSiblings = [];
 
