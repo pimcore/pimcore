@@ -171,11 +171,10 @@ class Asset extends Element\AbstractElement
     {
         $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
-        if(!$this->isInDumpState()) {
+        if (!$this->isInDumpState()) {
 
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-
         }
 
         return $blockedVars;

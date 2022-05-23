@@ -679,7 +679,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function __sleep()
     {
-        if($this->isInDumpState()) {
+        if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $this->removeInheritedProperties();
         }

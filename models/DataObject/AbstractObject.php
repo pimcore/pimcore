@@ -83,6 +83,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @deprecated
      *
      * @var int|null
@@ -1451,7 +1452,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_versionCount' => 'versionCount',
             'o_locked' => 'locked',
             'o_parent' => 'parent',
-            'o_properties' => 'properties'
+            'o_properties' => 'properties',
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {
