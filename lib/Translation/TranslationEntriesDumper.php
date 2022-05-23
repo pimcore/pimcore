@@ -26,12 +26,17 @@ class TranslationEntriesDumper
 
     /**
      * @param Translation $translation
+     *
+     * @return void
      */
     public static function addToSaveQueue(Translation $translation)
     {
         self::$translations[$translation->getKey()] = $translation;
     }
 
+    /**
+     * @return void
+     */
     public function dumpToDb()
     {
         foreach (self::$translations as $translation) {

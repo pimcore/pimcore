@@ -287,7 +287,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @throws \Exception
      */
-    private function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
+    private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale)
     {
         if (empty($id)) {
             return $translated;
@@ -435,6 +435,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $this->disableTranslations;
     }
 
+    /**
+     * @param bool $disableTranslations
+     *
+     * @return void
+     */
     public function setDisableTranslations(bool $disableTranslations)
     {
         $this->disableTranslations = $disableTranslations;
@@ -456,8 +461,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * Passes through all unknown calls onto the translator object.
+     *
+     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         return call_user_func_array([$this->translator, $method], $args);
     }
