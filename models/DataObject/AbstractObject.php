@@ -236,6 +236,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var array|null
+     */
+    protected $o_properties = null;
+
     public function __construct()
     {
         $this->o_id = & $this->id;
@@ -245,6 +254,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_versionCount = & $this->versionCount;
         $this->o_locked = & $this->locked;
         $this->o_parent = & $this->parent;
+        $this->o_properties = & $this->properties;
     }
 
     /**
@@ -252,7 +262,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1436,5 +1446,28 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $list;
+    }
+
+    public function __wakeup()
+    {
+        $propertyMappings = [
+            'o_id' => 'id',
+            'o_path' => 'path',
+            'o_creationDate' => 'creationDate',
+            'o_userOwner' => 'userOwner',
+            'o_versionCount' => 'versionCount',
+            'o_locked' => 'locked',
+            'o_parent' => 'parent',
+            'o_properties' => 'properties'
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }
