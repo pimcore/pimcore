@@ -94,13 +94,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @internal
-     *
      * @var resource|null
      */
     protected $stream;
@@ -1102,14 +1095,6 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParentId()
     {
         return $this->parentId;
@@ -1141,18 +1126,6 @@ class Asset extends Element\AbstractElement
     public function setKey($key)
     {
         return $this->setFilename($key);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int)$modificationDate;
-
-        return $this;
     }
 
     /**
