@@ -65,6 +65,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
+     * @var bool
+     */
+    public static $doNotRestoreKeyAndPath = false;
+
+    /**
+     * @internal
+     *
      * @var int|null
      */
     protected ?int $id = null;
@@ -691,14 +698,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = static::getById($this->getId());
 
-            if ($originalElement) {
+            $type = Service::getElementType($this);
 
-                if (Service::getElementType($this) === 'asset') {
-                    $this->setParentId($originalElement->getParentId());
-                } else {
-                    $this->setKey($originalElement->getKey());
-                }
-
+            if ( $type === 'asset' && $originalElement ) {
+                $this->setParentId($originalElement->getParentId());
+                $this->setPath($originalElement->getRealPath());
+            } else if (
+                ($type === 'object' && !self::$doNotRestoreKeyAndPath) ||
+                $type === 'document'
+            ) {
+                $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getRealPath());
             }
         }
