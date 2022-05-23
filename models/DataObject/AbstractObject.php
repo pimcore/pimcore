@@ -262,7 +262,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties', 'o_properties']);
         }
 
         return $blockedVars;

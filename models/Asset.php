@@ -1716,6 +1716,24 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
+    public function __wakeup()
+    {
+        if ($this->isInDumpState()) {
+            // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
+            $originalElement = Asset::getById($this->getId());
+            if ($originalElement) {
+                $this->setParentId($originalElement->getParentId());
+                $this->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($this->isInDumpState() && $this->properties !== null) {
+            $this->renewInheritedProperties();
+        }
+
+        $this->setInDumpState(false);
+    }
+
     public function __destruct()
     {
         // close open streams
@@ -1884,27 +1902,5 @@ class Asset extends Element\AbstractElement
         \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = static::getById($this->getId());
-
-            if ($originalElement) {
-
-                // set parentId and path for Asset
-                $this->setParentId($originalElement->getParentId());
-                $this->setPath($originalElement->getRealPath());
-
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 }
