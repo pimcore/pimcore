@@ -146,6 +146,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_modificationDate;
@@ -246,6 +248,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_creationDate = & $this->creationDate;
         $this->o_userOwner = & $this->userOwner;
         $this->o_versionCount = & $this->versionCount;
+        $this->o_modificationDate = & $this->modificationDate;
         $this->o_locked = & $this->locked;
         $this->o_parent = & $this->parent;
         $this->o_properties = & $this->properties;
@@ -1031,14 +1034,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int|null
-     */
-    public function getModificationDate()
-    {
-        return $this->o_modificationDate;
-    }
-
-    /**
      * @return int
      */
     public function getUserModification()
@@ -1111,20 +1106,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         }
         $this->o_childrenSortBy = $childrenSortBy;
-    }
-
-    /**
-     * @param int $o_modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($o_modificationDate)
-    {
-        $this->markFieldDirty('o_modificationDate');
-
-        $this->o_modificationDate = (int) $o_modificationDate;
-
-        return $this;
     }
 
     /**
@@ -1453,6 +1434,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_locked' => 'locked',
             'o_parent' => 'parent',
             'o_properties' => 'properties',
+            'o_modificationDate' => 'modificationDate',
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {

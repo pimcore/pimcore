@@ -107,13 +107,6 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $modificationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected ?int $userModification = null;
 
     /**
@@ -937,14 +930,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParentId()
     {
         return $this->parentId;
@@ -1000,18 +985,6 @@ class Document extends Element\AbstractElement
     public function setKey($key)
     {
         $this->key = (string)$key;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
