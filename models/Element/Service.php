@@ -23,6 +23,7 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -43,6 +44,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1344,7 +1346,7 @@ class Service extends Model\AbstractModel
             'ctype' => $note->getCtype(),
             'cpath' => $cpath,
             'date' => $note->getDate(),
-            'title' => $note->getTitle(),
+            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
             'description' => $note->getDescription(),
         ];
 
