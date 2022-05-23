@@ -53,11 +53,11 @@ abstract class FrontendController extends Controller
     public function __get($name)
     {
         if ('document' === $name) {
-            return $this->documentResolver->getDocument();
+            return $this->getDocumentResolver()->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->editmodeResolver->isEditmode();
+            return $this->getEditmodeResolver()->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
