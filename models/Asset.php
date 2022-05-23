@@ -1892,7 +1892,7 @@ class Asset extends Element\AbstractElement
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = static::getById($this->getId());
 
-            if ($originalElement && !self::$doNotRestoreKeyAndPath) {
+            if ($originalElement) {
 
                 // set parentId and path for Asset
                 $this->setParentId($originalElement->getParentId());
