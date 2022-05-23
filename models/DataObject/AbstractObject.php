@@ -51,13 +51,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
-     * @internal
-     *
-     * @var bool
-     */
-    public static $doNotRestoreKeyAndPath = false;
-
-    /**
      * possible types of a document
      *
      * @var array
@@ -90,7 +83,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
      * @deprecated
      *
      * @var int|null
@@ -237,6 +229,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var array|null
+     */
+    protected $o_properties = null;
+
     public function __construct()
     {
         $this->o_id = & $this->id;
@@ -246,6 +247,25 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_versionCount = & $this->versionCount;
         $this->o_locked = & $this->locked;
         $this->o_parent = & $this->parent;
+        $this->o_properties = & $this->properties;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'parent', 'omitMandatoryCheck'];
+
+        if ($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
+        } else {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties', 'o_properties']);
+        }
+
+        return $blockedVars;
     }
 
     /**
@@ -1175,42 +1195,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this->o_childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
     }
 
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-
-        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = DataObject::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
-    }
-
     /**
      * @param string $method
      * @param array $args
@@ -1455,5 +1439,28 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $list;
+    }
+
+    public function __wakeup()
+    {
+        $propertyMappings = [
+            'o_id' => 'id',
+            'o_path' => 'path',
+            'o_creationDate' => 'creationDate',
+            'o_userOwner' => 'userOwner',
+            'o_versionCount' => 'versionCount',
+            'o_locked' => 'locked',
+            'o_parent' => 'parent',
+            'o_properties' => 'properties'
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }

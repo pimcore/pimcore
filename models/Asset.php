@@ -165,6 +165,23 @@ class Asset extends Element\AbstractElement
     protected $dataChanged = false;
 
     /**
+     * @return array
+     */
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+
+        if(!$this->isInDumpState()) {
+
+            // for caching asset
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+
+        }
+
+        return $blockedVars;
+    }
+
+    /**
      *
      * @return array
      */
@@ -1697,22 +1714,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the asset
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()

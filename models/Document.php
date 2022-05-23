@@ -145,6 +145,21 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
+     * @return array
+     */
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+
+        if (!$this->isInDumpState()) {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+        }
+
+        return $blockedVars;
+    }
+
+    /**
      * get possible types
      *
      * @return array
@@ -1137,40 +1152,6 @@ class Document extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = Document::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 
     /**

@@ -65,6 +65,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
+     * @var bool
+     */
+    public static $doNotRestoreKeyAndPath = false;
+
+    /**
+     * @internal
+     *
      * @var int|null
      */
     protected ?int $id = null;
@@ -662,15 +669,42 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return [];
     }
 
+    protected function getBlockedVars(): array
+    {
+        return ['dependencies', 'parent'];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function __sleep()
     {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'parent'];
+        if($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $this->removeInheritedProperties();
+        }
 
-        return array_diff($parentVars, $blockedVars);
+        return array_diff(parent::__sleep(), $this->getBlockedVars());
+    }
+
+    public function __wakeup()
+    {
+        if ($this->isInDumpState()) {
+            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
+            $originalElement = static::getById($this->getId());
+
+            if ($originalElement && !self::$doNotRestoreKeyAndPath) {
+                // set key and path for DataObject and Document (assets have different wakeup call)
+                $this->setKey($originalElement->getKey());
+                $this->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($this->isInDumpState() && $this->properties !== null) {
+            $this->renewInheritedProperties();
+        }
+
+        $this->setInDumpState(false);
     }
 
     /**
