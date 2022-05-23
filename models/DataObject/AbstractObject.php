@@ -164,6 +164,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected ?int $o_userModification = null;
@@ -252,6 +254,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_locked = & $this->locked;
         $this->o_parent = & $this->parent;
         $this->o_properties = & $this->properties;
+        $this->o_userModification = & $this->userModification;
     }
 
     /**
@@ -1034,14 +1037,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
-     */
-    public function getUserModification()
-    {
-        return $this->o_userModification;
-    }
-
-    /**
      * @param int $o_parentId
      *
      * @return $this
@@ -1106,20 +1101,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         }
         $this->o_childrenSortBy = $childrenSortBy;
-    }
-
-    /**
-     * @param int $o_userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($o_userModification)
-    {
-        $this->markFieldDirty('o_userModification');
-
-        $this->o_userModification = (int) $o_userModification;
-
-        return $this;
     }
 
     /**
@@ -1434,7 +1415,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_locked' => 'locked',
             'o_parent' => 'parent',
             'o_properties' => 'properties',
-            'o_modificationDate' => 'modificationDate',
+            'o_userModification' => 'userModification',
+            'o_modificationDate' => 'modificationDate'
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {

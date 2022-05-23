@@ -132,6 +132,34 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?string $locked = null;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $userModification = null;
+
+    /**
+     * @return int
+     */
+    public function getUserModification()
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $userModification
+     *
+     * @return $this
+     */
+    public function setUserModification($userModification)
+    {
+        $this->markFieldDirty('userModification');
+        $this->userModification = (int) $userModification;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getCreationDate()
@@ -344,7 +372,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
-        $userModificationKey = $this instanceof AbstractObject ? 'o_userModification' : 'userModification';
+        $userModificationKey = 'userModification';
         if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();

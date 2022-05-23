@@ -1053,26 +1053,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getUserModification()
-    {
-        return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserModification($userModification)
-    {
-        $this->markFieldDirty('userModification');
-
-        $this->userModification = (int) $userModification;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isPublished()

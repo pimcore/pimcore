@@ -101,13 +101,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int|null
-     */
-    protected ?int $userModification = null;
-
-    /**
-     * @internal
-     *
      * @var array|null
      */
     protected $versions = null;
@@ -1265,26 +1258,6 @@ class Asset extends Element\AbstractElement
     public function setDataChanged($changed = true)
     {
         $this->dataChanged = $changed;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserModification()
-    {
-        return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserModification($userModification)
-    {
-        $this->markFieldDirty('userModification');
-
-        $this->userModification = (int)$userModification;
 
         return $this;
     }
