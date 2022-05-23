@@ -687,27 +687,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_diff(parent::__sleep(), $this->getBlockedVars());
     }
 
-    public function setParentId($parentId)
-    {
-        return $this;
-    }
-
     public function __wakeup()
     {
         if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = static::getById($this->getId());
 
-            $type = Service::getElementType($this);
-
-            if ($originalElement) {
-                if ($type === 'asset') {
-                    $this->setParentId($originalElement->getParentId());
-                    $this->setPath($originalElement->getRealPath());
-                } else if ($type === 'document' || ($type === 'object' && !self::$doNotRestoreKeyAndPath)) {
-                    $this->setKey($originalElement->getKey());
-                    $this->setPath($originalElement->getRealPath());
-                }
+            if ($originalElement && !self::$doNotRestoreKeyAndPath) {
+                // set key and path for DataObject and Document (assets have different wakeup call)
+                $this->setKey($originalElement->getKey());
+                $this->setPath($originalElement->getRealPath());
             }
         }
 

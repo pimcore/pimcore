@@ -1885,4 +1885,26 @@ class Asset extends Element\AbstractElement
             new AssetUpdateTasksMessage($this->getId())
         );
     }
+
+    public function __wakeup()
+    {
+        if ($this->isInDumpState()) {
+            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
+            $originalElement = static::getById($this->getId());
+
+            if ($originalElement && !self::$doNotRestoreKeyAndPath) {
+
+                // set parentId and path for Asset
+                $this->setParentId($originalElement->getParentId());
+                $this->setPath($originalElement->getRealPath());
+
+            }
+        }
+
+        if ($this->isInDumpState() && $this->properties !== null) {
+            $this->renewInheritedProperties();
+        }
+
+        $this->setInDumpState(false);
+    }
 }
