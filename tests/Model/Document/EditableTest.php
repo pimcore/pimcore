@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Helper\Document\TestDataHelper;
