@@ -111,7 +111,7 @@ class Tracker extends AbstractTracker
     /**
      * @return string|null
      */
-    public function getDefaultPath()//: ?string
+    public function getDefaultPath()
     {
         return $this->defaultPath;
     }
@@ -136,7 +136,7 @@ class Tracker extends AbstractTracker
      * @param SiteId $siteId
      * @return string|null
      */
-    protected function buildCode(SiteId $siteId)//: ?string
+    protected function buildCode(SiteId $siteId)
     {
         $config = $this->configProvider->getConfig();
 
@@ -159,7 +159,7 @@ class Tracker extends AbstractTracker
      *
      * @return string
      */
-    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)//: string
+    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
@@ -176,7 +176,7 @@ class Tracker extends AbstractTracker
      * @param ConfigObject $siteConfig
      * @return string
      */
-    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)//: string
+    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
     {
         $data = [
             'siteId' => $siteId,

@@ -45,7 +45,7 @@ abstract class AbstractTracker implements TrackerInterface
     /**
      * {@inheritdoc}
      */
-    public function generateCode(SiteId $siteId = null)//: ?string
+    public function generateCode(SiteId $siteId = null)
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
@@ -61,7 +61,7 @@ abstract class AbstractTracker implements TrackerInterface
      *
      * @return string|null
      */
-    abstract protected function buildCode(SiteId $siteId);//: ?string
+    abstract protected function buildCode(SiteId $siteId);
 
     /**
      * {@inheritdoc}

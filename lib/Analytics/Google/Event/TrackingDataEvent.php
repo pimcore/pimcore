@@ -49,6 +49,14 @@ class TrackingDataEvent extends Event
      */
     private $template;
 
+    /**
+     * TrackingDataEvent constructor.
+     * @param Config $config
+     * @param SiteId $siteId
+     * @param array $data
+     * @param array $blocks
+     * @param string $template
+     */
     public function __construct(
         Config $config,
         SiteId $siteId,

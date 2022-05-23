@@ -34,7 +34,7 @@ class ConfigProvider
     /**
      * @param ConfigObject|null $configObject
      */
-    public function __construct(ConfigObject $configObject = null)
+    public function __construct(?ConfigObject $configObject = null)
     {
         $this->configObject = $configObject;
     }

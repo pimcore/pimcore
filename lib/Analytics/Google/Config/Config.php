@@ -80,7 +80,7 @@ class Config
      *
      * @return null|ConfigObject
      */
-    public function getConfigForSite(string $configKey)//: ?ConfigObject
+    public function getConfigForSite(string $configKey)
     {
         if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
             return null;
@@ -127,7 +127,7 @@ class Config
      *
      * @return string|null
      */
-    private function normalizeStringValue(mixed $value)//: ?string
+    private function normalizeStringValue(mixed $value)
     {
         if (null === $value) {
             return $value;

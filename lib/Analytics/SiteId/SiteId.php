@@ -79,7 +79,7 @@ class SiteId
     /**
      * @return Site|null
      */
-    public function getSite()//: ?Site
+    public function getSite()
     {
         return $this->site;
     }
