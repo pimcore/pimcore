@@ -700,15 +700,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
             $type = Service::getElementType($this);
 
-            if ( $type === 'asset' && $originalElement ) {
-                $this->setParentId($originalElement->getParentId());
-                $this->setPath($originalElement->getRealPath());
-            } else if (
-                ($type === 'object' && !self::$doNotRestoreKeyAndPath) ||
-                $type === 'document'
-            ) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
+            if ($originalElement) {
+                if ($type === 'asset') {
+                    $this->setParentId($originalElement->getParentId());
+                    $this->setPath($originalElement->getRealPath());
+                } else if ($type === 'document' || ($type === 'object' && !self::$doNotRestoreKeyAndPath)) {
+                    $this->setKey($originalElement->getKey());
+                    $this->setPath($originalElement->getRealPath());
+                }
             }
         }
 

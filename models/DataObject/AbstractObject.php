@@ -51,13 +51,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
-     * @internal
-     *
-     * @var bool
-     */
-    public static $doNotRestoreKeyAndPath = false;
-
-    /**
      * possible types of a document
      *
      * @var array
