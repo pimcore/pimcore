@@ -94,7 +94,7 @@ interface AdminSessionHandlerInterface
      * @param string $name
      * @param SessionInterface|null $session
      *
-     * @return AttributeBagInterface|LockableAttributeBag|SessionBagInterface
+     * @return SessionBagInterface
      */
     public function loadAttributeBag(string $name, SessionInterface $session = null): SessionBagInterface;
 

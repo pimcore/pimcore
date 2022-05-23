@@ -76,7 +76,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @return string
+     * @return string|null
      */
     public function getPriceSystemName(): ?string
     {
@@ -86,7 +86,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface
+     * @return PriceSystemInterface|null
      */
     public function getPriceSystemImplementation(): ?PriceSystemInterface
     {
@@ -96,7 +96,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return AvailabilitySystemInterface
+     * @return AvailabilitySystemInterface|null
      */
     public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
     {
@@ -108,7 +108,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @param int $quantityScale
      *
-     * @return PriceInterface
+     * @return PriceInterface|null
      */
     public function getOSPrice($quantityScale = 1): ?PriceInterface
     {
@@ -133,7 +133,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @param int $quantity
      *
-     * @return AvailabilityInterface
+     * @return AvailabilityInterface|null
      */
     public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
     {

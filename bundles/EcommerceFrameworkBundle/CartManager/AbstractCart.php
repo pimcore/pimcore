@@ -138,7 +138,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @param AbstractSetProductEntry[] $subProducts
      * @param string|null $comment
      *
-     * @return mixed
+     * @return string
      */
     public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {

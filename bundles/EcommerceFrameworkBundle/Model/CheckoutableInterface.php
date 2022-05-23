@@ -81,7 +81,7 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @param int $quantityScale
      *
-     * @return PriceInfoInterface|AbstractPriceInfo
+     * @return PriceInfoInterface|null
      */
     public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface;
 

@@ -60,7 +60,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return mixed
+     * @return string|bool
      *
      * @throws \Exception
      */

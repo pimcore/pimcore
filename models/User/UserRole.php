@@ -307,7 +307,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getPerspectives()
     {

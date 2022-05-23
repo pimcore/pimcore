@@ -213,7 +213,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return DataObject\Data\Consent
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

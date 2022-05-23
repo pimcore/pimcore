@@ -110,7 +110,7 @@ class Analytics extends AbstractAdapter
      * @param array|null $drillDownFilters
      * @param bool $useDimensionHandling
      *
-     * @return mixed
+     * @return array
      *
      * @throws \Exception
      */
@@ -202,7 +202,7 @@ class Analytics extends AbstractAdapter
      * @param \stdClass $configuration
      * @param array $fields
      *
-     * @return mixed
+     * @return \stdClass
      */
     protected function handleFields($configuration, $fields)
     {

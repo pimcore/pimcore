@@ -67,7 +67,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @throws UnsupportedException
      *
-     * @return string|string
+     * @return string|null
      */
     public function getPriceSystemName(): ?string
     {
@@ -78,7 +78,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * returns product type for product index (either object or variant).
      * by default it returns type of object, but it may be overwritten if necessary.
      *
-     * @return string|string
+     * @return string|null
      */
     public function getOSIndexType(): ?string
     {
@@ -89,7 +89,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * returns parent id for product index.
      * by default it returns id of parent object, but it may be overwritten if necessary.
      *
-     * @return int
+     * @return int|null
      */
     public function getOSParentId()
     {
@@ -102,7 +102,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @throws UnsupportedException
      *
-     * @return array
+     * @return array|null
      */
     public function getCategories(): ?array
     {
@@ -119,7 +119,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @throws UnsupportedException
      *
-     * @return string
+     * @return string|null
      */
     public function getOSName(): ?string
     {
@@ -132,7 +132,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @throws UnsupportedException
      *
-     * @return string
+     * @return string|null
      */
     public function getOSProductNumber(): ?string
     {
@@ -144,7 +144,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @return string
+     * @return string|null
      */
     public function getAvailabilitySystemName(): ?string
     {
@@ -168,7 +168,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return PriceSystemInterface
+     * @return PriceSystemInterface|null
      */
     public function getPriceSystemImplementation(): ?PriceSystemInterface
     {
@@ -178,7 +178,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return AvailabilitySystemInterface
+     * @return AvailabilitySystemInterface|null
      */
     public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
     {
@@ -190,7 +190,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @param int $quantityScale
      *
-     * @return PriceInterface
+     * @return PriceInterface|null
      */
     public function getOSPrice($quantityScale = 1): ?PriceInterface
     {
@@ -203,7 +203,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @param int $quantityScale
      *
-     * @return PriceInfoInterface|AbstractPriceInfo
+     * @return PriceInfoInterface|null
      */
     public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface
     {
@@ -215,7 +215,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @param int $quantity
      *
-     * @return AvailabilityInterface
+     * @return AvailabilityInterface|null
      */
     public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
     {

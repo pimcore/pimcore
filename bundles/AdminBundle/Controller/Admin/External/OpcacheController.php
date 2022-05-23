@@ -32,7 +32,7 @@ class OpcacheController extends AdminController implements KernelControllerEvent
      * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")
      *
      * @param Request $request
-     * @param Profiler $profiler
+     * @param Profiler|null $profiler
      *
      * @return Response
      */

@@ -158,7 +158,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return mixed
+     * @return string|false
      */
     public function exportCsv(array $params)
     {
@@ -204,7 +204,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function exportPlain(array $params)
     {

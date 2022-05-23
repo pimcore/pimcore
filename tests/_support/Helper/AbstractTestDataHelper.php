@@ -48,7 +48,7 @@ abstract class AbstractTestDataHelper extends Module
     /**
      * @param string|null $condition
      *
-     * @return Concrete[]
+     * @return DataObject[]
      */
     protected function getObjectList($condition = null)
     {

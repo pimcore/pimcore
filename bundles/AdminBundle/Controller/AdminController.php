@@ -32,8 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
     /**
-     * {@inheritdoc}
-     *
+     * @return string[]
      */
     public static function getSubscribedServices()// : array
     {
