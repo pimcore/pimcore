@@ -93,6 +93,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_parentId;
@@ -255,6 +257,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->o_parent = & $this->parent;
         $this->o_properties = & $this->properties;
         $this->o_userModification = & $this->userModification;
+        $this->o_parentId = & $this->parentId;
     }
 
     /**
@@ -1004,12 +1007,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function getParentId()
     {
+        $parentId = parent::getParentId();
+
         // fall back to parent if no ID is set but we have a parent object
-        if (!$this->o_parentId && $this->o_parent) {
-            return $this->o_parent->getId();
+        if (!$parentId && $this->parent) {
+            return $this->parent->getId();
         }
 
-        return $this->o_parentId;
+        return $parentId;
     }
 
     /**
@@ -1037,18 +1042,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $o_parentId
+     * @param int $parentId
      *
      * @return $this
      */
-    public function setParentId($o_parentId)
+    public function setParentId($parentId)
     {
-        $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId) {
-            $this->markFieldDirty('o_parentId');
-        }
-        $this->o_parentId = $o_parentId;
-        $this->o_parent = null;
+        parent::setParentId($parentId);
         $this->o_siblings = [];
         $this->o_hasSiblings = [];
 
@@ -1417,6 +1417,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_properties' => 'properties',
             'o_userModification' => 'userModification',
             'o_modificationDate' => 'modificationDate',
+            'o_parentId' => 'parentId'
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {
