@@ -53,11 +53,11 @@ abstract class FrontendController extends Controller
     public function __get($name)
     {
         if ('document' === $name) {
-            return $this->getDocumentResolver()->getDocument();
+            return $this->container->get(DocumentResolver::class)->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->getEditmodeResolver()->isEditmode();
+            return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
@@ -79,31 +79,6 @@ abstract class FrontendController extends Controller
         throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
-    final protected function getResponseResolver()
-    {
-        return $this->container->get(ResponseHeaderResolver::class);
-    }
-
-    final protected function getRequestStack()
-    {
-        return $this->container->get('request_stack');
-    }
-
-    final protected function getDocumentResolver()
-    {
-        return $this->container->get(DocumentResolver::class);
-    }
-
-    final protected function getEditmodeResolver()
-    {
-        return $this->container->get(EditmodeResolver::class);
-    }
-
-    final protected function getEditableRenderer()
-    {
-        return $this->container->get(EditableRenderer::class);
-    }
-
     /**
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
@@ -116,10 +91,10 @@ abstract class FrontendController extends Controller
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
         if (null === $request) {
-            $request = $this->getRequestStack()->getCurrentRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
         }
 
-        $this->getResponseResolver()->addResponseHeader($request, $key, $values, $replace);
+        $this->container->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
@@ -141,7 +116,7 @@ abstract class FrontendController extends Controller
             $document = $this->document;
         }
 
-        return $this->getEditableRenderer()->getEditable($document, $type, $inputName, $options);
+        return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
     /**
