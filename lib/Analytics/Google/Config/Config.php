@@ -33,7 +33,7 @@ class Config
 
     /**
      * @param ConfigObject $reportConfig
-     * @return static
+     * @return self
      */
     public static function fromReportConfig(ConfigObject $reportConfig): self
     {
@@ -80,7 +80,7 @@ class Config
      *
      * @return null|ConfigObject
      */
-    public function getConfigForSite(string $configKey): ?ConfigObject
+    public function getConfigForSite(string $configKey)//: ?ConfigObject
     {
         if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
             return null;
@@ -122,7 +122,12 @@ class Config
         return true;
     }
 
-    private function normalizeStringValue($value)
+    /**
+     * @param mixed $value
+     *
+     * @return string|null
+     */
+    private function normalizeStringValue(mixed $value)//: ?string
     {
         if (null === $value) {
             return $value;

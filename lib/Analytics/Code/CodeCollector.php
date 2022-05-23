@@ -54,6 +54,11 @@ class CodeCollector
         self::ACTION_APPEND,
     ];
 
+    /**
+     * CodeCollector constructor.
+     * @param array $validBlocks
+     * @param string $defaultBlock
+     */
     public function __construct(array $validBlocks, string $defaultBlock)
     {
         if (!in_array($defaultBlock, $validBlocks)) {
@@ -75,7 +80,7 @@ class CodeCollector
      * @param string $action
      * @param SiteId|null $siteId Restrict code part to a specific site
      */
-    public function addCodePart(string $code, string $block = null, string $action = self::ACTION_APPEND, SiteId $siteId = null)
+    public function addCodePart(string $code, ?string $block = null, string $action = self::ACTION_APPEND, ?SiteId $siteId = null)
     {
         if (!in_array($action, $this->validActions)) {
             throw new \InvalidArgumentException(sprintf(
