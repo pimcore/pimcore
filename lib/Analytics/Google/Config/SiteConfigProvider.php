@@ -33,6 +33,11 @@ class SiteConfigProvider
      */
     private $configProvider;
 
+    /**
+     * SiteConfigProvider constructor.
+     * @param SiteIdProvider $siteIdProvider
+     * @param ConfigProvider $configProvider
+     */
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider
@@ -41,7 +46,11 @@ class SiteConfigProvider
         $this->configProvider = $configProvider;
     }
 
-    public function getSiteConfig(Site $site = null)
+    /**
+     * @param Site|null $site
+     * @return \Pimcore\Config\Config|null
+     */
+    public function getSiteConfig(?Site $site = null)//: ?\Pimcore\Config\Config
     {
         $siteId = $this->getSiteId($site);
         $config = $this->configProvider->getConfig();
@@ -49,7 +58,11 @@ class SiteConfigProvider
         return $config->getConfigForSite($siteId->getConfigKey());
     }
 
-    public function isSiteReportingConfigured(Site $site = null): bool
+    /**
+     * @param Site|null $site
+     * @return bool
+     */
+    public function isSiteReportingConfigured(?Site $site = null): bool
     {
         $siteId = $this->getSiteId($site);
         $config = $this->configProvider->getConfig();
@@ -57,7 +70,11 @@ class SiteConfigProvider
         return $config->isReportingConfigured($siteId->getConfigKey());
     }
 
-    private function getSiteId(Site $site = null): SiteId
+    /**
+     * @param Site|null $site
+     * @return SiteId
+     */
+    private function getSiteId(?Site $site = null): SiteId
     {
         $siteId = null;
         if (null === $site) {

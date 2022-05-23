@@ -28,6 +28,10 @@ class SiteIdProvider
      */
     private $siteResolver;
 
+    /**
+     * SiteIdProvider constructor.
+     * @param SiteResolver $siteResolver
+     */
     public function __construct(SiteResolver $siteResolver)
     {
         $this->siteResolver = $siteResolver;
@@ -40,7 +44,7 @@ class SiteIdProvider
      *
      * @return SiteId
      */
-    public function getForRequest(Request $request = null): SiteId
+    public function getForRequest(?Request $request = null): SiteId
     {
         if ($this->siteResolver->isSiteRequest($request)) {
             $site = $this->siteResolver->getSite($request);

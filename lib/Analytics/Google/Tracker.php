@@ -87,6 +87,13 @@ class Tracker extends AbstractTracker
         self::BLOCK_AFTER_SCRIPT_TAG,
     ];
 
+    /**
+     * Tracker constructor.
+     * @param SiteIdProvider $siteIdProvider
+     * @param ConfigProvider $configProvider
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Environment $twig
+     */
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider,
@@ -101,22 +108,35 @@ class Tracker extends AbstractTracker
         $this->twig = $twig;
     }
 
-    public function getDefaultPath()
+    /**
+     * @return string|null
+     */
+    public function getDefaultPath()//: ?string
     {
         return $this->defaultPath;
     }
 
-    public function setDefaultPath(string $defaultPath = null)
+    /**
+     * @param string|null $defaultPath
+     */
+    public function setDefaultPath(?string $defaultPath = null)
     {
         $this->defaultPath = $defaultPath;
     }
 
+    /**
+     * @return CodeCollector
+     */
     protected function buildCodeCollector(): CodeCollector
     {
         return new CodeCollector($this->blocks, self::BLOCK_AFTER_TRACK);
     }
 
-    protected function buildCode(SiteId $siteId)
+    /**
+     * @param SiteId $siteId
+     * @return string|null
+     */
+    protected function buildCode(SiteId $siteId)//: ?string
     {
         $config = $this->configProvider->getConfig();
 
@@ -139,7 +159,7 @@ class Tracker extends AbstractTracker
      *
      * @return string
      */
-    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)
+    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)//: string
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
@@ -150,7 +170,13 @@ class Tracker extends AbstractTracker
         return $this->doBuildCode($siteId, $config, $siteConfig);
     }
 
-    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
+    /**
+     * @param SiteId $siteId
+     * @param Config $config
+     * @param ConfigObject $siteConfig
+     * @return string
+     */
+    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)//: string
     {
         $data = [
             'siteId' => $siteId,

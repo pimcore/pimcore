@@ -31,6 +31,10 @@ class Config
         $this->config = $config;
     }
 
+    /**
+     * @param ConfigObject $reportConfig
+     * @return static
+     */
     public static function fromReportConfig(ConfigObject $reportConfig): self
     {
         $config = null;
@@ -43,11 +47,18 @@ class Config
         return new self($config);
     }
 
+    /**
+     * @return ConfigObject
+     */
     public function getConfig(): ConfigObject
     {
         return $this->config;
     }
 
+    /**
+     * @param string $configKey
+     * @return bool
+     */
     public function isSiteConfigured(string $configKey): bool
     {
         $config = $this->getConfigForSite($configKey);
@@ -69,7 +80,7 @@ class Config
      *
      * @return null|ConfigObject
      */
-    public function getConfigForSite(string $configKey)
+    public function getConfigForSite(string $configKey): ?ConfigObject
     {
         if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
             return null;
@@ -78,6 +89,9 @@ class Config
         return $this->config->get('sites')->$configKey;
     }
 
+    /**
+     * @return array
+     */
     public function getConfiguredSites(): array
     {
         $sites = $this->config->get('sites');
@@ -88,6 +102,10 @@ class Config
         return [];
     }
 
+    /**
+     * @param string $configKey
+     * @return bool
+     */
     public function isReportingConfigured(string $configKey): bool
     {
         $config = $this->getConfigForSite($configKey);
@@ -104,11 +122,6 @@ class Config
         return true;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
     private function normalizeStringValue($value)
     {
         if (null === $value) {

@@ -42,19 +42,30 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     /** @var Environment * */
     protected $twig;
 
+    /**
+     * TrackingCodeSubscriber constructor.
+     * @param TrackingManager $trackingManager
+     * @param Environment $twig
+     */
     public function __construct(TrackingManager $trackingManager, Environment $twig)
     {
         $this->trackingManager = $trackingManager;
         $this->twig = $twig;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()//: array
     {
         return [
             GoogleTagManagerEvents::CODE_HEAD => ['onCodeHead'],
         ];
     }
 
+    /**
+     * @param CodeEvent $event
+     */
     public function onCodeHead(CodeEvent $event)
     {
         if (! $this->isEnabled()) {

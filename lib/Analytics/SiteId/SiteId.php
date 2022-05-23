@@ -38,17 +38,29 @@ class SiteId
      */
     private $site;
 
-    private function __construct(string $configKey, Site $site = null)
+    /**
+     * SiteId constructor.
+     * @param string $configKey
+     * @param Site|null $site
+     */
+    private function __construct(string $configKey, ?Site $site = null)
     {
         $this->configKey = $configKey;
         $this->site = $site;
     }
 
+    /**
+     * @return SiteId
+     */
     public static function forMainDomain(): SiteId
     {
         return new self(self::CONFIG_KEY_MAIN_DOMAIN);
     }
 
+    /**
+     * @param Site $site
+     * @return SiteId
+     */
     public static function forSite(Site $site): SiteId
     {
         $configKey = sprintf('site_%s', $site->getId());
@@ -56,6 +68,9 @@ class SiteId
         return new self($configKey, $site);
     }
 
+    /**
+     * @return string
+     */
     public function getConfigKey(): string
     {
         return $this->configKey;
@@ -64,11 +79,15 @@ class SiteId
     /**
      * @return Site|null
      */
-    public function getSite()
+    public function getSite()//: ?Site
     {
         return $this->site;
     }
 
+    /**
+     * @param TranslatorInterface $translator
+     * @return string
+     */
     public function getTitle(TranslatorInterface $translator): string
     {
         $site = $this->site;
