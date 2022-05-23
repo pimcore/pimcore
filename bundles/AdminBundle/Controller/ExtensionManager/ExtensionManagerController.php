@@ -118,7 +118,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
             $updates[$id] = $options;
         }
 
-        $this->bundleManager->setStates($updates);
+        $this->getBundleManager()->setStates($updates);
 
         return $this->adminJson([
             'extensions' => $this->getBundleList(array_keys($updates)),
@@ -153,7 +153,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         ];
 
         if ($type === 'bundle') {
-            $this->bundleManager->setState($id, ['enabled' => $enable]);
+            $this->getBundleManager()->setState($id, ['enabled' => $enable]);
             $reload = true;
 
             $message = $this->installAssets($assetsInstaller, $enable);
@@ -247,17 +247,17 @@ class ExtensionManagerController extends AdminController implements KernelContro
     private function handleInstallation(Request $request, $install = true)
     {
         try {
-            $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+            $bundle = $this->getBundleManager()->getActiveBundle($request->get('id'), false);
 
             if ($install) {
-                $this->bundleManager->install($bundle);
+                $this->getBundleManager()->install($bundle);
             } else {
-                $this->bundleManager->uninstall($bundle);
+                $this->getBundleManager()->uninstall($bundle);
             }
 
             $data = [
                 'success' => true,
-                'reload' => $this->bundleManager->needsReloadAfterInstall($bundle),
+                'reload' => $this->getBundleManager()->needsReloadAfterInstall($bundle),
             ];
 
             if (!empty($message = $this->getInstallerOutput($bundle))) {
@@ -285,7 +285,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      */
     private function getBundleList(array $filter = [])
     {
-        $bm = $this->bundleManager;
+        $bm = $this->getBundleManager();
 
         $results = [];
         foreach ($bm->getEnabledBundleNames() as $className) {
@@ -374,7 +374,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      */
     private function buildBundleInfo(PimcoreBundleInterface $bundle, $enabled = false, $installed = false)
     {
-        $bm = $this->bundleManager;
+        $bm = $this->getBundleManager();
 
         $state = $bm->getState($bundle);
 
@@ -473,11 +473,11 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
     private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false)
     {
-        if (!$this->bundleManager->isEnabled($bundle)) {
+        if (!$this->getBundleManager()->isEnabled($bundle)) {
             return null;
         }
 
-        $installer = $this->bundleManager->getInstaller($bundle);
+        $installer = $this->getBundleManager()->getInstaller($bundle);
         if (null !== $installer) {
             $output = $installer->getOutput();
             if ($output instanceof BufferedOutput) {

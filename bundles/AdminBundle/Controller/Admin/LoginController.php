@@ -72,8 +72,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        if ($this->translator instanceof LocaleAwareInterface) {
-            $this->translator->setLocale($locale);
+        if ($this->getTranslator() instanceof LocaleAwareInterface) {
+            $this->getTranslator()->setLocale($locale);
         }
     }
 
@@ -275,7 +275,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         return [
             'config' => $config,
-            'pluginCssPaths' => $this->bundleManager->getCssPaths(),
+            'pluginCssPaths' => $this->getBundleManager()->getCssPaths(),
         ];
     }
 

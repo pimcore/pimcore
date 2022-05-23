@@ -19,7 +19,6 @@ use GuzzleHttp\ClientInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -69,11 +68,11 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
-        $user = $this->tokenResolver->getUser();
+        $user = $this->getTokenResolver()->getUser();
 
         if ($user) {
-            if ($this->translator instanceof LocaleAwareInterface) {
-                $this->translator->setLocale($user->getLanguage());
+            if ($this->getTranslator() instanceof LocaleAwareInterface) {
+                $this->getTranslator()->setLocale($user->getLanguage());
             }
             $event->getRequest()->setLocale($user->getLanguage());
         }

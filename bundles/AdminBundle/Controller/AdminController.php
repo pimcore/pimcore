@@ -51,6 +51,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
     public static function getSubscribedServices()// : array
     {
         $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
         $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
@@ -72,28 +75,18 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
-    /**
-     * @required
-     */
-    public function setTranslator(TranslatorInterface $translator)
+    public function getTranslator()
     {
-        $this->translator = $translator;
+        return $this->container->get('translator');
     }
 
-    /**
-     * @required
-     */
-    public function setBundleManager(PimcoreBundleManager $bundleManager){
-        $this->bundleManager = $bundleManager;
+    public function getBundleManager(){
+        return $this->container->get(PimcoreBundleManager::class);
     }
 
-    /**
-     * @required
-     * @param TokenStorageUserResolver $tokenResolver
-     */
-    public function setTokenResolver(TokenStorageUserResolver $tokenResolver)
+    public function getTokenResolver()
     {
-        $this->tokenResolver = $tokenResolver;
+        return $this->container->get(TokenStorageUserResolver::class);
     }
 
     /**
@@ -107,10 +100,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
     {
 
         if ($proxyUser) {
-            return $this->tokenResolver->getUserProxy();
+            return $this->getTokenResolver()->getUserProxy();
         }
 
-        return $this->tokenResolver->getUser();
+        return $this->getTokenResolver()->getUser();
     }
 
     /**
@@ -286,6 +279,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        return $this->translator->trans($id, $parameters, $domain, $locale);
+        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
 }
