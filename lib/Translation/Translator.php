@@ -287,7 +287,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @throws \Exception
      */
-    private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale)
+    private function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
         if (empty($id)) {
             return $translated;
