@@ -1433,6 +1433,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             'o_locked' => 'locked',
             'o_parent' => 'parent',
             'o_properties' => 'properties',
+            'o_userModification' => 'userModification'
         ];
 
         foreach ($propertyMappings as $oldProperty => $newProperty) {
