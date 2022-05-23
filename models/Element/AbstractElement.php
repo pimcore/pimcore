@@ -160,11 +160,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function setParentId($parentId)
     {
         $parentId = (int) $parentId;
-        $type = Service::getElementType($this);
-
-        if ($parentId != $this->parentId && $type === 'object') {
-            $this->markFieldDirty('parentId');
-        }
         $this->parentId = $parentId;
         $this->parent = null;
 
