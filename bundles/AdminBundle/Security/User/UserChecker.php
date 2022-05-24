@@ -34,8 +34,6 @@ class UserChecker extends BaseUserChecker
     public function checkPreAuth(UserInterface $user)
     {
         $this->checkValidUser($user);
-
-        parent::checkPreAuth($user);
     }
 
     /**
@@ -44,8 +42,6 @@ class UserChecker extends BaseUserChecker
     public function checkPostAuth(UserInterface $user)
     {
         $this->checkValidUser($user);
-
-        parent::checkPostAuth($user);
     }
 
     private function checkValidUser(UserInterface $user)

@@ -131,7 +131,7 @@ class Analytics extends AbstractAdapter
             throw new \Exception('Google Analytics is not configured');
         }
 
-        $service = new \Google_Service_Analytics($client);
+        $service = new \Google\Service\Analytics($client);
 
         if (!$configuration->profileId) {
             throw new \Exception('no profileId given');
