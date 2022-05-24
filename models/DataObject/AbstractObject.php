@@ -328,7 +328,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param Concrete $object
+     * @param Concrete|null $object
      *
      * @return bool
      */

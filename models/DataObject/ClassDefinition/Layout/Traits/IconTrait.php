@@ -28,7 +28,7 @@ trait IconTrait
     public $icon;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getIcon(): ?string
     {
@@ -36,7 +36,7 @@ trait IconTrait
     }
 
     /**
-     * @param string $icon
+     * @param string|null $icon
      */
     public function setIcon(?string $icon): void
     {

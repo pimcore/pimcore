@@ -156,7 +156,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return ObjectData\IndexFieldSelection|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {

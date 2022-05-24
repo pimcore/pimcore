@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Helper\Document\TestDataHelper;
@@ -172,7 +171,7 @@ class EditableTest extends ModelTestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete $object
+     * @param Page $document
      * @param array|string $fields
      * @param array $returnData
      */

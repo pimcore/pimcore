@@ -1402,7 +1402,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse|StreamedResponse
+     * @return StreamedResponse
      */
     public function getFolderThumbnailAction(Request $request)
     {
@@ -2305,6 +2305,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($zip->open($zipFile) === true) {
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
+
+                if (str_starts_with($path, '__MACOSX/')) {
+                    continue;
+                }
 
                 if ($path !== false) {
                     if ($zip->extractTo($tmpDir . '/', $path)) {

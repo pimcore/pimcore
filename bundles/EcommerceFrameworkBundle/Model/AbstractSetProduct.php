@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
@@ -31,7 +30,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @throws UnsupportedException
      *
-     * @return AbstractSetProductEntry[]
+     * @return AbstractSetProductEntry[]|null
      */
     abstract public function getMandatoryProductEntries(): ?array;
 
@@ -40,7 +39,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @throws UnsupportedException
      *
-     * @return AbstractSetProductEntry[]
+     * @return AbstractSetProductEntry[]|null
      */
     abstract public function getOptionalProductEntries(): ?array;
 
@@ -50,7 +49,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * if no products given, mandatory products are used
      *
      * @param int $quantityScale
-     * @param AbstractSetProductEntry[] $products
+     * @param AbstractSetProductEntry[]|null $products
      *
      * @return bool
      */
@@ -86,7 +85,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int $quantityScale
      * @param array|null $products
      *
-     * @return PriceInterface
+     * @return PriceInterface|null
      */
     public function getOSPrice($quantityScale = null, $products = null): ?PriceInterface
     {
@@ -105,7 +104,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int $quantityScale
      * @param array|null $products
      *
-     * @return PriceInfoInterface|AbstractPriceInfo
+     * @return PriceInfoInterface|null
      */
     public function getOSPriceInfo($quantityScale = null, $products = null): ?PriceInfoInterface
     {
@@ -120,7 +119,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int $quantity
      * @param AbstractSetProductEntry[] $products
      *
-     * @return AvailabilityInterface
+     * @return AvailabilityInterface|null
      */
     public function getOSAvailabilityInfo($quantity = null, $products = null): ?AvailabilityInterface
     {

@@ -141,7 +141,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
@@ -218,7 +218,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @param string $uuid
      *
-     * @return mixed
+     * @return self
      */
     public static function getByUuid($uuid)
     {

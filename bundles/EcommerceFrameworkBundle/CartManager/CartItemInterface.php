@@ -140,7 +140,7 @@ interface CartItemInterface
     public function save();
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|null $date
      *
      * @return void
      */

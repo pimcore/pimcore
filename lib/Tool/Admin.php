@@ -94,7 +94,7 @@ class Admin
      *
      * @param string $scriptContent
      *
-     * @return mixed
+     * @return array
      */
     public static function getMinimizedScriptPath($scriptContent)
     {

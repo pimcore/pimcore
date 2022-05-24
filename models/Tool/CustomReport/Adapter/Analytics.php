@@ -110,7 +110,7 @@ class Analytics extends AbstractAdapter
      * @param array|null $drillDownFilters
      * @param bool $useDimensionHandling
      *
-     * @return mixed
+     * @return array
      *
      * @throws \Exception
      */
@@ -131,7 +131,7 @@ class Analytics extends AbstractAdapter
             throw new \Exception('Google Analytics is not configured');
         }
 
-        $service = new \Google_Service_Analytics($client);
+        $service = new \Google\Service\Analytics($client);
 
         if (!$configuration->profileId) {
             throw new \Exception('no profileId given');
@@ -202,7 +202,7 @@ class Analytics extends AbstractAdapter
      * @param \stdClass $configuration
      * @param array $fields
      *
-     * @return mixed
+     * @return \stdClass
      */
     protected function handleFields($configuration, $fields)
     {

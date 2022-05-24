@@ -56,7 +56,7 @@ class StaticPageGenerator
      * @param Document\PageSnippet $document
      * @param array $params
      *
-     * @return bool|string
+     * @return bool
      */
     public function generate($document, $params = [])
     {

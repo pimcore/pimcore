@@ -194,7 +194,7 @@ final class Config implements \ArrayAccess
     /**
      * @static
      *
-     * @return mixed|\Pimcore\Config\Config
+     * @return \Pimcore\Config\Config
      */
     public static function getWebsiteConfig($language = null)
     {

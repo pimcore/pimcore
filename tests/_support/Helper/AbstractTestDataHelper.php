@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Helper;
 use Codeception\Module;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -48,7 +47,7 @@ abstract class AbstractTestDataHelper extends Module
     /**
      * @param string|null $condition
      *
-     * @return Concrete[]
+     * @return DataObject[]
      */
     protected function getObjectList($condition = null)
     {
