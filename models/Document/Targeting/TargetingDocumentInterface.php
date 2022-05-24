@@ -49,7 +49,7 @@ interface TargetingDocumentInterface extends ElementInterface
     /**
      * Sets the target group to use
      *
-     * @param int $useTargetGroup
+     * @param int|null $useTargetGroup
      */
     public function setUseTargetGroup(int $useTargetGroup = null);
 

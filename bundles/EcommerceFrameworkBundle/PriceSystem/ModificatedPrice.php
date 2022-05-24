@@ -61,7 +61,7 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
@@ -69,7 +69,7 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      */
     public function setDescription(string $description = null)
     {

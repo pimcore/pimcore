@@ -870,7 +870,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return array|IndexableInterface
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup|null
      */
     protected function loadElementById($elementId)
     {

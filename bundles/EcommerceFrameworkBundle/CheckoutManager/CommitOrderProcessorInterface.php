@@ -60,7 +60,7 @@ interface CommitOrderProcessorInterface
      *
      * @param StatusInterface $paymentStatus
      * @param PaymentInterface $paymentProvider
-     * @param AbstractOrder $sourceOrder Source order for recurring payment
+     * @param AbstractOrder|null $sourceOrder Source order for recurring payment
      *
      * @return AbstractOrder
      */

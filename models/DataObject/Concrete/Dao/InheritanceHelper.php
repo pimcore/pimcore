@@ -560,7 +560,7 @@ class InheritanceHelper
      * @param array $node
      * @param array $params
      *
-     * @return mixed
+     * @return array
      */
     protected function getRelationsForNode(&$node, $params = [])
     {

@@ -372,7 +372,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $config
      *
-     * @return mixed
+     * @return Listing
      *
      * @throws \Exception
      */
@@ -384,6 +384,7 @@ class Asset extends Element\AbstractElement
 
         $listClass = Listing::class;
 
+        /** @var Listing $list */
         $list = self::getModelFactory()->build($listClass);
         $list->setValues($config);
 
@@ -1126,7 +1127,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return mixed
+     * @return string|false
      */
     public function getData()
     {
@@ -1392,7 +1393,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
+     * @param array[]|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
      */

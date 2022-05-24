@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Model\DataObject;
 
 /**
  * Interface for IndexService Tenant Configurations
@@ -137,7 +138,7 @@ interface ConfigInterface
      * @param IndexableInterface $object
      * @param array $subIds
      *
-     * @return mixed
+     * @return array
      */
     public function getSubIdsToCleanup(IndexableInterface $object, array $subIds);
 
@@ -159,7 +160,7 @@ interface ConfigInterface
      * @param int $objectId
      * @param bool $onlyMainObject - only returns main object
      *
-     * @return mixed
+     * @return DataObject|null
      */
     public function getObjectById($objectId, $onlyMainObject = false);
 
@@ -169,7 +170,7 @@ interface ConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId);
 

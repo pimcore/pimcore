@@ -336,7 +336,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string|null
+     * @return string|null
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {

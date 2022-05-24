@@ -28,7 +28,7 @@ class StaticPageResolver extends AbstractRequestResolver
     /**
      * @param Request $request
      *
-     * @return mixed
+     * @return bool
      */
     public function hasStaticPageContext($request)
     {

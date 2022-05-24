@@ -193,7 +193,7 @@ class Document extends Element\AbstractElement
         }
 
         try {
-            $helperDoc = new static();
+            $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
@@ -246,7 +246,12 @@ class Document extends Element\AbstractElement
         }
 
         if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $document = new static();
+            $reflectionClass = new \ReflectionClass(static::class);
+            if ($reflectionClass->isAbstract()) {
+                $document = new Document();
+            } else {
+                $document = new static();
+            }
 
             try {
                 $document->getDao()->getById($id);
