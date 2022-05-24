@@ -105,7 +105,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
             ->scalarNode('custom_admin_route_name')
-                ->defaultValue('custom_admin_entry_point')
+                ->defaultValue('my_custom_admin_entry_point')
             ->end()
             ->arrayNode('branding')
                 ->addDefaultsIfNotSet()
