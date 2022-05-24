@@ -38,7 +38,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
-
     /**
      * @var TokenStorageUserResolver
      */
@@ -51,6 +50,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
 
     /**
      * AdminController constructor.
+     *
      * @param TokenStorageUserResolver $tokenStorageUserResolver
      * @param TranslatorInterface $translator
      */

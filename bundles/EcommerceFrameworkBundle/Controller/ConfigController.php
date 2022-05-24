@@ -16,9 +16,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class ConfigController
@@ -36,12 +36,14 @@ class ConfigController extends AdminController
 
     /**
      * ConfigController constructor.
+     *
      * @param RouterInterface $router
      */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
+
     /**
      * @Route("/js-config", name="pimcore_ecommerceframework_config_jsconfig", methods={"GET"})
      *

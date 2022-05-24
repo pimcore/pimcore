@@ -35,10 +35,12 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @var TokenStorageUserResolver
      */
     protected $tokenResolver;
+
     /**
      * @var TranslatorInterface
      */
     protected $translator;
+
     /**
      * @var PimcoreBundleManager
      */
@@ -79,7 +81,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return $this->container->get('translator');
     }
 
-    public function getBundleManager(){
+    public function getBundleManager()
+    {
         return $this->container->get(PimcoreBundleManager::class);
     }
 
@@ -97,7 +100,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser($proxyUser = false)
     {
-
         if ($proxyUser) {
             return $this->getTokenResolver()->getUserProxy();
         }
