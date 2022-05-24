@@ -267,7 +267,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setClasses(?array|string $classes)
+    public function setClasses(array|string|null $classes)
     {
         $classes = $this->prepareArray($classes);
 
@@ -289,7 +289,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setDocTypes(?array|string $docTypes)
+    public function setDocTypes(array|string|null $docTypes)
     {
         $docTypes = $this->prepareArray($docTypes);
 
@@ -319,7 +319,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setPerspectives(?array|string $perspectives)
+    public function setPerspectives(array|string|null $perspectives)
     {
         $perspectives = $this->prepareArray($perspectives);
 
@@ -341,7 +341,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesView(?array|string $websiteTranslationLanguagesView)
+    public function setWebsiteTranslationLanguagesView(array|string|null $websiteTranslationLanguagesView)
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
 
@@ -363,7 +363,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesEdit(?array|string $websiteTranslationLanguagesEdit)
+    public function setWebsiteTranslationLanguagesEdit(array|string|null $websiteTranslationLanguagesEdit)
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
 
@@ -382,7 +382,7 @@ class UserRole extends AbstractUser
      *
      * @return array
      */
-    protected function prepareArray(?array|string $array)
+    protected function prepareArray(array|string|null $array)
     {
         if (is_string($array) && strlen($array)) {
             $array = explode(',', $array);
