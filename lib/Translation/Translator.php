@@ -18,6 +18,7 @@ namespace Pimcore\Translation;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -25,7 +26,7 @@ use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
+class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface
 {
     /**
      * @var TranslatorInterface|TranslatorBagInterface
@@ -471,5 +472,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     private function getCacheKey(string $domain, string $locale): string
     {
         return 'translation_data_' . md5($domain . '_' . $locale);
+    }
+
+    /**
+     * @param string $cacheDir
+     *
+     * @return string[]
+     */
+    public function warmUp(string $cacheDir): array
+    {
+        return $this->translator->warmUp($cacheDir);
     }
 }
