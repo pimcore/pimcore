@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -29,6 +30,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class ConfigController extends AdminController
 {
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * ConfigController constructor.
+     * @param RouterInterface $router
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
+    /**
      * @Route("/js-config", name="pimcore_ecommerceframework_config_jsconfig", methods={"GET"})
      *
      * @return Response
@@ -39,7 +53,7 @@ class ConfigController extends AdminController
 
         $orderList = $config['menu']['order_list'];
         if (isset($orderList['route']) && !empty($orderList['route'])) {
-            $orderList['route'] = $this->get('router')->generate($orderList['route']);
+            $orderList['route'] = $this->router->generate($orderList['route']);
         } elseif (isset($orderList['path']) && !empty($orderList['path'])) {
             $orderList['route'] = $orderList['path'];
         }

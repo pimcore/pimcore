@@ -19,7 +19,6 @@ use GuzzleHttp\ClientInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -44,13 +43,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdminOrderController
+ * @internal
  *
  * @Route("/admin-order")
  *
- * @internal
  */
 class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
@@ -67,10 +68,12 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
-        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+        $user = $this->getTokenResolver()->getUser();
 
         if ($user) {
-            $this->get('translator')->setLocale($user->getLanguage());
+            if ($this->getTranslator() instanceof LocaleAwareInterface) {
+                $this->getTranslator()->setLocale($user->getLanguage());
+            }
             $event->getRequest()->setLocale($user->getLanguage());
         }
 

@@ -52,11 +52,11 @@ abstract class FrontendController extends Controller
     public function __get($name)
     {
         if ('document' === $name) {
-            return $this->get(DocumentResolver::class)->getDocument();
+            return $this->container->get(DocumentResolver::class)->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->get(EditmodeResolver::class)->isEditmode();
+            return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
@@ -90,10 +90,10 @@ abstract class FrontendController extends Controller
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
         if (null === $request) {
-            $request = $this->get('request_stack')->getCurrentRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
         }
 
-        $this->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
+        $this->container->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
@@ -107,6 +107,7 @@ abstract class FrontendController extends Controller
      * @param Document\PageSnippet|null $document
      *
      * @return Document\Editable\EditableInterface
+     * @throws \Exception
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
@@ -114,9 +115,7 @@ abstract class FrontendController extends Controller
             $document = $this->document;
         }
 
-        $editableRenderer = $this->container->get(EditableRenderer::class);
-
-        return $editableRenderer->getEditable($document, $type, $inputName, $options);
+        return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
     /**

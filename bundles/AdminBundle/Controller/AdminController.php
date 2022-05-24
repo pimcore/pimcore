@@ -32,6 +32,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
     /**
+     * @var TokenStorageUserResolver
+     */
+    protected $tokenResolver;
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+    /**
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
+
+    /**
      * @return string[]
      */
     public static function getSubscribedServices()// : array
@@ -61,6 +74,20 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
+    public function getTranslator()
+    {
+        return $this->container->get('translator');
+    }
+
+    public function getBundleManager(){
+        return $this->container->get(PimcoreBundleManager::class);
+    }
+
+    public function getTokenResolver()
+    {
+        return $this->container->get(TokenStorageUserResolver::class);
+    }
+
     /**
      * Get user from user proxy object which is registered on security component
      *
@@ -70,13 +97,12 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser($proxyUser = false)
     {
-        $resolver = $this->get(TokenStorageUserResolver::class);
 
         if ($proxyUser) {
-            return $resolver->getUserProxy();
+            return $this->getTokenResolver()->getUserProxy();
         }
 
-        return $resolver->getUser();
+        return $this->getTokenResolver()->getUser();
     }
 
     /**
@@ -252,8 +278,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        $translator = $this->get('translator');
-
-        return $translator->trans($id, $parameters, $domain, $locale);
+        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
 }
