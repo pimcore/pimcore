@@ -303,6 +303,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if ($tmpObject['leaf']) {
             $tmpObject['expandable'] = false;
+            $tmpObject['leaf'] = false; //this is required to allow drag&drop
             $tmpObject['expanded'] = true;
             $tmpObject['loaded'] = true;
         }
