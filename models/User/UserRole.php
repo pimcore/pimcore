@@ -187,11 +187,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param string|array $permissions
+     * @param string|array|null $permissions
      *
      * @return $this
      */
-    public function setPermissions(string|array $permissions)
+    public function setPermissions(string|array|null $permissions)
     {
         if (is_string($permissions)) {
             $this->permissions = explode(',', $permissions);
