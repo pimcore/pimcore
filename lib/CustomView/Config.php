@@ -71,14 +71,16 @@ final class Config
 
     /**
      * @param mixed $data
+     *
      * @return array
      */
-    protected static function flipArray(mixed $data): array {
-        if(empty($data['classes'])) {
+    protected static function flipArray(mixed $data): array
+    {
+        if (empty($data['classes'])) {
             return [];
-        }
-        else {
+        } else {
             $tempClasses = explode(',', $data['classes']);
+
             return array_fill_keys($tempClasses, null);
         }
     }
