@@ -43,6 +43,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param bool $loadAutoSave
+     * @return Listing
      */
     public function setLoadAutoSave(bool $loadAutoSave): self
     {
@@ -64,7 +65,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return static
      */
-    public function setVersions($versions)
+    public function setVersions(?array $versions)
     {
         return $this->setData($versions);
     }
