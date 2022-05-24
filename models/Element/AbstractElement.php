@@ -138,6 +138,35 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected ?int $userModification = null;
 
     /**
+     * @internal
+     *
+     * @var int|null
+     */
+    protected ?int $parentId = null;
+
+
+    /**
+     * @return int|null
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @param int $parentId
+     * @return $this
+     */
+    public function setParentId($parentId)
+    {
+        $parentId = (int) $parentId;
+        $this->parentId = $parentId;
+        $this->parent = null;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getUserModification()

@@ -63,13 +63,6 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int|null
-     */
-    protected $parentId;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected string $type = '';
@@ -935,14 +928,6 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPath()
     {
         // check for site, if so rewrite the path for output
@@ -1003,8 +988,8 @@ class Document extends Element\AbstractElement
      */
     public function setParentId($parentId)
     {
-        $this->parentId = (int) $parentId;
-        $this->parent = null;
+        parent::setParentId($parentId);
+
         $this->siblings = [];
         $this->hasSiblings = [];
 

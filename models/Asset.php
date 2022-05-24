@@ -66,13 +66,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int|null
-     */
-    protected $parentId;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected $type = '';
@@ -1096,14 +1089,6 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
@@ -1127,19 +1112,6 @@ class Asset extends Element\AbstractElement
     public function setKey($key)
     {
         return $this->setFilename($key);
-    }
-
-    /**
-     * @param int $parentId
-     *
-     * @return $this
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = (int)$parentId;
-        $this->parent = null;
-
-        return $this;
     }
 
     /**
