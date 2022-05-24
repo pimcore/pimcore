@@ -29,7 +29,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface
 {
     /**
-     * @var TranslatorInterface|TranslatorBagInterface
+     * @var TranslatorInterface|TranslatorBagInterface|WarmableInterface
      */
     protected $translator;
 
