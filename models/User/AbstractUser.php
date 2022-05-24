@@ -124,11 +124,11 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return $this
      */
-    public function setId(int $id)
+    public function setId(?int $id)
     {
         $this->id = (int) $id;
 
@@ -144,11 +144,11 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param int $parentId
+     * @param int|null $parentId
      *
      * @return $this
      */
-    public function setParentId(int $parentId)
+    public function setParentId(?int $parentId)
     {
         $this->parentId = (int)$parentId;
 
