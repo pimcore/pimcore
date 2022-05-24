@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
- * @method array getTranslations(Document $document, string $task = 'open')
+ * @method int[] getTranslations(Document $document, string $task = 'open')
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
@@ -273,13 +273,12 @@ class Service extends Model\Element\Service
      * @param Document $target
      * @param Document $source
      *
-     * @return mixed
+     * @return Document
      *
      * @throws \Exception
      */
     public function copyContents($target, $source)
     {
-
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
@@ -340,7 +339,7 @@ class Service extends Model\Element\Service
      *
      * @param Document $doc
      *
-     * @return mixed
+     * @return Document
      */
     public static function loadAllDocumentFields($doc)
     {
@@ -571,7 +570,7 @@ class Service extends Model\Element\Service
      * @param bool $ignoreHardlinks
      * @param array $types
      *
-     * @return Document|Document\PageSnippet|null
+     * @return Document|null
      */
     public function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
     {

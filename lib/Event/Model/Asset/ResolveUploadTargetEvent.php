@@ -84,7 +84,7 @@ class ResolveUploadTargetEvent extends Event
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getParentId()
     {
@@ -92,7 +92,7 @@ class ResolveUploadTargetEvent extends Event
     }
 
     /**
-     * @param mixed $parentId
+     * @param int $parentId
      */
     public function setParentId($parentId): void
     {

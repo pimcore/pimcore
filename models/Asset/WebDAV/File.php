@@ -141,7 +141,7 @@ class File extends DAV\File
     }
 
     /**
-     * @return mixed|void
+     * @return resource|null
      *
      * @throws DAV\Exception\Forbidden
      */

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Google\Service\Analytics;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
@@ -34,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
-     * @var \Google_Service_Analytics
+     * @var Analytics
      */
     protected $service;
 
@@ -519,6 +520,6 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
             die('Google Analytics is not configured');
         }
 
-        $this->service = new \Google_Service_Analytics($client);
+        $this->service = new Analytics($client);
     }
 }

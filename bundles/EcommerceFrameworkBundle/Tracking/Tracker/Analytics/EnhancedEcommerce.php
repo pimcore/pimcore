@@ -276,7 +276,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param Transaction $transaction
      * @param ProductAction[] $items
      *
-     * @return mixed
+     * @return array
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
     {

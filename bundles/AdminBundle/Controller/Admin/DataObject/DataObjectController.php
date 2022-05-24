@@ -221,7 +221,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = o_id AND list=0)';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = objects.o_id AND list=0)';
 
             $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
@@ -299,6 +299,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
         if ($child->getLocked()) {
             $tmpObject['cls'] .= 'pimcore_treenode_lockOwner ';
+        }
+
+        if ($tmpObject['leaf']) {
+            $tmpObject['expandable'] = false;
+            $tmpObject['expanded'] = true;
+            $tmpObject['leaf'] = false;
+            $tmpObject['loaded'] = true;
         }
 
         return $tmpObject;

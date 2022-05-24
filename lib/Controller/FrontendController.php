@@ -30,8 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class FrontendController extends Controller
 {
     /**
-     * {@inheritdoc}
-     *
+     * @return string[]
      */
     public static function getSubscribedServices()// : array
     {

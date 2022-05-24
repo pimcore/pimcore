@@ -60,7 +60,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return mixed
+     * @return string|bool
      *
      * @throws \Exception
      */
@@ -354,7 +354,7 @@ class Ffmpeg extends Adapter
     {
         $videoBitrate = (int)$videoBitrate;
 
-        $videoBitrate = ceil($videoBitrate / 2) * 2;
+        $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
         parent::setVideoBitrate($videoBitrate);
 
@@ -374,7 +374,7 @@ class Ffmpeg extends Adapter
     {
         $audioBitrate = (int)$audioBitrate;
 
-        $audioBitrate = ceil($audioBitrate / 2) * 2;
+        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
 
         parent::setAudioBitrate($audioBitrate);
 

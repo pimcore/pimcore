@@ -481,7 +481,7 @@ class MiscController extends AdminController
      * @param Request $request
      * @param string $paramName
      *
-     * @return mixed|string
+     * @return string
      *
      * @throws \Exception
      */
@@ -597,7 +597,7 @@ class MiscController extends AdminController
      * @Route("/http-error-log-detail", name="pimcore_admin_misc_httperrorlogdetail", methods={"GET"})
      *
      * @param Request $request
-     * @param Profiler $profiler
+     * @param Profiler|null $profiler
      *
      * @return Response
      */
@@ -674,7 +674,7 @@ class MiscController extends AdminController
      * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
      *
      * @param Request $request
-     * @param Profiler $profiler
+     * @param Profiler|null $profiler
      *
      * @throws \Exception
      *
@@ -717,7 +717,7 @@ class MiscController extends AdminController
      * @Route("/icon-list", name="pimcore_admin_misc_iconlist", methods={"GET"})
      *
      * @param Request $request
-     * @param Profiler $profiler
+     * @param Profiler|null $profiler
      *
      * @return Response
      */

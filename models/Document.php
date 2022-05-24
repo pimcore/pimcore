@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
@@ -66,21 +65,7 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $id;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected $parentId;
-
-    /**
-     * @internal
-     *
-     * @var self|null
-     */
-    protected $parent;
 
     /**
      * @internal
@@ -122,35 +107,7 @@ class Document extends Element\AbstractElement
      *
      * @var int|null
      */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
     protected ?int $userModification = null;
-
-    /**
-     * @internal
-     *
-     * @var array|null
-     */
-    protected $properties = null;
 
     /**
      * @internal
@@ -181,20 +138,19 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * enum('self','propagate') nullable
-     *
-     * @internal
-     *
-     * @var string|null
+     * @return array
      */
-    protected $locked = null;
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
+        if (!$this->isInDumpState()) {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+        }
+
+        return $blockedVars;
+    }
 
     /**
      * get possible types
@@ -297,7 +253,12 @@ class Document extends Element\AbstractElement
         }
 
         if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $document = new Document();
+            $reflectionClass = new \ReflectionClass(static::class);
+            if ($reflectionClass->isAbstract()) {
+                $document = new Document();
+            } else {
+                $document = new static();
+            }
 
             try {
                 $document->getDao()->getById($id);
@@ -316,11 +277,13 @@ class Document extends Element\AbstractElement
                 }
             }
 
-            /** @var Document $document */
-            $document = self::getModelFactory()->build($className);
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            if (get_class($document) !== $className) {
+                /** @var Document $document */
+                $document = self::getModelFactory()->build($className);
+                $document->getDao()->getById($id);
+            }
 
-            $document->getDao()->getById($id);
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
             $document->__setDataVersionTimestamp($document->getModificationDate());
 
             $document->resetDirtyMap();
@@ -766,28 +729,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        if (empty($this->locked)) {
-            return null;
-        }
-
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
      * @internal
      *
      * @throws \Exception
@@ -986,33 +927,9 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getKey()
     {
         return $this->key;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
     }
 
     /**
@@ -1070,41 +987,9 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int) $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
-    {
-        $this->id = $id ? (int)$id : null;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setKey($key)
     {
         $this->key = (string)$key;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
@@ -1122,16 +1007,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->siblings = [];
         $this->hasSiblings = [];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
 
         return $this;
     }
@@ -1183,44 +1058,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getUserModification()
-    {
-        return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserModification($userModification)
-    {
-        $this->markFieldDirty('userModification');
-
-        $this->userModification = (int) $userModification;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int) $userOwner;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isPublished()
@@ -1249,68 +1086,13 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
-    {
-        if ($this->properties === null) {
-            // try to get from cache
-            $cacheKey = 'document_properties_' . $this->getId();
-            $properties = \Pimcore\Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['document_properties' => 'document_properties', $elementCacheTag => $elementCacheTag];
-                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
-            }
-
-            $this->setProperties($properties);
-        }
-
-        return $this->properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('document');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->properties[$name] = $property;
-
-        return $this;
-    }
-
-    /**
      * @return Document|null
      */
-    public function getParent()
+    public function getParent() /** : ?Document */
     {
-        if ($this->parent === null) {
-            $this->setParent(Document::getById($this->getParentId()));
-        }
+        $parent = parent::getParent();
 
-        return $this->parent;
+        return $parent instanceof Document ? $parent : null;
     }
 
     /**
@@ -1328,40 +1110,6 @@ class Document extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = Document::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 
     /**
@@ -1382,24 +1130,6 @@ class Document extends Element\AbstractElement
     public static function doHideUnpublished()
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int) $versionCount;
-
-        return $this;
     }
 
     /**

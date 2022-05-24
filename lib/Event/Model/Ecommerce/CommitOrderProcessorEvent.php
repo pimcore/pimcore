@@ -65,7 +65,7 @@ class CommitOrderProcessorEvent extends Event
     }
 
     /**
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrder(): ?AbstractOrder
     {

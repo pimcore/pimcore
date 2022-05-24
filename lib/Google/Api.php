@@ -222,13 +222,14 @@ class Api
             if ($item['attributes']['type'] == $type) {
                 if (strpos($item['id'], 'XX') !== false) {
                     for ($i = 1; $i <= 5; $i++) {
-                        $name = str_replace('1', $i, str_replace('01', $i, $translator->trans($item['attributes']['uiName'], [], 'admin')));
+                        $replace = (string) $i;
+                        $name = str_replace('1', $replace, str_replace('01', $replace, $translator->trans($item['attributes']['uiName'], [], 'admin')));
 
                         if (in_array($item['id'], ['ga:dimensionXX', 'ga:metricXX'])) {
-                            $name .= ' '.$i;
+                            $name .= ' '.$replace;
                         }
                         $result[] = [
-                            'id' => str_replace('XX', $i, $item['id']),
+                            'id' => str_replace('XX', $replace, $item['id']),
                             'name' => $name,
                         ];
                     }

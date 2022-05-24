@@ -140,9 +140,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 $data->setPoster($data->getPoster()->getId());
             }
 
-            $data = object2array($data->getObjectVars());
-
-            return Serialize::serialize($data);
+            return Serialize::serialize($data->getObjectVars());
         }
 
         return null;
@@ -227,10 +225,11 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($data->getPoster() instanceof Asset) {
                 $data->setPoster($data->getPoster()->getRealFullPath());
             }
-            $data = object2array($data->getObjectVars());
+
+            return $data->getObjectVars();
         }
 
-        return $data;
+        return null;
     }
 
     /**
@@ -296,10 +295,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function getDataForGrid($data, $object = null, $params = [])
     {
         $id = null;
-        if ($data) {
-            if ($data->getData() instanceof Asset) {
-                $id = $data->getData()->getId();
-            }
+        if ($data && $data->getData() instanceof Asset) {
+            $id = $data->getData()->getId();
         }
         $result = $this->getDataForEditmode($data, $object, $params);
         if ($id) {

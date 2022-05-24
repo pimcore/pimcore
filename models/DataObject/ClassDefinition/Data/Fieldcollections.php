@@ -321,7 +321,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->load($object);
 
         if ($container->isEmpty()) {
@@ -336,7 +336,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function delete($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->delete($object);
     }
 
@@ -591,7 +591,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {

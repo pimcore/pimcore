@@ -63,7 +63,7 @@ abstract class AbstractOperator implements OperatorInterface
     }
 
     /**
-     * @return mixed|null
+     * @return array
      */
     public function getContext()
     {
@@ -71,7 +71,7 @@ abstract class AbstractOperator implements OperatorInterface
     }
 
     /**
-     * @param mixed $context
+     * @param array $context
      */
     public function setContext($context)
     {
