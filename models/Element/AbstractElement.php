@@ -144,7 +144,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $parentId = null;
 
-
     /**
      * @return int|null
      */
@@ -155,6 +154,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @param int $parentId
+     *
      * @return $this
      */
     public function setParentId($parentId)
