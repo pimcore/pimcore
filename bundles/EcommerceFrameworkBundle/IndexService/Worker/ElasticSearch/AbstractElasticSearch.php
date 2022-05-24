@@ -128,7 +128,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     /**
      * the versioned index-name
      *
-     * @param int $indexVersionOverride if set, then the index name for a specific index version is built. example. 13
+     * @param int|null $indexVersionOverride if set, then the index name for a specific index version is built. example. 13
      *
      * @return string the name of the index, such as at_de_elastic_13
      */
@@ -479,7 +479,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param array|string $data
      *
-     * @return mixed
+     * @return array|string
      */
     protected function doPreIndexDataModification($data)
     {

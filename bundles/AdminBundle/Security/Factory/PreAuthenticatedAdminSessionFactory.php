@@ -69,7 +69,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @param NodeDefinition|ArrayNodeDefinition $builder
+     * @param NodeDefinition $builder
      */
     public function addConfiguration(NodeDefinition $builder)
     {

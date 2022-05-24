@@ -614,7 +614,7 @@ class DefaultFindologic implements ProductListInterface
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      *
-     * @return array|void
+     * @return array
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
@@ -696,7 +696,7 @@ class DefaultFindologic implements ProductListInterface
      * @param bool   $countValues
      * @param bool   $fieldnameShouldBeExcluded
      *
-     * @return array|void
+     * @return array
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {

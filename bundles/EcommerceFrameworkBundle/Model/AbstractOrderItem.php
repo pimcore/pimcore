@@ -25,12 +25,12 @@ use Pimcore\Model\Element\AbstractElement;
 abstract class AbstractOrderItem extends Concrete
 {
     /**
-     * @return AbstractElement
+     * @return AbstractElement|null
      */
     abstract public function getProduct(): ?AbstractElement;
 
     /**
-     * @param AbstractElement $product
+     * @param AbstractElement|null $product
      */
     abstract public function setProduct(?AbstractElement $product);
 
@@ -92,7 +92,7 @@ abstract class AbstractOrderItem extends Concrete
     abstract public function getTaxInfo(): array;
 
     /**
-     * @param array $taxInfo
+     * @param array|null $taxInfo
      */
     abstract public function setTaxInfo(?array $taxInfo);
 
@@ -112,7 +112,7 @@ abstract class AbstractOrderItem extends Concrete
     abstract public function getPricingRules();
 
     /**
-     * @param Fieldcollection $pricingRules
+     * @param Fieldcollection|null $pricingRules
      *
      * @return $this
      */
@@ -181,7 +181,7 @@ abstract class AbstractOrderItem extends Concrete
     }
 
     /**
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
     public function getOrder(): ?AbstractOrder
     {

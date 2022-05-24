@@ -48,7 +48,7 @@ class Authentication
     }
 
     /**
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return User|null
      */
@@ -192,7 +192,7 @@ class Authentication
      * @param string $username
      * @param string $plainTextPassword
      *
-     * @return bool|false|string
+     * @return string
      *
      * @throws \Exception
      */

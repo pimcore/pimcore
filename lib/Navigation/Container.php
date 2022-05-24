@@ -110,7 +110,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page|array $page  page to add
      *
-     * @return Container fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception if page is invalid
      */
@@ -147,15 +147,15 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Adds several pages at once
      *
-     * @param  Page[]|Container  $pages  pages to add
+     * @param  iterable<Page>  $pages  pages to add
      *
-     * @return Container fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception if $pages is not array or Container
      */
     public function addPages($pages)
     {
-        // @phpstan-ignore-next-line this should be checked via parameter type in Pimcore 11
+        // This should be checked via parameter type in Pimcore 11
         if (!$pages instanceof self && !is_array($pages)) {
             throw new \Exception('Invalid argument: $pages must be an array or an instance of ' . self::class);
         }
@@ -172,7 +172,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page[] $pages pages to set
      *
-     * @return Container  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function setPages(array $pages)
     {
@@ -236,7 +236,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Removes all pages in container
      *
-     * @return Container  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function removePages()
     {
@@ -532,7 +532,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * @return mixed
+     * @return int|string|null
      */
     #[\ReturnTypeWillChange]
     public function key()// : mixed

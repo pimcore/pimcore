@@ -1449,7 +1449,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @param array|null $existingData
      * @param array $additionalData
      *
-     * @return mixed
+     * @return array|null
      */
     public function appendData($existingData, $additionalData)
     {

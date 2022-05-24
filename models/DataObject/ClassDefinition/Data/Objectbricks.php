@@ -212,7 +212,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param string $getter
      * @param array|null $params
      *
-     * @return mixed
+     * @return \stdClass
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
     {
@@ -683,7 +683,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param string $getter
      * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params = [])
     {

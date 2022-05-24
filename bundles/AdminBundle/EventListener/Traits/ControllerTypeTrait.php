@@ -42,6 +42,8 @@ trait ControllerTypeTrait
         if ($controller instanceof $type) {
             return $controller;
         }
+
+        return null;
     }
 
     /**

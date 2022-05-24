@@ -198,7 +198,7 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function getDataForSearchIndex($data, $params = [])
     {

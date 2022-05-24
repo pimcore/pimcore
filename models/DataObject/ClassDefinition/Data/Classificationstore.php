@@ -633,7 +633,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param int $keyId
      *
-     * @return mixed
+     * @return DataObject\Classificationstore\KeyConfig
      */
     public function getKeyConfiguration($keyId)
     {
@@ -972,7 +972,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionView(): ?array
     {
@@ -988,7 +988,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionEdit(): ?array
     {

@@ -133,7 +133,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @param string $path
      *
-     * @return mixed
+     * @return string|false
      */
     protected function getJson($path)
     {

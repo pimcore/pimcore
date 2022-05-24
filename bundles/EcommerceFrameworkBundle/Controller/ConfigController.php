@@ -31,7 +31,7 @@ class ConfigController extends AdminController
     /**
      * @Route("/js-config", name="pimcore_ecommerceframework_config_jsconfig", methods={"GET"})
      *
-     * @return string
+     * @return Response
      */
     public function jsConfigAction()
     {

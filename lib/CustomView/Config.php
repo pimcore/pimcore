@@ -84,7 +84,7 @@ final class Config
     }
 
     /**
-     * @return array|bool
+     * @return array
      *
      * @internal
      *
