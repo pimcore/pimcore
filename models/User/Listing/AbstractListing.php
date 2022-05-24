@@ -45,7 +45,7 @@ abstract class AbstractListing extends Model\Listing\AbstractListing
      *
      * @return static
      */
-    public function setItems($items)
+    public function setItems(array $items)
     {
         return $this->setData($items);
     }

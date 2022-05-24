@@ -53,7 +53,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return static|null
      */
-    public static function getById($id)
+    public static function getById(int $id)
     {
         $cacheKey = 'user_' . $id;
 
@@ -103,7 +103,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return static|null
      */
-    public static function getByName($name)
+    public static function getByName(string $name)
     {
         try {
             $user = new static();
@@ -128,7 +128,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = (int) $id;
 
@@ -148,7 +148,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId)
     {
         $this->parentId = (int)$parentId;
 
@@ -168,7 +168,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -289,7 +289,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
 

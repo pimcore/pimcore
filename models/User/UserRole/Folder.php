@@ -77,7 +77,7 @@ class Folder extends Model\User\AbstractUser
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren(array $children)
     {
         if (is_array($children)) {
             $this->children = $children;

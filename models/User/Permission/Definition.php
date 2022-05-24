@@ -37,7 +37,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (is_array($data) && !empty($data)) {
             $this->setValues($data);
@@ -57,7 +57,7 @@ class Definition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setKey($key)
+    public function setKey(string $key)
     {
         $this->key = $key;
 
@@ -91,7 +91,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByKey($permission)
+    public static function getByKey(string $permission)
     {
         if (!$permission) {
             throw new \Exception('No permisson defined.');
@@ -115,7 +115,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function create($permission)
+    public static function create(string $permission)
     {
         if (!$permission) {
             throw new \Exception('No permisson defined.');

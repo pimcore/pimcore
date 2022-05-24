@@ -114,7 +114,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCreate($create)
+    public function setCreate(bool $create)
     {
         $this->create = $create;
 
@@ -134,7 +134,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDelete($delete)
+    public function setDelete(bool $delete)
     {
         $this->delete = $delete;
 
@@ -154,7 +154,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setList($list)
+    public function setList(bool $list)
     {
         $this->list = $list;
 
@@ -174,7 +174,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setProperties($properties)
+    public function setProperties(bool $properties)
     {
         $this->properties = $properties;
 
@@ -194,7 +194,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setPublish($publish)
+    public function setPublish(bool $publish)
     {
         $this->publish = $publish;
 
@@ -214,7 +214,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setRename($rename)
+    public function setRename(bool $rename)
     {
         $this->rename = $rename;
 
@@ -234,7 +234,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setSettings($settings)
+    public function setSettings(bool $settings)
     {
         $this->settings = $settings;
 
@@ -254,7 +254,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(bool $versions)
     {
         $this->versions = $versions;
 
@@ -274,7 +274,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setView($view)
+    public function setView(bool $view)
     {
         $this->view = $view;
 
@@ -294,7 +294,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid)
     {
         $this->cid = $cid;
 
@@ -314,7 +314,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId)
     {
         $this->userId = $userId;
 
@@ -334,7 +334,7 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCpath($cpath)
+    public function setCpath(string $cpath)
     {
         $this->cpath = $cpath;
 

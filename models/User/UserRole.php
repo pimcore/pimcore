@@ -129,7 +129,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setPermission($permissionName, $value = null)
+    public function setPermission(string $permissionName, ?bool $value = null)
     {
         if (!in_array($permissionName, $this->permissions) && $value) {
             $this->permissions[] = $permissionName;
@@ -154,7 +154,7 @@ class UserRole extends AbstractUser
      *
      * @return bool
      */
-    public function getPermission($permissionName)
+    public function getPermission(string $permissionName)
     {
         if (in_array($permissionName, $this->permissions)) {
             return true;
@@ -191,7 +191,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setPermissions($permissions)
+    public function setPermissions(string|array $permissions)
     {
         if (is_string($permissions)) {
             $this->permissions = explode(',', $permissions);
@@ -207,7 +207,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesAsset($workspacesAsset)
+    public function setWorkspacesAsset(array $workspacesAsset)
     {
         $this->workspacesAsset = $workspacesAsset;
 
@@ -227,7 +227,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesDocument($workspacesDocument)
+    public function setWorkspacesDocument(array $workspacesDocument)
     {
         $this->workspacesDocument = $workspacesDocument;
 
@@ -247,7 +247,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWorkspacesObject($workspacesObject)
+    public function setWorkspacesObject(array $workspacesObject)
     {
         $this->workspacesObject = $workspacesObject;
 
@@ -267,7 +267,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setClasses($classes)
+    public function setClasses(array $classes)
     {
         $classes = $this->prepareArray($classes);
 
@@ -289,7 +289,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setDocTypes($docTypes)
+    public function setDocTypes(array $docTypes)
     {
         $docTypes = $this->prepareArray($docTypes);
 
@@ -319,7 +319,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setPerspectives($perspectives)
+    public function setPerspectives(array|string $perspectives)
     {
         $perspectives = $this->prepareArray($perspectives);
 
@@ -341,7 +341,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesView($websiteTranslationLanguagesView)
+    public function setWebsiteTranslationLanguagesView(array $websiteTranslationLanguagesView)
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
 
@@ -363,7 +363,7 @@ class UserRole extends AbstractUser
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesEdit($websiteTranslationLanguagesEdit)
+    public function setWebsiteTranslationLanguagesEdit(array $websiteTranslationLanguagesEdit)
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
 
@@ -382,7 +382,7 @@ class UserRole extends AbstractUser
      *
      * @return array
      */
-    protected function prepareArray($array)
+    protected function prepareArray(array|string $array)
     {
         if (is_string($array) && strlen($array)) {
             $array = explode(',', $array);

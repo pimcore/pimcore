@@ -57,7 +57,7 @@ class DataObject extends AbstractWorkspace
      *
      * @return $this
      */
-    public function setSave($save)
+    public function setSave(bool $save)
     {
         $this->save = $save;
 
@@ -77,7 +77,7 @@ class DataObject extends AbstractWorkspace
      *
      * @return $this
      */
-    public function setUnpublish($unpublish)
+    public function setUnpublish(bool $unpublish)
     {
         $this->unpublish = $unpublish;
 
@@ -95,7 +95,7 @@ class DataObject extends AbstractWorkspace
     /**
      * @param string $lEdit
      */
-    public function setLEdit($lEdit)
+    public function setLEdit(string $lEdit)
     {
         //@TODO - at the moment disallowing all languages is not possible - the empty lEdit value means that every language is allowed to edit...
         $this->lEdit = $lEdit;
@@ -112,7 +112,7 @@ class DataObject extends AbstractWorkspace
     /**
      * @param string $lView
      */
-    public function setLView($lView)
+    public function setLView(string $lView)
     {
         $this->lView = $lView;
     }
@@ -128,7 +128,7 @@ class DataObject extends AbstractWorkspace
     /**
      * @param string $layouts
      */
-    public function setLayouts($layouts)
+    public function setLayouts(string $layouts)
     {
         $this->layouts = $layouts;
     }
