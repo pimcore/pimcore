@@ -73,8 +73,6 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface
     /**
      * @param ElementInterface $element
      * @param AttributeSet $result
-     *
-     * @return void
      */
     protected function addProperties(ElementInterface $element, AttributeSet $result)
     {

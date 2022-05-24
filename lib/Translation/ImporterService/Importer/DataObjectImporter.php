@@ -27,8 +27,6 @@ class DataObjectImporter extends AbstractElementImporter
      * @param string $targetLanguage
      * @param Attribute $attribute
      *
-     * @return void
-     *
      * @throws \Exception
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
@@ -116,8 +114,6 @@ class DataObjectImporter extends AbstractElementImporter
 
     /**
      * @param DataObject\Concrete $element
-     *
-     * @return void
      *
      * @throws \Exception
      */

@@ -48,8 +48,6 @@ class AbstractElementImporter implements ImporterInterface
      * @param string $targetLanguage
      * @param Attribute $attribute
      *
-     * @return void
-     *
      * @throws \Exception
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
@@ -66,8 +64,6 @@ class AbstractElementImporter implements ImporterInterface
 
     /**
      * @param Element\ElementInterface $element
-     *
-     * @return void
      *
      * @throws \Exception
      */

@@ -437,8 +437,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param bool $disableTranslations
-     *
-     * @return void
      */
     public function setDisableTranslations(bool $disableTranslations)
     {
