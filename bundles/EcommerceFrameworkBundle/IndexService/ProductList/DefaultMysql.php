@@ -422,7 +422,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return array|IndexableInterface
+     * @return IndexableInterface|null
      */
     protected function loadElementById($elementId)
     {

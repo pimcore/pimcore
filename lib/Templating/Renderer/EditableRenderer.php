@@ -133,7 +133,7 @@ class EditableRenderer implements LoggerAwareInterface
      * @param array $options
      * @param bool|null $editmode
      *
-     * @return mixed
+     * @return Editable\EditableInterface
      *
      * @throws \Exception
      */

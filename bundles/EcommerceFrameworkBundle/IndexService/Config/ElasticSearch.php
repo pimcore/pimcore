@@ -346,7 +346,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @param mixed $data
      * @param array $relations
      *
-     * @return mixed
+     * @return DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations)
     {
@@ -359,7 +359,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId)
     {

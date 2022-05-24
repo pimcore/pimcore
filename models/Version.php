@@ -698,7 +698,7 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getStackTrace(): ?string
     {

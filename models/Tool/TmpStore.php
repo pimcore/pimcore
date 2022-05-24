@@ -276,7 +276,7 @@ final class TmpStore extends Model\AbstractModel
     /**
      * @param int|null $lifetime
      *
-     * @return mixed
+     * @return bool
      */
     public function update($lifetime = null)
     {

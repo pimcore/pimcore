@@ -27,7 +27,7 @@ class PdoCoreHandlerTest extends AbstractCoreHandlerTest
     /**
      * Initializes item pool
      *
-     * @return PdoAdapter
+     * @return TagAwareAdapter
      */
     protected function createCachePool()
     {

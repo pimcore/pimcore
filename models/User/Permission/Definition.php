@@ -87,7 +87,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $permission
      *
-     * @return mixed
+     * @return Definition|null
      *
      * @throws \Exception
      */
@@ -104,12 +104,14 @@ class Definition extends Model\AbstractModel
         if (1 === count($permissionDefinition)) {
             return $permissionDefinition[0];
         }
+
+        return null;
     }
 
     /**
      * @param string $permission
      *
-     * @return mixed|static
+     * @return self|static
      *
      * @throws \Exception
      */

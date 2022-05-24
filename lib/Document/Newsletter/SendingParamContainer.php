@@ -27,7 +27,7 @@ class SendingParamContainer
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     protected $params;
 
@@ -35,7 +35,7 @@ class SendingParamContainer
      * SendingParamContainer constructor.
      *
      * @param string $email
-     * @param array $params
+     * @param array|null $params
      */
     public function __construct($email, array $params = null)
     {
@@ -60,7 +60,7 @@ class SendingParamContainer
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getParams()
     {
@@ -68,7 +68,7 @@ class SendingParamContainer
     }
 
     /**
-     * @param array $params
+     * @param array|null $params
      */
     public function setParams($params)
     {

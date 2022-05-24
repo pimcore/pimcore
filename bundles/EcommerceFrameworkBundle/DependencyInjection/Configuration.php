@@ -250,7 +250,7 @@ final class Configuration implements ConfigurationInterface
                         'noShipping' => [
                             'price_calculator' => [
                                 'factory_id' => 'PriceCalculatorFactory',
-                                'modificators' => '~',
+                                'modificators' => [],
                             ],
                         ],
                     ])
@@ -802,9 +802,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('placeholders')
                                 ->info('Placeholder values in this tenant attributes definition (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
                                 ->example([
-                                    'placeholders' => [
-                                        '%%locale%%' => 'de_AT',
-                                    ],
+                                    '%%locale%%' => 'de_AT',
                                 ])
                                 ->defaultValue([])
                                 ->beforeNormalization()

@@ -55,7 +55,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * @return mixed
+     * @return int|string|null
      */
     #[\ReturnTypeWillChange]
     public function key()// : mixed
