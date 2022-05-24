@@ -89,7 +89,7 @@ final class Runtime extends \ArrayObject
      *
      * @throws \Exception if no entry is registered for $index.
      */
-    public static function get($index)
+    public static function get(string $index)
     {
         $instance = self::getInstance();
 
@@ -111,9 +111,8 @@ final class Runtime extends \ArrayObject
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
      *
-     * @return void
      */
-    public static function set($index, $value)
+    public static function set(string $index, mixed $value)
     {
         $instance = self::getInstance();
         $instance->offsetSet($index, $value);
@@ -127,7 +126,7 @@ final class Runtime extends \ArrayObject
      *
      * @return bool
      */
-    public static function isRegistered($index)
+    public static function isRegistered(string $index)
     {
         $instance = self::getInstance();
 
@@ -160,7 +159,7 @@ final class Runtime extends \ArrayObject
      * @param mixed $data
      * @param string $id
      */
-    public static function save($data, $id)
+    public static function save(mixed $data, string $id)
     {
         self::set($id, $data);
     }
@@ -172,7 +171,7 @@ final class Runtime extends \ArrayObject
      *
      * @return mixed
      */
-    public static function load($id)
+    public static function load(string $id)
     {
         return self::get($id);
     }
@@ -180,7 +179,7 @@ final class Runtime extends \ArrayObject
     /**
      * @param array $keepItems
      */
-    public static function clear($keepItems = [])
+    public static function clear(array $keepItems = [])
     {
         self::$instance = null;
         $newInstance = new self();
