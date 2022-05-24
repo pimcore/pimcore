@@ -65,7 +65,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setInstanceIdentifier($instanceIdentifier)
+    public function setInstanceIdentifier(string $instanceIdentifier)
     {
         $this->instanceIdentifier = $instanceIdentifier;
 
@@ -103,7 +103,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setItemId($id)
+    public function setItemId(int $id)
     {
         $this->itemId = $id;
 
@@ -123,7 +123,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
 
@@ -174,7 +174,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @param string $uuid
      */
-    public function setUuid($uuid)
+    public function setUuid(string $uuid)
     {
         $this->uuid = $uuid;
     }
@@ -184,7 +184,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setItem($item)
+    public function setItem(mixed $item)
     {
         $this->setItemId($item->getId());
 
@@ -206,7 +206,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByItem($item)
+    public static function getByItem(mixed $item)
     {
         $self = new self;
         $self->setSystemInstanceIdentifier();
@@ -220,7 +220,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return self
      */
-    public static function getByUuid($uuid)
+    public static function getByUuid(string $uuid)
     {
         $self = new self;
 
@@ -234,7 +234,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function create($item)
+    public static function create(mixed $item)
     {
         $uuid = new static;
         $uuid->setSystemInstanceIdentifier()->setItem($item);

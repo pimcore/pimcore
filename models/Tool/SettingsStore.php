@@ -98,7 +98,7 @@ final class SettingsStore extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
+    public static function set(string $id, int|string|bool|float $data, string $type = 'string', ?string $scope = null): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
@@ -209,7 +209,7 @@ final class SettingsStore extends Model\AbstractModel
     /**
      * @param int|string|bool|float $data
      */
-    public function setData($data): void
+    public function setData(int|string|bool|float $data): void
     {
         if (!empty($this->getType())) {
             settype($data, $this->getType());

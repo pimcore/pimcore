@@ -30,7 +30,7 @@ interface CustomReportAdapterInterface
      *
      * @return array
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null);
+    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields = null, ?array $drillDownFilters = null);
 
     /**
      * returns available columns for given configuration
@@ -39,7 +39,7 @@ interface CustomReportAdapterInterface
      *
      * @return array
      */
-    public function getColumns($configuration);
+    public function getColumns(?\stdClass $configuration);
 
     /**
      * returns all available values for given field with given filters and drillDownFilters
@@ -50,5 +50,5 @@ interface CustomReportAdapterInterface
      *
      * @return array
      */
-    public function getAvailableOptions($filters, $field, $drillDownFilters);
+    public function getAvailableOptions(array $filters, string $field, array $drillDownFilters);
 }
