@@ -263,11 +263,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $classes
+     * @param array|string $classes
      *
      * @return $this
      */
-    public function setClasses(array $classes)
+    public function setClasses(array|string $classes)
     {
         $classes = $this->prepareArray($classes);
 
@@ -285,11 +285,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $docTypes
+     * @param array|string $docTypes
      *
      * @return $this
      */
-    public function setDocTypes(array $docTypes)
+    public function setDocTypes(array|string $docTypes)
     {
         $docTypes = $this->prepareArray($docTypes);
 
@@ -337,11 +337,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesView
+     * @param array|string $websiteTranslationLanguagesView
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesView(array $websiteTranslationLanguagesView)
+    public function setWebsiteTranslationLanguagesView(array|string $websiteTranslationLanguagesView)
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
 
@@ -359,11 +359,11 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesEdit
+     * @param array|string $websiteTranslationLanguagesEdit
      *
      * @return $this
      */
-    public function setWebsiteTranslationLanguagesEdit(array $websiteTranslationLanguagesEdit)
+    public function setWebsiteTranslationLanguagesEdit(array|string $websiteTranslationLanguagesEdit)
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
 
