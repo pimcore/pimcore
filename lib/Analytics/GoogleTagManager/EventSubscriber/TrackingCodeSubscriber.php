@@ -42,12 +42,20 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     /** @var Environment * */
     protected $twig;
 
+    /**
+     * TrackingCodeSubscriber constructor.
+     * @param TrackingManager $trackingManager
+     * @param Environment $twig
+     */
     public function __construct(TrackingManager $trackingManager, Environment $twig)
     {
         $this->trackingManager = $trackingManager;
         $this->twig = $twig;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -55,6 +63,9 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param CodeEvent $event
+     */
     public function onCodeHead(CodeEvent $event)
     {
         if (! $this->isEnabled()) {

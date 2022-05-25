@@ -39,6 +39,9 @@ class ConfigProvider
         $this->configObject = $configObject;
     }
 
+    /**
+     * @return Config
+     */
     public function getConfig(): Config
     {
         if (null === $this->config) {
@@ -48,6 +51,9 @@ class ConfigProvider
         return $this->config;
     }
 
+    /**
+     * @return ConfigObject
+     */
     private function getConfigObject(): ConfigObject
     {
         if (null === $this->configObject) {
@@ -57,6 +63,10 @@ class ConfigProvider
         return $this->configObject;
     }
 
+    /**
+     * @return ConfigObject
+     * @throws \Exception
+     */
     protected function loadDefaultConfigObject(): ConfigObject
     {
         $reportConfig = \Pimcore\Config::getReportConfig();

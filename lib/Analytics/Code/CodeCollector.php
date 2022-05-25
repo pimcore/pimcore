@@ -54,6 +54,11 @@ class CodeCollector
         self::ACTION_APPEND,
     ];
 
+    /**
+     * CodeCollector constructor.
+     * @param array $validBlocks
+     * @param string $defaultBlock
+     */
     public function __construct(array $validBlocks, string $defaultBlock)
     {
         if (!in_array($defaultBlock, $validBlocks)) {

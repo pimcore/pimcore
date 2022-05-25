@@ -87,6 +87,13 @@ class Tracker extends AbstractTracker
         self::BLOCK_AFTER_SCRIPT_TAG,
     ];
 
+    /**
+     * Tracker constructor.
+     * @param SiteIdProvider $siteIdProvider
+     * @param ConfigProvider $configProvider
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Environment $twig
+     */
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider,
@@ -101,21 +108,34 @@ class Tracker extends AbstractTracker
         $this->twig = $twig;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDefaultPath()
     {
         return $this->defaultPath;
     }
 
+    /**
+     * @param string|null $defaultPath
+     */
     public function setDefaultPath(string $defaultPath = null)
     {
         $this->defaultPath = $defaultPath;
     }
 
+    /**
+     * @return CodeCollector
+     */
     protected function buildCodeCollector(): CodeCollector
     {
         return new CodeCollector($this->blocks, self::BLOCK_AFTER_TRACK);
     }
 
+    /**
+     * @param SiteId $siteId
+     * @return string|null
+     */
     protected function buildCode(SiteId $siteId)
     {
         $config = $this->configProvider->getConfig();
@@ -150,6 +170,12 @@ class Tracker extends AbstractTracker
         return $this->doBuildCode($siteId, $config, $siteConfig);
     }
 
+    /**
+     * @param SiteId $siteId
+     * @param Config $config
+     * @param ConfigObject $siteConfig
+     * @return string
+     */
     private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
     {
         $data = [

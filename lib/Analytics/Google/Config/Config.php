@@ -26,11 +26,19 @@ class Config
      */
     private $config;
 
+    /**
+     * Config constructor.
+     * @param ConfigObject $config
+     */
     public function __construct(ConfigObject $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * @param ConfigObject $reportConfig
+     * @return self
+     */
     public static function fromReportConfig(ConfigObject $reportConfig): self
     {
         $config = null;
@@ -43,11 +51,18 @@ class Config
         return new self($config);
     }
 
+    /**
+     * @return ConfigObject
+     */
     public function getConfig(): ConfigObject
     {
         return $this->config;
     }
 
+    /**
+     * @param string $configKey
+     * @return bool
+     */
     public function isSiteConfigured(string $configKey): bool
     {
         $config = $this->getConfigForSite($configKey);
@@ -78,6 +93,9 @@ class Config
         return $this->config->get('sites')->$configKey;
     }
 
+    /**
+     * @return array
+     */
     public function getConfiguredSites(): array
     {
         $sites = $this->config->get('sites');
@@ -88,6 +106,10 @@ class Config
         return [];
     }
 
+    /**
+     * @param string $configKey
+     * @return bool
+     */
     public function isReportingConfigured(string $configKey): bool
     {
         $config = $this->getConfigForSite($configKey);
