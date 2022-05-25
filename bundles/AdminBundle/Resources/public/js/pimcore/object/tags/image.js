@@ -76,7 +76,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
-            value: filterValue
+            value: filterValue === null ? 'null' : filterValue
         });
     },
 

@@ -667,7 +667,7 @@ pimcore.object.tree = Class.create({
             }
 
             // expand and collapse complete tree
-            if (!record.data.leaf) {
+            if (record.data.expandable) {
                 if (record.data.expanded) {
                     advancedMenuItems.push({
                         text: t('collapse_children'),

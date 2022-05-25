@@ -102,11 +102,18 @@ pimcore.object.helpers.grid = Class.create({
                     }
                 }
 
-                if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchAppend) {
-                    batchAppendColumns.push(key);
-                }
-                if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchRemove) {
-                    batchRemoveColumns.push(key);
+                // Don't add batch options if field has dynamic options
+                if (
+                    !fieldConfig.hasOwnProperty('layout')
+                    || !fieldConfig.layout.hasOwnProperty('dynamicOptions')
+                    || fieldConfig.layout.dynamicOptions !== true
+                ) {
+                    if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchAppend) {
+                        batchAppendColumns.push(key);
+                    }
+                    if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchRemove) {
+                        batchRemoveColumns.push(key);
+                    }
                 }
 
                 readerFields.push(readerFieldConfig);
