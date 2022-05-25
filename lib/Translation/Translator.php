@@ -425,7 +425,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @param Kernel $kernel
      */
-    public function setKernel(Kernel $kernel)
+    public function setKernel($kernel)
     {
         $this->kernel = $kernel;
     }
