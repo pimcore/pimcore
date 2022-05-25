@@ -398,11 +398,17 @@ final class Version extends AbstractModel
         return $data;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFileStream()
     {
         return $this->storageAdapter->getFileStream($this);
     }
 
+    /**
+     * @return mixed
+     */
     public function getBinaryFileStream()
     {
         return $this->storageAdapter->getBinaryFileStream($this);
@@ -715,6 +721,7 @@ final class Version extends AbstractModel
 
     /**
      * @param bool $autoSave
+     * @return Version
      */
     public function setAutoSave(bool $autoSave): self
     {

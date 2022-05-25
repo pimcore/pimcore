@@ -43,6 +43,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param bool $loadAutoSave
+     * @return Listing
      */
     public function setLoadAutoSave(bool $loadAutoSave): self
     {
