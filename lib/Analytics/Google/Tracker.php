@@ -114,9 +114,6 @@ class Tracker extends AbstractTracker
         $this->defaultPath = $defaultPath;
     }
 
-    /**
-     * @return CodeCollector
-     */
     protected function buildCodeCollector(): CodeCollector
     {
         return new CodeCollector($this->blocks, self::BLOCK_AFTER_TRACK);

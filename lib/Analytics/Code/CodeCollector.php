@@ -54,11 +54,6 @@ class CodeCollector
         self::ACTION_APPEND,
     ];
 
-    /**
-     * CodeCollector constructor.
-     * @param array $validBlocks
-     * @param string $defaultBlock
-     */
     public function __construct(array $validBlocks, string $defaultBlock)
     {
         if (!in_array($defaultBlock, $validBlocks)) {
@@ -122,6 +117,13 @@ class CodeCollector
         $this->codeParts[$configKey][$block][$action][] = $code;
     }
 
+    /**
+     * Adds registered parts to a code block
+     *
+     * @param SiteId $siteId
+     * @param CodeBlock $codeBlock
+     * @param string $block
+     */
     public function enrichCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
     {
         // global parts not restricted to a config key
