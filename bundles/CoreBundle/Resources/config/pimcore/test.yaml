@@ -1,7 +1,7 @@
 framework:
     test: ~
     session:
-        storage_id: session.storage.factory.mock_file
+        storage_factory_id: session.storage.factory.mock_file
     profiler: false
     mailer:
         transports:

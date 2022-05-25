@@ -322,7 +322,9 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
 
-        $this->requestStack->getSession()->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
+        /** @var Session $session */
+        $session = $this->requestStack->getSession();
+        $session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
 
         return $this;
     }
