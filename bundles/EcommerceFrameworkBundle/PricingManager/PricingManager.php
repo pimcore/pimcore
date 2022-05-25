@@ -59,7 +59,7 @@ class PricingManager implements PricingManagerInterface
     /**
      * @var RequestStack
      */
-    protected RequestStack $requestStack;
+    protected $requestStack;
 
     /**
      * @var array
@@ -119,19 +119,6 @@ class PricingManager implements PricingManagerInterface
     public function isEnabled(): bool
     {
         return $this->enabled;
-    }
-
-    /**
-     * @TODO move to constructor injection in Pimcore 11
-     *
-     * @required
-     * @internal
-     *
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack(RequestStack $requestStack): void
-    {
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -249,8 +236,9 @@ class PricingManager implements PricingManagerInterface
      */
     public function getEnvironment()
     {
+        $requestStack = \Pimcore::getContainer()->get('request_stack');
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->requestStack->getSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
+        $sessionBag = $requestStack->getSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
 
         $class = $this->options['environment_class'];
 
