@@ -70,7 +70,7 @@ class Cache
      *
      * @return mixed
      */
-    public static function load(string $key)
+    public static function load($key)
     {
         return static::getHandler()->load($key);
     }
@@ -87,7 +87,7 @@ class Cache
      *
      * @return bool
      */
-    public static function save(mixed $data, string $key, array $tags = [], int|\DateInterval $lifetime = null, int $priority = 0, bool $force = false)
+    public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
         return static::getHandler()->save($key, $data, $tags, $lifetime, $priority, $force);
     }
@@ -99,7 +99,7 @@ class Cache
      *
      * @return bool
      */
-    public static function remove(string $key)
+    public static function remove($key)
     {
         return static::getHandler()->remove($key);
     }
@@ -121,7 +121,7 @@ class Cache
      *
      * @return bool
      */
-    public static function clearTag(string $tag)
+    public static function clearTag($tag)
     {
         return static::getHandler()->clearTag($tag);
     }
@@ -143,7 +143,7 @@ class Cache
      *
      * @param string $tag
      */
-    public static function addClearTagOnShutdown(string $tag)
+    public static function addClearTagOnShutdown($tag)
     {
         static::getHandler()->addTagClearedOnShutdown($tag);
     }
@@ -153,7 +153,7 @@ class Cache
      *
      * @param string $tag
      */
-    public static function addIgnoredTagOnSave(string $tag)
+    public static function addIgnoredTagOnSave($tag)
     {
         static::getHandler()->addTagIgnoredOnSave($tag);
     }
@@ -163,7 +163,7 @@ class Cache
      *
      * @param string $tag
      */
-    public static function removeIgnoredTagOnSave(string $tag)
+    public static function removeIgnoredTagOnSave($tag)
     {
         static::getHandler()->removeTagIgnoredOnSave($tag);
     }
@@ -173,7 +173,7 @@ class Cache
      *
      * @param string $tag
      */
-    public static function addIgnoredTagOnClear(string $tag)
+    public static function addIgnoredTagOnClear($tag)
     {
         static::getHandler()->addTagIgnoredOnClear($tag);
     }
@@ -183,7 +183,7 @@ class Cache
      *
      * @param string $tag
      */
-    public static function removeIgnoredTagOnClear(string $tag)
+    public static function removeIgnoredTagOnClear($tag)
     {
         static::getHandler()->removeTagIgnoredOnClear($tag);
     }
@@ -191,11 +191,11 @@ class Cache
     /**
      * Write and clean up cache
      *
-     * @param bool $forceWrite
-     *@internal
+     * @internal
      *
+     * @param bool $forceWrite
      */
-    public static function shutdown(bool $forceWrite = false)
+    public static function shutdown($forceWrite = false)
     {
         static::getHandler()->shutdown($forceWrite);
     }
@@ -227,7 +227,7 @@ class Cache
     /**
      * @param bool $forceImmediateWrite
      */
-    public static function setForceImmediateWrite(bool $forceImmediateWrite)
+    public static function setForceImmediateWrite($forceImmediateWrite)
     {
         static::getHandler()->setForceImmediateWrite($forceImmediateWrite);
     }
