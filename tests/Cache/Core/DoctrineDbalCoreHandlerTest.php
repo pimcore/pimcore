@@ -32,8 +32,8 @@ class DoctrineDbalCoreHandlerTest extends AbstractCoreHandlerTest
     protected function createCachePool()
     {
         TestHelper::checkDbSupport();
-        $pdoAdapter = new DoctrineDbalAdapter(\Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);
-        $adapter = new TagAwareAdapter($pdoAdapter);
+        $doctrineDbalAdapter = new DoctrineDbalAdapter(\Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);
+        $adapter = new TagAwareAdapter($doctrineDbalAdapter);
 
         return $adapter;
     }
