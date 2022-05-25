@@ -125,7 +125,7 @@ class Xliff12Exporter implements ExporterInterface
      * @param string $targetContent
      * @param string $targetLang
      */
-    protected function addTransUnitNode(\SimpleXMLElement $xml, $name, $sourceContent, $sourceLang, $targetContent, $targetLang)
+    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, string $targetContent, string $targetLang)
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));
