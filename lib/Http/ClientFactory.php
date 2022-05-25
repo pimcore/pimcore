@@ -38,6 +38,10 @@ class ClientFactory
         $this->config = $config;
     }
 
+    /**
+     * @param array $config
+     * @return Client
+     */
     public function createClient(array $config = [])
     {
         $guzzleConfig = [
