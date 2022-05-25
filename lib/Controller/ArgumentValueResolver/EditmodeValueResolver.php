@@ -28,7 +28,7 @@ final class EditmodeValueResolver implements ArgumentValueResolverInterface
     /**
      * @var EditmodeResolver
      */
-    private EditmodeResolver $editmodeResolver;
+    private $editmodeResolver;
 
     public function __construct(EditmodeResolver $editmodeResolver)
     {

@@ -31,7 +31,7 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
     /**
      * @var DocumentResolver
      */
-    protected DocumentResolver $documentResolver;
+    protected $documentResolver;
 
     /**
      * @param DocumentResolver $documentResolver

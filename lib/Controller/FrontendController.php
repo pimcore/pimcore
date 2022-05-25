@@ -15,7 +15,6 @@
 
 namespace Pimcore\Controller;
 
-use Exception;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
@@ -73,7 +72,7 @@ abstract class FrontendController extends Controller
      * @param string $name
      * @param mixed $value
      */
-    public function __set(string $name, mixed $value)
+    public function __set($name, $value)
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
@@ -121,7 +120,7 @@ abstract class FrontendController extends Controller
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null)
+    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
         if (null === $document) {
             $document = $this->document;
@@ -137,7 +136,7 @@ abstract class FrontendController extends Controller
      *
      * @return Response
      */
-    public function renderTemplate(string $view, array $parameters = [], Response $response = null)
+    public function renderTemplate($view, array $parameters = [], Response $response = null)
     {
         return $this->render($view, $parameters, $response);
     }
