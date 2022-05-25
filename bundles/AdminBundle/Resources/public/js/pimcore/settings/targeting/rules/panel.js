@@ -205,7 +205,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     }.bind(this)
                 });
             }
-        });
+       }.bind(this));
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
