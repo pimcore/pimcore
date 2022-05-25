@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -55,11 +54,6 @@ class PricingManager implements PricingManagerInterface
      * @var SessionInterface
      */
     protected $session;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
 
     /**
      * @var array
