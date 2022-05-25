@@ -26,12 +26,22 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
      */
     private $dataExtractors;
 
+    /**
+     * @param TranslationItem $translationItem
+     * @param string $sourceLanguage
+     * @param array $targetLanguages
+     *
+     * @return AttributeSet
+     *
+     * @throws \Exception
+     */
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet
     {
         return $this->getDataExtractor($translationItem->getType())->extract($translationItem, $sourceLanguage, $targetLanguages);
     }
 
     /**
+     * @param string $type
      * @param DataExtractorInterface $dataExtractor
      *
      * @return $this

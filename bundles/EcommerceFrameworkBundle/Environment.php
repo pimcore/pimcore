@@ -234,7 +234,7 @@ class Environment implements EnvironmentInterface
     /**
      * gets current assortment tenant which is used for indexing and product lists
      *
-     * @return string
+     * @return string|null
      */
     public function getCurrentAssortmentTenant()
     {
@@ -246,9 +246,7 @@ class Environment implements EnvironmentInterface
     /**
      * sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param mixed $subTenant
-     *
-     * @return mixed
+     * @param string|null $subTenant
      */
     public function setCurrentAssortmentSubTenant($subTenant)
     {
@@ -260,7 +258,7 @@ class Environment implements EnvironmentInterface
     /**
      * gets current assortment tenant which is used for indexing and product lists
      *
-     * @return mixed
+     * @return string|null
      */
     public function getCurrentAssortmentSubTenant()
     {
@@ -274,8 +272,6 @@ class Environment implements EnvironmentInterface
      *
      * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
-     *
-     * @return mixed
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true)
     {

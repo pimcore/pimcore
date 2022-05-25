@@ -85,7 +85,7 @@ class DocumentEditableExtension extends AbstractExtension
      * @param string $name
      * @param array $options
      *
-     * @return \Pimcore\Model\Document\Editable|string
+     * @return \Pimcore\Model\Document\Editable\EditableInterface|string
      *
      * @throws \Exception
      */
@@ -107,7 +107,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @param BlockInterface $block
      *
-     * @return \Generator|int[]
+     * @return \Generator
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {

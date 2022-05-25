@@ -47,6 +47,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - MariaDB >= 10.3
 - MySQL >= 8.0
 - Percona Server (supported versions see MySQL)
+- [AWS Aurora](https://aws.amazon.com/de/about-aws/whats-new/2021/11/amazon-aurora-mysql-8-0/) (supported versions see MySQL)
 
 #### Features
 - InnoDB / XtraDB storage engine

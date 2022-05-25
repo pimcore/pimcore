@@ -277,7 +277,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {

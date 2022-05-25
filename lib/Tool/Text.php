@@ -26,7 +26,7 @@ class Text
     /**
      * @param string $text
      *
-     * @return mixed|string
+     * @return string
      */
     public static function removeLineBreaks($text = '')
     {

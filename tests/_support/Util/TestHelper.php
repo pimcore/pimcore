@@ -383,7 +383,7 @@ class TestHelper
      * @param bool $publish
      * @param string|null $type
      *
-     * @return Concrete|Unittest
+     * @return Concrete
      */
     public static function createEmptyObject($keyPrefix = '', $save = true, $publish = true, $type = null)
     {
