@@ -21,9 +21,6 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
 {
     protected VersionStorageAdapterInterface $storageAdapter;
 
-    /**
-     * @param FileSystemVersionStorageAdapter $storageAdapter
-     */
     public function __construct(FileSystemVersionStorageAdapter $storageAdapter)
     {
         $this->storageAdapter = $storageAdapter;
@@ -85,9 +82,6 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->storageAdapter->delete($version, $isBinaryHashInUse);
     }
 
-    /**
-     * @param VersionStorageAdapterInterface $adapter
-     */
     public function setStorageAdapter(VersionStorageAdapterInterface $adapter)
     {
         $this->storageAdapter = $adapter;
