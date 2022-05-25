@@ -385,7 +385,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @param string $adminPath
      */
-    public function setAdminPath($adminPath)
+    public function setAdminPath(string $adminPath)
     {
         $this->adminPath = $adminPath;
     }
@@ -425,7 +425,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @param Kernel $kernel
      */
-    public function setKernel($kernel)
+    public function setKernel(Kernel $kernel)
     {
         $this->kernel = $kernel;
     }

@@ -41,7 +41,7 @@ class TranslationItem
      * @param string $id
      * @param ElementInterface $element
      */
-    public function __construct(string $type, string $id, $element)
+    public function __construct(string $type, string $id, ElementInterface $element)
     {
         $this->type = $type;
         $this->id = $id;
