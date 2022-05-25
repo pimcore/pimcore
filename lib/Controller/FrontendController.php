@@ -15,11 +15,15 @@
 
 namespace Pimcore\Controller;
 
+use Exception;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,7 +51,10 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * {@inheritdoc}
+     * @param string $name
+     * @return mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __get($name)
     {
@@ -59,23 +66,24 @@ abstract class FrontendController extends Controller
             return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
-        throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
+        throw new RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param mixed $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Property "%s" is a request attribute and can\'t be set on the controller instance',
                 $name
             ));
         }
 
-        throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
+        throw new RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
     /**
@@ -86,6 +94,8 @@ abstract class FrontendController extends Controller
      * @param array|string $values
      * @param bool $replace
      * @param Request|null $request
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
@@ -108,9 +118,10 @@ abstract class FrontendController extends Controller
      *
      * @return Document\Editable\EditableInterface
      *
-     * @throws \Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null)
     {
         if (null === $document) {
             $document = $this->document;
@@ -124,9 +135,9 @@ abstract class FrontendController extends Controller
      * @param array $parameters
      * @param Response|null $response
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function renderTemplate($view, array $parameters = [], Response $response = null)
+    public function renderTemplate(string $view, array $parameters = [], Response $response = null)
     {
         return $this->render($view, $parameters, $response);
     }

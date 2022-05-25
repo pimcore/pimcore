@@ -33,17 +33,17 @@ class ResponseHeader extends ConfigurationAnnotation
     /**
      * @var string
      */
-    protected $key;
+    protected string $key;
 
     /**
      * @var string|array
      */
-    protected $values;
+    protected string|array $values;
 
     /**
      * @var bool
      */
-    protected $replace = false;
+    protected bool $replace = false;
 
     /**
      * @param array $data
