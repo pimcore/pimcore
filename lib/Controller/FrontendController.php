@@ -51,9 +51,8 @@ abstract class FrontendController extends Controller
      * their resolvers.
      *
      * @param string $name
+     *
      * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function __get($name)
     {
@@ -65,7 +64,7 @@ abstract class FrontendController extends Controller
             return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
-        throw new RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
+        throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
     /**
@@ -76,13 +75,13 @@ abstract class FrontendController extends Controller
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
-            throw new RuntimeException(sprintf(
+            throw new \RuntimeException(sprintf(
                 'Property "%s" is a request attribute and can\'t be set on the controller instance',
                 $name
             ));
         }
 
-        throw new RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
+        throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
     /**
@@ -116,9 +115,6 @@ abstract class FrontendController extends Controller
      * @param Document\PageSnippet|null $document
      *
      * @return Document\Editable\EditableInterface
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
