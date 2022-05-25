@@ -44,7 +44,7 @@ class SessionCart extends AbstractCart implements CartInterface
     protected static function getSessionBag(): AttributeBagInterface
     {
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = \Pimcore::getContainer()->get('session')->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        $sessionBag = \Pimcore::getContainer()->get('request_stack')->getSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
 
         if (empty($sessionBag->get('carts'))) {
             $sessionBag->set('carts', []);

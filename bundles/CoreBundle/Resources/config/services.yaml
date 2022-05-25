@@ -6,15 +6,6 @@ services:
     #
     # SESSION
     #
-
-    session:
-        public: true
-        class: Symfony\Component\HttpFoundation\Session\Session
-        arguments:
-            $storage: '@session.storage'
-            $flashes: '@session.flash_bag'
-
-
     # Sessions need to be configured (e.g. adding custom attribute bags) before they are started. The configurator handles
     # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
     # DI tag. See the SessionConfiguratorPass for details.

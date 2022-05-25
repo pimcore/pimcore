@@ -31,7 +31,7 @@ final class SessionConfiguratorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('session')) {
+        if (!$container->has('session')) {
             return;
         }
 
@@ -40,7 +40,7 @@ final class SessionConfiguratorPass implements CompilerPassInterface
         }
 
         // configure the core session through our configurator service (mainly to register custom attribute bags)
-        $session = $container->getDefinition('session');
+        $session = $container->findDefinition('session');
 
         // just to make sure nobody else (symfony core, other bundle) sets a configurator and we overwrite it here
         if ($session->getConfigurator()) {
