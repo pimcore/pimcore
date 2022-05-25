@@ -142,7 +142,7 @@ final class Version extends AbstractModel
      *
      * @return Version|null
      */
-    public static function getById(int $id)
+    public static function getById($id)
     {
         try {
             /**
@@ -267,7 +267,7 @@ final class Version extends AbstractModel
      *
      * @return mixed
      */
-    private function marshalData(ElementInterface $data)
+    private function marshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -303,7 +303,7 @@ final class Version extends AbstractModel
      *
      * @return mixed
      */
-    private function unmarshalData(ElementInterface $data)
+    private function unmarshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -345,12 +345,13 @@ final class Version extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param bool $renewReferences
      *
      * @return mixed
-     * @internal
      */
-    public function loadData(bool $renewReferences = true)
+    public function loadData($renewReferences = true)
     {
         $data = $this->storageAdapter->loadMetaData($this);
 
@@ -452,9 +453,9 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setCid(int $cid)
+    public function setCid($cid)
     {
-        $this->cid = $cid;
+        $this->cid = (int) $cid;
 
         return $this;
     }
@@ -464,9 +465,9 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setDate(int $date)
+    public function setDate($date)
     {
-        $this->date = $date;
+        $this->date = (int) $date;
 
         return $this;
     }
@@ -476,31 +477,31 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setId(int $id)
+    public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (int) $id;
 
         return $this;
     }
 
     /**
-     * @param string|null $note
+     * @param string $note
      *
      * @return $this
      */
-    public function setNote(?string $note)
+    public function setNote($note)
     {
-        $this->note = $note;
+        $this->note = (string) $note;
 
         return $this;
     }
 
     /**
-     * @param int|null $userId
+     * @param int $userId
      *
      * @return $this
      */
-    public function setUserId(?int $userId)
+    public function setUserId($userId)
     {
         if (is_numeric($userId)) {
             if ($user = User::getById($userId)) {
@@ -529,7 +530,7 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setData(mixed $data)
+    public function setData($data)
     {
         $this->data = $data;
 
@@ -549,9 +550,9 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setSerialized(bool $serialized)
+    public function setSerialized($serialized)
     {
-        $this->serialized = $serialized;
+        $this->serialized = (bool) $serialized;
 
         return $this;
     }
@@ -569,9 +570,9 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setCtype(string $ctype)
+    public function setCtype($ctype)
     {
-        $this->ctype = $ctype;
+        $this->ctype = (string) $ctype;
 
         return $this;
     }
@@ -617,9 +618,9 @@ final class Version extends AbstractModel
      *
      * @return $this
      */
-    public function setPublic(bool $public)
+    public function setPublic($public)
     {
-        $this->public = $public;
+        $this->public = (bool) $public;
 
         return $this;
     }
@@ -635,9 +636,9 @@ final class Version extends AbstractModel
     /**
      * @param int $versionCount
      */
-    public function setVersionCount(int $versionCount): void
+    public function setVersionCount($versionCount): void
     {
-        $this->versionCount = $versionCount;
+        $this->versionCount = (int) $versionCount;
     }
 
     /**
@@ -677,7 +678,7 @@ final class Version extends AbstractModel
      */
     public function getGenerateStackTrace()
     {
-        return $this->generateStackTrace;
+        return (bool) $this->generateStackTrace;
     }
 
     /**
@@ -714,7 +715,6 @@ final class Version extends AbstractModel
 
     /**
      * @param bool $autoSave
-     * @return Version
      */
     public function setAutoSave(bool $autoSave): self
     {
