@@ -176,7 +176,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                     }.bind(this)
                 });
             }
-        });
+      }.bind(this));
     },
 
     openTargetGroup: function (node) {
