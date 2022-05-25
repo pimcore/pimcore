@@ -122,13 +122,6 @@ class CodeCollector
         $this->codeParts[$configKey][$block][$action][] = $code;
     }
 
-    /**
-     * Adds registered parts to a code block
-     *
-     * @param SiteId $siteId
-     * @param CodeBlock $codeBlock
-     * @param string $block
-     */
     public function enrichCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
     {
         // global parts not restricted to a config key

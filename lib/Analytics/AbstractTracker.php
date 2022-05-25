@@ -33,10 +33,6 @@ abstract class AbstractTracker implements TrackerInterface
      */
     private $codeCollector;
 
-    /**
-     * AbstractTracker constructor.
-     * @param SiteIdProvider $siteIdProvider
-     */
     public function __construct(SiteIdProvider $siteIdProvider)
     {
         $this->siteIdProvider = $siteIdProvider;

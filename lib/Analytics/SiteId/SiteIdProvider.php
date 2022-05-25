@@ -28,10 +28,6 @@ class SiteIdProvider
      */
     private $siteResolver;
 
-    /**
-     * SiteIdProvider constructor.
-     * @param SiteResolver $siteResolver
-     */
     public function __construct(SiteResolver $siteResolver)
     {
         $this->siteResolver = $siteResolver;

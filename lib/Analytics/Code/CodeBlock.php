@@ -28,26 +28,16 @@ final class CodeBlock
      */
     private $parts = [];
 
-    /**
-     * CodeBlock constructor.
-     * @param array $parts
-     */
     public function __construct(array $parts = [])
     {
         $this->parts = $parts;
     }
 
-    /**
-     * @param array $parts
-     */
     public function setParts(array $parts)
     {
         $this->parts = $parts;
     }
 
-    /**
-     * @return array
-     */
     public function getParts(): array
     {
         return $this->parts;
@@ -78,9 +68,6 @@ final class CodeBlock
         }
     }
 
-    /**
-     * @return string
-     */
     public function asString(): string
     {
         $string = implode("\n", $this->parts);
@@ -89,9 +76,6 @@ final class CodeBlock
         return $string;
     }
 
-    /**
-     * @return string
-     */
     public function __toString()
     {
         return $this->asString();

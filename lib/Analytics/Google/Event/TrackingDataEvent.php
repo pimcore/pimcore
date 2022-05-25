@@ -49,14 +49,6 @@ class TrackingDataEvent extends Event
      */
     private $template;
 
-    /**
-     * TrackingDataEvent constructor.
-     * @param Config $config
-     * @param SiteId $siteId
-     * @param array $data
-     * @param array $blocks
-     * @param string $template
-     */
     public function __construct(
         Config $config,
         SiteId $siteId,
@@ -71,33 +63,21 @@ class TrackingDataEvent extends Event
         $this->template = $template;
     }
 
-    /**
-     * @return Config
-     */
     public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @return SiteId
-     */
     public function getSiteId(): SiteId
     {
         return $this->siteId;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data)
     {
         $this->data = $data;
@@ -111,10 +91,6 @@ class TrackingDataEvent extends Event
         return $this->blocks;
     }
 
-    /**
-     * @param string $block
-     * @return CodeBlock
-     */
     public function getBlock(string $block): CodeBlock
     {
         if (!isset($this->blocks[$block])) {
@@ -124,17 +100,11 @@ class TrackingDataEvent extends Event
         return $this->blocks[$block];
     }
 
-    /**
-     * @return string
-     */
     public function getTemplate(): string
     {
         return $this->template;
     }
 
-    /**
-     * @param string $template
-     */
     public function setTemplate(string $template)
     {
         $this->template = $template;

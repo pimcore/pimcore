@@ -87,13 +87,6 @@ class Tracker extends AbstractTracker
         self::BLOCK_AFTER_SCRIPT_TAG,
     ];
 
-    /**
-     * Tracker constructor.
-     * @param SiteIdProvider $siteIdProvider
-     * @param ConfigProvider $configProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param Environment $twig
-     */
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider,
@@ -116,9 +109,6 @@ class Tracker extends AbstractTracker
         return $this->defaultPath;
     }
 
-    /**
-     * @param string|null $defaultPath
-     */
     public function setDefaultPath(string $defaultPath = null)
     {
         $this->defaultPath = $defaultPath;

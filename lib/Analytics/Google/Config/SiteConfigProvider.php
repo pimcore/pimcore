@@ -33,11 +33,6 @@ class SiteConfigProvider
      */
     private $configProvider;
 
-    /**
-     * SiteConfigProvider constructor.
-     * @param SiteIdProvider $siteIdProvider
-     * @param ConfigProvider $configProvider
-     */
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider
@@ -58,10 +53,6 @@ class SiteConfigProvider
         return $config->getConfigForSite($siteId->getConfigKey());
     }
 
-    /**
-     * @param Site|null $site
-     * @return bool
-     */
     public function isSiteReportingConfigured(Site $site = null): bool
     {
         $siteId = $this->getSiteId($site);
@@ -70,10 +61,6 @@ class SiteConfigProvider
         return $config->isReportingConfigured($siteId->getConfigKey());
     }
 
-    /**
-     * @param Site|null $site
-     * @return SiteId
-     */
     private function getSiteId(Site $site = null): SiteId
     {
         $siteId = null;
