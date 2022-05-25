@@ -20,9 +20,6 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -92,8 +89,6 @@ abstract class FrontendController extends Controller
      * @param array|string $values
      * @param bool $replace
      * @param Request|null $request
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
     {
