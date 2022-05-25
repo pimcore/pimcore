@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -48,13 +49,17 @@ class PricingManager implements PricingManagerInterface
     protected $actionMapping = [];
 
     /**
-     * TODO: use RequestStack to get session
      *
      * @deprecated will be removed in Pimcore 11
      *
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * @var RequestStack
+     */
+    protected RequestStack $requestStack;
 
     /**
      * @var array
@@ -114,6 +119,19 @@ class PricingManager implements PricingManagerInterface
     public function isEnabled(): bool
     {
         return $this->enabled;
+    }
+
+    /**
+     * @TODO move to constructor injection in Pimcore 11
+     *
+     * @required
+     * @internal
+     *
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -232,7 +250,7 @@ class PricingManager implements PricingManagerInterface
     public function getEnvironment()
     {
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
+        $sessionBag = $this->requestStack->getSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
 
         $class = $this->options['environment_class'];
 

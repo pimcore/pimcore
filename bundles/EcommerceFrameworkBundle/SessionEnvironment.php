@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Localization\LocaleServiceInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -37,13 +38,17 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
     /**
-     * TODO: use RequestStack to get session
      *
      * @deprecated will be removed in Pimcore 11
      *
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * @var RequestStack
+     */
+    protected RequestStack $requestStack;
 
     /**
      * @var bool
@@ -57,6 +62,19 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $this->session = $session;
     }
 
+    /**
+     * @TODO move to constructor injection in Pimcore 11
+     *
+     * @required
+     * @internal
+     *
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
+    }
+
     protected function load()
     {
         if ($this->sessionLoaded) {
@@ -64,7 +82,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         }
 
         //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
+        if ('cli' === php_sapi_name() && !$this->requestStack->getSession()->isStarted()) {
             return;
         }
 
@@ -88,7 +106,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     public function save()
     {
         //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
+        if ('cli' === php_sapi_name() && !$this->requestStack->getSession()->isStarted()) {
             return;
         }
 
@@ -108,7 +126,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         parent::clearEnvironment();
 
         //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
+        if ('cli' === php_sapi_name() && !$this->requestStack->getSession()->isStarted()) {
             return;
         }
 
@@ -130,7 +148,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     protected function getSessionBag(): AttributeBagInterface
     {
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
+        $sessionBag = $this->requestStack->getSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
 
         return $sessionBag;
     }

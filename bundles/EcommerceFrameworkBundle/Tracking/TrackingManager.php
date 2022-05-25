@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -52,9 +53,17 @@ class TrackingManager implements TrackingManagerInterface
     protected $enviroment = null;
 
     /**
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var Session
      */
     protected $session;
+
+    /**
+     * @var RequestStack
+     */
+    protected RequestStack $requestStack;
 
     /**
      * @param TrackerInterface[] $trackers
@@ -76,6 +85,19 @@ class TrackingManager implements TrackingManagerInterface
     public function setSession(SessionInterface $session)
     {
         $this->session = $session;
+    }
+
+    /**
+     * @TODO move to constructor injection in Pimcore 11
+     *
+     * @required
+     * @internal
+     *
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -300,7 +322,7 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
 
-        $this->session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
+        $this->requestStack->getSession()->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
 
         return $this;
     }
