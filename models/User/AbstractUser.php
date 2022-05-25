@@ -124,7 +124,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return $this
      */
@@ -144,7 +144,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param int $parentId
+     * @param int|null  $parentId
      *
      * @return $this
      */
