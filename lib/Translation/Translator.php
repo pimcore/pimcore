@@ -385,7 +385,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @param string $adminPath
      */
-    public function setAdminPath(string $adminPath)
+    public function setAdminPath($adminPath)
     {
         $this->adminPath = $adminPath;
     }
@@ -460,9 +460,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * Passes through all unknown calls onto the translator object.
      *
+     * @param string $method
+     * @param array $args
+     *
      * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call($method, $args)
     {
         return call_user_func_array([$this->translator, $method], $args);
     }
