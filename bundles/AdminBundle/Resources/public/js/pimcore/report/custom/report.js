@@ -542,23 +542,17 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
     createCsv: function (btn, exportFile, offset, withHeader) {
         let filterData = this.store.getFilters().items;
         let proxy = this.store.getProxy();
-        let drillDownFilters = this.drillDownFilters;
-
-        let params = {
-            exportFile: exportFile,
-            offset: offset,
-            name: this.config.name,
-            filter: filterData.length > 0 ? encodeURIComponent(proxy.encodeFilters(filterData)) : "",
-            headers: withHeader,
-        }
-
-        Object.keys(drillDownFilters).forEach(function(key) {
-            params[`drillDownFilters[${key}]`] = drillDownFilters[key]
-        })
 
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_reports_customreport_createcsv'),
-            params: params,
+            params: {
+                exportFile: exportFile,
+                offset: offset,
+                name: this.config.name,
+                filter: filterData.length > 0 ? encodeURIComponent(proxy.encodeFilters(filterData)) : "",
+                headers: withHeader,
+                drillDownFilters: JSON.stringify(this.drillDownFilters)
+            },
             success: function (response) {
                 response = JSON.parse(response["responseText"]);
                 if(response["finished"]) {
@@ -574,5 +568,5 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }
             }.bind(this)
         });
-    },
+    }
 });

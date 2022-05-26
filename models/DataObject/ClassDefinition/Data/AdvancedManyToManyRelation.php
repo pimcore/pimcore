@@ -900,6 +900,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -968,7 +970,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -986,7 +988,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

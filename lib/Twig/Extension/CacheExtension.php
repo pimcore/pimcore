@@ -67,7 +67,7 @@ class CacheExtension extends AbstractExtension
      * @param int|null $lifetime
      * @param bool $force
      *
-     * @return mixed
+     * @return $this
      */
     public function init($name, $lifetime = null, $force = false)
     {

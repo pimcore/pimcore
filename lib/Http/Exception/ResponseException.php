@@ -25,8 +25,8 @@ class ResponseException extends \Exception
     protected $response;
 
     /**
-     * @param Response   $response
-     * @param \Exception $previous
+     * @param Response $response
+     * @param \Exception|null $previous
      */
     public function __construct(Response $response, \Exception $previous = null)
     {

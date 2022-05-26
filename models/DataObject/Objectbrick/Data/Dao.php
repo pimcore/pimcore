@@ -95,17 +95,17 @@ class Dao extends Model\Dao\AbstractDao
             Logger::warning('Error during removing old relations: ' . $e);
         }
 
+        if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
+            // if this is a fresh object, then we don't need the check
+            $isBrickUpdate = false; // used to indicate whether we want to consider the default value
+        } else {
+            // or brick has been added
+            $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
+            $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
+        }
+
         foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
-
-            if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
-                // if this is a fresh object, then we don't need the check
-                $isBrickUpdate = false; // used to indicate whether we want to consider the default value
-            } else {
-                // or brick has been added
-                $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
-                $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
-            }
 
             if ($fd instanceof CustomResourcePersistingInterface) {
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
@@ -156,7 +156,11 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate($storetable, $data);
+        if ($isBrickUpdate) {
+            $this->db->update($storetable, $data, ['o_id'=> $object->getId()]);
+        } else {
+            $this->db->insert($storetable, $data);
+        }
 
         // get data for query table
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);

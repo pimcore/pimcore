@@ -116,7 +116,7 @@ class IndexService
     /**
      * Returns all attributes marked as general search attributes for full text search
      *
-     * @param string $tenant
+     * @param string|null $tenant
      *
      * @return array
      *
@@ -191,7 +191,7 @@ class IndexService
     /**
      * Returns all filter groups
      *
-     * @param string $tenant
+     * @param string|null $tenant
      *
      * @return array
      *

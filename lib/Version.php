@@ -44,7 +44,7 @@ final class Version
     }
 
     /**
-     * @return int
+     * @return string
      */
     public static function getRevision()
     {

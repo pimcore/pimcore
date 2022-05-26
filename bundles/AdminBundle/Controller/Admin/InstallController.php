@@ -35,7 +35,7 @@ class InstallController extends AdminController
      *
      * @param Request $request
      * @param ConnectionInterface $db
-     * @param Profiler $profiler
+     * @param Profiler|null $profiler
      *
      * @return Response
      */

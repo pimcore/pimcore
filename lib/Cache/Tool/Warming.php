@@ -21,7 +21,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Listing\AbstractListing;
 
 /**
  * @internal
@@ -109,7 +108,7 @@ class Warming
     /**
      * @param Document\Listing|Asset\Listing|DataObject\Listing $list
      */
-    protected static function loadToCache(AbstractListing $list)
+    protected static function loadToCache(Document\Listing|Asset\Listing|DataObject\Listing $list)
     {
         $totalCount = $list->getTotalCount();
         $iterations = ceil($totalCount / self::getPerIteration());

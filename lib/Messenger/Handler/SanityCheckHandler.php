@@ -59,12 +59,15 @@ class SanityCheckHandler implements BatchHandlerInterface
     }
 
     /**
-     * @param PageSnippet|Asset|Concrete $element
+     * @param ElementInterface $element
      *
      * @throws \Exception
      */
     private function performSanityCheck(ElementInterface $element)
     {
+        if (!$element instanceof PageSnippet && !$element instanceof Concrete && !$element instanceof Asset) {
+            return;
+        }
         $latestNotPublishedVersion = null;
 
         if ($latestVersion = $element->getLatestVersion()) {
