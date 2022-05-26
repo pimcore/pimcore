@@ -148,7 +148,9 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable $editable
+     * @param $brick
+     * @return bool
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {
@@ -160,7 +162,9 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable\Areablock $editable
+     * @param array $options
+     * @return array
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
@@ -291,6 +295,10 @@ class EditableHandler implements LoggerAwareInterface
         return $html;
     }
 
+    /**
+     * @param $result
+     * @return void
+     */
     protected function handleBrickActionResult($result)
     {
 
@@ -390,7 +398,10 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param $controller
+     * @param array $attributes
+     * @param array $query
+     * @return string|Response
      */
     public function renderAction($controller, array $attributes = [], array $query = [])
     {

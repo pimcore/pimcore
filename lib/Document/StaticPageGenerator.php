@@ -36,6 +36,10 @@ class StaticPageGenerator
      */
     private $lockFactory;
 
+    /**
+     * @param DocumentRenderer $documentRenderer
+     * @param LockFactory $lockFactory
+     */
     public function __construct(DocumentRenderer $documentRenderer, LockFactory $lockFactory)
     {
         $this->documentRenderer = $documentRenderer;
