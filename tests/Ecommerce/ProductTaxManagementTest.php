@@ -35,7 +35,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
      * @param array $taxes
      * @param string $combinationType
      *
-     * @return AbstractProduct|\PHPUnit_Framework_MockObject_Stub
+     * @return CheckoutableInterface
      */
     private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {

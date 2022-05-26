@@ -51,13 +51,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
-     * @internal
-     *
-     * @var bool
-     */
-    public static $doNotRestoreKeyAndPath = false;
-
-    /**
      * possible types of a document
      *
      * @var array
@@ -91,12 +84,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_id;
 
     /**
      * @internal
+     *
+     * @deprecated
      *
      * @var int|null
      */
@@ -105,7 +102,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
-     * @var self|null
+     * @deprecated
      */
     protected $o_parent;
 
@@ -126,6 +123,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var string|null
      */
     protected $o_path;
@@ -140,12 +139,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected $o_creationDate;
 
     /**
      * @internal
+     *
+     * @deprecated
      *
      * @var int|null
      */
@@ -154,6 +157,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected ?int $o_userOwner = null;
@@ -161,16 +166,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int|null
      */
     protected ?int $o_userModification = null;
-
-    /**
-     * @internal
-     *
-     * @var array|null
-     */
-    protected ?array $o_properties = null;
 
     /**
      * @internal
@@ -207,6 +207,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var string
      */
     protected $o_locked;
@@ -228,9 +230,53 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     *
      * @var int
      */
     protected $o_versionCount = 0;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var array|null
+     */
+    protected $o_properties = null;
+
+    public function __construct()
+    {
+        $this->o_id = & $this->id;
+        $this->o_path = & $this->path;
+        $this->o_creationDate = & $this->creationDate;
+        $this->o_userOwner = & $this->userOwner;
+        $this->o_versionCount = & $this->versionCount;
+        $this->o_modificationDate = & $this->modificationDate;
+        $this->o_locked = & $this->locked;
+        $this->o_parent = & $this->parent;
+        $this->o_properties = & $this->properties;
+        $this->o_userModification = & $this->userModification;
+        $this->o_parentId = & $this->parentId;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'parent', 'omitMandatoryCheck'];
+
+        if ($this->isInDumpState()) {
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
+            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
+        } else {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['o_children', 'properties', 'o_properties']);
+        }
+
+        return $blockedVars;
+    }
 
     /**
      * @static
@@ -285,7 +331,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param Concrete $object
+     * @param Concrete|null $object
      *
      * @return bool
      */
@@ -565,30 +611,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
-    }
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @return string|null
-     */
-    public function getLocked()
-    {
-        return $this->o_locked;
-    }
-
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @param string|null $o_locked
-     *
-     * @return $this
-     */
-    public function setLocked($o_locked)
-    {
-        $this->o_locked = $o_locked;
-
-        return $this;
     }
 
     /**
@@ -983,22 +1005,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return int|null
      */
-    public function getId()
-    {
-        return $this->o_id;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getParentId()
     {
+        $parentId = parent::getParentId();
+
         // fall back to parent if no ID is set but we have a parent object
-        if (!$this->o_parentId && $this->o_parent) {
-            return $this->o_parent->getId();
+        if (!$parentId && $this->parent) {
+            return $this->parent->getId();
         }
 
-        return $this->o_parentId;
+        return $parentId;
     }
 
     /**
@@ -1018,14 +1034,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return string|null
-     */
-    public function getPath()
-    {
-        return $this->o_path;
-    }
-
-    /**
      * @return int
      */
     public function getIndex()
@@ -1034,62 +1042,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int|null
-     */
-    public function getCreationDate()
-    {
-        return $this->o_creationDate;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
-    {
-        return $this->o_modificationDate;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getUserOwner()
-    {
-        return $this->o_userOwner;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserModification()
-    {
-        return $this->o_userModification;
-    }
-
-    /**
-     * @param int|null $o_id
+     * @param int $parentId
      *
      * @return $this
      */
-    public function setId($o_id)
+    public function setParentId($parentId)
     {
-        $this->o_id = $o_id ? (int)$o_id : null;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_parentId
-     *
-     * @return $this
-     */
-    public function setParentId($o_parentId)
-    {
-        $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId) {
-            $this->markFieldDirty('o_parentId');
+        $parentId = (int) $parentId;
+        if ($parentId != $this->parentId) {
+            $this->markFieldDirty('parentId');
         }
-        $this->o_parentId = $o_parentId;
-        $this->o_parent = null;
+
+        parent::setParentId($parentId);
+
         $this->o_siblings = [];
         $this->o_hasSiblings = [];
 
@@ -1121,18 +1086,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $o_path
-     *
-     * @return $this
-     */
-    public function setPath($o_path)
-    {
-        $this->o_path = $o_path;
-
-        return $this;
-    }
-
-    /**
      * @param int $o_index
      *
      * @return $this
@@ -1154,58 +1107,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         }
         $this->o_childrenSortBy = $childrenSortBy;
-    }
-
-    /**
-     * @param int $o_creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($o_creationDate)
-    {
-        $this->o_creationDate = (int) $o_creationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($o_modificationDate)
-    {
-        $this->markFieldDirty('o_modificationDate');
-
-        $this->o_modificationDate = (int) $o_modificationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($o_userOwner)
-    {
-        $this->o_userOwner = (int) $o_userOwner;
-
-        return $this;
-    }
-
-    /**
-     * @param int $o_userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($o_userModification)
-    {
-        $this->markFieldDirty('o_userModification');
-
-        $this->o_userModification = (int) $o_userModification;
-
-        return $this;
     }
 
     /**
@@ -1234,84 +1135,23 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return self|null
      */
-    public function getParent()
+    public function getParent() /** : ?self **/
     {
-        if ($this->o_parent === null) {
-            $this->setParent(DataObject::getById($this->getParentId()));
-        }
+        $parent = parent::getParent();
 
-        return $this->o_parent;
+        return $parent instanceof AbstractObject ? $parent : null;
     }
 
     /**
-     * @param self|null $o_parent
+     * @param self|null $parent
      *
      * @return $this
      */
-    public function setParent($o_parent)
+    public function setParent($parent)
     {
-        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
-        $this->o_parent = $o_parent;
-
-        return $this;
-    }
-
-    /**
-     * @return Model\Property[]
-     */
-    public function getProperties()
-    {
-        if ($this->o_properties === null) {
-            // try to get from cache
-            $cacheKey = 'object_properties_' . $this->getId();
-            $properties = Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['object_properties' => 'object_properties', $elementCacheTag => $elementCacheTag];
-                Cache::save($properties, $cacheKey, $cacheTags);
-            }
-
-            $this->setProperties($properties);
-        }
-
-        return $this->o_properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->o_properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Model\Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('object');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->o_properties[$name] = $property;
+        $this->parent = $parent;
 
         return $this;
     }
@@ -1322,42 +1162,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getChildrenSortBy()
     {
         return $this->o_childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
-    }
-
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-
-        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = DataObject::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->o_properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
     }
 
     /**
@@ -1469,26 +1273,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection()
     {
         self::setDisableDirtyDetection(false);
-    }
-
-    /**
-     * @return int
-     */
-    public function getVersionCount(): int
-    {
-        return $this->o_versionCount ? $this->o_versionCount : 0;
-    }
-
-    /**
-     * @param int|null $o_versionCount
-     *
-     * @return AbstractObject
-     */
-    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
-    {
-        $this->o_versionCount = (int) $o_versionCount;
-
-        return $this;
     }
 
     /**
@@ -1624,5 +1408,31 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $list;
+    }
+
+    public function __wakeup()
+    {
+        $propertyMappings = [
+            'o_id' => 'id',
+            'o_path' => 'path',
+            'o_creationDate' => 'creationDate',
+            'o_userOwner' => 'userOwner',
+            'o_versionCount' => 'versionCount',
+            'o_locked' => 'locked',
+            'o_parent' => 'parent',
+            'o_properties' => 'properties',
+            'o_userModification' => 'userModification',
+            'o_modificationDate' => 'modificationDate',
+            'o_parentId' => 'parentId',
+        ];
+
+        foreach ($propertyMappings as $oldProperty => $newProperty) {
+            if ($this->$newProperty === null) {
+                $this->$newProperty = $this->$oldProperty;
+                $this->$oldProperty = & $this->$newProperty;
+            }
+        }
+
+        parent::__wakeup();
     }
 }

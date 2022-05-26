@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document\Editable\Areablock;
+use Pimcore\Model\Document\Editable\Block;
 use Pimcore\Model\Document\Editable\Checkbox;
 use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Embed;
@@ -36,21 +37,23 @@ use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Editable\Video;
+use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Util\TestHelper;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertAreablock(Page $page, $field, $seed = 1)
+    public function assertAreablock(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Areablock $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Areablock::class, $editable);
         $value = $editable->getValue();
 
@@ -81,14 +84,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertCheckbox(Page $page, $field, $seed = 1)
+    public function assertCheckbox(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Checkbox $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Checkbox::class, $editable);
         $value = $editable->getValue();
         $expected = ($seed % 2) == true;
@@ -97,14 +100,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertDate(Page $page, $field, $seed = 1)
+    public function assertDate(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Date $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Date::class, $editable);
         $value = $editable->getValue();
         $this->assertInstanceOf(Carbon::class, $value);
@@ -114,7 +117,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param Page $page
      * @param string $field
      * @param int $seed
      */
@@ -129,15 +132,15 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
      */
-    public function assertImage(Page $page, $field, $seed = 1, $params = [])
+    public function assertImage(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Image $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Image::class, $editable);
         $value = $editable->getImage();
         $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $value);
@@ -147,14 +150,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertInput(Page $page, $field, $seed = 1)
+    public function assertInput(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Input $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Input::class, $editable);
         $value = $editable->getValue();
 
@@ -162,14 +165,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertLink(Page $page, $field, $seed = 1, $params = [])
+    public function assertLink(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Link $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
 
         $this->assertInstanceOf(Link::class, $editable);
         $target = $editable->getTarget();
@@ -185,14 +188,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertMultiselect(Page $page, $field, $seed = 1)
+    public function assertMultiselect(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Select $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Multiselect::class, $editable);
 
         $expected = ['1', '2'];
@@ -201,14 +204,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertNumeric(Page $page, $field, $seed = 1)
+    public function assertNumeric(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Numeric $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Numeric::class, $editable);
         $value = $editable->getValue();
 
@@ -216,15 +219,15 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
      */
-    public function assertPdf(Page $page, $field, $seed = 1, $params = [])
+    public function assertPdf(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Pdf $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Pdf::class, $editable);
         $value = $editable->getElement();
         $this->assertInstanceOf(Document::class, $value);
@@ -234,14 +237,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertRelation(Page $page, $field, $seed = 1, $params = [])
+    public function assertRelation(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Relation $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Relation::class, $editable);
         $value = $editable->getElement();
 
@@ -252,14 +255,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertRelations(Page $page, $field, $seed = 1, $params = [])
+    public function assertRelations(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Relations $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Relations::class, $editable);
         $value = $editable->getElements();
 
@@ -274,7 +277,7 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param Page $page
      * @param string $field
      * @param int $seed
      */
@@ -310,14 +313,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertSelect(Page $page, $field, $seed = 1)
+    public function assertSelect(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Select $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Select::class, $editable);
 
         $expected = 1 + ($seed % 2);
@@ -326,14 +329,14 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertTable(Page $page, $field, $seed = 1)
+    public function assertTable(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Table $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Table::class, $editable);
         $value = $editable->getValue();
 
@@ -349,15 +352,15 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      * @param array $params
      */
-    public function assertVideo(Page $page, $field, $seed = 1, $params = [])
+    public function assertVideo(PageSnippet $pagesnippet, $field, $seed = 1, $params = [])
     {
         /** @var Video $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Video::class, $editable);
 
         $video = $editable->getVideoAsset();
@@ -380,28 +383,107 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertWysiwyg(Page $page, $field, $seed = 1)
+    public function assertWysiwyg(PageSnippet $pagesnippet, $field, $seed = 1)
     {
-        $this->assertTextarea($page, $field, $seed);
+        /** @var Wysiwyg $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Wysiwyg::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals('content<br>' . $seed, $value);
     }
 
     /**
-     * @param Page $object
+     * @param PageSnippet $pagesnippet
      * @param string $field
      * @param int $seed
      */
-    public function assertTextarea(Page $page, $field, $seed = 1)
+    public function assertTextarea(PageSnippet $pagesnippet, $field, $seed = 1)
     {
         /** @var Textarea $editable */
-        $editable = $page->getEditable($field);
+        $editable = $pagesnippet->getEditable($field);
         $this->assertInstanceOf(Textarea::class, $editable);
         $value = $editable->getValue();
 
         $this->assertEquals('content<br>' . $seed, $value);
+    }
+
+    /**
+     * @param PageSnippet $pagesnippet
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertBlock(PageSnippet $pagesnippet, $field, $seed = 1)
+    {
+        /** @var Block $editable */
+        $editable = $pagesnippet->getEditable($field);
+        $this->assertInstanceOf(Block::class, $editable);
+        $value = $editable->getValue();
+
+        $expected = $this->createBlockData();
+
+        //assert block indices data
+        $this->assertEquals(array_keys($expected), $value);
+
+        $blockElements = $editable->getElements();
+
+        //assert editables at index 1
+        /** @var Input $blockInput1 */
+        $blockInput1 = $blockElements[0]->getEditable('input');
+        $this->assertEquals($expected[1]['input'], $blockInput1->getValue());
+
+        /** @var Image $blockImage1 */
+        $blockImage1 = $blockElements[0]->getEditable('image');
+        $this->assertInstanceOf(Asset\Image::class, $blockImage1->getImage());
+
+        //assert editables at index 2
+        /** @var Input $blockInput2 */
+        $blockInput2 = $blockElements[1]->getEditable('input');
+        $this->assertEquals($expected[2]['input'], $blockInput2->getValue());
+
+        /** @var Image $blockImage2 */
+        $blockImage2 = $blockElements[1]->getEditable('image');
+        $this->assertInstanceOf(Asset\Image::class, $blockImage2->getImage());
+    }
+
+    /**
+     * @param Page|null $page
+     * @param string|null $blockName
+     *
+     * @return array[]
+     */
+    public function createBlockData($page = null, $blockName = null): array
+    {
+        $asset = TestHelper::createImageAsset('blockimage-');
+        $blockIndices =  [
+            '1' => [
+                'input' => 'block text 1',
+            ],
+            '2' => [
+                'input' => 'block text 2',
+            ],
+        ];
+
+        if ($page && $blockName) {
+            foreach ($blockIndices as $blockIdx => $blockVal) {
+                //Add editable on each block index
+                $input = new Input();
+                $input->setName($blockName . ':' . $blockIdx . '.input');
+                $input->setDataFromResource($blockVal['input']);
+                $page->setEditable($input);
+
+                $image = new Image();
+                $image->setName($blockName . ':' . $blockIdx . '.image');
+                $image->setDataFromEditmode(['id' => $asset->getId()]);
+                $page->setEditable($image);
+            }
+        }
+
+        return $blockIndices;
     }
 
     /**
@@ -690,7 +772,10 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function fillWysiwyg(Page $page, $field, $seed = 1)
     {
-        $this->fillTextarea($page, $field, $seed);
+        $editable = new Wysiwyg();
+        $editable->setName($field);
+        $editable->setDataFromEditmode('content<br>' . $seed);
+        $page->setEditable($editable);
     }
 
     /**
@@ -703,6 +788,20 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Textarea();
         $editable->setName($field);
         $editable->setDataFromEditmode('content<br>' . $seed);
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillBlock(Page $page, $field, $seed = 1)
+    {
+        $editable = new Block();
+        $editable->setName($field);
+        $data = $this->createBlockData($page, $field);
+        $editable->setDataFromEditmode(array_keys($data));
         $page->setEditable($editable);
     }
 }

@@ -63,7 +63,7 @@ trait Wrapper
     }
 
     /**
-     * @return mixed
+     * @return array|null
      */
     public function getProperties()
     {

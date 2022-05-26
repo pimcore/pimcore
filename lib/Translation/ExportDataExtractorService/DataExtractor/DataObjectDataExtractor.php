@@ -47,6 +47,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     * @param array|null $exportAttributes
      *
      * @return AttributeSet
      *
@@ -72,6 +73,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     * @param array|null $exportAttributes
+     * @param bool $inherited
      *
      * @return AttributeSet
      *

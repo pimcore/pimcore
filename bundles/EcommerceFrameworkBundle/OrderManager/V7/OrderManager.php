@@ -848,7 +848,7 @@ class OrderManager implements OrderManagerInterface
      * @param RecurringPaymentInterface $paymentProvider
      * @param string|null $paymentMethod
      *
-     * @return mixed
+     * @return \Pimcore\Model\DataObject\Concrete|null|false
      *
      * @throws \Exception
      */

@@ -1238,8 +1238,10 @@ class UserController extends AdminController implements KernelControllerEventInt
     private function generateCustomUrl(array $params, $fallbackUrl = 'pimcore_admin_login_check', $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
     {
         try {
+            $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');
+
             //try to generate invitation link for custom admin point
-            $loginUrl = $this->generateUrl('my_custom_admin_entry_point', $params, $referenceType);
+            $loginUrl = $this->generateUrl($adminEntryPointRoute, $params, $referenceType);
         } catch (\Exception $e) {
             //use default login check for invitation link
             $loginUrl = $this->generateUrl($fallbackUrl, $params, $referenceType);

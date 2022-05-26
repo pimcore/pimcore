@@ -145,7 +145,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      * @param IndexableInterface $object
      * @param int|null $subObjectId
      *
-     * @return mixed $subTenantData
+     * @return array $subTenantData
      */
     public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
     {

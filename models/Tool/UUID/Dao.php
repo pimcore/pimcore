@@ -65,7 +65,11 @@ class Dao extends Model\Dao\AbstractDao
         if (!$uuid) {
             throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
-        $this->db->delete(self::TABLE_NAME, ['uuid' => $uuid]);
+
+        $itemId = $this->model->getItemId();
+        $type = $this->model->getType();
+
+        $this->db->delete(self::TABLE_NAME, ['itemId' => $itemId, 'type' => $type, 'uuid' => $uuid]);
     }
 
     /**

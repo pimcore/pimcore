@@ -2,7 +2,7 @@
 
 Pimcore includes the [`presta/sitemap-bundle`](https://github.com/prestaconcept/PrestaSitemapBundle) which adds a simple,
 yet powerful API to generate XML sitemaps. Have a look at the bundle documentation on details how the bundle works and how
-you can add sitemaps to it. The bundle exposes a way to add sitemap entries by [firing an event](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/5-Usage-Event_Listener.md)
+you can add sitemaps to it. The bundle exposes a way to add sitemap entries by [firing an event](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/4-dynamic-routes-usage.md)
 which you can handle to add entries to an `UrlContainerInterface`. For simple scenarios, you can directly implement such
 an event handler and start to add entries.
 
@@ -11,12 +11,12 @@ an event handler and start to add entries.
 Sitemaps can either be exposed by being generated on-the-fly or by being dumped to static files. What to use depends on the size
 of your site (e.g. the size of the tree which needs to be processed). In general it's recommended to create static files
 as it reduces the overhead of creating the sitemap on every crawler request. If you want to serve the sitemap directly,
-you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/1-installation.md)
+you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/1-installation.md)
 for details).
 
 ```yaml
 PrestaSitemapBundle:
-    resource: "@PrestaSitemapBundle/Resources/config/routing.yaml"
+    resource: "@PrestaSitemapBundle/config/routing.yaml"
     prefix:   /
 ```
 
@@ -42,7 +42,7 @@ using the `presta:sitemaps:dump` command, you can override those parameters by p
 
 For details see:
 
-* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-configuration.md#configuring-your-application-base-url)
+* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/2-configuration.md#configuring-your-application-base-url)
 * [Symfony Documentation on the Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands)
 * [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/10.x/lib/Sitemap/UrlGenerator.php)
 
@@ -383,7 +383,7 @@ services:
 
 To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/10.x/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands).
-See core processors/generators and [demo](https://github.com/pimcore/demo-basic/tree/master/src/)
+See core processors/generators and [demo](https://github.com/pimcore/demo/tree/10.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
 
 ```php

@@ -24,14 +24,14 @@ class Info
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $id;
 
     /**
      * @internal
      *
-     * @var Editable|Editable\Area|Editable\Areablock
+     * @var Editable|null
      */
     protected $editable;
 
@@ -45,26 +45,26 @@ class Info
     /**
      * @internal
      *
-     * @var Request
+     * @var Request|null
      */
     protected $request;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $type;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $index;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -72,7 +72,7 @@ class Info
     }
 
     /**
-     * @param string $id
+     * @param string|null $id
      *
      * @return $this
      */
@@ -84,7 +84,7 @@ class Info
     }
 
     /**
-     * @return Editable|Editable\Area|Editable\Areablock
+     * @return Editable|null
      */
     public function getEditable()
     {
@@ -100,7 +100,7 @@ class Info
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getType()
     {
@@ -108,7 +108,7 @@ class Info
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */
@@ -167,7 +167,7 @@ class Info
     }
 
     /**
-     * @return Request
+     * @return Request|null
      */
     public function getRequest()
     {
@@ -187,7 +187,7 @@ class Info
     }
 
     /**
-     * @param int $index
+     * @param int|null $index
      *
      * @return $this
      */
@@ -199,7 +199,7 @@ class Info
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex()
     {
@@ -207,7 +207,7 @@ class Info
     }
 
     /**
-     * @return Document|Document\PageSnippet
+     * @return Document\PageSnippet
      */
     public function getDocument()
     {

@@ -44,7 +44,7 @@ class OrderManagerEvent extends Event
      * OrderManagerEvent constructor.
      *
      * @param CartInterface $cart
-     * @param AbstractOrder $order
+     * @param AbstractOrder|null $order
      * @param OrderManagerInterface $orderManager
      * @param array $arguments
      */

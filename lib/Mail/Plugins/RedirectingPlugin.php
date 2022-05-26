@@ -49,7 +49,7 @@ final class RedirectingPlugin
     /**
      * Set the recipient of all messages.
      *
-     * @param mixed $recipient
+     * @param array $recipient
      */
     public function setRecipient($recipient)
     {
@@ -59,7 +59,7 @@ final class RedirectingPlugin
     /**
      * Get the recipient of all messages.
      *
-     * @return mixed
+     * @return array
      */
     public function getRecipient()
     {

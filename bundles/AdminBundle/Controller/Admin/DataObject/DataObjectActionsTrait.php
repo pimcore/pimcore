@@ -128,6 +128,10 @@ trait DataObjectActionsTrait
                 $list = $beforeListLoadEvent->getArgument('list');
             }
 
+            if ($objectType === DataObject::OBJECT_TYPE_VARIANT) {
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
+            }
+
             $list->load();
 
             $objects = [];

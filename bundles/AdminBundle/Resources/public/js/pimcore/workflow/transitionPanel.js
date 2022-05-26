@@ -171,7 +171,7 @@ pimcore.workflow.transitionPanel = Class.create({
                 width: 530,
                 height: height,
                 iconCls: this.transitionConfig.iconCls,
-                title: this.transitionConfig.label,
+                title: t(this.transitionConfig.label),
                 layout: "fit",
                 closeAction:'close',
                 plain: true,
