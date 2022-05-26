@@ -38,18 +38,11 @@ class IgnoredSessionKeysEvent extends Event
         $this->keys = $keys;
     }
 
-    /**
-     * @return array
-     */
     public function getKeys(): array
     {
         return $this->keys;
     }
 
-    /**
-     * @param array $keys
-     * @return void
-     */
     public function setKeys(array $keys)
     {
         $this->keys = $keys;

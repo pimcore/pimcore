@@ -42,11 +42,6 @@ class BuildConditionEvent extends Event
      */
     private $condition;
 
-    /**
-     * @param string $type
-     * @param string $class
-     * @param array $config
-     */
     public function __construct(string $type, string $class, array $config)
     {
         $this->type = $type;
@@ -54,33 +49,21 @@ class BuildConditionEvent extends Event
         $this->config = $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getClass(): string
     {
         return $this->class;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return bool
-     */
     public function hasCondition(): bool
     {
         return null !== $this->condition;
@@ -94,10 +77,6 @@ class BuildConditionEvent extends Event
         return $this->condition;
     }
 
-    /**
-     * @param ConditionInterface $condition
-     * @return void
-     */
     public function setCondition(ConditionInterface $condition)
     {
         $this->condition = $condition;

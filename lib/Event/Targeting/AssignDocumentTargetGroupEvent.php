@@ -41,17 +41,11 @@ class AssignDocumentTargetGroupEvent extends TargetingEvent
         $this->targetGroup = $targetGroup;
     }
 
-    /**
-     * @return Document
-     */
     public function getDocument(): Document
     {
         return $this->document;
     }
 
-    /**
-     * @return TargetGroup
-     */
     public function getTargetGroup(): TargetGroup
     {
         return $this->targetGroup;

@@ -33,27 +33,17 @@ class PrepareResponseEvent extends Event
      */
     private $response;
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     */
     public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
         $this->response = $response;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @return Response
-     */
     public function getResponse(): Response
     {
         return $this->response;

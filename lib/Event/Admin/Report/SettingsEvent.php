@@ -44,7 +44,6 @@ class SettingsEvent extends Event
 
     /**
      * @param array $settings
-     * @return void
      */
     public function setSettings($settings)
     {
