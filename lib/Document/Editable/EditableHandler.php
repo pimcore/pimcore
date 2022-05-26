@@ -149,7 +149,7 @@ class EditableHandler implements LoggerAwareInterface
 
     /**
      * @param Editable $editable
-     * @param AreabrickInterface|string $brick
+     * @param AreabrickInterface|string|bool $brick
      * @return bool
      */
     public function isBrickEnabled(Editable $editable, $brick)
