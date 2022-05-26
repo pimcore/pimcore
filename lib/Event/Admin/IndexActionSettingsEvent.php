@@ -41,6 +41,10 @@ class IndexActionSettingsEvent extends Event
         $this->settings = $settings;
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
     public function addSetting(string $key, $value)
     {
         $this->settings[$key] = $value;
