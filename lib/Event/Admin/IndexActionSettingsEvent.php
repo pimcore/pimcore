@@ -26,16 +26,26 @@ class IndexActionSettingsEvent extends Event
      */
     private $settings;
 
+    /**
+     * @param array $settings
+     */
     public function __construct(array $settings)
     {
         $this->settings = $settings;
     }
 
+    /**
+     * @return array
+     */
     public function getSettings(): array
     {
         return $this->settings;
     }
 
+    /**
+     * @param array $settings
+     * @return void
+     */
     public function setSettings(array $settings)
     {
         $this->settings = $settings;

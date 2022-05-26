@@ -52,11 +52,18 @@ class TargetingCodeEvent extends Event
         $this->data = $data;
     }
 
+    /**
+     * @return string
+     */
     public function getTemplate(): string
     {
         return $this->template;
     }
 
+    /**
+     * @param string $template
+     * @return void
+     */
     public function setTemplate(string $template)
     {
         $this->template = $template;
@@ -70,6 +77,10 @@ class TargetingCodeEvent extends Event
         return $this->blocks;
     }
 
+    /**
+     * @param string $block
+     * @return CodeBlock
+     */
     public function getBlock(string $block): CodeBlock
     {
         if (!isset($this->blocks[$block])) {
@@ -79,11 +90,18 @@ class TargetingCodeEvent extends Event
         return $this->blocks[$block];
     }
 
+    /**
+     * @return array
+     */
     public function getData(): array
     {
         return $this->data;
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     public function setData(array $data)
     {
         $this->data = $data;

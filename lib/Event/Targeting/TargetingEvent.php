@@ -28,16 +28,25 @@ class TargetingEvent extends Event
      */
     protected $visitorInfo;
 
+    /**
+     * @param VisitorInfo $visitorInfo
+     */
     public function __construct(VisitorInfo $visitorInfo)
     {
         $this->visitorInfo = $visitorInfo;
     }
 
+    /**
+     * @return VisitorInfo
+     */
     public function getVisitorInfo(): VisitorInfo
     {
         return $this->visitorInfo;
     }
 
+    /**
+     * @return Request
+     */
     public function getRequest(): Request
     {
         return $this->visitorInfo->getRequest();

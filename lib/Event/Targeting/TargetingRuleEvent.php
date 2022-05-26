@@ -27,6 +27,10 @@ class TargetingRuleEvent extends TargetingEvent
      */
     private $rule;
 
+    /**
+     * @param VisitorInfo $visitorInfo
+     * @param Rule $rule
+     */
     public function __construct(VisitorInfo $visitorInfo, Rule $rule)
     {
         parent::__construct($visitorInfo);
@@ -34,6 +38,9 @@ class TargetingRuleEvent extends TargetingEvent
         $this->rule = $rule;
     }
 
+    /**
+     * @return Rule
+     */
     public function getRule(): Rule
     {
         return $this->rule;

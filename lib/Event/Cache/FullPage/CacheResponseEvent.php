@@ -35,22 +35,36 @@ class CacheResponseEvent extends Event
      */
     private $cache;
 
+    /**
+     * @param Response $response
+     * @param bool $cache
+     */
     public function __construct(Response $response, bool $cache)
     {
         $this->response = $response;
         $this->cache = $cache;
     }
 
+    /**
+     * @return Response
+     */
     public function getResponse(): Response
     {
         return $this->response;
     }
 
+    /**
+     * @return bool
+     */
     public function getCache(): bool
     {
         return $this->cache;
     }
 
+    /**
+     * @param bool $cache
+     * @return void
+     */
     public function setCache(bool $cache)
     {
         $this->cache = $cache;
