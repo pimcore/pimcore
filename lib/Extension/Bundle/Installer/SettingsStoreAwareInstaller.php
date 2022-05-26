@@ -78,26 +78,16 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->dependencyFactory = $dependencyFactory;
     }
 
-    /**
-     * @return string
-     */
     protected function getSettingsStoreInstallationId(): string
     {
         return 'BUNDLE_INSTALLED__' . $this->bundle->getNamespace() . '\\' . $this->bundle->getName();
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastMigrationVersionClassName(): ?string
     {
         return null;
     }
 
-    /**
-     * @return void
-     * @throws \Exception
-     */
     protected function markInstalled()
     {
         $migrationVersion = $this->getLastMigrationVersionClassName();
@@ -124,10 +114,6 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
     }
 
-    /**
-     * @return void
-     * @throws \Exception
-     */
     protected function markUninstalled()
     {
         SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
@@ -144,20 +130,12 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         }
     }
 
-    /**
-     * @return void
-     * @throws \Exception
-     */
     public function install()
     {
         parent::install();
         $this->markInstalled();
     }
 
-    /**
-     * @return void
-     * @throws \Exception
-     */
     public function uninstall()
     {
         parent::uninstall();
