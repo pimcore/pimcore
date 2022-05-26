@@ -150,6 +150,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * @param Editable $editable
      * @param AreabrickInterface|string|bool $brick
+     *
      * @return bool
      */
     public function isBrickEnabled(Editable $editable, $brick)
@@ -164,6 +165,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * @param Editable\Areablock $editable
      * @param array $options
+     *
      * @return array
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
@@ -297,7 +299,6 @@ class EditableHandler implements LoggerAwareInterface
 
     /**
      * @param Response|null $result
-     * @return void
      */
     protected function handleBrickActionResult($result)
     {

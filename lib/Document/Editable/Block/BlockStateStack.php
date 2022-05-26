@@ -78,9 +78,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
         return array_slice($this->states, -1)[0];
     }
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         return count($this->states);
@@ -94,10 +91,6 @@ final class BlockStateStack implements \Countable, \JsonSerializable
         return $this->states;
     }
 
-    /**
-     * @param array $array
-     * @return void
-     */
     public function loadArray(array $array)
     {
         $this->states = [];
