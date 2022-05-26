@@ -35,7 +35,7 @@ trait PackageVersionTrait
     abstract protected function getComposerPackageName(): string;
 
     /**
-     * {@inheritdoc}
+     * @return array|string|string[]|null
      */
     public function getVersion()
     {
@@ -49,7 +49,7 @@ trait PackageVersionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed|string
      */
     public function getDescription()
     {
