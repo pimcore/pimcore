@@ -296,7 +296,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param $result
+     * @param Response|null $result
      * @return void
      */
     protected function handleBrickActionResult($result)
@@ -398,7 +398,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param $controller
+     * @param string $controller
      * @param array $attributes
      * @param array $query
      * @return string|Response
