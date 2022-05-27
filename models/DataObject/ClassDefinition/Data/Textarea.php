@@ -25,6 +25,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -49,6 +50,12 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string|int
      */
     public $height = 0;
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    public $defaultValue;
 
     /**
      * @internal
@@ -198,6 +205,8 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+	$data = $this->handleDefaultValue($data, $object, $params);
+
         return $data;
     }
 
@@ -316,6 +325,36 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        return $this->getDefaultValue();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @param string $defaultValue
+     *
+     * @return $this
+     */
+    public function setDefaultValue($defaultValue)
+    {
+        if ((string)$defaultValue !== '') {
+            $this->defaultValue = $defaultValue;
+        }
+
+        return $this;
     }
 
     /**
