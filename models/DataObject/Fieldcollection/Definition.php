@@ -198,7 +198,7 @@ class Definition extends Model\AbstractModel
             $data .=  $this->getInfoDocBlock();
             $data .= "\n\n";
 
-            $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= 'return ' . $exportedClass . ";\n";
 
             \Pimcore\File::put($definitionFile, $data);
         }
@@ -281,14 +281,14 @@ class Definition extends Model\AbstractModel
     protected function getInfoDocBlock(): string
     {
         $cd = '/**' . "\n";
-        $cd .= "Fields Summary:\n";
+        $cd .= " * Fields Summary:\n";
 
         $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
         foreach ($this->getFieldDefinitions() as $fieldDefinition) {
-            $cd .= $fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+            $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
 
-        $cd .= '*/';
+        $cd .= ' */';
 
         return $cd;
     }

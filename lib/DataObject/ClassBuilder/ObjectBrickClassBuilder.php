@@ -33,13 +33,13 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
         }
 
         $infoDocBlock = '/**' . "\n";
-        $infoDocBlock .= "Fields Summary:\n";
+        $infoDocBlock .= " * Fields Summary:\n";
 
         foreach ($definition->getFieldDefinitions() as $fieldDefinition) {
-            $infoDocBlock .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+            $infoDocBlock .= ' * ' . str_replace("\n", "\n * ", trim($this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
 
-        $infoDocBlock .= '*/';
+        $infoDocBlock .= ' */';
 
         $cd = '<?php';
         $cd .= "\n\n";

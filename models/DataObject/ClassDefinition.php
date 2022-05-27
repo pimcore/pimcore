@@ -511,7 +511,7 @@ final class ClassDefinition extends Model\AbstractModel
             $data .= $this->getInfoDocBlock();
             $data .= "\n\n";
 
-            $data .= "\nreturn ".$exportedClass.";\n";
+            $data .= 'return '.$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
@@ -528,22 +528,22 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
-        if ($this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
+        if ($description = $this->getDescription()) {
+            $description = str_replace(['/**', '*/', '//'], '', $description);
             $description = str_replace("\n", "\n * ", $description);
 
             $cd .= ' * '.$description."\n";
         }
 
-        $cd .= "\n\n";
-        $cd .= "Fields Summary:\n";
+        $cd .= " *\n";
+        $cd .= " * Fields Summary:\n";
 
         $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
         foreach ($this->getFieldDefinitions() as $fieldDefinition) {
-            $cd .= $fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+            $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
 
-        $cd .= '*/';
+        $cd .= ' */';
 
         return $cd;
     }
