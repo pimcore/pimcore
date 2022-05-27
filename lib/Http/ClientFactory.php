@@ -40,6 +40,7 @@ class ClientFactory
 
     /**
      * @param array $config
+     *
      * @return Client
      */
     public function createClient(array $config = [])
