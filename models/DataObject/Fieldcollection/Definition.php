@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -194,6 +195,8 @@ class Definition extends Model\AbstractModel
 
             $data = '<?php';
             $data .= "\n\n";
+            $data .=  $this->getInfoDocBlock();
+            $data .= "\n\n";
 
             $data .= "\nreturn " . $exportedClass . ";\n";
 
@@ -268,5 +271,25 @@ class Definition extends Model\AbstractModel
     public function getPhpClassFile()
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
+    }
+
+    /**
+     * @internal
+     *
+     * @return string
+     */
+    protected function getInfoDocBlock(): string
+    {
+        $cd = '/**' . "\n";
+        $cd .= "Fields Summary:\n";
+
+        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+            $cd .= $fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+        }
+
+        $cd .= '*/';
+
+        return $cd;
     }
 }
