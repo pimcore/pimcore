@@ -65,15 +65,14 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        $request = $this->requestHelper->getRequest();
-        if (!$request->getSession()->isStarted()) {
+        if ($this->requestHelper->getSession()->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
             });
         }
 
-        return $request->getSession()->getId();
+        return $this->requestHelper->getSession()->getId();
     }
 
     /**
@@ -232,9 +231,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
-        $request = $this->requestHelper->getRequest();
-        if (!$request->getSession()->isStarted()) {
-            $request->getSession()->start();
+        if (!$this->requestHelper->getSession()->isStarted()) {
+            $this->requestHelper->getSession()->start();
         }
 
         $this->openedSessions++;
@@ -244,7 +242,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             'count' => $this->openedSessions,
         ]);
 
-        return $request->getSession();
+        return $this->requestHelper->getSession();
     }
 
     /**
