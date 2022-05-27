@@ -26,7 +26,7 @@ final class ResultContainer
     public $label;
 
     /**
-     * @var string
+     * @var mixed
      */
     public $value;
 
@@ -44,7 +44,7 @@ final class ResultContainer
     }
 
     /**
-     * @param $label
+     * @param string $label
      */
     public function setLabel($label)
     {
@@ -60,7 +60,7 @@ final class ResultContainer
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      */
     public function setValue($value)
     {
@@ -76,7 +76,7 @@ final class ResultContainer
     }
 
     /**
-     * @param $isEmpty
+     * @param bool $isEmpty
      */
     public function setIsEmpty($isEmpty)
     {
