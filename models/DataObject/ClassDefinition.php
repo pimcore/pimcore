@@ -525,14 +525,14 @@ final class ClassDefinition extends Model\AbstractModel
     protected function getInfoDocBlock(): string
     {
         $cd = '/**' . "\n";
-        $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
-        $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
+        $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
+        $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
-            $description = str_replace("\n", "\n* ", $description);
+            $description = str_replace("\n", "\n * ", $description);
 
-            $cd .= '* '.$description."\n";
+            $cd .= ' * '.$description."\n";
         }
 
         $cd .= "\n\n";
