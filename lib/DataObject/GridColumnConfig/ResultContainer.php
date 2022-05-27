@@ -20,37 +20,64 @@ namespace Pimcore\DataObject\GridColumnConfig;
  */
 final class ResultContainer
 {
+    /**
+     * @var string
+     */
     public $label;
 
+    /**
+     * @var string
+     */
     public $value;
 
+    /**
+     * @var bool
+     */
     public $isEmpty;
 
+    /**
+     * @return string
+     */
     public function getLabel()
     {
         return $this->label;
     }
 
+    /**
+     * @param $label
+     */
     public function setLabel($label)
     {
         $this->label = $label;
     }
 
+    /**
+     * @return string
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @param $value
+     */
     public function setValue($value)
     {
         $this->value = $value;
     }
 
+    /**
+     * @return bool
+     */
     public function getIsEmpty()
     {
         return $this->isEmpty;
     }
 
+    /**
+     * @param $isEmpty
+     */
     public function setIsEmpty($isEmpty)
     {
         $this->isEmpty = $isEmpty;
