@@ -44,4 +44,11 @@ final class RedirectEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.redirect.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\RedirectEvent")
+     *
+     * @var string
+     */
+    const PRE_BUILD = 'pimcore.redirect.preBuild';
 }

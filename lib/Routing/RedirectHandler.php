@@ -17,6 +17,9 @@ namespace Pimcore\Routing;
 
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Event\Model\RedirectEvent;
+use Pimcore\Event\RedirectEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -38,6 +41,7 @@ use Symfony\Component\Lock\LockInterface;
 final class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
@@ -162,6 +166,7 @@ final class RedirectHandler implements LoggerAwareInterface
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
     {
+        $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
             $d = Document::getById((int) $target);
