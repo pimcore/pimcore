@@ -27,12 +27,26 @@ use Pimcore\Composer\PackageInfo;
  */
 trait PackageVersionTrait
 {
+
     /**
      * Returns the composer package name used to resolve the version
      *
      * @return string
      */
-    abstract protected function getComposerPackageName(): string;
+    public function getComposerPackageName(): string {
+        $composerFile = __DIR__ . '/../composer.json';
+
+        if (file_exists($composerFile)) {
+            $composerConfig = file_get_contents($composerFile);
+            $composerConfig = json_decode($composerConfig);
+
+            if (property_exists($composerConfig, 'name')) {
+                return $composerConfig->name;
+            }
+        }
+
+        return '';
+    }
 
     /**
      * {@inheritdoc}
