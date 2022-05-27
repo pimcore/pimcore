@@ -166,6 +166,7 @@ final class RedirectHandler implements LoggerAwareInterface
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
     {
+        $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
             $d = Document::getById((int) $target);
@@ -232,7 +233,6 @@ final class RedirectHandler implements LoggerAwareInterface
         }
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
-        $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $response = new RedirectResponse($url, $statusCode);
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
