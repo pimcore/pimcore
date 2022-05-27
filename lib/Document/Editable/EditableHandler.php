@@ -402,6 +402,7 @@ class EditableHandler implements LoggerAwareInterface
      * @param string $controller
      * @param array $attributes
      * @param array $query
+     *
      * @return string|Response
      */
     public function renderAction($controller, array $attributes = [], array $query = [])
