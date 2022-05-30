@@ -146,7 +146,9 @@ class Bootstrap
 
     private static function prepareEnvVariables()
     {
-        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        }
     }
 
     public static function defineConstants()
