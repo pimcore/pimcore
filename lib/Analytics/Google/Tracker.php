@@ -121,6 +121,7 @@ class Tracker extends AbstractTracker
 
     /**
      * @param SiteId $siteId
+     *
      * @return string|null
      */
     protected function buildCode(SiteId $siteId)
@@ -161,6 +162,7 @@ class Tracker extends AbstractTracker
      * @param SiteId $siteId
      * @param Config $config
      * @param ConfigObject $siteConfig
+     *
      * @return string
      */
     private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)

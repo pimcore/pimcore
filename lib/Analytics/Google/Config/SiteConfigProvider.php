@@ -43,6 +43,7 @@ class SiteConfigProvider
 
     /**
      * @param Site|null $site
+     *
      * @return \Pimcore\Config\Config|null
      */
     public function getSiteConfig(Site $site = null)
