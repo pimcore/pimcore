@@ -41,6 +41,10 @@ class SiteConfigProvider
         $this->configProvider = $configProvider;
     }
 
+    /**
+     * @param Site|null $site
+     * @return \Pimcore\Config\Config|null
+     */
     public function getSiteConfig(Site $site = null)
     {
         $siteId = $this->getSiteId($site);

@@ -43,6 +43,9 @@ final class CodeBlock
         return $this->parts;
     }
 
+    /**
+     * @param array|string $parts
+     */
     public function append($parts)
     {
         $parts = (array)$parts;
@@ -52,6 +55,9 @@ final class CodeBlock
         }
     }
 
+    /**
+     * @param array|string $parts
+     */
     public function prepend($parts)
     {
         $parts = (array)$parts;

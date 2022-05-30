@@ -101,6 +101,9 @@ class Tracker extends AbstractTracker
         $this->twig = $twig;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDefaultPath()
     {
         return $this->defaultPath;
@@ -116,6 +119,10 @@ class Tracker extends AbstractTracker
         return new CodeCollector($this->blocks, self::BLOCK_AFTER_TRACK);
     }
 
+    /**
+     * @param SiteId $siteId
+     * @return string|null
+     */
     protected function buildCode(SiteId $siteId)
     {
         $config = $this->configProvider->getConfig();
@@ -150,6 +157,12 @@ class Tracker extends AbstractTracker
         return $this->doBuildCode($siteId, $config, $siteConfig);
     }
 
+    /**
+     * @param SiteId $siteId
+     * @param Config $config
+     * @param ConfigObject $siteConfig
+     * @return string
+     */
     private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
     {
         $data = [
