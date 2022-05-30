@@ -34,11 +34,8 @@ final class Config
     private static function getRepository()
     {
         if (!self::$locationAwareConfigRepository) {
-            $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            if (isset($containerConfig[self::CONFIG_ID]['definitions'])) {
-                $config = $containerConfig[self::CONFIG_ID]['definitions'];
-            }
+            $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
             // @deprecated legacy will be removed in Pimcore 11
             $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
