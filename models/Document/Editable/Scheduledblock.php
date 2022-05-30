@@ -200,7 +200,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockStart($showControls = true, $return = false, $additional_class = '')
+    public function blockStart($showControls = true, $return = false, $additionalClass = '')
     {
         $attributes = [
             'data-name' => $this->getName(),
@@ -217,8 +217,8 @@ class Scheduledblock extends Block implements BlockInterface
 
         // outer element
         $class = 'pimcore_block_entry';
-        if (!empty($additional_class)) {
-            $class = sprintf('%s %s', $class, $additional_class);
+        if (!empty($additionalClass)) {
+            $class = sprintf('%s %s', $class, $additionalClass);
         }
 
         $this->outputEditmode('<div class="' . $class . '" ' . $oAttr . ' ' . $attr . '>');

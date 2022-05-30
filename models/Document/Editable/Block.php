@@ -275,7 +275,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockStart($showControls = true, $return = false, $additional_class = '')
+    public function blockStart($showControls = true, $return = false, $additionalClass = '')
     {
         $attr = $this->getBlockAttributes();
 
@@ -285,8 +285,8 @@ class Block extends Model\Document\Editable implements BlockInterface
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         $class = 'pimcore_block_entry';
-        if (!empty($additional_class)) {
-            $class = sprintf('%s %s', $class, $additional_class);
+        if (!empty($additionalClass)) {
+            $class = sprintf('%s %s', $class, $additionalClass );
         }
 
         $html = '<div class="' . $class . '" ' . $oAttr . ' ' . $attr . '>';
