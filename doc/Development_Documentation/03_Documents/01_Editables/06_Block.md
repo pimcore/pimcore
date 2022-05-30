@@ -125,7 +125,7 @@ If you want to wrap buttons in a div or change the Position.
 <div>
     {% for b in block.iterator %}
         {% do block.blockConstruct() %}
-            {% do block.blockStart(true, false, 'my-additional-class') %}
+            {% do block.blockStart(additionalClass='my-additional-class') %}
                 Add additional class 'my-addional-class' to editmode-div
             {% do block.blockEnd() %}
         {% do block.blockDestruct() %}
