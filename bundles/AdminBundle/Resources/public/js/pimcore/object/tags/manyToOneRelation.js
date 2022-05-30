@@ -68,7 +68,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
-            value: filterValue
+            value: filterValue === null ? 'null' : filterValue
         });
     },
 

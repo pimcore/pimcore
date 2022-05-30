@@ -134,7 +134,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                         $property->setDataFromEditmode($value);
                         $property->setInheritable($propertyData['inheritable']);
 
-                        if ($propertyName == 'language') {
+                        if ($propertyName === 'language') {
                             $property->setInherited($this->getPropertyInheritance($document, $propertyName, $value));
                         }
 
@@ -299,11 +299,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     /**
      * @param Model\Document $document
      * @param string $propertyName
-     * @param string $propertyValue
+     * @param mixed $propertyValue
      *
      * @return bool
      */
-    protected function getPropertyInheritance(Model\Document $document, string $propertyName, string $propertyValue): bool
+    protected function getPropertyInheritance(Model\Document $document, string $propertyName, mixed $propertyValue): bool
     {
         if ($document->getParent()) {
             return $propertyValue == $document->getParent()->getProperty($propertyName);
