@@ -150,7 +150,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param string|null $permissionName
+     * @param string $permissionName
      *
      * @return bool
      */
@@ -187,7 +187,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param string|array|null $permissions
+     * @param string|array $permissions
      *
      * @return $this
      */
@@ -263,7 +263,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array|string|null $classes
+     * @param array|string $classes
      *
      * @return $this
      */
@@ -285,7 +285,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array|string|null $docTypes
+     * @param array|string $docTypes
      *
      * @return $this
      */
@@ -315,7 +315,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array|string|null $perspectives
+     * @param array|string $perspectives
      *
      * @return $this
      */
@@ -337,7 +337,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array|string|null $websiteTranslationLanguagesView
+     * @param array|string $websiteTranslationLanguagesView
      *
      * @return $this
      */
@@ -359,7 +359,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array|string|null $websiteTranslationLanguagesEdit
+     * @param array|string $websiteTranslationLanguagesEdit
      *
      * @return $this
      */
@@ -378,7 +378,7 @@ class UserRole extends AbstractUser
      *
      * @internal
      *
-     * @param array|string|null $array
+     * @param array|string $array
      *
      * @return array
      */
