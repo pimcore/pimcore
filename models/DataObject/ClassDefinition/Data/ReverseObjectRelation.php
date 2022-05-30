@@ -240,11 +240,19 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 
+    /**
+     * @param DataObject\Concrete $container
+     * @param array $params
+     * @return array
+     */
     public function preGetData($container, $params = [])
     {
         return $this->load($container);
     }
 
+    /**
+     * @return false
+     */
     public function supportsInheritance()
     {
         return false;

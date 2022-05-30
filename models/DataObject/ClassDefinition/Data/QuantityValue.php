@@ -524,6 +524,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $obj;
     }
 
+    /**
+     * @param array $value
+     * @param string $operator
+     * @param array $params
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterCondition($value, $operator, $params = [])
     {
         /** @var UnitConversionService $converter */
