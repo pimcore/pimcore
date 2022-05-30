@@ -257,7 +257,7 @@ class Bootstrap
 
         $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+        if ($conf['general']['timezone']) {
             date_default_timezone_set($conf['general']['timezone']);
         }
 

@@ -45,13 +45,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByKey($key)
     {
-        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'] ?? false;
-
-        $condition = '`key` = ?';
-        if ($caseInsensitive) {
-            $condition = 'LOWER(`key`) = LOWER(?)';
-        }
-        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = ? ORDER BY `creationDate` ', [$key]);
 
         if (!empty($data)) {
             foreach ($data as $d) {
