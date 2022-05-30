@@ -721,7 +721,6 @@ final class Version extends AbstractModel
 
     /**
      * @param bool $autoSave
-     * @return Version
      */
     public function setAutoSave(bool $autoSave): self
     {
