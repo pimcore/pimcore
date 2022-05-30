@@ -1495,12 +1495,14 @@ class DataObjectHelperController extends AdminController
 
             $storage->delete($csvFile);
 
+            $storage->delete($csvFile);
+            return $response;
+
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
         }
 
-        return $response;
     }
 
     /**
