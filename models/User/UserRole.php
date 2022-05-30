@@ -263,7 +263,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $classes
+     * @param array|string $classes
      *
      * @return $this
      */
@@ -285,7 +285,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $docTypes
+     * @param array|string $docTypes
      *
      * @return $this
      */
@@ -337,7 +337,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesView
+     * @param array|string $websiteTranslationLanguagesView
      *
      * @return $this
      */
@@ -359,7 +359,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesEdit
+     * @param array|string $websiteTranslationLanguagesEdit
      *
      * @return $this
      */
