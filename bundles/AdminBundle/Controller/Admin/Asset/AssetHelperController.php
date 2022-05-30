@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
 use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToWriteFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -885,7 +886,7 @@ class AssetHelperController extends AdminController
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return Response
      */
     public function downloadCsvFileAction(Request $request)
     {
@@ -903,13 +904,13 @@ class AssetHelperController extends AdminController
             );
 
             $response->headers->set('Content-Disposition', $disposition);
+            $storage->delete($csvFile);
+            return $response;
 
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('CSV file not found');
         }
-
-        return $response;
     }
 
     /**

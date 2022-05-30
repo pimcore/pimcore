@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToWriteFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -1430,7 +1431,7 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return Response
      */
     public function downloadCsvFileAction(Request $request)
     {
@@ -1448,13 +1449,13 @@ class DataObjectHelperController extends AdminController
             );
 
             $response->headers->set('Content-Disposition', $disposition);
+            $storage->delete($csvFile);
+            return $response;
 
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('CSV file not found');
         }
-
-        return $response;
     }
 
     /**
@@ -1491,6 +1492,8 @@ class DataObjectHelperController extends AdminController
             $response->headers->set('Content-Type', 'application/xlsx');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
+
+            $storage->delete($csvFile);
 
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
