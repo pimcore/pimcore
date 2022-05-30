@@ -30,7 +30,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['assets']['metadata']['predefined']['definitions'] ?? [],
+            'containerConfig' => $config['assets']['metadata']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_asset_metadata',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/predefined-asset-metadata',
             'legacyConfigFile' => 'predefined-asset-metadata.php',

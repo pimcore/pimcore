@@ -38,15 +38,13 @@ class ConfigController extends AdminController
         $config = $this->getParameter('pimcore_ecommerce.pimcore.config');
 
         $orderList = $config['menu']['order_list'];
-        if (isset($orderList['route']) && !empty($orderList['route'])) {
+        if ($orderList['route']) {
             $orderList['route'] = $this->get('router')->generate($orderList['route']);
-        } elseif (isset($orderList['path']) && !empty($orderList['path'])) {
+        } elseif ($orderList['path']) {
             $orderList['route'] = $orderList['path'];
         }
 
-        if (array_key_exists('path', $orderList)) {
-            unset($orderList['path']);
-        }
+        unset($orderList['path']);
 
         $config['menu']['order_list'] = $orderList;
 
