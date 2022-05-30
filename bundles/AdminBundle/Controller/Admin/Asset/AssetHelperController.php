@@ -942,17 +942,19 @@ class AssetHelperController extends AdminController
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
+            
+            $response = new BinaryFileResponse($xlsxFilename);
+            $response->headers->set('Content-Type', 'application/xlsx');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
 
             $storage->delete($csvFile);
-
+            return $response;
+            
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
         }
-
-        return $response;
     }
 
     /**
