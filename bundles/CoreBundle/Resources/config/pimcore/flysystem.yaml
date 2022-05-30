@@ -65,8 +65,7 @@ flysystem:
         pimcore.temp.storage:
             # Storage for temporary files that work under a batch process, such as export csv
             # must not be `local` for stateless environment
-            adapter: 'aws'
+            adapter: 'local'
             visibility: private
             options:
-                client: 'minio_client'
-                bucket: 'temp'
+                directory: '%kernel.project_dir%/var/temp'
