@@ -29,7 +29,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['custom_report']['definitions'] ?? [],
+            'containerConfig' => $config['custom_report']['definitions'],
             'settingsStoreScope' => 'pimcore_custom_reports',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/custom-reports',
             'legacyConfigFile' => 'custom-reports.php',
