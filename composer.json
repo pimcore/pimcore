@@ -141,6 +141,7 @@
     "symfony/web-profiler-bundle": "^5.2.0",
     "symfony/workflow": "^5.2.0",
     "symfony/yaml": "^5.2.0",
+    "symfony/polyfill-intl-icu": "^1.21",
     "symfony/polyfill-php81": "^1.23.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/twig": "^3.0.4",
