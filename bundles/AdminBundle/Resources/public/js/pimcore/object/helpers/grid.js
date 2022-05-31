@@ -104,6 +104,7 @@ pimcore.object.helpers.grid = Class.create({
 
                 // Don't add batch options if field has dynamic options
                 if (
+                    fieldConfig.layout === undefined ||
                     !fieldConfig.hasOwnProperty('layout')
                     || !fieldConfig.layout.hasOwnProperty('dynamicOptions')
                     || fieldConfig.layout.dynamicOptions !== true
