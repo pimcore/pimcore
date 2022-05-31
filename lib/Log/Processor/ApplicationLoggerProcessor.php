@@ -138,6 +138,10 @@ class ApplicationLoggerProcessor
         return $record;
     }
 
+    /**
+     * @param $filename
+     * @return array|string|string[]
+     */
     private function normalizeFilename($filename)
     {
         return str_replace(PIMCORE_PROJECT_ROOT . '/', '', $filename);
