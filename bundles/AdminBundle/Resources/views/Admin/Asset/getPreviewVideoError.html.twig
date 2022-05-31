@@ -73,7 +73,7 @@
                 </div>
 
 
-                <script>
+                <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
                     window.setTimeout(function () {
                         location.reload();
                     }, 5000);
