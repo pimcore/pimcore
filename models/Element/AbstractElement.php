@@ -756,6 +756,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @return string[]
      */
     protected function getBlockedVars(): array
