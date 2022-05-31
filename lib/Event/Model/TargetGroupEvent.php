@@ -25,6 +25,9 @@ class TargetGroupEvent extends Event
      */
     protected $targetGroup;
 
+    /**
+     * @var array
+     */
     protected $arguments;
 
     /**

@@ -33,6 +33,7 @@ interface ExportDataExtractorServiceInterface
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet;
 
     /**
+     * @param string $type
      * @param DataExtractorInterface $dataExtractor
      *
      * @return $this

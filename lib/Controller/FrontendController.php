@@ -47,7 +47,9 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * {@inheritdoc}
+     * @param string $name
+     *
+     * @return mixed
      */
     public function __get($name)
     {
@@ -63,7 +65,8 @@ abstract class FrontendController extends Controller
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -124,7 +127,7 @@ abstract class FrontendController extends Controller
      * @param array $parameters
      * @param Response|null $response
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function renderTemplate($view, array $parameters = [], Response $response = null)
     {

@@ -176,6 +176,14 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @return array
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
      * @param array $items
      *
      * @return $this

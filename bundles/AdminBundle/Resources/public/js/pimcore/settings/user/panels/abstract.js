@@ -49,7 +49,7 @@ pimcore.settings.user.panels.abstract = Class.create({
 
         Ext.MessageBox.show({
             title:t('delete'),
-            msg: record.hasChildNodes() ? t("are_you_sure_recursive") : t("are_you_sure"),
+            msg: record.hasChildNodes() ? t("are_you_sure_recursive") : sprintf(t("delete_message_advanced"), t('user'), record.data.text),
             buttons: Ext.Msg.OKCANCEL ,
             icon: record.hasChildNodes() ? Ext.MessageBox.WARNING : Ext.MessageBox.QUESTION,
             fn: function (button) {

@@ -961,7 +961,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
-            value: filterValues
+            value: filterValues === null ? 'null' : filterValues
         });
     },
 

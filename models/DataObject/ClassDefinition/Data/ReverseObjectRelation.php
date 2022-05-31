@@ -156,7 +156,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
         if ($ownerClass instanceof DataObject\ClassDefinition && $object instanceof DataObject\Concrete && $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                 return true;
             }
         }

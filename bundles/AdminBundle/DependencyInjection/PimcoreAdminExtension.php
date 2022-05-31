@@ -63,6 +63,7 @@ final class PimcoreAdminExtension extends Extension
         $container->setParameter('pimcore_admin.csrf_protection.excluded_routes', $config['csrf_protection']['excluded_routes']);
         $container->setParameter('pimcore_admin.admin_languages', $config['admin_languages']);
         $container->setParameter('pimcore_admin.custom_admin_path_identifier', $config['custom_admin_path_identifier']);
+        $container->setParameter('pimcore_admin.custom_admin_route_name', $config['custom_admin_route_name']);
 
         $container->setParameter('pimcore_admin.config', $config);
     }

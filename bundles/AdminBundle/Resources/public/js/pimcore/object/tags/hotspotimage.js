@@ -101,7 +101,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             id: "x-gridfilter-" + dataIndex,
             property: dataIndex,
             dataIndex: dataIndex,
-            value: filterValue
+            value: filterValue === null ? 'null' : filterValue
         });
     },
 

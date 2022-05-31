@@ -312,11 +312,36 @@ class Multiselect extends Data implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
+
+        if ($optionsProvider === null) {
+            return $this->getDataForEditmode($data, $object, $params);
+        }
+
+        $context = $params['context'] ?? [];
+        $context['object'] = $object;
+        if ($object) {
+            $context['class'] = $object->getClass();
+        }
+
+        $context['fieldname'] = $this->getName();
+        $options = $optionsProvider->{'getOptions'}($context, $this);
+        $this->setOptions($options);
+
+        if (isset($params['purpose']) && $params['purpose'] === 'editmode') {
+            $result = $data;
+        } else {
+            $result = ['value' => $data, 'options' => $this->getOptions()];
+        }
+
+        return $result;
     }
 
     /**
