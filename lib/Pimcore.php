@@ -162,7 +162,7 @@ class Pimcore
      * needing to access the container directly. This exists mainly for compatibility with legacy code.
      *
      * @internal
-     * @deprecated
+     * @deprecated this method just exists for legacy reasons and shouldn't be used in new code
      *
      * @return ContainerInterface|null
      */
