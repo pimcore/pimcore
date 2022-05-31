@@ -143,13 +143,13 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     }
 
     /**
-     * @return bool|float|int|string
+     * @return bool
      */
     public function isInstalled()
     {
         $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId(), 'pimcore');
 
-        return $installSetting ? $installSetting->getData() : false;
+        return (bool) ($installSetting ? $installSetting->getData() : false);
     }
 
     /**
