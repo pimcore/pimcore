@@ -121,6 +121,8 @@ class IntlFormatter
      * @param string $format
      *
      * @return \IntlDateFormatter|\Symfony\Polyfill\Intl\Icu\IntlDateFormatter
+     *
+     * @throws \RuntimeException
      */
     protected function buildDateTimeFormatters($format)
     {

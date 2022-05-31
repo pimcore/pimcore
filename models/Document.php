@@ -131,7 +131,7 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
