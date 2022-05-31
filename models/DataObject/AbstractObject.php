@@ -261,7 +261,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
