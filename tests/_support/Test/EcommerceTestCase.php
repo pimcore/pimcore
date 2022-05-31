@@ -50,7 +50,7 @@ abstract class EcommerceTestCase extends TestCase
     protected function buildSession(): SessionInterface
     {
         if (null === $this->session) {
-            $this->session = new Session(new MockArraySessionStorage());
+            $this->session = \Pimcore::getContainer()->get('session');
 
             $configurator = new SessionBagListener();
             $configurator->configure($this->session);
