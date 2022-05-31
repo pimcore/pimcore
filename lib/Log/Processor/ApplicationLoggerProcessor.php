@@ -141,7 +141,7 @@ class ApplicationLoggerProcessor
 
     /**
      * @param string $filename
-     * @return array|string|string[]
+     * @return array|string
      */
     private function normalizeFilename($filename)
     {
