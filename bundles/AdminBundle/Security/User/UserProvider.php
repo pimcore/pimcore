@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 
 use Pimcore\Model\User as PimcoreUser;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -34,7 +34,7 @@ class UserProvider implements UserProviderInterface
             return new User($pimcoreUser);
         }
 
-        throw new UsernameNotFoundException(sprintf('User %s was not found', $username));
+        throw new UserNotFoundException(sprintf('User %s was not found', $username));
     }
 
     /**
