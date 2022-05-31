@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -54,7 +54,7 @@ class SessionCart extends AbstractCart implements CartInterface
         }
 
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        $sessionBag = $session->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
         if (empty($sessionBag->get('carts'))) {
             $sessionBag->set('carts', []);

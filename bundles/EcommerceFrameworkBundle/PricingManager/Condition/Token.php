@@ -18,6 +18,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
+/**
+ * @deprecated will be removed in Pimcore 11
+ */
 class Token implements ConditionInterface
 {
     /**

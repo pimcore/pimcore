@@ -15,60 +15,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
-use Pimcore\Session\SessionConfiguratorInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionConfigurator implements SessionConfiguratorInterface
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
+
+/**
+ * @deprecated will be removed in Pimcore 11. Use SessionBagListener instead.
+ */
+class SessionConfigurator extends SessionBagListener
 {
-    const ATTRIBUTE_BAG_CART = 'ecommerceframework_cart';
-
-    const ATTRIBUTE_BAG_ENVIRONMENT = 'ecommerceframework_environment';
-
-    const ATTRIBUTE_BAG_PRICING_ENVIRONMENT = 'ecommerceframework_pricing_environment';
-
-    const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
-
-    /**
-     * @return string[]
-     */
-    protected function getBagNames()
-    {
-        return [
-            self::ATTRIBUTE_BAG_CART,
-            self::ATTRIBUTE_BAG_ENVIRONMENT,
-            self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT,
-            self::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT,
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(SessionInterface $session)
-    {
-        $bagNames = $this->getBagNames();
-
-        foreach ($bagNames as $bagName) {
-            $bag = new AttributeBag('_' . $bagName);
-            $bag->setName($bagName);
-
-            $session->registerBag($bag);
-        }
-    }
-
-    /**
-     * Clears all session bags filled from the e-commerce framework
-     *
-     * @param SessionInterface $session
-     */
-    public function clearSession(SessionInterface $session)
-    {
-        $bagNames = $this->getBagNames();
-
-        foreach ($bagNames as $bagName) {
-            $sessionBag = $session->getBag($bagName);
-            $sessionBag->clear();
-        }
-    }
 }

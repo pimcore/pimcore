@@ -29,7 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProd
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionBagListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Tests\Test\EcommerceTestCase;
 
@@ -214,7 +214,7 @@ class ConditionTest extends EcommerceTestCase
      */
     private function mockCart()
     {
-        $sessionBag = $this->buildSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
         /** @var SessionCart|\PHPUnit_Framework_MockObject_Stub $cart */
         $cart = Stub::construct(SessionCart::class, [], [

@@ -78,7 +78,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
 
-        $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
+        $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']); //@TODO Remove in Pimcore 11
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
 
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);

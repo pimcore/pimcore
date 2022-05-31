@@ -16,12 +16,15 @@
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Session\SessionConfigurator;
+use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
+ * @TODO remove in Pimcore 11
+ *
  * @internal
  */
 final class SessionConfiguratorPass implements CompilerPassInterface
@@ -65,6 +68,10 @@ final class SessionConfiguratorPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
 
         foreach ($taggedServices as $id => $tags) {
+            trigger_deprecation('pimcore/pimcore', '10.5',
+                sprintf('Implementation of %s is deprecated since version 10.5 and will be removed in Pimcore 11.' .
+                    'Implement the Event Listener instead.', SessionConfiguratorInterface::class));
+
             $configurator->addMethodCall('addConfigurator', [new Reference($id)]);
         }
     }

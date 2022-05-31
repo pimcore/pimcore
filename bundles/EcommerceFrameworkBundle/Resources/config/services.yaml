@@ -10,8 +10,10 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator:
         public: false
-        tags:
-            - { name: pimcore.session.configurator }
+        deprecated:
+            message: 'The "%service_id%" service is deprecated, use SessionBagListener instead.'
+            package: pimcore/pimcore
+            version: 10.5
 
     #
     # INSTALLER
