@@ -172,11 +172,12 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
+     * @return array
      * @internal
      *
-     * @param Dependency $d
-     *
-     * @return array
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
@@ -198,11 +199,12 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
+     * @return array
      * @internal
      *
-     * @param Dependency $d
-     *
-     * @return array
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
