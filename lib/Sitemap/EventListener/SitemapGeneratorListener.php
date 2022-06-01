@@ -38,6 +38,9 @@ class SitemapGeneratorListener implements EventSubscriberInterface
         $this->generators = $generators;
     }
 
+    /**
+     * @return string[]
+     */
     public static function getSubscribedEvents()
     {
         return [
