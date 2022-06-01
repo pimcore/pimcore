@@ -35,7 +35,7 @@ trait PackageVersionTrait
      */
     public function getComposerPackageName(): string {
         foreach([__DIR__ . '/../composer.json', __DIR__ . '/composer.json'] as $composerFile) {
-            if (file_exists($composerFile)) {
+            if (is_file($composerFile)) {
                 $composerConfig = json_decode(file_get_contents($composerFile));
     
                 if (property_exists($composerConfig, 'name')) {
