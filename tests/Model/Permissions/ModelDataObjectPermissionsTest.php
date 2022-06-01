@@ -600,16 +600,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $eventDispatcher = new EventDispatcher();
 
-        $responseData = [
-            'total'=>0,
-            'nodes'=>[]
-        ];
-
-        if ($user->isAllowed('objects')){
+        try{
+            TestHelper::callMethod($controller,'checkPermission','objects');
             $responseData = $controller->treeGetChildsByIdAction(
                 $request,
                 $eventDispatcher
             );
+        } catch(AccessDeniedHttpException $e){
+            $responseData = [
+                'total'=>0,
+                'nodes'=>[]
+            ];
         }
 
         $responsePaths = [];
