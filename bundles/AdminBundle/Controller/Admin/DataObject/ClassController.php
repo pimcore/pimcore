@@ -614,6 +614,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $mapping = [];
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->setCondition('id not LIKE \'%.brick.%\'');
         $customLayouts->setOrder('ASC');
         $customLayouts->setOrderKey('name');
         $customLayouts = $customLayouts->load();
