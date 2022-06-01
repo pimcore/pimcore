@@ -34,7 +34,8 @@ trait PackageVersionTrait
      *
      * @return string
      */
-    public function getComposerPackageName(): string {
+    public function getComposerPackageName(): string
+    {
         foreach (InstalledVersions::getAllRawData() as $installed) {
             foreach ($installed['versions'] as $packageName => $packageInfo) {
                 if (!isset($packageInfo['install_path'])) {
