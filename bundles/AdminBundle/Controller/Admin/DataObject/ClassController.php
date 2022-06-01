@@ -247,9 +247,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
             $brickLayoutSeparator = strpos($request->get('id'), '.brick.');
-            if($brickLayoutSeparator !== false) {
+            if ($brickLayoutSeparator !== false) {
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById(substr($request->get('id'), 0, $brickLayoutSeparator));
-                if($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
                     $customLayout = DataObject\ClassDefinition\CustomLayout::create(
                         [
                             'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+strlen('.brick.')),
@@ -367,7 +367,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
         $customLayouts->addConditionParam('id=?', $request->get('id'));
         $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
-        foreach($customLayouts as $customLayout) {
+        foreach ($customLayouts as $customLayout) {
             $customLayout->delete();
         }
 
@@ -1320,14 +1320,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 if ($forObjectEditor) {
                     $layoutId = $request->get('layoutId');
                     $itemLayoutDefinitions = null;
-                    if($layoutId) {
+                    if ($layoutId) {
                         $layout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
                         if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
                             $itemLayoutDefinitions = $layout->getLayoutDefinitions();
                         }
                     }
 
-                    if($itemLayoutDefinitions === null) {
+                    if ($itemLayoutDefinitions === null) {
                         $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     }
 
