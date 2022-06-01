@@ -33,12 +33,14 @@ class Builder
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $htmlMenuIdPrefix;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $pageClass = DocumentPage::class;
@@ -205,7 +207,7 @@ class Builder
 
     /**
      * @internal
-     * 
+     *
      * @param Container $navigation navigation container to iterate
      * @param string $property name of property to match against
      * @param string $value value to match property against
@@ -223,7 +225,7 @@ class Builder
 
     /**
      * @internal
-     * 
+     *
      * @param Page $page
      * @param bool $isActive
      *
@@ -292,7 +294,7 @@ class Builder
 
     /**
      * @internal
-     * 
+     *
      * @param Document $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback
