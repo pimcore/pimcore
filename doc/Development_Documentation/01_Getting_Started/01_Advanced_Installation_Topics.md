@@ -39,8 +39,8 @@ pimcore_install:
             
             # env variables can be directly read with the %env() syntax
             # see https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
-            host:                 %env(DB_HOST)%
-            port:                 %env(DB_PORT)%
+            host:                 "%env(DB_HOST)%"
+            port:                 "%env(DB_PORT)%"
 ```
 
 

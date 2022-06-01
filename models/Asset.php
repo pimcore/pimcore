@@ -144,7 +144,7 @@ class Asset extends Element\AbstractElement
     protected $dataChanged = false;
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
