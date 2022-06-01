@@ -42,12 +42,3 @@ pimcore_install:
             host:                 "%env(DB_HOST)%"
             port:                 "%env(DB_PORT)%"
 ```
-
-
-## Add some randomness to the maintenance cron job
-```bash
-# We need bash since RANDOM is a bash builtin
-SHELL=/bin/bash
-
-*/5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
-```
