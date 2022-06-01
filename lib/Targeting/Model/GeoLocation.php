@@ -53,7 +53,7 @@ class GeoLocation
      * @param float $latitude
      * @param float $longitude
      * @param float|null $altitude
-     * @return static
+     * @return self
      */
     public static function build($latitude, $longitude, $altitude = null): self
     {
