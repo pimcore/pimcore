@@ -115,11 +115,8 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects[] = $objects;
         }
-        if ($userObjects) {
-            $userObjects = \array_merge(...$userObjects);
-        }
 
-        return $userObjects;
+        return \array_merge(...$userObjects);
     }
 
     /**
@@ -225,7 +222,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
 
         if ($new instanceof Concrete) {
@@ -279,7 +276,7 @@ class Service extends Model\Element\Service
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
-        $new->setProperties($source->getProperties());
+        $new->setProperties(self::cloneProperties($source->getProperties()));
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
@@ -319,16 +316,16 @@ class Service extends Model\Element\Service
         $csvMode = $params['csvMode'] ?? false;
 
         if ($object instanceof Concrete) {
+            $user = AdminTool::getCurrentUser();
+
             $context = ['object' => $object,
                 'purpose' => 'gridview',
                 'language' => $requestedLanguage, ];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
-            $data['permissions'] = $object->getUserPermissions();
+            $data['permissions'] = $object->getUserPermissions($user);
             $data['locked'] = $object->isLocked();
-
-            $user = AdminTool::getCurrentUser();
 
             if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
@@ -766,8 +763,8 @@ class Service extends Model\Element\Service
                 $field = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
                 $getter = 'get' . ucfirst($field);
 
                 if (method_exists($object, $getter)) {
@@ -804,7 +801,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {
@@ -1012,14 +1009,14 @@ class Service extends Model\Element\Service
 
         if ($user->getAdmin()) {
             $superLayout = new ClassDefinition\CustomLayout();
-            $superLayout->setId(-1);
+            $superLayout->setId('-1');
             $superLayout->setName('Master (Admin Mode)');
             $resultList[-1] = $superLayout;
         }
 
         if ($isMasterAllowed) {
             $master = new ClassDefinition\CustomLayout();
-            $master->setId(0);
+            $master->setId('0');
             $master->setName('Master');
             $resultList[0] = $master;
         }
@@ -1027,7 +1024,7 @@ class Service extends Model\Element\Service
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey('name');
-        $condition = 'classId = ' . $list->quote($classId);
+        $condition = 'classId = ' . $list->quote($classId).' AND id NOT LIKE \'%.brick.%\'';
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
             $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
@@ -1066,7 +1063,7 @@ class Service extends Model\Element\Service
 
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
-            $insideDataType |= is_a($layout, $targetClass);
+            $insideDataType = $insideDataType || is_a($layout, $targetClass);
             if (is_array($children)) {
                 foreach ($children as $child) {
                     $targetList = self::extractFieldDefinitions($child, $targetClass, $targetList, $insideDataType);
@@ -1206,7 +1203,7 @@ class Service extends Model\Element\Service
 
         $permissionList = [];
 
-        $parentPermissionSet = $object->getPermissions(null, $user, true);
+        $parentPermissionSet = $object->getPermissions(null, $user);
         if ($parentPermissionSet) {
             $permissionList[] = $parentPermissionSet;
         }
@@ -1345,7 +1342,7 @@ class Service extends Model\Element\Service
                 return false;
             }
 
-            $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
+            $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1727,7 +1724,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $container
+     * @param Model\AbstractModel $container
      * @param ClassDefinition|ClassDefinition\Data $fd
      */
     public static function doResetDirtyMap($container, $fd)
@@ -1746,7 +1743,7 @@ class Service extends Model\Element\Service
                     $value->resetLanguageDirtyMap();
                 }
 
-                if ($value instanceof DirtyIndicatorInterface) {
+                if ($value instanceof Model\AbstractModel && $value instanceof DirtyIndicatorInterface) {
                     $value->resetDirtyMap();
                     self::doResetDirtyMap($value, $fieldDefinitions[$fieldDefinition->getName()]);
                 }
@@ -1792,7 +1789,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      * @param string $requestedLanguage
      * @param array $fields
      * @param array $helperDefinitions
@@ -1804,7 +1801,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
+    public static function getCsvDataForObject(Concrete $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
         $objectData = [];
         $mappedFieldnames = [];
@@ -1871,8 +1868,6 @@ class Service extends Model\Element\Service
      */
     public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
-        $mappedFieldnames = [];
-
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
 
@@ -1889,7 +1884,7 @@ class Service extends Model\Element\Service
                     $data[] = $tmp;
                 }
 
-                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, false, $context);
                 $rowData = self::escapeCsvRecord($rowData);
                 $data[] = $rowData;
             }
@@ -1921,8 +1916,8 @@ class Service extends Model\Element\Service
             if ($type == 'classificationstore') {
                 $fieldname = $fieldParts[2];
                 $groupKeyId = explode('-', $fieldParts[3]);
-                $groupId = $groupKeyId[0];
-                $keyId = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyId = (int) $groupKeyId[1];
 
                 $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
                 $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
@@ -1988,8 +1983,8 @@ class Service extends Model\Element\Service
                     if ($type == 'classificationstore') {
                         $fieldname = $fieldParts[2];
                         $groupKeyId = explode('-', $fieldParts[3]);
-                        $groupId = $groupKeyId[0];
-                        $keyId = $groupKeyId[1];
+                        $groupId = (int) $groupKeyId[0];
+                        $keyId = (int) $groupKeyId[1];
                         $getter = 'get' . ucfirst($fieldname);
                         if (method_exists($object, $getter)) {
                             $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);

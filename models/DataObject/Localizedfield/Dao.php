@@ -238,23 +238,19 @@ class Dao extends Model\Dao\AbstractDao
                     )) {
                     $this->db->insertOrUpdate($storeTable, $insertData);
                 }
-            } catch (\Exception $e) {
+            } catch (TableNotFoundException $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
-                if (strpos($e->getMessage(), 'exist')) {
-                    try {
-                        $this->db->rollBack();
-                    } catch (\Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info($er);
-                    }
-
-                    $this->createUpdateTable();
-
-                    // throw exception which gets caught in AbstractObject::save() -> retry saving
-                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                try {
+                    $this->db->rollBack();
+                } catch (\Exception $er) {
+                    // PDO adapter throws exceptions if rollback fails
+                    Logger::info((string) $er);
                 }
 
-                throw $e;
+                $this->createUpdateTable();
+
+                // throw exception which gets caught in AbstractObject::save() -> retry saving
+                throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
             }
 
             if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
@@ -277,28 +273,26 @@ class Dao extends Model\Dao\AbstractDao
 
                 try {
                     $oldData = $this->db->fetchRow($sql);
-                } catch (\Exception $e) {
+                } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it!
-                    if (strpos($e->getMessage(), 'exist')) {
 
-                        // the following is to ensure consistent data and atomic transactions, while having the flexibility
-                        // to add new languages on the fly without saving all classes having localized fields
+                    // the following is to ensure consistent data and atomic transactions, while having the flexibility
+                    // to add new languages on the fly without saving all classes having localized fields
 
-                        // first we need to roll back all modifications, because otherwise they would be implicitly committed
-                        // by the following DDL
-                        try {
-                            $this->db->rollBack();
-                        } catch (\Exception $er) {
-                            // PDO adapter throws exceptions if rollback fails
-                            Logger::info($er);
-                        }
-
-                        // this creates the missing table
-                        $this->createUpdateTable();
-
-                        // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
-                        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                    // first we need to roll back all modifications, because otherwise they would be implicitly committed
+                    // by the following DDL
+                    try {
+                        $this->db->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::info((string) $er);
                     }
+
+                    // this creates the missing table
+                    $this->createUpdateTable();
+
+                    // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
+                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
 
                 // get fields which shouldn't be updated
@@ -520,14 +514,14 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
                 try {
                     $this->db->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    Logger::info($er);
+                    Logger::info((string) $er);
                 }
 
                 $this->createUpdateTable();
@@ -722,7 +716,7 @@ class Dao extends Model\Dao\AbstractDao
 
             // create query
             $sql = sprintf(
-                'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
+                'IF(`%s`.`%s` IS NULL OR STRCMP(`%s`.`%s`, "") = 0, %s, `%s`.`%s`)',
                 $lang,
                 $field,
                 $lang,
@@ -795,7 +789,7 @@ QUERY;
                 // execute
                 $this->db->query($viewQuery);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
     }

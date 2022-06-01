@@ -19,7 +19,6 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -203,7 +202,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     * @param User $node
+     * @param User\AbstractUser $node
      * @param array $currentList
      * @param bool $roleMode
      *
@@ -285,11 +284,14 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function updateAction(Request $request)
     {
-        /** @var User|User\Role $user */
-        $user = User\AbstractUser::getById((int)$request->get('id'));
+        $user = User\UserRole::getById((int)$request->get('id'));
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Only admin users are allowed to modify admin users');
+            throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
         if ($request->get('data')) {
@@ -321,10 +323,8 @@ class UserController extends AdminController implements KernelControllerEventInt
 
             // only admins are allowed to create admin users
             // if the logged in user isn't an admin, set admin always to false
-            if (!$this->getAdminUser()->isAdmin() && $user instanceof User) {
-                if ($user instanceof User) {
-                    $user->setAdmin(false);
-                }
+            if ($user instanceof User && !$this->getAdminUser()->isAdmin()) {
+                $user->setAdmin(false);
             }
 
             // check for permissions
@@ -367,7 +367,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             }
         }
 
-        if ($request->get('keyBindings')) {
+        if ($user instanceof User && $request->get('keyBindings')) {
             $keyBindings = json_decode($request->get('keyBindings'), true);
             $tmpArray = [];
             foreach ($keyBindings as $action => $item) {
@@ -388,23 +388,26 @@ class UserController extends AdminController implements KernelControllerEventInt
      * @Route("/user/get", name="pimcore_admin_user_get", methods={"GET"})
      *
      * @param Request $request
-     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getAction(Request $request, Config $config)
+    public function getAction(Request $request)
     {
-        if ((int)$request->get('id') < 1) {
-            return $this->adminJson(['success' => false]);
+        $userId = (int)$request->get('id');
+        if ($userId < 1) {
+            throw $this->createNotFoundException();
         }
 
-        /** @var User $user */
-        $user = User::getById((int)$request->get('id'));
+        $user = User::getById($userId);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Only admin users are allowed to modify admin users');
+            throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
         // workspaces
@@ -465,7 +468,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         // unset confidential informations
         $userData = $user->getObjectVars();
         $userData['roles'] =  array_map('intval', $user->getRoles());
-        $userData['docTypes'] =  array_map('intval', $user->getDocTypes());
+        $userData['docTypes'] =  $user->getDocTypes();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
@@ -499,9 +502,11 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function getMinimalAction(Request $request)
     {
-        /** @var User $user */
         $user = User::getById((int)$request->get('id'));
-        $user->setPassword(null);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         $minimalUserData['id'] = $user->getId();
         $minimalUserData['admin'] = $user->isAdmin();
@@ -726,8 +731,11 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function roleGetAction(Request $request)
     {
-        /** @var User\UserRole $role */
         $role = User\Role::getById((int)$request->get('id'));
+
+        if (!$role) {
+            throw $this->createNotFoundException();
+        }
 
         // workspaces
         $types = ['asset', 'document', 'object'];
@@ -778,11 +786,14 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function uploadImageAction(Request $request)
     {
-        /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
 
+        if (!$userObj) {
+            throw $this->createNotFoundException();
+        }
+
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Only admin users are allowed to modify admin users');
+            throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
         $userObj->setImage($_FILES['Filedata']['tmp_name']);
@@ -807,11 +818,14 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function deleteImageAction(Request $request)
     {
-        /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
 
+        if (!$userObj) {
+            throw $this->createNotFoundException();
+        }
+
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Only admin users are allowed to modify admin users');
+            throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
         $userObj->setImage(null);
@@ -890,17 +904,16 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function reset2FaSecretAction(Request $request)
     {
-        /**
-         * @var User $user
-         */
         $user = User::getById((int)$request->get('id'));
-        $success = true;
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
         $user->save();
 
         return $this->adminJson([
-            'success' => $success,
+            'success' => true,
         ]);
     }
 
@@ -913,8 +926,10 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function getImageAction(Request $request)
     {
-        /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
+        if (!$userObj) {
+            throw $this->createNotFoundException();
+        }
         $stream = $userObj->getImage();
 
         return new StreamedResponse(function () use ($stream) {
@@ -935,7 +950,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        $user = User::getById($request->get('id'));
+        $user = User::getById((int) $request->get('id'));
 
         if (!$user) {
             return $this->adminJson([
@@ -1223,8 +1238,10 @@ class UserController extends AdminController implements KernelControllerEventInt
     private function generateCustomUrl(array $params, $fallbackUrl = 'pimcore_admin_login_check', $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
     {
         try {
+            $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');
+
             //try to generate invitation link for custom admin point
-            $loginUrl = $this->generateUrl('my_custom_admin_entry_point', $params, $referenceType);
+            $loginUrl = $this->generateUrl($adminEntryPointRoute, $params, $referenceType);
         } catch (\Exception $e) {
             //use default login check for invitation link
             $loginUrl = $this->generateUrl($fallbackUrl, $params, $referenceType);

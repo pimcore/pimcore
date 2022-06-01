@@ -110,6 +110,6 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $this->db->insert('targeting_target_groups', []);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

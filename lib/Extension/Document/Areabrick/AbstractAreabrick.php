@@ -160,7 +160,6 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      * @param PageSnippet $document
      * @param string $type
      * @param string $inputName
-     * @param string $inputName
      * @param array $options
      *
      * @return Editable\EditableInterface

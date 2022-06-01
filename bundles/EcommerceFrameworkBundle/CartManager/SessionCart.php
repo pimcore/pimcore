@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class SessionCart extends AbstractCart implements CartInterface
 {
     /**
-     * @var CartInterface[]
+     * @var SessionCart[]
      */
     protected static $unserializedCarts;
 
@@ -113,7 +113,7 @@ class SessionCart extends AbstractCart implements CartInterface
     /**
      * @param int $id
      *
-     * @return CartInterface|SessionCart
+     * @return SessionCart|null
      */
     public static function getById($id)
     {
@@ -127,7 +127,7 @@ class SessionCart extends AbstractCart implements CartInterface
      *
      * @param int $userId
      *
-     * @return CartInterface[]
+     * @return SessionCart[]
      */
     public static function getAllCartsForUser($userId)
     {

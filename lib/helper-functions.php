@@ -112,7 +112,7 @@ function foldersize($path)
  * @param string $string
  * @param string[] $values
  *
- * @return mixed
+ * @return string
  */
 function replace_pcre_backreferences($string, $values)
 {
@@ -364,18 +364,16 @@ function rscandir($base = '', &$data = [])
  *
  * @param string $delimiter
  * @param string $string
- * @param string $limit
+ * @param int $limit
  * @param bool $useArrayFilter
  *
  * @return array
+ *
+ * @phpstan-param non-empty-string $delimiter
  */
-function explode_and_trim($delimiter, $string = '', $limit = '', $useArrayFilter = true)
+function explode_and_trim($delimiter, $string = '', $limit = 0, $useArrayFilter = true)
 {
-    if ($limit === '') {
-        $exploded = explode($delimiter, $string);
-    } else {
-        $exploded = explode($delimiter, $string, $limit);
-    }
+    $exploded = explode($delimiter, $string, $limit);
     foreach ($exploded as $key => $value) {
         $exploded[$key] = trim($value);
     }

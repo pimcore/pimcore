@@ -83,7 +83,7 @@ class Item extends Model\AbstractModel
      * @static
      *
      * @param Element\ElementInterface $element
-     * @param Model\User $user
+     * @param Model\User|null $user
      */
     public static function create(Element\ElementInterface $element, Model\User $user = null)
     {
@@ -170,7 +170,7 @@ class Item extends Model\AbstractModel
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
             if ($dummy) {
                 $dummy->delete();
             }

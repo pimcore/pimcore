@@ -259,3 +259,10 @@ services:
     Pimcore\Image\Adapter\GD:
         shared: false
         public: true
+
+    Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
+        public: true
+        alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
+
+    Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+

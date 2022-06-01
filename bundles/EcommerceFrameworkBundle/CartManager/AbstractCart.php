@@ -70,7 +70,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $modificationDateTimestamp;
 
     /**
-     * @var int|null
+     * @var string|int|null
      */
     protected $id;
 
@@ -138,7 +138,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @param AbstractSetProductEntry[] $subProducts
      * @param string|null $comment
      *
-     * @return mixed
+     * @return string
      */
     public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
@@ -295,7 +295,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         if (!empty($subProducts)) {
             $subItems = [];
             foreach ($subProducts as $subProduct) {
-                if ($subItems[$subProduct->getProduct()->getId()]) {
+                if (isset($subItems[$subProduct->getProduct()->getId()])) {
                     $subItem = $subItems[$subProduct->getProduct()->getId()];
                     $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
                 } else {
@@ -573,7 +573,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param int $id
+     * @param string|int $id
      */
     public function setId($id)
     {
@@ -581,7 +581,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return int|null
+     * @return string|int|null
      */
     public function getId()
     {
@@ -602,7 +602,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param \DateTime $creationDate
+     * @param \DateTime|null $creationDate
      */
     public function setCreationDate(\DateTime $creationDate = null)
     {

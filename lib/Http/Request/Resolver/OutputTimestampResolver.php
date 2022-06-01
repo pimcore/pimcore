@@ -44,7 +44,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
     /**
      * Gets timestamp for with the output should be rendered to
      *
-     * @return string|null
+     * @return int
      */
     public function getOutputTimestamp()
     {

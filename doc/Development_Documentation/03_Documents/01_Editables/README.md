@@ -16,7 +16,7 @@ the editables, Pimcore can't throw exceptions there. Therefore Pimcore catches t
 To prevent that and to have Pimcore throw the Exception, you can call editables like:
 
 ```twig
-<h1>{{ pimcore_input("headline").render() }}</h1>
+<h1>{{ pimcore_input("headline").render()|raw }}</h1>
 ```
 
 Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 

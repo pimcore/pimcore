@@ -17,85 +17,53 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
 /**
- * @Route("/page")
+ * @Route("/page", name="pimcore_admin_document_page_")
  *
  * @internal
  */
 class PageController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_page_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_page_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_page_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      * @param StaticPageGenerator $staticPageGenerator
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator)
+    public function getDataByIdAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
-        $page = Document\Page::getById($request->get('id'));
+        $page = Document\Page::getById((int)$request->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
         }
 
-        // check for lock
-        if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
-            }
-            Element\Editlock::lock($request->get('id'), 'document');
+        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $page = clone $page;
@@ -104,7 +72,6 @@ class PageController extends DocumentControllerBase
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
-        $page->setLocked($page->isLocked());
         $page->setParent(null);
 
         // unset useless data
@@ -112,6 +79,7 @@ class PageController extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['locked'] = $page->isLocked();
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
@@ -132,17 +100,11 @@ class PageController extends DocumentControllerBase
             $page->getScheduledTasks()
         );
 
-        $this->preSendDataActions($data, $page, $draftVersion);
-
-        if ($page->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $page, $draftVersion);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
+     * @Route("/save", name="save", methods={"PUT", "POST"})
      *
      * @param Request $request
      * @param StaticPageGenerator $staticPageGenerator
@@ -151,25 +113,21 @@ class PageController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator)
+    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
     {
-        $page = Document\Page::getById($request->get('id'));
-
-        if (!$page) {
+        $oldPage = Document\Page::getById((int) $request->get('id'));
+        if (!$oldPage) {
             throw $this->createNotFoundException('Page not found');
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($page);
+        $pageSession = $this->getFromSession($oldPage);
 
         if ($pageSession) {
             $page = $pageSession;
         } else {
-            /** @var Document\Page $page */
-            $page = $this->getLatestVersion($page);
+            $page = $this->getLatestVersion($oldPage);
         }
-
-        $page->setUserModification($this->getAdminUser()->getId());
 
         if ($request->get('missingRequiredEditable') !== null) {
             $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
@@ -194,22 +152,10 @@ class PageController extends DocumentControllerBase
             $page->setMetaData($metaData);
         }
 
-        // only save when publish or unpublish
-        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $page);
+        list($task, $page, $version) = $this->saveDocument($page, $request);
 
-            if ($request->get('task') == 'unpublish') {
-                $page->setPublished(false);
-            } elseif ($request->get('task') == 'publish') {
-                $page->setPublished(true);
-            }
-
-            $page->save();
-            $this->saveToSession($page);
-
+        if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
-
-            $this->handleTask($request->get('task'), $page);
 
             $data = [
                 'versionDate' => $page->getModificationDate(),
@@ -221,15 +167,25 @@ class PageController extends DocumentControllerBase
                 $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
             }
 
+            if ($page->getPrettyUrl() !== $oldPage->getPrettyUrl()
+                && empty($oldPage->getPrettyUrl()) === false
+                && empty($page->getPrettyUrl()) === false
+            ) {
+                $redirect = new Redirect();
+
+                $redirect->setSource($oldPage->getPrettyUrl());
+                $redirect->setTarget($page->getPrettyUrl());
+                $redirect->setStatusCode(301);
+                $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                $redirect->save();
+            }
+
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
                 'data' => $data,
             ]);
-        } elseif ($page->isAllowed('save')) {
-            $this->setValuesToDocument($request, $page);
-
-            $version = $page->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+        } else {
             $this->saveToSession($page);
 
             $draftData = [
@@ -239,22 +195,20 @@ class PageController extends DocumentControllerBase
             ];
 
             $treeData = $this->getTreeNodeConfig($page);
-            $this->handleTask($request->get('task'), $page);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 
     /**
-     * @Route("/generate-previews", name="pimcore_admin_document_page_generatepreviews", methods={"GET"})
+     * @Route("/generate-previews", name="generatepreviews", methods={"GET"})
      *
      * @param Request $request
+     * @param MessageBusInterface $messengerBusPimcoreCore
      *
      * @return JsonResponse
      */
-    public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore)
+    public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $list = new Document\Listing();
         $list->setCondition('type = ?', ['page']);
@@ -271,15 +225,15 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image", methods={"GET"})
+     * @Route("/display-preview-image", name="display_preview_image", methods={"GET"})
      *
      * @param Request $request
      *
      * @return BinaryFileResponse
      */
-    public function displayPreviewImageAction(Request $request)
+    public function displayPreviewImageAction(Request $request): BinaryFileResponse
     {
-        $document = Document\Page::getById($request->get('id'));
+        $document = Document\Page::getById((int) $request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, [
                 'Content-Type' => 'image/jpg',
@@ -290,13 +244,13 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/check-pretty-url", name="pimcore_admin_document_page_checkprettyurl", methods={"POST"})
+     * @Route("/check-pretty-url", name="checkprettyurl", methods={"POST"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function checkPrettyUrlAction(Request $request)
+    public function checkPrettyUrlAction(Request $request): JsonResponse
     {
         $docId = $request->get('id');
         $path = (string) trim($request->get('path'));
@@ -346,13 +300,13 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/clear-editable-data", name="pimcore_admin_document_page_cleareditabledata", methods={"PUT"})
+     * @Route("/clear-editable-data", name="cleareditabledata", methods={"PUT"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function clearEditableDataAction(Request $request)
+    public function clearEditableDataAction(Request $request): JsonResponse
     {
         $targetGroupId = $request->get('targetGroup');
         $docId = $request->get('id');
@@ -385,21 +339,23 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/qr-code", name="pimcore_admin_document_page_qrcode", methods={"GET"})
+     * @Route("/qr-code", name="qrcode", methods={"GET"})
      *
      * @param Request $request
      *
      * @return BinaryFileResponse
+     *
+     * @throws \Exception
      */
-    public function qrCodeAction(Request $request)
+    public function qrCodeAction(Request $request): BinaryFileResponse
     {
-        $page = Document\Page::getById($request->query->get('id'));
+        $page = Document\Page::getById((int) $request->query->get('id'));
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found');
         }
 
-        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+        $url = $page->getUrl();
 
         $result = Builder::create()
             ->writer(new PngWriter())
@@ -423,28 +379,39 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/areabrick-render-index-editmode", name="pimcore_admin_document_page_areabrick-render-index-editmode", methods={"POST"})
+     * @Route("/areabrick-render-index-editmode", name="areabrick-render-index-editmode", methods={"POST"})
      *
      * @param Request $request
      * @param BlockStateStack $blockStateStack
      * @param EditmodeEditableDefinitionCollector $definitionCollector
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
+     * @param DocumentResolver $documentResolver
      *
      * @return JsonResponse
+     *
+     * @throws NotFoundHttpException|\Exception
+     *
      */
     public function areabrickRenderIndexEditmode(
         Request $request,
         BlockStateStack $blockStateStack,
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
-        EditableRenderer $editableRenderer
-    ) {
+        EditableRenderer $editableRenderer,
+        DocumentResolver $documentResolver
+    ): JsonResponse {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
-        $document = clone Document\PageSnippet::getById($request->get('documentId'));
+        $document = Document\PageSnippet::getById((int) $request->get('documentId'));
+        if (!$document) {
+            throw $this->createNotFoundException();
+        }
+
+        $document = clone $document;
         $document->setEditables([]);
+        $documentResolver->setDocument($request, $document);
 
         $twig->addGlobal('document', $document);
         $twig->addGlobal('editmode', true);

@@ -44,7 +44,7 @@ And to allow external urls for each directive, you can provide a list in the con
 pimcore_admin:
     admin_csp_header:
         additional_urls:
-            script_src:
+            script-src:
                 - 'https://oreo.cat/scripts/meow.js' 
                 - 'https://bagheera.cat/*'
             style-src:

@@ -120,7 +120,9 @@ class IntlFormatter
     /**
      * @param string $format
      *
-     * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
+     * @return \IntlDateFormatter
+     *
+     * @throws \RuntimeException
      */
     protected function buildDateTimeFormatters($format)
     {

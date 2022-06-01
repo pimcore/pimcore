@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
             'type' => $this->model->getType(),
         ]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     /**

@@ -87,6 +87,12 @@ Ext.require([
     'Ext.ux.form.MultiSelect'
 ]);
 
+Ext.override(Ext.tip.ToolTip, {
+    showDelay: 1700,
+    hideDelay: 0,
+    trackMouse: false,
+});
+
 Ext.onReady(function () {
     var body = Ext.getBody();
 
@@ -108,7 +114,6 @@ Ext.onReady(function () {
 
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;
-
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
@@ -171,7 +176,6 @@ Ext.onReady(function () {
             ) {
                 new Ext.ToolTip({
                     target: tmpEl,
-                    showDelay: 1000,
                     hideDelay: 0,
                     trackMouse: false,
                     html: t("click_right_for_more_options")

@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
@@ -24,65 +23,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/snippet")
+ * @Route("/snippet", name="pimcore_admin_document_snippet_")
  *
  * @internal
  */
 class SnippetController extends DocumentControllerBase
 {
-    use ElementEditLockHelperTrait;
-
     /**
-     * @Route("/save-to-session", name="pimcore_admin_document_snippet_savetosession", methods={"POST"})
-     *
-     * {@inheritDoc}
-     */
-    public function saveToSessionAction(Request $request)
-    {
-        return parent::saveToSessionAction($request);
-    }
-
-    /**
-     * @Route("/remove-from-session", name="pimcore_admin_document_snippet_removefromsession", methods={"DELETE"})
-     *
-     * {@inheritDoc}
-     */
-    public function removeFromSessionAction(Request $request)
-    {
-        return parent::removeFromSessionAction($request);
-    }
-
-    /**
-     * @Route("/change-master-document", name="pimcore_admin_document_snippet_changemasterdocument", methods={"PUT"})
-     *
-     * {@inheritDoc}
-     */
-    public function changeMasterDocumentAction(Request $request)
-    {
-        return parent::changeMasterDocumentAction($request);
-    }
-
-    /**
-     * @Route("/get-data-by-id", name="pimcore_admin_document_snippet_getdatabyid", methods={"GET"})
+     * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function getDataByIdAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippet = Document\Snippet::getById((int)$request->get('id'));
 
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
         }
 
-        // check for lock
-        if ($snippet->isAllowed('save') || $snippet->isAllowed('publish') || $snippet->isAllowed('unpublish') || $snippet->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-                return $this->getEditLockResponse($request->get('id'), 'document');
-            }
-            Element\Editlock::lock($request->get('id'), 'document');
+        if (($lock = $this->checkForLock($snippet)) instanceof JsonResponse) {
+            return $lock;
         }
 
         $snippet = clone $snippet;
@@ -91,13 +56,13 @@ class SnippetController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
-        $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
         // unset useless data
         $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
+        $data['locked'] = $snippet->isLocked();
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);
@@ -114,17 +79,11 @@ class SnippetController extends DocumentControllerBase
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $snippet, $draftVersion);
-
-        if ($snippet->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        throw $this->createAccessDeniedHttpException();
+        return $this->preSendDataActions($data, $snippet, $draftVersion);
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_document_snippet_save", methods={"POST","PUT"})
+     * @Route("/save", name="save", methods={"POST","PUT"})
      *
      * @param Request $request
      *
@@ -134,8 +93,7 @@ class SnippetController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
-
+        $snippet = Document\Snippet::getById((int) $request->get('id'));
         if (!$snippet) {
             throw $this->createNotFoundException('Snippet not found');
         }
@@ -149,28 +107,16 @@ class SnippetController extends DocumentControllerBase
             $snippet = $this->getLatestVersion($snippet);
         }
 
-        $snippet->setUserModification($this->getAdminUser()->getId());
-
-        if ($request->get('task') == 'unpublish') {
-            $snippet->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $snippet->setPublished(true);
-        }
-
         if ($request->get('missingRequiredEditable') !== null) {
             $snippet->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
         }
 
-        if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
-            $this->setValuesToDocument($request, $snippet);
+        list($task, $snippet, $version) = $this->saveDocument($snippet, $request);
 
-            $snippet->save();
+        if ($task == self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $this->saveToSession($snippet);
 
             $treeData = $this->getTreeNodeConfig($snippet);
-
-            $this->handleTask($request->get('task'), $snippet);
 
             return $this->adminJson([
                 'success' => true,
@@ -180,10 +126,7 @@ class SnippetController extends DocumentControllerBase
                 ],
                 'treeData' => $treeData,
             ]);
-        } elseif ($snippet->isAllowed('save')) {
-            $this->setValuesToDocument($request, $snippet);
-
-            $version = $snippet->saveVersion(true, true, null, $request->get('task') == 'autoSave');
+        } else {
             $this->saveToSession($snippet);
 
             $draftData = [
@@ -192,11 +135,7 @@ class SnippetController extends DocumentControllerBase
                 'isAutoSave' => $version->isAutoSave(),
             ];
 
-            $this->handleTask($request->get('task'), $snippet);
-
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
     }
 

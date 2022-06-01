@@ -56,6 +56,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         try {
             $data = [
                 'id' => $this->model->getId()->getId(),
+                'key' => $this->model->getKey(),
+                'index' => $this->model->getIndex(),
                 'fullpath' => $this->model->getFullPath(),
                 'maintype' => $this->model->getId()->getType(),
                 'type' => $this->model->getType(),
@@ -71,7 +73,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
             $this->db->insertOrUpdate('search_backend_data', $data);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
     }
 

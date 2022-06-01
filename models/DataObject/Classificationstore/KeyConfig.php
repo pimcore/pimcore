@@ -382,7 +382,7 @@ final class KeyConfig extends Model\AbstractModel
      * Calculate cache key
      *
      * @param int $id
-     * @param string $name
+     * @param string|null $name
      *
      * @return string
      */

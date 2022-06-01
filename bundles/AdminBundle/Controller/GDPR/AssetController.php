@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -82,9 +83,12 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      */
     public function exportAssetsAction(Request $request, Assets $service)
     {
-        $asset = \Pimcore\Model\Asset::getById($request->get('id'));
+        $asset = Asset::getById((int) $request->get('id'));
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
         if (!$asset->isAllowed('view')) {
-            throw new \Exception('export denied');
+            throw $this->createAccessDeniedException('Export denied');
         }
         $exportResult = $service->doExportData($asset);
 

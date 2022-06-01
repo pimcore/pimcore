@@ -308,10 +308,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    if (isset($params['owner'])) {
-                        $this->setBlockElementOwner($blockElement, $params);
-                    }
-
                     $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -323,6 +319,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $params['context']['containerType'] = 'block';
                     $dataForEditMode = $fd->getDataForEditmode($elementData, $object, $params);
                     $resultElement[$elementName] = $dataForEditMode;
+
+                    if (isset($params['owner'])) {
+                        $this->setBlockElementOwner($blockElement, $params);
+                    }
                 }
                 $result[] = [
                     'oIndex' => $idx,
@@ -742,14 +742,23 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array
      */
-    public function __sleep()
+    public function getBlockedVarsForExport(): array
     {
-        $vars = get_object_vars($this);
-        $blockedVars = [
+        return [
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
+            'childs',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        $blockedVars = $this->getBlockedVarsForExport();
 
         foreach ($blockedVars as $blockedVar) {
             unset($vars[$blockedVar]);
@@ -957,7 +966,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
             }
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
             $context = $params['context'];
 
@@ -968,7 +977,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $context = $params['context'];
             $collectionType = $context['containerKey'];
@@ -980,7 +989,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         }
 
         return $data;
@@ -1287,5 +1296,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         return null;
+    }
+
+    public static function __set_state($data)
+    {
+        $obj = new static();
+        $obj->setValues($data);
+
+        $obj->childs = $obj->children;  // @phpstan-ignore-line
+
+        return $obj;
     }
 }

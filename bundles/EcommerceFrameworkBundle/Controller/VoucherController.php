@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -38,15 +39,25 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
     /**
-     * @return string[]
+     * @var TokenStorageUserResolver
      */
-    public static function getSubscribedServices(): array
-    {
-        $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
-        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+    protected $tokenResolver;
 
-        return $services;
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * AdminController constructor.
+     *
+     * @param TokenStorageUserResolver $tokenStorageUserResolver
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TokenStorageUserResolver $tokenStorageUserResolver, TranslatorInterface $translator)
+    {
+        $this->tokenResolver = $tokenStorageUserResolver;
+        $this->translator = $translator;
     }
 
     /**
@@ -55,10 +66,12 @@ class VoucherController extends FrontendController implements KernelControllerEv
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
-        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+        $user = $this->tokenResolver->getUser();
 
         if ($user) {
-            $this->get('translator')->setLocale($user->getLanguage());
+            if ($this->translator instanceof LocaleAwareInterface) {
+                $this->translator->setLocale($user->getLanguage());
+            }
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
@@ -74,10 +87,10 @@ class VoucherController extends FrontendController implements KernelControllerEv
      */
     public function voucherCodeTabAction(Request $request)
     {
-        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
+        $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
-        if (!($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries)) {
-            throw new \InvalidArgumentException('Voucher series not found');
+        if (!$onlineShopVoucherSeries) {
+            throw $this->createNotFoundException('Voucher series not found');
         }
 
         $paramsBag = [];
@@ -106,12 +119,12 @@ class VoucherController extends FrontendController implements KernelControllerEv
      */
     public function exportTokensAction(Request $request)
     {
-        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
-        if (!($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries)) {
-            throw new \InvalidArgumentException('Voucher series not found');
+        $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
+
+        if (!$onlineShopVoucherSeries) {
+            throw $this->createNotFoundException('Voucher series not found');
         }
 
-        /** @var \Pimcore\Model\DataObject\OnlineShopVoucherSeries $onlineShopVoucherSeries */
         $tokenManager = $onlineShopVoucherSeries->getTokenManager();
         if (!(null !== $tokenManager && $tokenManager instanceof ExportableTokenManagerInterface)) {
             throw new \InvalidArgumentException('Token manager does not support exporting');
@@ -144,7 +157,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
 
         $response = new Response($result);
         $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Content-Length', strlen($result));
+        $response->headers->set('Content-Length', (string) strlen($result));
 
         if ($download && null !== $suffix) {
             $response->headers->set('Content-Disposition', sprintf('attachment; filename="voucher-export.%s"', $suffix));
@@ -160,27 +173,27 @@ class VoucherController extends FrontendController implements KernelControllerEv
      */
     public function generateAction(Request $request)
     {
-        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
-        if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
-            if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
-                $result = $tokenManager->insertOrUpdateVoucherSeries();
+        $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
-                $translator = $this->get('translator');
-                $params = ['id' => $request->get('id')]; //$request->query->all();
+        if (!$onlineShopVoucherSeries) {
+            throw $this->createNotFoundException('Could not get voucher series, probably you did not provide a correct id.');
+        }
 
-                if ($result === false) {
-                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-generation', [], 'admin');
-                } else {
-                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-generation', [], 'admin');
-                }
+        if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
+            $result = $tokenManager->insertOrUpdateVoucherSeries();
 
-                return $this->redirectToRoute(
-                    'pimcore_ecommerce_backend_voucher_voucher-code-tab',
-                    $params
-                );
+            $params = ['id' => $request->get('id')]; //$request->query->all();
+
+            if ($result === false) {
+                $params['error'] = $this->translator->trans('bundle_ecommerce_voucherservice_msg-error-generation', [], 'admin');
+            } else {
+                $params['success'] = $this->translator->trans('bundle_ecommerce_voucherservice_msg-success-generation', [], 'admin');
             }
-        } else {
-            throw new \InvalidArgumentException('Could not get voucher series, probably you did not provide a correct id.');
+
+            return $this->redirectToRoute(
+                'pimcore_ecommerce_backend_voucher_voucher-code-tab',
+                $params
+            );
         }
     }
 
@@ -191,31 +204,30 @@ class VoucherController extends FrontendController implements KernelControllerEv
      */
     public function cleanupAction(Request $request)
     {
-        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
-        if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
-            if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
-                $translator = $this->get('translator');
+        $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
-                // Prepare cleanUp parameter array.
-                $params = ['id' => $request->get('id')]; // $request->query->all();
-                $request->get('usage') ? $params['usage'] = $request->get('usage') : '';
-                $request->get('olderThan') ? $params['olderThan'] = $request->get('olderThan') : '';
+        if (!$onlineShopVoucherSeries) {
+            throw $this->createNotFoundException('Could not get voucher series, probably you did not provide a correct id.');
+        }
+        if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
 
-                if (empty($params['usage'])) {
-                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-required-missing', [], 'admin');
-                } elseif ($tokenManager->cleanUpCodes($params)) {
-                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup', [], 'admin');
-                } else {
-                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup', [], 'admin');
-                }
+            // Prepare cleanUp parameter array.
+            $params = ['id' => $request->get('id')]; // $request->query->all();
+            $request->get('usage') ? $params['usage'] = $request->get('usage') : '';
+            $request->get('olderThan') ? $params['olderThan'] = $request->get('olderThan') : '';
 
-                return $this->redirectToRoute(
-                    'pimcore_ecommerce_backend_voucher_voucher-code-tab',
-                    $params
-                );
+            if (empty($params['usage'])) {
+                $params['error'] = $this->translator->trans('bundle_ecommerce_voucherservice_msg-error-required-missing', [], 'admin');
+            } elseif ($tokenManager->cleanUpCodes($params)) {
+                $params['success'] = $this->translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup', [], 'admin');
+            } else {
+                $params['error'] = $this->translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup', [], 'admin');
             }
-        } else {
-            throw new \InvalidArgumentException('Could not get voucher series, probably you did not provide a correct id.');
+
+            return $this->redirectToRoute(
+                'pimcore_ecommerce_backend_voucher_voucher-code-tab',
+                $params
+            );
         }
     }
 
@@ -230,12 +242,11 @@ class VoucherController extends FrontendController implements KernelControllerEv
     {
         $duration = $request->get('duration');
         $id = $request->get('id');
-        $translator = $this->get('translator');
 
         if (!isset($duration)) {
             return $this->redirectToRoute(
                 'pimcore_ecommerce_backend_voucher_voucher-code-tab',
-                ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
+                ['error' => $this->translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
             );
         }
 
@@ -245,7 +256,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
                 if ($tokenManager->cleanUpReservations($duration, $id)) {
                     return $this->redirectToRoute(
                         'pimcore_ecommerce_backend_voucher_voucher-code-tab',
-                        ['success' => $translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
+                        ['success' => $this->translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
                     );
                 }
             }
@@ -253,7 +264,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
 
         return $this->redirectToRoute(
             'pimcore_ecommerce_backend_voucher_voucher-code-tab',
-            ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
+            ['error' => $this->translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
         );
     }
 }

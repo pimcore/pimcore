@@ -28,6 +28,23 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save()
     {
+        $data = $this->getValidObjectVars();
+
+        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
+    }
+
+    public function create()
+    {
+        $data = $this->getValidObjectVars();
+
+        $this->db->insert(self::TABLE_NAME, $data);
+    }
+
+    /**
+     * @return array
+     */
+    private function getValidObjectVars()
+    {
         $data = $this->model->getObjectVars();
 
         foreach ($data as $key => $value) {
@@ -36,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
+        return $data;
     }
 
     /**
@@ -48,7 +65,11 @@ class Dao extends Model\Dao\AbstractDao
         if (!$uuid) {
             throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
-        $this->db->delete(self::TABLE_NAME, ['uuid' => $uuid]);
+
+        $itemId = $this->model->getItemId();
+        $type = $this->model->getType();
+
+        $this->db->delete(self::TABLE_NAME, ['itemId' => $itemId, 'type' => $type, 'uuid' => $uuid]);
     }
 
     /**
@@ -63,5 +84,15 @@ class Dao extends Model\Dao\AbstractDao
         $model->setValues($data);
 
         return $model;
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public function exists($uuid)
+    {
+        return (bool) $this->db->fetchOne('SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?', [$uuid]);
     }
 }

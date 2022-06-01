@@ -130,7 +130,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @param string $getter
-     * @param Objectbrick\Data\AbstractData $data
+     * @param DataObject\Objectbrick $data
      * @param array|null $params
      * @param string $allowedBrickType
      * @param int $level
@@ -183,7 +183,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
         foreach ($calculatedChilds as $fd) {
             $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
-            $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+            $fieldData->setContextualData('objectbrick', $this->getName(), null, null, null, $fd->getName(), $fd);
             $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
             $brickData[$fd->getName()] = $fieldData;
         }
@@ -212,7 +212,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param string $getter
      * @param array|null $params
      *
-     * @return mixed
+     * @return \stdClass
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
     {
@@ -683,7 +683,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param string $getter
      * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params = [])
     {
@@ -695,7 +695,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param Objectbrick\Data\AbstractData $data
+     * @param Objectbrick $data
      * @param string $getter
      * @param array $params
      * @param int $level

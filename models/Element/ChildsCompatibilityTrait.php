@@ -25,7 +25,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return array
      */
     public function getChilds()
     {
@@ -47,7 +47,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return $this
      */
     public function setChilds()
     {
@@ -69,7 +69,7 @@ trait ChildsCompatibilityTrait
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return bool
      */
     public function hasChilds()
     {
@@ -84,82 +84,5 @@ trait ChildsCompatibilityTrait
         }
 
         throw new \Exception('Method hasChildren was not found');
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $name
-     */
-    public function __get($name)
-    {
-        if ($name === 'childs' && property_exists($this, 'children')) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
-            );
-
-            return $this->children;
-        }
-
-        trigger_error(sprintf('Undefined property: %s::$%s', __CLASS__, $name), E_USER_NOTICE);
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
-    {
-        if ($name === 'childs' && property_exists($this, 'children')) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Accessing childs property is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.'
-            );
-            $this->children = $value;
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $name
-     */
-    public function __isset($name)
-    {
-        if ($name === 'childs' && property_exists($this, 'children')) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Accessing childs property is deprecated, please use getChildren() instead. It will be removed in Pimcore 11.'
-            );
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $name
-     */
-    public function __unset($name)
-    {
-        if ($name === 'childs' && property_exists($this, 'children')) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Accessing childs property is deprecated, please use setChildren() instead. It will be removed in Pimcore 11.'
-            );
-            unset($this->children);
-        }
     }
 }

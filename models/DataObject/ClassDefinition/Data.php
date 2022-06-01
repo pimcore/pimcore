@@ -29,7 +29,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $title;
 
@@ -56,7 +56,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var bool
      */
-    public $locked;
+    public $locked = false;
 
     /**
      * @var string
@@ -123,7 +123,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'userpermissions', 'dependencies', 'modificationdate', 'usermodification', 'byid', 'bypath', 'data',
         'versions', 'properties', 'permissions', 'permissionsforuser', 'childamount', 'apipluginbroker', 'resource',
         'parentClass', 'definition', 'locked', 'language', 'omitmandatorycheck', 'idpath', 'object', 'fieldname',
-        'property', 'parentid', 'children', 'scheduledtasks',
+        'property', 'parentid', 'children', 'scheduledtasks', 'latestVersion',
     ];
 
     /**
@@ -217,7 +217,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
@@ -403,7 +403,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int|bool|null $locked
+     * @param bool $locked
      *
      * @return $this
      */
@@ -558,7 +558,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function getFilterConditionExt($value, $operator, $params = [])
     {
         $db = \Pimcore\Db::get();
-        $name = $params['name'] ? $params['name'] : $this->name;
+        $name = $params['name'] ?: $this->name;
         $key = $db->quoteIdentifier($name);
         if (!empty($params['brickPrefix'])) {
             $key = $params['brickPrefix'].$key;
@@ -1250,7 +1250,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      *
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|array
@@ -1449,7 +1449,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @param array|null $existingData
      * @param array $additionalData
      *
-     * @return mixed
+     * @return array|null
      */
     public function appendData($existingData, $additionalData)
     {

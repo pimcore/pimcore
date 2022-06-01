@@ -31,7 +31,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     public $configuration;
 
     /**
-     * @var int
+     * @var string|int|null
      */
     public $seriesId;
 
@@ -158,7 +158,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return mixed
+     * @return string|false
      */
     public function exportCsv(array $params)
     {
@@ -178,7 +178,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
             $data = $this->getExportData($params);
         } catch (\Exception $e) {
             fputcsv($stream, [$e->getMessage()]);
-            fputcsv($stream, '');
+            fputcsv($stream, ['']);
         }
 
         if (null !== $data && is_array($data)) {
@@ -204,7 +204,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function exportPlain(array $params)
     {

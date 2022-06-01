@@ -159,7 +159,7 @@ class ToolbarListener implements EventSubscriberInterface
             return false;
         }
 
-        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug', false);
+        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug');
         if (!$cookieValue) {
             return false;
         }

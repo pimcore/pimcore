@@ -105,6 +105,9 @@ class Imagick extends Adapter
                     // only for vector graphics
                     // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                     $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
+                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    $i->transparentPaintImage('', 1, 0, false);
                 }
 
                 $this->setColorspaceToRGB();
@@ -242,7 +245,7 @@ class Imagick extends Adapter
             }
         }
         if (!$this->isPreserveColor()) {
-            $i->profileImage('*', null);
+            $i->profileImage('*', '');
         }
 
         if ($quality && !$this->isPreserveColor()) {
@@ -283,7 +286,7 @@ class Imagick extends Adapter
         }
 
         if (!$success) {
-            throw new \Exception('Unable to write image: ', $path);
+            throw new \Exception('Unable to write image: ' . $path);
         }
 
         if ($realTargetPath) {
@@ -410,7 +413,7 @@ class Imagick extends Adapter
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                     $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
                 } catch (\Exception $e) {
-                    Logger::warn($e);
+                    Logger::warn((string) $e);
                 }
             }
         }
@@ -880,7 +883,7 @@ class Imagick extends Adapter
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
         if (is_file($image)) {
-            $this->resource->setImageMatte(1);
+            $this->resource->setImageMatte(true);
             $newImage = new \Imagick();
             $newImage->readimage($image);
             $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
@@ -984,7 +987,7 @@ class Imagick extends Adapter
 
         // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
         // getimageformat() onto SVG graphics, this is a workaround to avoid problems
-        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@i", $imagePath)) {
             return true;
         }
 
@@ -1018,7 +1021,7 @@ class Imagick extends Adapter
                 }
             }
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err((string) $e);
         }
 
         return false;
@@ -1047,8 +1050,6 @@ class Imagick extends Adapter
         if (in_array($this->resource->getimageformat(), ['EPT', 'EPDF', 'EPI', 'EPS', 'EPS2', 'EPS3', 'EPSF', 'EPSI', 'EPT', 'PDF', 'PFA', 'PFB', 'PFM', 'PS', 'PS2', 'PS3'])) {
             // we need a special handling for PhotoShop EPS
             $i = 0;
-
-            ini_set('auto_detect_line_endings', true); // we need to turn this on, as the damn f****** Mac has different line endings in EPS files, Prost Mahlzeit!
 
             $epsFile = fopen($this->imagePath, 'r');
             while (($eps_line = fgets($epsFile)) && ($i < 100)) {

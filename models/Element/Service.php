@@ -23,6 +23,7 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use League\Csv\EscapeFormula;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -44,6 +45,7 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -649,6 +651,7 @@ class Service extends Model\AbstractModel
 
                 if ($predefined && $predefined->getType() == $p->getType()) {
                     $properties[$key]['config'] = $predefined->getConfig();
+                    $properties[$key]['predefinedName'] = $predefined->getName();
                     $properties[$key]['description'] = $predefined->getDescription();
                 }
             }
@@ -660,7 +663,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
+     * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      */
     protected function updateChildren($target, $new)
@@ -708,40 +711,80 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * find all elements which the user may not list and therefore may never be shown to the user
+     * find all elements which the user may not list and therefore may never be shown to the user.
+     * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
      * @internal
      *
      * @param string $type asset|object|document
      * @param Model\User $user
      *
-     * @return array
+     * @return array{forbidden: array, allowed: array}
      */
     public static function findForbiddenPaths($type, $user)
     {
+        $db = Db::get();
+
         if ($user->isAdmin()) {
-            return [];
+            return ['forbidden' => [], 'allowed' => ['/']];
         }
 
-        // get workspaces
-        $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
-        foreach ($user->getRoles() as $roleId) {
-            $role = Model\User\Role::getById($roleId);
-            $workspaces = array_merge($workspaces, $role->{'getWorkspaces' . ucfirst($type)}());
+        $workspaceCids = [];
+        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        if ($userWorkspaces) {
+            // this collects the array that are on user-level, which have top priority
+            foreach ($userWorkspaces as $userWorkspace) {
+                $workspaceCids[] = $userWorkspace['cid'];
+            }
         }
+
+        if ($userRoleIds = $user->getRoles()) {
+            $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
+            if ($workspaceCids) {
+                $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
+            }
+            $roleWorkspacesSql .= ' GROUP BY cpath';
+
+            $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+        }
+
+        $uniquePaths = [];
+        foreach (array_merge($userWorkspaces, $roleWorkspaces ?? []) as $workspace) {
+            $uniquePaths[$workspace['cpath']] = $workspace['list'];
+        }
+        ksort($uniquePaths);
+
+        //TODO: above this should be all in one query (eg. instead of ksort, use sql sort) but had difficulties making the `group by` working properly to let user permissions take precedence
+
+        $totalPaths = count($uniquePaths);
 
         $forbidden = [];
-        if (count($workspaces) > 0) {
-            foreach ($workspaces as $workspace) {
-                if (!$workspace->getList()) {
-                    $forbidden[] = $workspace->getCpath();
+        $allowed = [];
+        if ($totalPaths > 0) {
+            $uniquePathsKeys = array_keys($uniquePaths);
+            for ($index = 0; $index < $totalPaths; $index++) {
+                $path = $uniquePathsKeys[$index];
+                if ($uniquePaths[$path] == 0) {
+                    $forbidden[$path] = [];
+                    for ($findIndex = $index + 1; $findIndex < $totalPaths; $findIndex++) { //NB: the starting index is the last index we got
+                        $findPath = $uniquePathsKeys[$findIndex];
+                        if (str_contains($findPath, $path)) { //it means that we found a children
+                            if ($uniquePaths[$findPath] == 1) {
+                                array_push($forbidden[$path], $findPath); //adding list=1 children
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    $allowed[] = $path;
                 }
             }
         } else {
-            $forbidden[] = '/';
+            $forbidden['/'] = [];
         }
 
-        return $forbidden;
+        return ['forbidden' => $forbidden, 'allowed' => $allowed];
     }
 
     /**
@@ -1221,11 +1264,11 @@ class Service extends Model\AbstractModel
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
-                } catch (\Exception $e) {
+                    $reflectionProperty->setAccessible(true);
+                    $myValue = $reflectionProperty->getValue($object);
+                } catch (\Throwable $e) {
                     return false;
                 }
-                $reflectionProperty->setAccessible(true);
-                $myValue = $reflectionProperty->getValue($object);
 
                 return $myValue instanceof ElementInterface;
             }
@@ -1265,6 +1308,23 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @template T
+     *
+     * @param T $properties
+     *
+     * @return T
+     */
+    public static function cloneProperties(mixed $properties): mixed
+    {
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cid'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('ctype'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('cpath'));
+
+        return $deepCopy->copy($properties);
+    }
+
+    /**
      * @internal
      *
      * @param Note $note
@@ -1287,7 +1347,7 @@ class Service extends Model\AbstractModel
             'ctype' => $note->getCtype(),
             'cpath' => $cpath,
             'date' => $note->getDate(),
-            'title' => $note->getTitle(),
+            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
             'description' => $note->getDescription(),
         ];
 
@@ -1443,10 +1503,8 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        if ($element instanceof ElementDumpStateInterface) {
-            self::loadAllFields($element);
-            $element->setInDumpState(true);
-        }
+        self::loadAllFields($element);
+        $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);

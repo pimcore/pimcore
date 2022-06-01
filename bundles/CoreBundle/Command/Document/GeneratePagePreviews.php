@@ -72,7 +72,7 @@ class GeneratePagePreviews extends AbstractCommand
         $parentIdOrPath = $input->getOption('parent');
         if ($parentIdOrPath) {
             if (is_numeric(($parentIdOrPath))) {
-                $parent = Document::getById($parentIdOrPath);
+                $parent = Document::getById((int) $parentIdOrPath);
             } else {
                 $parent = Document::getByPath($parentIdOrPath);
             }

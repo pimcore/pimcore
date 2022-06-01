@@ -2,15 +2,23 @@
 name: "Codeception Tests"
 
 on:
+    schedule:
+        -   cron: '0 3 * * *'
     pull_request:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
+        paths-ignore:
+            - 'docs/**'
+            - 'bundles/**/Resources/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
+        paths-ignore:
+            - 'docs/**'
+            - 'bundles/**/Resources/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}

@@ -33,7 +33,7 @@ final class User extends User\UserRole
     protected $type = 'user';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $password;
 
@@ -133,7 +133,7 @@ final class User extends User\UserRole
     protected $twoFactorAuthentication;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPassword()
     {
@@ -141,13 +141,13 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $password
+     * @param string|null $password
      *
      * @return $this
      */
     public function setPassword($password)
     {
-        if (strlen($password) > 4) {
+        if (strlen((string) $password) > 4) {
             $this->password = $password;
         }
 
@@ -599,7 +599,7 @@ final class User extends User\UserRole
      */
     public function setContentLanguages($contentLanguages)
     {
-        if ($contentLanguages && is_array($contentLanguages)) {
+        if (is_array($contentLanguages)) {
             $contentLanguages = implode(',', $contentLanguages);
         }
         $this->contentLanguages = $contentLanguages;
@@ -686,7 +686,7 @@ final class User extends User\UserRole
                 $userRole = User\UserRole::getById($role);
                 $this->mergedWebsiteTranslationLanguagesEdit = array_merge($this->mergedWebsiteTranslationLanguagesEdit, $userRole->getWebsiteTranslationLanguagesEdit());
             }
-            $this->mergedWebsiteTranslationLanguagesEdit = array_values($this->mergedWebsiteTranslationLanguagesEdit);
+            $this->mergedWebsiteTranslationLanguagesEdit = array_values(array_unique($this->mergedWebsiteTranslationLanguagesEdit));
         }
 
         return $this->mergedWebsiteTranslationLanguagesEdit;
@@ -727,7 +727,8 @@ final class User extends User\UserRole
                 $userRole = User\UserRole::getById($role);
                 $this->mergedWebsiteTranslationLanguagesView = array_merge($this->mergedWebsiteTranslationLanguagesView, $userRole->getWebsiteTranslationLanguagesView());
             }
-            $this->mergedWebsiteTranslationLanguagesView = array_values($this->mergedWebsiteTranslationLanguagesView);
+
+            $this->mergedWebsiteTranslationLanguagesView = array_values(array_unique($this->mergedWebsiteTranslationLanguagesView));
         }
 
         return $this->mergedWebsiteTranslationLanguagesView;

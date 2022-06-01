@@ -12,3 +12,5 @@ pimcore:
     objects: 
         auto_save_interval: 60 # saving interval in seconds, default 60s, set to 0 to disable it
 ```
+
+> Note: When using Auto Save for a type, the "Disable unsaved content warning" checkbox in User profile will have no effect on the close action.

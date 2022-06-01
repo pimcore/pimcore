@@ -33,7 +33,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $allowedClassId;
 
@@ -49,14 +49,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var array
      */
-    public $columns;
+    public $columns = [];
 
     /**
      * @internal
      *
      * @var string[]
      */
-    public $columnKeys;
+    public $columnKeys = [];
 
     /**
      * Static type of this element
@@ -72,14 +72,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var bool
      */
-    public $enableBatchEdit;
+    public $enableBatchEdit = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $allowMultipleAssignments;
+    public $allowMultipleAssignments = false;
 
     /**
      * @internal
@@ -303,10 +303,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                         $setter = 'set' . ucfirst($c['key']);
                         $value = $relation[$c['key']] ?? null;
 
-                        if ($c['type'] == 'multiselect') {
-                            if (is_array($value) && count($value)) {
-                                $value = implode(',', $value);
-                            }
+                        if ($c['type'] == 'multiselect' && is_array($value)) {
+                            $value = implode(',', $value);
                         }
 
                         $metaData->$setter($value);
@@ -643,7 +641,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param string $allowedClassId
+     * @param string|null $allowedClassId
      *
      * @return $this
      */
@@ -655,7 +653,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAllowedClassId()
     {
@@ -715,7 +713,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getColumns()
     {
@@ -892,7 +890,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $type = $elementData['type'];
                 $id = $elementData['id'];
                 $target = Element\Service::getElementById($type, $id);
-                if ($target) {
+                if ($target instanceof DataObject\Concrete) {
                     $columns = $elementMetadata['columns'];
                     $fieldname = $elementMetadata['fieldname'];
                     $data = $elementMetadata['data'];

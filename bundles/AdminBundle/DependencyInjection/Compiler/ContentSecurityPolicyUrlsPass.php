@@ -35,10 +35,8 @@ final class ContentSecurityPolicyUrlsPass implements CompilerPassInterface
 
         $config = $container->getParameter('pimcore_admin.config');
 
-        if (count($config['admin_csp_header']['additional_urls'])) {
-            foreach ($config['admin_csp_header']['additional_urls'] as $additionalUrlsKey => $additionalUrlsArr) {
-                $definition->addMethodCall('addAllowedUrls', [$additionalUrlsKey, $additionalUrlsArr]);
-            }
+        foreach ($config['admin_csp_header']['additional_urls'] as $additionalUrlsKey => $additionalUrlsArr) {
+            $definition->addMethodCall('addAllowedUrls', [$additionalUrlsKey, $additionalUrlsArr]);
         }
     }
 }

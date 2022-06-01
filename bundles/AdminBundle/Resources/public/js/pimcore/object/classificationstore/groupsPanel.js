@@ -145,16 +145,20 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var keyId = data.data.keyId;
                         var groupId = data.data.groupId;
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
-                            method: 'DELETE',
-                            params: {
-                                keyId: keyId,
-                                groupId: groupId
-                            },
-                            success: function (response) {
-                                this.relationsStore.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_relation'), data.data.keyName), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
+                                    method: 'DELETE',
+                                    params: {
+                                        keyId: keyId,
+                                        groupId: groupId
+                                    },
+                                    success: function (response) {
+                                        this.relationsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]
@@ -316,15 +320,19 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         this.relationsGrid.hide();
                         this.relationsPanel.disable();
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
-                            method: 'DELETE',
-                            params: {
-                                id: id
-                            },
-                            success: function (response) {
-                                this.groupsStore.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), data.data.name), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
+                                    method: 'DELETE',
+                                    params: {
+                                        id: id
+                                    },
+                                    success: function (response) {
+                                        this.groupsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]

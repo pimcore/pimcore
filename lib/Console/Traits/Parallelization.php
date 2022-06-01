@@ -52,7 +52,7 @@ trait Parallelization
                 //'p', avoid collisions with already existing Pimcore command options
                 InputOption::VALUE_OPTIONAL,
                 'The number of parallel processes to run',
-                1
+                '1'
             )
             ->addOption(
                 'child',

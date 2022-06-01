@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 
-use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
+use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\Runtime;
@@ -134,7 +134,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $event = new LoginRedirectEvent('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective'))]);
+        $event = new LoginRedirectEvent('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective', ''))]);
         $this->dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
         $url = $this->router->generate($event->getRouteName(), $event->getRouteParams());
@@ -354,7 +354,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     public function createAuthenticatedToken(UserInterface $user, $providerKey)
     {
         if ($this->twoFactorRequired) {
-            return new TwoFactorRequiredToken(
+            return new LegacyTwoFactorRequiredToken(
                 $user,
                 $providerKey,
                 $user->getRoles()

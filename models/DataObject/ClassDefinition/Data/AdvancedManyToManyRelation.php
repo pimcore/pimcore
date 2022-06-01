@@ -411,10 +411,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                         $setter = 'set' . ucfirst($key);
                         $value = $element[$key] ?? null;
 
-                        if ($columnConfig['type'] === 'multiselect') {
-                            if (is_array($value) && count($value)) {
-                                $value = implode(',', $value);
-                            }
+                        if ($columnConfig['type'] === 'multiselect' && is_array($value)) {
+                            $value = implode(',', $value);
                         }
 
                         $metaData->$setter($value);
@@ -902,6 +900,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -970,7 +970,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -988,7 +988,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

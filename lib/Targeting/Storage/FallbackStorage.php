@@ -168,7 +168,7 @@ class FallbackStorage implements TargetingStorageInterface
                 $this->fallbackStorage->clear($visitorInfo, $scope);
             }
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
         }
     }
 }

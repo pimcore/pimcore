@@ -186,7 +186,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     /**
      * @param string $property
-     * @param CoreCacheHandler $handler
+     * @param CoreCacheHandler|null $handler
      *
      * @return mixed
      */

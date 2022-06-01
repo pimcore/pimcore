@@ -71,9 +71,9 @@ class Bootstrap
         DataObject\Localizedfield::setGetFallbackValues(true);
 
         // CLI has no memory/time limits
-        @ini_set('memory_limit', -1);
-        @ini_set('max_execution_time', -1);
-        @ini_set('max_input_time', -1);
+        @ini_set('memory_limit', '-1');
+        @ini_set('max_execution_time', '-1');
+        @ini_set('max_input_time', '-1');
 
         // Error reporting is enabled in CLI
         @ini_set('display_errors', 'On');
@@ -146,7 +146,9 @@ class Bootstrap
 
     private static function prepareEnvVariables()
     {
-        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        }
     }
 
     public static function defineConstants()
@@ -257,7 +259,7 @@ class Bootstrap
 
         $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+        if ($conf['general']['timezone']) {
             date_default_timezone_set($conf['general']['timezone']);
         }
 

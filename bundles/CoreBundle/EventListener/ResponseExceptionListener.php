@@ -102,7 +102,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $headers = $exception->getHeaders();
         } else {
             // only log exception if it's not intentional (like a NotFoundHttpException)
-            $this->logger->error($exception);
+            $this->logger->error((string) $exception);
         }
 
         $errorPath = $this->determineErrorPath($request);
@@ -115,11 +115,11 @@ class ResponseExceptionListener implements EventSubscriberInterface
             return;
         }
 
-        $document = Document::getByPath($errorPath);
+        $document = Document\Page::getByPath($errorPath);
 
-        if (!$document instanceof Document\Page) {
+        if (!$document) {
             // default is home
-            $document = Document::getById(1);
+            $document = Document\Page::getById(1);
         }
 
         try {
@@ -193,7 +193,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $defaultErrorDocumentPath = $site->getErrorDocument();
         } else {
             $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?: [];
-            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?: '';
         }
 
         if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {

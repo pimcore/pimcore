@@ -164,7 +164,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -194,7 +194,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param string $data
+     * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -208,7 +208,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -220,7 +220,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -277,7 +277,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {

@@ -58,7 +58,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param mixed $data
+     * @param Asset\Image|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -66,7 +66,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Asset) {
+        if ($data instanceof Asset\Image) {
             return $data->getId();
         }
 
@@ -76,7 +76,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param int $data
+     * @param int|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -94,7 +94,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param Asset|null $data
+     * @param Asset\Image|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -102,7 +102,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Asset) {
+        if ($data instanceof Asset\Image) {
             return $data->getId();
         }
 
@@ -124,11 +124,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return $data->getObjectVars();
         }
 
-        return $data;
+        return null;
     }
 
     /**
-     * @param Asset $data
+     * @param Asset\Image $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -142,7 +142,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -175,7 +175,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $data
+     * @param array|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -381,6 +381,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 'id' => $value->getId(),
             ];
         }
+
+        return null;
     }
 
     /**
@@ -391,6 +393,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (isset($value['id'])) {
             return Asset\Image::getById($value['id']);
         }
+
+        return null;
     }
 
     /**

@@ -28,9 +28,10 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 | Version  | Supported | LTS** | CE End of life*** |
 |----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
+| `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
 | `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
 | `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
+| `10.4`   |     ✅     |   ☑   |                   |
 | `10.x`   |     ✅     |   ☑   |                   |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   

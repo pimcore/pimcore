@@ -84,16 +84,22 @@ abstract class Kernel extends SymfonyKernel
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getProjectDir()
+    #[\ReturnTypeWillChange]
+    public function getProjectDir()// : string
     {
         return PIMCORE_PROJECT_ROOT;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getCacheDir()
+    #[\ReturnTypeWillChange]
+    public function getCacheDir()// : string
     {
         if (isset($_SERVER['APP_CACHE_DIR'])) {
             return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
@@ -104,8 +110,11 @@ abstract class Kernel extends SymfonyKernel
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getLogDir()
+    #[\ReturnTypeWillChange]
+    public function getLogDir()// : string
     {
         return PIMCORE_LOG_DIRECTORY;
     }
@@ -459,7 +468,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         //@ini_set("memory_limit", "1024M");
-        @ini_set('max_execution_time', $maxExecutionTime);
+        @ini_set('max_execution_time', (string) $maxExecutionTime);
         @set_time_limit($maxExecutionTime);
         ini_set('default_charset', 'UTF-8');
 
@@ -477,5 +486,25 @@ abstract class Kernel extends SymfonyKernel
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function locateResource(string $name)
+    {
+        // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.2
+        // @TODO to be removed in Pimcore 11
+        if ($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
+            try {
+                // try the new location of v3 first, as most probably this is used
+                return parent::locateResource('@PrestaSitemapBundle/config/routing.yml');
+            } catch (\InvalidArgumentException $e) {
+                // if the file doesnt exist in the new location, try the v2 location
+                return parent::locateResource($name);
+            }
+        }
+
+        return parent::locateResource($name);
     }
 }

@@ -21,6 +21,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PathsEvent extends Event
 {
+    /**
+     * @var array
+     */
     protected $paths = [];
 
     /**

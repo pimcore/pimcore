@@ -208,7 +208,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param float $data
+     * @param string $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *

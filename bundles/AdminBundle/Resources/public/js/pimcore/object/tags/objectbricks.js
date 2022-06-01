@@ -87,7 +87,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         for (var i = 0; i < this.data.length; i++) {
             if (this.data[i] != null) {
                 this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
+
+                if (this.fieldConfig.allowedTypes.length === 0 || this.fieldConfig.allowedTypes.indexOf(this.data[i].type) > -1) {
+                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
+                }
             }
         }
 
@@ -104,6 +107,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
                 var elementData = data[i];
                 if (this.addedTypes[elementData.key]) {
+                    continue;
+                }
+
+                if(this.fieldConfig.allowedTypes.length > 0 && this.fieldConfig.allowedTypes.indexOf(elementData.key) === -1) {
                     continue;
                 }
 

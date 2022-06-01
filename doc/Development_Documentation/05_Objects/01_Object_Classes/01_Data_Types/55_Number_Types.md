@@ -47,7 +47,7 @@ In the class editor, it is possible to restrict the list of valid units on a fie
 
 Only those units will be available then.
 
-![Quantity Value Field](../../../img/classes-datatypes-number6.jpg)
+![Quantity Value Field](../../../img/classes-datatypes-number6.png)
 
 The following code snippet shows how to set a value.
 ```php

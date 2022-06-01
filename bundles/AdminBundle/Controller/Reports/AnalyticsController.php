@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Google\Service\Analytics;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
@@ -34,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
-     * @var \Google_Service_Analytics
+     * @var Analytics
      */
     protected $service;
 
@@ -128,20 +129,23 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     /**
      * @param Request $request
      *
-     * @return mixed|string
+     * @return string
      */
     protected function getFilterPath(Request $request)
     {
         if ($request->get('type') == 'document' && $request->get('id')) {
-            $doc = Document::getById($request->get('id'));
+            $doc = Document::getById((int) $request->get('id'));
+            if (!$doc) {
+                throw $this->createNotFoundException();
+            }
             $path = $doc->getFullPath();
 
             if ($doc instanceof Document\Page && $doc->getPrettyUrl()) {
                 $path = $doc->getPrettyUrl();
             }
 
-            if ($request->get('site')) {
-                $site = Site::getById($request->get('site'));
+            if ($siteId = $request->get('site')) {
+                $site = Site::getById((int) $siteId);
                 $path = preg_replace('@^' . preg_quote($site->getRootPath(), '@') . '/@', '/', $path);
             }
 
@@ -516,6 +520,6 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
             die('Google Analytics is not configured');
         }
 
-        $this->service = new \Google_Service_Analytics($client);
+        $this->service = new Analytics($client);
     }
 }

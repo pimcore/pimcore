@@ -98,7 +98,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        $field = $filterDefinition->getField();
+        $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;
 
         if (!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING) {

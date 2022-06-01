@@ -220,7 +220,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $length
-     * @param null|string $seriesId
+     * @param string|int|null $seriesId
      *
      * @return null|string
      */

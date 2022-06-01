@@ -156,7 +156,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                     checked:datax.useCurrentDate,
                     disabled: this.isInCustomLayoutEditor(),
                     listeners:{
-                        change:this.toggleDefaultDate.bind(this, datefield, timefield)
+                        change:this.toggleDefaultDate.bind(this, defaultValue, datefield, timefield)
                     }
                 }, {
                 xtype: "displayfield",
@@ -190,7 +190,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         }
     },
 
-    toggleDefaultDate:function (datefield, timefield, checkbox, checked) {
+    toggleDefaultDate:function (defaultValue, datefield, timefield, checkbox, checked) {
             if (checked) {
                 datefield.setValue(null);
                 timefield.setValue(null);

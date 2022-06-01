@@ -35,14 +35,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/class")
+ * @Route("/class", name="pimcore_admin_dataobject_class_")
  *
  * @internal
  */
 class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
+     * @Route("/get-document-types", name="getdocumenttypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -62,7 +62,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-asset-types", name="pimcore_admin_dataobject_class_getassettypes", methods={"GET"})
+     * @Route("/get-asset-types", name="getassettypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -82,7 +82,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-tree", name="pimcore_admin_dataobject_class_gettree", methods={"GET", "POST"})
+     * @Route("/get-tree", name="gettree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -215,7 +215,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get", name="pimcore_admin_dataobject_class_get", methods={"GET"})
+     * @Route("/get", name="get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -224,6 +224,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $class->setFieldDefinitions([]);
         $isWriteable = $class->isWritable();
         $class = $class->getObjectVars();
@@ -233,7 +236,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-custom-layout", name="pimcore_admin_dataobject_class_getcustomlayout", methods={"GET"})
+     * @Route("/get-custom-layout", name="getcustomlayout", methods={"GET"})
      *
      * @param Request $request
      *
@@ -242,6 +245,28 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
+        if (!$customLayout) {
+            $brickLayoutSeparator = strpos($request->get('id'), '.brick.');
+            if ($brickLayoutSeparator !== false) {
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById(substr($request->get('id'), 0, $brickLayoutSeparator));
+                if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                    $customLayout = DataObject\ClassDefinition\CustomLayout::create(
+                        [
+                            'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+strlen('.brick.')),
+                            'userOwner' => $this->getAdminUser()->getId(),
+                            'classId' => $customLayout->getClassId(),
+                        ]
+                    );
+
+                    $customLayout->setId($request->get('id'));
+                    $customLayout->save();
+                }
+            }
+
+            if (!$customLayout) {
+                throw $this->createNotFoundException();
+            }
+        }
         $isWriteable = $customLayout->isWritable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
@@ -250,7 +275,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/add", name="pimcore_admin_dataobject_class_add", methods={"POST"})
+     * @Route("/add", name="add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -280,7 +305,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/add-custom-layout", name="pimcore_admin_dataobject_class_addcustomlayout", methods={"POST"})
+     * @Route("/add-custom-layout", name="addcustomlayout", methods={"POST"})
      *
      * @param Request $request
      *
@@ -314,7 +339,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/delete", name="pimcore_admin_dataobject_class_delete", methods={"DELETE"})
+     * @Route("/delete", name="delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -323,13 +348,15 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function deleteAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
-        $class->delete();
+        if ($class) {
+            $class->delete();
+        }
 
         return new Response();
     }
 
     /**
-     * @Route("/delete-custom-layout", name="pimcore_admin_dataobject_class_deletecustomlayout", methods={"DELETE"})
+     * @Route("/delete-custom-layout", name="deletecustomlayout", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -337,8 +364,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
-        if ($customLayout) {
+        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->addConditionParam('id=?', $request->get('id'));
+        $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
+        foreach ($customLayouts as $customLayout) {
             $customLayout->delete();
         }
 
@@ -346,7 +375,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/save-custom-layout", name="pimcore_admin_dataobject_class_savecustomlayout", methods={"PUT"})
+     * @Route("/save-custom-layout", name="savecustomlayout", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -355,7 +384,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function saveCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
-        $class = DataObject\ClassDefinition::getById($customLayout->getClassId());
+        if (!$customLayout) {
+            throw $this->createNotFoundException();
+        }
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -386,7 +417,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/save", name="pimcore_admin_dataobject_class_save", methods={"PUT"})
+     * @Route("/save", name="save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -397,6 +428,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function saveAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -476,7 +510,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/import-class", name="pimcore_admin_dataobject_class_importclass", methods={"POST", "PUT"})
+     * @Route("/import-class", name="importclass", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -485,6 +519,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function importClassAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json, false, true);
@@ -500,7 +537,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/import-custom-layout-definition", name="pimcore_admin_dataobject_class_importcustomlayoutdefinition", methods={"POST", "PUT"})
+     * @Route("/import-custom-layout-definition", name="importcustomlayoutdefinition", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -538,7 +575,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-custom-layout-definitions", name="pimcore_admin_dataobject_class_getcustomlayoutdefinitions", methods={"GET"})
+     * @Route("/get-custom-layout-definitions", name="getcustomlayoutdefinitions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -546,10 +583,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function getCustomLayoutDefinitionsAction(Request $request)
     {
-        $classId = $request->get('classId');
+        $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition('classId = ' . $list->quote($classId));
+        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.brick.%\'', $classIds);
         $list = $list->load();
         $result = [];
         foreach ($list as $item) {
@@ -564,7 +601,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-all-layouts", name="pimcore_admin_dataobject_class_getalllayouts", methods={"GET"})
+     * @Route("/get-all-layouts", name="getalllayouts", methods={"GET"})
      *
      * @param Request $request
      *
@@ -577,6 +614,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $mapping = [];
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->setCondition('id not LIKE \'%.brick.%\'');
         $customLayouts->setOrder('ASC');
         $customLayouts->setOrderKey('name');
         $customLayouts = $customLayouts->load();
@@ -612,7 +650,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/export-class", name="pimcore_admin_dataobject_class_exportclass", methods={"GET"})
+     * @Route("/export-class", name="exportclass", methods={"GET"})
      *
      * @param Request $request
      *
@@ -640,7 +678,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/export-custom-layout-definition", name="pimcore_admin_dataobject_class_exportcustomlayoutdefinition", methods={"GET"})
+     * @Route("/export-custom-layout-definition", name="exportcustomlayoutdefinition", methods={"GET"})
      *
      * @param Request $request
      *
@@ -681,7 +719,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
 
     /**
-     * @Route("/fieldcollection-get", name="pimcore_admin_dataobject_class_fieldcollectionget", methods={"GET"})
+     * @Route("/fieldcollection-get", name="fieldcollectionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -699,7 +737,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/fieldcollection-update", name="pimcore_admin_dataobject_class_fieldcollectionupdate", methods={"PUT", "POST"})
+     * @Route("/fieldcollection-update", name="fieldcollectionupdate", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -757,7 +795,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/import-fieldcollection", name="pimcore_admin_dataobject_class_importfieldcollection", methods={"POST"})
+     * @Route("/import-fieldcollection", name="importfieldcollection", methods={"POST"})
      *
      * @param Request $request
      *
@@ -783,7 +821,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/export-fieldcollection", name="pimcore_admin_dataobject_class_exportfieldcollection", methods={"GET"})
+     * @Route("/export-fieldcollection", name="exportfieldcollection", methods={"GET"})
      *
      * @param Request $request
      *
@@ -809,7 +847,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/fieldcollection-delete", name="pimcore_admin_dataobject_class_fieldcollectiondelete", methods={"DELETE"})
+     * @Route("/fieldcollection-delete", name="fieldcollectiondelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -824,7 +862,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/fieldcollection-tree", name="pimcore_admin_dataobject_class_fieldcollectiontree", methods={"GET", "POST"})
+     * @Route("/fieldcollection-tree", name="fieldcollectiontree", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -846,7 +884,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if ($request->query->has('allowedTypes')) {
             $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
-        $object = DataObject::getById($request->get('object_id'));
+        $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
         $currentLayoutId = $request->get('layoutId', null);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -931,7 +969,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/fieldcollection-list", name="pimcore_admin_dataobject_class_fieldcollectionlist", methods={"GET"})
+     * @Route("/fieldcollection-list", name="fieldcollectionlist", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -961,7 +999,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         'outerFieldname' => $request->get('field_name'),
                     ];
 
-                    $object = DataObject::getById($request->get('object_id'));
+                    $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -985,7 +1023,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-class-definition-for-column-config", name="pimcore_admin_dataobject_class_getclassdefinitionforcolumnconfig", methods={"GET"})
+     * @Route("/get-class-definition-for-column-config", name="getclassdefinitionforcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      *
@@ -994,6 +1032,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        if (!$class) {
+            throw $this->createNotFoundException();
+        }
         $objectId = (int)$request->get('oid');
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
@@ -1064,7 +1105,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
 
     /**
-     * @Route("/objectbrick-get", name="pimcore_admin_dataobject_class_objectbrickget", methods={"GET"})
+     * @Route("/objectbrick-get", name="objectbrickget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1082,7 +1123,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/objectbrick-update", name="pimcore_admin_dataobject_class_objectbrickupdate", methods={"PUT", "POST"})
+     * @Route("/objectbrick-update", name="objectbrickupdate", methods={"PUT", "POST"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1150,7 +1191,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/import-objectbrick", name="pimcore_admin_dataobject_class_importobjectbrick", methods={"POST"})
+     * @Route("/import-objectbrick", name="importobjectbrick", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1175,7 +1216,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/export-objectbrick", name="pimcore_admin_dataobject_class_exportobjectbrick", methods={"GET"})
+     * @Route("/export-objectbrick", name="exportobjectbrick", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1201,7 +1242,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/objectbrick-delete", name="pimcore_admin_dataobject_class_objectbrickdelete", methods={"DELETE"})
+     * @Route("/objectbrick-delete", name="objectbrickdelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1216,7 +1257,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/objectbrick-tree", name="pimcore_admin_dataobject_class_objectbricktree", methods={"GET", "POST"})
+     * @Route("/objectbrick-tree", name="objectbricktree", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1236,7 +1277,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $fieldname = null;
         $className = null;
 
-        $object = DataObject::getById($request->get('object_id'));
+        $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1277,7 +1318,19 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
                 }
                 if ($forObjectEditor) {
-                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    $layoutId = $request->get('layoutId');
+                    $itemLayoutDefinitions = null;
+                    if ($layoutId) {
+                        $layout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
+                        if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $itemLayoutDefinitions = $layout->getLayoutDefinitions();
+                        }
+                    }
+
+                    if ($itemLayoutDefinitions === null) {
+                        $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    }
+
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
 
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
@@ -1300,7 +1353,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     $user = $this->getAdminUser();
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
                         DataObject\Service::createSuperLayout($layout);
-                        $objectData['layout'] = $layout;
+                    } elseif ($currentLayoutId) {
+                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId.'.brick.'.$item->getKey());
+                        if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $layout = $customLayout->getLayoutDefinitions();
+                        }
                     }
 
                     $context = [
@@ -1343,7 +1400,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/objectbrick-list", name="pimcore_admin_dataobject_class_objectbricklist", methods={"GET"})
+     * @Route("/objectbrick-list", name="objectbricklist", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1390,7 +1447,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     'outerFieldname' => $request->get('field_name'),
                 ];
 
-                $object = DataObject::getById($request->get('object_id'));
+                $object = DataObject\Concrete::getById((int) $request->get('object_id'));
 
                 DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);
@@ -1415,7 +1472,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
 
     /**
-     * @Route("/bulk-import", name="pimcore_admin_dataobject_class_bulkimport", methods={"POST"})
+     * @Route("/bulk-import", name="bulkimport", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1480,7 +1537,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
 
     /**
-     * @Route("/bulk-commit", name="pimcore_admin_dataobject_class_bulkcommit", methods={"POST"})
+     * @Route("/bulk-commit", name="bulkcommit", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1586,7 +1643,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
 
     /**
-     * @Route("/bulk-export-prepare", name="pimcore_admin_dataobject_class_bulkexportprepare", methods={"POST"})
+     * @Route("/bulk-export-prepare", name="bulkexportprepare", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1604,7 +1661,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/bulk-export", name="pimcore_admin_dataobject_class_bulkexport", methods={"GET"})
+     * @Route("/bulk-export", name="bulkexport", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1674,7 +1731,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/do-bulk-export", name="pimcore_admin_dataobject_class_dobulkexport", methods={"GET"})
+     * @Route("/do-bulk-export", name="dobulkexport", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1743,7 +1800,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-fieldcollection-usages", name="pimcore_admin_dataobject_class_getfieldcollectionusages", methods={"GET"})
+     * @Route("/get-fieldcollection-usages", name="getfieldcollectionusages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1775,7 +1832,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-bricks-usages", name="pimcore_admin_dataobject_class_getbrickusages", methods={"GET"})
+     * @Route("/get-bricks-usages", name="getbrickusages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1806,7 +1863,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/get-icons", name="pimcore_admin_dataobject_class_geticons", methods={"GET"})
+     * @Route("/get-icons", name="geticons", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1848,7 +1905,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/suggest-class-identifier", name="pimcore_admin_dataobject_class_suggestclassidentifier")
+     * @Route("/suggest-class-identifier", name="suggestclassidentifier")
      *
      * @return Response
      */
@@ -1868,7 +1925,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/suggest-custom-layout-identifier", name="pimcore_admin_dataobject_class_suggestcustomlayoutidentifier")
+     * @Route("/suggest-custom-layout-identifier", name="suggestcustomlayoutidentifier")
      *
      * @param Request $request
      *
@@ -1903,7 +1960,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @Route("/text-layout-preview", name="pimcore_admin_dataobject_class_textlayoutpreview")
+     * @Route("/text-layout-preview", name="textlayoutpreview")
      *
      * @param Request $request
      *

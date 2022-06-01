@@ -22,7 +22,6 @@ use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -179,6 +178,7 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
+        $this->buildRedirectsStatusCodes($rootNode);
 
         return $treeBuilder;
     }
@@ -205,6 +205,24 @@ final class Configuration implements ConfigurationInterface
                         ->defaultValue(1800)
                     ->end()
         ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('redirects')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('status_codes')
+                        ->info('List all redirect status codes.')
+                        ->prototype('scalar')
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -540,6 +558,9 @@ final class Configuration implements ConfigurationInterface
                                             ],
                                         ])
                                     ->end()
+                                    ->booleanNode('status_cache')
+                                        ->defaultTrue()
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -657,6 +678,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('predefined')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->arrayNode('definitions')
                                 ->normalizeKeys(false)
@@ -921,8 +943,12 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('default_controller_print_container')
                                 ->defaultValue('App\\Controller\\Web2printController::containerAction')
                             ->end()
-                            ->booleanNode('enableInDefaultView')->end()
-                            ->scalarNode('generalTool')->end()
+                            ->booleanNode('enableInDefaultView')
+                                ->defaultValue(false)
+                            ->end()
+                            ->scalarNode('generalTool')
+                                ->defaultValue('')
+                            ->end()
                             ->scalarNode('generalDocumentSaveMode')->end()
                             ->scalarNode('pdfreactorVersion')->end()
                             ->scalarNode('pdfreactorProtocol')->end()
@@ -1031,7 +1057,6 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('context')
             ->useAttributeAsKey('name');
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry

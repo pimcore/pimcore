@@ -285,6 +285,19 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
                     editable['id'] = editable['id'].replaceAll('_1000000_', '_' + nextKey + '_');
                     editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName() + ':'), this.getName() + ':');
                     editable['name'] = editable['name'].replaceAll(':1000000.', ':' + nextKey + '.');
+                    if (editable['config']['blockStateStack']) {
+                        let blockStateStack = JSON.parse(editable['config']['blockStateStack']);
+                        for (let i = 0; i < blockStateStack.length; i++) {
+                            if (blockStateStack[i].indexes) {
+                                for (let j = 0; j < blockStateStack[i].indexes.length; j++) {
+                                    if (blockStateStack[i].indexes[j] === 1000000) {
+                                        blockStateStack[i].indexes[j] = nextKey;
+                                    }
+                                }
+                            }
+                        }
+                        editable['config']['blockStateStack'] = JSON.stringify(blockStateStack);
+                    }
                     editableManager.addByDefinition(editable);
                 });
             }
