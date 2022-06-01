@@ -112,9 +112,11 @@ class IndexController extends AdminController
      *
      * @param Request $request
      *
+     * @param EventDispatcherInterface $eventDispatcher
+     *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function getFieldsAction(Request $request)
+    public function getFieldsAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $indexService = Factory::getInstance()->getIndexService();
 
@@ -156,7 +158,10 @@ class IndexController extends AdminController
 
         ksort($fields);
 
-        return $this->adminJson(['data' => array_values($fields)]);
+        $event = new GenericEvent(null, ['data' => $fields]);
+        $eventDispatcher->dispatch($event, AdminEvents::GET_FIELD_NAMES);
+        $data = $event->getArgument('data');
+        return $this->adminJson(['data' => array_values($data)]);
     }
 
     /**
