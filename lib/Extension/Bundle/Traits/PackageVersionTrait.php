@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Traits;
 
+use Composer\InstalledVersions;
 use PackageVersions\Versions;
 use Pimcore\Composer\PackageInfo;
 
@@ -34,12 +35,15 @@ trait PackageVersionTrait
      * @return string
      */
     public function getComposerPackageName(): string {
-        foreach([__DIR__ . '/../composer.json', __DIR__ . '/composer.json'] as $composerFile) {
-            if (is_file($composerFile)) {
-                $composerConfig = json_decode(file_get_contents($composerFile));
-    
-                if (property_exists($composerConfig, 'name')) {
-                    return $composerConfig->name;
+        foreach (InstalledVersions::getAllRawData() as $installed) {
+            foreach ($installed['versions'] as $packageName => $packageInfo) {
+                if (!isset($packageInfo['install_path'])) {
+                    // It's a replaced or provided (virtual) package
+                    continue;
+                }
+
+                if (str_starts_with(__DIR__, realpath($packageInfo['install_path']))) {
+                    return $packageName;
                 }
             }
         }
