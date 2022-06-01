@@ -161,7 +161,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     }
 
     /**
-     * @return bool|float|int|string
+     * @return bool
      */
     public function canBeUninstalled()
     {
