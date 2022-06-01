@@ -24,6 +24,7 @@ use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -599,10 +600,18 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $eventDispatcher = new EventDispatcher();
 
-        $responseData = $controller->treeGetChildsByIdAction(
-            $request,
-            $eventDispatcher
-        );
+        try{
+            $controller->checkPermission('objects');
+            $responseData = $controller->treeGetChildsByIdAction(
+                $request,
+                $eventDispatcher
+            );
+        } catch(Exception $e){
+            $responseData = [
+                'total'=>0,
+                'nodes'=>[]
+            ];
+        }
 
         $responsePaths = [];
         foreach ($responseData['nodes'] as $node) {
@@ -708,6 +717,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             [$this->userfolder->getFullpath()]
         );
 
+        $this->doTestTreeGetChildsById(
+            $this->bars,
+            $this->userPermissionTest6,
+            []
+        );
+
         // test /permissionfoo/bars/userfolder
         $this->doTestTreeGetChildsById(
             $this->userfolder,
@@ -743,6 +758,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $this->userfolder,
             $this->userPermissionTest5,
             [$this->usertestobject->getFullpath()]
+        );
+
+        $this->doTestTreeGetChildsById(
+            $this->userfolder,
+            $this->userPermissionTest6,
+            []
         );
 
         // test /permissionfoo/bars/groupfolder
