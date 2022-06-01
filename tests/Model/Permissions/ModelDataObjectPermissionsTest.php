@@ -601,7 +601,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $eventDispatcher = new EventDispatcher();
 
         try{
-            TestHelper::callMethod($controller,'checkPermission','objects');
+            TestHelper::callMethod($controller,'checkPermission',['objects']);
             $responseData = $controller->treeGetChildsByIdAction(
                 $request,
                 $eventDispatcher
