@@ -196,16 +196,35 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getLayoutSelection: function () {
+        var classId = [];
+        if(typeof this.klass.id !== 'undefined') {
+            classId = [this.klass.id];
+        } else if(typeof this.klass.classDefinitions !== 'undefined') {
+            for(var i in this.klass.availableClasses) {
+                classId.push(this.klass.availableClasses[i].id);
+            }
+        }
         this.layoutComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('pimcore_admin_dataobject_class_getcustomlayoutdefinitions'),
                 extraParams: {
-                    classId: this.klass.id
+                    classId: classId.join(',')
                 },
                 reader: {
                     type: 'json',
-                    rootProperty: 'data'
+                    rootProperty: 'data',
+                    transform: function (data) {
+                        if (data.data) {
+                            Ext.each(data.data, function (data) {
+                                if(typeof this.klass.key !== 'undefined') {
+                                    data.id = data.id+'.brick.'+this.klass.key;
+                                }
+                            }.bind(this));
+                        }
+
+                        return data;
+                    }.bind(this),
                 }
             },
             fields: ['id', 'name'],
@@ -264,14 +283,16 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     xtype: "button",
                     text: t("add_layout"),
                     iconCls: "pimcore_icon_add",
-                    handler: this.suggestIdentifier.bind(this)
+                    handler: this.suggestIdentifier.bind(this),
+                    hidden: typeof this.klass.id === 'undefined'
                 },
                 {
                     xtype: "button",
                     text: t("delete_layout"),
                     iconCls: "pimcore_icon_delete",
                     disabled: false,
-                    handler: this.deleteLayout.bind(this)
+                    handler: this.deleteLayout.bind(this),
+                    hidden: typeof this.klass.id === 'undefined'
                 }
             ]
         };
@@ -457,7 +478,11 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getClassDefinitionPanel: function () {
         if (!this.classDefinitionPanel) {
-            this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_get'), this.klass.id);
+            if (typeof this.klass.id !== 'undefined') {
+                this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_get'), this.klass.id);
+            } else if(typeof this.klass.key !== 'undefined') {
+                this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_objectbrickget'), this.klass.key);
+            }
         }
 
         return this.classDefinitionPanel;
@@ -521,6 +546,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class'),
             region: "west",
             autoScroll: true,
+            rootVisible: false,
             split: true,
             disabled: true,
             root: {
@@ -597,7 +623,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     baseNode.appendChild(this.recursiveAddNode(child, baseNode, attributePrefix, isCustom));
                 }
                 rootNode.expand();
-                baseNode.expand();
             }
         }
     },
