@@ -522,6 +522,9 @@ class Dao extends Model\Element\Dao
      */
     public function isAllowed($type, $user)
     {
+        if (!$user->isAllowed('objects')){
+            return false;
+        }
         $parentIds = $this->collectParentIds();
 
         $userIds = $user->getRoles();
