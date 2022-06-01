@@ -24,7 +24,7 @@ use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -606,7 +606,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                 $request,
                 $eventDispatcher
             );
-        } catch(Exception $e){
+        } catch(AccessDeniedHttpException $e){
             $responseData = [
                 'total'=>0,
                 'nodes'=>[]
