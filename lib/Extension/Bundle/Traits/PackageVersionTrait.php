@@ -18,12 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle\Traits;
 
 use Composer\InstalledVersions;
-use PackageVersions\Versions;
 use Pimcore\Composer\PackageInfo;
 
 /**
  * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions
- * via ocramius/package-versions which is generated on composer install.
+ * via composer's version info which is generated on composer install.
  */
 trait PackageVersionTrait
 {
@@ -55,11 +54,10 @@ trait PackageVersionTrait
      */
     public function getVersion()
     {
-        $version = Versions::getVersion($this->getComposerPackageName());
+        $version = InstalledVersions::getPrettyVersion($this->getComposerPackageName());
 
-        // normalizes v2.3.0@9e016f4898c464f5c895c17993416c551f1697d3 to 2.3.0
+        // normalizes e.g. 'v2.3.0' to '2.3.0'
         $version = preg_replace('/^v/', '', $version);
-        $version = preg_replace('/@(.+)$/', '', $version);
 
         return $version;
     }
