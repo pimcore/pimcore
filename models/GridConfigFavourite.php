@@ -35,7 +35,7 @@ class GridConfigFavourite extends AbstractModel
     protected $classId;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $objectId;
 
@@ -155,7 +155,7 @@ class GridConfigFavourite extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getObjectId()
     {

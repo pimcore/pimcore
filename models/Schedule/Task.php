@@ -61,7 +61,7 @@ class Task extends Model\AbstractModel
     protected $active;
 
     /**
-     * @var null|int
+     * @var int|null
      */
     protected $userId;
 
@@ -95,7 +95,7 @@ class Task extends Model\AbstractModel
     /**
      * @param array $data
      *
-     * @return Task
+     * @return self
      */
     public static function create($data)
     {

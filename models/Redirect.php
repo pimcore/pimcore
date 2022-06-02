@@ -125,7 +125,7 @@ final class Redirect extends AbstractModel
     /**
      * ID of the user who make the latest changes
      *
-     * @var int
+     * @var int|null
      */
     protected $userModification;
 
@@ -523,7 +523,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {

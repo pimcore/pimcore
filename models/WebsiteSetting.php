@@ -87,7 +87,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @param int $id
      *
-     * @return WebsiteSetting|null
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -117,7 +117,7 @@ final class WebsiteSetting extends AbstractModel
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
      *
-     * @return null|WebsiteSetting
+     * @return WebsiteSetting|null
      *
      * @throws \Exception
      */

@@ -443,7 +443,7 @@ final class Staticroute extends AbstractModel
      * @param array $urlOptions
      * @param bool $encode
      *
-     * @return mixed|string
+     * @return string
      */
     public function assemble(array $urlOptions = [], $encode = true)
     {

@@ -43,7 +43,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @param Workflow[] $workflows
+     * @param Workflow[]|null $workflows
      */
     public function setWorkflows($workflows)
     {

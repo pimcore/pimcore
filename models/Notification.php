@@ -54,35 +54,35 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var User
+     * @var User|null
      */
     protected $sender;
 
     /**
      * @internal
      *
-     * @var User
+     * @var User|null
      */
     protected $recipient;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $title;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $type;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $message;
 
@@ -96,7 +96,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $linkedElementType;
 
@@ -192,7 +192,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|User
+     * @return User|null
      */
     public function getSender(): ?User
     {
@@ -200,7 +200,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|User $sender
+     * @param User|null $sender
      *
      * @return Notification
      */
@@ -212,7 +212,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|User
+     * @return User|null
      */
     public function getRecipient(): ?User
     {
@@ -220,7 +220,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|User $recipient
+     * @param User|null $recipient
      *
      * @return Notification
      */
@@ -232,7 +232,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getTitle(): ?string
     {
@@ -240,7 +240,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $title
+     * @param string|null $title
      *
      * @return Notification
      */
@@ -252,7 +252,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getType(): ?string
     {
@@ -260,7 +260,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $type
+     * @param string|null $type
      *
      * @return Notification
      */
@@ -272,7 +272,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getMessage(): ?string
     {
@@ -280,7 +280,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $message
+     * @param string|null $message
      *
      * @return Notification
      */
@@ -292,7 +292,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|Element\ElementInterface
+     * @return Element\ElementInterface|null
      */
     public function getLinkedElement(): ?Element\ElementInterface
     {
@@ -300,7 +300,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|Element\ElementInterface $linkedElement
+     * @param Element\ElementInterface|null $linkedElement
      *
      * @return Notification
      */
@@ -313,7 +313,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getLinkedElementType(): ?string
     {

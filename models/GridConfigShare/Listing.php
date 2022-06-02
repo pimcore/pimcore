@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $gridconfigShares
+     * @param Model\GridConfigShare[]|null $gridconfigShares
      *
      * @return static
      */
