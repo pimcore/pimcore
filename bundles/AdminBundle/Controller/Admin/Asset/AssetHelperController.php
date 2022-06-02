@@ -18,11 +18,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
-use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -49,6 +49,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class AssetHelperController extends AdminController
 {
+    use ModelBuilderTrait;
+
     /**
      * @param int $userId
      * @param string $classId
@@ -729,11 +731,10 @@ class AssetHelperController extends AdminController
      * @Route("/do-export", name="pimcore_admin_asset_assethelper_doexport", methods={"POST"})
      *
      * @param Request $request
-     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function doExportAction(Request $request, LocaleServiceInterface $localeService)
+    public function doExportAction(Request $request)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
@@ -742,7 +743,7 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ?? ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        $list = new Asset\Listing();
+        $list = $this->buildModel(Asset\Listing::class);
 
         $quotedIds = [];
         foreach ($ids as $id) {

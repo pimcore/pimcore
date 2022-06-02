@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -36,6 +37,8 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
+use Sabre\DAV\Locks\Backend\PDO;
+use Sabre\DAV\Locks\Plugin;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,6 +63,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use ModelBuilderTrait;
 
     /**
      * @var Asset\Service
@@ -274,7 +278,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
 
             // get assets
-            $childrenList = new Asset\Listing();
+            $childrenList = $this->buildModel(Asset\Listing::class);
             $childrenList->addConditionParam('parentId = ?', [$asset->getId()]);
             $childrenList->filterAccessibleByUser($this->getAdminUser(), $asset);
 
@@ -673,7 +677,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($type === 'children') {
             $parentAsset = Asset::getById((int) $request->get('id'));
 
-            $list = new Asset\Listing();
+            $list = $this->buildModel(Asset\Listing::class);
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
@@ -925,18 +929,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $homeDir = Asset::getById(1);
 
         try {
-            $publicDir = new Asset\WebDAV\Folder($homeDir);
-            $objectTree = new Asset\WebDAV\Tree($publicDir);
+            $publicDir = $this->buildModel(Asset\WebDAV\Folder::class, ['asset' => $homeDir]);
+            $objectTree = $this->buildModel(Asset\WebDAV\Tree::class, ['rootNode' => $publicDir]);
             $server = new \Sabre\DAV\Server($objectTree);
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
             /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
             $pdo = \Pimcore\Db::get()->getWrappedConnection();
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
+            $lockBackend = new PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
-            $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
+            $lockPlugin = new Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
 
             // browser plugin
@@ -1208,7 +1212,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         if ($config) {
-            $thumbnailConfig = new Asset\Image\Thumbnail\Config();
+            $thumbnailConfig = $this->buildModel(Asset\Image\Thumbnail\Config::class);
             $thumbnailConfig->setName('pimcore-download-' . $image->getId() . '-' . md5($request->get('config')));
 
             if ($config['resize_mode'] == 'scaleByWidth') {
@@ -1809,7 +1813,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $conditionFilters = [];
-        $list = new Asset\Listing();
+        $list = $this->buildModel(Asset\Listing::class);
         $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
@@ -2076,7 +2080,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $condition = implode(' AND ', $conditionFilters);
 
-            $assetList = new Asset\Listing();
+            $assetList = $this->buildModel(Asset\Listing::class);
             $assetList->setCondition($condition);
             $assetList->setOrderKey('LENGTH(path)', false);
             $assetList->setOrder('ASC');
@@ -2157,7 +2161,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $condition = implode(' AND ', $conditionFilters);
 
-                $assetList = new Asset\Listing();
+                $assetList = $this->buildModel(Asset\Listing::class);
                 $assetList->setCondition($condition);
                 $assetList->setOrderKey('LENGTH(path) ASC, id ASC', false);
                 $assetList->setOffset((int)$request->get('offset'));
@@ -2801,6 +2805,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             'getImageThumbnailAction', 'getVideoThumbnailAction', 'getDocumentThumbnailAction',
         ]);
 
-        $this->_assetService = new Asset\Service($this->getAdminUser());
+        /** @var Asset\Service $service */
+        $service = $this->buildModel(Asset\Service::class, ['user' => $this->getAdminUser()]);
+        $this->_assetService = $service;
     }
 }
