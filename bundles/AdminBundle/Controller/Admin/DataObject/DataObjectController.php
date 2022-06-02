@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -57,6 +58,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
+    use ModelBuilderTrait;
 
     /**
      * @var DataObject\Service
@@ -113,7 +115,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $limit = 100;
             }
 
-            $childrenList = new DataObject\Listing();
+            $childrenList = $this->buildModel(DataObject\Listing::class);
             $childrenList->setCondition($this->buildChildrenCondition($object, $filter, $view));
             $childrenList->setLimit($limit);
             $childrenList->setOffset($offset);
@@ -336,7 +338,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object = $targetObject;
 
         while ($parent = $object->getParent()) {
-            $list = new DataObject\Listing();
+            $list = $this->buildModel(DataObject\Listing::class);
             $list->setCondition('o_parentId = ?', $parent->getId());
             $list->setUnpublished(true);
             $total = $list->getTotalCount();
@@ -639,7 +641,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $isInheritedValue = false;
 
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
-                $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
+                $fieldData = $this->buildModel(DataObject\Data\CalculatedValue::class, ['fieldname' => $fielddefinition->getName()]);
                 $fieldData->setContextualData('object', null, null, null, null, null, $fielddefinition);
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             } else {
@@ -783,11 +785,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/add", name="add", methods={"POST"})
      *
      * @param Request $request
-     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request, Model\FactoryInterface $modelFactory): JsonResponse
+    public function addAction(Request $request): JsonResponse
     {
         $message = '';
         $parent = DataObject::getById((int) $request->get('parentId'));
@@ -813,7 +814,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($request->get('className'));
         /** @var DataObject\Concrete $object */
-        $object = $modelFactory->build($className);
+        $object = $this->buildModel($className);
         $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
         $object->setClassId($request->get('classId'));
 
@@ -919,7 +920,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($type === 'children') {
             $parentObject = DataObject::getById((int) $request->get('id'));
 
-            $list = new DataObject\Listing();
+            $list = $this->buildModel(DataObject\Listing::class);
             $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(o_path)', false);
@@ -1132,7 +1133,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
     {
         $fn = function () use ($parentObject, $currentSortOrder) {
-            $list = new DataObject\Listing();
+            $list = $this->buildModel(DataObject\Listing::class);
 
             Db::get()->executeUpdate(
                 'UPDATE '.$list->getDao()->getTableName().' o,
@@ -1196,7 +1197,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
         $fn = function () use ($updatedObject, $newIndex) {
-            $list = new DataObject\Listing();
+            $list = $this->buildModel(DataObject\Listing::class);
             $updatedObject->saveIndex($newIndex);
 
             Db::get()->executeUpdate(
@@ -1749,7 +1750,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if ($object->hasChildren(DataObject::$types)) {
                 // get amount of children
-                $list = new DataObject\Listing();
+                $list = $this->buildModel(DataObject\Listing::class);
                 $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
@@ -2099,6 +2100,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // check permissions
         $this->checkPermission('objects');
 
-        $this->_objectService = new DataObject\Service($this->getAdminUser());
+        $this->_objectService = $this->buildModel(DataObject\Service::class, ['user' => $this->getAdminUser()]);
     }
 }

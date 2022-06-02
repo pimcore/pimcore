@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
@@ -41,6 +42,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class ClassController extends AdminController implements KernelControllerEventInterface
 {
+    use ModelBuilderTrait;
+
     /**
      * @Route("/get-document-types", name="getdocumenttypes", methods={"GET"})
      *
@@ -92,7 +95,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
-        $classesList = new DataObject\ClassDefinition\Listing();
+        $classesList = $this->buildModel(DataObject\ClassDefinition\Listing::class);
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
         $classes = $classesList->load();
@@ -364,7 +367,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts = $this->buildModel(DataObject\ClassDefinition\CustomLayout\Listing::class);
         $customLayouts->addConditionParam('id=?', $request->get('id'));
         $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
         foreach ($customLayouts as $customLayout) {
@@ -584,7 +587,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getCustomLayoutDefinitionsAction(Request $request)
     {
         $classIds = explode(',', $request->get('classId'));
-        $list = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $list = $this->buildModel(DataObject\ClassDefinition\CustomLayout\Listing::class);
 
         $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.brick.%\'', $classIds);
         $list = $list->load();
@@ -613,7 +616,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $resultList = [];
         $mapping = [];
 
-        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts = $this->buildModel(DataObject\ClassDefinition\CustomLayout\Listing::class);
         $customLayouts->setCondition('id not LIKE \'%.brick.%\'');
         $customLayouts->setOrder('ASC');
         $customLayouts->setOrderKey('name');
@@ -622,7 +625,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $mapping[$layout->getClassId()][] = $layout;
         }
 
-        $classList = new DataObject\ClassDefinition\Listing();
+        $classList = $this->buildModel(DataObject\ClassDefinition\Listing::class);
         $classList->setOrder('ASC');
         $classList->setOrderKey('name');
         $classList = $classList->load();
@@ -762,7 +765,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 }
             }
 
-            $fcDef = new DataObject\Fieldcollection\Definition();
+            $fcDef = $this->buildModel(DataObject\Fieldcollection\Definition::class);
             $fcDef->setKey($key);
             $fcDef->setTitle($title);
             $fcDef->setGroup($group);
@@ -871,7 +874,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function fieldcollectionTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $list = new DataObject\Fieldcollection\Definition\Listing();
+        $list = $this->buildModel(DataObject\Fieldcollection\Definition\Listing::class);
         $list = $list->load();
 
         $forObjectEditor = $request->get('forObjectEditor');
@@ -981,7 +984,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $currentLayoutId = $request->get('layoutId');
 
-        $list = new DataObject\Fieldcollection\Definition\Listing();
+        $list = $this->buildModel(DataObject\Fieldcollection\Definition\Listing::class);
         $list = $list->load();
 
         if ($request->query->has('allowedTypes')) {
