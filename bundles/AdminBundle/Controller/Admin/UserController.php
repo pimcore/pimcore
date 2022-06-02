@@ -284,7 +284,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function updateAction(Request $request)
     {
-        $user = User\UserRole::getById((int)$request->get('id'));
+        $user = User\AbstractUser::getById((int)$request->get('id'));
 
         if (!$user) {
             throw $this->createNotFoundException();
