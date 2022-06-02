@@ -34,6 +34,11 @@ abstract class AbstractItem implements ItemInterface
      */
     private $source;
 
+    /**
+     * @param int $priority
+     * @param array $environments
+     * @param string $source
+     */
     public function __construct(int $priority = 0, array $environments = [], string $source = self::SOURCE_PROGRAMATICALLY)
     {
         $this->priority = $priority;
@@ -41,16 +46,26 @@ abstract class AbstractItem implements ItemInterface
         $this->source = $source;
     }
 
+    /**
+     * @return int
+     */
     public function getPriority(): int
     {
         return $this->priority;
     }
 
+    /**
+     * @return array
+     */
     public function getEnvironments(): array
     {
         return $this->environments;
     }
 
+    /**
+     * @param string $environment
+     * @return bool
+     */
     public function matchesEnvironment(string $environment): bool
     {
         if (empty($this->environments)) {
@@ -60,6 +75,9 @@ abstract class AbstractItem implements ItemInterface
         return in_array($environment, $this->environments, true);
     }
 
+    /**
+     * @return string
+     */
     public function getSource(): string
     {
         return $this->source;

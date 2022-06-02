@@ -40,6 +40,9 @@ class BundleLocator implements BundleLocatorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param string|object $class
+     * @return BundleInterface
      */
     public function getBundle($class): BundleInterface
     {
@@ -48,6 +51,9 @@ class BundleLocator implements BundleLocatorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param string|object $class
+     * @return string
      */
     public function getBundlePath($class): string
     {

@@ -58,6 +58,7 @@ class BundleCollection
      * @param string $identifier
      *
      * @return ItemInterface
+     * @throws \InvalidArgumentException
      */
     public function getItem(string $identifier): ItemInterface
     {
@@ -110,6 +111,8 @@ class BundleCollection
 
     /**
      * Returns all bundle identifiers
+     *
+     * @param string|null $environment
      *
      * @return array
      */
