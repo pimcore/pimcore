@@ -28,7 +28,7 @@ trait ModelBuilderTrait
     /**
      * Returns a model entity for the given model name
      *
-     * @template M
+     * @template M of object
      *
      * @param string $modelName
      * @psalm-param class-string<M> $className
