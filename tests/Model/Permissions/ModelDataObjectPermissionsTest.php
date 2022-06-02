@@ -627,23 +627,17 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $eventDispatcher = new EventDispatcher();
 
-        if (is_null($expectedChildren)){
-            $this->assertException(AccessDeniedHttpException::class, function () use ($controller) {
-                TestHelper::callMethod($controller, 'checkPermission', ['objects']);
-            });
-        }
-
         try{
             TestHelper::callMethod($controller,'checkPermission',['objects']);
             $responseData = $controller->treeGetChildsByIdAction(
                 $request,
                 $eventDispatcher
             );
-        } catch(AccessDeniedHttpException $e){
-            $responseData = [
-                'total'=>0,
-                'nodes'=>[]
-            ];
+        } catch(\Exception $e){
+            if (is_null($expectedChildren)){
+                $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert master object permission');
+                return;
+            }
         }
 
         $responsePaths = [];
@@ -753,7 +747,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->bars,
             $this->userPermissionTest6,
-            []
+            null
         );
 
         // test /permissionfoo/bars/userfolder
@@ -882,7 +876,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->permissionbar,
             $this->userPermissionTest6,
-            []
+            null
         );
         // test /permissionbar/foo
         $this->doTestTreeGetChildsById(
@@ -924,7 +918,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->foo,
             $this->userPermissionTest6,
-            []
+            null
         );
     }
 
