@@ -783,7 +783,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->userfolder,
             $this->userPermissionTest6,
-            null
+            []
         );
 
         // test /permissionfoo/bars/groupfolder
@@ -826,7 +826,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
             $this->userPermissionTest6,
-            null
+            []
         );
 
         // test /permissionbar
