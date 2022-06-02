@@ -447,16 +447,16 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
     public function testIsAllowed()
     {
-        $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true, true, true, false, false);
+        $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true, true, true, true, false);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true, false, false, false, false);
 
-        $this->doIsAllowedTest($this->bars, 'list', true, true, true, true, true, false, false);
+        $this->doIsAllowedTest($this->bars, 'list', true, true, true, true, true, true, false);
         $this->doIsAllowedTest($this->bars, 'view', true, false, false, false, false, false, false);
 
         $this->doIsAllowedTest($this->hugo, 'list', true, false, false, false, false, false, false);
         $this->doIsAllowedTest($this->hugo, 'view', true, false, false, false, false, false, false);
 
-        $this->doIsAllowedTest($this->userfolder, 'list', true, true, true, true, false, false, false);
+        $this->doIsAllowedTest($this->userfolder, 'list', true, true, true, true, false, true, false);
         $this->doIsAllowedTest($this->userfolder, 'view', true, true, true, false, false, false, false);
 
         $this->doIsAllowedTest($this->usertestobject, 'list', true, true, true, true, false, true, false);
