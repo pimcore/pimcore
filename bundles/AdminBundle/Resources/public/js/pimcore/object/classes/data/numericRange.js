@@ -44,7 +44,7 @@ pimcore.object.classes.data.numericRange = Class.create(pimcore.object.classes.d
     },
 
     getIconClass: function () {
-        return 'pimcore_icon_numeric';
+        return 'pimcore_icon_numericRange';
     },
 
     getLayout: function ($super) {

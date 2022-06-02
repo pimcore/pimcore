@@ -19,7 +19,6 @@ pimcore.object.tags.numericRange = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-        console.log(data, fieldConfig);
     },
 
     getName: function () {
