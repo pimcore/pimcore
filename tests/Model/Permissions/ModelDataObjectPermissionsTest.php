@@ -390,7 +390,16 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doHasChildrenTest($this->hiddenobject, false, false, false, false, false);
     }
 
-    protected function doIsAllowedTest(DataObject\AbstractObject $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2, bool $resultPermissionTest3, bool $resultPermissionTest4)
+    protected function doIsAllowedTest(
+       DataObject\AbstractObject $element,
+       string $type, bool $resultAdmin,
+       bool $resultPermissionTest1,
+       bool $resultPermissionTest2,
+       bool $resultPermissionTest3,
+       bool $resultPermissionTest4,
+       bool $resultPermissionTest5,
+       bool $resultPermissionTest6
+    )
     {
         $admin = User::getByName('admin');
 
@@ -423,39 +432,50 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             $element->isAllowed($type, $this->userPermissionTest4),
             '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest4'
         );
+
+        $this->assertEquals(
+            $resultPermissionTest5,
+            $element->isAllowed($type, $this->userPermissionTest5),
+            '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest5'
+        );
+        $this->assertEquals(
+            $resultPermissionTest6,
+            $element->isAllowed($type, $this->userPermissionTest6),
+            '`' . $type . '` of `' . $element->getFullpath() . '` is allowed for UserPermissionTest6'
+        );
     }
 
     public function testIsAllowed()
     {
-        $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true, true, true);
-        $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true, false, false);
+        $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true, true, true, false, false);
+        $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true, false, false, false, false);
 
-        $this->doIsAllowedTest($this->bars, 'list', true, true, true, true, true);
-        $this->doIsAllowedTest($this->bars, 'view', true, false, false, false, false);
+        $this->doIsAllowedTest($this->bars, 'list', true, true, true, true, true, false, false);
+        $this->doIsAllowedTest($this->bars, 'view', true, false, false, false, false, false, false);
 
-        $this->doIsAllowedTest($this->hugo, 'list', true, false, false, false, false);
-        $this->doIsAllowedTest($this->hugo, 'view', true, false, false, false, false);
+        $this->doIsAllowedTest($this->hugo, 'list', true, false, false, false, false, false, false);
+        $this->doIsAllowedTest($this->hugo, 'view', true, false, false, false, false, false, false);
 
-        $this->doIsAllowedTest($this->userfolder, 'list', true, true, true, true, false);
-        $this->doIsAllowedTest($this->userfolder, 'view', true, true, true, false, false);
+        $this->doIsAllowedTest($this->userfolder, 'list', true, true, true, true, false, false, false);
+        $this->doIsAllowedTest($this->userfolder, 'view', true, true, true, false, false, false, false);
 
-        $this->doIsAllowedTest($this->usertestobject, 'list', true, true, true, true, false);
-        $this->doIsAllowedTest($this->usertestobject, 'view', true, true, true, true, false);
+        $this->doIsAllowedTest($this->usertestobject, 'list', true, true, true, true, false, true, false);
+        $this->doIsAllowedTest($this->usertestobject, 'view', true, true, true, true, false, true, false);
 
-        $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false, false, true);
-        $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false, false, true);
+        $this->doIsAllowedTest($this->groupfolder, 'list', true, true, false, false, true, false, false);
+        $this->doIsAllowedTest($this->groupfolder, 'view', true, true, false, false, true, false, false);
 
-        $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false, false, true);
-        $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false, false, true);
+        $this->doIsAllowedTest($this->grouptestobject, 'list', true, true, false, false, true, false, false);
+        $this->doIsAllowedTest($this->grouptestobject, 'view', true, true, false, false, true, false, false);
 
-        $this->doIsAllowedTest($this->permissionbar, 'list', true, true, true, false, false);
-        $this->doIsAllowedTest($this->permissionbar, 'view', true, true, true, false, false);
+        $this->doIsAllowedTest($this->permissionbar, 'list', true, true, true, false, false, false, false);
+        $this->doIsAllowedTest($this->permissionbar, 'view', true, true, true, false, false, false, false);
 
-        $this->doIsAllowedTest($this->foo, 'list', true, false, false, false, false);
-        $this->doIsAllowedTest($this->foo, 'view', true, false, false, false, false);
+        $this->doIsAllowedTest($this->foo, 'list', true, false, false, false, false, false, false);
+        $this->doIsAllowedTest($this->foo, 'view', true, false, false, false, false, false, false);
 
-        $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false, false, false);
-        $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false, false, false);
+        $this->doIsAllowedTest($this->hiddenobject, 'list', true, false, false, false, false, false, false);
+        $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false, false, false, false, false);
     }
 
     protected function doAreAllowedTest(DataObject\AbstractObject $element, User $user, array $expectedPermissions)
@@ -763,7 +783,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->userfolder,
             $this->userPermissionTest6,
-            []
+            null
         );
 
         // test /permissionfoo/bars/groupfolder
@@ -806,7 +826,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
             $this->userPermissionTest6,
-            []
+            null
         );
 
         // test /permissionbar
