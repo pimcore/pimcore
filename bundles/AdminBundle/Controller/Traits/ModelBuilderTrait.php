@@ -31,7 +31,7 @@ trait ModelBuilderTrait
      * @template M of object
      *
      * @param string $modelName
-     * @psalm-param class-string<M> $className
+     * @psalm-param class-string<M> $modelName
      * @param array|null $params
      *
      * @return AbstractModel
