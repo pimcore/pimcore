@@ -18,8 +18,10 @@ namespace Pimcore\Tests\Model\Element;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Model\Asset;
+use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\Search;
 use Pimcore\Model\User;
+use Pimcore\Tests\Helper\Pimcore;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -462,6 +464,12 @@ class ModelAssetPermissionsTest extends ModelTestCase
             'getThumbnailUrl' => function ($asset) {
                 return '';
             },
+            'buildModel' => function($modelName, $params = []) {
+                $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+                $modelFactory = $pimcoreModule->grabService(FactoryInterface::class);
+
+                return $modelFactory->build($modelName, $params);
+            }
         ]);
 
         return $AssetController;

@@ -20,8 +20,10 @@ use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\Search;
 use Pimcore\Model\User;
+use Pimcore\Tests\Helper\Pimcore;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -585,6 +587,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'adminJson' => function ($data) {
                 return $data;
             },
+            'buildModel' => function($modelName, $params = []) {
+                $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+                $modelFactory = $pimcoreModule->grabService(FactoryInterface::class);
+
+                return $modelFactory->build($modelName, $params);
+            }
         ]);
 
         return $dataObjectController;
