@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
+use Pimcore\Cache\Runtime;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
@@ -54,6 +56,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
+    use ModelBuilderTrait;
 
     /**
      * @var Document\Service
@@ -163,7 +166,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $db = Db::get();
 
-            $list = new Document\Listing();
+            /** @var Document\Listing $list */
+            $list = $this->buildModel(Document\Listing::class);
 
             $condition = 'parentId =  ' . $db->quote($document->getId());
 
@@ -376,8 +380,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $document->setProperty('language', 'text', $request->get('language'), false, true);
                 $document->save();
 
-                $service = new Document\Service();
-                $service->addTranslation($translationsBaseDocument, $document);
+                $this->_documentService->addTranslation($translationsBaseDocument, $document);
             }
 
             return $this->adminJson([
@@ -415,7 +418,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($type === 'children') {
             $parentDocument = Document::getById((int) $request->get('id'));
 
-            $list = new Document\Listing();
+            $list = $this->buildModel(Document\Listing::class);
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
@@ -582,7 +585,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     $this->doCreateRedirectForFormerPath($oldPath, $document->getId(), $sourceSite, $targetSite);
 
                     if ($document->hasChildren()) {
-                        $list = new Document\Listing();
+                        $list = $this->buildModel(Document\Listing::class);
                         $list->setCondition('path LIKE :path', [
                             'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
                         ]);
@@ -651,7 +654,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $newIndex = (int)$newIndex;
         $document->saveIndex($newIndex);
 
-        $list = new Document\Listing();
+        $list = $this->buildModel(Document\Listing::class);
         $list->setCondition('parentId = ? AND id != ?', [$document->getParentId(), $document->getId()]);
         $list->setOrderKey('index');
         $list->setOrder('asc');
@@ -678,7 +681,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function docTypesGetAction(Request $request)
     {
         // get list of types
-        $list = new Document\DocType\Listing();
+        $list = $this->buildModel(Document\DocType\Listing::class);
         $list->load();
 
         $docTypes = [];
@@ -733,7 +736,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                if (!(new DocType())->isWriteable()) {
+                if (!($this->buildModel(DocType::class))->isWriteable()) {
                     throw new ConfigWriteException();
                 }
 
@@ -767,7 +770,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDocTypesAction(Request $request)
     {
-        $list = new Document\DocType\Listing();
+        $list = $this->buildModel(Document\DocType\Listing::class);
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
@@ -937,7 +940,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $childIds = [];
             if ($document->hasChildren()) {
                 // get amount of children
-                $list = new Document\Listing();
+                $list = $this->buildModel(Document\Listing::class);
                 $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
@@ -1297,7 +1300,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $documents = [];
         if ($document->hasChildren()) {
-            $list = new Document\Listing();
+            $list = $this->buildModel(Document\Listing::class);
             $list->setCondition('parentId = ?', $document->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
@@ -1315,7 +1318,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             foreach ($childsList as $childDocument) {
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed('list')) {
-                    $list = new Document\Listing();
+                    $list = $this->buildModel(Document\Listing::class);
                     $list->setCondition('path LIKE ? and type = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
@@ -1376,7 +1379,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 'success' => false,
             ]);
         }
-        $service = new Document\Service();
 
         $locales = Tool::getSupportedLocales();
 
@@ -1393,12 +1395,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
             ],
         ];
 
-        $translations = $service->getTranslations($document);
+        $translations = $this->_documentService->getTranslations($document);
 
         $combinedTranslations = $translations;
 
         if ($parentDocument = $document->getParent()) {
-            $parentTranslations = $service->getTranslations($parentDocument);
+            $parentTranslations = $this->_documentService->getTranslations($parentDocument);
             foreach ($parentTranslations as $language => $languageDocumentId) {
                 $combinedTranslations[$language] = $translations[$language] ?? $languageDocumentId;
             }
@@ -1427,11 +1429,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
     private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null)
     {
-        $service = new Document\Service();
-
         $config = $this->getTreeNodeConfig($document);
 
-        $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
+        $translations = is_null($translations) ? $this->_documentService->getTranslations($document) : $translations;
 
         foreach ($languages as $language) {
             if ($languageDocument = $translations[$language] ?? false) {
@@ -1473,10 +1473,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $type = $request->get('type');
         $class = '\\Pimcore\\Model\\Document\\' . ucfirst($type);
         if (Tool::classExists($class)) {
-            $new = new $class;
+            $new = $this->buildModel($class);
 
             // overwrite internal store to avoid "duplicate full path" error
-            \Pimcore\Cache\Runtime::set('document_' . $document->getId(), $new);
+            Runtime::set('document_' . $document->getId(), $new);
 
             $props = $document->getObjectVars();
             foreach ($props as $name => $value) {
@@ -1511,10 +1511,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $document = Document::getById((int) $request->get('id'));
         if ($document) {
-            $service = new Document\Service();
             $document = $document->getId() === 1 ? $document : $document->getParent();
 
-            $translations = $service->getTranslations($document);
+            $translations = $this->_documentService->getTranslations($document);
             if (isset($translations[$request->get('language')])) {
                 $targetDocument = Document::getById($translations[$request->get('language')]);
                 $success = true;
@@ -1549,11 +1548,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 throw new \Exception(sprintf('Target Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
             }
 
-            $service = new Document\Service;
-            if ($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
-                throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
+            if ($this->_documentService->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
+                throw new \Exception('Target Document already linked to Source Document ID('
+                    . $this->_documentService->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
             }
-            $service->addTranslation($sourceDocument, $targetDocument);
+            $this->_documentService->addTranslation($sourceDocument, $targetDocument);
         }
 
         return $this->adminJson([
@@ -1573,8 +1572,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $sourceDocument = Document::getById((int) $request->get('sourceId'));
         $targetDocument = Document::getById((int) $request->get('targetId'));
         if ($sourceDocument && $targetDocument) {
-            $service = new Document\Service;
-            $service->removeTranslationLink($sourceDocument, $targetDocument);
+            $this->_documentService->removeTranslationLink($sourceDocument, $targetDocument);
         }
 
         return $this->adminJson([
@@ -1651,6 +1649,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         // check permissions
         $this->checkActionPermission($event, 'documents', ['docTypesGetAction']);
 
-        $this->_documentService = new Document\Service($this->getAdminUser());
+        /** @var Document\Service $service */
+        $service = $this->buildModel(Document\Service::class, ['user' => $this->getAdminUser()]);
+        $this->_documentService = $service;
     }
 }

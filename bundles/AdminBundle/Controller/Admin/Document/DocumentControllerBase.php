@@ -57,6 +57,10 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     const TASK_DELETE = 'delete';
 
+    public function __construct(protected Model\Document\Service $_documentService)
+    {
+    }
+
     /**
      * @param array $data
      * @param Model\Document $document
@@ -201,9 +205,8 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function addTranslationsData(Model\Document $document, array &$data): void
     {
-        $service = new Model\Document\Service;
-        $translations = $service->getTranslations($document);
-        $unlinkTranslations = $service->getTranslations($document, 'unlink');
+        $translations = $this->_documentService->getTranslations($document);
+        $unlinkTranslations = $this->_documentService->getTranslations($document, 'unlink');
         $language = $document->getProperty('language');
         unset($translations[$language], $unlinkTranslations[$language]);
         $data['translations'] = $translations;

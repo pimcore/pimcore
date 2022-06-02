@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Exception;
 use Pimcore;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
@@ -40,6 +41,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class NewsletterController extends DocumentControllerBase
 {
+    use ModelBuilderTrait;
+
     /**
      * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
@@ -157,7 +160,7 @@ class NewsletterController extends DocumentControllerBase
         try {
             $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($request->get('class')) . '\\Listing';
             /** @var Pimcore\Model\DataObject\Listing $list */
-            $list = new $className();
+            $list = $this->buildModel($className);
 
             $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
             if ($request->get('objectFilterSQL')) {
@@ -183,7 +186,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getAvailableClassesAction(): JsonResponse
     {
-        $classList = new Listing();
+        $classList = $this->buildModel(Listing::class);
 
         $availableClasses = [];
         foreach ($classList->load() as $class) {

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ModelBuilderTrait;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
@@ -44,6 +45,8 @@ use Twig\Environment;
  */
 class PageController extends DocumentControllerBase
 {
+    use ModelBuilderTrait;
+
     /**
      * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
@@ -210,7 +213,7 @@ class PageController extends DocumentControllerBase
      */
     public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
-        $list = new Document\Listing();
+        $list = $this->buildModel(Document\Listing::class);
         $list->setCondition('type = ?', ['page']);
 
         foreach ($list->loadIdList() as $docId) {
@@ -282,7 +285,7 @@ class PageController extends DocumentControllerBase
             $message[] = 'URL is invalid.';
         }
 
-        $list = new Document\Listing();
+        $list = $this->buildModel(Document\Listing::class);
         $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
             $path, $path, $docId,
