@@ -874,7 +874,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function fieldcollectionTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $list = $this->buildModel(DataObject\Fieldcollection\Definition\Listing::class);
+        $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         $forObjectEditor = $request->get('forObjectEditor');
@@ -984,7 +984,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $currentLayoutId = $request->get('layoutId');
 
-        $list = $this->buildModel(DataObject\Fieldcollection\Definition\Listing::class);
+        $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         if ($request->query->has('allowedTypes')) {

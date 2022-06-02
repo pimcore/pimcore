@@ -641,7 +641,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $isInheritedValue = false;
 
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
-                $fieldData = $this->buildModel(DataObject\Data\CalculatedValue::class, ['fieldname' => $fielddefinition->getName()]);
+                $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
                 $fieldData->setContextualData('object', null, null, null, null, null, $fielddefinition);
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             } else {
