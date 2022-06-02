@@ -611,7 +611,14 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         return $dataObjectController;
     }
 
-    protected function doTestTreeGetChildsById(DataObject\AbstractObject $element, User $user, array $expectedChildren)
+    /**
+     * @param DataObject\AbstractObject $element
+     * @param User $user
+     * @param array|null $expectedChildren When null,the master permission is disabled
+     *
+     * @throws \ReflectionException
+     */
+    protected function doTestTreeGetChildsById(DataObject\AbstractObject $element, User $user, ?array $expectedChildren)
     {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\DataObject\\DataObjectController', $user);
 
@@ -619,6 +626,12 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             'node' => $element->getId(),
         ]);
         $eventDispatcher = new EventDispatcher();
+
+        if (is_null($expectedChildren)){
+            $this->expectThrowable(new AccessDeniedHttpException(), function () {
+                TestHelper::callMethod($controller, 'checkPermission', ['objects']);
+            });
+        }
 
         try{
             TestHelper::callMethod($controller,'checkPermission',['objects']);
@@ -783,7 +796,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->userfolder,
             $this->userPermissionTest6,
-            []
+            null
         );
 
         // test /permissionfoo/bars/groupfolder
@@ -826,7 +839,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->groupfolder,
             $this->userPermissionTest6,
-            []
+            null
         );
 
         // test /permissionbar
