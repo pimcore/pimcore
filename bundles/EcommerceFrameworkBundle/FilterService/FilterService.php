@@ -81,7 +81,7 @@ class FilterService
 
         if ($filterObject->getFilters()) {
             foreach ($filterObject->getFilters() as $filter) {
-                $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
+                $currentFilter[] = $this->addCondition($filter, $productList, $currentFilter, $params);
             }
             //do this in a separate loop in order to make sure that all filters are set when group by values are prepared
             foreach ($filterObject->getFilters() as $filter) {
