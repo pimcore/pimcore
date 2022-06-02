@@ -38,6 +38,7 @@ interface GeneratorContextInterface extends \IteratorAggregate, \Countable
     /**
      * @param string|int $key
      * @param mixed $default
+     *
      * @return mixed
      */
     public function get($key, $default = null);
