@@ -1145,9 +1145,12 @@ abstract class Page extends Container
     /**
      * @param string|null $type
      * @throws \Exception
+     *
+     * TODO: In Pimcore 11, deprecate/remove the IF block and mark these methods as internal in the phpdoc block
      */
     public static function setDefaultPageType($type = null)
     {
+        /* @phpstan-ignore-next-line */
         if ($type !== null && !is_string($type)) {
             throw new \Exception(
                 'Cannot set default page type: type is no string but should be'
