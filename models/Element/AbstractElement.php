@@ -606,6 +606,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return true;
         }
 
+        if (!$user->isAllowed(Service::getElementType($this) . 's')) {
+            return false;
+        }
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);

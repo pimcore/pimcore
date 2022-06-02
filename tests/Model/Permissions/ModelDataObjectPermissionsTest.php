@@ -628,7 +628,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $eventDispatcher = new EventDispatcher();
 
         if (is_null($expectedChildren)){
-            $this->expectThrowable(new AccessDeniedHttpException(), function () {
+            $this->assertException(AccessDeniedHttpException::class, function () use ($controller) {
                 TestHelper::callMethod($controller, 'checkPermission', ['objects']);
             });
         }
