@@ -51,7 +51,7 @@ class Task extends Model\AbstractModel
     protected $action;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $version;
 
@@ -155,7 +155,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getVersion()
     {
@@ -223,7 +223,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param int $version
+     * @param int|null $version
      *
      * @return $this
      */

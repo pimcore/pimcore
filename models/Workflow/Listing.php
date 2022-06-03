@@ -26,7 +26,7 @@ class Listing extends Model\Listing\JsonListing
     /**
      * @internal
      *
-     * @var array|null
+     * @var Workflow[]|null
      */
     protected $workflows = null;
 

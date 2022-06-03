@@ -24,7 +24,7 @@ use Pimcore\Model\Exception\NotFoundException;
 class Workflow extends AbstractModel
 {
     /**
-     * @var int|null
+     * @var int
      */
     protected $id;
 
@@ -144,7 +144,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getId()
     {
@@ -254,7 +254,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * Returns whether or not a state name is valid within the workflow
+     * Returns whether a state name is valid within the workflow
      *
      * @param string $stateName
      *

@@ -26,7 +26,7 @@ use Pimcore\Model\Exception\NotFoundException;
 final class WebsiteSetting extends AbstractModel
 {
     /**
-     * @var int|null
+     * @var int
      */
     protected $id;
 
@@ -157,7 +157,7 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getId()
     {
@@ -287,6 +287,8 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool')
+     *
      * @param string $type
      *
      * @return $this
@@ -299,6 +301,8 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool')
+     *
      * @return string
      */
     public function getType()

@@ -39,7 +39,7 @@ final class Translation extends AbstractModel
     const DOMAIN_ADMIN = 'admin';
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $key;
 
@@ -93,7 +93,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getKey()
     {
