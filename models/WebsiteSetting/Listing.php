@@ -19,7 +19,7 @@ use Pimcore\Model;
 use Pimcore\Model\WebsiteSetting;
 
 /**
- * @method \Pimcore\Model\WebsiteSetting\Listing\Dao getDao()
+ * @method WebsiteSetting\Listing\Dao getDao()
  * @method WebsiteSetting[] load()
  * @method int getTotalCount()
  */
