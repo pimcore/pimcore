@@ -90,6 +90,12 @@ included as icon. When rendering editmode, the following location will be search
  to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
  `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
 
+You can optionally implement `Pimcore\Extension\Document\Areabrick\Preview\OptionsAwareInterface` to add a custom image preview
+for your brick that will be shown as a tooltip when hovering over the add-brick button.  
+If you return an instance of `Pimcore\Extension\Document\Areabrick\Preview\OptionsInterface` with path = `null`, the image will
+be included similar to the icon in `<bundlePath>/Resources/public/areas/<brickId>/preview.png` and
+`/bundles/<bundleUrl>/areas/<brickId>/preview.png`.
+
 Given our `iframe` brick defined before, the following paths will be used.
 
 ### `global` template location
@@ -99,6 +105,8 @@ Given our `iframe` brick defined before, the following paths will be used.
 | view template | `templates/areas/iframe/view.html.twig`                 |
 | icon path     | `public/bundles/app/areas/iframe/icon.png`              |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
+| preview path  | `public/bundles/app/areas/iframe/preview.png`           |
+| preview URL   | `/bundles/app/areas/iframe/preview.png`                 |
 
 ### `bundle` template location
 
