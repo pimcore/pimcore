@@ -758,11 +758,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             listeners: {
                 click: this[addBLockFunction].bind(scope, element, brick.type),
                 render: function (c) {
-                    if(brick.preview && brick.preview.img) {
+                    if(brick.previewHtml) {
                         Ext.create('Ext.tip.ToolTip', {
                             target: c.getEl(),
                             showDelay: 500,
-                            html: '<img width="' + brick.preview.width + '" height="' + brick.preview.height + '" src="' + brick.preview.img + '">'
+                            html: brick.previewHtml
                         });
                     }
                 }
@@ -1115,11 +1115,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             },
             listeners: {
                 render: function () {
-                    if (brick.preview && brick.preview.img) {
+                    if (brick.previewHtml) {
                         Ext.create('Ext.tip.ToolTip', {
                             target: this.getEl(),
                             showDelay: 500,
-                            html: '<img width="' + brick.preview.width + '" height="' + brick.preview.height + '" src="' + brick.preview.img + '">'
+                            html: brick.previewHtml
                         });
                     }
                 },

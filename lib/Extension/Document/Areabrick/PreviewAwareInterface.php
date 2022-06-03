@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Extension\Document\Areabrick\Preview;
+namespace Pimcore\Extension\Document\Areabrick;
 
-interface OptionsAwareInterface
+interface PreviewAwareInterface
 {
-    public function getPreviewOptions(): OptionsInterface;
+    public function getPreviewHtml(): string;
 }
