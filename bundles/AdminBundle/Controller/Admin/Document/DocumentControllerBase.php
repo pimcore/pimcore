@@ -448,7 +448,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
                 break;
             case $task === self::TASK_SCHEDULER && $document->isAllowed('settings'):
-                $document->saveScheduledTasks();
+                if ($document instanceof Model\Document\PageSnippet
+                    || $document instanceof Model\Document\Hardlink
+                    || $document instanceof Model\Document\Link) {
+                    $document->saveScheduledTasks();
+                }
 
                 break;
             default:
