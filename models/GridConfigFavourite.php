@@ -35,7 +35,7 @@ class GridConfigFavourite extends AbstractModel
     protected $classId;
 
     /**
-     * @var int|null
+     * @var int
      */
     protected $objectId;
 
@@ -50,6 +50,8 @@ class GridConfigFavourite extends AbstractModel
     protected $searchType;
 
     /**
+     * enum('asset','object')
+     *
      * @var string
      */
     protected $type;
@@ -155,7 +157,7 @@ class GridConfigFavourite extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getObjectId()
     {
@@ -171,6 +173,8 @@ class GridConfigFavourite extends AbstractModel
     }
 
     /**
+     * enum('asset','object')
+     *
      * @return string
      */
     public function getType()
@@ -179,6 +183,8 @@ class GridConfigFavourite extends AbstractModel
     }
 
     /**
+     * enum('asset','object')
+     *
      * @param string $type
      */
     public function setType(string $type)

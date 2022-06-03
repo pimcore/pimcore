@@ -25,12 +25,12 @@ use Pimcore\Model\Exception\NotFoundException;
 class GridConfig extends AbstractModel
 {
     /**
-     * @var int|null
+     * @var int
      */
     protected $id;
 
     /**
-     * @var int|null
+     * @var int
      */
     protected $ownerId;
 
@@ -55,7 +55,7 @@ class GridConfig extends AbstractModel
     protected $config;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $description;
 
@@ -128,7 +128,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getId()
     {
@@ -144,7 +144,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getOwnerId()
     {
@@ -224,7 +224,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
@@ -232,7 +232,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      */
     public function setDescription($description)
     {
@@ -304,6 +304,8 @@ class GridConfig extends AbstractModel
     }
 
     /**
+     * enum('asset','object')
+     *
      * @return string
      */
     public function getType()
@@ -312,6 +314,8 @@ class GridConfig extends AbstractModel
     }
 
     /**
+     * enum('asset','object')
+     *
      * @param string $type
      */
     public function setType(string $type)

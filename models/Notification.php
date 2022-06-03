@@ -313,6 +313,8 @@ class Notification extends AbstractModel
     }
 
     /**
+     * enum('document','asset', 'object) nullable
+     *
      * @return string|null
      */
     public function getLinkedElementType(): ?string
