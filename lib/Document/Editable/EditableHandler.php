@@ -192,20 +192,7 @@ class EditableHandler implements LoggerAwareInterface
 
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
-                $bundle = null;
-
-                try {
-                    $bundle = $this->bundleLocator->getBundle($brick);
-
-                    // check if file exists
-                    $iconPath = sprintf('%s/Resources/public/areas/%s/icon.png', $bundle->getPath(), $brick->getId());
-                    if (file_exists($iconPath)) {
-                        // build URL to icon
-                        $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
-                    }
-                } catch (\Exception $e) {
-                    $icon = '';
-                }
+                $icon = $this->autoResolveBrickResource($brick, 'icon.png');
             }
 
             if ($this->editmodeResolver->isEditmode()) {
@@ -295,6 +282,24 @@ class EditableHandler implements LoggerAwareInterface
         $this->handleBrickActionResult($brick->postRenderAction($info));
 
         return $html;
+    }
+
+    protected function autoResolveBrickResource(AreabrickInterface $brick, string $filename): string
+    {
+        try {
+            $bundle = $this->bundleLocator->getBundle($brick);
+
+            // check if file exists
+            $resourcePath = sprintf('%s/Resources/public/areas/%s/%s', $bundle->getPath(), $brick->getId(), $filename);
+            if (file_exists($resourcePath)) {
+                // build URL to resource
+                $resource = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), $filename);
+            }
+        } catch (\Exception $e) {
+            $resource = '';
+        }
+
+        return $resource;
     }
 
     /**
