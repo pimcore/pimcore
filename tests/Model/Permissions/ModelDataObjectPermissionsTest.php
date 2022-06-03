@@ -24,9 +24,9 @@ use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ModelDataObjectPermissionsTest extends ModelTestCase
 {
@@ -292,7 +292,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $this->userPermissionTest5->save();
 
-        //create user 5, with no roles, with no permissions set but workspaces configured --> should not find anything
+        //create user 6, with no roles, with no permissions set but workspaces configured --> should not find anything
         $this->userPermissionTest6 = new User();
         $this->userPermissionTest6->setName('Permissiontest6');
         $this->userPermissionTest6->setPermissions([]);
@@ -531,6 +531,10 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'view' => 1,
                 ]
             );
+
+            $this->doAreAllowedTest($element, $this->userPermissionTest6,
+                []
+            );
         }
 
         //check permissions of userfolder (directly defined) and usertestobject (inherited)
@@ -563,6 +567,15 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'versions' => 0,
                     'create' => 0,
                     'rename' => 0,
+                ]
+            );
+
+            $this->doAreAllowedTest($element, $this->userPermissionTest6,
+                [
+                    'list' => 0,
+                    'view' => 0,
+                    'save' => 0,
+                    'publish' => 0
                 ]
             );
         }
