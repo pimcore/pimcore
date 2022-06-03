@@ -448,8 +448,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
                 break;
             case $task === self::TASK_SCHEDULER && $document->isAllowed('settings'):
-                $this->setValuesToDocument($request, $document);
-                $document->save();
+                $document->saveScheduledTasks();
 
                 break;
             default:
