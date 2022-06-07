@@ -209,18 +209,22 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
+    /**
+     * @param DataObject\ClassDefinition\Data[] $fds
+     * @param array $found
+     *
+     * @throws \Exception
+     */
     private function enforceBlockRules($fds, $found = [])
     {
-        if (($found['block'] ?? false) && ($found['localizedfield'] ?? false)) {
-            throw new \Exception('A localizedfield cannot be nested inside a block and vice versa');
-        }
-        /** @var DataObject\ClassDefinition\Data $fd */
         foreach ($fds as $fd) {
             $childParams = $found;
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
                 $childParams['block'] = true;
             } elseif ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                $childParams['localizedfield'] = true;
+                if ($found['block'] ?? false) {
+                    throw new \Exception('A localizedfield cannot be nested inside a block');
+                }
             }
             if (method_exists($fd, 'getFieldDefinitions')) {
                 $this->enforceBlockRules($fd->getFieldDefinitions(), $childParams);
