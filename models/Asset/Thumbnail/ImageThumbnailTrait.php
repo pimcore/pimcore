@@ -185,12 +185,16 @@ trait ImageThumbnailTrait
         $pathReference = $this->getPathReference();
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
-                $info = @getimagesize($this->getLocalFile());
-                if ($info) {
-                    $dimensions = [
-                        'width' => $info[0],
-                        'height' => $info[1],
-                    ];
+                $localFile = $this->getLocalFile();
+
+                if (null !== $localFile) {
+                    $info = @getimagesize($localFile);
+                    if ($info) {
+                        $dimensions = [
+                            'width' => $info[0],
+                            'height' => $info[1],
+                        ];
+                    }
                 }
             } catch (\Exception $e) {
                 // noting to do
@@ -334,7 +338,13 @@ trait ImageThumbnailTrait
      */
     public function getLocalFile()
     {
-        return self::getLocalFileFromStream($this->getStream());
+        $stream = $this->getStream();
+
+        if (null === $stream) {
+            return null;
+        }
+
+        return self::getLocalFileFromStream($stream);
     }
 
     /**
