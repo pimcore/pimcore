@@ -1165,23 +1165,23 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int|string|null $number
+     * @param mixed $number
      *
      * @return int|null
      */
     public function getAsIntegerCast($number)
     {
-        return strlen($number) === 0 ? '' : (int)$number;
+        return strlen((string) $number) === 0 ? null : (int)$number;
     }
 
     /**
      * @param mixed $number
      *
-     * @return float
+     * @return float|null
      */
     public function getAsFloatCast($number)
     {
-        return strlen($number) === 0 ? '' : (float)$number;
+        return strlen((string) $number) === 0 ? null : (float)$number;
     }
 
     /**
