@@ -22,12 +22,11 @@ use PackageVersions\Versions;
 use Pimcore\Composer\PackageInfo;
 
 /**
- * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions 
+ * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions
  * via ocramius/package-versions which is generated on composer install.
  */
 trait PackageVersionTrait
 {
-
     /**
      * Returns the composer package name used to resolve the version
      *
