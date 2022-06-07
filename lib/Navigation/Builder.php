@@ -24,9 +24,6 @@ use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
 
-/**
- * @internal
- */
 class Builder
 {
     /**
@@ -35,11 +32,15 @@ class Builder
     private $requestHelper;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $htmlMenuIdPrefix;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $pageClass = DocumentPage::class;
@@ -58,7 +59,7 @@ class Builder
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
-    public function __construct(RequestHelper $requestHelper, string $pageClass = null)
+    public function __construct(RequestHelper $requestHelper, ?string $pageClass = null)
     {
         $this->requestHelper = $requestHelper;
 
@@ -205,6 +206,8 @@ class Builder
     }
 
     /**
+     * @internal
+     *
      * @param Container $navigation navigation container to iterate
      * @param string $property name of property to match against
      * @param string $value value to match property against
@@ -221,6 +224,8 @@ class Builder
     }
 
     /**
+     * @internal
+     *
      * @param Page $page
      * @param bool $isActive
      *
@@ -288,6 +293,8 @@ class Builder
     }
 
     /**
+     * @internal
+     *
      * @param Document $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback
