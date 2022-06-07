@@ -84,4 +84,9 @@ trait RuntimeCacheTrait
 
         return Cache::load($cacheKey);
     }
+
+    private static function isCacheRegistered(string $cacheKey): bool
+    {
+        return Cache\Runtime::isRegistered($cacheKey);
+    }
 }

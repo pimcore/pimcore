@@ -16,6 +16,7 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Pimcore\Cache\RuntimeCacheTrait;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -37,6 +38,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
+
+    use RuntimeCacheTrait;
+
     /**
      * all possible types of documents
      *
@@ -184,9 +188,10 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
+        self::setCacheEnabled(true);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force && self::isCacheRegistered($cacheKey)) {
+            $document = self::getCache($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
@@ -196,7 +201,7 @@ class Document extends Element\AbstractElement
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
-            \Pimcore\Cache\Runtime::set($cacheKey, $doc);
+            self::setCache($doc, $cacheKey);
         } catch (NotFoundException $e) {
             $doc = null;
         }
@@ -237,9 +242,10 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        self::setCacheEnabled(true);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force) {
+            $document = self::getCache($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
@@ -276,14 +282,14 @@ class Document extends Element\AbstractElement
                 $document->getDao()->getById($id);
             }
 
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            self::setCache($document, $cacheKey);
             $document->__setDataVersionTimestamp($document->getModificationDate());
 
             $document->resetDirtyMap();
 
             \Pimcore\Cache::save($document, $cacheKey);
         } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            self::setCache($document, $cacheKey);
         }
 
         if (!$document || !static::typeMatch($document)) {
@@ -435,13 +441,14 @@ class Document extends Element\AbstractElement
 
             $additionalTags = [];
             if (isset($updatedChildren) && is_array($updatedChildren)) {
+                self::setCacheEnabled(true);
                 foreach ($updatedChildren as $updatedDocument) {
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long-running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
-                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
+                    self::setCache(null, $tag);
+                    self::setCache(null, self::getPathCacheKey($updatedDocument['oldPath']));
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -574,7 +581,8 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set document to registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), $this);
+        self::setCacheEnabled(true);
+        self::setCache($this, self::getCacheKey($this->getId()));
     }
 
     /**
@@ -774,9 +782,10 @@ class Document extends Element\AbstractElement
 
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
+            self::setCacheEnabled(true);
+            if (self::isCacheRegistered($parentCacheKey)) {
                 /** @var Document $parent */
-                $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
+                $parent = self::getCache($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
@@ -795,8 +804,8 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //clear document from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
-        \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
+        self::setCache(null, self::getCacheKey($this->getId()));
+        self::setCache(null, self::getPathCacheKey($this->getRealFullPath()));
 
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
