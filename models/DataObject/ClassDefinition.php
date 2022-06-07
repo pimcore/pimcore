@@ -1492,8 +1492,8 @@ final class ClassDefinition extends Model\AbstractModel
             for ($i = 1; $i < count($keyArray) - 1; $i++) {
                 $children = &$children->getChildrenByRef()[$keyArray[$i]];
             }
-
-            array_splice($children->getChildrenByRef(), end($keyArray), 1);
+            $children = &$children->getChildrenByRef();
+            array_splice($children, end($keyArray), 1);
 
             return 1;
         }
