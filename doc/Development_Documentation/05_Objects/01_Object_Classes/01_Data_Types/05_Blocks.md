@@ -28,9 +28,7 @@ The value of the second input field can be retrieved as follows:
 
 ```php
         $object = DataObject\BlockClass::getById(48);
-        /** @var DataObject\ClassDefinition\Data\Block $blockData */
         $blockItems = $object->getBlockElement1();
-        /** @var DataObject\Data\BlockElement $firstBlockItem */
         $firstBlockItem = $blockItems[0];
         echo($firstBlockItem["input2"]->getData());
 ```
@@ -49,9 +47,7 @@ Get Values of Localized Block Entries:
 
 ```php
         $object = DataObject\BlockClass::getById(48);
-        /** @var DataObject\ClassDefinition\Data\Block $blockData */
         $blockItems = $object->getBlockElement1();
-        /** @var DataObject\Data\BlockElement $firstBlockItem */
         $firstBlockItem = $blockItems[0];
         $localizedfields = $firstBlockItem["localizedfields"]->getData();
         // after that use it as you would to it with `Pimcore\Model\DataObject\LocalizedField::getLocalizedValue`
