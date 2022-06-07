@@ -22,9 +22,8 @@ use PackageVersions\Versions;
 use Pimcore\Composer\PackageInfo;
 
 /**
- * Exposes a simple getVersion() implementation by looking up the installed versions via ocramius/package-versions
- * which is generated on composer install. This trait can be used by using it from a bundle class and implementing
- * getComposerPackageName() to return the name of the composer package to lookup.
+ * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions 
+ * via ocramius/package-versions which is generated on composer install.
  */
 trait PackageVersionTrait
 {
