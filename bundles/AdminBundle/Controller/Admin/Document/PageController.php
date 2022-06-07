@@ -188,11 +188,14 @@ class PageController extends DocumentControllerBase
         } else {
             $this->saveToSession($page);
 
-            $draftData = [
-                'id' => $version->getId(),
-                'modificationDate' => $version->getDate(),
-                'isAutoSave' => $version->isAutoSave(),
-            ];
+            $draftData = [];
+            if ($version) {
+                $draftData = [
+                    'id' => $version->getId(),
+                    'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
+                ];
+            }
 
             $treeData = $this->getTreeNodeConfig($page);
 
