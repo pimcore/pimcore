@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use Pimcore\Cache\RuntimeCacheTrait;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -53,6 +54,7 @@ class Asset extends Element\AbstractElement
 {
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
+    use RuntimeCacheTrait;
 
     /**
      * all possible types of assets
@@ -221,6 +223,7 @@ class Asset extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
+        self::setCacheEnabled(true);
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
@@ -228,8 +231,8 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $asset = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$force && self::isCacheRegistered($cacheKey)) {
+            $asset = self::getCache($cacheKey);
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
@@ -248,7 +251,7 @@ class Asset extends Element\AbstractElement
                     $asset->getDao()->getById($id);
                 }
 
-                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+                self::setCache($asset, $cacheKey);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 $asset->resetDirtyMap();
@@ -258,7 +261,7 @@ class Asset extends Element\AbstractElement
                 return null;
             }
         } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+            self::setCache($asset, $cacheKey);
         }
 
         if (!$asset || !static::typeMatch($asset)) {
@@ -460,6 +463,7 @@ class Asset extends Element\AbstractElement
     public function save()
     {
         // additional parameters (e.g. "versionNote" for the version note)
+        self::setCacheEnabled(true);
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
             $params = func_get_arg(0);
@@ -562,7 +566,7 @@ class Asset extends Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
+                    self::setCache(null, $tag);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -671,6 +675,7 @@ class Asset extends Element\AbstractElement
     protected function update($params = [])
     {
         $storage = Storage::get('asset');
+        self::setCacheEnabled(true);
         $this->updateModificationInfos();
 
         $path = $this->getRealFullPath();
@@ -768,12 +773,12 @@ class Asset extends Element\AbstractElement
 
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
-        \Pimcore\Cache\Runtime::set($cacheKey, $this);
+        self::setCache($this, $cacheKey);
         if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
-            \Pimcore\Cache\Runtime::set($cacheKey, null);
+            self::setCache(null, $cacheKey);
             Asset::getById($this->getId()); // call it to load it to the runtime cache again
         }
 
@@ -979,6 +984,7 @@ class Asset extends Element\AbstractElement
      */
     public function delete(bool $isNested = false)
     {
+        self::setCacheEnabled(true);
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
         }
@@ -1050,7 +1056,7 @@ class Asset extends Element\AbstractElement
         $this->clearDependentCache();
 
         // clear asset from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
+        self::setCache(null, self::getCacheKey($this->getId()));
 
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
