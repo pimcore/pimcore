@@ -413,11 +413,12 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('insertFieldsBack', $callable, true);
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField() {
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField()
+    {
         $classDef = new ClassDefinition();
 
         $delElement = new ClassDefinition\Data\Input();
-        $delElement->setName("delete1");
+        $delElement->setName('delete1');
         $classDef->setDeletedDataComponents([$delElement]);
         $layoutDef = new ClassDefinition\Layout\Panel();
 
@@ -426,17 +427,18 @@ class DefinitionModifierTest extends ModelTestCase
 
         $layoutDef->setChildren([$panel1]);
 
-        $delMethod = self::getMethod($classDef,'deleteDeletedDataComponentsInLayoutDefinition');
+        $delMethod = self::getMethod($classDef, 'deleteDeletedDataComponentsInLayoutDefinition');
         $delMethod->invokeArgs($classDef, [$layoutDef, $layoutDef]);
 
         $this->assertEmpty($layoutDef->getChildren()[0]->getChildren());
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields() {
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields()
+    {
         $classDef = new ClassDefinition();
 
         $delElements = [];
-        for($i = 0; $i < 5; $i++){
+        for ($i = 0; $i < 5; $i++) {
             $delElement = new ClassDefinition\Data\Input();
             $delElement->setName('delete' . $i);
             array_push($delElements, $delElement);
@@ -445,7 +447,7 @@ class DefinitionModifierTest extends ModelTestCase
         $classDef->setDeletedDataComponents($delElements);
 
         $keepElements = [];
-        for($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $keepElement = new ClassDefinition\Data\Input();
             $keepElement->setName('keep' . $i);
             array_push($keepElements, $keepElement);
@@ -454,11 +456,11 @@ class DefinitionModifierTest extends ModelTestCase
         $layoutDef = new ClassDefinition\Layout\Panel();
 
         $panel1 = new ClassDefinition\Layout\Panel();
-        $panel1->setChildren([$delElements[0], $delElements[1], $delElements[2], $keepElements[0], $delElements[3], $delElements[4], $keepElements[1], $keepElements[2],]);
+        $panel1->setChildren([$delElements[0], $delElements[1], $delElements[2], $keepElements[0], $delElements[3], $delElements[4], $keepElements[1], $keepElements[2], ]);
 
         $layoutDef->setChildren([$panel1]);
 
-        $delMethod = self::getMethod($classDef,'deleteDeletedDataComponentsInLayoutDefinition');
+        $delMethod = self::getMethod($classDef, 'deleteDeletedDataComponentsInLayoutDefinition');
         $delMethod->invokeArgs($classDef, [$layoutDef, $layoutDef]);
 
         $this->assertTrue($layoutDef->getChildren()[0]->getChildren()[0] === $keepElements[0]);
@@ -466,10 +468,12 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertTrue($layoutDef->getChildren()[0]->getChildren()[2] === $keepElements[2]);
     }
 
-    private static function getMethod($class, $name) {
+    private static function getMethod($class, $name)
+    {
         $class = new \ReflectionClass($class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method;
     }
 }

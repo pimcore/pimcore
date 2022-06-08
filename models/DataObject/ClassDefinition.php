@@ -265,7 +265,6 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public $enableGridLocking = false;
 
-
     /**
      * @internal
      *
@@ -889,7 +888,7 @@ final class ClassDefinition extends Model\AbstractModel
     public function setLayoutDefinitions($layoutDefinitions)
     {
         $oldFieldDefinitions = null;
-        if($this->layoutDefinitions !== null) {
+        if ($this->layoutDefinitions !== null) {
             $this->setDeletedDataComponents([]);
             $oldFieldDefinitions = $this->getFieldDefinitions();
         }
@@ -899,11 +898,11 @@ final class ClassDefinition extends Model\AbstractModel
         $this->fieldDefinitions = [];
         $this->extractDataDefinitions($this->layoutDefinitions);
 
-        if($oldFieldDefinitions !== null) {
+        if ($oldFieldDefinitions !== null) {
             $newFieldDefinitions = $this->getFieldDefinitions();
             $deletedComponents = [];
             foreach ($oldFieldDefinitions as $fieldDefinition) {
-                if(!array_key_exists($fieldDefinition->getName(), $newFieldDefinitions)) {
+                if (!array_key_exists($fieldDefinition->getName(), $newFieldDefinitions)) {
                     array_push($deletedComponents, $fieldDefinition);
                 }
             }
@@ -1435,7 +1434,8 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @return ClassDefinition\Data[]
      */
-    public function getDeletedDataComponents() {
+    public function getDeletedDataComponents()
+    {
         return $this->deletedDataComponents;
     }
 
@@ -1444,13 +1444,16 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition {
+    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition
+    {
         $this->deletedDataComponents = $deletedDataComponents;
+
         return $this;
     }
 
-    private function deleteDeletedDataComponentsInCustomLayout(): void {
-        if(empty($this->getDeletedDataComponents())) {
+    private function deleteDeletedDataComponentsInCustomLayout(): void
+    {
+        if (empty($this->getDeletedDataComponents())) {
             return;
         }
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
@@ -1465,26 +1468,24 @@ final class ClassDefinition extends Model\AbstractModel
         }
     }
 
-
-
-private function deleteDeletedDataComponentsInLayoutDefinition(ClassDefinition\Layout $layoutDefinition): void
+    private function deleteDeletedDataComponentsInLayoutDefinition(ClassDefinition\Layout $layoutDefinition): void
     {
         $componentsToDelete = $this->getDeletedDataComponents();
         $componentDeleted = false;
 
         $children = &$layoutDefinition->getChildrenByRef();
         $count = count($children);
-        for($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $component = $children[$i];
-            if(in_array($component, $componentsToDelete)) {
+            if (in_array($component, $componentsToDelete)) {
                 unset($children[$i]);
                 $componentDeleted = true;
             }
-            if($component instanceof ClassDefinition\Layout) {
+            if ($component instanceof ClassDefinition\Layout) {
                 $this->deleteDeletedDataComponentsInLayoutDefinition($component);
             }
         }
-        if($componentDeleted) {
+        if ($componentDeleted) {
             $children = array_values($children);
         }
     }
