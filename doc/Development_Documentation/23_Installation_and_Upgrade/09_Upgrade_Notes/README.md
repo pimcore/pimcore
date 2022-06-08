@@ -1,4 +1,9 @@
 # Upgrade Notes
+## 10.4.2
+- When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
+  Until now, some commands (e.g. `messenger:consume`) could be executed even if the system was in maintenance mode. 
+  To circumvent, use `--ignore-maintenance-mode` option, which is available to all commands.  
+
 ## 10.4.0
 - **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
 - [Image Optimizer] Optimize Image messages are now routed to different queue
