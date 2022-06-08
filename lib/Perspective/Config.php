@@ -255,6 +255,7 @@ final class Config
 
         $event = new GenericEvent(null, [
             'result' => $result,
+            'configName' => $currentConfigName,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::PERSPECTIVE_POST_GET_RUNTIME);
 
