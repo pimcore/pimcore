@@ -62,3 +62,10 @@ flysystem:
             visibility: private
             options:
                 directory: '%kernel.project_dir%/var/email'
+        pimcore.temp.storage:
+            # Storage for temporary files that work under a batch process, such as export csv
+            # must not be `local` for stateless environment
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/tmp'
