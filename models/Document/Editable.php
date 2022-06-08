@@ -375,6 +375,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @param array $config
+     *
      * @return $this
      */
     public function setConfig($config)
