@@ -28,7 +28,7 @@ mode and the option is not set.
 
 ##### `--maintenance-mode`
 The console application implicitly adds the `--maintenance-mode` option to all commands.
-Which this option set, Pimcore is set into maintenance mode while that command is executed. 
+With this option set, Pimcore is set into maintenance mode while that command is executed. 
 
 ##### `dump()` and `dumpVerbose()`
 Better `var_dump` through [`VarDumper`](https://symfony.com/doc/5.2/components/var_dumper/introduction.html). 
