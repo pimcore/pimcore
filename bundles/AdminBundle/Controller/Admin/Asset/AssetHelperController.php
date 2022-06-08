@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
-use League\Flysystem\UnableToWriteFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -39,10 +38,10 @@ use Pimcore\Tool\Storage;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -727,7 +726,7 @@ class AssetHelperController extends AdminController
 
         $fileHandle = uniqid('asset-export-');
         $storage = Storage::get('temp');
-        $storage->write($this->getCsvFile($fileHandle),'');
+        $storage->write($this->getCsvFile($fileHandle), '');
 
         return $this->adminJson(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
@@ -905,8 +904,8 @@ class AssetHelperController extends AdminController
 
             $response->headers->set('Content-Disposition', $disposition);
             $storage->delete($csvFile);
-            return $response;
 
+            return $response;
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('CSV file not found');
@@ -942,15 +941,15 @@ class AssetHelperController extends AdminController
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
-            
+
             $response = new BinaryFileResponse($xlsxFilename);
             $response->headers->set('Content-Type', 'application/xlsx');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
 
             $storage->delete($csvFile);
+
             return $response;
-            
         } catch (FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
