@@ -16,7 +16,6 @@
 namespace Pimcore\Console;
 
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -67,7 +66,6 @@ abstract class AbstractCommand extends Command
         $this->io = new PimcoreStyle($input, $output);
         $this->input = $input;
         $this->output = $output;
-
     }
 
     /**
