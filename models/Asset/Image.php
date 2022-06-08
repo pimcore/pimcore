@@ -110,11 +110,11 @@ class Image extends Model\Asset
             $reference = $thumbnail->getPathReference();
             if (in_array($reference['type'], ['asset', 'thumbnail'])) {
                 $image = $thumbnail->getLocalFile();
-                
+
                 if (null === $image) {
                     return false;
                 }
-                
+
                 $imageWidth = $thumbnail->getWidth();
                 $imageHeight = $thumbnail->getHeight();
 
@@ -181,7 +181,7 @@ class Image extends Model\Asset
             if (null === $path) {
                 return false;
             }
-            
+
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
@@ -364,7 +364,7 @@ EOT;
         if (!$path) {
             $path = $this->getLocalFile();
         }
-        
+
         if (!$path) {
             return null;
         }
