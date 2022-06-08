@@ -216,12 +216,7 @@ class Scheduledblock extends Block implements BlockInterface
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         // outer element
-        $class = 'pimcore_block_entry';
-        if (!empty($additionalClass)) {
-            $class = sprintf('%s %s', $class, $additionalClass);
-        }
-
-        $this->outputEditmode('<div class="' . $class . '" ' . $oAttr . ' ' . $attr . '>');
+        $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
 
         $this->current++;
     }
