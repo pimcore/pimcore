@@ -51,7 +51,7 @@ trait PackageVersionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getVersion()
     {
@@ -65,7 +65,7 @@ trait PackageVersionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getDescription()
     {
