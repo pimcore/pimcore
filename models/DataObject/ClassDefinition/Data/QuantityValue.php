@@ -222,17 +222,15 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param loat|int|string|null $defaultValue
-     *
-     * @return $this
+     * @param float|int|string|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
-        if ($this->defaultValue !== null) {
-            return $this->toNumeric($this->defaultValue);
+        if ((string)$defaultValue !== '') {
+            $this->defaultValue = $defaultValue;
+        } else {
+            $this->defaultValue = null;
         }
-
-        return $this;
     }
 
     /**
