@@ -43,7 +43,7 @@ class PackageInfo
                 $type = [$type];
             }
 
-            $packages = array_filter($packages, static fn(array $package) => in_array($package['type'], $type, true));
+            $packages = array_filter($packages, static fn (array $package) => in_array($package['type'], $type, true));
         }
 
         return $packages;
