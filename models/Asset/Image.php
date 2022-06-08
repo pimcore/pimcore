@@ -365,7 +365,7 @@ EOT;
             $path = $this->getLocalFile();
         }
         
-        if (null === $path) {
+        if (!$path) {
             return null;
         }
 
