@@ -7,6 +7,7 @@
 - [Backend search] `key` and `index` columns have been added to the search index. Run `./bin/console pimcore:search-backend-reindex` to reindex.
 - [Cache] Pimcore use DoctrineDbalAdapter instead of PdoAdapter by default now.
 - Removed `ocramius/package-versions` dependency. If you rely on it, please add it to your own `composer.json`.
+- [AssetUpdateTasks (System thumbnail generation / Asset updates)] Message bus for processing updates (thumbnails, metadata etc ) in assets (images, videos, documents) is now routed to a different queue `pimcore_image_optimize` instead of `pimcore_core`. If you want to handle AssetUpdateTasks messages, then it is required to add specific option `pimcore_image_optimize` to the command like `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize`. Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that AssetUpdateTasks messages on the queue gets consumed.
 
 ## 10.4.0
 - **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
