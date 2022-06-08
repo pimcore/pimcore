@@ -66,7 +66,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var float|null
+     * @var float|int|string|null
      */
     public $defaultValue;
 
@@ -222,15 +222,17 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param float|null $defaultValue
+     * @param loat|int|string|null $defaultValue
+     *
+     * @return $this
      */
     public function setDefaultValue($defaultValue)
     {
-        if (is_numeric($defaultValue)) {
-            $this->defaultValue = (float) $defaultValue;
-        } else {
-            $this->defaultValue = null;
+        if ($this->defaultValue !== null) {
+            return $this->toNumeric($this->defaultValue);
         }
+
+        return $this;
     }
 
     /**
@@ -662,7 +664,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!$this->isEmpty($data->getValue()) && !is_numeric($data->getValue())) {
+        if ($data !== null && !$this->isEmpty($data->getValue()) && !is_numeric($data->getValue())) {
             throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data->getValue() . '] ');
         }
 
@@ -673,7 +675,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             }
         }
 
-        if (!$this->isEmpty($data->getValue())) {
+        if ($data !== null && !$this->isEmpty($data->getValue())) {
             $value = $this->toNumeric($data->getValue());
 
             if ($value >= PHP_INT_MAX) {
