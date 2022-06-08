@@ -286,7 +286,7 @@ class Block extends Model\Document\Editable implements BlockInterface
 
         $class = 'pimcore_block_entry';
         if (!empty($additionalClass)) {
-            $class = sprintf('%s %s', $class, $additionalClass );
+            $class = sprintf('%s %s', $class, $additionalClass);
         }
 
         $html = '<div class="' . $class . '" ' . $oAttr . ' ' . $attr . '>';
