@@ -332,7 +332,7 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @return string
+     * @return string|null
      *
      * @throws \Exception
      */
