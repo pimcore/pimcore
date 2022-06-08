@@ -1817,7 +1817,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get('messenger.bus.pimcore_image_optimize')->dispatch(
+        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }
