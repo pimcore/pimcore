@@ -210,13 +210,15 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return float|int|string
+     * @return float|int|string|null
      */
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
         }
+
+        return null;
     }
 
     /**
@@ -891,7 +893,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return false;
         }
 
-        return $oldValue->getValue() === $newValue->getValue()
+        return $this->toNumeric($oldValue->getValue()) === $this->toNumeric($newValue->getValue())
             && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
     }
 
