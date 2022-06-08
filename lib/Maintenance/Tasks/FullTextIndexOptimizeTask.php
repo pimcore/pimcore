@@ -34,6 +34,7 @@ class FullTextIndexOptimizeTask implements TaskInterface
 
     /**
      * {@inheritdoc}
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function execute()
