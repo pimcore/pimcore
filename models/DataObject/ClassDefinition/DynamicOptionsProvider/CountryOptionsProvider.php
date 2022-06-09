@@ -73,9 +73,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getDefaultValue($context, $fieldDefinition)
     {
