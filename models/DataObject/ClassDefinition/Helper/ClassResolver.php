@@ -27,6 +27,7 @@ abstract class ClassResolver
     /**
      * @param string $class
      * @param callable|null $validationCallback
+     *
      * @return mixed|null
      */
     protected static function resolve($class, callable $validationCallback = null)

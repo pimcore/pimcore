@@ -820,6 +820,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
+     *
      * @return array
      */
     protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
