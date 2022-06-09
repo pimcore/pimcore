@@ -37,6 +37,9 @@ trait PimcoreExtensionsTrait
      */
     protected $autoQuoteIdentifiers = true;
 
+    /**
+     * @var array
+     */
     private static array $tablePrimaryKeyCache = [];
 
     /**
