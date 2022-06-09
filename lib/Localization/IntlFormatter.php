@@ -43,7 +43,9 @@ class IntlFormatter
      */
     protected $locale;
 
-    /** @var LocaleServiceInterface */
+    /**
+     * @var LocaleServiceInterface
+     */
     private $localeService;
 
     /**
@@ -110,6 +112,7 @@ class IntlFormatter
     }
 
     /**
+     * @param string $locale
      * @param string $currencyFormat
      */
     public function setCurrencyFormat($locale, $currencyFormat)
@@ -189,7 +192,7 @@ class IntlFormatter
     /**
      * formats given datetime in given format
      *
-     * @param \DateTime $dateTime
+     * @param int|string|\DateTimeInterface $dateTime
      * @param string $format
      *
      * @return bool|string
