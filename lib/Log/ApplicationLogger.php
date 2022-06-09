@@ -426,6 +426,7 @@ class ApplicationLogger implements LoggerInterface
 
     /**
      * @param \Throwable $exceptionObject
+     *
      * @return FileObject
      */
     private static function createExceptionFileObject(\Throwable $exceptionObject)

@@ -138,9 +138,9 @@ class ApplicationLoggerProcessor
         return $record;
     }
 
-
     /**
      * @param string $filename
+     *
      * @return string
      */
     private function normalizeFilename($filename)
