@@ -466,6 +466,9 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return array_keys($vars);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function __set_state($data)
     {
         $obj = new static();
