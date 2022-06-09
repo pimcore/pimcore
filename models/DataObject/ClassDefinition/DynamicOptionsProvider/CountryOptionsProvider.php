@@ -31,9 +31,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptions($context, $fieldDefinition)
     {
@@ -65,9 +63,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasStaticOptions($context, $fieldDefinition)
     {
@@ -75,9 +71,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getDefaultValue($context, $fieldDefinition)
     {

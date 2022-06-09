@@ -525,11 +525,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param array $value
-     * @param string $operator
-     * @param array $params
-     * @return string
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getFilterCondition($value, $operator, $params = [])
     {

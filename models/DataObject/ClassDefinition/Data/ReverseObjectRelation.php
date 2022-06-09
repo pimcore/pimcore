@@ -241,9 +241,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\Concrete $container
-     * @param array $params
-     * @return array
+     * {@inheritdoc}
      */
     public function preGetData($container, $params = [])
     {
