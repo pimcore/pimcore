@@ -68,6 +68,7 @@ class RedirectUrlPartResolver
 
                 break;
 
+            case Redirect::TYPE_AUTO_CREATE:
             case Redirect::TYPE_PATH:
                 $part = $this->request->getPathInfo();
 

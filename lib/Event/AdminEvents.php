@@ -544,6 +544,7 @@ final class AdminEvents
      *
      * Arguments:
      *  - result | The result array
+     *  - configName | Name of the current perspective
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *

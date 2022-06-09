@@ -1021,7 +1021,7 @@ class Service extends Model\Element\Service
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey('name');
-        $condition = 'classId = ' . $list->quote($classId);
+        $condition = 'classId = ' . $list->quote($classId).' AND id NOT LIKE \'%.brick.%\'';
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
             $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
@@ -1300,7 +1300,7 @@ class Service extends Model\Element\Service
      */
     private static function mergeFieldDefinition(&$mergedFieldDefinition, &$customFieldDefinitions, $key)
     {
-        if (!$customFieldDefinitions[$key]) {
+        if (empty($customFieldDefinitions[$key])) {
             unset($mergedFieldDefinition[$key]);
         } elseif (isset($mergedFieldDefinition[$key])) {
             $def = $customFieldDefinitions[$key];

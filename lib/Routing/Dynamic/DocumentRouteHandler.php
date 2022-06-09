@@ -250,12 +250,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         DocumentRoute $route,
         DynamicRequestContext $context = null
     ) {
-        // if we have a request we're currently in match mode (not generating URLs) -> only match when frontend request by admin
+        // if we have a request in context, we're currently in match mode (not generating URLs) -> only match when frontend request by admin
         try {
-            $request = null;
-            if ($context) {
-                $request = $context->getRequest();
-            }
+            $request = $context ? $context->getRequest() : $this->requestHelper->getMainRequest();
             $isAdminRequest = $this->requestHelper->isFrontendRequestByAdmin($request);
         } catch (\LogicException $e) {
             // catch logic exception here - when the exception fires, it is no admin request

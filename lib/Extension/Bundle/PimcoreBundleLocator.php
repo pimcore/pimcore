@@ -97,18 +97,11 @@ class PimcoreBundleLocator
      */
     private function findBundlesInPaths(array $paths)
     {
-        $filteredPaths = [];
-        foreach ($paths as $path) {
-            if (file_exists($path) && is_dir($path)) {
-                $filteredPaths[] = $path;
-            }
-        }
-
         $result = [];
 
         $finder = new Finder();
         $finder
-            ->in(array_unique($filteredPaths))
+            ->in(array_unique(array_filter($paths, 'is_dir')))
             ->name('*Bundle.php');
 
         /** @var SplFileInfo $file */
@@ -140,8 +133,8 @@ class PimcoreBundleLocator
 
         $result = [];
         foreach ($pimcoreBundles as $packageInfo) {
-            // if bundle explicitely defines bundles, use the config
-            if (isset($packageInfo['extra']) && isset($packageInfo['extra']['pimcore'])) {
+            // if bundle explicitly defines bundles, use the config
+            if (isset($packageInfo['extra']['pimcore'])) {
                 $cfg = $packageInfo['extra']['pimcore'];
                 if (isset($cfg['bundles']) && is_array($cfg['bundles'])) {
                     foreach ($cfg['bundles'] as $bundle) {

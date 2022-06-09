@@ -1517,6 +1517,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 
+    /**
+     * @return bool
+     */
     public function isForbiddenName()
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);

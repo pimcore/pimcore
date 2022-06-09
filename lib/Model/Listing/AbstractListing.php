@@ -244,25 +244,27 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $key
+     * @param string $condition
      * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
      */
-    public function addConditionParam($key, $value = null, $concatenator = 'AND')
+    public function addConditionParam($condition, $value = null, $concatenator = 'AND')
     {
         $this->setData(null);
 
-        $key = '('.$key.')';
-        $ignore = true;
-        if (strpos($key, '?') !== false || strpos($key, ':') !== false) {
-            $ignore = false;
+        $condition = '('.$condition.')';
+        $ignoreParameter = true;
+
+        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
+            $ignoreParameter = false;
         }
-        $this->conditionParams[$key] = [
+        $this->conditionParams[$condition] = [
             'value' => $value,
             'concatenator' => $concatenator,
-            'ignore-value' => $ignore, // If there is not a placeholder, ignore value!
+            'ignore-value' => $ignoreParameter, // If there is not a placeholder, ignore value!
         ];
 
         return $this;

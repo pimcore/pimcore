@@ -219,6 +219,9 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->_language = $language;
     }
 
+    /**
+     * @return mixed
+     */
     public function marshalForCache()
     {
         $this->needsRenewReferences = true;
