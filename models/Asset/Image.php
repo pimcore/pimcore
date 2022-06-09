@@ -282,7 +282,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
      *
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param null|string|array|Image\Thumbnail\Config $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
