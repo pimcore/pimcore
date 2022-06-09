@@ -91,6 +91,11 @@ class LocationAwareConfigRepository
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
     }
 
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
     public function loadConfigByKey(string $key)
     {
         $dataSource = null;
@@ -116,8 +121,9 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
-     * @return mixed|null
+     * @return mixed
      */
     private function getDataFromContainerConfig(string $key, ?string &$dataSource)
     {
@@ -130,8 +136,9 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
-     * @return mixed|null
+     * @return mixed
      */
     private function getDataFromSettingsStore(string $key, ?string &$dataSource)
     {
@@ -173,7 +180,12 @@ class LocationAwareConfigRepository
     }
 
     /**
+     * @param string|null $key
+     * @param string|null $dataSource
+     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function isWriteable(?string $key = null, ?string $dataSource = null): bool
     {
@@ -323,6 +335,7 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
      * @throws \Exception
      */
