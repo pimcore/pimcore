@@ -465,6 +465,16 @@ final class ClassDefinition extends Model\AbstractModel
         $this->getDao()->save($isUpdate);
 
         $this->generateClassFiles($saveDefinitionFile);
+        
+        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
+            foreach ($classDefinition->getFieldDefinitions() as $def) {
+                // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
+                //TODO Pimcore 11 remove method_exists call
+                if (!$fieldDefinition instanceof ClassDefinition\Data\DataContainerAwareInterface && method_exists($fieldDefinition, 'classSaved')) {
+                    $fieldDefinition->classSaved($classDefinition);
+                }
+            }
+        }
 
         // empty object cache
         try {
