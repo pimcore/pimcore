@@ -561,7 +561,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         $columns = array_diff(array_keys($vars), $ignored);
         $defaultValue = 0;
-        if (!$user || $user->isAdmin()) {
+
+        if ((!$user && php_sapi_name() === 'cli') || $user->isAdmin()) {
             $defaultValue = 1;
         }
 
