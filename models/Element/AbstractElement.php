@@ -577,7 +577,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return $permissions;
         }
 
-
         $permissions = $this->getDao()->areAllowed($columns, $user);
 
         foreach ($permissions as $type => $isAllowed) {

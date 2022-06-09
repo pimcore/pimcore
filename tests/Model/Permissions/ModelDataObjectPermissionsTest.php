@@ -399,8 +399,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
        bool $resultPermissionTest4,
        bool $resultPermissionTest5,
        bool $resultPermissionTest6
-    )
-    {
+    ) {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -575,7 +574,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                     'list' => 0,
                     'view' => 0,
                     'save' => 0,
-                    'publish' => 0
+                    'publish' => 0,
                 ]
             );
         }
@@ -640,15 +639,16 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         ]);
         $eventDispatcher = new EventDispatcher();
 
-        try{
-            TestHelper::callMethod($controller,'checkPermission',['objects']);
+        try {
+            TestHelper::callMethod($controller, 'checkPermission', ['objects']);
             $responseData = $controller->treeGetChildsByIdAction(
                 $request,
                 $eventDispatcher
             );
-        } catch(\Exception $e){
-            if (is_null($expectedChildren)){
+        } catch (\Exception $e) {
+            if (is_null($expectedChildren)) {
                 $this->assertInstanceOf(AccessDeniedHttpException::class, $e, 'Assert master object permission');
+
                 return;
             }
         }
