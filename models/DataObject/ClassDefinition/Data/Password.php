@@ -493,8 +493,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param mixed $data
      * @param bool $omitMandatoryCheck
      * @param array $params
-     * @return void
-     * @throws Model\Element\ValidationException
+     *
+     * @throws Model\Element\ValidationException|\Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
