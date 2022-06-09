@@ -457,8 +457,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @param array $data
-     * @return static
+     * {@inheritdoc}
      */
     public static function __set_state($data)
     {
