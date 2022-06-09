@@ -85,28 +85,30 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * @param int $id
+     * @param null|bool $force
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById($id, ?bool $force = false)
     {
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         try {
-            if (Cache\Runtime::isRegistered($cacheKey)) {
+            if (!$force && Cache\Runtime::isRegistered($cacheKey)) {
                 return Cache\Runtime::get($cacheKey);
-            } else if ($config = Cache::load($cacheKey)) {
-                Cache\Runtime::set($cacheKey, $config);
-                return $config;
-            } else {
-                $config = new self();
-                $config->getDao()->getById($id);
+            }
 
+            if (!$force && $config = Cache::load($cacheKey)) {
                 Cache\Runtime::set($cacheKey, $config);
-                Cache::save($config, $cacheKey);
                 return $config;
             }
+            $config = new self();
+            $config->getDao()->getById($id);
+
+            Cache\Runtime::set($cacheKey, $config);
+            Cache::save($config, $cacheKey);
+            return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -115,31 +117,34 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * @param string $name
      * @param int $storeId
+     * @param bool $force
      *
      * @return self|null
      *
      * @throws \Exception
      */
-    public static function getByName($name, $storeId = 1)
+    public static function getByName($name, $storeId = 1, ?bool $force = false)
     {
         $cacheKey = self::getCacheKey($storeId, $name);
 
         try {
-            if (Cache\Runtime::isRegistered($cacheKey)) {
+            if (!$force && Cache\Runtime::isRegistered($cacheKey)) {
                 return Cache\Runtime::get($cacheKey);
-            } else if ($config = Cache::load($cacheKey)) {
-                Cache\Runtime::set($cacheKey, $config);
-                return $config;
-            } else {
-                $config = new self();
-                $config->setName($name);
-                $config->setStoreId($storeId ? $storeId : 1);
-                $config->getDao()->getByName();
+            }
 
+            if (!$force && ($config = Cache::load($cacheKey))) {
                 Cache\Runtime::set($cacheKey, $config);
-                Cache::save($config, $cacheKey);
                 return $config;
             }
+
+            $config = new self();
+            $config->setName($name);
+            $config->setStoreId($storeId ? $storeId : 1);
+            $config->getDao()->getByName();
+
+            Cache\Runtime::set($cacheKey, $config);
+            Cache::save($config, $cacheKey);
+            return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
