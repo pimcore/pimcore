@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\GroupConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -27,7 +28,6 @@ use Pimcore\Model;
  */
 final class GroupConfig extends Model\AbstractModel
 {
-    use Cache\RuntimeCacheTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
@@ -84,16 +84,19 @@ final class GroupConfig extends Model\AbstractModel
         $cacheKey = self::getCacheKey($id);
 
         try {
-            if ($config = self::getCache($cacheKey)) {
+            if (Cache\Runtime::isRegistered($cacheKey)) {
+                return Cache\Runtime::get($cacheKey);
+            } else if ($config = Cache::load($cacheKey)) {
+                Cache\Runtime::set($cacheKey, $config);
+                return $config;
+            } else {
+                $config = new self();
+                $config->getDao()->getById($id);
+
+                Cache\Runtime::set($cacheKey, $config);
+                Cache::save($config, $cacheKey);
                 return $config;
             }
-
-            $config = new self();
-            $config->getDao()->getById($id);
-
-            self::setCache($config, $cacheKey);
-
-            return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -112,18 +115,21 @@ final class GroupConfig extends Model\AbstractModel
         $cacheKey = self::getCacheKey($storeId, $name);
 
         try {
-            if ($config = self::getCache($cacheKey)) {
+            if (Cache\Runtime::isRegistered($cacheKey)) {
+                return Cache\Runtime::get($cacheKey);
+            } else if ($config = Cache::load($cacheKey)) {
+                Cache\Runtime::set($cacheKey, $config);
+                return $config;
+            } else {
+                $config = new self();
+                $config->setName($name);
+                $config->setStoreId($storeId ? $storeId : 1);
+                $config->getDao()->getByName();
+
+                Cache\Runtime::set($cacheKey, $config);
+                Cache::save($config, $cacheKey);
                 return $config;
             }
-
-            $config = new self();
-            $config->setName($name);
-            $config->setStoreId($storeId ? $storeId : 1);
-            $config->getDao()->getByName();
-
-            self::setCache($config, $cacheKey);
-
-            return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
@@ -227,8 +233,7 @@ final class GroupConfig extends Model\AbstractModel
     {
         $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE);
         if ($this->getId()) {
-            self::removeCache(self::getCacheKey($this->getId()));
-            self::removeCache(self::getCacheKey($this->getStoreId(), $this->getName()));
+            self::removeCache();
         }
 
         $this->getDao()->delete();
@@ -243,8 +248,7 @@ final class GroupConfig extends Model\AbstractModel
         $isUpdate = false;
 
         if ($this->getId()) {
-            self::removeCache(self::getCacheKey($this->getId()));
-            self::removeCache(self::getCacheKey($this->getStoreId(), $this->getName()));
+            self::removeCache();
 
             $isUpdate = true;
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_UPDATE);
@@ -349,5 +353,19 @@ final class GroupConfig extends Model\AbstractModel
         }
 
         return $cacheKey;
+    }
+
+    /**
+     * @internal
+     */
+    private function removeCache(): void
+    {
+        // Remove runtime cache
+        Runtime::set(self::getCacheKey($this->getId()), null);
+        Runtime::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+
+        // Remove persisted cache
+        Cache::remove(self::getCacheKey($this->getId()));
+        Cache::remove(self::getCacheKey($this->getStoreId(), $this->getName()));
     }
 }
