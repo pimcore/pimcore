@@ -65,6 +65,7 @@ final class CollectionConfig extends Model\AbstractModel
 
     /**
      * @param int $id
+     * @param bool|null $force
      *
      * @return self|null
      */
@@ -97,6 +98,7 @@ final class CollectionConfig extends Model\AbstractModel
     /**
      * @param string $name
      * @param int $storeId
+     * @param bool|null $force
      *
      * @return self|null
      *
