@@ -1300,7 +1300,7 @@ class Service extends Model\Element\Service
      */
     private static function mergeFieldDefinition(&$mergedFieldDefinition, &$customFieldDefinitions, $key)
     {
-        if (!$customFieldDefinitions[$key]) {
+        if (empty($customFieldDefinitions[$key])) {
             unset($mergedFieldDefinition[$key]);
         } elseif (isset($mergedFieldDefinition[$key])) {
             $def = $customFieldDefinitions[$key];

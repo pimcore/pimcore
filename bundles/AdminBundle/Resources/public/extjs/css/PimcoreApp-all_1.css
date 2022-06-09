@@ -589,7 +589,7 @@
 }
 
 .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(../img/tree/loading.gif);
+    background-image: url(/bundles/pimcoreadmin/extjs/img/tree/loading.gif);
     color: transparent;
 }
 
@@ -781,7 +781,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(../img/tree/loading.gif);
+    background-image: url(/bundles/pimcoreadmin/extjs/img/tree/loading.gif);
     color: transparent;
 }
 
@@ -7971,30 +7971,23 @@ body > .x-mask {
     padding-right: 0;
 }
 
-.x-dd-drop-ok .x-dd-drop-icon {
-    font: 16px/1 'Font Awesome 5 Free';
-    color: #a4cf6d;
-}
-
-.x-dd-drop-ok .x-dd-drop-icon:before {
-    content: '\f058';
-}
-
+.x-dd-drop-ok .x-dd-drop-icon,
 .x-dd-drop-ok-add .x-dd-drop-icon {
     font: 16px/1 'Font Awesome 5 Free';
     color: #a4cf6d;
 }
 
+.x-dd-drop-ok .x-dd-drop-icon:before,
 .x-dd-drop-ok-add .x-dd-drop-icon:before {
     content: '\f058';
 }
 
-.x-dd-drop-nodrop div.x-dd-drop-icon {
+.x-dd-drop-nodrop .x-dd-drop-icon {
     font: 16px/1 'Font Awesome 5 Free';
     color: #d9705d;
 }
 
-.x-dd-drop-nodrop div.x-dd-drop-icon:before {
+.x-dd-drop-nodrop .x-dd-drop-icon:before {
     content: '\f057';
 }
 

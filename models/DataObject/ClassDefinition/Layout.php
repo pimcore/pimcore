@@ -293,6 +293,16 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
+     * @internal
+     *
+     * @return array
+     */
+    public function &getChildrenByRef()
+    {
+        return $this->children;
+    }
+
+    /**
      * @param array $children
      *
      * @return $this

@@ -62,7 +62,7 @@
             <div id="github">
                 <a class="github-button" href="https://github.com/pimcore/pimcore" data-color-scheme="no-preference: dark; light: dark; dark: dark;" data-size="large" aria-label="Star pimcore/pimcore on GitHub">Star</a>
             </div>
-            <script async defer src="https://buttons.github.io/buttons.js"></script>
+            <script async defer src="https://buttons.github.io/buttons.js" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
         {% endif %}
 
         {#

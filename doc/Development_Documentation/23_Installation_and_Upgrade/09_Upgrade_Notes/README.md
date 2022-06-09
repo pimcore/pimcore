@@ -6,10 +6,15 @@
   eg. "@PrestaSitemapBundle/~~Resources/~~config/routing.yaml", to ensure a smoother upgrade to upcoming major release.
 - [Backend search] `key` and `index` columns have been added to the search index. Run `./bin/console pimcore:search-backend-reindex` to reindex.
 - [Cache] Pimcore use DoctrineDbalAdapter instead of PdoAdapter by default now.
+- Removed `ocramius/package-versions` dependency. If you rely on it, please add it to your own `composer.json`.
 - [Permissions] Added an extra check about [system permission](https://pimcore.com/docs/pimcore/current/Development_Documentation/Administration_of_Pimcore/Users_and_Roles.html#page_System-Permissions) in element `isAllowed()` method, please make sure your custom implementations are not affected by this change. 
   Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls. 
- The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
+  The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
 
+## 10.4.2
+- When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
+  Until now, some commands (e.g. `messenger:consume`) could be executed even if the system was in maintenance mode.
+  To circumvent, use `--ignore-maintenance-mode` option, which is available to all commands.
 
 ## 10.4.0
 - **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 
