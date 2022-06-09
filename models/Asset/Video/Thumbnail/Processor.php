@@ -225,10 +225,13 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
+        $workerSourceFile = $asset->getTemporaryFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
             try {
+                $converter->load($workerSourceFile, ['asset' => $asset]);
+
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
@@ -256,14 +259,21 @@ class Processor
                         }
                     }
 
-                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
-                } else {
+                    $formats[$converter->getFormat()] = preg_replace(
+                        '/'.preg_quote($asset->getRealPath(), '/').'/',
+                        '',
+                        $converter->getStorageFile(),
+                        1
+                    );
+                }
+                else {
                     $conversionStatus = 'error';
                 }
 
                 $converter->destroy();
+
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 
@@ -290,9 +300,7 @@ class Processor
             Model\Version::enable();
         }
 
-        if ($instance->getDeleteSourceAfterFinished()) {
-            @unlink($instance->getDeleteSourceAfterFinished());
-        }
+        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
     }
