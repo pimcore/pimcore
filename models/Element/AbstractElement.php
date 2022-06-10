@@ -566,7 +566,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $user = \Pimcore\Tool\Admin::getCurrentUser();
         }
 
-        if ((!$user && php_sapi_name() === 'cli') || $user->isAdmin()) {
+        if ((!$user && php_sapi_name() === 'cli') || $user?->isAdmin()) {
             $defaultValue = 1;
         }
 
