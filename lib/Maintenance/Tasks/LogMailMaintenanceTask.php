@@ -99,6 +99,6 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1');
+        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
     }
 }
