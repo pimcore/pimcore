@@ -99,6 +99,7 @@ abstract class AbstractDao implements DaoInterface
     /**
      * @param string $table
      * @param string $column
+     *
      * @return string
      */
     public static function getForeignKeyName($table, $column)
