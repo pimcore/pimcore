@@ -574,7 +574,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $permissions[$name] = $defaultValue;
         }
 
-
         if (!$user || $user->isAdmin() || !$user->isAllowed(Service::getElementType($this) . 's')) {
             return $permissions;
         }
