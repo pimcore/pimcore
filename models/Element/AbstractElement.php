@@ -549,7 +549,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function getUserPermissions(User $user = null)
+    public function getUserPermissions(?User $user = null)
     {
         $baseClass = Service::getBaseClassNameForElement($this);
         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClass;
@@ -560,15 +560,20 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $permissions = [];
 
         $columns = array_diff(array_keys($vars), $ignored);
+        $defaultValue = 0;
+
+        if ((!$user && php_sapi_name() === 'cli') || $user->isAdmin()) {
+            $defaultValue = 1;
+        }
 
         foreach ($columns as $name) {
-            $permissions[$name] = 1;
+            $permissions[$name] = $defaultValue;
         }
 
         if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();
         }
-        if (!$user || $user->isAdmin()) {
+        if (!$user || $user->isAdmin() || !$user->isAllowed(Service::getElementType($this) . 's')) {
             return $permissions;
         }
 
@@ -606,6 +611,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return true;
         }
 
+        if (!$user->isAllowed(Service::getElementType($this) . 's')) {
+            return false;
+        }
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);

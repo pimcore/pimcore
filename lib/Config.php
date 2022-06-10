@@ -329,22 +329,6 @@ final class Config implements \ArrayAccess
         return $config;
     }
 
-    private static function getArrayValue($keys, $array)
-    {
-        $len = count($keys);
-        $pointer = $array;
-        for ($i = 0; $i < $len; $i++) {
-            $key = $keys[$i];
-            if (array_key_exists($key, $pointer)) {
-                $pointer = $pointer[$key];
-            } else {
-                return null;
-            }
-        }
-
-        return $pointer;
-    }
-
     /**
      * @return PimcoreConfig
      *
