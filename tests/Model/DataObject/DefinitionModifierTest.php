@@ -476,4 +476,22 @@ class DefinitionModifierTest extends ModelTestCase
 
         return $method;
     }
+
+    public function testGetByIdIgnoreCaseWithoutValidId()
+    {
+            $id = '-9999';
+            $classDef = new ClassDefinition();
+            $checkVal = $classDef->getByIdIgnoreCase($id);
+
+            $this->assertNull($checkVal);
+    }
+
+    public function testGetByIdIgnoreCaseWithValidId()
+    {
+        $id = 'Inheritance';
+        $classDef = new ClassDefinition();
+        $checkVal = $classDef->getByIdIgnoreCase($id);
+
+        $this->assertNotEmpty($checkVal);
+    }
 }
